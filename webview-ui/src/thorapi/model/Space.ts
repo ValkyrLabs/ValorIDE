@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,7 @@ export type Space  = DataObject & {
      * @type {string}
      * @memberof Space
      */
-    name: string;
-    /**
-     * Type of space.
-     * @type {string}
-     * @memberof Space
-     */
-    type: SpaceTypeEnum;
+    name?: string;
     /**
      * Space description.
      * @type {string}
@@ -57,17 +50,23 @@ export type Space  = DataObject & {
      */
     description?: string;
     /**
+     * Type of space.
+     * @type {string}
+     * @memberof Space
+     */
+    type?: SpaceTypeEnum;
+    /**
      * Space configuration settings.
      * @type {string}
      * @memberof Space
      */
     settings?: string;
     /**
-     * Parent space for hierarchical organization.
-     * @type {string}
+     * 
+     * @type {Space}
      * @memberof Space
      */
-    parentSpaceId?: string;
+    parentSpace?: Space;
     /**
      * Whether the space is active.
      * @type {boolean}
@@ -133,11 +132,11 @@ export type Space  = DataObject & {
 export function SpaceFromJSON(json: any): Space {
     return {
         ...DataObjectFromJSON(json),
-        'name': json['name'],
-        'type': json['type'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
         'description': !exists(json, 'description') ? undefined : json['description'],
+        'type': !exists(json, 'type') ? undefined : json['type'],
         'settings': !exists(json, 'settings') ? undefined : json['settings'],
-        'parentSpaceId': !exists(json, 'parentSpaceId') ? undefined : json['parentSpaceId'],
+        'parentSpace': !exists(json, 'parentSpace') ? undefined : SpaceFromJSON(json['parentSpace']),
         'isActive': !exists(json, 'isActive') ? undefined : json['isActive'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
@@ -158,10 +157,10 @@ export function SpaceToJSON(value?: Space): any {
     return {
         ...DataObjectToJSON(value),
         'name': value.name,
-        'type': value.type,
         'description': value.description,
+        'type': value.type,
         'settings': value.settings,
-        'parentSpaceId': value.parentSpaceId,
+        'parentSpace': SpaceToJSON(value.parentSpace),
         'isActive': value.isActive,
         'trashed': value.trashed,
     };

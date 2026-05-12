@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type InitiateTwoFactorResponse  = DataObject & {
      * @type {string}
      * @memberof InitiateTwoFactorResponse
      */
-    secretId: string;
+    secretId?: string;
     /**
      * QR code URL to scan with authenticator app
      * @type {string}
      * @memberof InitiateTwoFactorResponse
      */
-    qrCodeUrl: string;
+    qrCodeUrl?: string;
     /**
      * Manual entry key (for users without QR camera)
      * @type {string}
@@ -127,8 +126,8 @@ export type InitiateTwoFactorResponse  = DataObject & {
 export function InitiateTwoFactorResponseFromJSON(json: any): InitiateTwoFactorResponse {
     return {
         ...DataObjectFromJSON(json),
-        'secretId': json['secretId'],
-        'qrCodeUrl': json['qrCodeUrl'],
+        'secretId': !exists(json, 'secretId') ? undefined : json['secretId'],
+        'qrCodeUrl': !exists(json, 'qrCodeUrl') ? undefined : json['qrCodeUrl'],
         'manualEntryKey': !exists(json, 'manualEntryKey') ? undefined : json['manualEntryKey'],
         'backupCodes': !exists(json, 'backupCodes') ? undefined : json['backupCodes'],
         'message': !exists(json, 'message') ? undefined : json['message'],

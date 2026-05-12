@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetBackupConfigListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchBackupConfigByIdApiRequest {
+    id: string;
+    backupConfig: BackupConfig;
 }
 
 export interface PostBackupConfigApiRequest {
@@ -204,6 +208,60 @@ function getBackupConfigListRaw<T>(requestParameters: GetBackupConfigListApiRequ
 */
 export function getBackupConfigList<T>(requestParameters: GetBackupConfigListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<BackupConfig>>): QueryConfig<T> {
     return getBackupConfigListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing BackupConfig.
+ * Partially update an existing BackupConfig
+ */
+function patchBackupConfigByIdRaw<T>(requestParameters: PatchBackupConfigByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, BackupConfig> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchBackupConfigById.');
+    }
+
+    if (requestParameters.backupConfig === null || requestParameters.backupConfig === undefined) {
+        throw new runtime.RequiredError('backupConfig','Required parameter requestParameters.backupConfig was null or undefined when calling patchBackupConfigById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/BackupConfig/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || BackupConfigToJSON(requestParameters.backupConfig),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BackupConfigFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing BackupConfig.
+* Partially update an existing BackupConfig
+*/
+export function patchBackupConfigById<T>(requestParameters: PatchBackupConfigByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, BackupConfig>): QueryConfig<T> {
+    return patchBackupConfigByIdRaw(requestParameters, requestConfig);
 }
 
 /**

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -48,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -70,16 +68,16 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        username: Yup.string().required("username is required."),
-        password: Yup.string().required("password is required."),
-        email: Yup.string().email("Invalid email").required("email is required.").matches(/^[a-zA-Z0-9_!#$%&’*+\/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$/, "email must match pattern The main email address"),
         firstName: Yup.string(),
         middleName: Yup.string(),
         lastName: Yup.string(),
+        username: Yup.string(),
+        password: Yup.string().matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$/, "password must match pattern Your account password"),
         federalIdentification: Yup.string().matches(/^\\d{3}-\\d{2}-\\d{4}$/, "federalIdentification must match pattern SSN or a 10 digit federal government ID (encrypted)"),
         residenceCountry: Yup.string(),
         stateIdentification: Yup.string().matches(/^\\d{10}$/, "stateIdentification must match pattern Driver\&#39;s License or a 10 digit state government ID"),
         residenceState: Yup.string(),
+        email: Yup.string().email("Invalid email").matches(/^[a-zA-Z0-9_!#$%&’*+\/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$/, "email must match pattern The main email address"),
         phone: Yup.string().matches(/^\\+?[1-9]\\d{1,14}$/, "phone must match pattern The main phone number"),
         social: Yup.string(),
         bio: Yup.string(),
@@ -132,16 +130,16 @@ const PrincipalForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Principal> = {
-          username: '',
-          password: '',
-          email: '',
           firstName: '',
           middleName: '',
           lastName: '',
+          username: '',
+          password: '',
           federalIdentification: '',
           residenceCountry: '',
           stateIdentification: '',
           residenceState: '',
+          email: '',
           phone: '',
           social: '',
           bio: '',
@@ -230,105 +228,6 @@ const PrincipalForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New Principal
                 </Accordion.Header>
                 <Accordion.Body>
-                    <label htmlFor="username" className="nice-form-control">
-                      <b>
-                        Username:
-                        {touched.username &&
-                         !errors.username && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="username"
-                            value={values?.username}
-                            placeholder="Username"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="username"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="password" className="nice-form-control">
-                      <b>
-                        Password:
-                        {touched.password &&
-                         !errors.password && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="password"
-                            value={values?.password}
-                            placeholder="Password"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="password"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="email" className="nice-form-control">
-                      <b>
-                        Email:
-                        {touched.email &&
-                         !errors.email && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="email"
-                            value={values?.email}
-                            placeholder="Email"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="email"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="firstName" className="nice-form-control">
                       <b>
                         First Name:
@@ -424,6 +323,72 @@ const PrincipalForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="lastName"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="username" className="nice-form-control">
+                      <b>
+                        Username:
+                        {touched.username &&
+                         !errors.username && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="username"
+                            value={values?.username}
+                            placeholder="Username"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="username"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="password" className="nice-form-control">
+                      <b>
+                        Password:
+                        {touched.password &&
+                         !errors.password && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="password"
+                            value={values?.password}
+                            placeholder="Password"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="password"
                         component="span"
                       />
                     </label>
@@ -556,6 +521,39 @@ const PrincipalForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="residenceState"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="email" className="nice-form-control">
+                      <b>
+                        Email:
+                        {touched.email &&
+                         !errors.email && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="email"
+                            value={values?.email}
+                            placeholder="Email"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="email"
                         component="span"
                       />
                     </label>

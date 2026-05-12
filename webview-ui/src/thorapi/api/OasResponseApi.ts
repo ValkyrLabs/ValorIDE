@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetOasResponseListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchOasResponseByIdApiRequest {
+    id: string;
+    oasResponse: OasResponse;
 }
 
 export interface PostOasResponseApiRequest {
@@ -204,6 +208,60 @@ function getOasResponseListRaw<T>(requestParameters: GetOasResponseListApiReques
 */
 export function getOasResponseList<T>(requestParameters: GetOasResponseListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<OasResponse>>): QueryConfig<T> {
     return getOasResponseListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing OasResponse.
+ * Partially update an existing OasResponse
+ */
+function patchOasResponseByIdRaw<T>(requestParameters: PatchOasResponseByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, OasResponse> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchOasResponseById.');
+    }
+
+    if (requestParameters.oasResponse === null || requestParameters.oasResponse === undefined) {
+        throw new runtime.RequiredError('oasResponse','Required parameter requestParameters.oasResponse was null or undefined when calling patchOasResponseById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/OasResponse/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || OasResponseToJSON(requestParameters.oasResponse),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OasResponseFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing OasResponse.
+* Partially update an existing OasResponse
+*/
+export function patchOasResponseById<T>(requestParameters: PatchOasResponseByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, OasResponse>): QueryConfig<T> {
+    return patchOasResponseByIdRaw(requestParameters, requestConfig);
 }
 
 /**

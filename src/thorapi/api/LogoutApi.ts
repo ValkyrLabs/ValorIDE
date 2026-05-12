@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetLogoutListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchLogoutByIdApiRequest {
+    id: string;
+    logout: Logout;
 }
 
 export interface PostLogoutApiRequest {
@@ -204,6 +208,60 @@ function getLogoutListRaw<T>(requestParameters: GetLogoutListApiRequest, request
 */
 export function getLogoutList<T>(requestParameters: GetLogoutListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Logout>>): QueryConfig<T> {
     return getLogoutListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing Logout.
+ * Partially update an existing Logout
+ */
+function patchLogoutByIdRaw<T>(requestParameters: PatchLogoutByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Logout> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchLogoutById.');
+    }
+
+    if (requestParameters.logout === null || requestParameters.logout === undefined) {
+        throw new runtime.RequiredError('logout','Required parameter requestParameters.logout was null or undefined when calling patchLogoutById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Logout/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || LogoutToJSON(requestParameters.logout),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(LogoutFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing Logout.
+* Partially update an existing Logout
+*/
+export function patchLogoutById<T>(requestParameters: PatchLogoutByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Logout>): QueryConfig<T> {
+    return patchLogoutByIdRaw(requestParameters, requestConfig);
 }
 
 /**

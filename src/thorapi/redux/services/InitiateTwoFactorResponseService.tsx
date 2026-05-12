@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
@@ -19,6 +18,15 @@ import { InitiateTwoFactorResponse } from '@thorapi/model/InitiateTwoFactorRespo
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type InitiateTwoFactorResponseResponse = InitiateTwoFactorResponse[]
+
+const toInitiateTwoFactorResponseList = (result: unknown): InitiateTwoFactorResponseResponse => {
+  if (Array.isArray(result)) {
+    return result as InitiateTwoFactorResponseResponse
+  }
+
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as InitiateTwoFactorResponseResponse) : []
+}
 
 export const InitiateTwoFactorResponseService = createApi({
   reducerPath: 'InitiateTwoFactorResponse', // This should remain unique
@@ -33,13 +41,15 @@ export const InitiateTwoFactorResponseService = createApi({
         if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
         return `InitiateTwoFactorResponse?${q.join('&')}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'InitiateTwoFactorResponse' as const, id })),
-              { type: 'InitiateTwoFactorResponse', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toInitiateTwoFactorResponseList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'InitiateTwoFactorResponse' as const, id })),
+          { type: 'InitiateTwoFactorResponse', id: `PAGE_${page}` },
+        ]
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,13 +61,15 @@ export const InitiateTwoFactorResponseService = createApi({
         }
         return `InitiateTwoFactorResponse`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'InitiateTwoFactorResponse' as const, id })),
-              { type: 'InitiateTwoFactorResponse', id: 'LIST' },
-            ]
-          : [{ type: 'InitiateTwoFactorResponse', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toInitiateTwoFactorResponseList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'InitiateTwoFactorResponse' as const, id })),
+          { type: 'InitiateTwoFactorResponse', id: 'LIST' },
+        ]
+      },
     }),
 
     // 3) Create

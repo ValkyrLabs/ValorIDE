@@ -4,6 +4,7 @@ export type ApiProvider =
   | "anthropic"
   | "openrouter"
   | "moonshot"
+  | "minimax"
   | "bedrock"
   | "vertex"
   | "openai"
@@ -42,6 +43,8 @@ export interface ApiHandlerOptions {
   openRouterProviderSorting?: string;
   moonshotApiKey?: string;
   moonshotApiLine?: string; // "international" | "china"
+  minimaxApiKey?: string;
+  minimaxApiLine?: string; // "international" | "china"
   awsAccessKey?: string;
   awsSecretKey?: string;
   awsSessionToken?: string;
@@ -60,6 +63,14 @@ export interface ApiHandlerOptions {
   ollamaModelId?: string;
   ollamaBaseUrl?: string;
   ollamaApiOptionsCtxNum?: string;
+  ollamaRequestTimeout?: string; // milliseconds, e.g. "60000"
+  ollamaKeepAlive?: string; // e.g. "5m"
+  ollamaTemperature?: string; // e.g. "0.7"
+  ollamaTopP?: string; // e.g. "0.9"
+  ollamaTopK?: string; // e.g. "40"
+  ollamaRepeatPenalty?: string; // e.g. "1.1"
+  ollamaNumPredict?: string; // max tokens to predict
+  ollamaMirostat?: string; // 0 = disabled, 1 or 2 = enabled
   lmStudioModelId?: string;
   lmStudioBaseUrl?: string;
   geminiApiKey?: string;
@@ -522,6 +533,43 @@ export const moonshotModels = {
 export type MoonshotModelId = keyof typeof moonshotModels;
 export const moonshotDefaultModelId =
   "kimi-k2-0905-preview" satisfies MoonshotModelId;
+
+// MiniMax API (M2.7)
+// https://platform.minimax.io/docs/api-reference/text-openai-api
+// https://platform.minimax.io/docs/api-reference/text-chatcompletion
+// https://platform.minimax.io/docs/guides/pricing-paygo
+export const minimaxModels = {
+  "MiniMax-M2.7": {
+    maxTokens: 8_192,
+    contextWindow: 204_800,
+    supportsImages: false,
+    supportsPromptCache: true,
+    inputPrice: 0.3,
+    outputPrice: 1.2,
+    cacheWritesPrice: 0.375,
+    cacheReadsPrice: 0.06,
+    temperature: 1.0,
+    description:
+      "MiniMax M2.7 text model with 204.8K context and balanced latency/quality.",
+  },
+  "MiniMax-M2.7-highspeed": {
+    maxTokens: 8_192,
+    contextWindow: 204_800,
+    supportsImages: false,
+    supportsPromptCache: true,
+    inputPrice: 0.6,
+    outputPrice: 2.4,
+    cacheWritesPrice: 0.375,
+    cacheReadsPrice: 0.06,
+    temperature: 1.0,
+    description:
+      "MiniMax M2.7 highspeed variant optimized for lower latency and faster throughput.",
+  },
+} as const satisfies Record<string, OpenAiCompatibleModelInfo>;
+export type MinimaxModelId = keyof typeof minimaxModels;
+export const minimaxDefaultModelId =
+  "MiniMax-M2.7" satisfies MinimaxModelId;
+
 // Vertex AI
 // https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-valoride
 // https://cloud.google.com/vertex-ai/generative-ai/pricing#partner-models

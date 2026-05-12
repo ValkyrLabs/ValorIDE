@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type McpServiceRegistry  = DataObject & {
      * @type {string}
      * @memberof McpServiceRegistry
      */
-    slug: string;
+    slug?: string;
     /**
      * Human-readable name for the service
      * @type {string}
      * @memberof McpServiceRegistry
      */
-    displayName: string;
+    displayName?: string;
     /**
      * Detailed description of the service
      * @type {string}
@@ -187,8 +186,8 @@ export type McpServiceRegistry  = DataObject & {
 export function McpServiceRegistryFromJSON(json: any): McpServiceRegistry {
     return {
         ...DataObjectFromJSON(json),
-        'slug': json['slug'],
-        'displayName': json['displayName'],
+        'slug': !exists(json, 'slug') ? undefined : json['slug'],
+        'displayName': !exists(json, 'displayName') ? undefined : json['displayName'],
         'description': !exists(json, 'description') ? undefined : json['description'],
         'category': !exists(json, 'category') ? undefined : json['category'],
         'author': !exists(json, 'author') ? undefined : json['author'],

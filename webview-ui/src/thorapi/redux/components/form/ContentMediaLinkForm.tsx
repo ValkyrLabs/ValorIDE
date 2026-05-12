@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -50,7 +49,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -58,7 +56,7 @@ Template file: typescript-redux-query/modelForm.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 
 Description:
-link to images, videos, audio, and other content media
+Link object that attaches uploaded media to domain entities. Canonical ContentData flow: (1) upload/register file (files upload APIs or FileUploadSession), (2) persist FileRecord/media URL, (3) create ContentMediaLink with contentDataId and a contentUse role, (4) read back ContentData.contentMedia to verify attachment.
 */
 
 /* -----------------------------------------------------
@@ -70,6 +68,10 @@ const ContentUseValidation = () => {
     'screenshot',
     'selfie',
     'portrait',
+    'banner',
+    'hero',
+    'header',
+    'cover',
     'promotional',
     'informational',
     'entertainment',
@@ -534,6 +536,10 @@ const ContentUseLookup = () => {
       <option value='screenshot' label="Screenshot" />
       <option value='selfie' label="Selfie" />
       <option value='portrait' label="Portrait" />
+      <option value='banner' label="Banner" />
+      <option value='hero' label="Hero" />
+      <option value='header' label="Header" />
+      <option value='cover' label="Cover" />
       <option value='promotional' label="Promotional" />
       <option value='informational' label="Informational" />
       <option value='entertainment' label="Entertainment" />

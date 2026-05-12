@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetHostInstanceListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchHostInstanceByIdApiRequest {
+    id: string;
+    hostInstance: HostInstance;
 }
 
 export interface PostHostInstanceApiRequest {
@@ -204,6 +208,60 @@ function getHostInstanceListRaw<T>(requestParameters: GetHostInstanceListApiRequ
 */
 export function getHostInstanceList<T>(requestParameters: GetHostInstanceListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<HostInstance>>): QueryConfig<T> {
     return getHostInstanceListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing HostInstance.
+ * Partially update an existing HostInstance
+ */
+function patchHostInstanceByIdRaw<T>(requestParameters: PatchHostInstanceByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, HostInstance> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchHostInstanceById.');
+    }
+
+    if (requestParameters.hostInstance === null || requestParameters.hostInstance === undefined) {
+        throw new runtime.RequiredError('hostInstance','Required parameter requestParameters.hostInstance was null or undefined when calling patchHostInstanceById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/HostInstance/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || HostInstanceToJSON(requestParameters.hostInstance),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(HostInstanceFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing HostInstance.
+* Partially update an existing HostInstance
+*/
+export function patchHostInstanceById<T>(requestParameters: PatchHostInstanceByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, HostInstance>): QueryConfig<T> {
+    return patchHostInstanceByIdRaw(requestParameters, requestConfig);
 }
 
 /**

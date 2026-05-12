@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetChatCompletionRequestListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchChatCompletionRequestByIdApiRequest {
+    id: string;
+    chatCompletionRequest: ChatCompletionRequest;
 }
 
 export interface PostChatCompletionRequestApiRequest {
@@ -204,6 +208,60 @@ function getChatCompletionRequestListRaw<T>(requestParameters: GetChatCompletion
 */
 export function getChatCompletionRequestList<T>(requestParameters: GetChatCompletionRequestListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<ChatCompletionRequest>>): QueryConfig<T> {
     return getChatCompletionRequestListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing ChatCompletionRequest.
+ * Partially update an existing ChatCompletionRequest
+ */
+function patchChatCompletionRequestByIdRaw<T>(requestParameters: PatchChatCompletionRequestByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, ChatCompletionRequest> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchChatCompletionRequestById.');
+    }
+
+    if (requestParameters.chatCompletionRequest === null || requestParameters.chatCompletionRequest === undefined) {
+        throw new runtime.RequiredError('chatCompletionRequest','Required parameter requestParameters.chatCompletionRequest was null or undefined when calling patchChatCompletionRequestById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ChatCompletionRequest/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || ChatCompletionRequestToJSON(requestParameters.chatCompletionRequest),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ChatCompletionRequestFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing ChatCompletionRequest.
+* Partially update an existing ChatCompletionRequest
+*/
+export function patchChatCompletionRequestById<T>(requestParameters: PatchChatCompletionRequestByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ChatCompletionRequest>): QueryConfig<T> {
+    return patchChatCompletionRequestByIdRaw(requestParameters, requestConfig);
 }
 
 /**

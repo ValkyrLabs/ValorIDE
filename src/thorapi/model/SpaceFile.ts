@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -35,6 +34,12 @@ import {
     FileRecord,
     FileRecordFromJSON,
     FileRecordToJSON,
+    Principal,
+    PrincipalFromJSON,
+    PrincipalToJSON,
+    Space,
+    SpaceFromJSON,
+    SpaceToJSON,
 } from './';
 
 
@@ -47,17 +52,11 @@ import {
  */
 export type SpaceFile  = DataObject & {
     /**
-     * Space that references the file record.
-     * @type {string}
+     * 
+     * @type {Space}
      * @memberof SpaceFile
      */
-    spaceId: string;
-    /**
-     * File record linked to the space.
-     * @type {string}
-     * @memberof SpaceFile
-     */
-    fileRecordId: string;
+    space?: Space;
     /**
      * 
      * @type {FileRecord}
@@ -77,11 +76,11 @@ export type SpaceFile  = DataObject & {
      */
     isPinned?: boolean;
     /**
-     * Principal who pinned the file to the favorites list.
-     * @type {string}
+     * 
+     * @type {Principal}
      * @memberof SpaceFile
      */
-    pinnedById?: string;
+    pinnedBy?: Principal;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -141,12 +140,11 @@ export type SpaceFile  = DataObject & {
 export function SpaceFileFromJSON(json: any): SpaceFile {
     return {
         ...DataObjectFromJSON(json),
-        'spaceId': json['spaceId'],
-        'fileRecordId': json['fileRecordId'],
+        'space': !exists(json, 'space') ? undefined : SpaceFromJSON(json['space']),
         'fileRecord': !exists(json, 'fileRecord') ? undefined : FileRecordFromJSON(json['fileRecord']),
         'addedDate': !exists(json, 'addedDate') ? undefined : new Date(json['addedDate']),
         'isPinned': !exists(json, 'isPinned') ? undefined : json['isPinned'],
-        'pinnedById': !exists(json, 'pinnedById') ? undefined : json['pinnedById'],
+        'pinnedBy': !exists(json, 'pinnedBy') ? undefined : PrincipalFromJSON(json['pinnedBy']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -165,12 +163,11 @@ export function SpaceFileToJSON(value?: SpaceFile): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'spaceId': value.spaceId,
-        'fileRecordId': value.fileRecordId,
+        'space': SpaceToJSON(value.space),
         'fileRecord': FileRecordToJSON(value.fileRecord),
         'addedDate': value.addedDate === undefined ? undefined : value.addedDate.toISOString(),
         'isPinned': value.isPinned,
-        'pinnedById': value.pinnedById,
+        'pinnedBy': PrincipalToJSON(value.pinnedBy),
         'trashed': value.trashed,
     };
 }

@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -51,37 +50,37 @@ export type Invoice  = DataObject & {
      * @type {string}
      * @memberof Invoice
      */
-    customerId: string;
-    /**
-     * 
-     * @type {Date}
-     * @memberof Invoice
-     */
-    invoiceDate: Date;
-    /**
-     * 
-     * @type {Date}
-     * @memberof Invoice
-     */
-    dueDate: Date;
-    /**
-     * 
-     * @type {number}
-     * @memberof Invoice
-     */
-    amount: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Invoice
-     */
-    status: InvoiceStatusEnum;
+    customerId?: string;
     /**
      * 
      * @type {SalesOrder}
      * @memberof Invoice
      */
     salesOrder?: SalesOrder;
+    /**
+     * 
+     * @type {Date}
+     * @memberof Invoice
+     */
+    invoiceDate?: Date;
+    /**
+     * 
+     * @type {Date}
+     * @memberof Invoice
+     */
+    dueDate?: Date;
+    /**
+     * 
+     * @type {number}
+     * @memberof Invoice
+     */
+    amount?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Invoice
+     */
+    status?: InvoiceStatusEnum;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -141,12 +140,12 @@ export type Invoice  = DataObject & {
 export function InvoiceFromJSON(json: any): Invoice {
     return {
         ...DataObjectFromJSON(json),
-        'customerId': json['customerId'],
-        'invoiceDate': new Date(json['invoiceDate']),
-        'dueDate': new Date(json['dueDate']),
-        'amount': json['amount'],
-        'status': json['status'],
+        'customerId': !exists(json, 'customerId') ? undefined : json['customerId'],
         'salesOrder': !exists(json, 'salesOrder') ? undefined : SalesOrderFromJSON(json['salesOrder']),
+        'invoiceDate': !exists(json, 'invoiceDate') ? undefined : new Date(json['invoiceDate']),
+        'dueDate': !exists(json, 'dueDate') ? undefined : new Date(json['dueDate']),
+        'amount': !exists(json, 'amount') ? undefined : json['amount'],
+        'status': !exists(json, 'status') ? undefined : json['status'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -166,11 +165,11 @@ export function InvoiceToJSON(value?: Invoice): any {
     return {
         ...DataObjectToJSON(value),
         'customerId': value.customerId,
-        'invoiceDate': value.invoiceDate.toISOString(),
-        'dueDate': value.dueDate.toISOString(),
+        'salesOrder': SalesOrderToJSON(value.salesOrder),
+        'invoiceDate': value.invoiceDate === undefined ? undefined : value.invoiceDate.toISOString(),
+        'dueDate': value.dueDate === undefined ? undefined : value.dueDate.toISOString(),
         'amount': value.amount,
         'status': value.status,
-        'salesOrder': SalesOrderToJSON(value.salesOrder),
         'trashed': value.trashed,
     };
 }

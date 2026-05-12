@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -51,30 +50,6 @@ export type McpMarketplaceItem  = DataObject & {
      * @type {string}
      * @memberof McpMarketplaceItem
      */
-    githubUrl: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    name: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    author: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    description: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
     mcpMarketplaceCatalogId?: string;
     /**
      * 
@@ -87,7 +62,31 @@ export type McpMarketplaceItem  = DataObject & {
      * @type {string}
      * @memberof McpMarketplaceItem
      */
-    icon?: string;
+    githubUrl?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpMarketplaceItem
+     */
+    name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpMarketplaceItem
+     */
+    author?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpMarketplaceItem
+     */
+    description?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpMarketplaceItem
+     */
+    codiconIcon?: string;
     /**
      * 
      * @type {string}
@@ -142,18 +141,6 @@ export type McpMarketplaceItem  = DataObject & {
      * @memberof McpMarketplaceItem
      */
     downloadCount?: number;
-    /**
-     * 
-     * @type {Date}
-     * @memberof McpMarketplaceItem
-     */
-    createdAt?: Date;
-    /**
-     * 
-     * @type {Date}
-     * @memberof McpMarketplaceItem
-     */
-    updatedAt?: Date;
     /**
      * 
      * @type {Date}
@@ -219,13 +206,13 @@ export type McpMarketplaceItem  = DataObject & {
 export function McpMarketplaceItemFromJSON(json: any): McpMarketplaceItem {
     return {
         ...DataObjectFromJSON(json),
-        'githubUrl': json['githubUrl'],
-        'name': json['name'],
-        'author': json['author'],
-        'description': json['description'],
         'mcpMarketplaceCatalogId': !exists(json, 'mcpMarketplaceCatalogId') ? undefined : json['mcpMarketplaceCatalogId'],
         'mcpServerId': !exists(json, 'mcpServerId') ? undefined : json['mcpServerId'],
-        'icon': !exists(json, 'icon') ? undefined : json['icon'],
+        'githubUrl': !exists(json, 'githubUrl') ? undefined : json['githubUrl'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'author': !exists(json, 'author') ? undefined : json['author'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'codiconIcon': !exists(json, 'codiconIcon') ? undefined : json['codiconIcon'],
         'logoUrl': !exists(json, 'logoUrl') ? undefined : json['logoUrl'],
         'category': !exists(json, 'category') ? undefined : json['category'],
         'tags': !exists(json, 'tags') ? undefined : (json['tags'] as Array<any>).map(McpMarketplaceItemTagFromJSON),
@@ -235,8 +222,6 @@ export function McpMarketplaceItemFromJSON(json: any): McpMarketplaceItem {
         'isRecommended': !exists(json, 'isRecommended') ? undefined : json['isRecommended'],
         'githubStars': !exists(json, 'githubStars') ? undefined : json['githubStars'],
         'downloadCount': !exists(json, 'downloadCount') ? undefined : json['downloadCount'],
-        'createdAt': !exists(json, 'createdAt') ? undefined : new Date(json['createdAt']),
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : new Date(json['updatedAt']),
         'lastGithubSync': !exists(json, 'lastGithubSync') ? undefined : new Date(json['lastGithubSync']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
@@ -256,13 +241,13 @@ export function McpMarketplaceItemToJSON(value?: McpMarketplaceItem): any {
     }
     return {
         ...DataObjectToJSON(value),
+        'mcpMarketplaceCatalogId': value.mcpMarketplaceCatalogId,
+        'mcpServerId': value.mcpServerId,
         'githubUrl': value.githubUrl,
         'name': value.name,
         'author': value.author,
         'description': value.description,
-        'mcpMarketplaceCatalogId': value.mcpMarketplaceCatalogId,
-        'mcpServerId': value.mcpServerId,
-        'icon': value.icon,
+        'codiconIcon': value.codiconIcon,
         'logoUrl': value.logoUrl,
         'category': value.category,
         'tags': value.tags === undefined ? undefined : (value.tags as Array<any>).map(McpMarketplaceItemTagToJSON),
@@ -272,8 +257,6 @@ export function McpMarketplaceItemToJSON(value?: McpMarketplaceItem): any {
         'isRecommended': value.isRecommended,
         'githubStars': value.githubStars,
         'downloadCount': value.downloadCount,
-        'createdAt': value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
-        'updatedAt': value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
         'lastGithubSync': value.lastGithubSync === undefined ? undefined : value.lastGithubSync.toISOString(),
         'trashed': value.trashed,
     };

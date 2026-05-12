@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetSalesPipelineListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchSalesPipelineByIdApiRequest {
+    id: string;
+    salesPipeline: SalesPipeline;
 }
 
 export interface PostSalesPipelineApiRequest {
@@ -204,6 +208,60 @@ function getSalesPipelineListRaw<T>(requestParameters: GetSalesPipelineListApiRe
 */
 export function getSalesPipelineList<T>(requestParameters: GetSalesPipelineListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<SalesPipeline>>): QueryConfig<T> {
     return getSalesPipelineListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing SalesPipeline.
+ * Partially update an existing SalesPipeline
+ */
+function patchSalesPipelineByIdRaw<T>(requestParameters: PatchSalesPipelineByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, SalesPipeline> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchSalesPipelineById.');
+    }
+
+    if (requestParameters.salesPipeline === null || requestParameters.salesPipeline === undefined) {
+        throw new runtime.RequiredError('salesPipeline','Required parameter requestParameters.salesPipeline was null or undefined when calling patchSalesPipelineById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/SalesPipeline/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || SalesPipelineToJSON(requestParameters.salesPipeline),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SalesPipelineFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing SalesPipeline.
+* Partially update an existing SalesPipeline
+*/
+export function patchSalesPipelineById<T>(requestParameters: PatchSalesPipelineByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SalesPipeline>): QueryConfig<T> {
+    return patchSalesPipelineByIdRaw(requestParameters, requestConfig);
 }
 
 /**

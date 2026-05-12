@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -79,8 +77,9 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        campaignId: Yup.string().required("campaignId is required."),
-        name: Yup.string().required("name is required."),
+        campaignId: Yup.string(),
+        name: Yup.string(),
+        notes: Yup.string(),
         startDate: Yup.date()
           .transform((value, originalValue) => {
             if (!originalValue) {
@@ -88,7 +87,7 @@ const validationSchema = Yup.object().shape({
             }
             const parsed = new Date(originalValue);
             return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).required("startDate is required.").typeError("startDate must be a valid date"),
+          }).typeError("startDate must be a valid date"),
         endDate: Yup.date()
           .transform((value, originalValue) => {
             if (!originalValue) {
@@ -96,11 +95,10 @@ const validationSchema = Yup.object().shape({
             }
             const parsed = new Date(originalValue);
             return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).required("endDate is required.").typeError("endDate must be a valid date"),
+          }).typeError("endDate must be a valid date"),
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
-        .required("status is required."),
-        notes: Yup.string(),
+        ,
         budget: asNumber(Yup.number().typeError("budget must be a number")),
         trashed: Yup.boolean(),
 });
@@ -134,10 +132,10 @@ const CampaignForm: React.FC = () => {
   const initialValues: Partial<Campaign> = {
           campaignId: '',
           name: '',
+          notes: '',
           startDate: new Date(),
           endDate: new Date(),
         status: undefined,
-          notes: '',
           budget: 0,
           trashed: false,
   };
@@ -278,6 +276,39 @@ const CampaignForm: React.FC = () => {
                       />
                     </label>
                     <br />
+                    <label htmlFor="notes" className="nice-form-control">
+                      <b>
+                        Notes:
+                        {touched.notes &&
+                         !errors.notes && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="notes"
+                            value={values?.notes}
+                            placeholder="Notes"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="notes"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="startDate" className="nice-form-control">
                       <b>
                         Start Date:
@@ -395,39 +426,6 @@ const CampaignForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="status"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="notes" className="nice-form-control">
-                      <b>
-                        Notes:
-                        {touched.notes &&
-                         !errors.notes && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="notes"
-                            value={values?.notes}
-                            placeholder="Notes"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="notes"
                         component="span"
                       />
                     </label>

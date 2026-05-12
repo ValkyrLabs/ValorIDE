@@ -34,6 +34,11 @@ import { getSwarmPromptBroadcaster } from "@services/swarmPromptBroadcaster";
 import { StartupAuthService } from "@services/auth/StartupAuthService";
 import { ApiProvider, ModelInfo } from "@shared/api";
 import { LlmDetailsSummary, SelectedLlmDetails } from "@shared/llm";
+import {
+  SwarmMessageType,
+  SwarmEntityType,
+  buildSwarmMessage,
+} from "@shared/swarm-protocol";
 import { ChatContent } from "@shared/ChatContent";
 import { ChatSettings } from "@shared/ChatSettings";
 import {
@@ -2109,6 +2114,7 @@ export class Controller {
         case "qwen":
         case "deepseek":
         case "moonshot":
+        case "minimax":
         case "xai":
           await updateGlobalState(
             this.context,
@@ -2209,13 +2215,14 @@ export class Controller {
           case "vertex":
           case "gemini":
           case "asksage":
-        case "openai-native":
-        case "qwen":
-        case "deepseek":
-        case "moonshot":
-        case "xai":
-          await updateGlobalState(this.context, "apiModelId", newModelId);
-          break;
+          case "openai-native":
+          case "qwen":
+          case "deepseek":
+          case "moonshot":
+          case "minimax":
+          case "xai":
+            await updateGlobalState(this.context, "apiModelId", newModelId);
+            break;
           case "openrouter":
           case "valoride":
             await updateGlobalState(
@@ -2954,9 +2961,12 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
         "Content-Type": "application/json",
       };
 
-      // Add JWT token if available
-      if (apiConfiguration?.valkyraiJwt) {
-        headers["Authorization"] = `Bearer ${apiConfiguration.valkyraiJwt}`;
+      // Prefer explicit ValkyrAI token, otherwise fall back to login JWT.
+      const authToken =
+        apiConfiguration?.valkyraiJwt ||
+        (await getSecret(this.context, "jwtToken"));
+      if (authToken) {
+        headers["Authorization"] = `Bearer ${authToken}`;
       }
 
       const response = await axios.get(endpoint, { headers });
@@ -3001,9 +3011,17 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
         console.error("Invalid response from ValkyrAI LLMDetails endpoint");
       }
     } catch (error) {
-      console.error("Error fetching LLMDetails from ValkyrAI:", error);
-      lastError =
-        error instanceof Error ? error.message : "Unknown LLMDetails error";
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        lastError =
+          "Authentication required for ValkyrAI LLMDetails. Sign in again or provide a ValkyrAI JWT.";
+        console.warn(
+          "Unauthorized when fetching LLMDetails from ValkyrAI (401).",
+        );
+      } else {
+        console.error("Error fetching LLMDetails from ValkyrAI:", error);
+        lastError =
+          error instanceof Error ? error.message : "Unknown LLMDetails error";
+      }
     }
 
     await this.postMessageToWebview({
@@ -3040,12 +3058,67 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
           error instanceof Error ? error.message : "Unable to reach host.";
       }
     }
+
+    if (success) {
+      void this.registerSwarmSession(normalizedHost);
+    }
+
     await this.postMessageToWebview({
       type: "valkyraiHostTestResult",
       host: normalizedHost,
       success,
       error: errorMessage,
     });
+  }
+
+  /**
+   * Registers this ValorIDE instance as a SWARM session with the ValkyrAI backend.
+   * Non-fatal: errors are logged but do not affect normal operation.
+   */
+  private async registerSwarmSession(host: string): Promise<void> {
+    try {
+      const jwtToken = await getSecret(this.context, "jwtToken");
+      const instanceId = vscode.env.machineId || crypto.randomUUID();
+      const version =
+        this.context.extension?.packageJSON?.version ?? "unknown";
+      const workspaceName =
+        vscode.workspace.workspaceFolders?.map((f) => f.name).join(", ") ??
+        "unknown";
+
+      const sessionMessage = buildSwarmMessage(
+        SwarmMessageType.EVENT,
+        { type: SwarmEntityType.AGENT, instanceId, username: "valoride" },
+        { type: SwarmEntityType.SERVER },
+        "register",
+        {
+          agentType: "valoride-ide",
+          version,
+          machineId: instanceId,
+          workspace: workspaceName,
+        },
+      );
+
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (jwtToken) {
+        headers["Authorization"] = `Bearer ${jwtToken}`;
+      }
+
+      await axios.post(`${host}/swarm/sessions`, sessionMessage, {
+        headers,
+        timeout: 5000,
+      });
+      console.log(`[SWARM] ValorIDE session registered with ${host}`);
+
+      await this.postMessageToWebview({
+        type: "swarm:broadcast",
+        payload: { action: "sessionRegistered", data: { host, instanceId } },
+      });
+    } catch (error) {
+      // Non-fatal: SWARM registration is best-effort
+      console.warn("[SWARM] Session registration skipped:", error instanceof Error ? error.message : error);
+    }
   }
 
   private async handleValkyraiHostConfigChange() {

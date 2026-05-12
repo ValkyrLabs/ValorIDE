@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -48,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -70,9 +68,9 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        success: Yup.boolean().required("success is required."),
-        funnelUrl: Yup.string().required("funnelUrl is required."),
+        success: Yup.boolean(),
         published: Yup.boolean(),
+        funnelUrl: Yup.string(),
         landingPageUrl: Yup.string(),
         message: Yup.string(),
         publishedAt: Yup.date()
@@ -114,8 +112,8 @@ const PublishFunnel200ResponseForm: React.FC = () => {
   -------------------------------------------------------- */
   const initialValues: Partial<PublishFunnel200Response> = {
           success: false,
-          funnelUrl: '',
           published: false,
+          funnelUrl: '',
           landingPageUrl: '',
           message: '',
           publishedAt: new Date(),
@@ -229,39 +227,6 @@ const PublishFunnel200ResponseForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="funnelUrl" className="nice-form-control">
-                      <b>
-                        Funnel Url:
-                        {touched.funnelUrl &&
-                         !errors.funnelUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="funnelUrl"
-                            value={values?.funnelUrl}
-                            placeholder="Funnel Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="funnelUrl"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="published" className="nice-form-control">
                       <b>
                         Published:
@@ -295,6 +260,39 @@ const PublishFunnel200ResponseForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="published"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="funnelUrl" className="nice-form-control">
+                      <b>
+                        Funnel Url:
+                        {touched.funnelUrl &&
+                         !errors.funnelUrl && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="funnelUrl"
+                            value={values?.funnelUrl}
+                            placeholder="Funnel Url"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="funnelUrl"
                         component="span"
                       />
                     </label>

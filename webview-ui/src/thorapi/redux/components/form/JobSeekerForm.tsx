@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -48,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -70,8 +68,8 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        email: Yup.string().email("Invalid email").required("email is required."),
-        fullName: Yup.string().required("fullName is required."),
+        email: Yup.string().email("Invalid email"),
+        fullName: Yup.string(),
         linkedinUrl: Yup.string(),
         currentRole: Yup.string(),
         currentCompany: Yup.string(),
@@ -81,6 +79,14 @@ const validationSchema = Yup.object().shape({
         skills: Yup.string(),
         resumeStorageUrl: Yup.string(),
         resumeParsedText: Yup.string(),
+        createdDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
         updatedDate: Yup.date()
           .transform((value, originalValue) => {
             if (!originalValue) {
@@ -131,6 +137,7 @@ const JobSeekerForm: React.FC = () => {
           skills: '',
           resumeStorageUrl: '',
           resumeParsedText: '',
+          createdDate: new Date(),
           updatedDate: new Date(),
           aiReadableProfile: '',
           trashed: false,
@@ -577,6 +584,49 @@ const JobSeekerForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="resumeParsedText"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="createdDate" className="nice-form-control">
+                      <b>
+                        Created Date:
+                        {touched.createdDate &&
+                         !errors.createdDate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+                      <ErrorMessage
+                        className="error"
+                        name="createdDate"
                         component="span"
                       />
                     </label>

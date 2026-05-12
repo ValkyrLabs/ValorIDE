@@ -58,6 +58,27 @@ import {
 } from "react-icons/fa";
 import { format } from "date-fns";
 
+const principalReference = (id?: string): Principal | undefined =>
+  id ? ({ id } as Principal) : undefined;
+
+const getPrincipalId = (principal?: Principal | null): string | undefined => {
+  const id = principal?.id ?? principal?.ownerId;
+  return id === undefined || id === null ? undefined : String(id);
+};
+
+const getPreferencePrincipalId = (
+  preference?: Partial<UserPreference> | null,
+): string | undefined => {
+  if (!preference) {
+    return undefined;
+  }
+  return (
+    getPrincipalId(preference.principal) ??
+    (preference as any).principalId ??
+    preference.ownerId
+  );
+};
+
 interface UserPreferencesProps {
   className?: string;
 }
@@ -162,7 +183,7 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
     // Filter user preferences for current user
     const currentUserPreferences = useMemo(() => {
       return userPreferences.filter(
-        (pref) => pref.principalId === currentPrincipalId,
+        (pref) => getPreferencePrincipalId(pref) === currentPrincipalId,
       );
     }, [userPreferences, currentPrincipalId]);
 
@@ -193,7 +214,7 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
           // Create new preference
           await addUserPreference({
             ...editingPreference,
-            principalId: currentPrincipalId,
+            principal: principalReference(currentPrincipalId),
           }).unwrap();
         }
 
@@ -378,9 +399,9 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
                         Modified:{" "}
                         {pref.lastModifiedDate
                           ? format(
-                            new Date(pref.lastModifiedDate),
-                            "MMM dd, yyyy",
-                          )
+                              new Date(pref.lastModifiedDate),
+                              "MMM dd, yyyy",
+                            )
                           : "N/A"}
                       </small>
                     </Card.Body>
@@ -625,12 +646,14 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
                   <Form.Control
                     type="text"
                     value={
-                      editingPreference.principalId || currentPrincipalId || ""
+                      getPreferencePrincipalId(editingPreference) ||
+                      currentPrincipalId ||
+                      ""
                     }
                     onChange={(e) =>
                       setEditingPreference({
                         ...editingPreference,
-                        principalId: e.target.value,
+                        principal: principalReference(e.target.value),
                       })
                     }
                     placeholder="Enter Principal ID"
@@ -720,7 +743,7 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
 
                       <dt className="col-sm-4">Principal ID:</dt>
                       <dd className="col-sm-8">
-                        {selectedPreference.principalId || "N/A"}
+                        {getPreferencePrincipalId(selectedPreference) || "N/A"}
                       </dd>
 
                       <dt className="col-sm-4">Owner ID:</dt>
@@ -740,9 +763,9 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
                       <dd className="col-sm-7">
                         {selectedPreference.createdDate
                           ? format(
-                            new Date(selectedPreference.createdDate),
-                            "MMM dd, yyyy HH:mm",
-                          )
+                              new Date(selectedPreference.createdDate),
+                              "MMM dd, yyyy HH:mm",
+                            )
                           : "N/A"}
                       </dd>
 
@@ -750,9 +773,9 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
                       <dd className="col-sm-7">
                         {selectedPreference.lastModifiedDate
                           ? format(
-                            new Date(selectedPreference.lastModifiedDate),
-                            "MMM dd, yyyy HH:mm",
-                          )
+                              new Date(selectedPreference.lastModifiedDate),
+                              "MMM dd, yyyy HH:mm",
+                            )
                           : "N/A"}
                       </dd>
 
@@ -765,9 +788,9 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
                       <dd className="col-sm-7">
                         {selectedPreference.lastAccessedDate
                           ? format(
-                            new Date(selectedPreference.lastAccessedDate),
-                            "MMM dd, yyyy HH:mm",
-                          )
+                              new Date(selectedPreference.lastAccessedDate),
+                              "MMM dd, yyyy HH:mm",
+                            )
                           : "N/A"}
                       </dd>
                     </dl>

@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -33,7 +32,7 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 // thorapi
 
 /**
- * link to images, videos, audio, and other content media
+ * Link object that attaches uploaded media to domain entities. Canonical ContentData flow: (1) upload/register file (files upload APIs or FileUploadSession), (2) persist FileRecord/media URL, (3) create ContentMediaLink with contentDataId and a contentUse role, (4) read back ContentData.contentMedia to verify attachment.
  * @export
  * @interface ContentMediaLink
  */
@@ -51,7 +50,7 @@ export type ContentMediaLink  = DataObject & {
      */
     contentDataId?: string;
     /**
-     * specialized usage for the media object if any
+     * Specialized usage role for the media object, including article presentation roles such as header/hero/cover.
      * @type {string}
      * @memberof ContentMediaLink
      */
@@ -176,6 +175,10 @@ export enum ContentMediaLinkContentUseEnum {
     SCREENSHOT = 'screenshot',
     SELFIE = 'selfie',
     PORTRAIT = 'portrait',
+    BANNER = 'banner',
+    HERO = 'hero',
+    HEADER = 'header',
+    COVER = 'cover',
     PROMOTIONAL = 'promotional',
     INFORMATIONAL = 'informational',
     ENTERTAINMENT = 'entertainment',

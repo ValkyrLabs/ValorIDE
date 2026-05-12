@@ -354,12 +354,12 @@ export class MothershipService extends EventEmitter {
 
   public getPresenceSnapshot(now: number = Date.now(), offlineAfterMs: number = 90_000): Record<string, { lastSeenAt: number; online: boolean }> {
     const snapshot: Record<string, { lastSeenAt: number; online: boolean }> = {};
-    for (const [peerId, lastSeenAt] of this.peerLiveness.entries()) {
+    this.peerLiveness.forEach((lastSeenAt, peerId) => {
       snapshot[peerId] = {
         lastSeenAt,
         online: now - lastSeenAt <= offlineAfterMs,
       };
-    }
+    });
     return snapshot;
   }
 

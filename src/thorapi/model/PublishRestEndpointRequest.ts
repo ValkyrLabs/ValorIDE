@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,25 +42,25 @@ export type PublishRestEndpointRequest  = DataObject & {
      * @type {string}
      * @memberof PublishRestEndpointRequest
      */
-    controllerPath: string;
-    /**
-     * Unique slug for the MCP tool
-     * @type {string}
-     * @memberof PublishRestEndpointRequest
-     */
-    toolSlug: string;
-    /**
-     * Human-readable tool name
-     * @type {string}
-     * @memberof PublishRestEndpointRequest
-     */
-    displayName: string;
+    controllerPath?: string;
     /**
      * Optional specific endpoint path within controller (e.g., /route). If omitted, publishes all endpoints.
      * @type {string}
      * @memberof PublishRestEndpointRequest
      */
     endpointPath?: string;
+    /**
+     * Unique slug for the MCP tool
+     * @type {string}
+     * @memberof PublishRestEndpointRequest
+     */
+    toolSlug?: string;
+    /**
+     * Human-readable tool name
+     * @type {string}
+     * @memberof PublishRestEndpointRequest
+     */
+    displayName?: string;
     /**
      * Brief summary of what the tool does
      * @type {string}
@@ -205,10 +204,10 @@ export type PublishRestEndpointRequest  = DataObject & {
 export function PublishRestEndpointRequestFromJSON(json: any): PublishRestEndpointRequest {
     return {
         ...DataObjectFromJSON(json),
-        'controllerPath': json['controllerPath'],
-        'toolSlug': json['toolSlug'],
-        'displayName': json['displayName'],
+        'controllerPath': !exists(json, 'controllerPath') ? undefined : json['controllerPath'],
         'endpointPath': !exists(json, 'endpointPath') ? undefined : json['endpointPath'],
+        'toolSlug': !exists(json, 'toolSlug') ? undefined : json['toolSlug'],
+        'displayName': !exists(json, 'displayName') ? undefined : json['displayName'],
         'summary': !exists(json, 'summary') ? undefined : json['summary'],
         'description': !exists(json, 'description') ? undefined : json['description'],
         'category': !exists(json, 'category') ? undefined : json['category'],
@@ -242,9 +241,9 @@ export function PublishRestEndpointRequestToJSON(value?: PublishRestEndpointRequ
     return {
         ...DataObjectToJSON(value),
         'controllerPath': value.controllerPath,
+        'endpointPath': value.endpointPath,
         'toolSlug': value.toolSlug,
         'displayName': value.displayName,
-        'endpointPath': value.endpointPath,
         'summary': value.summary,
         'description': value.description,
         'category': value.category,

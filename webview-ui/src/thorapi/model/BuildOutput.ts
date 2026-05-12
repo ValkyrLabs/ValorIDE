@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -51,31 +50,31 @@ export type BuildOutput  = DataObject & {
      * @type {string}
      * @memberof BuildOutput
      */
-    buildId: string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof BuildOutput
-     */
-    success: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof BuildOutput
-     */
-    output: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof BuildOutput
-     */
     applicationId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof BuildOutput
+     */
+    buildId?: string;
     /**
      * 
      * @type {Date}
      * @memberof BuildOutput
      */
     lastSuccessfulRun?: Date;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof BuildOutput
+     */
+    success?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof BuildOutput
+     */
+    output?: string;
     /**
      * 
      * @type {Array<Solution>}
@@ -141,11 +140,11 @@ export type BuildOutput  = DataObject & {
 export function BuildOutputFromJSON(json: any): BuildOutput {
     return {
         ...DataObjectFromJSON(json),
-        'buildId': json['buildId'],
-        'success': json['success'],
-        'output': json['output'],
         'applicationId': !exists(json, 'applicationId') ? undefined : json['applicationId'],
+        'buildId': !exists(json, 'buildId') ? undefined : json['buildId'],
         'lastSuccessfulRun': !exists(json, 'lastSuccessfulRun') ? undefined : new Date(json['lastSuccessfulRun']),
+        'success': !exists(json, 'success') ? undefined : json['success'],
+        'output': !exists(json, 'output') ? undefined : json['output'],
         'solutions': !exists(json, 'solutions') ? undefined : (json['solutions'] as Array<any>).map(SolutionFromJSON),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
@@ -165,11 +164,11 @@ export function BuildOutputToJSON(value?: BuildOutput): any {
     }
     return {
         ...DataObjectToJSON(value),
+        'applicationId': value.applicationId,
         'buildId': value.buildId,
+        'lastSuccessfulRun': value.lastSuccessfulRun === undefined ? undefined : value.lastSuccessfulRun.toISOString(),
         'success': value.success,
         'output': value.output,
-        'applicationId': value.applicationId,
-        'lastSuccessfulRun': value.lastSuccessfulRun === undefined ? undefined : value.lastSuccessfulRun.toISOString(),
         'solutions': value.solutions === undefined ? undefined : (value.solutions as Array<any>).map(SolutionToJSON),
         'trashed': value.trashed,
     };

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -80,11 +78,11 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        productId: Yup.string().required("productId is required."),
-        slug: Yup.string().required("slug is required."),
+        productId: Yup.string(),
       templateId: Yup.mixed()
         .oneOf(TemplateIdValidation(), "Invalid value for templateId")
         ,
+        slug: Yup.string(),
         seoTitle: Yup.string(),
         seoDescription: Yup.string(),
         seoKeywords: Yup.string(),
@@ -130,8 +128,8 @@ const ProductLandingPageForm: React.FC = () => {
   -------------------------------------------------------- */
   const initialValues: Partial<ProductLandingPage> = {
           productId: '',
-          slug: '',
         templateId: undefined,
+          slug: '',
           seoTitle: '',
           seoDescription: '',
           seoKeywords: '',
@@ -245,39 +243,6 @@ const ProductLandingPageForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="slug" className="nice-form-control">
-                      <b>
-                        Slug:
-                        {touched.slug &&
-                         !errors.slug && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="slug"
-                            value={values?.slug}
-                            placeholder="Slug"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="slug"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="templateId" className="nice-form-control">
                       <b>
                         Template Id:
@@ -309,6 +274,39 @@ const ProductLandingPageForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="templateId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="slug" className="nice-form-control">
+                      <b>
+                        Slug:
+                        {touched.slug &&
+                         !errors.slug && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="slug"
+                            value={values?.slug}
+                            placeholder="Slug"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="slug"
                         component="span"
                       />
                     </label>

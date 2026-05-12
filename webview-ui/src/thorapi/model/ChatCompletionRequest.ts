@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -51,19 +50,19 @@ export type ChatCompletionRequest  = DataObject & {
      * @type {string}
      * @memberof ChatCompletionRequest
      */
-    model: string;
-    /**
-     * Array of role-based messages to control the conversation.
-     * @type {Array<ChatMessage>}
-     * @memberof ChatCompletionRequest
-     */
-    messages: Array<ChatMessage>;
+    model?: string;
     /**
      * Optional field, historically used in non-chat contexts; often omitted.
      * @type {string}
      * @memberof ChatCompletionRequest
      */
     prompt?: string;
+    /**
+     * Array of role-based messages to control the conversation.
+     * @type {Array<ChatMessage>}
+     * @memberof ChatCompletionRequest
+     */
+    messages?: Array<ChatMessage>;
     /**
      * the amount of desired variance or non-determinism in the result
      * @type {number}
@@ -135,9 +134,9 @@ export type ChatCompletionRequest  = DataObject & {
 export function ChatCompletionRequestFromJSON(json: any): ChatCompletionRequest {
     return {
         ...DataObjectFromJSON(json),
-        'model': json['model'],
-        'messages': (json['messages'] as Array<any>).map(ChatMessageFromJSON),
+        'model': !exists(json, 'model') ? undefined : json['model'],
         'prompt': !exists(json, 'prompt') ? undefined : json['prompt'],
+        'messages': !exists(json, 'messages') ? undefined : (json['messages'] as Array<any>).map(ChatMessageFromJSON),
         'temperature': !exists(json, 'temperature') ? undefined : json['temperature'],
         'stream': !exists(json, 'stream') ? undefined : json['stream'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -159,8 +158,8 @@ export function ChatCompletionRequestToJSON(value?: ChatCompletionRequest): any 
     return {
         ...DataObjectToJSON(value),
         'model': value.model,
-        'messages': (value.messages as Array<any>).map(ChatMessageToJSON),
         'prompt': value.prompt,
+        'messages': value.messages === undefined ? undefined : (value.messages as Array<any>).map(ChatMessageToJSON),
         'temperature': value.temperature,
         'stream': value.stream,
         'trashed': value.trashed,

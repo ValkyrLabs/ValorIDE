@@ -18,7 +18,7 @@ import { ExtensionMessage } from "@shared/ExtensionMessage";
 import BrowserSettingsSection from "./BrowserSettingsSection";
 import LLMDetailsSelector from "../LLMDetailsSelector";
 import { VscSettingsGear } from "react-icons/vsc";
-import { FaStar, FaShareAlt, FaCheck, FaTag, FaShieldAlt } from "react-icons/fa";
+import { FaStar, FaShareAlt, FaCheck, FaShieldAlt } from "react-icons/fa";
 import StatusBadge from "@thorapi/components/common/StatusBadge";
 import OfflineBanner from "@thorapi/components/common/OfflineBanner";
 import SystemAlerts from "@thorapi/components/SystemAlerts";
@@ -338,34 +338,36 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
   return (
     <>
       <SystemAlerts />
-      <div className="fixed top-0 left-0 right-0 bottom-0 pt-[10px] pr-0 pb-0 pl-5 flex flex-col overflow-hidden">
+      <div className="fixed top-0 left-0 right-0 bottom-0 pt-2.5 pr-0 pb-0 pl-5 flex flex-col overflow-hidden">
+        {/* Header bar */}
         <div className="flex justify-between items-center mb-[13px] pr-[17px]">
-          <div className="flex items-center gap-2">
-            <VSCodeButton onClick={() => handleSubmit(false)}>
-              Save
-            </VSCodeButton>
-          </div>
-          <h3 className="text-[var(--vscode-foreground)] m-0">Settings</h3>
+          <h3 className="text-(--vscode-foreground) m-0">Settings</h3>
           <div className="flex items-center gap-2">
             <VSCodeButton
-              appearance="secondary"
+              appearance="icon"
               onClick={handleStar}
               title="Star us on GitHub"
             >
-              <span className="flex items-center gap-2">
-                <FaStar />{" "}
-              </span>
+              <FaStar />
             </VSCodeButton>
             <VSCodeButton
-              appearance="secondary"
+              appearance="icon"
               onClick={handleShare}
               title="Copy Marketplace link to clipboard"
             >
-              <span className="flex items-center gap-2">
-                <FaShareAlt size={18} />{" "}
-                {copied ? <FaCheck size={18} /> : <FaTag />}
-              </span>
+              {copied ? <FaCheck size={14} /> : <FaShareAlt size={14} />}
             </VSCodeButton>
+            <div
+              className="flex items-center"
+              title="Store and load the JWT in local storage to avoid logging in every time"
+            >
+              <VSCodeCheckbox
+                checked={persistJwt}
+                onChange={(e: any) => setPersistJwt(!!e?.target?.checked)}
+              >
+                <span className="text-xs">Remember login</span>
+              </VSCodeCheckbox>
+            </div>
             <SettingsButton
               onClick={() => {
                 try {
@@ -374,13 +376,16 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
                   console.warn("Reset layout message failed: ", err);
                 }
               }}
-              title="Reset layout (resets VS Code view locations to defaults)"
+              title="Reset layout"
               className="mr-2"
             >
-              <span className="flex items-center gap-2">
-                <FaShieldAlt /> Reset Layout
+              <span className="flex items-center gap-1 text-xs">
+                <FaShieldAlt size={11} /> Reset Layout
               </span>
             </SettingsButton>
+            <VSCodeButton onClick={() => handleSubmit(false)}>
+              Save
+            </VSCodeButton>
           </div>
         </div>
         <div className="grow overflow-y-scroll pr-2 flex flex-col">
@@ -388,7 +393,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
           <OfflineBanner />
            */}
           {peers.length > 0 && (
-            <div className="border border-solid border-[var(--vscode-panel-border)] rounded-md p-[10px] mb-3 bg-[var(--vscode-panel-background)] text-[var(--vscode-foreground)]">
+            <div className="border border-solid border-(--vscode-panel-border) rounded-md p-2.5 mb-3 bg-(--vscode-panel-background) text-(--vscode-foreground)">
               <div className="mb-2 font-semibold">Active instances</div>
               <div className="flex flex-wrap gap-2">
                 {peers.map((id) => (
@@ -411,8 +416,8 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 
           {/* Tabs container */}
           {planActSeparateModelsSetting ? (
-            <div className="border border-solid border-[var(--vscode-panel-border)] rounded-md p-[10px] mb-5 bg-[var(--vscode-panel-background)]">
-              <div className="flex gap-[1px] mb-[10px] -mt-2 border-0 border-b border-solid border-[var(--vscode-panel-border)]">
+            <div className="border border-solid border-(--vscode-panel-border) rounded-md p-2.5 mb-5 bg-(--vscode-panel-background)">
+              <div className="flex gap-px mb-2.5 -mt-2 border-0 border-b border-solid border-(--vscode-panel-border)">
                 <TabButton
                   isActive={chatSettings.mode === "plan"}
                   onClick={() => handleTabChange("plan")}
@@ -459,7 +464,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
             >
               <span className="font-medium">Custom Instructions</span>
             </VSCodeTextArea>
-            <p className="text-xs mt-[5px] text-[var(--vscode-descriptionForeground)]">
+            <p className="text-xs mt-[5px] text-(--vscode-descriptionForeground)">
               These instructions are added to the end of the system prompt sent
               with every request.
             </p>
@@ -476,7 +481,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
             >
               Use different models for Plan and Act modes
             </VSCodeCheckbox>
-            <p className="text-xs mt-[5px] text-[var(--vscode-descriptionForeground)]">
+            <p className="text-xs mt-[5px] text-(--vscode-descriptionForeground)">
               Switching between Plan and Act mode will persist the API and model
               used in the previous mode. This may be helpful e.g. when using a
               strong reasoning model to architect a plan for a cheaper coding
@@ -495,7 +500,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
             >
               Allow anonymous error and usage reporting
             </VSCodeCheckbox>
-            <p className="text-xs mt-[5px] text-[var(--vscode-descriptionForeground)]">
+            <p className="text-xs mt-[5px] text-(--vscode-descriptionForeground)">
               Help improve ValorIDE by sending anonymous usage data and error
               reports. No code, prompts, or personal information are ever sent.
               See our{" "}
@@ -517,11 +522,19 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
           </div>
 
           <div
-            className="border border-solid border-[var(--vscode-panel-border)] rounded-md p-[10px] mb-[15px] bg-[var(--vscode-panel-background)]"
+            className="border border-solid border-(--vscode-panel-border) rounded-md p-3 mb-[15px] bg-(--vscode-panel-background)"
             id="valkyrai-backend-section"
           >
-            <div className="font-semibold mb-2">ValkyrAI Backend</div>
-            <p className="text-xs text-[var(--vscode-descriptionForeground)] mb-2">
+            <div className="font-semibold mb-1 flex items-center gap-2">
+              <span>ValkyrAI Backend</span>
+              <StatusBadge
+                label="P2P"
+                value={value}
+                kind={kind as any}
+                title={hasError ? String(communicationService.error) : undefined}
+              />
+            </div>
+            <p className="text-xs text-(--vscode-descriptionForeground) mb-2">
               Configure which ValkyrAI backend this IDE uses. Changes apply
               immediately and sync via VS Code settings.
             </p>
@@ -534,9 +547,11 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
             </VSCodeTextField>
             {valkyraiHostError && (
               <div
-                className="text-xs mt-1"
+                className="text-xs mt-1 px-2 py-1 rounded"
                 style={{
-                  color: "var(--vscode-inputValidation-errorForeground)",
+                  color: "var(--vscode-inputValidation-errorForeground, #f48771)",
+                  background: "var(--vscode-inputValidation-errorBackground, #5a1d1d)",
+                  border: "1px solid var(--vscode-inputValidation-errorBorder, #f48771)",
                 }}
               >
                 {valkyraiHostError}
@@ -568,12 +583,12 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
             </div>
             <div className="mt-4">
               <div className="font-semibold mb-1">LLM Prompt Selection</div>
-              <p className="text-xs text-[var(--vscode-descriptionForeground)] mb-2">
+              <p className="text-xs text-(--vscode-descriptionForeground) mb-2">
                 Select which ValkyrAI prompt collection this backend should use.
                 Changes apply immediately for the active backend.
               </p>
               {selectedLlmDetails && (
-                <div className="text-xs mb-2 text-[var(--vscode-descriptionForeground)] flex items-center gap-2">
+                <div className="text-xs mb-2 text-(--vscode-descriptionForeground) flex items-center gap-2">
                   <span>
                     Active prompt: <strong>{selectedLlmDetails.name}</strong>
                   </span>
@@ -616,22 +631,22 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 
           {IS_DEV && (
             <>
-              <div className="mt-[10px] mb-1">Debug</div>
+              <div className="mt-2.5 mb-1">Debug</div>
               <VSCodeButton
                 onClick={handleResetState}
                 className="mt-[5px] w-auto"
               >
                 Reset State
               </VSCodeButton>
-              <p className="text-xs mt-[5px] text-[var(--vscode-descriptionForeground)]">
+              <p className="text-xs mt-[5px] text-(--vscode-descriptionForeground)">
                 This will reset all global state and secret storage in the
                 extension.
               </p>
             </>
           )}
 
-          <div className="text-center text-[var(--vscode-descriptionForeground)] text-xs leading-[1.2] px-0 py-0 pr-2 pb-[15px] mt-auto">
-            <p className="break-words m-0 p-0">
+          <div className="text-center text-(--vscode-descriptionForeground) text-xs leading-[1.2] px-0 py-0 pr-2 pb-[15px] mt-auto">
+            <p className="wrap-break-word m-0 p-0">
               If you have any questions or feedback, feel free to open an issue
               at{" "}
               <VSCodeLink
@@ -641,7 +656,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
                 https://github.com/valkyrlabs/valoride
               </VSCodeLink>
             </p>
-            <p className="italic mt-[10px] mb-0 p-0">v{version}</p>
+            <p className="italic mt-2.5 mb-0 p-0">v{version}</p>
           </div>
         </div>
       </div>

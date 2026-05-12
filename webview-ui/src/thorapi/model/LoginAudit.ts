@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -46,12 +45,6 @@ import {
  * @interface LoginAudit
  */
 export type LoginAudit  = DataObject & {
-    /**
-     * Reference to Principal (null for failed attempts with unknown user)
-     * @type {string}
-     * @memberof LoginAudit
-     */
-    principalId: string;
     /**
      * Status of login attempt
      * @type {string}
@@ -94,12 +87,6 @@ export type LoginAudit  = DataObject & {
      * @memberof LoginAudit
      */
     geoLocation?: string;
-    /**
-     * When the login attempt occurred
-     * @type {Date}
-     * @memberof LoginAudit
-     */
-    readonly createdAt?: Date;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -159,7 +146,6 @@ export type LoginAudit  = DataObject & {
 export function LoginAuditFromJSON(json: any): LoginAudit {
     return {
         ...DataObjectFromJSON(json),
-        'principalId': json['principalId'],
         'loginStatus': json['loginStatus'],
         'loginMethod': json['loginMethod'],
         'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
@@ -167,7 +153,6 @@ export function LoginAuditFromJSON(json: any): LoginAudit {
         'userAgent': !exists(json, 'userAgent') ? undefined : json['userAgent'],
         'deviceFingerprint': !exists(json, 'deviceFingerprint') ? undefined : json['deviceFingerprint'],
         'geoLocation': !exists(json, 'geoLocation') ? undefined : json['geoLocation'],
-        'createdAt': !exists(json, 'createdAt') ? undefined : new Date(json['createdAt']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -186,7 +171,6 @@ export function LoginAuditToJSON(value?: LoginAudit): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'principalId': value.principalId,
         'loginStatus': value.loginStatus,
         'loginMethod': value.loginMethod,
         'principal': PrincipalToJSON(value.principal),

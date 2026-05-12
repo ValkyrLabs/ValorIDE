@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,43 +42,61 @@ export type UsageTransaction  = DataObject & {
      * @type {string}
      * @memberof UsageTransaction
      */
-    customerId: string;
+    customerId?: string;
     /**
      * When the usage occurred
      * @type {Date}
      * @memberof UsageTransaction
      */
-    spentAt: Date;
+    spentAt?: Date;
     /**
      * How many credits were consumed
      * @type {number}
      * @memberof UsageTransaction
      */
-    credits: number;
+    credits?: number;
+    /**
+     * Metering category (llm_tokens, workflow_run, subscription, manual_adjustment)
+     * @type {string}
+     * @memberof UsageTransaction
+     */
+    usageType?: string;
+    /**
+     * Usage meter units consumed (for example total tokens or workflow runtime units)
+     * @type {number}
+     * @memberof UsageTransaction
+     */
+    meteredUnits?: number;
+    /**
+     * Stripe meter/event name used for reconciliation
+     * @type {string}
+     * @memberof UsageTransaction
+     */
+    meterName?: string;
     /**
      * The LLM provider (e.g. openai, llama)
      * @type {string}
      * @memberof UsageTransaction
      */
-    modelProvider: string;
+    modelProvider?: string;
     /**
      * The specific model name or ID
      * @type {string}
      * @memberof UsageTransaction
      */
-    model: string;
+    model?: string;
     /**
      * Number of tokens in the prompt
      * @type {number}
      * @memberof UsageTransaction
      */
-    promptTokens: number;
+    promptTokens?: number;
     /**
      * Number of tokens in the completion
      * @type {number}
      * @memberof UsageTransaction
      */
-    completionTokens: number;
+    completionTokens?: number;
     /**
      * Ensures no double-charge
      * @type {string}
@@ -145,13 +162,16 @@ export type UsageTransaction  = DataObject & {
 export function UsageTransactionFromJSON(json: any): UsageTransaction {
     return {
         ...DataObjectFromJSON(json),
-        'customerId': json['customerId'],
-        'spentAt': new Date(json['spentAt']),
-        'credits': json['credits'],
-        'modelProvider': json['modelProvider'],
-        'model': json['model'],
-        'promptTokens': json['promptTokens'],
-        'completionTokens': json['completionTokens'],
+        'customerId': !exists(json, 'customerId') ? undefined : json['customerId'],
+        'spentAt': !exists(json, 'spentAt') ? undefined : new Date(json['spentAt']),
+        'credits': !exists(json, 'credits') ? undefined : json['credits'],
+        'usageType': !exists(json, 'usageType') ? undefined : json['usageType'],
+        'meteredUnits': !exists(json, 'meteredUnits') ? undefined : json['meteredUnits'],
+        'meterName': !exists(json, 'meterName') ? undefined : json['meterName'],
+        'modelProvider': !exists(json, 'modelProvider') ? undefined : json['modelProvider'],
+        'model': !exists(json, 'model') ? undefined : json['model'],
+        'promptTokens': !exists(json, 'promptTokens') ? undefined : json['promptTokens'],
+        'completionTokens': !exists(json, 'completionTokens') ? undefined : json['completionTokens'],
         'idempotencyKey': !exists(json, 'idempotencyKey') ? undefined : json['idempotencyKey'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
@@ -172,8 +192,11 @@ export function UsageTransactionToJSON(value?: UsageTransaction): any {
     return {
         ...DataObjectToJSON(value),
         'customerId': value.customerId,
-        'spentAt': value.spentAt.toISOString(),
+        'spentAt': value.spentAt === undefined ? undefined : value.spentAt.toISOString(),
         'credits': value.credits,
+        'usageType': value.usageType,
+        'meteredUnits': value.meteredUnits,
+        'meterName': value.meterName,
         'modelProvider': value.modelProvider,
         'model': value.model,
         'promptTokens': value.promptTokens,

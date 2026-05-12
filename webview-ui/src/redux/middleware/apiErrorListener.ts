@@ -8,6 +8,7 @@ import {
   insufficientCreditsDetected,
   type ApiErrorPayload,
 } from "../slices/apiErrorsSlice";
+import { clearStoredAuthSession } from "@thorapi/utils/accessControl";
 
 const isInsufficientCreditsPayload = (data: any): boolean => {
   if (!data) return false;
@@ -36,6 +37,18 @@ const buildMessage = (status: number, data: any): string => {
   }
 };
 
+const isExpiredSessionPayload = (status: number, data: any): boolean => {
+  if (status !== 401 && status !== 403) {
+    return false;
+  }
+  const message = buildMessage(status, data).toLowerCase();
+  return (
+    message.includes("session expired") ||
+    message.includes("replaced by another login") ||
+    message.includes("fresh token")
+  );
+};
+
 export const apiErrorListener = createListenerMiddleware();
 
 apiErrorListener.startListening({
@@ -60,6 +73,10 @@ apiErrorListener.startListening({
       message: buildMessage(status, data),
       data,
     };
+
+    if (isExpiredSessionPayload(status, data)) {
+      clearStoredAuthSession("api-error-listener");
+    }
 
     if (isInsufficientCreditsPayload(data)) {
       listenerApi.dispatch(insufficientCreditsDetected(errorPayload));

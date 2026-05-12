@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetMcpToolCallResponseListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchMcpToolCallResponseByIdApiRequest {
+    id: string;
+    mcpToolCallResponse: McpToolCallResponse;
 }
 
 export interface PostMcpToolCallResponseApiRequest {
@@ -204,6 +208,60 @@ function getMcpToolCallResponseListRaw<T>(requestParameters: GetMcpToolCallRespo
 */
 export function getMcpToolCallResponseList<T>(requestParameters: GetMcpToolCallResponseListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<McpToolCallResponse>>): QueryConfig<T> {
     return getMcpToolCallResponseListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing McpToolCallResponse.
+ * Partially update an existing McpToolCallResponse
+ */
+function patchMcpToolCallResponseByIdRaw<T>(requestParameters: PatchMcpToolCallResponseByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpToolCallResponse> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchMcpToolCallResponseById.');
+    }
+
+    if (requestParameters.mcpToolCallResponse === null || requestParameters.mcpToolCallResponse === undefined) {
+        throw new runtime.RequiredError('mcpToolCallResponse','Required parameter requestParameters.mcpToolCallResponse was null or undefined when calling patchMcpToolCallResponseById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/McpToolCallResponse/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || McpToolCallResponseToJSON(requestParameters.mcpToolCallResponse),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpToolCallResponseFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing McpToolCallResponse.
+* Partially update an existing McpToolCallResponse
+*/
+export function patchMcpToolCallResponseById<T>(requestParameters: PatchMcpToolCallResponseByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpToolCallResponse>): QueryConfig<T> {
+    return patchMcpToolCallResponseByIdRaw(requestParameters, requestConfig);
 }
 
 /**

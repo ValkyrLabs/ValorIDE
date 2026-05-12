@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -92,7 +90,6 @@ const validationSchema = Yup.object().shape({
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
         .required("status is required."),
-        customerId: Yup.string(),
         taxAmount: asNumber(Yup.number().typeError("taxAmount must be a number")),
         tariffAmount: asNumber(Yup.number().typeError("tariffAmount must be a number")),
         subtotalAmount: asNumber(Yup.number().typeError("subtotalAmount must be a number")),
@@ -137,7 +134,6 @@ const SalesOrderForm: React.FC = () => {
           totalAmount: 0,
           orderDate: new Date(),
         status: undefined,
-          customerId: '',
           taxAmount: 0,
           tariffAmount: 0,
           subtotalAmount: 0,
@@ -331,39 +327,6 @@ const SalesOrderForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="status"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="customerId" className="nice-form-control">
-                      <b>
-                        Customer Id:
-                        {touched.customerId &&
-                         !errors.customerId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="customerId"
-                            value={values?.customerId}
-                            placeholder="Customer Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="customerId"
                         component="span"
                       />
                     </label>

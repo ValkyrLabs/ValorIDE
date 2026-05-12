@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
@@ -19,6 +18,15 @@ import { ProductFunnelWizard } from '@thorapi/model/ProductFunnelWizard'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type ProductFunnelWizardResponse = ProductFunnelWizard[]
+
+const toProductFunnelWizardList = (result: unknown): ProductFunnelWizardResponse => {
+  if (Array.isArray(result)) {
+    return result as ProductFunnelWizardResponse
+  }
+
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as ProductFunnelWizardResponse) : []
+}
 
 export const ProductFunnelWizardService = createApi({
   reducerPath: 'ProductFunnelWizard', // This should remain unique
@@ -33,13 +41,15 @@ export const ProductFunnelWizardService = createApi({
         if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
         return `ProductFunnelWizard?${q.join('&')}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'ProductFunnelWizard' as const, id })),
-              { type: 'ProductFunnelWizard', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toProductFunnelWizardList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'ProductFunnelWizard' as const, id })),
+          { type: 'ProductFunnelWizard', id: `PAGE_${page}` },
+        ]
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,13 +61,15 @@ export const ProductFunnelWizardService = createApi({
         }
         return `ProductFunnelWizard`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'ProductFunnelWizard' as const, id })),
-              { type: 'ProductFunnelWizard', id: 'LIST' },
-            ]
-          : [{ type: 'ProductFunnelWizard', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toProductFunnelWizardList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'ProductFunnelWizard' as const, id })),
+          { type: 'ProductFunnelWizard', id: 'LIST' },
+        ]
+      },
     }),
 
     // 3) Create

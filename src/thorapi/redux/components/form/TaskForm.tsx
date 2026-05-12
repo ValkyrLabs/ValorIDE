@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -37,8 +36,8 @@ import { AclGrantRequest, PermissionType } from '@valkyr/component-library/Permi
 import {
   Task,
   TaskRoleEnum,
-  TaskStatusEnum,
   TaskPriorityLevelEnum,
+  TaskStatusEnum,
 } from '@thorapi/model';
 
 import { useAddTaskMutation } from '../../services/TaskService';
@@ -51,7 +50,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -59,7 +57,7 @@ Template file: typescript-redux-query/modelForm.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 
 Description:
-ValkyrAI Task object manages execution and state of automation workflows
+Transactional execution unit within a Workflow. ExecModules inside a Task execute sequentially. Branching and fan-out occur ONLY via TaskEdge. 
 */
 
 /* -----------------------------------------------------
@@ -71,23 +69,23 @@ const RoleValidation = () => {
     'assistant',
   ];
 };
-const StatusValidation = () => {
-  return [
-    'running',
-    'stopped',
-    'ready',
-    'good',
-    'warning',
-    'error',
-    'disabled',
-  ];
-};
 const PriorityLevelValidation = () => {
   return [
     'CRITICAL',
     'HIGH',
     'NORMAL',
     'LOW',
+  ];
+};
+const StatusValidation = () => {
+  return [
+    'ready',
+    'running',
+    'stopped',
+    'good',
+    'warning',
+    'error',
+    'disabled',
   ];
 };
 
@@ -100,16 +98,15 @@ const asNumber = (schema: Yup.NumberSchema) =>
 const validationSchema = Yup.object().shape({
         name: Yup.string(),
         description: Yup.string(),
-        workflowId: Yup.string(),
       role: Yup.mixed()
         .oneOf(RoleValidation(), "Invalid value for role")
+        ,
+      priorityLevel: Yup.mixed()
+        .oneOf(PriorityLevelValidation(), "Invalid value for priorityLevel")
         ,
         taskOrder: asNumber(Yup.number().typeError("taskOrder must be a number")),
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
-        ,
-      priorityLevel: Yup.mixed()
-        .oneOf(PriorityLevelValidation(), "Invalid value for priorityLevel")
         ,
         trashed: Yup.boolean(),
 });
@@ -143,11 +140,10 @@ const TaskForm: React.FC = () => {
   const initialValues: Partial<Task> = {
           name: '',
           description: '',
-          workflowId: '',
         role: undefined,
+        priorityLevel: undefined,
           taskOrder: 0,
         status: undefined,
-        priorityLevel: undefined,
           trashed: false,
   };
 
@@ -287,39 +283,6 @@ const TaskForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="workflowId" className="nice-form-control">
-                      <b>
-                        Workflow Id:
-                        {touched.workflowId &&
-                         !errors.workflowId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="workflowId"
-                            value={values?.workflowId}
-                            placeholder="Workflow Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="workflowId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="role" className="nice-form-control">
                       <b>
                         Role:
@@ -351,6 +314,41 @@ const TaskForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="role"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="priorityLevel" className="nice-form-control">
+                      <b>
+                        Priority Level:
+                        {touched.priorityLevel &&
+                         !errors.priorityLevel && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="priorityLevel"
+                          value={values.priorityLevel || ''}
+                          className={
+                            errors.priorityLevel
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('priorityLevel', true);
+                            setFieldValue('priorityLevel', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Priority Level" />
+                          <PriorityLevelLookup />
+                        </BSForm.Select>
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="priorityLevel"
                         component="span"
                       />
                     </label>
@@ -428,41 +426,6 @@ const TaskForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="status"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="priorityLevel" className="nice-form-control">
-                      <b>
-                        Priority Level:
-                        {touched.priorityLevel &&
-                         !errors.priorityLevel && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="priorityLevel"
-                          value={values.priorityLevel || ''}
-                          className={
-                            errors.priorityLevel
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('priorityLevel', true);
-                            setFieldValue('priorityLevel', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Priority Level" />
-                          <PriorityLevelLookup />
-                        </BSForm.Select>
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="priorityLevel"
                         component="span"
                       />
                     </label>
@@ -582,29 +545,6 @@ const RoleLookup = () => {
 };
 
 /*
-lowercase statuslookup
-uppercase STATUSLOOKUP
-snakecase status_lookup
-pascalcase StatusLookup
-camelcase statusLookup
-kebabcase status-lookup
-*/
-
-const StatusLookup = () => {
-  return (
-    <>
-      <option value='running' label="Running" />
-      <option value='stopped' label="Stopped" />
-      <option value='ready' label="Ready" />
-      <option value='good' label="Good" />
-      <option value='warning' label="Warning" />
-      <option value='error' label="Error" />
-      <option value='disabled' label="Disabled" />
-    </>
-  );
-};
-
-/*
 lowercase prioritylevellookup
 uppercase PRIORITYLEVELLOOKUP
 snakecase priority_level_lookup
@@ -620,6 +560,29 @@ const PriorityLevelLookup = () => {
       <option value='HIGH' label="High" />
       <option value='NORMAL' label="Normal" />
       <option value='LOW' label="Low" />
+    </>
+  );
+};
+
+/*
+lowercase statuslookup
+uppercase STATUSLOOKUP
+snakecase status_lookup
+pascalcase StatusLookup
+camelcase statusLookup
+kebabcase status-lookup
+*/
+
+const StatusLookup = () => {
+  return (
+    <>
+      <option value='ready' label="Ready" />
+      <option value='running' label="Running" />
+      <option value='stopped' label="Stopped" />
+      <option value='good' label="Good" />
+      <option value='warning' label="Warning" />
+      <option value='error' label="Error" />
+      <option value='disabled' label="Disabled" />
     </>
   );
 };

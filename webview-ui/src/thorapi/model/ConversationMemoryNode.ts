@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -51,37 +50,7 @@ export type ConversationMemoryNode  = DataObject & {
      * @type {ConversationBranch}
      * @memberof ConversationMemoryNode
      */
-    branch: ConversationBranch;
-    /**
-     * Role of the message captured in this node.
-     * @type {string}
-     * @memberof ConversationMemoryNode
-     */
-    messageRole: ConversationMemoryNodeMessageRoleEnum;
-    /**
-     * Monotonically increasing sequence number within the branch.
-     * @type {number}
-     * @memberof ConversationMemoryNode
-     */
-    sequenceNo: number;
-    /**
-     * SHA-256 hash of the normalized message content for deduplication.
-     * @type {string}
-     * @memberof ConversationMemoryNode
-     */
-    contentHash: string;
-    /**
-     * Number of characters stored inside the payload.
-     * @type {number}
-     * @memberof ConversationMemoryNode
-     */
-    contentChars: number;
-    /**
-     * Deflated payload of the normalized content (base64 encoded).
-     * @type {string}
-     * @memberof ConversationMemoryNode
-     */
-    compressedPayload: string;
+    branch?: ConversationBranch;
     /**
      * 
      * @type {ConversationMemoryNode}
@@ -95,11 +64,41 @@ export type ConversationMemoryNode  = DataObject & {
      */
     chatMessageId?: string;
     /**
+     * Role of the message captured in this node.
+     * @type {string}
+     * @memberof ConversationMemoryNode
+     */
+    messageRole?: ConversationMemoryNodeMessageRoleEnum;
+    /**
      * Session identifier used when the node was recorded.
      * @type {string}
      * @memberof ConversationMemoryNode
      */
     sessionId?: string;
+    /**
+     * Monotonically increasing sequence number within the branch.
+     * @type {number}
+     * @memberof ConversationMemoryNode
+     */
+    sequenceNo?: number;
+    /**
+     * SHA-256 hash of the normalized message content for deduplication.
+     * @type {string}
+     * @memberof ConversationMemoryNode
+     */
+    contentHash?: string;
+    /**
+     * Number of characters stored inside the payload.
+     * @type {number}
+     * @memberof ConversationMemoryNode
+     */
+    contentChars?: number;
+    /**
+     * Deflated payload of the normalized content (base64 encoded).
+     * @type {string}
+     * @memberof ConversationMemoryNode
+     */
+    compressedPayload?: string;
     /**
      * Serialized float32 embedding vector (base64 encoded).
      * @type {string}
@@ -201,15 +200,15 @@ export type ConversationMemoryNode  = DataObject & {
 export function ConversationMemoryNodeFromJSON(json: any): ConversationMemoryNode {
     return {
         ...DataObjectFromJSON(json),
-        'branch': ConversationBranchFromJSON(json['branch']),
-        'messageRole': json['messageRole'],
-        'sequenceNo': json['sequenceNo'],
-        'contentHash': json['contentHash'],
-        'contentChars': json['contentChars'],
-        'compressedPayload': json['compressedPayload'],
+        'branch': !exists(json, 'branch') ? undefined : ConversationBranchFromJSON(json['branch']),
         'parent': !exists(json, 'parent') ? undefined : ConversationMemoryNodeFromJSON(json['parent']),
         'chatMessageId': !exists(json, 'chatMessageId') ? undefined : json['chatMessageId'],
+        'messageRole': !exists(json, 'messageRole') ? undefined : json['messageRole'],
         'sessionId': !exists(json, 'sessionId') ? undefined : json['sessionId'],
+        'sequenceNo': !exists(json, 'sequenceNo') ? undefined : json['sequenceNo'],
+        'contentHash': !exists(json, 'contentHash') ? undefined : json['contentHash'],
+        'contentChars': !exists(json, 'contentChars') ? undefined : json['contentChars'],
+        'compressedPayload': !exists(json, 'compressedPayload') ? undefined : json['compressedPayload'],
         'embeddingVector': !exists(json, 'embeddingVector') ? undefined : json['embeddingVector'],
         'embeddingDimensions': !exists(json, 'embeddingDimensions') ? undefined : json['embeddingDimensions'],
         'embeddingChecksum': !exists(json, 'embeddingChecksum') ? undefined : json['embeddingChecksum'],
@@ -236,14 +235,14 @@ export function ConversationMemoryNodeToJSON(value?: ConversationMemoryNode): an
     return {
         ...DataObjectToJSON(value),
         'branch': ConversationBranchToJSON(value.branch),
+        'parent': ConversationMemoryNodeToJSON(value.parent),
+        'chatMessageId': value.chatMessageId,
         'messageRole': value.messageRole,
+        'sessionId': value.sessionId,
         'sequenceNo': value.sequenceNo,
         'contentHash': value.contentHash,
         'contentChars': value.contentChars,
         'compressedPayload': value.compressedPayload,
-        'parent': ConversationMemoryNodeToJSON(value.parent),
-        'chatMessageId': value.chatMessageId,
-        'sessionId': value.sessionId,
         'embeddingVector': value.embeddingVector,
         'embeddingDimensions': value.embeddingDimensions,
         'embeddingChecksum': value.embeddingChecksum,

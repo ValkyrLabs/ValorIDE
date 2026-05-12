@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
@@ -19,6 +18,15 @@ import { AgentDiscoveryItem } from '@thorapi/model/AgentDiscoveryItem'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type AgentDiscoveryItemResponse = AgentDiscoveryItem[]
+
+const toAgentDiscoveryItemList = (result: unknown): AgentDiscoveryItemResponse => {
+  if (Array.isArray(result)) {
+    return result as AgentDiscoveryItemResponse
+  }
+
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as AgentDiscoveryItemResponse) : []
+}
 
 export const AgentDiscoveryItemService = createApi({
   reducerPath: 'AgentDiscoveryItem', // This should remain unique
@@ -33,13 +41,15 @@ export const AgentDiscoveryItemService = createApi({
         if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
         return `AgentDiscoveryItem?${q.join('&')}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'AgentDiscoveryItem' as const, id })),
-              { type: 'AgentDiscoveryItem', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toAgentDiscoveryItemList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'AgentDiscoveryItem' as const, id })),
+          { type: 'AgentDiscoveryItem', id: `PAGE_${page}` },
+        ]
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,13 +61,15 @@ export const AgentDiscoveryItemService = createApi({
         }
         return `AgentDiscoveryItem`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'AgentDiscoveryItem' as const, id })),
-              { type: 'AgentDiscoveryItem', id: 'LIST' },
-            ]
-          : [{ type: 'AgentDiscoveryItem', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toAgentDiscoveryItemList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'AgentDiscoveryItem' as const, id })),
+          { type: 'AgentDiscoveryItem', id: 'LIST' },
+        ]
+      },
     }),
 
     // 3) Create

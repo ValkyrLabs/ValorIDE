@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -39,11 +38,17 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  */
 export type AgentChatMessageRequest  = DataObject & {
     /**
+     * Conversation thread identifier.
+     * @type {string}
+     * @memberof AgentChatMessageRequest
+     */
+    conversationId?: string;
+    /**
      * Chat message text.
      * @type {string}
      * @memberof AgentChatMessageRequest
      */
-    message: string;
+    message?: string;
     /**
      * Optional JSON metadata for attachments.
      * @type {string}
@@ -115,7 +120,8 @@ export type AgentChatMessageRequest  = DataObject & {
 export function AgentChatMessageRequestFromJSON(json: any): AgentChatMessageRequest {
     return {
         ...DataObjectFromJSON(json),
-        'message': json['message'],
+        'conversationId': !exists(json, 'conversationId') ? undefined : json['conversationId'],
+        'message': !exists(json, 'message') ? undefined : json['message'],
         'attachments': !exists(json, 'attachments') ? undefined : json['attachments'],
         'priority': !exists(json, 'priority') ? undefined : json['priority'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -136,6 +142,7 @@ export function AgentChatMessageRequestToJSON(value?: AgentChatMessageRequest): 
     }
     return {
         ...DataObjectToJSON(value),
+        'conversationId': value.conversationId,
         'message': value.message,
         'attachments': value.attachments,
         'priority': value.priority,

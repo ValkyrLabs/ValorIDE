@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -29,6 +28,14 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists, mapValues } from '../src/runtime';
 import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import {
+
+
+    Principal,
+    PrincipalFromJSON,
+    PrincipalToJSON,
+} from './';
+
 
 // thorapi
 
@@ -39,11 +46,11 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  */
 export type ConversationBranch  = DataObject & {
     /**
-     * Principal that owns the conversational memory branch.
-     * @type {string}
+     * 
+     * @type {Principal}
      * @memberof ConversationBranch
      */
-    principalId?: string;
+    principal?: Principal;
     /**
      * Stable session identifier used to anchor the branch.
      * @type {string}
@@ -121,7 +128,7 @@ export type ConversationBranch  = DataObject & {
 export function ConversationBranchFromJSON(json: any): ConversationBranch {
     return {
         ...DataObjectFromJSON(json),
-        'principalId': !exists(json, 'principalId') ? undefined : json['principalId'],
+        'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
         'rootSessionId': !exists(json, 'rootSessionId') ? undefined : json['rootSessionId'],
         'label': !exists(json, 'label') ? undefined : json['label'],
         'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
@@ -143,7 +150,7 @@ export function ConversationBranchToJSON(value?: ConversationBranch): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'principalId': value.principalId,
+        'principal': PrincipalToJSON(value.principal),
         'rootSessionId': value.rootSessionId,
         'label': value.label,
         'metadata': value.metadata,

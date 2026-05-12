@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type Metrics  = DataObject & {
      * @type {string}
      * @memberof Metrics
      */
-    endpoint: string;
+    endpoint?: string;
     /**
      * HTTP method
      * @type {string}
      * @memberof Metrics
      */
-    method: string;
+    method?: string;
     /**
      * Total request count
      * @type {number}
@@ -139,8 +138,8 @@ export type Metrics  = DataObject & {
 export function MetricsFromJSON(json: any): Metrics {
     return {
         ...DataObjectFromJSON(json),
-        'endpoint': json['endpoint'],
-        'method': json['method'],
+        'endpoint': !exists(json, 'endpoint') ? undefined : json['endpoint'],
+        'method': !exists(json, 'method') ? undefined : json['method'],
         'count': !exists(json, 'count') ? undefined : json['count'],
         'errorCount': !exists(json, 'errorCount') ? undefined : json['errorCount'],
         'averageLatencyMs': !exists(json, 'averageLatencyMs') ? undefined : json['averageLatencyMs'],

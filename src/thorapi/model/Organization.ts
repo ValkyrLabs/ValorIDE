@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -51,7 +50,7 @@ export type Organization  = DataObject & {
      * @type {string}
      * @memberof Organization
      */
-    name: string;
+    name?: string;
     /**
      * Lowercase, trimmed name used for deduplication matching
      * @type {string}
@@ -147,7 +146,7 @@ export type Organization  = DataObject & {
 export function OrganizationFromJSON(json: any): Organization {
     return {
         ...DataObjectFromJSON(json),
-        'name': json['name'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
         'normalizedName': !exists(json, 'normalizedName') ? undefined : json['normalizedName'],
         'homePage': !exists(json, 'homePage') ? undefined : json['homePage'],
         'phone': !exists(json, 'phone') ? undefined : json['phone'],

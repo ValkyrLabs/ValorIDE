@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,19 +42,19 @@ export type Depend  = DataObject & {
      * @type {string}
      * @memberof Depend
      */
-    groupId: string;
+    groupId?: string;
     /**
      * 
      * @type {string}
      * @memberof Depend
      */
-    artifactId: string;
+    artifactId?: string;
     /**
      * 
      * @type {string}
      * @memberof Depend
      */
-    version: string;
+    version?: string;
     /**
      * 
      * @type {string}
@@ -133,9 +132,9 @@ export type Depend  = DataObject & {
 export function DependFromJSON(json: any): Depend {
     return {
         ...DataObjectFromJSON(json),
-        'groupId': json['groupId'],
-        'artifactId': json['artifactId'],
-        'version': json['version'],
+        'groupId': !exists(json, 'groupId') ? undefined : json['groupId'],
+        'artifactId': !exists(json, 'artifactId') ? undefined : json['artifactId'],
+        'version': !exists(json, 'version') ? undefined : json['version'],
         'scope': !exists(json, 'scope') ? undefined : json['scope'],
         'status': !exists(json, 'status') ? undefined : json['status'],
         'buildId': !exists(json, 'buildId') ? undefined : json['buildId'],

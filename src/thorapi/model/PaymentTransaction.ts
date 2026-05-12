@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -39,29 +38,53 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  */
 export type PaymentTransaction  = DataObject & {
     /**
-     * When the payment was processed
-     * @type {Date}
-     * @memberof PaymentTransaction
-     */
-    paidAt: Date;
-    /**
-     * Amount paid, in cents
-     * @type {number}
-     * @memberof PaymentTransaction
-     */
-    amountCents: number;
-    /**
-     * Credits granted by this payment
-     * @type {number}
-     * @memberof PaymentTransaction
-     */
-    credits: number;
-    /**
      * Owning customer account
      * @type {string}
      * @memberof PaymentTransaction
      */
     customerId?: string;
+    /**
+     * When the payment was processed
+     * @type {Date}
+     * @memberof PaymentTransaction
+     */
+    paidAt?: Date;
+    /**
+     * Amount paid, in cents
+     * @type {number}
+     * @memberof PaymentTransaction
+     */
+    amountCents?: number;
+    /**
+     * Credits granted by this payment
+     * @type {number}
+     * @memberof PaymentTransaction
+     */
+    credits?: number;
+    /**
+     * Stripe customer id used for payment reconciliation
+     * @type {string}
+     * @memberof PaymentTransaction
+     */
+    stripeCustomerId?: string;
+    /**
+     * Stripe payment intent id for checkout/webhook reconciliation
+     * @type {string}
+     * @memberof PaymentTransaction
+     */
+    stripePaymentIntentId?: string;
+    /**
+     * Stripe checkout session id associated with this credit purchase
+     * @type {string}
+     * @memberof PaymentTransaction
+     */
+    stripeCheckoutSessionId?: string;
+    /**
+     * Payment lifecycle status (pending, succeeded, failed, refunded)
+     * @type {string}
+     * @memberof PaymentTransaction
+     */
+    paymentStatus?: string;
     /**
      * Ensures no double-charge
      * @type {string}
@@ -127,10 +150,14 @@ export type PaymentTransaction  = DataObject & {
 export function PaymentTransactionFromJSON(json: any): PaymentTransaction {
     return {
         ...DataObjectFromJSON(json),
-        'paidAt': new Date(json['paidAt']),
-        'amountCents': json['amountCents'],
-        'credits': json['credits'],
         'customerId': !exists(json, 'customerId') ? undefined : json['customerId'],
+        'paidAt': !exists(json, 'paidAt') ? undefined : new Date(json['paidAt']),
+        'amountCents': !exists(json, 'amountCents') ? undefined : json['amountCents'],
+        'credits': !exists(json, 'credits') ? undefined : json['credits'],
+        'stripeCustomerId': !exists(json, 'stripeCustomerId') ? undefined : json['stripeCustomerId'],
+        'stripePaymentIntentId': !exists(json, 'stripePaymentIntentId') ? undefined : json['stripePaymentIntentId'],
+        'stripeCheckoutSessionId': !exists(json, 'stripeCheckoutSessionId') ? undefined : json['stripeCheckoutSessionId'],
+        'paymentStatus': !exists(json, 'paymentStatus') ? undefined : json['paymentStatus'],
         'idempotencyKey': !exists(json, 'idempotencyKey') ? undefined : json['idempotencyKey'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
@@ -150,10 +177,14 @@ export function PaymentTransactionToJSON(value?: PaymentTransaction): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'paidAt': value.paidAt.toISOString(),
+        'customerId': value.customerId,
+        'paidAt': value.paidAt === undefined ? undefined : value.paidAt.toISOString(),
         'amountCents': value.amountCents,
         'credits': value.credits,
-        'customerId': value.customerId,
+        'stripeCustomerId': value.stripeCustomerId,
+        'stripePaymentIntentId': value.stripePaymentIntentId,
+        'stripeCheckoutSessionId': value.stripeCheckoutSessionId,
+        'paymentStatus': value.paymentStatus,
         'idempotencyKey': value.idempotencyKey,
         'trashed': value.trashed,
     };

@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -51,13 +50,13 @@ export type JobApplicationResponse  = DataObject & {
      * @type {string}
      * @memberof JobApplicationResponse
      */
-    applicationId: string;
+    applicationId?: string;
     /**
      * Application submission status
      * @type {string}
      * @memberof JobApplicationResponse
      */
-    status: string;
+    status?: string;
     /**
      * Success message for applicant
      * @type {string}
@@ -153,8 +152,8 @@ export type JobApplicationResponse  = DataObject & {
 export function JobApplicationResponseFromJSON(json: any): JobApplicationResponse {
     return {
         ...DataObjectFromJSON(json),
-        'applicationId': json['applicationId'],
-        'status': json['status'],
+        'applicationId': !exists(json, 'applicationId') ? undefined : json['applicationId'],
+        'status': !exists(json, 'status') ? undefined : json['status'],
         'confirmationMessage': !exists(json, 'confirmationMessage') ? undefined : json['confirmationMessage'],
         'recommendedOpportunities': !exists(json, 'recommendedOpportunities') ? undefined : (json['recommendedOpportunities'] as Array<any>).map(CareerOpportunityFromJSON),
         'matchScore': !exists(json, 'matchScore') ? undefined : json['matchScore'],

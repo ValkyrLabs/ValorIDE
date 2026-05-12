@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetExecModuleListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchExecModuleByIdApiRequest {
+    id: string;
+    execModule: ExecModule;
 }
 
 export interface PostExecModuleApiRequest {
@@ -204,6 +208,60 @@ function getExecModuleListRaw<T>(requestParameters: GetExecModuleListApiRequest,
 */
 export function getExecModuleList<T>(requestParameters: GetExecModuleListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<ExecModule>>): QueryConfig<T> {
     return getExecModuleListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing ExecModule.
+ * Partially update an existing ExecModule
+ */
+function patchExecModuleByIdRaw<T>(requestParameters: PatchExecModuleByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, ExecModule> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchExecModuleById.');
+    }
+
+    if (requestParameters.execModule === null || requestParameters.execModule === undefined) {
+        throw new runtime.RequiredError('execModule','Required parameter requestParameters.execModule was null or undefined when calling patchExecModuleById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ExecModule/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || ExecModuleToJSON(requestParameters.execModule),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ExecModuleFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing ExecModule.
+* Partially update an existing ExecModule
+*/
+export function patchExecModuleById<T>(requestParameters: PatchExecModuleByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ExecModule>): QueryConfig<T> {
+    return patchExecModuleByIdRaw(requestParameters, requestConfig);
 }
 
 /**

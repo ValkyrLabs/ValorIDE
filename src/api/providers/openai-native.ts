@@ -13,6 +13,7 @@ import { convertToOpenAiMessages } from "../transform/openai-format";
 import { calculateApiCostOpenAI } from "../../utils/cost";
 import { ApiStream } from "../transform/stream";
 import type { ChatCompletionReasoningEffort } from "openai/resources/chat/completions";
+import { resolveOpenAiNativeAuthToken } from "./openai-native-auth";
 
 interface OpenAiNativeHandlerOptions {
   openAiNativeApiKey?: string;
@@ -28,14 +29,19 @@ export class OpenAiNativeHandler implements ApiHandler {
     this.options = options;
   }
 
-  private ensureClient(): OpenAI {
+  private async ensureClient(): Promise<OpenAI> {
     if (!this.client) {
-      if (!this.options.openAiNativeApiKey) {
-        throw new Error("OpenAI API key is required");
+      const authToken = await resolveOpenAiNativeAuthToken({
+        openAiNativeApiKey: this.options.openAiNativeApiKey,
+      });
+      if (!authToken) {
+        throw new Error(
+          "OpenAI authentication is required. Provide an OpenAI API key or run `codex login` to use OAuth.",
+        );
       }
       try {
         this.client = new OpenAI({
-          apiKey: this.options.openAiNativeApiKey,
+          apiKey: authToken,
         });
       } catch (error: any) {
         throw new Error(`Error creating OpenAI client: ${error.message}`);
@@ -78,7 +84,7 @@ export class OpenAiNativeHandler implements ApiHandler {
     systemPrompt: string,
     messages: Anthropic.Messages.MessageParam[],
   ): ApiStream {
-    const client = this.ensureClient();
+    const client = await this.ensureClient();
     const model = this.getModel();
 
     switch (model.id) {

@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetCellListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchCellByIdApiRequest {
+    id: string;
+    cell: Cell;
 }
 
 export interface PostCellApiRequest {
@@ -204,6 +208,60 @@ function getCellListRaw<T>(requestParameters: GetCellListApiRequest, requestConf
 */
 export function getCellList<T>(requestParameters: GetCellListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Cell>>): QueryConfig<T> {
     return getCellListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing Cell.
+ * Partially update an existing Cell
+ */
+function patchCellByIdRaw<T>(requestParameters: PatchCellByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Cell> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchCellById.');
+    }
+
+    if (requestParameters.cell === null || requestParameters.cell === undefined) {
+        throw new runtime.RequiredError('cell','Required parameter requestParameters.cell was null or undefined when calling patchCellById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Cell/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || CellToJSON(requestParameters.cell),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(CellFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing Cell.
+* Partially update an existing Cell
+*/
+export function patchCellById<T>(requestParameters: PatchCellByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Cell>): QueryConfig<T> {
+    return patchCellByIdRaw(requestParameters, requestConfig);
 }
 
 /**

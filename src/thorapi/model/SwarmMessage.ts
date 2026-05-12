@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -57,37 +56,37 @@ export type SwarmMessage  = DataObject & {
      * @type {string}
      * @memberof SwarmMessage
      */
-    type: SwarmMessageTypeEnum;
+    type?: SwarmMessageTypeEnum;
     /**
      * 
      * @type {Swarm}
      * @memberof SwarmMessage
      */
-    from: Swarm;
+    fromSwarm?: Swarm;
     /**
      * 
      * @type {Swarm}
      * @memberof SwarmMessage
      */
-    to: Swarm;
+    toSwarm?: Swarm;
     /**
      * Timestamp representing when the message was created.
      * @type {Date}
      * @memberof SwarmMessage
      */
-    timestamp: Date;
-    /**
-     * 
-     * @type {SwarmPayload}
-     * @memberof SwarmMessage
-     */
-    payload: SwarmPayload;
+    timestamp?: Date;
     /**
      * Identifier of the message being acknowledged.
      * @type {string}
      * @memberof SwarmMessage
      */
     ackId?: string;
+    /**
+     * 
+     * @type {SwarmPayload}
+     * @memberof SwarmMessage
+     */
+    payload?: SwarmPayload;
     /**
      * 
      * @type {SwarmSecurity}
@@ -165,12 +164,12 @@ export type SwarmMessage  = DataObject & {
 export function SwarmMessageFromJSON(json: any): SwarmMessage {
     return {
         ...DataObjectFromJSON(json),
-        'type': json['type'],
-        'from': SwarmFromJSON(json['from']),
-        'to': SwarmFromJSON(json['to']),
-        'timestamp': new Date(json['timestamp']),
-        'payload': SwarmPayloadFromJSON(json['payload']),
+        'type': !exists(json, 'type') ? undefined : json['type'],
+        'fromSwarm': !exists(json, 'fromSwarm') ? undefined : SwarmFromJSON(json['fromSwarm']),
+        'toSwarm': !exists(json, 'toSwarm') ? undefined : SwarmFromJSON(json['toSwarm']),
+        'timestamp': !exists(json, 'timestamp') ? undefined : new Date(json['timestamp']),
         'ackId': !exists(json, 'ackId') ? undefined : json['ackId'],
+        'payload': !exists(json, 'payload') ? undefined : SwarmPayloadFromJSON(json['payload']),
         'security': !exists(json, 'security') ? undefined : SwarmSecurityFromJSON(json['security']),
         'ttl': !exists(json, 'ttl') ? undefined : json['ttl'],
         'priority': !exists(json, 'priority') ? undefined : json['priority'],
@@ -193,11 +192,11 @@ export function SwarmMessageToJSON(value?: SwarmMessage): any {
     return {
         ...DataObjectToJSON(value),
         'type': value.type,
-        'from': SwarmToJSON(value.from),
-        'to': SwarmToJSON(value.to),
-        'timestamp': value.timestamp.toISOString(),
-        'payload': SwarmPayloadToJSON(value.payload),
+        'fromSwarm': SwarmToJSON(value.fromSwarm),
+        'toSwarm': SwarmToJSON(value.toSwarm),
+        'timestamp': value.timestamp === undefined ? undefined : value.timestamp.toISOString(),
         'ackId': value.ackId,
+        'payload': SwarmPayloadToJSON(value.payload),
         'security': SwarmSecurityToJSON(value.security),
         'ttl': value.ttl,
         'priority': value.priority,

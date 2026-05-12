@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
@@ -19,6 +18,15 @@ import { CircuitBreakerState } from '@thorapi/model/CircuitBreakerState'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type CircuitBreakerStateResponse = CircuitBreakerState[]
+
+const toCircuitBreakerStateList = (result: unknown): CircuitBreakerStateResponse => {
+  if (Array.isArray(result)) {
+    return result as CircuitBreakerStateResponse
+  }
+
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as CircuitBreakerStateResponse) : []
+}
 
 export const CircuitBreakerStateService = createApi({
   reducerPath: 'CircuitBreakerState', // This should remain unique
@@ -33,13 +41,15 @@ export const CircuitBreakerStateService = createApi({
         if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
         return `CircuitBreakerState?${q.join('&')}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'CircuitBreakerState' as const, id })),
-              { type: 'CircuitBreakerState', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toCircuitBreakerStateList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'CircuitBreakerState' as const, id })),
+          { type: 'CircuitBreakerState', id: `PAGE_${page}` },
+        ]
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,13 +61,15 @@ export const CircuitBreakerStateService = createApi({
         }
         return `CircuitBreakerState`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'CircuitBreakerState' as const, id })),
-              { type: 'CircuitBreakerState', id: 'LIST' },
-            ]
-          : [{ type: 'CircuitBreakerState', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toCircuitBreakerStateList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'CircuitBreakerState' as const, id })),
+          { type: 'CircuitBreakerState', id: 'LIST' },
+        ]
+      },
     }),
 
     // 3) Create

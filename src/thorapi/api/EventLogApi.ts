@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetEventLogListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchEventLogByIdApiRequest {
+    id: string;
+    eventLog: EventLog;
 }
 
 export interface PostEventLogApiRequest {
@@ -204,6 +208,60 @@ function getEventLogListRaw<T>(requestParameters: GetEventLogListApiRequest, req
 */
 export function getEventLogList<T>(requestParameters: GetEventLogListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<EventLog>>): QueryConfig<T> {
     return getEventLogListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing EventLog.
+ * Partially update an existing EventLog
+ */
+function patchEventLogByIdRaw<T>(requestParameters: PatchEventLogByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, EventLog> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchEventLogById.');
+    }
+
+    if (requestParameters.eventLog === null || requestParameters.eventLog === undefined) {
+        throw new runtime.RequiredError('eventLog','Required parameter requestParameters.eventLog was null or undefined when calling patchEventLogById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/EventLog/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || EventLogToJSON(requestParameters.eventLog),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(EventLogFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing EventLog.
+* Partially update an existing EventLog
+*/
+export function patchEventLogById<T>(requestParameters: PatchEventLogByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, EventLog>): QueryConfig<T> {
+    return patchEventLogByIdRaw(requestParameters, requestConfig);
 }
 
 /**

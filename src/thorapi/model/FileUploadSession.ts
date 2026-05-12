@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -44,7 +43,7 @@ import {
 // thorapi
 
 /**
- * Tracks multipart upload state until completion.
+ * Tracks multipart upload state until completion. Use when the client needs multipart/direct upload before creating a FileRecord-backed ContentMediaLink for ContentData.
  * @export
  * @interface FileUploadSession
  */
@@ -67,18 +66,6 @@ export type FileUploadSession  = DataObject & {
      * @memberof FileUploadSession
      */
     storageKey: string;
-    /**
-     * File that will receive the uploaded contents.
-     * @type {string}
-     * @memberof FileUploadSession
-     */
-    fileId: string;
-    /**
-     * Principal who initiated the upload session.
-     * @type {string}
-     * @memberof FileUploadSession
-     */
-    initiatedById: string;
     /**
      * When the upload session expires.
      * @type {Date}
@@ -177,8 +164,6 @@ export function FileUploadSessionFromJSON(json: any): FileUploadSession {
         'uploadId': json['uploadId'],
         'storageDriverId': json['storageDriverId'],
         'storageKey': json['storageKey'],
-        'fileId': json['fileId'],
-        'initiatedById': json['initiatedById'],
         'expiresAt': new Date(json['expiresAt']),
         'file': !exists(json, 'file') ? undefined : FileRecordFromJSON(json['file']),
         'initiatedBy': !exists(json, 'initiatedBy') ? undefined : PrincipalFromJSON(json['initiatedBy']),
@@ -206,8 +191,6 @@ export function FileUploadSessionToJSON(value?: FileUploadSession): any {
         'uploadId': value.uploadId,
         'storageDriverId': value.storageDriverId,
         'storageKey': value.storageKey,
-        'fileId': value.fileId,
-        'initiatedById': value.initiatedById,
         'expiresAt': value.expiresAt.toISOString(),
         'file': FileRecordToJSON(value.file),
         'initiatedBy': PrincipalToJSON(value.initiatedBy),

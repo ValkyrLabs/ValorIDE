@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -50,23 +49,17 @@ import {
  */
 export type AclObjectIdentity  = DataObject & {
     /**
-     * UUID of the specific secured object instance
-     * @type {string}
-     * @memberof AclObjectIdentity
-     */
-    objectIdIdentity: string;
-    /**
-     * If true, entries inherit from parent ACL
-     * @type {boolean}
-     * @memberof AclObjectIdentity
-     */
-    entriesInheriting: boolean;
-    /**
      * 
      * @type {AclClass}
      * @memberof AclObjectIdentity
      */
     aclClass?: AclClass;
+    /**
+     * UUID of the specific secured object instance
+     * @type {string}
+     * @memberof AclObjectIdentity
+     */
+    objectIdIdentity?: string;
     /**
      * 
      * @type {AclObjectIdentity}
@@ -79,6 +72,12 @@ export type AclObjectIdentity  = DataObject & {
      * @memberof AclObjectIdentity
      */
     ownerSid?: AclSid;
+    /**
+     * If true, entries inherit from parent ACL
+     * @type {boolean}
+     * @memberof AclObjectIdentity
+     */
+    entriesInheriting?: boolean;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -138,11 +137,11 @@ export type AclObjectIdentity  = DataObject & {
 export function AclObjectIdentityFromJSON(json: any): AclObjectIdentity {
     return {
         ...DataObjectFromJSON(json),
-        'objectIdIdentity': json['objectIdIdentity'],
-        'entriesInheriting': json['entriesInheriting'],
         'aclClass': !exists(json, 'aclClass') ? undefined : AclClassFromJSON(json['aclClass']),
+        'objectIdIdentity': !exists(json, 'objectIdIdentity') ? undefined : json['objectIdIdentity'],
         'parentObject': !exists(json, 'parentObject') ? undefined : AclObjectIdentityFromJSON(json['parentObject']),
         'ownerSid': !exists(json, 'ownerSid') ? undefined : AclSidFromJSON(json['ownerSid']),
+        'entriesInheriting': !exists(json, 'entriesInheriting') ? undefined : json['entriesInheriting'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -161,11 +160,11 @@ export function AclObjectIdentityToJSON(value?: AclObjectIdentity): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'objectIdIdentity': value.objectIdIdentity,
-        'entriesInheriting': value.entriesInheriting,
         'aclClass': AclClassToJSON(value.aclClass),
+        'objectIdIdentity': value.objectIdIdentity,
         'parentObject': AclObjectIdentityToJSON(value.parentObject),
         'ownerSid': AclSidToJSON(value.ownerSid),
+        'entriesInheriting': value.entriesInheriting,
         'trashed': value.trashed,
     };
 }

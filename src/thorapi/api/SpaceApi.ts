@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetSpaceListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchSpaceByIdApiRequest {
+    id: string;
+    space: Space;
 }
 
 export interface PostSpaceApiRequest {
@@ -204,6 +208,60 @@ function getSpaceListRaw<T>(requestParameters: GetSpaceListApiRequest, requestCo
 */
 export function getSpaceList<T>(requestParameters: GetSpaceListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Space>>): QueryConfig<T> {
     return getSpaceListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing Space.
+ * Partially update an existing Space
+ */
+function patchSpaceByIdRaw<T>(requestParameters: PatchSpaceByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Space> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchSpaceById.');
+    }
+
+    if (requestParameters.space === null || requestParameters.space === undefined) {
+        throw new runtime.RequiredError('space','Required parameter requestParameters.space was null or undefined when calling patchSpaceById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Space/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || SpaceToJSON(requestParameters.space),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SpaceFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing Space.
+* Partially update an existing Space
+*/
+export function patchSpaceById<T>(requestParameters: PatchSpaceByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Space>): QueryConfig<T> {
+    return patchSpaceByIdRaw(requestParameters, requestConfig);
 }
 
 /**

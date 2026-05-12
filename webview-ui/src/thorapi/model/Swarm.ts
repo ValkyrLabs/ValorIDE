@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -29,6 +28,14 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists, mapValues } from '../src/runtime';
 import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import {
+
+
+    Principal,
+    PrincipalFromJSON,
+    PrincipalToJSON,
+} from './';
+
 
 // thorapi
 
@@ -39,23 +46,23 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  */
 export type Swarm  = DataObject & {
     /**
-     * Entity classification.
-     * @type {string}
-     * @memberof Swarm
-     */
-    swarmType: SwarmSwarmTypeEnum;
-    /**
      * Unique identifier for the agent instance.
      * @type {string}
      * @memberof Swarm
      */
     instanceId?: string;
     /**
-     * Platform principal identifier when available.
+     * Entity classification.
      * @type {string}
      * @memberof Swarm
      */
-    principalId?: string;
+    swarmType?: SwarmSwarmTypeEnum;
+    /**
+     * 
+     * @type {Principal}
+     * @memberof Swarm
+     */
+    principal?: Principal;
     /**
      * Display name associated with the entity.
      * @type {string}
@@ -121,9 +128,9 @@ export type Swarm  = DataObject & {
 export function SwarmFromJSON(json: any): Swarm {
     return {
         ...DataObjectFromJSON(json),
-        'swarmType': json['swarmType'],
         'instanceId': !exists(json, 'instanceId') ? undefined : json['instanceId'],
-        'principalId': !exists(json, 'principalId') ? undefined : json['principalId'],
+        'swarmType': !exists(json, 'swarmType') ? undefined : json['swarmType'],
+        'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
         'username': !exists(json, 'username') ? undefined : json['username'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
@@ -143,9 +150,9 @@ export function SwarmToJSON(value?: Swarm): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'swarmType': value.swarmType,
         'instanceId': value.instanceId,
-        'principalId': value.principalId,
+        'swarmType': value.swarmType,
+        'principal': PrincipalToJSON(value.principal),
         'username': value.username,
         'trashed': value.trashed,
     };

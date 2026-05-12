@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type DefaultResponse  = DataObject & {
      * @type {boolean}
      * @memberof DefaultResponse
      */
-    success: boolean;
+    success?: boolean;
     /**
      * Response message or description
      * @type {string}
      * @memberof DefaultResponse
      */
-    message: string;
+    message?: string;
     /**
      * Optional data payload
      * @type {string}
@@ -121,8 +120,8 @@ export type DefaultResponse  = DataObject & {
 export function DefaultResponseFromJSON(json: any): DefaultResponse {
     return {
         ...DataObjectFromJSON(json),
-        'success': json['success'],
-        'message': json['message'],
+        'success': !exists(json, 'success') ? undefined : json['success'],
+        'message': !exists(json, 'message') ? undefined : json['message'],
         'data': !exists(json, 'data') ? undefined : json['data'],
         'timestamp': !exists(json, 'timestamp') ? undefined : new Date(json['timestamp']),
         'id': !exists(json, 'id') ? undefined : json['id'],

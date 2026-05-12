@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,7 +42,7 @@ export type JobApplication  = DataObject & {
      * @type {string}
      * @memberof JobApplication
      */
-    jobSeekerId: string;
+    jobSeekerId?: string;
     /**
      * Reference to CareerOpportunity (null for general inquiry)
      * @type {string}
@@ -105,11 +104,11 @@ export type JobApplication  = DataObject & {
      */
     internalNotes?: string;
     /**
-     * Date of object creation
+     * When application was created
      * @type {Date}
      * @memberof JobApplication
      */
-    readonly createdDate?: Date;
+    createdDate?: Date;
     /**
      * Last update time
      * @type {Date}
@@ -169,7 +168,7 @@ export type JobApplication  = DataObject & {
 export function JobApplicationFromJSON(json: any): JobApplication {
     return {
         ...DataObjectFromJSON(json),
-        'jobSeekerId': json['jobSeekerId'],
+        'jobSeekerId': !exists(json, 'jobSeekerId') ? undefined : json['jobSeekerId'],
         'opportunityId': !exists(json, 'opportunityId') ? undefined : json['opportunityId'],
         'appliedDate': !exists(json, 'appliedDate') ? undefined : new Date(json['appliedDate']),
         'resumeAttachmentUrl': !exists(json, 'resumeAttachmentUrl') ? undefined : json['resumeAttachmentUrl'],
@@ -210,6 +209,7 @@ export function JobApplicationToJSON(value?: JobApplication): any {
         'recommendedNextSteps': value.recommendedNextSteps,
         'assignedRecruiter': value.assignedRecruiter,
         'internalNotes': value.internalNotes,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
         'updatedDate': value.updatedDate === undefined ? undefined : value.updatedDate.toISOString(),
         'trashed': value.trashed,
     };

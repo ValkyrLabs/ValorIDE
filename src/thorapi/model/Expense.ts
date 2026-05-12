@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,25 +42,25 @@ export type Expense  = DataObject & {
      * @type {Date}
      * @memberof Expense
      */
-    expenseDate: Date;
+    expenseDate?: Date;
     /**
      * 
      * @type {number}
      * @memberof Expense
      */
-    amount: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Expense
-     */
-    category: ExpenseCategoryEnum;
+    amount?: number;
     /**
      * 
      * @type {string}
      * @memberof Expense
      */
     description?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Expense
+     */
+    category?: ExpenseCategoryEnum;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -121,10 +120,10 @@ export type Expense  = DataObject & {
 export function ExpenseFromJSON(json: any): Expense {
     return {
         ...DataObjectFromJSON(json),
-        'expenseDate': new Date(json['expenseDate']),
-        'amount': json['amount'],
-        'category': json['category'],
+        'expenseDate': !exists(json, 'expenseDate') ? undefined : new Date(json['expenseDate']),
+        'amount': !exists(json, 'amount') ? undefined : json['amount'],
         'description': !exists(json, 'description') ? undefined : json['description'],
+        'category': !exists(json, 'category') ? undefined : json['category'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -143,10 +142,10 @@ export function ExpenseToJSON(value?: Expense): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'expenseDate': value.expenseDate.toISOString(),
+        'expenseDate': value.expenseDate === undefined ? undefined : value.expenseDate.toISOString(),
         'amount': value.amount,
-        'category': value.category,
         'description': value.description,
+        'category': value.category,
         'trashed': value.trashed,
     };
 }

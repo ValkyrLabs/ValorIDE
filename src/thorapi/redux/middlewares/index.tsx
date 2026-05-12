@@ -6,7 +6,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/middleweares.index.mustache
@@ -20,6 +19,7 @@ import { Middleware, combineReducers, configureStore } from "@reduxjs/toolkit";
 
 // IMPORTant
 import { AccountBalanceService } from '../services/AccountBalanceService';
+import { AccountPlanService } from '../services/AccountPlanService';
 import { AclClassService } from '../services/AclClassService';
 import { AclEntryService } from '../services/AclEntryService';
 import { AclObjectIdentityService } from '../services/AclObjectIdentityService';
@@ -36,10 +36,17 @@ import { AgentDiscoveryItemService } from '../services/AgentDiscoveryItemService
 import { AgentEventTriggerService } from '../services/AgentEventTriggerService';
 import { AgentHierarchyService } from '../services/AgentHierarchyService';
 import { AgentHierarchyNodeService } from '../services/AgentHierarchyNodeService';
+import { ApiIdentityKpiSnapshotService } from '../services/ApiIdentityKpiSnapshotService';
 import { ApiMetricSnapshotService } from '../services/ApiMetricSnapshotService';
 import { ApiMetricsResponseService } from '../services/ApiMetricsResponseService';
+import { ApiSpineKpiSnapshotService } from '../services/ApiSpineKpiSnapshotService';
 import { ApiTrafficEventService } from '../services/ApiTrafficEventService';
+import { AppendTrustEventRequestService } from '../services/AppendTrustEventRequestService';
+import { AppendTrustEventResponseService } from '../services/AppendTrustEventResponseService';
 import { ApplicationService } from '../services/ApplicationService';
+import { ArrayIntegerItemService } from '../services/ArrayIntegerItemService';
+import { ArrayNumberItemService } from '../services/ArrayNumberItemService';
+import { ArrayStringItemService } from '../services/ArrayStringItemService';
 import { AuthorityService } from '../services/AuthorityService';
 import { BackupConfigService } from '../services/BackupConfigService';
 import { BalanceResponseService } from '../services/BalanceResponseService';
@@ -47,6 +54,7 @@ import { BlankRangeService } from '../services/BlankRangeService';
 import { BorderService } from '../services/BorderService';
 import { BudgetService } from '../services/BudgetService';
 import { BuildService } from '../services/BuildService';
+import { BuildArtifactService } from '../services/BuildArtifactService';
 import { BuildOutputService } from '../services/BuildOutputService';
 import { CampaignService } from '../services/CampaignService';
 import { CareerOpportunityService } from '../services/CareerOpportunityService';
@@ -58,7 +66,11 @@ import { ChatCompletionRequestService } from '../services/ChatCompletionRequestS
 import { ChatCompletionResponseService } from '../services/ChatCompletionResponseService';
 import { ChatMessageService } from '../services/ChatMessageService';
 import { ChatResponseService } from '../services/ChatResponseService';
+import { CircuitBreakerConfigService } from '../services/CircuitBreakerConfigService';
 import { CircuitBreakerStateService } from '../services/CircuitBreakerStateService';
+import { CloudProviderService } from '../services/CloudProviderService';
+import { CompleteTrustExecutionRequestService } from '../services/CompleteTrustExecutionRequestService';
+import { CompleteTrustExecutionResponseService } from '../services/CompleteTrustExecutionResponseService';
 import { CompleteUploadRequestService } from '../services/CompleteUploadRequestService';
 import { CompleteUploadRequestPartsInnerService } from '../services/CompleteUploadRequestPartsInnerService';
 import { ConfirmPasswordResetRequestService } from '../services/ConfirmPasswordResetRequestService';
@@ -68,10 +80,16 @@ import { ContentDataService } from '../services/ContentDataService';
 import { ContentMediaLinkService } from '../services/ContentMediaLinkService';
 import { ConversationBranchService } from '../services/ConversationBranchService';
 import { ConversationMemoryNodeService } from '../services/ConversationMemoryNodeService';
+import { CreatorEarningsService } from '../services/CreatorEarningsService';
+import { CreditAccountService } from '../services/CreditAccountService';
+import { CreditBalanceSummaryService } from '../services/CreditBalanceSummaryService';
 import { CustomerService } from '../services/CustomerService';
 import { DeadLetterQueueService } from '../services/DeadLetterQueueService';
 import { DefaultResponseService } from '../services/DefaultResponseService';
 import { DependService } from '../services/DependService';
+import { DeploymentService } from '../services/DeploymentService';
+import { DeploymentSpecService } from '../services/DeploymentSpecService';
+import { DeploymentTemplateService } from '../services/DeploymentTemplateService';
 import { DigitalAssetService } from '../services/DigitalAssetService';
 import { DiscardDeadLetterEntryRequestService } from '../services/DiscardDeadLetterEntryRequestService';
 import { DiscardDeadLetterEntryResponseService } from '../services/DiscardDeadLetterEntryResponseService';
@@ -79,6 +97,16 @@ import { DiscountService } from '../services/DiscountService';
 import { DownloadAccessService } from '../services/DownloadAccessService';
 import { EventLogService } from '../services/EventLogService';
 import { ExecModuleService } from '../services/ExecModuleService';
+import { ExecModuleAudienceConfigService } from '../services/ExecModuleAudienceConfigService';
+import { ExecModuleAuthConfigService } from '../services/ExecModuleAuthConfigService';
+import { ExecModuleConfigService } from '../services/ExecModuleConfigService';
+import { ExecModuleExecutionConfigService } from '../services/ExecModuleExecutionConfigService';
+import { ExecModuleIOConfigService } from '../services/ExecModuleIOConfigService';
+import { ExecModuleObservabilityConfigService } from '../services/ExecModuleObservabilityConfigService';
+import { ExecModulePayloadConfigService } from '../services/ExecModulePayloadConfigService';
+import { ExecModuleRateLimitConfigService } from '../services/ExecModuleRateLimitConfigService';
+import { ExecModuleResourceConfigService } from '../services/ExecModuleResourceConfigService';
+import { ExecModuleTransportConfigService } from '../services/ExecModuleTransportConfigService';
 import { ExecuteModuleRequestService } from '../services/ExecuteModuleRequestService';
 import { ExpenseService } from '../services/ExpenseService';
 import { FileAuditLogService } from '../services/FileAuditLogService';
@@ -91,9 +119,15 @@ import { FileVersionService } from '../services/FileVersionService';
 import { FormatService } from '../services/FormatService';
 import { FormulaService } from '../services/FormulaService';
 import { GeneralLedgerEntryService } from '../services/GeneralLedgerEntryService';
+import { GenerateTrustKeyRequestService } from '../services/GenerateTrustKeyRequestService';
+import { GenerateTrustKeyResponseService } from '../services/GenerateTrustKeyResponseService';
+import { GenerateTrustProofRequestService } from '../services/GenerateTrustProofRequestService';
+import { GenerateTrustProofResponseService } from '../services/GenerateTrustProofResponseService';
 import { GoalService } from '../services/GoalService';
 import { GoalDependencyService } from '../services/GoalDependencyService';
 import { GrantPermissionRequestService } from '../services/GrantPermissionRequestService';
+import { GraphLinkService } from '../services/GraphLinkService';
+import { GrayMatterService } from '../services/GrayMatterService';
 import { HostInstanceService } from '../services/HostInstanceService';
 import { IdempotencyKeyService } from '../services/IdempotencyKeyService';
 import { InitUploadRequestService } from '../services/InitUploadRequestService';
@@ -109,14 +143,18 @@ import { JobApplicationResponseService } from '../services/JobApplicationRespons
 import { JobMetadataService } from '../services/JobMetadataService';
 import { JobSeekerService } from '../services/JobSeekerService';
 import { KeyMetricService } from '../services/KeyMetricService';
-import { LegalPrecedentService } from '../services/LegalPrecedentService';
+import { LeaseTrustSecretRequestService } from '../services/LeaseTrustSecretRequestService';
+import { LeaseTrustSecretResponseService } from '../services/LeaseTrustSecretResponseService';
 import { LineItemService } from '../services/LineItemService';
+import { ListDeployableApplications200ResponseInnerService } from '../services/ListDeployableApplications200ResponseInnerService';
 import { LlmDetailsService } from '../services/LlmDetailsService';
+import { LlmRoutingPolicyService } from '../services/LlmRoutingPolicyService';
 import { LoginService } from '../services/LoginService';
 import { LoginAuditService } from '../services/LoginAuditService';
 import { LoginRequestService } from '../services/LoginRequestService';
 import { LoginResponseService } from '../services/LoginResponseService';
 import { LogoutService } from '../services/LogoutService';
+import { ManagedMcpServiceService } from '../services/ManagedMcpServiceService';
 import { McpService } from '../services/McpService';
 import { McpContentService } from '../services/McpContentService';
 import { McpDownloadResponseService } from '../services/McpDownloadResponseService';
@@ -134,6 +172,16 @@ import { McpToolCallResponseService } from '../services/McpToolCallResponseServi
 import { McpToolPresetService } from '../services/McpToolPresetService';
 import { McpTransportConfigService } from '../services/McpTransportConfigService';
 import { MediaObjectService } from '../services/MediaObjectService';
+import { MemoryActionRequestService } from '../services/MemoryActionRequestService';
+import { MemoryActionResponseService } from '../services/MemoryActionResponseService';
+import { MemoryContextStatsService } from '../services/MemoryContextStatsService';
+import { MemoryCostStatsService } from '../services/MemoryCostStatsService';
+import { MemoryEntryService } from '../services/MemoryEntryService';
+import { MemoryHitStatsService } from '../services/MemoryHitStatsService';
+import { MemoryRecommendationService } from '../services/MemoryRecommendationService';
+import { MemoryRetentionPolicyService } from '../services/MemoryRetentionPolicyService';
+import { MemoryRunRecordService } from '../services/MemoryRunRecordService';
+import { MemoryStatsService } from '../services/MemoryStatsService';
 import { MergeRangeService } from '../services/MergeRangeService';
 import { MetricsService } from '../services/MetricsService';
 import { NamedRangeService } from '../services/NamedRangeService';
@@ -153,8 +201,10 @@ import { OasServerService } from '../services/OasServerService';
 import { OpportunityService } from '../services/OpportunityService';
 import { OrderFulfillmentTaskService } from '../services/OrderFulfillmentTaskService';
 import { OrganizationService } from '../services/OrganizationService';
+import { OrganizationAddonSubscriptionService } from '../services/OrganizationAddonSubscriptionService';
 import { PasswordResetTokenService } from '../services/PasswordResetTokenService';
 import { PaymentTransactionService } from '../services/PaymentTransactionService';
+import { PaymentTypeService } from '../services/PaymentTypeService';
 import { PersistentLoginService } from '../services/PersistentLoginService';
 import { PhoneVerificationService } from '../services/PhoneVerificationService';
 import { PhoneVerificationRequestService } from '../services/PhoneVerificationRequestService';
@@ -163,7 +213,6 @@ import { PivotTableService } from '../services/PivotTableService';
 import { PresignRequestService } from '../services/PresignRequestService';
 import { PresignResponseService } from '../services/PresignResponseService';
 import { PrincipalService } from '../services/PrincipalService';
-import { PrincipalRolesService } from '../services/PrincipalRolesService';
 import { ProductService } from '../services/ProductService';
 import { ProductDeliveryConfigService } from '../services/ProductDeliveryConfigService';
 import { ProductFeatureService } from '../services/ProductFeatureService';
@@ -178,17 +227,28 @@ import { QuotaService } from '../services/QuotaService';
 import { RatingService } from '../services/RatingService';
 import { ReactionService } from '../services/ReactionService';
 import { ReferralLinkService } from '../services/ReferralLinkService';
+import { RegisterTrustPolicyRequestService } from '../services/RegisterTrustPolicyRequestService';
+import { RegisterTrustPolicyResponseService } from '../services/RegisterTrustPolicyResponseService';
 import { RequestPasswordResetRequestService } from '../services/RequestPasswordResetRequestService';
 import { RequestPasswordResetResponseService } from '../services/RequestPasswordResetResponseService';
 import { RequeueDeadLetterEntryRequestService } from '../services/RequeueDeadLetterEntryRequestService';
 import { RequeueDeadLetterEntryResponseService } from '../services/RequeueDeadLetterEntryResponseService';
 import { RetryPolicyService } from '../services/RetryPolicyService';
+import { RewrapTrustKeyRequestService } from '../services/RewrapTrustKeyRequestService';
+import { RewrapTrustKeyResponseService } from '../services/RewrapTrustKeyResponseService';
 import { RoleService } from '../services/RoleService';
+import { RotateTrustKeyRequestService } from '../services/RotateTrustKeyRequestService';
+import { RotateTrustKeyResponseService } from '../services/RotateTrustKeyResponseService';
 import { RunService } from '../services/RunService';
 import { SalesActivityService } from '../services/SalesActivityService';
 import { SalesOrderService } from '../services/SalesOrderService';
 import { SalesPipelineService } from '../services/SalesPipelineService';
+import { ScanBuildArtifacts200ResponseService } from '../services/ScanBuildArtifacts200ResponseService';
+import { ScanBuildArtifactsRequestService } from '../services/ScanBuildArtifactsRequestService';
 import { SecureKeyService } from '../services/SecureKeyService';
+import { SemanticIndexEntryService } from '../services/SemanticIndexEntryService';
+import { ServiceInvocationEventService } from '../services/ServiceInvocationEventService';
+import { ServiceSubscriptionService } from '../services/ServiceSubscriptionService';
 import { SheetService } from '../services/SheetService';
 import { SheetColumnService } from '../services/SheetColumnService';
 import { SheetRowService } from '../services/SheetRowService';
@@ -198,8 +258,13 @@ import { SpaceService } from '../services/SpaceService';
 import { SpaceFileService } from '../services/SpaceFileService';
 import { SpaceMemberService } from '../services/SpaceMemberService';
 import { StackService } from '../services/StackService';
+import { StartTrustExecutionRequestService } from '../services/StartTrustExecutionRequestService';
+import { StartTrustExecutionResponseService } from '../services/StartTrustExecutionResponseService';
 import { StrategicPriorityService } from '../services/StrategicPriorityService';
+import { SubmitTrustAttestationEvidenceRequestService } from '../services/SubmitTrustAttestationEvidenceRequestService';
+import { SubmitTrustAttestationEvidenceResponseService } from '../services/SubmitTrustAttestationEvidenceResponseService';
 import { SubscriberListService } from '../services/SubscriberListService';
+import { SubscriptionPlanService } from '../services/SubscriptionPlanService';
 import { SwarmService } from '../services/SwarmService';
 import { SwarmAgentSummaryService } from '../services/SwarmAgentSummaryService';
 import { SwarmCommandRequestService } from '../services/SwarmCommandRequestService';
@@ -214,13 +279,34 @@ import { SwarmRegisterResponseService } from '../services/SwarmRegisterResponseS
 import { SwarmSecurityService } from '../services/SwarmSecurityService';
 import { SwarmUnregisterRequestService } from '../services/SwarmUnregisterRequestService';
 import { SwarmUnregisterResponseService } from '../services/SwarmUnregisterResponseService';
+import { TagService } from '../services/TagService';
 import { TaskService } from '../services/TaskService';
+import { ThorapiRuleService } from '../services/ThorapiRuleService';
+import { TrustService } from '../services/TrustService';
+import { TrustAttestationEvidenceService } from '../services/TrustAttestationEvidenceService';
+import { TrustKeyService } from '../services/TrustKeyService';
+import { TrustKeyProviderService } from '../services/TrustKeyProviderService';
+import { TrustKeyRotationService } from '../services/TrustKeyRotationService';
+import { TrustKeyVersionService } from '../services/TrustKeyVersionService';
+import { TrustMerkleBatchService } from '../services/TrustMerkleBatchService';
+import { TrustObjectKeyEnvelopeService } from '../services/TrustObjectKeyEnvelopeService';
+import { TrustPolicyBindingService } from '../services/TrustPolicyBindingService';
+import { TrustPolicyManifestService } from '../services/TrustPolicyManifestService';
+import { TrustProofService } from '../services/TrustProofService';
+import { TrustRuntimeEventService } from '../services/TrustRuntimeEventService';
+import { TrustRuntimeExecutionService } from '../services/TrustRuntimeExecutionService';
+import { TrustSecretAccessEventService } from '../services/TrustSecretAccessEventService';
+import { TrustSecretLeaseService } from '../services/TrustSecretLeaseService';
+import { TrustVerificationResultService } from '../services/TrustVerificationResultService';
 import { TwoFactorSecretService } from '../services/TwoFactorSecretService';
 import { UpdateFileRequestService } from '../services/UpdateFileRequestService';
 import { UsageTransactionService } from '../services/UsageTransactionService';
 import { UserPreferenceService } from '../services/UserPreferenceService';
+import { ValidateDeploymentSpec200ResponseService } from '../services/ValidateDeploymentSpec200ResponseService';
 import { ValkyrJobService } from '../services/ValkyrJobService';
 import { VerifyPhoneOTPRequestService } from '../services/VerifyPhoneOTPRequestService';
+import { VerifyTrustProofRequestService } from '../services/VerifyTrustProofRequestService';
+import { VerifyTrustProofResponseService } from '../services/VerifyTrustProofResponseService';
 import { VerifyTwoFactorRequestService } from '../services/VerifyTwoFactorRequestService';
 import { VerifyTwoFactorResponseService } from '../services/VerifyTwoFactorResponseService';
 import { WebsocketMessageService } from '../services/WebsocketMessageService';
@@ -230,11 +316,23 @@ import { WizardStatusResponseService } from '../services/WizardStatusResponseSer
 import { WorkbookService } from '../services/WorkbookService';
 import { WorkflowService } from '../services/WorkflowService';
 import { WorkflowExecutionService } from '../services/WorkflowExecutionService';
+import { WorkflowGraphEdgeService } from '../services/WorkflowGraphEdgeService';
+import { WorkflowGraphEdgeConfigService } from '../services/WorkflowGraphEdgeConfigService';
+import { WorkflowGraphEdgeConnectionMappingService } from '../services/WorkflowGraphEdgeConnectionMappingService';
+import { WorkflowGraphModuleService } from '../services/WorkflowGraphModuleService';
+import { WorkflowGraphModuleMappingService } from '../services/WorkflowGraphModuleMappingService';
+import { WorkflowGraphNodeService } from '../services/WorkflowGraphNodeService';
+import { WorkflowGraphNodeTaskMappingService } from '../services/WorkflowGraphNodeTaskMappingService';
+import { WorkflowGraphRequestService } from '../services/WorkflowGraphRequestService';
+import { WorkflowGraphResponseService } from '../services/WorkflowGraphResponseService';
+import { WorkflowGraphValidationErrorService } from '../services/WorkflowGraphValidationErrorService';
+import { WorkflowGraphWorkflowDataService } from '../services/WorkflowGraphWorkflowDataService';
 import { WorkflowStateService } from '../services/WorkflowStateService';
 
 // use to populate external store
 export const middlewares : Middleware[] = [
     AccountBalanceService.middleware as Middleware,
+    AccountPlanService.middleware as Middleware,
     AclClassService.middleware as Middleware,
     AclEntryService.middleware as Middleware,
     AclObjectIdentityService.middleware as Middleware,
@@ -251,10 +349,17 @@ export const middlewares : Middleware[] = [
     AgentEventTriggerService.middleware as Middleware,
     AgentHierarchyService.middleware as Middleware,
     AgentHierarchyNodeService.middleware as Middleware,
+    ApiIdentityKpiSnapshotService.middleware as Middleware,
     ApiMetricSnapshotService.middleware as Middleware,
     ApiMetricsResponseService.middleware as Middleware,
+    ApiSpineKpiSnapshotService.middleware as Middleware,
     ApiTrafficEventService.middleware as Middleware,
+    AppendTrustEventRequestService.middleware as Middleware,
+    AppendTrustEventResponseService.middleware as Middleware,
     ApplicationService.middleware as Middleware,
+    ArrayIntegerItemService.middleware as Middleware,
+    ArrayNumberItemService.middleware as Middleware,
+    ArrayStringItemService.middleware as Middleware,
     AuthorityService.middleware as Middleware,
     BackupConfigService.middleware as Middleware,
     BalanceResponseService.middleware as Middleware,
@@ -262,6 +367,7 @@ export const middlewares : Middleware[] = [
     BorderService.middleware as Middleware,
     BudgetService.middleware as Middleware,
     BuildService.middleware as Middleware,
+    BuildArtifactService.middleware as Middleware,
     BuildOutputService.middleware as Middleware,
     CampaignService.middleware as Middleware,
     CareerOpportunityService.middleware as Middleware,
@@ -273,7 +379,11 @@ export const middlewares : Middleware[] = [
     ChatCompletionResponseService.middleware as Middleware,
     ChatMessageService.middleware as Middleware,
     ChatResponseService.middleware as Middleware,
+    CircuitBreakerConfigService.middleware as Middleware,
     CircuitBreakerStateService.middleware as Middleware,
+    CloudProviderService.middleware as Middleware,
+    CompleteTrustExecutionRequestService.middleware as Middleware,
+    CompleteTrustExecutionResponseService.middleware as Middleware,
     CompleteUploadRequestService.middleware as Middleware,
     CompleteUploadRequestPartsInnerService.middleware as Middleware,
     ConfirmPasswordResetRequestService.middleware as Middleware,
@@ -283,10 +393,16 @@ export const middlewares : Middleware[] = [
     ContentMediaLinkService.middleware as Middleware,
     ConversationBranchService.middleware as Middleware,
     ConversationMemoryNodeService.middleware as Middleware,
+    CreatorEarningsService.middleware as Middleware,
+    CreditAccountService.middleware as Middleware,
+    CreditBalanceSummaryService.middleware as Middleware,
     CustomerService.middleware as Middleware,
     DeadLetterQueueService.middleware as Middleware,
     DefaultResponseService.middleware as Middleware,
     DependService.middleware as Middleware,
+    DeploymentService.middleware as Middleware,
+    DeploymentSpecService.middleware as Middleware,
+    DeploymentTemplateService.middleware as Middleware,
     DigitalAssetService.middleware as Middleware,
     DiscardDeadLetterEntryRequestService.middleware as Middleware,
     DiscardDeadLetterEntryResponseService.middleware as Middleware,
@@ -294,6 +410,16 @@ export const middlewares : Middleware[] = [
     DownloadAccessService.middleware as Middleware,
     EventLogService.middleware as Middleware,
     ExecModuleService.middleware as Middleware,
+    ExecModuleAudienceConfigService.middleware as Middleware,
+    ExecModuleAuthConfigService.middleware as Middleware,
+    ExecModuleConfigService.middleware as Middleware,
+    ExecModuleExecutionConfigService.middleware as Middleware,
+    ExecModuleIOConfigService.middleware as Middleware,
+    ExecModuleObservabilityConfigService.middleware as Middleware,
+    ExecModulePayloadConfigService.middleware as Middleware,
+    ExecModuleRateLimitConfigService.middleware as Middleware,
+    ExecModuleResourceConfigService.middleware as Middleware,
+    ExecModuleTransportConfigService.middleware as Middleware,
     ExecuteModuleRequestService.middleware as Middleware,
     ExpenseService.middleware as Middleware,
     FileAuditLogService.middleware as Middleware,
@@ -306,9 +432,15 @@ export const middlewares : Middleware[] = [
     FormatService.middleware as Middleware,
     FormulaService.middleware as Middleware,
     GeneralLedgerEntryService.middleware as Middleware,
+    GenerateTrustKeyRequestService.middleware as Middleware,
+    GenerateTrustKeyResponseService.middleware as Middleware,
+    GenerateTrustProofRequestService.middleware as Middleware,
+    GenerateTrustProofResponseService.middleware as Middleware,
     GoalService.middleware as Middleware,
     GoalDependencyService.middleware as Middleware,
     GrantPermissionRequestService.middleware as Middleware,
+    GraphLinkService.middleware as Middleware,
+    GrayMatterService.middleware as Middleware,
     HostInstanceService.middleware as Middleware,
     IdempotencyKeyService.middleware as Middleware,
     InitUploadRequestService.middleware as Middleware,
@@ -324,14 +456,18 @@ export const middlewares : Middleware[] = [
     JobMetadataService.middleware as Middleware,
     JobSeekerService.middleware as Middleware,
     KeyMetricService.middleware as Middleware,
-    LegalPrecedentService.middleware as Middleware,
+    LeaseTrustSecretRequestService.middleware as Middleware,
+    LeaseTrustSecretResponseService.middleware as Middleware,
     LineItemService.middleware as Middleware,
+    ListDeployableApplications200ResponseInnerService.middleware as Middleware,
     LlmDetailsService.middleware as Middleware,
+    LlmRoutingPolicyService.middleware as Middleware,
     LoginService.middleware as Middleware,
     LoginAuditService.middleware as Middleware,
     LoginRequestService.middleware as Middleware,
     LoginResponseService.middleware as Middleware,
     LogoutService.middleware as Middleware,
+    ManagedMcpServiceService.middleware as Middleware,
     McpService.middleware as Middleware,
     McpContentService.middleware as Middleware,
     McpDownloadResponseService.middleware as Middleware,
@@ -349,6 +485,16 @@ export const middlewares : Middleware[] = [
     McpToolPresetService.middleware as Middleware,
     McpTransportConfigService.middleware as Middleware,
     MediaObjectService.middleware as Middleware,
+    MemoryActionRequestService.middleware as Middleware,
+    MemoryActionResponseService.middleware as Middleware,
+    MemoryContextStatsService.middleware as Middleware,
+    MemoryCostStatsService.middleware as Middleware,
+    MemoryEntryService.middleware as Middleware,
+    MemoryHitStatsService.middleware as Middleware,
+    MemoryRecommendationService.middleware as Middleware,
+    MemoryRetentionPolicyService.middleware as Middleware,
+    MemoryRunRecordService.middleware as Middleware,
+    MemoryStatsService.middleware as Middleware,
     MergeRangeService.middleware as Middleware,
     MetricsService.middleware as Middleware,
     NamedRangeService.middleware as Middleware,
@@ -368,8 +514,10 @@ export const middlewares : Middleware[] = [
     OpportunityService.middleware as Middleware,
     OrderFulfillmentTaskService.middleware as Middleware,
     OrganizationService.middleware as Middleware,
+    OrganizationAddonSubscriptionService.middleware as Middleware,
     PasswordResetTokenService.middleware as Middleware,
     PaymentTransactionService.middleware as Middleware,
+    PaymentTypeService.middleware as Middleware,
     PersistentLoginService.middleware as Middleware,
     PhoneVerificationService.middleware as Middleware,
     PhoneVerificationRequestService.middleware as Middleware,
@@ -378,7 +526,6 @@ export const middlewares : Middleware[] = [
     PresignRequestService.middleware as Middleware,
     PresignResponseService.middleware as Middleware,
     PrincipalService.middleware as Middleware,
-    PrincipalRolesService.middleware as Middleware,
     ProductService.middleware as Middleware,
     ProductDeliveryConfigService.middleware as Middleware,
     ProductFeatureService.middleware as Middleware,
@@ -393,17 +540,28 @@ export const middlewares : Middleware[] = [
     RatingService.middleware as Middleware,
     ReactionService.middleware as Middleware,
     ReferralLinkService.middleware as Middleware,
+    RegisterTrustPolicyRequestService.middleware as Middleware,
+    RegisterTrustPolicyResponseService.middleware as Middleware,
     RequestPasswordResetRequestService.middleware as Middleware,
     RequestPasswordResetResponseService.middleware as Middleware,
     RequeueDeadLetterEntryRequestService.middleware as Middleware,
     RequeueDeadLetterEntryResponseService.middleware as Middleware,
     RetryPolicyService.middleware as Middleware,
+    RewrapTrustKeyRequestService.middleware as Middleware,
+    RewrapTrustKeyResponseService.middleware as Middleware,
     RoleService.middleware as Middleware,
+    RotateTrustKeyRequestService.middleware as Middleware,
+    RotateTrustKeyResponseService.middleware as Middleware,
     RunService.middleware as Middleware,
     SalesActivityService.middleware as Middleware,
     SalesOrderService.middleware as Middleware,
     SalesPipelineService.middleware as Middleware,
+    ScanBuildArtifacts200ResponseService.middleware as Middleware,
+    ScanBuildArtifactsRequestService.middleware as Middleware,
     SecureKeyService.middleware as Middleware,
+    SemanticIndexEntryService.middleware as Middleware,
+    ServiceInvocationEventService.middleware as Middleware,
+    ServiceSubscriptionService.middleware as Middleware,
     SheetService.middleware as Middleware,
     SheetColumnService.middleware as Middleware,
     SheetRowService.middleware as Middleware,
@@ -413,8 +571,13 @@ export const middlewares : Middleware[] = [
     SpaceFileService.middleware as Middleware,
     SpaceMemberService.middleware as Middleware,
     StackService.middleware as Middleware,
+    StartTrustExecutionRequestService.middleware as Middleware,
+    StartTrustExecutionResponseService.middleware as Middleware,
     StrategicPriorityService.middleware as Middleware,
+    SubmitTrustAttestationEvidenceRequestService.middleware as Middleware,
+    SubmitTrustAttestationEvidenceResponseService.middleware as Middleware,
     SubscriberListService.middleware as Middleware,
+    SubscriptionPlanService.middleware as Middleware,
     SwarmService.middleware as Middleware,
     SwarmAgentSummaryService.middleware as Middleware,
     SwarmCommandRequestService.middleware as Middleware,
@@ -429,13 +592,34 @@ export const middlewares : Middleware[] = [
     SwarmSecurityService.middleware as Middleware,
     SwarmUnregisterRequestService.middleware as Middleware,
     SwarmUnregisterResponseService.middleware as Middleware,
+    TagService.middleware as Middleware,
     TaskService.middleware as Middleware,
+    ThorapiRuleService.middleware as Middleware,
+    TrustService.middleware as Middleware,
+    TrustAttestationEvidenceService.middleware as Middleware,
+    TrustKeyService.middleware as Middleware,
+    TrustKeyProviderService.middleware as Middleware,
+    TrustKeyRotationService.middleware as Middleware,
+    TrustKeyVersionService.middleware as Middleware,
+    TrustMerkleBatchService.middleware as Middleware,
+    TrustObjectKeyEnvelopeService.middleware as Middleware,
+    TrustPolicyBindingService.middleware as Middleware,
+    TrustPolicyManifestService.middleware as Middleware,
+    TrustProofService.middleware as Middleware,
+    TrustRuntimeEventService.middleware as Middleware,
+    TrustRuntimeExecutionService.middleware as Middleware,
+    TrustSecretAccessEventService.middleware as Middleware,
+    TrustSecretLeaseService.middleware as Middleware,
+    TrustVerificationResultService.middleware as Middleware,
     TwoFactorSecretService.middleware as Middleware,
     UpdateFileRequestService.middleware as Middleware,
     UsageTransactionService.middleware as Middleware,
     UserPreferenceService.middleware as Middleware,
+    ValidateDeploymentSpec200ResponseService.middleware as Middleware,
     ValkyrJobService.middleware as Middleware,
     VerifyPhoneOTPRequestService.middleware as Middleware,
+    VerifyTrustProofRequestService.middleware as Middleware,
+    VerifyTrustProofResponseService.middleware as Middleware,
     VerifyTwoFactorRequestService.middleware as Middleware,
     VerifyTwoFactorResponseService.middleware as Middleware,
     WebsocketMessageService.middleware as Middleware,
@@ -445,6 +629,17 @@ export const middlewares : Middleware[] = [
     WorkbookService.middleware as Middleware,
     WorkflowService.middleware as Middleware,
     WorkflowExecutionService.middleware as Middleware,
+    WorkflowGraphEdgeService.middleware as Middleware,
+    WorkflowGraphEdgeConfigService.middleware as Middleware,
+    WorkflowGraphEdgeConnectionMappingService.middleware as Middleware,
+    WorkflowGraphModuleService.middleware as Middleware,
+    WorkflowGraphModuleMappingService.middleware as Middleware,
+    WorkflowGraphNodeService.middleware as Middleware,
+    WorkflowGraphNodeTaskMappingService.middleware as Middleware,
+    WorkflowGraphRequestService.middleware as Middleware,
+    WorkflowGraphResponseService.middleware as Middleware,
+    WorkflowGraphValidationErrorService.middleware as Middleware,
+    WorkflowGraphWorkflowDataService.middleware as Middleware,
     WorkflowStateService.middleware as Middleware,
 ];
 

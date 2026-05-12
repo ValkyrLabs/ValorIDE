@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetFileAuditLogListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchFileAuditLogByIdApiRequest {
+    id: string;
+    fileAuditLog: FileAuditLog;
 }
 
 export interface PostFileAuditLogApiRequest {
@@ -204,6 +208,60 @@ function getFileAuditLogListRaw<T>(requestParameters: GetFileAuditLogListApiRequ
 */
 export function getFileAuditLogList<T>(requestParameters: GetFileAuditLogListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<FileAuditLog>>): QueryConfig<T> {
     return getFileAuditLogListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing FileAuditLog.
+ * Partially update an existing FileAuditLog
+ */
+function patchFileAuditLogByIdRaw<T>(requestParameters: PatchFileAuditLogByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, FileAuditLog> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchFileAuditLogById.');
+    }
+
+    if (requestParameters.fileAuditLog === null || requestParameters.fileAuditLog === undefined) {
+        throw new runtime.RequiredError('fileAuditLog','Required parameter requestParameters.fileAuditLog was null or undefined when calling patchFileAuditLogById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/FileAuditLog/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || FileAuditLogToJSON(requestParameters.fileAuditLog),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(FileAuditLogFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing FileAuditLog.
+* Partially update an existing FileAuditLog
+*/
+export function patchFileAuditLogById<T>(requestParameters: PatchFileAuditLogByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, FileAuditLog>): QueryConfig<T> {
+    return patchFileAuditLogByIdRaw(requestParameters, requestConfig);
 }
 
 /**

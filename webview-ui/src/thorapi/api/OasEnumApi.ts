@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetOasEnumListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchOasEnumByIdApiRequest {
+    id: string;
+    oasEnum: OasEnum;
 }
 
 export interface PostOasEnumApiRequest {
@@ -204,6 +208,60 @@ function getOasEnumListRaw<T>(requestParameters: GetOasEnumListApiRequest, reque
 */
 export function getOasEnumList<T>(requestParameters: GetOasEnumListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<OasEnum>>): QueryConfig<T> {
     return getOasEnumListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing OasEnum.
+ * Partially update an existing OasEnum
+ */
+function patchOasEnumByIdRaw<T>(requestParameters: PatchOasEnumByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, OasEnum> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchOasEnumById.');
+    }
+
+    if (requestParameters.oasEnum === null || requestParameters.oasEnum === undefined) {
+        throw new runtime.RequiredError('oasEnum','Required parameter requestParameters.oasEnum was null or undefined when calling patchOasEnumById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/OasEnum/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || OasEnumToJSON(requestParameters.oasEnum),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OasEnumFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing OasEnum.
+* Partially update an existing OasEnum
+*/
+export function patchOasEnumById<T>(requestParameters: PatchOasEnumByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, OasEnum>): QueryConfig<T> {
+    return patchOasEnumByIdRaw(requestParameters, requestConfig);
 }
 
 /**

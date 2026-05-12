@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type PhoneVerificationResponse  = DataObject & {
      * @type {string}
      * @memberof PhoneVerificationResponse
      */
-    verificationId: string;
+    verificationId?: string;
     /**
      * Status
      * @type {string}
      * @memberof PhoneVerificationResponse
      */
-    status: PhoneVerificationResponseStatusEnum;
+    status?: PhoneVerificationResponseStatusEnum;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -109,8 +108,8 @@ export type PhoneVerificationResponse  = DataObject & {
 export function PhoneVerificationResponseFromJSON(json: any): PhoneVerificationResponse {
     return {
         ...DataObjectFromJSON(json),
-        'verificationId': json['verificationId'],
-        'status': json['status'],
+        'verificationId': !exists(json, 'verificationId') ? undefined : json['verificationId'],
+        'status': !exists(json, 'status') ? undefined : json['status'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),

@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetTaskListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchTaskByIdApiRequest {
+    id: string;
+    task: Task;
 }
 
 export interface PostTaskApiRequest {
@@ -204,6 +208,60 @@ function getTaskListRaw<T>(requestParameters: GetTaskListApiRequest, requestConf
 */
 export function getTaskList<T>(requestParameters: GetTaskListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Task>>): QueryConfig<T> {
     return getTaskListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing Task.
+ * Partially update an existing Task
+ */
+function patchTaskByIdRaw<T>(requestParameters: PatchTaskByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Task> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchTaskById.');
+    }
+
+    if (requestParameters.task === null || requestParameters.task === undefined) {
+        throw new runtime.RequiredError('task','Required parameter requestParameters.task was null or undefined when calling patchTaskById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Task/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || TaskToJSON(requestParameters.task),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(TaskFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing Task.
+* Partially update an existing Task
+*/
+export function patchTaskById<T>(requestParameters: PatchTaskByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Task>): QueryConfig<T> {
+    return patchTaskByIdRaw(requestParameters, requestConfig);
 }
 
 /**

@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,19 +42,13 @@ export type SwarmGraphEdge  = DataObject & {
      * @type {string}
      * @memberof SwarmGraphEdge
      */
-    source: string;
+    source?: string;
     /**
      * Node identifier where the edge terminates.
      * @type {string}
      * @memberof SwarmGraphEdge
      */
-    target: string;
-    /**
-     * Timestamp when the edge was recorded.
-     * @type {Date}
-     * @memberof SwarmGraphEdge
-     */
-    timestamp: Date;
+    target?: string;
     /**
      * Action, event type, or command identifier associated with the edge.
      * @type {string}
@@ -68,6 +61,12 @@ export type SwarmGraphEdge  = DataObject & {
      * @memberof SwarmGraphEdge
      */
     status?: string;
+    /**
+     * Timestamp when the edge was recorded.
+     * @type {Date}
+     * @memberof SwarmGraphEdge
+     */
+    timestamp?: Date;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -127,11 +126,11 @@ export type SwarmGraphEdge  = DataObject & {
 export function SwarmGraphEdgeFromJSON(json: any): SwarmGraphEdge {
     return {
         ...DataObjectFromJSON(json),
-        'source': json['source'],
-        'target': json['target'],
-        'timestamp': new Date(json['timestamp']),
+        'source': !exists(json, 'source') ? undefined : json['source'],
+        'target': !exists(json, 'target') ? undefined : json['target'],
         'action': !exists(json, 'action') ? undefined : json['action'],
         'status': !exists(json, 'status') ? undefined : json['status'],
+        'timestamp': !exists(json, 'timestamp') ? undefined : new Date(json['timestamp']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -152,9 +151,9 @@ export function SwarmGraphEdgeToJSON(value?: SwarmGraphEdge): any {
         ...DataObjectToJSON(value),
         'source': value.source,
         'target': value.target,
-        'timestamp': value.timestamp.toISOString(),
         'action': value.action,
         'status': value.status,
+        'timestamp': value.timestamp === undefined ? undefined : value.timestamp.toISOString(),
         'trashed': value.trashed,
     };
 }

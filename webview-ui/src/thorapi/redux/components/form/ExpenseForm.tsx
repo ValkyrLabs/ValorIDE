@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -88,12 +86,12 @@ const validationSchema = Yup.object().shape({
             }
             const parsed = new Date(originalValue);
             return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).required("expenseDate is required.").typeError("expenseDate must be a valid date"),
-        amount: asNumber(Yup.number().typeError("amount must be a number")).required("amount is required."),
+          }).typeError("expenseDate must be a valid date"),
+        amount: asNumber(Yup.number().typeError("amount must be a number")),
+        description: Yup.string(),
       category: Yup.mixed()
         .oneOf(CategoryValidation(), "Invalid value for category")
-        .required("category is required."),
-        description: Yup.string(),
+        ,
         trashed: Yup.boolean(),
 });
 
@@ -126,8 +124,8 @@ const ExpenseForm: React.FC = () => {
   const initialValues: Partial<Expense> = {
           expenseDate: new Date(),
           amount: 0,
-        category: undefined,
           description: '',
+        category: undefined,
           trashed: false,
   };
 
@@ -286,6 +284,39 @@ const ExpenseForm: React.FC = () => {
                       />
                     </label>
                     <br />
+                    <label htmlFor="description" className="nice-form-control">
+                      <b>
+                        Description:
+                        {touched.description &&
+                         !errors.description && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="description"
+                            value={values?.description}
+                            placeholder="Description"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="description"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="category" className="nice-form-control">
                       <b>
                         Category:
@@ -317,39 +348,6 @@ const ExpenseForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="category"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="description" className="nice-form-control">
-                      <b>
-                        Description:
-                        {touched.description &&
-                         !errors.description && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="description"
-                            value={values?.description}
-                            placeholder="Description"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="description"
                         component="span"
                       />
                     </label>

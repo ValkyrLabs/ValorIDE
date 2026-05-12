@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type JobSeeker  = DataObject & {
      * @type {string}
      * @memberof JobSeeker
      */
-    email: string;
+    email?: string;
     /**
      * Full name
      * @type {string}
      * @memberof JobSeeker
      */
-    fullName: string;
+    fullName?: string;
     /**
      * LinkedIn profile URL
      * @type {string}
@@ -105,11 +104,11 @@ export type JobSeeker  = DataObject & {
      */
     resumeParsedText?: string;
     /**
-     * Date of object creation
+     * When profile was created
      * @type {Date}
      * @memberof JobSeeker
      */
-    readonly createdDate?: Date;
+    createdDate?: Date;
     /**
      * When profile was last updated
      * @type {Date}
@@ -175,8 +174,8 @@ export type JobSeeker  = DataObject & {
 export function JobSeekerFromJSON(json: any): JobSeeker {
     return {
         ...DataObjectFromJSON(json),
-        'email': json['email'],
-        'fullName': json['fullName'],
+        'email': !exists(json, 'email') ? undefined : json['email'],
+        'fullName': !exists(json, 'fullName') ? undefined : json['fullName'],
         'linkedinUrl': !exists(json, 'linkedinUrl') ? undefined : json['linkedinUrl'],
         'currentRole': !exists(json, 'currentRole') ? undefined : json['currentRole'],
         'currentCompany': !exists(json, 'currentCompany') ? undefined : json['currentCompany'],
@@ -217,6 +216,7 @@ export function JobSeekerToJSON(value?: JobSeeker): any {
         'skills': value.skills,
         'resumeStorageUrl': value.resumeStorageUrl,
         'resumeParsedText': value.resumeParsedText,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
         'updatedDate': value.updatedDate === undefined ? undefined : value.updatedDate.toISOString(),
         'aiReadableProfile': value.aiReadableProfile,
         'trashed': value.trashed,

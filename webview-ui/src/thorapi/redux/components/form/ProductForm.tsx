@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -36,8 +35,8 @@ import { AclGrantRequest, PermissionType } from '@valkyr/component-library/Permi
 
 import {
   Product,
-  ProductStatusEnum,
   ProductTypeEnum,
+  ProductStatusEnum,
 } from '@thorapi/model';
 
 import { useAddProductMutation } from '../../services/ProductService';
@@ -50,7 +49,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -64,16 +62,6 @@ Represents a product or service in the CRM.
 /* -----------------------------------------------------
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
-const StatusValidation = () => {
-  return [
-    'pending',
-    'sale',
-    'clearance',
-    'available',
-    'discontinued',
-    'out_of_stock',
-  ];
-};
 const TypeValidation = () => {
   return [
     'physical',
@@ -90,6 +78,16 @@ const TypeValidation = () => {
     'other',
   ];
 };
+const StatusValidation = () => {
+  return [
+    'pending',
+    'sale',
+    'clearance',
+    'available',
+    'discontinued',
+    'out_of_stock',
+  ];
+};
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
@@ -98,17 +96,18 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        name: Yup.string().required("name is required."),
-        price: asNumber(Yup.number().typeError("price must be a number")).required("price is required."),
-      status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        .required("status is required."),
+        name: Yup.string(),
         description: Yup.string(),
+        price: asNumber(Yup.number().typeError("price must be a number")),
         salePrice: asNumber(Yup.number().typeError("salePrice must be a number")),
         taxRate: asNumber(Yup.number().typeError("taxRate must be a number")),
         duration: asNumber(Yup.number().typeError("duration must be a number")),
+        sku: Yup.string(),
       type: Yup.mixed()
         .oneOf(TypeValidation(), "Invalid value for type")
+        ,
+      status: Yup.mixed()
+        .oneOf(StatusValidation(), "Invalid value for status")
         ,
         countryOfOrigin: Yup.string(),
         trashed: Yup.boolean(),
@@ -142,13 +141,14 @@ const ProductForm: React.FC = () => {
   -------------------------------------------------------- */
   const initialValues: Partial<Product> = {
           name: '',
-          price: 0,
-        status: undefined,
           description: '',
+          price: 0,
           salePrice: 0,
           taxRate: 0,
           duration: 0,
+          sku: '',
         type: undefined,
+        status: undefined,
           countryOfOrigin: '',
           trashed: false,
   };
@@ -256,6 +256,39 @@ const ProductForm: React.FC = () => {
                       />
                     </label>
                     <br />
+                    <label htmlFor="description" className="nice-form-control">
+                      <b>
+                        Description:
+                        {touched.description &&
+                         !errors.description && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="description"
+                            value={values?.description}
+                            placeholder="Description"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="description"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="price" className="nice-form-control">
                       <b>
                         Price:
@@ -294,74 +327,6 @@ const ProductForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="price"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="status" className="nice-form-control">
-                      <b>
-                        Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="status"
-                          value={values.status || ''}
-                          className={
-                            errors.status
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Status" />
-                          <StatusLookup />
-                        </BSForm.Select>
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="status"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="description" className="nice-form-control">
-                      <b>
-                        Description:
-                        {touched.description &&
-                         !errors.description && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="description"
-                            value={values?.description}
-                            placeholder="Description"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="description"
                         component="span"
                       />
                     </label>
@@ -492,6 +457,39 @@ const ProductForm: React.FC = () => {
                       />
                     </label>
                     <br />
+                    <label htmlFor="sku" className="nice-form-control">
+                      <b>
+                        Sku:
+                        {touched.sku &&
+                         !errors.sku && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="sku"
+                            value={values?.sku}
+                            placeholder="Sku"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="sku"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="type" className="nice-form-control">
                       <b>
                         Type:
@@ -523,6 +521,41 @@ const ProductForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="type"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="status" className="nice-form-control">
+                      <b>
+                        Status:
+                        {touched.status &&
+                         !errors.status && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="status"
+                          value={values.status || ''}
+                          className={
+                            errors.status
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('status', true);
+                            setFieldValue('status', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Status" />
+                          <StatusLookup />
+                        </BSForm.Select>
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="status"
                         component="span"
                       />
                     </label>
@@ -657,28 +690,6 @@ const ProductForm: React.FC = () => {
 };
 
 /*
-lowercase statuslookup
-uppercase STATUSLOOKUP
-snakecase status_lookup
-pascalcase StatusLookup
-camelcase statusLookup
-kebabcase status-lookup
-*/
-
-const StatusLookup = () => {
-  return (
-    <>
-      <option value='pending' label="Pending" />
-      <option value='sale' label="Sale" />
-      <option value='clearance' label="Clearance" />
-      <option value='available' label="Available" />
-      <option value='discontinued' label="Discontinued" />
-      <option value='out_of_stock' label="Out Of Stock" />
-    </>
-  );
-};
-
-/*
 lowercase typelookup
 uppercase TYPELOOKUP
 snakecase type_lookup
@@ -702,6 +713,28 @@ const TypeLookup = () => {
       <option value='media' label="Media" />
       <option value='performance' label="Performance" />
       <option value='other' label="Other" />
+    </>
+  );
+};
+
+/*
+lowercase statuslookup
+uppercase STATUSLOOKUP
+snakecase status_lookup
+pascalcase StatusLookup
+camelcase statusLookup
+kebabcase status-lookup
+*/
+
+const StatusLookup = () => {
+  return (
+    <>
+      <option value='pending' label="Pending" />
+      <option value='sale' label="Sale" />
+      <option value='clearance' label="Clearance" />
+      <option value='available' label="Available" />
+      <option value='discontinued' label="Discontinued" />
+      <option value='out_of_stock' label="Out Of Stock" />
     </>
   );
 };

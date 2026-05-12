@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -32,9 +31,15 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 import {
 
 
+    ApiIdentityKpiSnapshot,
+    ApiIdentityKpiSnapshotFromJSON,
+    ApiIdentityKpiSnapshotToJSON,
     ApiMetricSnapshot,
     ApiMetricSnapshotFromJSON,
     ApiMetricSnapshotToJSON,
+    ApiSpineKpiSnapshot,
+    ApiSpineKpiSnapshotFromJSON,
+    ApiSpineKpiSnapshotToJSON,
     ApiTrafficEvent,
     ApiTrafficEventFromJSON,
     ApiTrafficEventToJSON,
@@ -61,6 +66,24 @@ export type ApiMetricsResponse  = DataObject & {
      * @memberof ApiMetricsResponse
      */
     recent?: Array<ApiTrafficEvent>;
+    /**
+     * KPI rollup grouped by customer/account identity.
+     * @type {Array<ApiIdentityKpiSnapshot>}
+     * @memberof ApiMetricsResponse
+     */
+    customerKpis?: Array<ApiIdentityKpiSnapshot>;
+    /**
+     * KPI rollup grouped by organization/tenant identity.
+     * @type {Array<ApiIdentityKpiSnapshot>}
+     * @memberof ApiMetricsResponse
+     */
+    organizationKpis?: Array<ApiIdentityKpiSnapshot>;
+    /**
+     * KPI rollup grouped by organization/customer composite key.
+     * @type {Array<ApiSpineKpiSnapshot>}
+     * @memberof ApiMetricsResponse
+     */
+    spineKpis?: Array<ApiSpineKpiSnapshot>;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -122,6 +145,9 @@ export function ApiMetricsResponseFromJSON(json: any): ApiMetricsResponse {
         ...DataObjectFromJSON(json),
         'endpoints': !exists(json, 'endpoints') ? undefined : (json['endpoints'] as Array<any>).map(ApiMetricSnapshotFromJSON),
         'recent': !exists(json, 'recent') ? undefined : (json['recent'] as Array<any>).map(ApiTrafficEventFromJSON),
+        'customerKpis': !exists(json, 'customerKpis') ? undefined : (json['customerKpis'] as Array<any>).map(ApiIdentityKpiSnapshotFromJSON),
+        'organizationKpis': !exists(json, 'organizationKpis') ? undefined : (json['organizationKpis'] as Array<any>).map(ApiIdentityKpiSnapshotFromJSON),
+        'spineKpis': !exists(json, 'spineKpis') ? undefined : (json['spineKpis'] as Array<any>).map(ApiSpineKpiSnapshotFromJSON),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -142,6 +168,9 @@ export function ApiMetricsResponseToJSON(value?: ApiMetricsResponse): any {
         ...DataObjectToJSON(value),
         'endpoints': value.endpoints === undefined ? undefined : (value.endpoints as Array<any>).map(ApiMetricSnapshotToJSON),
         'recent': value.recent === undefined ? undefined : (value.recent as Array<any>).map(ApiTrafficEventToJSON),
+        'customerKpis': value.customerKpis === undefined ? undefined : (value.customerKpis as Array<any>).map(ApiIdentityKpiSnapshotToJSON),
+        'organizationKpis': value.organizationKpis === undefined ? undefined : (value.organizationKpis as Array<any>).map(ApiIdentityKpiSnapshotToJSON),
+        'spineKpis': value.spineKpis === undefined ? undefined : (value.spineKpis as Array<any>).map(ApiSpineKpiSnapshotToJSON),
         'trashed': value.trashed,
     };
 }

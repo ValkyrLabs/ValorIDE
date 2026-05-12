@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -38,18 +37,6 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @interface ChatMessage
  */
 export type ChatMessage  = DataObject & {
-    /**
-     * The role of the message sender (system, user, or assistant).
-     * @type {string}
-     * @memberof ChatMessage
-     */
-    role: ChatMessageRoleEnum;
-    /**
-     * The chat text or prompt being sent to the LLM.
-     * @type {string}
-     * @memberof ChatMessage
-     */
-    content: string;
     /**
      * 
      * @type {string}
@@ -86,6 +73,18 @@ export type ChatMessage  = DataObject & {
      * @memberof ChatMessage
      */
     sourceOwner?: string;
+    /**
+     * The role of the message sender (system, user, or assistant).
+     * @type {string}
+     * @memberof ChatMessage
+     */
+    role?: ChatMessageRoleEnum;
+    /**
+     * The chat text or prompt being sent to the LLM.
+     * @type {string}
+     * @memberof ChatMessage
+     */
+    content?: string;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -145,14 +144,14 @@ export type ChatMessage  = DataObject & {
 export function ChatMessageFromJSON(json: any): ChatMessage {
     return {
         ...DataObjectFromJSON(json),
-        'role': json['role'],
-        'content': json['content'],
         'sessionId': !exists(json, 'sessionId') ? undefined : json['sessionId'],
         'chatCompletionRequestId': !exists(json, 'chatCompletionRequestId') ? undefined : json['chatCompletionRequestId'],
         'connected': !exists(json, 'connected') ? undefined : json['connected'],
         'json': !exists(json, 'json') ? undefined : json['json'],
         'sourceType': !exists(json, 'sourceType') ? undefined : json['sourceType'],
         'sourceOwner': !exists(json, 'sourceOwner') ? undefined : json['sourceOwner'],
+        'role': !exists(json, 'role') ? undefined : json['role'],
+        'content': !exists(json, 'content') ? undefined : json['content'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -171,14 +170,14 @@ export function ChatMessageToJSON(value?: ChatMessage): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'role': value.role,
-        'content': value.content,
         'sessionId': value.sessionId,
         'chatCompletionRequestId': value.chatCompletionRequestId,
         'connected': value.connected,
         'json': value.json,
         'sourceType': value.sourceType,
         'sourceOwner': value.sourceOwner,
+        'role': value.role,
+        'content': value.content,
         'trashed': value.trashed,
     };
 }
@@ -187,19 +186,19 @@ export function ChatMessageToJSON(value?: ChatMessage): any {
 * @export
 * @enum {string}
 */
-export enum ChatMessageRoleEnum {
-    SYSTEM = 'system',
-    USER = 'user',
-    ASSISTANT = 'assistant'
+export enum ChatMessageSourceTypeEnum {
+    API = 'api',
+    SERVERLOG = 'server_log',
+    P2P = 'p2p'
 }
 /**
 * @export
 * @enum {string}
 */
-export enum ChatMessageSourceTypeEnum {
-    API = 'api',
-    SERVERLOG = 'server_log',
-    P2P = 'p2p'
+export enum ChatMessageRoleEnum {
+    SYSTEM = 'system',
+    USER = 'user',
+    ASSISTANT = 'assistant'
 }
 
 

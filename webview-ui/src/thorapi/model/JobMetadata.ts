@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,25 +42,13 @@ export type JobMetadata  = DataObject & {
      * @type {string}
      * @memberof JobMetadata
      */
-    type: string;
+    type?: string;
     /**
      * 
      * @type {string}
      * @memberof JobMetadata
      */
-    status: JobMetadataStatusEnum;
-    /**
-     * 
-     * @type {Date}
-     * @memberof JobMetadata
-     */
-    createdAt: Date;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof JobMetadata
-     */
-    readonly id: string;
+    status?: JobMetadataStatusEnum;
     /**
      * 
      * @type {string}
@@ -85,12 +72,6 @@ export type JobMetadata  = DataObject & {
      * @type {Date}
      * @memberof JobMetadata
      */
-    updatedAt?: Date;
-    /**
-     * 
-     * @type {Date}
-     * @memberof JobMetadata
-     */
     startedAt?: Date;
     /**
      * 
@@ -104,6 +85,12 @@ export type JobMetadata  = DataObject & {
      * @memberof JobMetadata
      */
     idempotencyKey?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof JobMetadata
+     */
+    readonly id?: string;
     /**
      * UUID of owner of the object in the system
      * @type {string}
@@ -157,17 +144,15 @@ export type JobMetadata  = DataObject & {
 export function JobMetadataFromJSON(json: any): JobMetadata {
     return {
         ...DataObjectFromJSON(json),
-        'type': json['type'],
-        'status': json['status'],
-        'createdAt': new Date(json['createdAt']),
-        'id': json['id'],
+        'type': !exists(json, 'type') ? undefined : json['type'],
+        'status': !exists(json, 'status') ? undefined : json['status'],
         'inputJson': !exists(json, 'inputJson') ? undefined : json['inputJson'],
         'outputJson': !exists(json, 'outputJson') ? undefined : json['outputJson'],
         'error': !exists(json, 'error') ? undefined : json['error'],
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : new Date(json['updatedAt']),
         'startedAt': !exists(json, 'startedAt') ? undefined : new Date(json['startedAt']),
         'finishedAt': !exists(json, 'finishedAt') ? undefined : new Date(json['finishedAt']),
         'idempotencyKey': !exists(json, 'idempotencyKey') ? undefined : json['idempotencyKey'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
         'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
@@ -187,11 +172,9 @@ export function JobMetadataToJSON(value?: JobMetadata): any {
         ...DataObjectToJSON(value),
         'type': value.type,
         'status': value.status,
-        'createdAt': value.createdAt.toISOString(),
         'inputJson': value.inputJson,
         'outputJson': value.outputJson,
         'error': value.error,
-        'updatedAt': value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
         'startedAt': value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
         'finishedAt': value.finishedAt === undefined ? undefined : value.finishedAt.toISOString(),
         'idempotencyKey': value.idempotencyKey,

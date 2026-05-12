@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetMcpResourceResponseListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchMcpResourceResponseByIdApiRequest {
+    id: string;
+    mcpResourceResponse: McpResourceResponse;
 }
 
 export interface PostMcpResourceResponseApiRequest {
@@ -204,6 +208,60 @@ function getMcpResourceResponseListRaw<T>(requestParameters: GetMcpResourceRespo
 */
 export function getMcpResourceResponseList<T>(requestParameters: GetMcpResourceResponseListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<McpResourceResponse>>): QueryConfig<T> {
     return getMcpResourceResponseListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing McpResourceResponse.
+ * Partially update an existing McpResourceResponse
+ */
+function patchMcpResourceResponseByIdRaw<T>(requestParameters: PatchMcpResourceResponseByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpResourceResponse> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchMcpResourceResponseById.');
+    }
+
+    if (requestParameters.mcpResourceResponse === null || requestParameters.mcpResourceResponse === undefined) {
+        throw new runtime.RequiredError('mcpResourceResponse','Required parameter requestParameters.mcpResourceResponse was null or undefined when calling patchMcpResourceResponseById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/McpResourceResponse/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || McpResourceResponseToJSON(requestParameters.mcpResourceResponse),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpResourceResponseFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing McpResourceResponse.
+* Partially update an existing McpResourceResponse
+*/
+export function patchMcpResourceResponseById<T>(requestParameters: PatchMcpResourceResponseByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpResourceResponse>): QueryConfig<T> {
+    return patchMcpResourceResponseByIdRaw(requestParameters, requestConfig);
 }
 
 /**

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -50,7 +49,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -87,16 +85,16 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        name: Yup.string().required("name is required."),
+        name: Yup.string(),
+        applicationId: Yup.string(),
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
-        .required("status is required."),
-        projectPath: Yup.string().required("projectPath is required."),
-        mavenHome: Yup.string().required("mavenHome is required."),
-        applicationId: Yup.string(),
+        ,
+        projectPath: Yup.string(),
       testEnumCodegen: Yup.mixed()
         .oneOf(TestEnumCodegenValidation(), "Invalid value for testEnumCodegen")
         ,
+        mavenHome: Yup.string(),
         trashed: Yup.boolean(),
 });
 
@@ -128,11 +126,11 @@ const BuildForm: React.FC = () => {
   -------------------------------------------------------- */
   const initialValues: Partial<Build> = {
           name: '',
+          applicationId: '',
         status: undefined,
           projectPath: '',
-          mavenHome: '',
-          applicationId: '',
         testEnumCodegen: undefined,
+          mavenHome: '',
           trashed: false,
   };
 
@@ -239,6 +237,39 @@ const BuildForm: React.FC = () => {
                       />
                     </label>
                     <br />
+                    <label htmlFor="applicationId" className="nice-form-control">
+                      <b>
+                        Application Id:
+                        {touched.applicationId &&
+                         !errors.applicationId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="applicationId"
+                            value={values?.applicationId}
+                            placeholder="Application Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="applicationId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
@@ -307,72 +338,6 @@ const BuildForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="mavenHome" className="nice-form-control">
-                      <b>
-                        Maven Home:
-                        {touched.mavenHome &&
-                         !errors.mavenHome && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="mavenHome"
-                            value={values?.mavenHome}
-                            placeholder="Maven Home"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="mavenHome"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="applicationId" className="nice-form-control">
-                      <b>
-                        Application Id:
-                        {touched.applicationId &&
-                         !errors.applicationId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="applicationId"
-                            value={values?.applicationId}
-                            placeholder="Application Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="applicationId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="testEnumCodegen" className="nice-form-control">
                       <b>
                         Test Enum Codegen:
@@ -404,6 +369,39 @@ const BuildForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="testEnumCodegen"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="mavenHome" className="nice-form-control">
+                      <b>
+                        Maven Home:
+                        {touched.mavenHome &&
+                         !errors.mavenHome && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="mavenHome"
+                            value={values?.mavenHome}
+                            placeholder="Maven Home"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="mavenHome"
                         component="span"
                       />
                     </label>

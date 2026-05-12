@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -44,13 +43,13 @@ import {
 // thorapi
 
 /**
- * ValkyrAI Task object manages execution and state of automation workflows
+ * Transactional execution unit within a Workflow. ExecModules inside a Task execute sequentially. Branching and fan-out occur ONLY via TaskEdge. 
  * @export
  * @interface Task
  */
 export type Task  = DataObject & {
     /**
-     * Name of the task
+     * Task name
      * @type {string}
      * @memberof Task
      */
@@ -62,47 +61,41 @@ export type Task  = DataObject & {
      */
     description?: string;
     /**
-     * The workflow this state is participating in
-     * @type {string}
-     * @memberof Task
-     */
-    workflowId?: string;
-    /**
      * 
      * @type {Workflow}
      * @memberof Task
      */
     workflow?: Workflow;
     /**
-     * override the workflow role for specific task -login to a system- the role with permissions -temporary user is created
+     * Role override for this task
      * @type {string}
      * @memberof Task
      */
     role?: TaskRoleEnum;
     /**
-     * the order in which the module is executed (low to high)
+     * 
+     * @type {string}
+     * @memberof Task
+     */
+    priorityLevel?: TaskPriorityLevelEnum;
+    /**
+     * Deprecated. Do NOT use as graph truth. Task ordering is defined via TaskEdge. 
      * @type {number}
      * @memberof Task
      */
     taskOrder?: number;
     /**
-     * an array of ExecModules to be processed
+     * Linear sequence of ExecModule instances executed inside this task. 
      * @type {Array<ExecModule>}
      * @memberof Task
      */
     modules?: Array<ExecModule>;
     /**
-     * last known status of the task
+     * 
      * @type {string}
      * @memberof Task
      */
     status?: TaskStatusEnum;
-    /**
-     * priority level of the task
-     * @type {string}
-     * @memberof Task
-     */
-    priorityLevel?: TaskPriorityLevelEnum;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -164,13 +157,12 @@ export function TaskFromJSON(json: any): Task {
         ...DataObjectFromJSON(json),
         'name': !exists(json, 'name') ? undefined : json['name'],
         'description': !exists(json, 'description') ? undefined : json['description'],
-        'workflowId': !exists(json, 'workflowId') ? undefined : json['workflowId'],
         'workflow': !exists(json, 'workflow') ? undefined : WorkflowFromJSON(json['workflow']),
         'role': !exists(json, 'role') ? undefined : json['role'],
+        'priorityLevel': !exists(json, 'priorityLevel') ? undefined : json['priorityLevel'],
         'taskOrder': !exists(json, 'taskOrder') ? undefined : json['taskOrder'],
         'modules': !exists(json, 'modules') ? undefined : (json['modules'] as Array<any>).map(ExecModuleFromJSON),
         'status': !exists(json, 'status') ? undefined : json['status'],
-        'priorityLevel': !exists(json, 'priorityLevel') ? undefined : json['priorityLevel'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -191,13 +183,12 @@ export function TaskToJSON(value?: Task): any {
         ...DataObjectToJSON(value),
         'name': value.name,
         'description': value.description,
-        'workflowId': value.workflowId,
         'workflow': WorkflowToJSON(value.workflow),
         'role': value.role,
+        'priorityLevel': value.priorityLevel,
         'taskOrder': value.taskOrder,
         'modules': value.modules === undefined ? undefined : (value.modules as Array<any>).map(ExecModuleToJSON),
         'status': value.status,
-        'priorityLevel': value.priorityLevel,
         'trashed': value.trashed,
     };
 }
@@ -214,24 +205,24 @@ export enum TaskRoleEnum {
 * @export
 * @enum {string}
 */
-export enum TaskStatusEnum {
-    RUNNING = 'running',
-    STOPPED = 'stopped',
-    READY = 'ready',
-    GOOD = 'good',
-    WARNING = 'warning',
-    ERROR = 'error',
-    DISABLED = 'disabled'
-}
-/**
-* @export
-* @enum {string}
-*/
 export enum TaskPriorityLevelEnum {
     CRITICAL = 'critical',
     HIGH = 'high',
     NORMAL = 'normal',
     LOW = 'low'
+}
+/**
+* @export
+* @enum {string}
+*/
+export enum TaskStatusEnum {
+    READY = 'ready',
+    RUNNING = 'running',
+    STOPPED = 'stopped',
+    GOOD = 'good',
+    WARNING = 'warning',
+    ERROR = 'error',
+    DISABLED = 'disabled'
 }
 
 

@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -49,12 +48,6 @@ import {
  * @interface FileVersion
  */
 export type FileVersion  = DataObject & {
-    /**
-     * Identifier of the parent file record.
-     * @type {string}
-     * @memberof FileVersion
-     */
-    fileId: string;
     /**
      * Sequential version number.
      * @type {number}
@@ -98,23 +91,17 @@ export type FileVersion  = DataObject & {
      */
     contentType?: string;
     /**
-     * Description of what changed in this version.
-     * @type {string}
-     * @memberof FileVersion
-     */
-    changeLog?: string;
-    /**
-     * Principal responsible for producing this version.
-     * @type {string}
-     * @memberof FileVersion
-     */
-    createdById?: string;
-    /**
      * 
      * @type {Principal}
      * @memberof FileVersion
      */
     createdBy?: Principal;
+    /**
+     * Description of what changed in this version.
+     * @type {string}
+     * @memberof FileVersion
+     */
+    changeLog?: string;
     /**
      * Indicates whether this version matches FileRecord.currentVersionId.
      * @type {boolean}
@@ -180,7 +167,6 @@ export type FileVersion  = DataObject & {
 export function FileVersionFromJSON(json: any): FileVersion {
     return {
         ...DataObjectFromJSON(json),
-        'fileId': json['fileId'],
         'versionNumber': json['versionNumber'],
         'storageKey': json['storageKey'],
         'sizeBytes': json['sizeBytes'],
@@ -188,9 +174,8 @@ export function FileVersionFromJSON(json: any): FileVersion {
         'storageDriverId': !exists(json, 'storageDriverId') ? undefined : json['storageDriverId'],
         'checksumSha256': !exists(json, 'checksumSha256') ? undefined : json['checksumSha256'],
         'contentType': !exists(json, 'contentType') ? undefined : json['contentType'],
-        'changeLog': !exists(json, 'changeLog') ? undefined : json['changeLog'],
-        'createdById': !exists(json, 'createdById') ? undefined : json['createdById'],
         'createdBy': !exists(json, 'createdBy') ? undefined : PrincipalFromJSON(json['createdBy']),
+        'changeLog': !exists(json, 'changeLog') ? undefined : json['changeLog'],
         'isCurrent': !exists(json, 'isCurrent') ? undefined : json['isCurrent'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
@@ -210,7 +195,6 @@ export function FileVersionToJSON(value?: FileVersion): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'fileId': value.fileId,
         'versionNumber': value.versionNumber,
         'storageKey': value.storageKey,
         'sizeBytes': value.sizeBytes,
@@ -218,9 +202,8 @@ export function FileVersionToJSON(value?: FileVersion): any {
         'storageDriverId': value.storageDriverId,
         'checksumSha256': value.checksumSha256,
         'contentType': value.contentType,
-        'changeLog': value.changeLog,
-        'createdById': value.createdById,
         'createdBy': PrincipalToJSON(value.createdBy),
+        'changeLog': value.changeLog,
         'isCurrent': value.isCurrent,
         'trashed': value.trashed,
     };

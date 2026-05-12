@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetChartSeriesListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchChartSeriesByIdApiRequest {
+    id: string;
+    chartSeries: ChartSeries;
 }
 
 export interface PostChartSeriesApiRequest {
@@ -204,6 +208,60 @@ function getChartSeriesListRaw<T>(requestParameters: GetChartSeriesListApiReques
 */
 export function getChartSeriesList<T>(requestParameters: GetChartSeriesListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<ChartSeries>>): QueryConfig<T> {
     return getChartSeriesListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing ChartSeries.
+ * Partially update an existing ChartSeries
+ */
+function patchChartSeriesByIdRaw<T>(requestParameters: PatchChartSeriesByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, ChartSeries> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchChartSeriesById.');
+    }
+
+    if (requestParameters.chartSeries === null || requestParameters.chartSeries === undefined) {
+        throw new runtime.RequiredError('chartSeries','Required parameter requestParameters.chartSeries was null or undefined when calling patchChartSeriesById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ChartSeries/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || ChartSeriesToJSON(requestParameters.chartSeries),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ChartSeriesFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing ChartSeries.
+* Partially update an existing ChartSeries
+*/
+export function patchChartSeriesById<T>(requestParameters: PatchChartSeriesByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ChartSeries>): QueryConfig<T> {
+    return patchChartSeriesByIdRaw(requestParameters, requestConfig);
 }
 
 /**

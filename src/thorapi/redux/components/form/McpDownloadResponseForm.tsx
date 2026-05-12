@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -48,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -70,14 +68,14 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        githubUrl: Yup.string().required("githubUrl is required."),
-        name: Yup.string().required("name is required."),
-        author: Yup.string().required("author is required."),
-        description: Yup.string().required("description is required."),
-        requiresApiKey: Yup.boolean().required("requiresApiKey is required."),
         mcpId: Yup.string(),
+        githubUrl: Yup.string(),
+        name: Yup.string(),
+        author: Yup.string(),
+        description: Yup.string(),
         readmeContent: Yup.string(),
         llmsInstallationContent: Yup.string(),
+        requiresApiKey: Yup.boolean(),
         trashed: Yup.boolean(),
 });
 
@@ -108,14 +106,14 @@ const McpDownloadResponseForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<McpDownloadResponse> = {
+          mcpId: '',
           githubUrl: '',
           name: '',
           author: '',
           description: '',
-          requiresApiKey: false,
-          mcpId: '',
           readmeContent: '',
           llmsInstallationContent: '',
+          requiresApiKey: false,
           trashed: false,
   };
 
@@ -189,6 +187,39 @@ const McpDownloadResponseForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New McpDownloadResponse
                 </Accordion.Header>
                 <Accordion.Body>
+                    <label htmlFor="mcpId" className="nice-form-control">
+                      <b>
+                        Mcp Id:
+                        {touched.mcpId &&
+                         !errors.mcpId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="mcpId"
+                            value={values?.mcpId}
+                            placeholder="Mcp Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="mcpId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="githubUrl" className="nice-form-control">
                       <b>
                         Github Url:
@@ -321,76 +352,6 @@ const McpDownloadResponseForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="requiresApiKey" className="nice-form-control">
-                      <b>
-                        Requires Api Key:
-                        {touched.requiresApiKey &&
-                         !errors.requiresApiKey && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="requiresApiKey"
-                            name="requiresApiKey"
-                            checked={values.requiresApiKey || false}
-                            onChange={(e) => {
-                              setFieldTouched('requiresApiKey', true);
-                              setFieldValue('requiresApiKey', e.target.checked);
-                            }}
-                            isInvalid={!!errors.requiresApiKey}
-                            className={errors.requiresApiKey ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="requiresApiKey"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="mcpId" className="nice-form-control">
-                      <b>
-                        Mcp Id:
-                        {touched.mcpId &&
-                         !errors.mcpId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="mcpId"
-                            value={values?.mcpId}
-                            placeholder="Mcp Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="mcpId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="readmeContent" className="nice-form-control">
                       <b>
                         Readme Content:
@@ -453,6 +414,43 @@ const McpDownloadResponseForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="llmsInstallationContent"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="requiresApiKey" className="nice-form-control">
+                      <b>
+                        Requires Api Key:
+                        {touched.requiresApiKey &&
+                         !errors.requiresApiKey && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="requiresApiKey"
+                            name="requiresApiKey"
+                            checked={values.requiresApiKey || false}
+                            onChange={(e) => {
+                              setFieldTouched('requiresApiKey', true);
+                              setFieldValue('requiresApiKey', e.target.checked);
+                            }}
+                            isInvalid={!!errors.requiresApiKey}
+                            className={errors.requiresApiKey ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="requiresApiKey"
                         component="span"
                       />
                     </label>

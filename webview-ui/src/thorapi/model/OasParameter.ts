@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -70,12 +69,6 @@ export type OasParameter  = DataObject & {
      * @memberof OasParameter
      */
     description?: string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof OasParameter
-     */
-    required?: boolean;
     /**
      * 
      * @type {OasObjectSchema}
@@ -145,7 +138,6 @@ export function OasParameterFromJSON(json: any): OasParameter {
         'name': !exists(json, 'name') ? undefined : json['name'],
         'location': !exists(json, 'location') ? undefined : json['location'],
         'description': !exists(json, 'description') ? undefined : json['description'],
-        'required': !exists(json, 'required') ? undefined : json['required'],
         'schema': !exists(json, 'schema') ? undefined : OasObjectSchemaFromJSON(json['schema']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
@@ -169,7 +161,6 @@ export function OasParameterToJSON(value?: OasParameter): any {
         'name': value.name,
         'location': value.location,
         'description': value.description,
-        'required': value.required,
         'schema': OasObjectSchemaToJSON(value.schema),
         'trashed': value.trashed,
     };

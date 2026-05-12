@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -36,9 +35,9 @@ import { AclGrantRequest, PermissionType } from '@valkyr/component-library/Permi
 
 import {
   LlmDetails,
+  LlmDetailsRoleEnum,
   LlmDetailsProviderEnum,
   LlmDetailsApiTypeEnum,
-  LlmDetailsRoleEnum,
 } from '@thorapi/model';
 
 import { useAddLlmDetailsMutation } from '../../services/LlmDetailsService';
@@ -51,7 +50,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -65,16 +63,25 @@ Details about a Language Learning Model (LLM) including capabilities and configu
 /* -----------------------------------------------------
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
+const RoleValidation = () => {
+  return [
+    'user',
+    'assistant',
+  ];
+};
 const ProviderValidation = () => {
   return [
     'valkyrai',
     'openai',
-    'llama',
+    'ollama',
     'phi',
     'gemma',
     'mistral',
     'claude',
+    'grok',
     'gemini',
+    'moonshot',
+    'deepseek',
     'other',
     'chatgpt_pass_through',
   ];
@@ -83,13 +90,10 @@ const ApiTypeValidation = () => {
   return [
     'openai',
     'ollama',
+    'anthropic',
+    'grok',
+    'gemini',
     'other',
-  ];
-};
-const RoleValidation = () => {
-  return [
-    'user',
-    'assistant',
   ];
 };
 
@@ -100,17 +104,17 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        name: Yup.string().required("name is required."),
-      provider: Yup.mixed()
-        .oneOf(ProviderValidation(), "Invalid value for provider")
-        .required("provider is required."),
-      apiType: Yup.mixed()
-        .oneOf(ApiTypeValidation(), "Invalid value for apiType")
-        .required("apiType is required."),
+        name: Yup.string(),
         version: Yup.string(),
         notes: Yup.string(),
       role: Yup.mixed()
         .oneOf(RoleValidation(), "Invalid value for role")
+        ,
+      provider: Yup.mixed()
+        .oneOf(ProviderValidation(), "Invalid value for provider")
+        ,
+      apiType: Yup.mixed()
+        .oneOf(ApiTypeValidation(), "Invalid value for apiType")
         ,
         initialPrompt: Yup.string(),
         credential: Yup.string(),
@@ -157,11 +161,11 @@ const LlmDetailsForm: React.FC = () => {
   -------------------------------------------------------- */
   const initialValues: Partial<LlmDetails> = {
           name: '',
-        provider: undefined,
-        apiType: undefined,
           version: '',
           notes: '',
         role: undefined,
+        provider: undefined,
+        apiType: undefined,
           initialPrompt: '',
           credential: '',
           credentialPassword: '',
@@ -282,76 +286,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="provider" className="nice-form-control">
-                      <b>
-                        Provider:
-                        {touched.provider &&
-                         !errors.provider && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="provider"
-                          value={values.provider || ''}
-                          className={
-                            errors.provider
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('provider', true);
-                            setFieldValue('provider', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Provider" />
-                          <ProviderLookup />
-                        </BSForm.Select>
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="provider"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="apiType" className="nice-form-control">
-                      <b>
-                        Api Type:
-                        {touched.apiType &&
-                         !errors.apiType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="apiType"
-                          value={values.apiType || ''}
-                          className={
-                            errors.apiType
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('apiType', true);
-                            setFieldValue('apiType', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Api Type" />
-                          <ApiTypeLookup />
-                        </BSForm.Select>
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="apiType"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="version" className="nice-form-control">
                       <b>
                         Version:
@@ -449,6 +383,76 @@ const LlmDetailsForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="role"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="provider" className="nice-form-control">
+                      <b>
+                        Provider:
+                        {touched.provider &&
+                         !errors.provider && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="provider"
+                          value={values.provider || ''}
+                          className={
+                            errors.provider
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('provider', true);
+                            setFieldValue('provider', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Provider" />
+                          <ProviderLookup />
+                        </BSForm.Select>
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="provider"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="apiType" className="nice-form-control">
+                      <b>
+                        Api Type:
+                        {touched.apiType &&
+                         !errors.apiType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="apiType"
+                          value={values.apiType || ''}
+                          className={
+                            errors.apiType
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('apiType', true);
+                            setFieldValue('apiType', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Api Type" />
+                          <ApiTypeLookup />
+                        </BSForm.Select>
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="apiType"
                         component="span"
                       />
                     </label>
@@ -1063,6 +1067,24 @@ const LlmDetailsForm: React.FC = () => {
 };
 
 /*
+lowercase rolelookup
+uppercase ROLELOOKUP
+snakecase role_lookup
+pascalcase RoleLookup
+camelcase roleLookup
+kebabcase role-lookup
+*/
+
+const RoleLookup = () => {
+  return (
+    <>
+      <option value='user' label="User" />
+      <option value='assistant' label="Assistant" />
+    </>
+  );
+};
+
+/*
 lowercase providerlookup
 uppercase PROVIDERLOOKUP
 snakecase provider_lookup
@@ -1076,12 +1098,15 @@ const ProviderLookup = () => {
     <>
       <option value='valkyrai' label="Valkyrai" />
       <option value='openai' label="Openai" />
-      <option value='llama' label="Llama" />
+      <option value='ollama' label="Ollama" />
       <option value='phi' label="Phi" />
       <option value='gemma' label="Gemma" />
       <option value='mistral' label="Mistral" />
       <option value='claude' label="Claude" />
+      <option value='grok' label="Grok" />
       <option value='gemini' label="Gemini" />
+      <option value='moonshot' label="Moonshot" />
+      <option value='deepseek' label="Deepseek" />
       <option value='other' label="Other" />
       <option value='chatgpt_pass_through' label="Chatgpt Pass Through" />
     </>
@@ -1102,25 +1127,10 @@ const ApiTypeLookup = () => {
     <>
       <option value='openai' label="Openai" />
       <option value='ollama' label="Ollama" />
+      <option value='anthropic' label="Anthropic" />
+      <option value='grok' label="Grok" />
+      <option value='gemini' label="Gemini" />
       <option value='other' label="Other" />
-    </>
-  );
-};
-
-/*
-lowercase rolelookup
-uppercase ROLELOOKUP
-snakecase role_lookup
-pascalcase RoleLookup
-camelcase roleLookup
-kebabcase role-lookup
-*/
-
-const RoleLookup = () => {
-  return (
-    <>
-      <option value='user' label="User" />
-      <option value='assistant' label="Assistant" />
     </>
   );
 };

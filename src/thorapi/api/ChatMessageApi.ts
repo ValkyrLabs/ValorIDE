@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetChatMessageListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchChatMessageByIdApiRequest {
+    id: string;
+    chatMessage: ChatMessage;
 }
 
 export interface PostChatMessageApiRequest {
@@ -204,6 +208,60 @@ function getChatMessageListRaw<T>(requestParameters: GetChatMessageListApiReques
 */
 export function getChatMessageList<T>(requestParameters: GetChatMessageListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<ChatMessage>>): QueryConfig<T> {
     return getChatMessageListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing ChatMessage.
+ * Partially update an existing ChatMessage
+ */
+function patchChatMessageByIdRaw<T>(requestParameters: PatchChatMessageByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, ChatMessage> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchChatMessageById.');
+    }
+
+    if (requestParameters.chatMessage === null || requestParameters.chatMessage === undefined) {
+        throw new runtime.RequiredError('chatMessage','Required parameter requestParameters.chatMessage was null or undefined when calling patchChatMessageById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ChatMessage/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || ChatMessageToJSON(requestParameters.chatMessage),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ChatMessageFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing ChatMessage.
+* Partially update an existing ChatMessage
+*/
+export function patchChatMessageById<T>(requestParameters: PatchChatMessageByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ChatMessage>): QueryConfig<T> {
+    return patchChatMessageByIdRaw(requestParameters, requestConfig);
 }
 
 /**

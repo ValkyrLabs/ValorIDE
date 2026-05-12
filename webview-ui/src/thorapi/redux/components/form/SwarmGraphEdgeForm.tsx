@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -48,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -70,8 +68,10 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        source: Yup.string().required("source is required."),
-        target: Yup.string().required("target is required."),
+        source: Yup.string(),
+        target: Yup.string(),
+        action: Yup.string(),
+        status: Yup.string(),
         timestamp: Yup.date()
           .transform((value, originalValue) => {
             if (!originalValue) {
@@ -79,9 +79,7 @@ const validationSchema = Yup.object().shape({
             }
             const parsed = new Date(originalValue);
             return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).required("timestamp is required.").typeError("timestamp must be a valid date"),
-        action: Yup.string(),
-        status: Yup.string(),
+          }).typeError("timestamp must be a valid date"),
         trashed: Yup.boolean(),
 });
 
@@ -114,9 +112,9 @@ const SwarmGraphEdgeForm: React.FC = () => {
   const initialValues: Partial<SwarmGraphEdge> = {
           source: '',
           target: '',
-          timestamp: new Date(),
           action: '',
           status: '',
+          timestamp: new Date(),
           trashed: false,
   };
 
@@ -256,49 +254,6 @@ const SwarmGraphEdgeForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="timestamp" className="nice-form-control">
-                      <b>
-                        Timestamp:
-                        {touched.timestamp &&
-                         !errors.timestamp && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="timestamp"
-                            type="datetime-local"
-                            value={values.timestamp ? 
-                              new Date(values.timestamp).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('timestamp', true);
-                              const v = e.target.value;
-                              setFieldValue('timestamp', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.timestamp
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-                      <ErrorMessage
-                        className="error"
-                        name="timestamp"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="action" className="nice-form-control">
                       <b>
                         Action:
@@ -361,6 +316,49 @@ const SwarmGraphEdgeForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="status"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="timestamp" className="nice-form-control">
+                      <b>
+                        Timestamp:
+                        {touched.timestamp &&
+                         !errors.timestamp && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="timestamp"
+                            type="datetime-local"
+                            value={values.timestamp ? 
+                              new Date(values.timestamp).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('timestamp', true);
+                              const v = e.target.value;
+                              setFieldValue('timestamp', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.timestamp
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+                      <ErrorMessage
+                        className="error"
+                        name="timestamp"
                         component="span"
                       />
                     </label>

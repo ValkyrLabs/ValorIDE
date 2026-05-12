@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
@@ -19,6 +18,15 @@ import { SalesPipeline } from '@thorapi/model/SalesPipeline'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type SalesPipelineResponse = SalesPipeline[]
+
+const toSalesPipelineList = (result: unknown): SalesPipelineResponse => {
+  if (Array.isArray(result)) {
+    return result as SalesPipelineResponse
+  }
+
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as SalesPipelineResponse) : []
+}
 
 export const SalesPipelineService = createApi({
   reducerPath: 'SalesPipeline', // This should remain unique
@@ -33,13 +41,15 @@ export const SalesPipelineService = createApi({
         if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
         return `SalesPipeline?${q.join('&')}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'SalesPipeline' as const, id })),
-              { type: 'SalesPipeline', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toSalesPipelineList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'SalesPipeline' as const, id })),
+          { type: 'SalesPipeline', id: `PAGE_${page}` },
+        ]
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,13 +61,15 @@ export const SalesPipelineService = createApi({
         }
         return `SalesPipeline`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'SalesPipeline' as const, id })),
-              { type: 'SalesPipeline', id: 'LIST' },
-            ]
-          : [{ type: 'SalesPipeline', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toSalesPipelineList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'SalesPipeline' as const, id })),
+          { type: 'SalesPipeline', id: 'LIST' },
+        ]
+      },
     }),
 
     // 3) Create

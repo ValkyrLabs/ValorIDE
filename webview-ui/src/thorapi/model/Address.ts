@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -29,6 +28,14 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists, mapValues } from '../src/runtime';
 import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import {
+
+
+    Principal,
+    PrincipalFromJSON,
+    PrincipalToJSON,
+} from './';
+
 
 // thorapi
 
@@ -39,36 +46,6 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  */
 export type Address  = DataObject & {
     /**
-     * full name of addressee
-     * @type {string}
-     * @memberof Address
-     */
-    name: string;
-    /**
-     * street address line 1
-     * @type {string}
-     * @memberof Address
-     */
-    street1: string;
-    /**
-     * full name of city
-     * @type {string}
-     * @memberof Address
-     */
-    city: string;
-    /**
-     * State of residence 2-character code (USA)
-     * @type {string}
-     * @memberof Address
-     */
-    state: string;
-    /**
-     * 5+4 digit zip code
-     * @type {string}
-     * @memberof Address
-     */
-    postalCode: string;
-    /**
      * 
      * @type {boolean}
      * @memberof Address
@@ -76,10 +53,10 @@ export type Address  = DataObject & {
     hasWifi?: boolean;
     /**
      * 
-     * @type {string}
+     * @type {Principal}
      * @memberof Address
      */
-    principalId?: string;
+    principal?: Principal;
     /**
      * The type of address
      * @type {string}
@@ -99,17 +76,47 @@ export type Address  = DataObject & {
      */
     gpsCoordinateLong?: number;
     /**
+     * full name of addressee
+     * @type {string}
+     * @memberof Address
+     */
+    name?: string;
+    /**
+     * street address line 1
+     * @type {string}
+     * @memberof Address
+     */
+    street1?: string;
+    /**
      * street address line 2
      * @type {string}
      * @memberof Address
      */
     street2?: string;
     /**
+     * full name of city
+     * @type {string}
+     * @memberof Address
+     */
+    city?: string;
+    /**
+     * State of residence 2-character code (USA)
+     * @type {string}
+     * @memberof Address
+     */
+    state?: string;
+    /**
      * 3 character country code (upper case)
      * @type {string}
      * @memberof Address
      */
     country?: string;
+    /**
+     * 5+4 digit zip code
+     * @type {string}
+     * @memberof Address
+     */
+    postalCode?: string;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -169,18 +176,18 @@ export type Address  = DataObject & {
 export function AddressFromJSON(json: any): Address {
     return {
         ...DataObjectFromJSON(json),
-        'name': json['name'],
-        'street1': json['street1'],
-        'city': json['city'],
-        'state': json['state'],
-        'postalCode': json['postal_code'],
         'hasWifi': !exists(json, 'hasWifi') ? undefined : json['hasWifi'],
-        'principalId': !exists(json, 'principalId') ? undefined : json['principalId'],
+        'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
         'addressType': !exists(json, 'addressType') ? undefined : json['addressType'],
         'gpsCoordinateLat': !exists(json, 'gps_coordinate_lat') ? undefined : json['gps_coordinate_lat'],
         'gpsCoordinateLong': !exists(json, 'gps_coordinate_long') ? undefined : json['gps_coordinate_long'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'street1': !exists(json, 'street1') ? undefined : json['street1'],
         'street2': !exists(json, 'street2') ? undefined : json['street2'],
+        'city': !exists(json, 'city') ? undefined : json['city'],
+        'state': !exists(json, 'state') ? undefined : json['state'],
         'country': !exists(json, 'country') ? undefined : json['country'],
+        'postalCode': !exists(json, 'postal_code') ? undefined : json['postal_code'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -199,18 +206,18 @@ export function AddressToJSON(value?: Address): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'name': value.name,
-        'street1': value.street1,
-        'city': value.city,
-        'state': value.state,
-        'postal_code': value.postalCode,
         'hasWifi': value.hasWifi,
-        'principalId': value.principalId,
+        'principal': PrincipalToJSON(value.principal),
         'addressType': value.addressType,
         'gps_coordinate_lat': value.gpsCoordinateLat,
         'gps_coordinate_long': value.gpsCoordinateLong,
+        'name': value.name,
+        'street1': value.street1,
         'street2': value.street2,
+        'city': value.city,
+        'state': value.state,
         'country': value.country,
+        'postal_code': value.postalCode,
         'trashed': value.trashed,
     };
 }

@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type McpTransportConfig  = DataObject & {
      * @type {string}
      * @memberof McpTransportConfig
      */
-    mcpServerId: string;
+    mcpServerId?: string;
     /**
      * Transport mechanism for tool invocation: - STDIO: Local process with stdin/stdout communication - HTTP: REST API invocation - WEBSOCKET: WebSocket-based bidirectional communication - SSE: Server-Sent Events for streaming responses - LAMBDA: AWS Lambda function invocation - CUSTOM: Custom protocol via extensions 
      * @type {string}
      * @memberof McpTransportConfig
      */
-    transportType: McpTransportConfigTransportTypeEnum;
+    transportType?: McpTransportConfigTransportTypeEnum;
     /**
      * For STDIO transport - path to executable
      * @type {string}
@@ -157,8 +156,8 @@ export type McpTransportConfig  = DataObject & {
 export function McpTransportConfigFromJSON(json: any): McpTransportConfig {
     return {
         ...DataObjectFromJSON(json),
-        'mcpServerId': json['mcpServerId'],
-        'transportType': json['transportType'],
+        'mcpServerId': !exists(json, 'mcpServerId') ? undefined : json['mcpServerId'],
+        'transportType': !exists(json, 'transportType') ? undefined : json['transportType'],
         'executablePath': !exists(json, 'executablePath') ? undefined : json['executablePath'],
         'baseUrl': !exists(json, 'baseUrl') ? undefined : json['baseUrl'],
         'authHeaderName': !exists(json, 'authHeaderName') ? undefined : json['authHeaderName'],

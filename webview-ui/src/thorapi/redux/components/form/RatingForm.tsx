@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -89,12 +87,13 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        contentId: Yup.string().required("contentId is required."),
       targetType: Yup.mixed()
         .oneOf(TargetTypeValidation(), "Invalid value for targetType")
         ,
+        contentId: Yup.string(),
         comments: Yup.string(),
         url: Yup.string(),
+        rating: asNumber(Yup.number().typeError("rating must be a number")),
         trashed: Yup.boolean(),
 });
 
@@ -125,10 +124,11 @@ const RatingForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Rating> = {
-          contentId: '',
         targetType: undefined,
+          contentId: '',
           comments: '',
           url: '',
+          rating: 0,
           trashed: false,
   };
 
@@ -202,39 +202,6 @@ const RatingForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New Rating
                 </Accordion.Header>
                 <Accordion.Body>
-                    <label htmlFor="contentId" className="nice-form-control">
-                      <b>
-                        Content Id:
-                        {touched.contentId &&
-                         !errors.contentId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="contentId"
-                            value={values?.contentId}
-                            placeholder="Content Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="contentId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="targetType" className="nice-form-control">
                       <b>
                         Target Type:
@@ -266,6 +233,39 @@ const RatingForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="targetType"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="contentId" className="nice-form-control">
+                      <b>
+                        Content Id:
+                        {touched.contentId &&
+                         !errors.contentId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="contentId"
+                            value={values?.contentId}
+                            placeholder="Content Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="contentId"
                         component="span"
                       />
                     </label>
@@ -350,6 +350,23 @@ const RatingForm: React.FC = () => {
 
 
 
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="rating"
+                            type="number"
+                            step="any"
+                            value={values.rating || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('rating', true);
+                              const v = e.target.value;
+                              setFieldValue('rating', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.rating
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
 
 

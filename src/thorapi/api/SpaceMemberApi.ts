@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetSpaceMemberListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchSpaceMemberByIdApiRequest {
+    id: string;
+    spaceMember: SpaceMember;
 }
 
 export interface PostSpaceMemberApiRequest {
@@ -204,6 +208,60 @@ function getSpaceMemberListRaw<T>(requestParameters: GetSpaceMemberListApiReques
 */
 export function getSpaceMemberList<T>(requestParameters: GetSpaceMemberListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<SpaceMember>>): QueryConfig<T> {
     return getSpaceMemberListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing SpaceMember.
+ * Partially update an existing SpaceMember
+ */
+function patchSpaceMemberByIdRaw<T>(requestParameters: PatchSpaceMemberByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, SpaceMember> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchSpaceMemberById.');
+    }
+
+    if (requestParameters.spaceMember === null || requestParameters.spaceMember === undefined) {
+        throw new runtime.RequiredError('spaceMember','Required parameter requestParameters.spaceMember was null or undefined when calling patchSpaceMemberById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/SpaceMember/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || SpaceMemberToJSON(requestParameters.spaceMember),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SpaceMemberFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing SpaceMember.
+* Partially update an existing SpaceMember
+*/
+export function patchSpaceMemberById<T>(requestParameters: PatchSpaceMemberByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SpaceMember>): QueryConfig<T> {
+    return patchSpaceMemberByIdRaw(requestParameters, requestConfig);
 }
 
 /**

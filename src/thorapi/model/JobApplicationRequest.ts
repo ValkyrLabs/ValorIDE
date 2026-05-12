@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,19 +42,13 @@ export type JobApplicationRequest  = DataObject & {
      * @type {string}
      * @memberof JobApplicationRequest
      */
-    email: string;
+    email?: string;
     /**
      * Applicant full name
      * @type {string}
      * @memberof JobApplicationRequest
      */
-    fullName: string;
-    /**
-     * Pre-signed URL or metadata pointer to the uploaded resume asset (stored as TEXT; max 5MB payload)
-     * @type {string}
-     * @memberof JobApplicationRequest
-     */
-    resume: string;
+    fullName?: string;
     /**
      * LinkedIn profile URL
      * @type {string}
@@ -80,6 +73,12 @@ export type JobApplicationRequest  = DataObject & {
      * @memberof JobApplicationRequest
      */
     yearsExperience?: number;
+    /**
+     * Pre-signed URL or metadata pointer to the uploaded resume asset (stored as TEXT; max 5MB payload)
+     * @type {string}
+     * @memberof JobApplicationRequest
+     */
+    resume?: string;
     /**
      * Optional cover letter text
      * @type {string}
@@ -163,13 +162,13 @@ export type JobApplicationRequest  = DataObject & {
 export function JobApplicationRequestFromJSON(json: any): JobApplicationRequest {
     return {
         ...DataObjectFromJSON(json),
-        'email': json['email'],
-        'fullName': json['fullName'],
-        'resume': json['resume'],
+        'email': !exists(json, 'email') ? undefined : json['email'],
+        'fullName': !exists(json, 'fullName') ? undefined : json['fullName'],
         'linkedinUrl': !exists(json, 'linkedinUrl') ? undefined : json['linkedinUrl'],
         'currentRole': !exists(json, 'currentRole') ? undefined : json['currentRole'],
         'currentCompany': !exists(json, 'currentCompany') ? undefined : json['currentCompany'],
         'yearsExperience': !exists(json, 'yearsExperience') ? undefined : json['yearsExperience'],
+        'resume': !exists(json, 'resume') ? undefined : json['resume'],
         'coverLetter': !exists(json, 'coverLetter') ? undefined : json['coverLetter'],
         'opportunityId': !exists(json, 'opportunityId') ? undefined : json['opportunityId'],
         'preferredRoles': !exists(json, 'preferredRoles') ? undefined : json['preferredRoles'],
@@ -194,11 +193,11 @@ export function JobApplicationRequestToJSON(value?: JobApplicationRequest): any 
         ...DataObjectToJSON(value),
         'email': value.email,
         'fullName': value.fullName,
-        'resume': value.resume,
         'linkedinUrl': value.linkedinUrl,
         'currentRole': value.currentRole,
         'currentCompany': value.currentCompany,
         'yearsExperience': value.yearsExperience,
+        'resume': value.resume,
         'coverLetter': value.coverLetter,
         'opportunityId': value.opportunityId,
         'preferredRoles': value.preferredRoles,

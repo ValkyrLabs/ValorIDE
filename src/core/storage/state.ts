@@ -107,6 +107,7 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     openAiNativeApiKey,
     deepSeekApiKey,
     moonshotApiKey,
+    minimaxApiKey,
     requestyApiKey,
     requestyModelId,
     requestyModelInfo,
@@ -138,6 +139,7 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     previousModeReasoningEffort,
     qwenApiLine,
     moonshotApiLine,
+    minimaxApiLine,
     liteLlmApiKey,
     telemetrySetting,
     asksageApiKey,
@@ -201,6 +203,7 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     getSecret(context, "openAiNativeApiKey") as Promise<string | undefined>,
     getSecret(context, "deepSeekApiKey") as Promise<string | undefined>,
     getSecret(context, "moonshotApiKey") as Promise<string | undefined>,
+    getSecret(context, "minimaxApiKey") as Promise<string | undefined>,
     getSecret(context, "requestyApiKey") as Promise<string | undefined>,
     getGlobalState(context, "requestyModelId") as Promise<string | undefined>,
     getGlobalState(context, "requestyModelInfo") as Promise<
@@ -266,6 +269,7 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     >,
     getGlobalState(context, "qwenApiLine") as Promise<string | undefined>,
     getGlobalState(context, "moonshotApiLine") as Promise<string | undefined>,
+    getGlobalState(context, "minimaxApiLine") as Promise<string | undefined>,
     getSecret(context, "liteLlmApiKey") as Promise<string | undefined>,
     getGlobalState(context, "telemetrySetting") as Promise<
       TelemetrySetting | undefined
@@ -395,6 +399,7 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
       openAiNativeApiKey,
       deepSeekApiKey,
       moonshotApiKey,
+      minimaxApiKey,
       requestyApiKey,
       requestyModelId,
       requestyModelInfo,
@@ -402,6 +407,7 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
       togetherModelId,
       qwenApiKey,
       moonshotApiLine,
+      minimaxApiLine,
       qwenApiLine,
       doubaoApiKey,
       mistralApiKey,
@@ -488,6 +494,7 @@ export async function updateApiConfiguration(
     openAiNativeApiKey,
     deepSeekApiKey,
     moonshotApiKey,
+    minimaxApiKey,
     requestyApiKey,
     requestyModelId,
     requestyModelInfo,
@@ -495,6 +502,7 @@ export async function updateApiConfiguration(
     togetherModelId,
     qwenApiKey,
     moonshotApiLine,
+    minimaxApiLine,
     doubaoApiKey,
     mistralApiKey,
     azureApiVersion,
@@ -563,6 +571,7 @@ export async function updateApiConfiguration(
   await storeSecret(context, "openAiNativeApiKey", openAiNativeApiKey);
   await storeSecret(context, "deepSeekApiKey", deepSeekApiKey);
   await storeSecret(context, "moonshotApiKey", moonshotApiKey);
+  await storeSecret(context, "minimaxApiKey", minimaxApiKey);
   await storeSecret(context, "requestyApiKey", requestyApiKey);
   await storeSecret(context, "togetherApiKey", togetherApiKey);
   await storeSecret(context, "qwenApiKey", qwenApiKey);
@@ -592,6 +601,7 @@ export async function updateApiConfiguration(
   );
   await updateGlobalState(context, "qwenApiLine", qwenApiLine);
   await updateGlobalState(context, "moonshotApiLine", moonshotApiLine);
+  await updateGlobalState(context, "minimaxApiLine", minimaxApiLine);
   await updateGlobalState(context, "requestyModelId", requestyModelId);
   await updateGlobalState(context, "requestyModelInfo", requestyModelInfo);
   await updateGlobalState(context, "togetherModelId", togetherModelId);
@@ -627,6 +637,7 @@ export async function resetExtensionState(context: vscode.ExtensionContext) {
     "openAiNativeApiKey",
     "deepSeekApiKey",
     "moonshotApiKey",
+    "minimaxApiKey",
     "requestyApiKey",
     "togetherApiKey",
     "qwenApiKey",

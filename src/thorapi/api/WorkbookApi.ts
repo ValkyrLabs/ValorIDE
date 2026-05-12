@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetWorkbookListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchWorkbookByIdApiRequest {
+    id: string;
+    workbook: Workbook;
 }
 
 export interface PostWorkbookApiRequest {
@@ -204,6 +208,60 @@ function getWorkbookListRaw<T>(requestParameters: GetWorkbookListApiRequest, req
 */
 export function getWorkbookList<T>(requestParameters: GetWorkbookListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Workbook>>): QueryConfig<T> {
     return getWorkbookListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing Workbook.
+ * Partially update an existing Workbook
+ */
+function patchWorkbookByIdRaw<T>(requestParameters: PatchWorkbookByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Workbook> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchWorkbookById.');
+    }
+
+    if (requestParameters.workbook === null || requestParameters.workbook === undefined) {
+        throw new runtime.RequiredError('workbook','Required parameter requestParameters.workbook was null or undefined when calling patchWorkbookById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Workbook/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || WorkbookToJSON(requestParameters.workbook),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(WorkbookFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing Workbook.
+* Partially update an existing Workbook
+*/
+export function patchWorkbookById<T>(requestParameters: PatchWorkbookByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Workbook>): QueryConfig<T> {
+    return patchWorkbookByIdRaw(requestParameters, requestConfig);
 }
 
 /**

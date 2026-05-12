@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
@@ -19,6 +18,15 @@ import { ValkyrJob } from '@thorapi/model/ValkyrJob'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type ValkyrJobResponse = ValkyrJob[]
+
+const toValkyrJobList = (result: unknown): ValkyrJobResponse => {
+  if (Array.isArray(result)) {
+    return result as ValkyrJobResponse
+  }
+
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as ValkyrJobResponse) : []
+}
 
 export const ValkyrJobService = createApi({
   reducerPath: 'ValkyrJob', // This should remain unique
@@ -33,13 +41,15 @@ export const ValkyrJobService = createApi({
         if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
         return `ValkyrJob?${q.join('&')}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'ValkyrJob' as const, id })),
-              { type: 'ValkyrJob', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toValkyrJobList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'ValkyrJob' as const, id })),
+          { type: 'ValkyrJob', id: `PAGE_${page}` },
+        ]
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,13 +61,15 @@ export const ValkyrJobService = createApi({
         }
         return `ValkyrJob`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'ValkyrJob' as const, id })),
-              { type: 'ValkyrJob', id: 'LIST' },
-            ]
-          : [{ type: 'ValkyrJob', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toValkyrJobList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'ValkyrJob' as const, id })),
+          { type: 'ValkyrJob', id: 'LIST' },
+        ]
+      },
     }),
 
     // 3) Create

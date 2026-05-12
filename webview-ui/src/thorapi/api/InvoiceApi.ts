@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetInvoiceListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchInvoiceByIdApiRequest {
+    id: string;
+    invoice: Invoice;
 }
 
 export interface PostInvoiceApiRequest {
@@ -204,6 +208,60 @@ function getInvoiceListRaw<T>(requestParameters: GetInvoiceListApiRequest, reque
 */
 export function getInvoiceList<T>(requestParameters: GetInvoiceListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Invoice>>): QueryConfig<T> {
     return getInvoiceListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing Invoice.
+ * Partially update an existing Invoice
+ */
+function patchInvoiceByIdRaw<T>(requestParameters: PatchInvoiceByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Invoice> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchInvoiceById.');
+    }
+
+    if (requestParameters.invoice === null || requestParameters.invoice === undefined) {
+        throw new runtime.RequiredError('invoice','Required parameter requestParameters.invoice was null or undefined when calling patchInvoiceById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Invoice/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || InvoiceToJSON(requestParameters.invoice),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(InvoiceFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing Invoice.
+* Partially update an existing Invoice
+*/
+export function patchInvoiceById<T>(requestParameters: PatchInvoiceByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Invoice>): QueryConfig<T> {
+    return patchInvoiceByIdRaw(requestParameters, requestConfig);
 }
 
 /**

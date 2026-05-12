@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -50,12 +49,6 @@ import {
  */
 export type OrderFulfillmentTask  = DataObject & {
     /**
-     * SalesOrder being fulfilled.
-     * @type {string}
-     * @memberof OrderFulfillmentTask
-     */
-    salesOrderId: string;
-    /**
      * Fulfillment action type.
      * @type {string}
      * @memberof OrderFulfillmentTask
@@ -73,12 +66,6 @@ export type OrderFulfillmentTask  = DataObject & {
      * @memberof OrderFulfillmentTask
      */
     status?: OrderFulfillmentTaskStatusEnum;
-    /**
-     * ValkyrAI Workflow orchestrating this fulfillment (if async).
-     * @type {string}
-     * @memberof OrderFulfillmentTask
-     */
-    workflowId?: string;
     /**
      * 
      * @type {Workflow}
@@ -174,11 +161,9 @@ export type OrderFulfillmentTask  = DataObject & {
 export function OrderFulfillmentTaskFromJSON(json: any): OrderFulfillmentTask {
     return {
         ...DataObjectFromJSON(json),
-        'salesOrderId': json['salesOrderId'],
         'fulfillmentType': json['fulfillmentType'],
         'salesOrder': !exists(json, 'salesOrder') ? undefined : SalesOrderFromJSON(json['salesOrder']),
         'status': !exists(json, 'status') ? undefined : json['status'],
-        'workflowId': !exists(json, 'workflowId') ? undefined : json['workflowId'],
         'workflow': !exists(json, 'workflow') ? undefined : WorkflowFromJSON(json['workflow']),
         'assignedTo': !exists(json, 'assignedTo') ? undefined : json['assignedTo'],
         'attempts': !exists(json, 'attempts') ? undefined : json['attempts'],
@@ -203,11 +188,9 @@ export function OrderFulfillmentTaskToJSON(value?: OrderFulfillmentTask): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'salesOrderId': value.salesOrderId,
         'fulfillmentType': value.fulfillmentType,
         'salesOrder': SalesOrderToJSON(value.salesOrder),
         'status': value.status,
-        'workflowId': value.workflowId,
         'workflow': WorkflowToJSON(value.workflow),
         'assignedTo': value.assignedTo,
         'attempts': value.attempts,

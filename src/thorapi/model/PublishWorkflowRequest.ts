@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,19 +42,19 @@ export type PublishWorkflowRequest  = DataObject & {
      * @type {string}
      * @memberof PublishWorkflowRequest
      */
-    workflowId: string;
+    workflowId?: string;
     /**
      * Unique slug for the resulting MCP tool
      * @type {string}
      * @memberof PublishWorkflowRequest
      */
-    toolSlug: string;
+    toolSlug?: string;
     /**
      * Human-readable tool name
      * @type {string}
      * @memberof PublishWorkflowRequest
      */
-    displayName: string;
+    displayName?: string;
     /**
      * What the workflow does when invoked as a tool
      * @type {string}
@@ -151,9 +150,9 @@ export type PublishWorkflowRequest  = DataObject & {
 export function PublishWorkflowRequestFromJSON(json: any): PublishWorkflowRequest {
     return {
         ...DataObjectFromJSON(json),
-        'workflowId': json['workflowId'],
-        'toolSlug': json['toolSlug'],
-        'displayName': json['displayName'],
+        'workflowId': !exists(json, 'workflowId') ? undefined : json['workflowId'],
+        'toolSlug': !exists(json, 'toolSlug') ? undefined : json['toolSlug'],
+        'displayName': !exists(json, 'displayName') ? undefined : json['displayName'],
         'description': !exists(json, 'description') ? undefined : json['description'],
         'category': !exists(json, 'category') ? undefined : json['category'],
         'inputMapping': !exists(json, 'inputMapping') ? undefined : json['inputMapping'],

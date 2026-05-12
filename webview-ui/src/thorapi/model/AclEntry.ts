@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -54,31 +53,31 @@ export type AclEntry  = DataObject & {
      * @type {AclObjectIdentity}
      * @memberof AclEntry
      */
-    aclObjectIdentity: AclObjectIdentity;
+    aclObjectIdentity?: AclObjectIdentity;
     /**
      * Ordering within the ACL
      * @type {number}
      * @memberof AclEntry
      */
-    aceOrder: number;
+    aceOrder?: number;
     /**
      * 
      * @type {AclSid}
      * @memberof AclEntry
      */
-    aclSid: AclSid;
+    aclSid?: AclSid;
     /**
      * Bit mask representing the granted/denied permission(s)
      * @type {number}
      * @memberof AclEntry
      */
-    mask: number;
+    mask?: number;
     /**
      * true if this is a granting entry, false if denying
      * @type {boolean}
      * @memberof AclEntry
      */
-    granting: boolean;
+    granting?: boolean;
     /**
      * Audit on successful authorization
      * @type {boolean}
@@ -156,11 +155,11 @@ export type AclEntry  = DataObject & {
 export function AclEntryFromJSON(json: any): AclEntry {
     return {
         ...DataObjectFromJSON(json),
-        'aclObjectIdentity': AclObjectIdentityFromJSON(json['aclObjectIdentity']),
-        'aceOrder': json['aceOrder'],
-        'aclSid': AclSidFromJSON(json['aclSid']),
-        'mask': json['mask'],
-        'granting': json['granting'],
+        'aclObjectIdentity': !exists(json, 'aclObjectIdentity') ? undefined : AclObjectIdentityFromJSON(json['aclObjectIdentity']),
+        'aceOrder': !exists(json, 'aceOrder') ? undefined : json['aceOrder'],
+        'aclSid': !exists(json, 'aclSid') ? undefined : AclSidFromJSON(json['aclSid']),
+        'mask': !exists(json, 'mask') ? undefined : json['mask'],
+        'granting': !exists(json, 'granting') ? undefined : json['granting'],
         'auditSuccess': !exists(json, 'auditSuccess') ? undefined : json['auditSuccess'],
         'auditFailure': !exists(json, 'auditFailure') ? undefined : json['auditFailure'],
         'sid': !exists(json, 'sid') ? undefined : json['sid'],

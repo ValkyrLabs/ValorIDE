@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetWebsocketSessionListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchWebsocketSessionByIdApiRequest {
+    id: string;
+    websocketSession: WebsocketSession;
 }
 
 export interface PostWebsocketSessionApiRequest {
@@ -204,6 +208,60 @@ function getWebsocketSessionListRaw<T>(requestParameters: GetWebsocketSessionLis
 */
 export function getWebsocketSessionList<T>(requestParameters: GetWebsocketSessionListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<WebsocketSession>>): QueryConfig<T> {
     return getWebsocketSessionListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing WebsocketSession.
+ * Partially update an existing WebsocketSession
+ */
+function patchWebsocketSessionByIdRaw<T>(requestParameters: PatchWebsocketSessionByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, WebsocketSession> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchWebsocketSessionById.');
+    }
+
+    if (requestParameters.websocketSession === null || requestParameters.websocketSession === undefined) {
+        throw new runtime.RequiredError('websocketSession','Required parameter requestParameters.websocketSession was null or undefined when calling patchWebsocketSessionById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/WebsocketSession/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || WebsocketSessionToJSON(requestParameters.websocketSession),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(WebsocketSessionFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing WebsocketSession.
+* Partially update an existing WebsocketSession
+*/
+export function patchWebsocketSessionById<T>(requestParameters: PatchWebsocketSessionByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, WebsocketSession>): QueryConfig<T> {
+    return patchWebsocketSessionByIdRaw(requestParameters, requestConfig);
 }
 
 /**

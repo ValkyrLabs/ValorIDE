@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type ConsultingProfile  = DataObject & {
      * @type {string}
      * @memberof ConsultingProfile
      */
-    jobSeekerId: string;
+    jobSeekerId?: string;
     /**
      * Type of consulting engagement
      * @type {string}
      * @memberof ConsultingProfile
      */
-    consultingType: ConsultingProfileConsultingTypeEnum;
+    consultingType?: ConsultingProfileConsultingTypeEnum;
     /**
      * JSON array (stored as string) of specialization areas (e.g., [\"ThorAPI Implementation\"])
      * @type {string}
@@ -99,11 +98,11 @@ export type ConsultingProfile  = DataObject & {
      */
     availableStartDate?: Date;
     /**
-     * Date of object creation
+     * When consulting profile was created
      * @type {Date}
      * @memberof ConsultingProfile
      */
-    readonly createdDate?: Date;
+    createdDate?: Date;
     /**
      * Last update time
      * @type {Date}
@@ -163,8 +162,8 @@ export type ConsultingProfile  = DataObject & {
 export function ConsultingProfileFromJSON(json: any): ConsultingProfile {
     return {
         ...DataObjectFromJSON(json),
-        'jobSeekerId': json['jobSeekerId'],
-        'consultingType': json['consultingType'],
+        'jobSeekerId': !exists(json, 'jobSeekerId') ? undefined : json['jobSeekerId'],
+        'consultingType': !exists(json, 'consultingType') ? undefined : json['consultingType'],
         'expertiseAreas': !exists(json, 'expertiseAreas') ? undefined : json['expertiseAreas'],
         'maximumHourlyRate': !exists(json, 'maximumHourlyRate') ? undefined : json['maximumHourlyRate'],
         'minimumMonthlyCommitment': !exists(json, 'minimumMonthlyCommitment') ? undefined : json['minimumMonthlyCommitment'],
@@ -202,6 +201,7 @@ export function ConsultingProfileToJSON(value?: ConsultingProfile): any {
         'profileCompletionScore': value.profileCompletionScore,
         'isAvailable': value.isAvailable,
         'availableStartDate': value.availableStartDate === undefined ? undefined : value.availableStartDate.toISOString(),
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
         'updatedDate': value.updatedDate === undefined ? undefined : value.updatedDate.toISOString(),
         'trashed': value.trashed,
     };

@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetOpportunityListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchOpportunityByIdApiRequest {
+    id: string;
+    opportunity: Opportunity;
 }
 
 export interface PostOpportunityApiRequest {
@@ -204,6 +208,60 @@ function getOpportunityListRaw<T>(requestParameters: GetOpportunityListApiReques
 */
 export function getOpportunityList<T>(requestParameters: GetOpportunityListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Opportunity>>): QueryConfig<T> {
     return getOpportunityListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing Opportunity.
+ * Partially update an existing Opportunity
+ */
+function patchOpportunityByIdRaw<T>(requestParameters: PatchOpportunityByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Opportunity> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchOpportunityById.');
+    }
+
+    if (requestParameters.opportunity === null || requestParameters.opportunity === undefined) {
+        throw new runtime.RequiredError('opportunity','Required parameter requestParameters.opportunity was null or undefined when calling patchOpportunityById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Opportunity/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || OpportunityToJSON(requestParameters.opportunity),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OpportunityFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing Opportunity.
+* Partially update an existing Opportunity
+*/
+export function patchOpportunityById<T>(requestParameters: PatchOpportunityByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Opportunity>): QueryConfig<T> {
+    return patchOpportunityByIdRaw(requestParameters, requestConfig);
 }
 
 /**

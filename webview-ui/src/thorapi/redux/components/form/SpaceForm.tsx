@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -79,13 +77,12 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        name: Yup.string().required("name is required."),
+        name: Yup.string(),
+        description: Yup.string(),
       type: Yup.mixed()
         .oneOf(TypeValidation(), "Invalid value for type")
-        .required("type is required."),
-        description: Yup.string(),
+        ,
         settings: Yup.string(),
-        parentSpaceId: Yup.string(),
         isActive: Yup.boolean(),
         trashed: Yup.boolean(),
 });
@@ -118,10 +115,9 @@ const SpaceForm: React.FC = () => {
   -------------------------------------------------------- */
   const initialValues: Partial<Space> = {
           name: '',
-        type: undefined,
           description: '',
+        type: undefined,
           settings: '',
-          parentSpaceId: '',
           isActive: false,
           trashed: false,
   };
@@ -229,6 +225,39 @@ const SpaceForm: React.FC = () => {
                       />
                     </label>
                     <br />
+                    <label htmlFor="description" className="nice-form-control">
+                      <b>
+                        Description:
+                        {touched.description &&
+                         !errors.description && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="description"
+                            value={values?.description}
+                            placeholder="Description"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="description"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="type" className="nice-form-control">
                       <b>
                         Type:
@@ -264,39 +293,6 @@ const SpaceForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="description" className="nice-form-control">
-                      <b>
-                        Description:
-                        {touched.description &&
-                         !errors.description && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="description"
-                            value={values?.description}
-                            placeholder="Description"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="description"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="settings" className="nice-form-control">
                       <b>
                         Settings:
@@ -326,39 +322,6 @@ const SpaceForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="settings"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="parentSpaceId" className="nice-form-control">
-                      <b>
-                        Parent Space Id:
-                        {touched.parentSpaceId &&
-                         !errors.parentSpaceId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="parentSpaceId"
-                            value={values?.parentSpaceId}
-                            placeholder="Parent Space Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="parentSpaceId"
                         component="span"
                       />
                     </label>

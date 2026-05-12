@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -79,12 +77,9 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        spaceId: Yup.string().required("spaceId is required."),
-        principalId: Yup.string().required("principalId is required."),
       role: Yup.mixed()
         .oneOf(RoleValidation(), "Invalid value for role")
         .required("role is required."),
-        invitedById: Yup.string(),
         invitedAt: Yup.date()
           .transform((value, originalValue) => {
             if (!originalValue) {
@@ -131,10 +126,7 @@ const SpaceMemberForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<SpaceMember> = {
-          spaceId: '',
-          principalId: '',
         role: undefined,
-          invitedById: '',
           invitedAt: new Date(),
           acceptedAt: new Date(),
           trashed: false,
@@ -210,72 +202,6 @@ const SpaceMemberForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New SpaceMember
                 </Accordion.Header>
                 <Accordion.Body>
-                    <label htmlFor="spaceId" className="nice-form-control">
-                      <b>
-                        Space Id:
-                        {touched.spaceId &&
-                         !errors.spaceId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="spaceId"
-                            value={values?.spaceId}
-                            placeholder="Space Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="spaceId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="principalId" className="nice-form-control">
-                      <b>
-                        Principal Id:
-                        {touched.principalId &&
-                         !errors.principalId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="principalId"
-                            value={values?.principalId}
-                            placeholder="Principal Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="principalId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="role" className="nice-form-control">
                       <b>
                         Role:
@@ -307,39 +233,6 @@ const SpaceMemberForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="role"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="invitedById" className="nice-form-control">
-                      <b>
-                        Invited By Id:
-                        {touched.invitedById &&
-                         !errors.invitedById && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="invitedById"
-                            value={values?.invitedById}
-                            placeholder="Invited By Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="invitedById"
                         component="span"
                       />
                     </label>

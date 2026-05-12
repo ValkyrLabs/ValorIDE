@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -35,6 +34,9 @@ import {
     Principal,
     PrincipalFromJSON,
     PrincipalToJSON,
+    Space,
+    SpaceFromJSON,
+    SpaceToJSON,
 } from './';
 
 
@@ -47,18 +49,6 @@ import {
  */
 export type SpaceMember  = DataObject & {
     /**
-     * Identifier of the space this membership belongs to.
-     * @type {string}
-     * @memberof SpaceMember
-     */
-    spaceId: string;
-    /**
-     * Identifier of the principal granted access.
-     * @type {string}
-     * @memberof SpaceMember
-     */
-    principalId: string;
-    /**
      * Role granted within the space.
      * @type {string}
      * @memberof SpaceMember
@@ -66,16 +56,22 @@ export type SpaceMember  = DataObject & {
     role: SpaceMemberRoleEnum;
     /**
      * 
+     * @type {Space}
+     * @memberof SpaceMember
+     */
+    space?: Space;
+    /**
+     * 
      * @type {Principal}
      * @memberof SpaceMember
      */
     principal?: Principal;
     /**
-     * Principal who created the membership invitation.
-     * @type {string}
+     * 
+     * @type {Principal}
      * @memberof SpaceMember
      */
-    invitedById?: string;
+    invitedBy?: Principal;
     /**
      * Timestamp when the membership invitation was issued.
      * @type {Date}
@@ -147,11 +143,10 @@ export type SpaceMember  = DataObject & {
 export function SpaceMemberFromJSON(json: any): SpaceMember {
     return {
         ...DataObjectFromJSON(json),
-        'spaceId': json['spaceId'],
-        'principalId': json['principalId'],
         'role': json['role'],
+        'space': !exists(json, 'space') ? undefined : SpaceFromJSON(json['space']),
         'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
-        'invitedById': !exists(json, 'invitedById') ? undefined : json['invitedById'],
+        'invitedBy': !exists(json, 'invitedBy') ? undefined : PrincipalFromJSON(json['invitedBy']),
         'invitedAt': !exists(json, 'invitedAt') ? undefined : new Date(json['invitedAt']),
         'acceptedAt': !exists(json, 'acceptedAt') ? undefined : new Date(json['acceptedAt']),
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -172,11 +167,10 @@ export function SpaceMemberToJSON(value?: SpaceMember): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'spaceId': value.spaceId,
-        'principalId': value.principalId,
         'role': value.role,
+        'space': SpaceToJSON(value.space),
         'principal': PrincipalToJSON(value.principal),
-        'invitedById': value.invitedById,
+        'invitedBy': PrincipalToJSON(value.invitedBy),
         'invitedAt': value.invitedAt === undefined ? undefined : value.invitedAt.toISOString(),
         'acceptedAt': value.acceptedAt === undefined ? undefined : value.acceptedAt.toISOString(),
         'trashed': value.trashed,

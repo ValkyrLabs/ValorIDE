@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -50,7 +49,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -58,7 +56,7 @@ Template file: typescript-redux-query/modelForm.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 
 Description:
-Primary metadata for a stored file, including lifecycle and ownership context.
+Primary metadata for a stored file, including lifecycle and ownership context. Canonical article-media workflow stores upload output here first, then references the resulting file via ContentMediaLink.
 */
 
 /* -----------------------------------------------------
@@ -98,8 +96,6 @@ const validationSchema = Yup.object().shape({
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
         .required("status is required."),
-        organizationId: Yup.string(),
-        uploaderId: Yup.string(),
         spaceId: Yup.string(),
         mimeType: Yup.string(),
         checksumSha256: Yup.string(),
@@ -164,8 +160,6 @@ const FileRecordForm: React.FC = () => {
           filename: '',
           sizeBytes: 0,
         status: undefined,
-          organizationId: '',
-          uploaderId: '',
           spaceId: '',
           mimeType: '',
           checksumSha256: '',
@@ -423,72 +417,6 @@ const FileRecordForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="status"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="organizationId" className="nice-form-control">
-                      <b>
-                        Organization Id:
-                        {touched.organizationId &&
-                         !errors.organizationId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="organizationId"
-                            value={values?.organizationId}
-                            placeholder="Organization Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="organizationId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="uploaderId" className="nice-form-control">
-                      <b>
-                        Uploader Id:
-                        {touched.uploaderId &&
-                         !errors.uploaderId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="uploaderId"
-                            value={values?.uploaderId}
-                            placeholder="Uploader Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="uploaderId"
                         component="span"
                       />
                     </label>

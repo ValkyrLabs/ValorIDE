@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
@@ -19,6 +18,15 @@ import { McpMarketplaceItemTag } from '@thorapi/model/McpMarketplaceItemTag'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type McpMarketplaceItemTagResponse = McpMarketplaceItemTag[]
+
+const toMcpMarketplaceItemTagList = (result: unknown): McpMarketplaceItemTagResponse => {
+  if (Array.isArray(result)) {
+    return result as McpMarketplaceItemTagResponse
+  }
+
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as McpMarketplaceItemTagResponse) : []
+}
 
 export const McpMarketplaceItemTagService = createApi({
   reducerPath: 'McpMarketplaceItemTag', // This should remain unique
@@ -33,13 +41,15 @@ export const McpMarketplaceItemTagService = createApi({
         if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
         return `McpMarketplaceItemTag?${q.join('&')}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'McpMarketplaceItemTag' as const, id })),
-              { type: 'McpMarketplaceItemTag', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toMcpMarketplaceItemTagList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'McpMarketplaceItemTag' as const, id })),
+          { type: 'McpMarketplaceItemTag', id: `PAGE_${page}` },
+        ]
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,13 +61,15 @@ export const McpMarketplaceItemTagService = createApi({
         }
         return `McpMarketplaceItemTag`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'McpMarketplaceItemTag' as const, id })),
-              { type: 'McpMarketplaceItemTag', id: 'LIST' },
-            ]
-          : [{ type: 'McpMarketplaceItemTag', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toMcpMarketplaceItemTagList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'McpMarketplaceItemTag' as const, id })),
+          { type: 'McpMarketplaceItemTag', id: 'LIST' },
+        ]
+      },
     }),
 
     // 3) Create

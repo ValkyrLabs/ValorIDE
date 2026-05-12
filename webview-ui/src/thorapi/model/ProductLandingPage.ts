@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,19 +42,19 @@ export type ProductLandingPage  = DataObject & {
      * @type {string}
      * @memberof ProductLandingPage
      */
-    productId: string;
-    /**
-     * URL-friendly slug for the landing page
-     * @type {string}
-     * @memberof ProductLandingPage
-     */
-    slug: string;
+    productId?: string;
     /**
      * Landing page template type
      * @type {string}
      * @memberof ProductLandingPage
      */
     templateId?: ProductLandingPageTemplateIdEnum;
+    /**
+     * URL-friendly slug for the landing page
+     * @type {string}
+     * @memberof ProductLandingPage
+     */
+    slug?: string;
     /**
      * SEO meta title
      * @type {string}
@@ -157,9 +156,9 @@ export type ProductLandingPage  = DataObject & {
 export function ProductLandingPageFromJSON(json: any): ProductLandingPage {
     return {
         ...DataObjectFromJSON(json),
-        'productId': json['productId'],
-        'slug': json['slug'],
+        'productId': !exists(json, 'productId') ? undefined : json['productId'],
         'templateId': !exists(json, 'templateId') ? undefined : json['templateId'],
+        'slug': !exists(json, 'slug') ? undefined : json['slug'],
         'seoTitle': !exists(json, 'seoTitle') ? undefined : json['seoTitle'],
         'seoDescription': !exists(json, 'seoDescription') ? undefined : json['seoDescription'],
         'seoKeywords': !exists(json, 'seoKeywords') ? undefined : json['seoKeywords'],
@@ -186,8 +185,8 @@ export function ProductLandingPageToJSON(value?: ProductLandingPage): any {
     return {
         ...DataObjectToJSON(value),
         'productId': value.productId,
-        'slug': value.slug,
         'templateId': value.templateId,
+        'slug': value.slug,
         'seoTitle': value.seoTitle,
         'seoDescription': value.seoDescription,
         'seoKeywords': value.seoKeywords,

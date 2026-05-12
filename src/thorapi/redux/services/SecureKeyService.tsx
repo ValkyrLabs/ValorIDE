@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
@@ -19,6 +18,15 @@ import { SecureKey } from '@thorapi/model/SecureKey'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type SecureKeyResponse = SecureKey[]
+
+const toSecureKeyList = (result: unknown): SecureKeyResponse => {
+  if (Array.isArray(result)) {
+    return result as SecureKeyResponse
+  }
+
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as SecureKeyResponse) : []
+}
 
 export const SecureKeyService = createApi({
   reducerPath: 'SecureKey', // This should remain unique
@@ -33,13 +41,15 @@ export const SecureKeyService = createApi({
         if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
         return `SecureKey?${q.join('&')}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'SecureKey' as const, id })),
-              { type: 'SecureKey', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toSecureKeyList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'SecureKey' as const, id })),
+          { type: 'SecureKey', id: `PAGE_${page}` },
+        ]
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,13 +61,15 @@ export const SecureKeyService = createApi({
         }
         return `SecureKey`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'SecureKey' as const, id })),
-              { type: 'SecureKey', id: 'LIST' },
-            ]
-          : [{ type: 'SecureKey', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toSecureKeyList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'SecureKey' as const, id })),
+          { type: 'SecureKey', id: 'LIST' },
+        ]
+      },
     }),
 
     // 3) Create

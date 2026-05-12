@@ -19,6 +19,7 @@
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noUnusedLocals": false,
+    "downlevelIteration": true,
     "resolveJsonModule": true,
     "rootDir": ".",
     "skipLibCheck": true,

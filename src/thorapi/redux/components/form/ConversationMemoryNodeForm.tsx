@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -79,14 +77,14 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
+        chatMessageId: Yup.string(),
       messageRole: Yup.mixed()
         .oneOf(MessageRoleValidation(), "Invalid value for messageRole")
-        .required("messageRole is required."),
-        sequenceNo: asNumber(Yup.number().integer().typeError("sequenceNo must be a number")).required("sequenceNo is required."),
-        contentHash: Yup.string().required("contentHash is required."),
-        contentChars: asNumber(Yup.number().integer().typeError("contentChars must be a number")).required("contentChars is required."),
-        chatMessageId: Yup.string(),
+        ,
         sessionId: Yup.string(),
+        sequenceNo: asNumber(Yup.number().integer().typeError("sequenceNo must be a number")),
+        contentHash: Yup.string(),
+        contentChars: asNumber(Yup.number().integer().typeError("contentChars must be a number")),
         embeddingDimensions: asNumber(Yup.number().integer().typeError("embeddingDimensions must be a number")),
         embeddingChecksum: Yup.string(),
         keywordsText: Yup.string(),
@@ -123,12 +121,12 @@ const ConversationMemoryNodeForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ConversationMemoryNode> = {
+          chatMessageId: '',
         messageRole: undefined,
+          sessionId: '',
           sequenceNo: 0,
           contentHash: '',
           contentChars: 0,
-          chatMessageId: '',
-          sessionId: '',
           embeddingDimensions: 0,
           embeddingChecksum: '',
           keywordsText: '',
@@ -208,6 +206,39 @@ const ConversationMemoryNodeForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New ConversationMemoryNode
                 </Accordion.Header>
                 <Accordion.Body>
+                    <label htmlFor="chatMessageId" className="nice-form-control">
+                      <b>
+                        Chat Message Id:
+                        {touched.chatMessageId &&
+                         !errors.chatMessageId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="chatMessageId"
+                            value={values?.chatMessageId}
+                            placeholder="Chat Message Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="chatMessageId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="messageRole" className="nice-form-control">
                       <b>
                         Message Role:
@@ -239,6 +270,39 @@ const ConversationMemoryNodeForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="messageRole"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="sessionId" className="nice-form-control">
+                      <b>
+                        Session Id:
+                        {touched.sessionId &&
+                         !errors.sessionId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="sessionId"
+                            value={values?.sessionId}
+                            placeholder="Session Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="sessionId"
                         component="span"
                       />
                     </label>
@@ -379,72 +443,6 @@ const ConversationMemoryNodeForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="compressedPayload"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="chatMessageId" className="nice-form-control">
-                      <b>
-                        Chat Message Id:
-                        {touched.chatMessageId &&
-                         !errors.chatMessageId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="chatMessageId"
-                            value={values?.chatMessageId}
-                            placeholder="Chat Message Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="chatMessageId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="sessionId" className="nice-form-control">
-                      <b>
-                        Session Id:
-                        {touched.sessionId &&
-                         !errors.sessionId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="sessionId"
-                            value={values?.sessionId}
-                            placeholder="Session Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="sessionId"
                         component="span"
                       />
                     </label>

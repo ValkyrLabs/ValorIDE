@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetWorkflowListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchWorkflowByIdApiRequest {
+    id: string;
+    workflow: Workflow;
 }
 
 export interface PostWorkflowApiRequest {
@@ -204,6 +208,60 @@ function getWorkflowListRaw<T>(requestParameters: GetWorkflowListApiRequest, req
 */
 export function getWorkflowList<T>(requestParameters: GetWorkflowListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Workflow>>): QueryConfig<T> {
     return getWorkflowListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing Workflow.
+ * Partially update an existing Workflow
+ */
+function patchWorkflowByIdRaw<T>(requestParameters: PatchWorkflowByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Workflow> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchWorkflowById.');
+    }
+
+    if (requestParameters.workflow === null || requestParameters.workflow === undefined) {
+        throw new runtime.RequiredError('workflow','Required parameter requestParameters.workflow was null or undefined when calling patchWorkflowById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Workflow/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || WorkflowToJSON(requestParameters.workflow),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(WorkflowFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing Workflow.
+* Partially update an existing Workflow
+*/
+export function patchWorkflowById<T>(requestParameters: PatchWorkflowByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Workflow>): QueryConfig<T> {
+    return patchWorkflowByIdRaw(requestParameters, requestConfig);
 }
 
 /**

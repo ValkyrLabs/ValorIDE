@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -48,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -70,10 +68,8 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        buildId: Yup.string().required("buildId is required."),
-        success: Yup.boolean().required("success is required."),
-        output: Yup.string().required("output is required."),
         applicationId: Yup.string(),
+        buildId: Yup.string(),
         lastSuccessfulRun: Yup.date()
           .transform((value, originalValue) => {
             if (!originalValue) {
@@ -82,6 +78,8 @@ const validationSchema = Yup.object().shape({
             const parsed = new Date(originalValue);
             return Number.isNaN(parsed.getTime()) ? value : parsed;
           }).typeError("lastSuccessfulRun must be a valid date"),
+        success: Yup.boolean(),
+        output: Yup.string(),
         trashed: Yup.boolean(),
 });
 
@@ -112,11 +110,11 @@ const BuildOutputForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<BuildOutput> = {
+          applicationId: '',
           buildId: '',
+          lastSuccessfulRun: new Date(),
           success: false,
           output: '',
-          applicationId: '',
-          lastSuccessfulRun: new Date(),
           trashed: false,
   };
 
@@ -190,6 +188,39 @@ const BuildOutputForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New BuildOutput
                 </Accordion.Header>
                 <Accordion.Body>
+                    <label htmlFor="applicationId" className="nice-form-control">
+                      <b>
+                        Application Id:
+                        {touched.applicationId &&
+                         !errors.applicationId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="applicationId"
+                            value={values?.applicationId}
+                            placeholder="Application Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="applicationId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="buildId" className="nice-form-control">
                       <b>
                         Build Id:
@@ -219,6 +250,49 @@ const BuildOutputForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="buildId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="lastSuccessfulRun" className="nice-form-control">
+                      <b>
+                        Last Successful Run:
+                        {touched.lastSuccessfulRun &&
+                         !errors.lastSuccessfulRun && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+
+
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastSuccessfulRun"
+                            type="datetime-local"
+                            value={values.lastSuccessfulRun ? 
+                              new Date(values.lastSuccessfulRun).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastSuccessfulRun', true);
+                              const v = e.target.value;
+                              setFieldValue('lastSuccessfulRun', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastSuccessfulRun
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+                      <ErrorMessage
+                        className="error"
+                        name="lastSuccessfulRun"
                         component="span"
                       />
                     </label>
@@ -289,82 +363,6 @@ const BuildOutputForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="output"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="applicationId" className="nice-form-control">
-                      <b>
-                        Application Id:
-                        {touched.applicationId &&
-                         !errors.applicationId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="applicationId"
-                            value={values?.applicationId}
-                            placeholder="Application Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="applicationId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="lastSuccessfulRun" className="nice-form-control">
-                      <b>
-                        Last Successful Run:
-                        {touched.lastSuccessfulRun &&
-                         !errors.lastSuccessfulRun && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="lastSuccessfulRun"
-                            type="datetime-local"
-                            value={values.lastSuccessfulRun ? 
-                              new Date(values.lastSuccessfulRun).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('lastSuccessfulRun', true);
-                              const v = e.target.value;
-                              setFieldValue('lastSuccessfulRun', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.lastSuccessfulRun
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-                      <ErrorMessage
-                        className="error"
-                        name="lastSuccessfulRun"
                         component="span"
                       />
                     </label>

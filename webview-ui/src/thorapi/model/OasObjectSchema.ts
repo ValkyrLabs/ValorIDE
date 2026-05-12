@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -35,9 +34,6 @@ import {
     OasEnum,
     OasEnumFromJSON,
     OasEnumToJSON,
-    OasRequired,
-    OasRequiredFromJSON,
-    OasRequiredToJSON,
 } from './';
 
 
@@ -91,12 +87,6 @@ export type OasObjectSchema  = DataObject & {
      * @memberof OasObjectSchema
      */
     oasEnum?: Array<OasEnum>;
-    /**
-     * 
-     * @type {Array<OasRequired>}
-     * @memberof OasObjectSchema
-     */
-    required?: Array<OasRequired>;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -163,7 +153,6 @@ export function OasObjectSchemaFromJSON(json: any): OasObjectSchema {
         'type': !exists(json, 'type') ? undefined : json['type'],
         'format': !exists(json, 'format') ? undefined : json['format'],
         'oasEnum': !exists(json, 'oasEnum') ? undefined : (json['oasEnum'] as Array<any>).map(OasEnumFromJSON),
-        'required': !exists(json, 'required') ? undefined : (json['required'] as Array<any>).map(OasRequiredFromJSON),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -189,7 +178,6 @@ export function OasObjectSchemaToJSON(value?: OasObjectSchema): any {
         'type': value.type,
         'format': value.format,
         'oasEnum': value.oasEnum === undefined ? undefined : (value.oasEnum as Array<any>).map(OasEnumToJSON),
-        'required': value.required === undefined ? undefined : (value.required as Array<any>).map(OasRequiredToJSON),
         'trashed': value.trashed,
     };
 }

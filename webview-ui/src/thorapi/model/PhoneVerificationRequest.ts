@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,7 +42,7 @@ export type PhoneVerificationRequest  = DataObject & {
      * @type {string}
      * @memberof PhoneVerificationRequest
      */
-    phoneNumber: string;
+    phoneNumber?: string;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -103,7 +102,7 @@ export type PhoneVerificationRequest  = DataObject & {
 export function PhoneVerificationRequestFromJSON(json: any): PhoneVerificationRequest {
     return {
         ...DataObjectFromJSON(json),
-        'phoneNumber': json['phoneNumber'],
+        'phoneNumber': !exists(json, 'phoneNumber') ? undefined : json['phoneNumber'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),

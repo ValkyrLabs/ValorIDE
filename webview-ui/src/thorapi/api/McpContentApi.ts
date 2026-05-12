@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetMcpContentListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchMcpContentByIdApiRequest {
+    id: string;
+    mcpContent: McpContent;
 }
 
 export interface PostMcpContentApiRequest {
@@ -204,6 +208,60 @@ function getMcpContentListRaw<T>(requestParameters: GetMcpContentListApiRequest,
 */
 export function getMcpContentList<T>(requestParameters: GetMcpContentListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<McpContent>>): QueryConfig<T> {
     return getMcpContentListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing McpContent.
+ * Partially update an existing McpContent
+ */
+function patchMcpContentByIdRaw<T>(requestParameters: PatchMcpContentByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpContent> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchMcpContentById.');
+    }
+
+    if (requestParameters.mcpContent === null || requestParameters.mcpContent === undefined) {
+        throw new runtime.RequiredError('mcpContent','Required parameter requestParameters.mcpContent was null or undefined when calling patchMcpContentById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/McpContent/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || McpContentToJSON(requestParameters.mcpContent),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpContentFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing McpContent.
+* Partially update an existing McpContent
+*/
+export function patchMcpContentById<T>(requestParameters: PatchMcpContentByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpContent>): QueryConfig<T> {
+    return patchMcpContentByIdRaw(requestParameters, requestConfig);
 }
 
 /**

@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,7 +42,7 @@ export type HostInstance  = DataObject & {
      * @type {string}
      * @memberof HostInstance
      */
-    name: string;
+    name?: string;
     /**
      * Fully qualified domain (if registered with ALB/Route53)
      * @type {string}
@@ -151,7 +150,7 @@ export type HostInstance  = DataObject & {
 export function HostInstanceFromJSON(json: any): HostInstance {
     return {
         ...DataObjectFromJSON(json),
-        'name': json['name'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
         'domain': !exists(json, 'domain') ? undefined : json['domain'],
         'cluste': !exists(json, 'cluste') ? undefined : json['cluste'],
         'serviceArn': !exists(json, 'serviceArn') ? undefined : json['serviceArn'],

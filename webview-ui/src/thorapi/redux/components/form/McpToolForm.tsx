@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -50,7 +49,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -66,6 +64,7 @@ McpTool
 -------------------------------------------------------- */
 const CategoryValidation = () => {
   return [
+    'uncategorized',
     'cloud_platform',
     'devops',
     'security',
@@ -92,8 +91,8 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        name: Yup.string().required("name is required."),
         mcpServerId: Yup.string(),
+        name: Yup.string(),
         slug: Yup.string(),
         description: Yup.string(),
       category: Yup.mixed()
@@ -138,8 +137,8 @@ const McpToolForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<McpTool> = {
-          name: '',
           mcpServerId: '',
+          name: '',
           slug: '',
           description: '',
         category: undefined,
@@ -223,39 +222,6 @@ const McpToolForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New McpTool
                 </Accordion.Header>
                 <Accordion.Body>
-                    <label htmlFor="name" className="nice-form-control">
-                      <b>
-                        Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="name"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="mcpServerId" className="nice-form-control">
                       <b>
                         Mcp Server Id:
@@ -285,6 +251,39 @@ const McpToolForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="mcpServerId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="name" className="nice-form-control">
+                      <b>
+                        Name:
+                        {touched.name &&
+                         !errors.name && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="name"
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="name"
                         component="span"
                       />
                     </label>
@@ -743,6 +742,7 @@ kebabcase category-lookup
 const CategoryLookup = () => {
   return (
     <>
+      <option value='uncategorized' label="Uncategorized" />
       <option value='cloud_platform' label="Cloud Platform" />
       <option value='devops' label="Devops" />
       <option value='security' label="Security" />

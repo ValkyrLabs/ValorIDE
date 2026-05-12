@@ -18,7 +18,7 @@ function copyRecursive(src, dest) {
 if (!fs.existsSync(sourceDir)) {
   console.error(
     `[sync-webview-build] Expected build output not found at ${sourceDir}. ` +
-      "Run `yarn run build:webview` before syncing.",
+      "Run `npm run build:webview` before syncing.",
   );
   process.exit(1);
 }

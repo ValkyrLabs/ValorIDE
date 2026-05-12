@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -77,11 +76,11 @@ export type AgentHierarchy  = DataObject & {
      */
     maxChildren?: number;
     /**
-     * Date of object creation
+     * When the hierarchy record was created.
      * @type {Date}
      * @memberof AgentHierarchy
      */
-    readonly createdDate?: Date;
+    createdDate?: Date;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -163,6 +162,7 @@ export function AgentHierarchyToJSON(value?: AgentHierarchy): any {
         'childAgents': value.childAgents === undefined ? undefined : (value.childAgents as Array<any>).map(AgentToJSON),
         'depth': value.depth,
         'maxChildren': value.maxChildren,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
         'trashed': value.trashed,
     };
 }

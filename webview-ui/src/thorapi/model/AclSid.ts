@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type AclSid  = DataObject & {
      * @type {string}
      * @memberof AclSid
      */
-    sid: string;
+    sid?: string;
     /**
      * true if SID refers to a principal (username), false if it refers to a GrantedAuthority
      * @type {boolean}
      * @memberof AclSid
      */
-    principal: boolean;
+    principal?: boolean;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -109,8 +108,8 @@ export type AclSid  = DataObject & {
 export function AclSidFromJSON(json: any): AclSid {
     return {
         ...DataObjectFromJSON(json),
-        'sid': json['sid'],
-        'principal': json['principal'],
+        'sid': !exists(json, 'sid') ? undefined : json['sid'],
+        'principal': !exists(json, 'principal') ? undefined : json['principal'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),

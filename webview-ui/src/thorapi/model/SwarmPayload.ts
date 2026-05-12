@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type SwarmPayload  = DataObject & {
      * @type {string}
      * @memberof SwarmPayload
      */
-    action: string;
+    action?: string;
     /**
      * Action parameters.
      * @type {string}
      * @memberof SwarmPayload
      */
-    data: string;
+    data?: string;
     /**
      * Optional correlation metadata.
      * @type {string}
@@ -115,8 +114,8 @@ export type SwarmPayload  = DataObject & {
 export function SwarmPayloadFromJSON(json: any): SwarmPayload {
     return {
         ...DataObjectFromJSON(json),
-        'action': json['action'],
-        'data': json['data'],
+        'action': !exists(json, 'action') ? undefined : json['action'],
+        'data': !exists(json, 'data') ? undefined : json['data'],
         'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],

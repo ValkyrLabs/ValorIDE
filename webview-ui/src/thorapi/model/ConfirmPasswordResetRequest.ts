@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type ConfirmPasswordResetRequest  = DataObject & {
      * @type {string}
      * @memberof ConfirmPasswordResetRequest
      */
-    token: string;
+    token?: string;
     /**
      * New password (must meet security requirements)
      * @type {string}
      * @memberof ConfirmPasswordResetRequest
      */
-    newPassword: string;
+    newPassword?: string;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -109,8 +108,8 @@ export type ConfirmPasswordResetRequest  = DataObject & {
 export function ConfirmPasswordResetRequestFromJSON(json: any): ConfirmPasswordResetRequest {
     return {
         ...DataObjectFromJSON(json),
-        'token': json['token'],
-        'newPassword': json['newPassword'],
+        'token': !exists(json, 'token') ? undefined : json['token'],
+        'newPassword': !exists(json, 'newPassword') ? undefined : json['newPassword'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),

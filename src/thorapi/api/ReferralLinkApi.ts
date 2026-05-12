@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetReferralLinkListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchReferralLinkByIdApiRequest {
+    id: string;
+    referralLink: ReferralLink;
 }
 
 export interface PostReferralLinkApiRequest {
@@ -204,6 +208,60 @@ function getReferralLinkListRaw<T>(requestParameters: GetReferralLinkListApiRequ
 */
 export function getReferralLinkList<T>(requestParameters: GetReferralLinkListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<ReferralLink>>): QueryConfig<T> {
     return getReferralLinkListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing ReferralLink.
+ * Partially update an existing ReferralLink
+ */
+function patchReferralLinkByIdRaw<T>(requestParameters: PatchReferralLinkByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, ReferralLink> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchReferralLinkById.');
+    }
+
+    if (requestParameters.referralLink === null || requestParameters.referralLink === undefined) {
+        throw new runtime.RequiredError('referralLink','Required parameter requestParameters.referralLink was null or undefined when calling patchReferralLinkById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ReferralLink/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || ReferralLinkToJSON(requestParameters.referralLink),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ReferralLinkFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing ReferralLink.
+* Partially update an existing ReferralLink
+*/
+export function patchReferralLinkById<T>(requestParameters: PatchReferralLinkByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ReferralLink>): QueryConfig<T> {
+    return patchReferralLinkByIdRaw(requestParameters, requestConfig);
 }
 
 /**

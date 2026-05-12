@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,7 +42,7 @@ export type VerifyTwoFactorResponse  = DataObject & {
      * @type {boolean}
      * @memberof VerifyTwoFactorResponse
      */
-    verified: boolean;
+    verified?: boolean;
     /**
      * Status message
      * @type {string}
@@ -115,7 +114,7 @@ export type VerifyTwoFactorResponse  = DataObject & {
 export function VerifyTwoFactorResponseFromJSON(json: any): VerifyTwoFactorResponse {
     return {
         ...DataObjectFromJSON(json),
-        'verified': json['verified'],
+        'verified': !exists(json, 'verified') ? undefined : json['verified'],
         'message': !exists(json, 'message') ? undefined : json['message'],
         'remainingBackupCodes': !exists(json, 'remainingBackupCodes') ? undefined : json['remainingBackupCodes'],
         'id': !exists(json, 'id') ? undefined : json['id'],

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -50,7 +49,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -92,7 +90,7 @@ const asNumber = (schema: Yup.NumberSchema) =>
 const validationSchema = Yup.object().shape({
       type: Yup.mixed()
         .oneOf(TypeValidation(), "Invalid value for type")
-        .required("type is required."),
+        ,
         timestamp: Yup.date()
           .transform((value, originalValue) => {
             if (!originalValue) {
@@ -100,7 +98,7 @@ const validationSchema = Yup.object().shape({
             }
             const parsed = new Date(originalValue);
             return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).required("timestamp is required.").typeError("timestamp must be a valid date"),
+          }).typeError("timestamp must be a valid date"),
         ackId: Yup.string(),
         ttl: asNumber(Yup.number().integer().typeError("ttl must be a number")),
       priority: Yup.mixed()

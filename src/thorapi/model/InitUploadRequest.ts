@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,19 +42,19 @@ export type InitUploadRequest  = DataObject & {
      * @type {string}
      * @memberof InitUploadRequest
      */
-    filename: string;
+    filename?: string;
     /**
      * 
      * @type {string}
      * @memberof InitUploadRequest
      */
-    mimeType: string;
+    mimeType?: string;
     /**
      * 
      * @type {number}
      * @memberof InitUploadRequest
      */
-    sizeBytes: number;
+    sizeBytes?: number;
     /**
      * 
      * @type {string}
@@ -127,9 +126,9 @@ export type InitUploadRequest  = DataObject & {
 export function InitUploadRequestFromJSON(json: any): InitUploadRequest {
     return {
         ...DataObjectFromJSON(json),
-        'filename': json['filename'],
-        'mimeType': json['mimeType'],
-        'sizeBytes': json['sizeBytes'],
+        'filename': !exists(json, 'filename') ? undefined : json['filename'],
+        'mimeType': !exists(json, 'mimeType') ? undefined : json['mimeType'],
+        'sizeBytes': !exists(json, 'sizeBytes') ? undefined : json['sizeBytes'],
         'spaceId': !exists(json, 'spaceId') ? undefined : json['spaceId'],
         'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
         'id': !exists(json, 'id') ? undefined : json['id'],

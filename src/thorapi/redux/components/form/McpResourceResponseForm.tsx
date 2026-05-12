@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -48,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -70,8 +68,8 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        uri: Yup.string().required("uri is required."),
         mcpResourceResponseId: Yup.string(),
+        uri: Yup.string(),
         mimeType: Yup.string(),
         text: Yup.string(),
         binaryContent: Yup.string(),
@@ -105,8 +103,8 @@ const McpResourceResponseForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<McpResourceResponse> = {
-          uri: '',
           mcpResourceResponseId: '',
+          uri: '',
           mimeType: '',
           text: '',
           binaryContent: '',
@@ -183,39 +181,6 @@ const McpResourceResponseForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New McpResourceResponse
                 </Accordion.Header>
                 <Accordion.Body>
-                    <label htmlFor="uri" className="nice-form-control">
-                      <b>
-                        Uri:
-                        {touched.uri &&
-                         !errors.uri && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="uri"
-                            value={values?.uri}
-                            placeholder="Uri"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="uri"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="mcpResourceResponseId" className="nice-form-control">
                       <b>
                         Mcp Resource Response Id:
@@ -245,6 +210,39 @@ const McpResourceResponseForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="mcpResourceResponseId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="uri" className="nice-form-control">
+                      <b>
+                        Uri:
+                        {touched.uri &&
+                         !errors.uri && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="uri"
+                            value={values?.uri}
+                            placeholder="Uri"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="uri"
                         component="span"
                       />
                     </label>

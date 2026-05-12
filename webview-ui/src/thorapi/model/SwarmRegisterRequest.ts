@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,7 +42,7 @@ export type SwarmRegisterRequest  = DataObject & {
      * @type {string}
      * @memberof SwarmRegisterRequest
      */
-    instanceId: string;
+    instanceId?: string;
     /**
      * Arbitrary metadata describing the agent.
      * @type {string}
@@ -109,7 +108,7 @@ export type SwarmRegisterRequest  = DataObject & {
 export function SwarmRegisterRequestFromJSON(json: any): SwarmRegisterRequest {
     return {
         ...DataObjectFromJSON(json),
-        'instanceId': json['instanceId'],
+        'instanceId': !exists(json, 'instanceId') ? undefined : json['instanceId'],
         'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],

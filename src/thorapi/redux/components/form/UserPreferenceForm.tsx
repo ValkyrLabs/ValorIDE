@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -80,11 +78,10 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        principalId: Yup.string().required("principalId is required."),
-        preference: Yup.string().required("preference is required."),
+        preference: Yup.string(),
       preferenceType: Yup.mixed()
         .oneOf(PreferenceTypeValidation(), "Invalid value for preferenceType")
-        .required("preferenceType is required."),
+        ,
         trashed: Yup.boolean(),
 });
 
@@ -115,7 +112,6 @@ const UserPreferenceForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<UserPreference> = {
-          principalId: '',
           preference: '',
         preferenceType: undefined,
           trashed: false,
@@ -191,39 +187,6 @@ const UserPreferenceForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New UserPreference
                 </Accordion.Header>
                 <Accordion.Body>
-                    <label htmlFor="principalId" className="nice-form-control">
-                      <b>
-                        Principal Id:
-                        {touched.principalId &&
-                         !errors.principalId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="principalId"
-                            value={values?.principalId}
-                            placeholder="Principal Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="principalId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="preference" className="nice-form-control">
                       <b>
                         Preference:

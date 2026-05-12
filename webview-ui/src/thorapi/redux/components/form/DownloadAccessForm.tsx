@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -48,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -70,8 +68,6 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        digitalAssetId: Yup.string().required("digitalAssetId is required."),
-        principalId: Yup.string().required("principalId is required."),
         salesOrderLineItemId: Yup.string().required("salesOrderLineItemId is required."),
         downloadToken: Yup.string(),
         downloadCount: asNumber(Yup.number().integer().typeError("downloadCount must be a number")),
@@ -139,8 +135,6 @@ const DownloadAccessForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<DownloadAccess> = {
-          digitalAssetId: '',
-          principalId: '',
           salesOrderLineItemId: '',
           downloadToken: '',
           downloadCount: 0,
@@ -223,72 +217,6 @@ const DownloadAccessForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New DownloadAccess
                 </Accordion.Header>
                 <Accordion.Body>
-                    <label htmlFor="digitalAssetId" className="nice-form-control">
-                      <b>
-                        Digital Asset Id:
-                        {touched.digitalAssetId &&
-                         !errors.digitalAssetId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="digitalAssetId"
-                            value={values?.digitalAssetId}
-                            placeholder="Digital Asset Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="digitalAssetId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="principalId" className="nice-form-control">
-                      <b>
-                        Principal Id:
-                        {touched.principalId &&
-                         !errors.principalId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="principalId"
-                            value={values?.principalId}
-                            placeholder="Principal Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="principalId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="salesOrderLineItemId" className="nice-form-control">
                       <b>
                         Sales Order Line Item Id:

@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -54,22 +53,16 @@ export type Discount  = DataObject & {
     code?: string;
     /**
      * 
-     * @type {string}
+     * @type {Product}
      * @memberof Discount
      */
-    lineItemId?: string;
+    lineItem?: Product;
     /**
      * whether this discount is applied to an entire order
      * @type {boolean}
      * @memberof Discount
      */
     orderDiscount?: boolean;
-    /**
-     * 
-     * @type {Product}
-     * @memberof Discount
-     */
-    lineItem?: Product;
     /**
      * 
      * @type {string}
@@ -142,9 +135,8 @@ export function DiscountFromJSON(json: any): Discount {
     return {
         ...DataObjectFromJSON(json),
         'code': !exists(json, 'code') ? undefined : json['code'],
-        'lineItemId': !exists(json, 'lineItemId') ? undefined : json['lineItemId'],
-        'orderDiscount': !exists(json, 'orderDiscount') ? undefined : json['orderDiscount'],
         'lineItem': !exists(json, 'lineItem') ? undefined : ProductFromJSON(json['lineItem']),
+        'orderDiscount': !exists(json, 'orderDiscount') ? undefined : json['orderDiscount'],
         'type': !exists(json, 'type') ? undefined : json['type'],
         'amount': !exists(json, 'amount') ? undefined : json['amount'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -166,9 +158,8 @@ export function DiscountToJSON(value?: Discount): any {
     return {
         ...DataObjectToJSON(value),
         'code': value.code,
-        'lineItemId': value.lineItemId,
-        'orderDiscount': value.orderDiscount,
         'lineItem': ProductToJSON(value.lineItem),
+        'orderDiscount': value.orderDiscount,
         'type': value.type,
         'amount': value.amount,
         'trashed': value.trashed,

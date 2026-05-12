@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetLlmDetailsListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchLlmDetailsByIdApiRequest {
+    id: string;
+    llmDetails: LlmDetails;
 }
 
 export interface PostLlmDetailsApiRequest {
@@ -204,6 +208,60 @@ function getLlmDetailsListRaw<T>(requestParameters: GetLlmDetailsListApiRequest,
 */
 export function getLlmDetailsList<T>(requestParameters: GetLlmDetailsListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<LlmDetails>>): QueryConfig<T> {
     return getLlmDetailsListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing LlmDetails.
+ * Partially update an existing LlmDetails
+ */
+function patchLlmDetailsByIdRaw<T>(requestParameters: PatchLlmDetailsByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, LlmDetails> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchLlmDetailsById.');
+    }
+
+    if (requestParameters.llmDetails === null || requestParameters.llmDetails === undefined) {
+        throw new runtime.RequiredError('llmDetails','Required parameter requestParameters.llmDetails was null or undefined when calling patchLlmDetailsById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/LlmDetails/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || LlmDetailsToJSON(requestParameters.llmDetails),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(LlmDetailsFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing LlmDetails.
+* Partially update an existing LlmDetails
+*/
+export function patchLlmDetailsById<T>(requestParameters: PatchLlmDetailsByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, LlmDetails>): QueryConfig<T> {
+    return patchLlmDetailsByIdRaw(requestParameters, requestConfig);
 }
 
 /**

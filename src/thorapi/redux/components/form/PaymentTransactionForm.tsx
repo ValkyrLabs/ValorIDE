@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -48,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -70,6 +68,7 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
+        customerId: Yup.string(),
         paidAt: Yup.date()
           .transform((value, originalValue) => {
             if (!originalValue) {
@@ -77,9 +76,12 @@ const validationSchema = Yup.object().shape({
             }
             const parsed = new Date(originalValue);
             return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).required("paidAt is required.").typeError("paidAt must be a valid date"),
-        amountCents: asNumber(Yup.number().integer().typeError("amountCents must be a number")).required("amountCents is required."),
-        customerId: Yup.string(),
+          }).typeError("paidAt must be a valid date"),
+        amountCents: asNumber(Yup.number().integer().typeError("amountCents must be a number")),
+        stripeCustomerId: Yup.string(),
+        stripePaymentIntentId: Yup.string(),
+        stripeCheckoutSessionId: Yup.string(),
+        paymentStatus: Yup.string(),
         idempotencyKey: Yup.string(),
         trashed: Yup.boolean(),
 });
@@ -111,9 +113,13 @@ const PaymentTransactionForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<PaymentTransaction> = {
+          customerId: '',
           paidAt: new Date(),
           amountCents: 0,
-          customerId: '',
+          stripeCustomerId: '',
+          stripePaymentIntentId: '',
+          stripeCheckoutSessionId: '',
+          paymentStatus: '',
           idempotencyKey: '',
           trashed: false,
   };
@@ -188,6 +194,39 @@ const PaymentTransactionForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New PaymentTransaction
                 </Accordion.Header>
                 <Accordion.Body>
+                    <label htmlFor="customerId" className="nice-form-control">
+                      <b>
+                        Customer Id:
+                        {touched.customerId &&
+                         !errors.customerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="customerId"
+                            value={values?.customerId}
+                            placeholder="Customer Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="customerId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="paidAt" className="nice-form-control">
                       <b>
                         Paid At:
@@ -297,11 +336,11 @@ const PaymentTransactionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="customerId" className="nice-form-control">
+                    <label htmlFor="stripeCustomerId" className="nice-form-control">
                       <b>
-                        Customer Id:
-                        {touched.customerId &&
-                         !errors.customerId && (
+                        Stripe Customer Id:
+                        {touched.stripeCustomerId &&
+                         !errors.stripeCustomerId && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
@@ -310,9 +349,9 @@ const PaymentTransactionForm: React.FC = () => {
 
                           {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
                           <SmartField
-                            name="customerId"
-                            value={values?.customerId}
-                            placeholder="Customer Id"
+                            name="stripeCustomerId"
+                            value={values?.stripeCustomerId}
+                            placeholder="Stripe Customer Id"
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
@@ -325,7 +364,106 @@ const PaymentTransactionForm: React.FC = () => {
 
                       <ErrorMessage
                         className="error"
-                        name="customerId"
+                        name="stripeCustomerId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="stripePaymentIntentId" className="nice-form-control">
+                      <b>
+                        Stripe Payment Intent Id:
+                        {touched.stripePaymentIntentId &&
+                         !errors.stripePaymentIntentId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="stripePaymentIntentId"
+                            value={values?.stripePaymentIntentId}
+                            placeholder="Stripe Payment Intent Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="stripePaymentIntentId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="stripeCheckoutSessionId" className="nice-form-control">
+                      <b>
+                        Stripe Checkout Session Id:
+                        {touched.stripeCheckoutSessionId &&
+                         !errors.stripeCheckoutSessionId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="stripeCheckoutSessionId"
+                            value={values?.stripeCheckoutSessionId}
+                            placeholder="Stripe Checkout Session Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="stripeCheckoutSessionId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="paymentStatus" className="nice-form-control">
+                      <b>
+                        Payment Status:
+                        {touched.paymentStatus &&
+                         !errors.paymentStatus && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="paymentStatus"
+                            value={values?.paymentStatus}
+                            placeholder="Payment Status"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="paymentStatus"
                         component="span"
                       />
                     </label>

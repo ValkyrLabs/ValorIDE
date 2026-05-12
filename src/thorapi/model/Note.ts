@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -38,12 +37,6 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @interface Note
  */
 export type Note  = DataObject & {
-    /**
-     * the note content.
-     * @type {string}
-     * @memberof Note
-     */
-    content: string;
     /**
      * 
      * @type {string}
@@ -69,11 +62,17 @@ export type Note  = DataObject & {
      */
     name?: string;
     /**
-     * Date of object creation
+     * the note content.
+     * @type {string}
+     * @memberof Note
+     */
+    content?: string;
+    /**
+     * 
      * @type {Date}
      * @memberof Note
      */
-    readonly createdDate?: Date;
+    createdDate?: Date;
     /**
      * The user who created the note.
      * @type {string}
@@ -133,11 +132,11 @@ export type Note  = DataObject & {
 export function NoteFromJSON(json: any): Note {
     return {
         ...DataObjectFromJSON(json),
-        'content': json['content'],
         'noteId': !exists(json, 'noteId') ? undefined : json['noteId'],
         'associatedEntityId': !exists(json, 'associatedEntityId') ? undefined : json['associatedEntityId'],
         'entityType': !exists(json, 'entityType') ? undefined : json['entityType'],
         'name': !exists(json, 'name') ? undefined : json['name'],
+        'content': !exists(json, 'content') ? undefined : json['content'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
         'createdBy': !exists(json, 'createdBy') ? undefined : json['createdBy'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -157,11 +156,12 @@ export function NoteToJSON(value?: Note): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'content': value.content,
         'noteId': value.noteId,
         'associatedEntityId': value.associatedEntityId,
         'entityType': value.entityType,
         'name': value.name,
+        'content': value.content,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
         'createdBy': value.createdBy,
         'trashed': value.trashed,
     };

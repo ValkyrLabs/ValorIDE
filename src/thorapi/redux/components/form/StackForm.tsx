@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -52,7 +51,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -106,12 +104,11 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        name: Yup.string().required("name is required."),
-        schemaData: Yup.string().required("schemaData is required."),
         execModuleId: Yup.string(),
       category: Yup.mixed()
         .oneOf(CategoryValidation(), "Invalid value for category")
         ,
+        name: Yup.string(),
         artifactId: Yup.string(),
         applicationId: Yup.string(),
         adminServerHost: Yup.string(),
@@ -138,6 +135,7 @@ const validationSchema = Yup.object().shape({
       templateRepo: Yup.mixed()
         .oneOf(TemplateRepoValidation(), "Invalid value for templateRepo")
         ,
+        schemaData: Yup.string(),
         schemaFileName: Yup.string(),
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
@@ -172,10 +170,9 @@ const StackForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Stack> = {
-          name: '',
-          schemaData: '',
           execModuleId: '',
         category: undefined,
+          name: '',
           artifactId: '',
           applicationId: '',
           adminServerHost: '',
@@ -198,6 +195,7 @@ const StackForm: React.FC = () => {
           schemaName: '',
         language: undefined,
         templateRepo: undefined,
+          schemaData: '',
           schemaFileName: '',
         status: undefined,
           trashed: false,
@@ -273,72 +271,6 @@ const StackForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New Stack
                 </Accordion.Header>
                 <Accordion.Body>
-                    <label htmlFor="name" className="nice-form-control">
-                      <b>
-                        Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="name"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="schemaData" className="nice-form-control">
-                      <b>
-                        Schema Data:
-                        {touched.schemaData &&
-                         !errors.schemaData && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="schemaData"
-                            value={values?.schemaData}
-                            placeholder="Schema Data"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="schemaData"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="execModuleId" className="nice-form-control">
                       <b>
                         Exec Module Id:
@@ -403,6 +335,39 @@ const StackForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="category"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="name" className="nice-form-control">
+                      <b>
+                        Name:
+                        {touched.name &&
+                         !errors.name && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="name"
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="name"
                         component="span"
                       />
                     </label>
@@ -1153,6 +1118,39 @@ const StackForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="templateRepo"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="schemaData" className="nice-form-control">
+                      <b>
+                        Schema Data:
+                        {touched.schemaData &&
+                         !errors.schemaData && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="schemaData"
+                            value={values?.schemaData}
+                            placeholder="Schema Data"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="schemaData"
                         component="span"
                       />
                     </label>

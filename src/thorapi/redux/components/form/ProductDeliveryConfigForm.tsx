@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -80,12 +78,10 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        productId: Yup.string().required("productId is required."),
       deliveryType: Yup.mixed()
         .oneOf(DeliveryTypeValidation(), "Invalid value for deliveryType")
         .required("deliveryType is required."),
         autoFulfill: Yup.boolean(),
-        fulfillmentWorkflowId: Yup.string(),
         notificationTemplate: Yup.string(),
         maxConcurrentFulfillments: asNumber(Yup.number().integer().typeError("maxConcurrentFulfillments must be a number")),
         retryPolicy: Yup.string(),
@@ -119,10 +115,8 @@ const ProductDeliveryConfigForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ProductDeliveryConfig> = {
-          productId: '',
         deliveryType: undefined,
           autoFulfill: false,
-          fulfillmentWorkflowId: '',
           notificationTemplate: '',
           maxConcurrentFulfillments: 0,
           retryPolicy: '',
@@ -199,39 +193,6 @@ const ProductDeliveryConfigForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New ProductDeliveryConfig
                 </Accordion.Header>
                 <Accordion.Body>
-                    <label htmlFor="productId" className="nice-form-control">
-                      <b>
-                        Product Id:
-                        {touched.productId &&
-                         !errors.productId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="productId"
-                            value={values?.productId}
-                            placeholder="Product Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="productId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="deliveryType" className="nice-form-control">
                       <b>
                         Delivery Type:
@@ -300,39 +261,6 @@ const ProductDeliveryConfigForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="autoFulfill"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="fulfillmentWorkflowId" className="nice-form-control">
-                      <b>
-                        Fulfillment Workflow Id:
-                        {touched.fulfillmentWorkflowId &&
-                         !errors.fulfillmentWorkflowId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="fulfillmentWorkflowId"
-                            value={values?.fulfillmentWorkflowId}
-                            placeholder="Fulfillment Workflow Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="fulfillmentWorkflowId"
                         component="span"
                       />
                     </label>

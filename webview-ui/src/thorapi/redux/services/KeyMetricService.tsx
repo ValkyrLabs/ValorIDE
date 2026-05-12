@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
@@ -19,6 +18,15 @@ import { KeyMetric } from '@thorapi/model/KeyMetric'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type KeyMetricResponse = KeyMetric[]
+
+const toKeyMetricList = (result: unknown): KeyMetricResponse => {
+  if (Array.isArray(result)) {
+    return result as KeyMetricResponse
+  }
+
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as KeyMetricResponse) : []
+}
 
 export const KeyMetricService = createApi({
   reducerPath: 'KeyMetric', // This should remain unique
@@ -33,13 +41,15 @@ export const KeyMetricService = createApi({
         if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
         return `KeyMetric?${q.join('&')}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'KeyMetric' as const, id })),
-              { type: 'KeyMetric', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toKeyMetricList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'KeyMetric' as const, id })),
+          { type: 'KeyMetric', id: `PAGE_${page}` },
+        ]
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,13 +61,15 @@ export const KeyMetricService = createApi({
         }
         return `KeyMetric`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'KeyMetric' as const, id })),
-              { type: 'KeyMetric', id: 'LIST' },
-            ]
-          : [{ type: 'KeyMetric', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toKeyMetricList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'KeyMetric' as const, id })),
+          { type: 'KeyMetric', id: 'LIST' },
+        ]
+      },
     }),
 
     // 3) Create

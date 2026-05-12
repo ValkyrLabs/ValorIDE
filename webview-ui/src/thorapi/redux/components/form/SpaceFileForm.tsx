@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -48,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -70,8 +68,6 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        spaceId: Yup.string().required("spaceId is required."),
-        fileRecordId: Yup.string().required("fileRecordId is required."),
         addedDate: Yup.date()
           .transform((value, originalValue) => {
             if (!originalValue) {
@@ -81,7 +77,6 @@ const validationSchema = Yup.object().shape({
             return Number.isNaN(parsed.getTime()) ? value : parsed;
           }).typeError("addedDate must be a valid date"),
         isPinned: Yup.boolean(),
-        pinnedById: Yup.string(),
         trashed: Yup.boolean(),
 });
 
@@ -112,11 +107,8 @@ const SpaceFileForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<SpaceFile> = {
-          spaceId: '',
-          fileRecordId: '',
           addedDate: new Date(),
           isPinned: false,
-          pinnedById: '',
           trashed: false,
   };
 
@@ -190,72 +182,6 @@ const SpaceFileForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New SpaceFile
                 </Accordion.Header>
                 <Accordion.Body>
-                    <label htmlFor="spaceId" className="nice-form-control">
-                      <b>
-                        Space Id:
-                        {touched.spaceId &&
-                         !errors.spaceId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="spaceId"
-                            value={values?.spaceId}
-                            placeholder="Space Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="spaceId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="fileRecordId" className="nice-form-control">
-                      <b>
-                        File Record Id:
-                        {touched.fileRecordId &&
-                         !errors.fileRecordId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="fileRecordId"
-                            value={values?.fileRecordId}
-                            placeholder="File Record Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="fileRecordId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="addedDate" className="nice-form-control">
                       <b>
                         Added Date:
@@ -332,39 +258,6 @@ const SpaceFileForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="isPinned"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="pinnedById" className="nice-form-control">
-                      <b>
-                        Pinned By Id:
-                        {touched.pinnedById &&
-                         !errors.pinnedById && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="pinnedById"
-                            value={values?.pinnedById}
-                            placeholder="Pinned By Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="pinnedById"
                         component="span"
                       />
                     </label>

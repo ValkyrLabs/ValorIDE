@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,7 +42,7 @@ export type LoginResponse  = DataObject & {
      * @type {string}
      * @memberof LoginResponse
      */
-    status: LoginResponseStatusEnum;
+    status?: LoginResponseStatusEnum;
     /**
      * JWT token (if SUCCESS)
      * @type {string}
@@ -127,7 +126,7 @@ export type LoginResponse  = DataObject & {
 export function LoginResponseFromJSON(json: any): LoginResponse {
     return {
         ...DataObjectFromJSON(json),
-        'status': json['status'],
+        'status': !exists(json, 'status') ? undefined : json['status'],
         'token': !exists(json, 'token') ? undefined : json['token'],
         'tempToken': !exists(json, 'tempToken') ? undefined : json['tempToken'],
         'message': !exists(json, 'message') ? undefined : json['message'],

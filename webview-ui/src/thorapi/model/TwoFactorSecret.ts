@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -46,12 +45,6 @@ import {
  * @interface TwoFactorSecret
  */
 export type TwoFactorSecret  = DataObject & {
-    /**
-     * Reference to the Principal who owns this secret
-     * @type {string}
-     * @memberof TwoFactorSecret
-     */
-    principalId: string;
     /**
      * TOTP secret key (Base32 encoded, encrypted at rest)
      * @type {string}
@@ -100,12 +93,6 @@ export type TwoFactorSecret  = DataObject & {
      * @memberof TwoFactorSecret
      */
     enabled?: boolean;
-    /**
-     * When this 2FA secret was created
-     * @type {Date}
-     * @memberof TwoFactorSecret
-     */
-    readonly createdAt?: Date;
     /**
      * Last time a code was successfully verified
      * @type {Date}
@@ -177,7 +164,6 @@ export type TwoFactorSecret  = DataObject & {
 export function TwoFactorSecretFromJSON(json: any): TwoFactorSecret {
     return {
         ...DataObjectFromJSON(json),
-        'principalId': json['principalId'],
         'secretKey': json['secretKey'],
         'algorithm': json['algorithm'],
         'digits': json['digits'],
@@ -186,7 +172,6 @@ export function TwoFactorSecretFromJSON(json: any): TwoFactorSecret {
         'qrCodeUrl': !exists(json, 'qrCodeUrl') ? undefined : json['qrCodeUrl'],
         'backupCodes': !exists(json, 'backupCodes') ? undefined : json['backupCodes'],
         'enabled': !exists(json, 'enabled') ? undefined : json['enabled'],
-        'createdAt': !exists(json, 'createdAt') ? undefined : new Date(json['createdAt']),
         'lastUsedAt': !exists(json, 'lastUsedAt') ? undefined : new Date(json['lastUsedAt']),
         'verifiedAt': !exists(json, 'verifiedAt') ? undefined : new Date(json['verifiedAt']),
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -207,7 +192,6 @@ export function TwoFactorSecretToJSON(value?: TwoFactorSecret): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'principalId': value.principalId,
         'secretKey': value.secretKey,
         'algorithm': value.algorithm,
         'digits': value.digits,

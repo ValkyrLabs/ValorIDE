@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -54,21 +53,21 @@ export type AccountBalance  = DataObject & {
      * @type {string}
      * @memberof AccountBalance
      */
-    customerId: string;
+    customerId?: string;
     /**
      * 
      * @type {Array<UsageTransaction>}
      * @memberof AccountBalance
      */
-    usageTransactions: Array<UsageTransaction>;
+    usageTransactions?: Array<UsageTransaction>;
     /**
      * 
      * @type {Array<PaymentTransaction>}
      * @memberof AccountBalance
      */
-    paymentTransactions: Array<PaymentTransaction>;
+    paymentTransactions?: Array<PaymentTransaction>;
     /**
-     * The calculated balance amount
+     * The calculated whole-credit balance
      * @type {number}
      * @memberof AccountBalance
      */
@@ -132,9 +131,9 @@ export type AccountBalance  = DataObject & {
 export function AccountBalanceFromJSON(json: any): AccountBalance {
     return {
         ...DataObjectFromJSON(json),
-        'customerId': json['customerId'],
-        'usageTransactions': (json['usageTransactions'] as Array<any>).map(UsageTransactionFromJSON),
-        'paymentTransactions': (json['paymentTransactions'] as Array<any>).map(PaymentTransactionFromJSON),
+        'customerId': !exists(json, 'customerId') ? undefined : json['customerId'],
+        'usageTransactions': !exists(json, 'usageTransactions') ? undefined : (json['usageTransactions'] as Array<any>).map(UsageTransactionFromJSON),
+        'paymentTransactions': !exists(json, 'paymentTransactions') ? undefined : (json['paymentTransactions'] as Array<any>).map(PaymentTransactionFromJSON),
         'currentBalance': !exists(json, 'currentBalance') ? undefined : json['currentBalance'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
@@ -155,8 +154,8 @@ export function AccountBalanceToJSON(value?: AccountBalance): any {
     return {
         ...DataObjectToJSON(value),
         'customerId': value.customerId,
-        'usageTransactions': (value.usageTransactions as Array<any>).map(UsageTransactionToJSON),
-        'paymentTransactions': (value.paymentTransactions as Array<any>).map(PaymentTransactionToJSON),
+        'usageTransactions': value.usageTransactions === undefined ? undefined : (value.usageTransactions as Array<any>).map(UsageTransactionToJSON),
+        'paymentTransactions': value.paymentTransactions === undefined ? undefined : (value.paymentTransactions as Array<any>).map(PaymentTransactionToJSON),
         'currentBalance': value.currentBalance,
         'trashed': value.trashed,
     };

@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetDiscountListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchDiscountByIdApiRequest {
+    id: string;
+    discount: Discount;
 }
 
 export interface PostDiscountApiRequest {
@@ -204,6 +208,60 @@ function getDiscountListRaw<T>(requestParameters: GetDiscountListApiRequest, req
 */
 export function getDiscountList<T>(requestParameters: GetDiscountListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Discount>>): QueryConfig<T> {
     return getDiscountListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing Discount.
+ * Partially update an existing Discount
+ */
+function patchDiscountByIdRaw<T>(requestParameters: PatchDiscountByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Discount> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchDiscountById.');
+    }
+
+    if (requestParameters.discount === null || requestParameters.discount === undefined) {
+        throw new runtime.RequiredError('discount','Required parameter requestParameters.discount was null or undefined when calling patchDiscountById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Discount/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || DiscountToJSON(requestParameters.discount),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(DiscountFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing Discount.
+* Partially update an existing Discount
+*/
+export function patchDiscountById<T>(requestParameters: PatchDiscountByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Discount>): QueryConfig<T> {
+    return patchDiscountByIdRaw(requestParameters, requestConfig);
 }
 
 /**

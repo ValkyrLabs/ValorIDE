@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -48,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -70,10 +68,12 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        method: Yup.string().required("method is required."),
-        path: Yup.string().required("path is required."),
-        status: asNumber(Yup.number().integer().typeError("status must be a number")).required("status is required."),
-        durationMs: asNumber(Yup.number().integer().typeError("durationMs must be a number")).required("durationMs is required."),
+        method: Yup.string(),
+        path: Yup.string(),
+        status: asNumber(Yup.number().integer().typeError("status must be a number")),
+        durationMs: asNumber(Yup.number().integer().typeError("durationMs must be a number")),
+        customerId: Yup.string(),
+        organizationId: Yup.string(),
         timestamp: Yup.date()
           .transform((value, originalValue) => {
             if (!originalValue) {
@@ -81,7 +81,7 @@ const validationSchema = Yup.object().shape({
             }
             const parsed = new Date(originalValue);
             return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).required("timestamp is required.").typeError("timestamp must be a valid date"),
+          }).typeError("timestamp must be a valid date"),
         trashed: Yup.boolean(),
 });
 
@@ -116,6 +116,8 @@ const ApiTrafficEventForm: React.FC = () => {
           path: '',
           status: 0,
           durationMs: 0,
+          customerId: '',
+          organizationId: '',
           timestamp: new Date(),
           trashed: false,
   };
@@ -334,6 +336,72 @@ const ApiTrafficEventForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="durationMs"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="customerId" className="nice-form-control">
+                      <b>
+                        Customer Id:
+                        {touched.customerId &&
+                         !errors.customerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="customerId"
+                            value={values?.customerId}
+                            placeholder="Customer Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="customerId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="organizationId" className="nice-form-control">
+                      <b>
+                        Organization Id:
+                        {touched.organizationId &&
+                         !errors.organizationId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="organizationId"
+                            value={values?.organizationId}
+                            placeholder="Organization Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="organizationId"
                         component="span"
                       />
                     </label>

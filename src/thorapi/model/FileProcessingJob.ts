@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -51,13 +50,13 @@ export type FileProcessingJob  = DataObject & {
      * @type {string}
      * @memberof FileProcessingJob
      */
-    type: FileProcessingJobTypeEnum;
+    type?: FileProcessingJobTypeEnum;
     /**
      * Current job status.
      * @type {string}
      * @memberof FileProcessingJob
      */
-    status: FileProcessingJobStatusEnum;
+    status?: FileProcessingJobStatusEnum;
     /**
      * Job progress percentage.
      * @type {number}
@@ -159,8 +158,8 @@ export type FileProcessingJob  = DataObject & {
 export function FileProcessingJobFromJSON(json: any): FileProcessingJob {
     return {
         ...DataObjectFromJSON(json),
-        'type': json['type'],
-        'status': json['status'],
+        'type': !exists(json, 'type') ? undefined : json['type'],
+        'status': !exists(json, 'status') ? undefined : json['status'],
         'progress': !exists(json, 'progress') ? undefined : json['progress'],
         'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
         'result': !exists(json, 'result') ? undefined : json['result'],

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -48,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -56,7 +54,7 @@ Template file: typescript-redux-query/modelForm.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 
 Description:
-Tracks multipart upload state until completion.
+Tracks multipart upload state until completion. Use when the client needs multipart/direct upload before creating a FileRecord-backed ContentMediaLink for ContentData.
 */
 
 /* -----------------------------------------------------
@@ -73,8 +71,6 @@ const validationSchema = Yup.object().shape({
         uploadId: Yup.string().required("uploadId is required."),
         storageDriverId: Yup.string().required("storageDriverId is required."),
         storageKey: Yup.string().required("storageKey is required."),
-        fileId: Yup.string().required("fileId is required."),
-        initiatedById: Yup.string().required("initiatedById is required."),
         expiresAt: Yup.date()
           .transform((value, originalValue) => {
             if (!originalValue) {
@@ -126,8 +122,6 @@ const FileUploadSessionForm: React.FC = () => {
           uploadId: '',
           storageDriverId: '',
           storageKey: '',
-          fileId: '',
-          initiatedById: '',
           expiresAt: new Date(),
           completedAt: new Date(),
           partSizeBytes: 0,
@@ -300,72 +294,6 @@ const FileUploadSessionForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="storageKey"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="fileId" className="nice-form-control">
-                      <b>
-                        File Id:
-                        {touched.fileId &&
-                         !errors.fileId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="fileId"
-                            value={values?.fileId}
-                            placeholder="File Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="fileId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="initiatedById" className="nice-form-control">
-                      <b>
-                        Initiated By Id:
-                        {touched.initiatedById &&
-                         !errors.initiatedById && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="initiatedById"
-                            value={values?.initiatedById}
-                            placeholder="Initiated By Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="initiatedById"
                         component="span"
                       />
                     </label>

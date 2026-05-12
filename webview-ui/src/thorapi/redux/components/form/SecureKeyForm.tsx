@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -80,14 +78,15 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        algorithm: Yup.string().required("algorithm is required."),
-        version: Yup.string().required("version is required."),
-        keyValue: Yup.string().required("keyValue is required."),
+        notes: Yup.string(),
+        algorithm: Yup.string(),
+        version: Yup.string(),
+        keyHash: Yup.string(),
+        cipherWorkCost: asNumber(Yup.number().integer().typeError("cipherWorkCost must be a number")),
+        keyValue: Yup.string(),
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
-        .required("status is required."),
-        notes: Yup.string(),
-        cipherWorkCost: asNumber(Yup.number().integer().typeError("cipherWorkCost must be a number")),
+        ,
         trashed: Yup.boolean(),
 });
 
@@ -118,12 +117,13 @@ const SecureKeyForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<SecureKey> = {
+          notes: '',
           algorithm: '',
           version: '',
+          keyHash: '',
+          cipherWorkCost: 0,
           keyValue: '',
         status: undefined,
-          notes: '',
-          cipherWorkCost: 0,
           trashed: false,
   };
 
@@ -197,6 +197,39 @@ const SecureKeyForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New SecureKey
                 </Accordion.Header>
                 <Accordion.Body>
+                    <label htmlFor="notes" className="nice-form-control">
+                      <b>
+                        Notes:
+                        {touched.notes &&
+                         !errors.notes && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="notes"
+                            value={values?.notes}
+                            placeholder="Notes"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="notes"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="algorithm" className="nice-form-control">
                       <b>
                         Algorithm:
@@ -259,6 +292,80 @@ const SecureKeyForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="version"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="keyHash" className="nice-form-control">
+                      <b>
+                        Key Hash:
+                        {touched.keyHash &&
+                         !errors.keyHash && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="keyHash"
+                            value={values?.keyHash}
+                            placeholder="Key Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="keyHash"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="cipherWorkCost" className="nice-form-control">
+                      <b>
+                        Cipher Work Cost:
+                        {touched.cipherWorkCost &&
+                         !errors.cipherWorkCost && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="cipherWorkCost"
+                            type="number"
+                            value={values.cipherWorkCost || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('cipherWorkCost', true);
+                              const v = e.target.value;
+                              setFieldValue('cipherWorkCost', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.cipherWorkCost
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="cipherWorkCost"
                         component="span"
                       />
                     </label>
@@ -327,80 +434,6 @@ const SecureKeyForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="status"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="notes" className="nice-form-control">
-                      <b>
-                        Notes:
-                        {touched.notes &&
-                         !errors.notes && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="notes"
-                            value={values?.notes}
-                            placeholder="Notes"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="notes"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="cipherWorkCost" className="nice-form-control">
-                      <b>
-                        Cipher Work Cost:
-                        {touched.cipherWorkCost &&
-                         !errors.cipherWorkCost && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="cipherWorkCost"
-                            type="number"
-                            value={values.cipherWorkCost || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('cipherWorkCost', true);
-                              const v = e.target.value;
-                              setFieldValue('cipherWorkCost', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.cipherWorkCost
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="cipherWorkCost"
                         component="span"
                       />
                     </label>

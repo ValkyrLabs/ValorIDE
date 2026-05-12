@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type SkillProfile  = DataObject & {
      * @type {string}
      * @memberof SkillProfile
      */
-    jobSeekerId: string;
+    jobSeekerId?: string;
     /**
      * Skill name (e.g., \"Spring Boot\", \"React\")
      * @type {string}
      * @memberof SkillProfile
      */
-    skillName: string;
+    skillName?: string;
     /**
      * Proficiency level
      * @type {string}
@@ -139,8 +138,8 @@ export type SkillProfile  = DataObject & {
 export function SkillProfileFromJSON(json: any): SkillProfile {
     return {
         ...DataObjectFromJSON(json),
-        'jobSeekerId': json['jobSeekerId'],
-        'skillName': json['skillName'],
+        'jobSeekerId': !exists(json, 'jobSeekerId') ? undefined : json['jobSeekerId'],
+        'skillName': !exists(json, 'skillName') ? undefined : json['skillName'],
         'proficiency': !exists(json, 'proficiency') ? undefined : json['proficiency'],
         'yearsOfExperience': !exists(json, 'yearsOfExperience') ? undefined : json['yearsOfExperience'],
         'verifiedByAI': !exists(json, 'verifiedByAI') ? undefined : json['verifiedByAI'],

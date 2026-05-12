@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type SwarmGraphNode  = DataObject & {
      * @type {string}
      * @memberof SwarmGraphNode
      */
-    type: string;
+    type?: string;
     /**
      * Human readable label rendered in dashboards.
      * @type {string}
      * @memberof SwarmGraphNode
      */
-    label: string;
+    label?: string;
     /**
      * Operational status flag (online/offline).
      * @type {string}
@@ -127,8 +126,8 @@ export type SwarmGraphNode  = DataObject & {
 export function SwarmGraphNodeFromJSON(json: any): SwarmGraphNode {
     return {
         ...DataObjectFromJSON(json),
-        'type': json['type'],
-        'label': json['label'],
+        'type': !exists(json, 'type') ? undefined : json['type'],
+        'label': !exists(json, 'label') ? undefined : json['label'],
         'status': !exists(json, 'status') ? undefined : json['status'],
         'lastSeen': !exists(json, 'lastSeen') ? undefined : new Date(json['lastSeen']),
         'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],

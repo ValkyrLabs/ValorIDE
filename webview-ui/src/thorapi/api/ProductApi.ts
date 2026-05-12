@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetProductListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchProductByIdApiRequest {
+    id: string;
+    product: Product;
 }
 
 export interface PostProductApiRequest {
@@ -204,6 +208,60 @@ function getProductListRaw<T>(requestParameters: GetProductListApiRequest, reque
 */
 export function getProductList<T>(requestParameters: GetProductListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Product>>): QueryConfig<T> {
     return getProductListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing Product.
+ * Partially update an existing Product
+ */
+function patchProductByIdRaw<T>(requestParameters: PatchProductByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Product> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchProductById.');
+    }
+
+    if (requestParameters.product === null || requestParameters.product === undefined) {
+        throw new runtime.RequiredError('product','Required parameter requestParameters.product was null or undefined when calling patchProductById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Product/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || ProductToJSON(requestParameters.product),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ProductFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing Product.
+* Partially update an existing Product
+*/
+export function patchProductById<T>(requestParameters: PatchProductByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Product>): QueryConfig<T> {
+    return patchProductByIdRaw(requestParameters, requestConfig);
 }
 
 /**

@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetFileDownloadTokenListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchFileDownloadTokenByIdApiRequest {
+    id: string;
+    fileDownloadToken: FileDownloadToken;
 }
 
 export interface PostFileDownloadTokenApiRequest {
@@ -204,6 +208,60 @@ function getFileDownloadTokenListRaw<T>(requestParameters: GetFileDownloadTokenL
 */
 export function getFileDownloadTokenList<T>(requestParameters: GetFileDownloadTokenListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<FileDownloadToken>>): QueryConfig<T> {
     return getFileDownloadTokenListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing FileDownloadToken.
+ * Partially update an existing FileDownloadToken
+ */
+function patchFileDownloadTokenByIdRaw<T>(requestParameters: PatchFileDownloadTokenByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, FileDownloadToken> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchFileDownloadTokenById.');
+    }
+
+    if (requestParameters.fileDownloadToken === null || requestParameters.fileDownloadToken === undefined) {
+        throw new runtime.RequiredError('fileDownloadToken','Required parameter requestParameters.fileDownloadToken was null or undefined when calling patchFileDownloadTokenById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/FileDownloadToken/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || FileDownloadTokenToJSON(requestParameters.fileDownloadToken),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(FileDownloadTokenFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing FileDownloadToken.
+* Partially update an existing FileDownloadToken
+*/
+export function patchFileDownloadTokenById<T>(requestParameters: PatchFileDownloadTokenByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, FileDownloadToken>): QueryConfig<T> {
+    return patchFileDownloadTokenByIdRaw(requestParameters, requestConfig);
 }
 
 /**

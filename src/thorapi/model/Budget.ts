@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -29,6 +28,14 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists, mapValues } from '../src/runtime';
 import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import {
+
+
+    Principal,
+    PrincipalFromJSON,
+    PrincipalToJSON,
+} from './';
+
 
 // thorapi
 
@@ -39,11 +46,11 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  */
 export type Budget  = DataObject & {
     /**
-     * Reference to the Principal (user/team) this budget applies to
-     * @type {string}
+     * 
+     * @type {Principal}
      * @memberof Budget
      */
-    principalId?: string;
+    principal?: Principal;
     /**
      * Budget name (e.g. \"Q4 2025 API Budget\")
      * @type {string}
@@ -163,7 +170,7 @@ export type Budget  = DataObject & {
 export function BudgetFromJSON(json: any): Budget {
     return {
         ...DataObjectFromJSON(json),
-        'principalId': !exists(json, 'principalId') ? undefined : json['principalId'],
+        'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
         'name': !exists(json, 'name') ? undefined : json['name'],
         'periodStart': !exists(json, 'periodStart') ? undefined : new Date(json['periodStart']),
         'periodEnd': !exists(json, 'periodEnd') ? undefined : new Date(json['periodEnd']),
@@ -192,7 +199,7 @@ export function BudgetToJSON(value?: Budget): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'principalId': value.principalId,
+        'principal': PrincipalToJSON(value.principal),
         'name': value.name,
         'periodStart': value.periodStart === undefined ? undefined : value.periodStart.toISOString(),
         'periodEnd': value.periodEnd === undefined ? undefined : value.periodEnd.toISOString(),

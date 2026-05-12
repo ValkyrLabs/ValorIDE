@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetFileUploadSessionListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchFileUploadSessionByIdApiRequest {
+    id: string;
+    fileUploadSession: FileUploadSession;
 }
 
 export interface PostFileUploadSessionApiRequest {
@@ -204,6 +208,60 @@ function getFileUploadSessionListRaw<T>(requestParameters: GetFileUploadSessionL
 */
 export function getFileUploadSessionList<T>(requestParameters: GetFileUploadSessionListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<FileUploadSession>>): QueryConfig<T> {
     return getFileUploadSessionListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing FileUploadSession.
+ * Partially update an existing FileUploadSession
+ */
+function patchFileUploadSessionByIdRaw<T>(requestParameters: PatchFileUploadSessionByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, FileUploadSession> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchFileUploadSessionById.');
+    }
+
+    if (requestParameters.fileUploadSession === null || requestParameters.fileUploadSession === undefined) {
+        throw new runtime.RequiredError('fileUploadSession','Required parameter requestParameters.fileUploadSession was null or undefined when calling patchFileUploadSessionById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/FileUploadSession/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || FileUploadSessionToJSON(requestParameters.fileUploadSession),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(FileUploadSessionFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing FileUploadSession.
+* Partially update an existing FileUploadSession
+*/
+export function patchFileUploadSessionById<T>(requestParameters: PatchFileUploadSessionByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, FileUploadSession>): QueryConfig<T> {
+    return patchFileUploadSessionByIdRaw(requestParameters, requestConfig);
 }
 
 /**

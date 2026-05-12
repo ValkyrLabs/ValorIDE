@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -44,7 +43,7 @@ import {
 // thorapi
 
 /**
- * Primary metadata for a stored file, including lifecycle and ownership context.
+ * Primary metadata for a stored file, including lifecycle and ownership context. Canonical article-media workflow stores upload output here first, then references the resulting file via ContentMediaLink.
  * @export
  * @interface FileRecord
  */
@@ -80,23 +79,11 @@ export type FileRecord  = DataObject & {
      */
     status: FileRecordStatusEnum;
     /**
-     * Owning organization for ACL enforcement and billing.
-     * @type {string}
-     * @memberof FileRecord
-     */
-    organizationId?: string;
-    /**
      * 
      * @type {Organization}
      * @memberof FileRecord
      */
     organization?: Organization;
-    /**
-     * Principal who initiated the upload.
-     * @type {string}
-     * @memberof FileRecord
-     */
-    uploaderId?: string;
     /**
      * 
      * @type {Principal}
@@ -245,9 +232,7 @@ export function FileRecordFromJSON(json: any): FileRecord {
         'filename': json['filename'],
         'sizeBytes': json['sizeBytes'],
         'status': json['status'],
-        'organizationId': !exists(json, 'organizationId') ? undefined : json['organizationId'],
         'organization': !exists(json, 'organization') ? undefined : OrganizationFromJSON(json['organization']),
-        'uploaderId': !exists(json, 'uploaderId') ? undefined : json['uploaderId'],
         'uploader': !exists(json, 'uploader') ? undefined : PrincipalFromJSON(json['uploader']),
         'spaceId': !exists(json, 'spaceId') ? undefined : json['spaceId'],
         'mimeType': !exists(json, 'mimeType') ? undefined : json['mimeType'],
@@ -285,9 +270,7 @@ export function FileRecordToJSON(value?: FileRecord): any {
         'filename': value.filename,
         'sizeBytes': value.sizeBytes,
         'status': value.status,
-        'organizationId': value.organizationId,
         'organization': OrganizationToJSON(value.organization),
-        'uploaderId': value.uploaderId,
         'uploader': PrincipalToJSON(value.uploader),
         'spaceId': value.spaceId,
         'mimeType': value.mimeType,

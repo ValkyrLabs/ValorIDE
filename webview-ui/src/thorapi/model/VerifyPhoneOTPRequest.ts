@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type VerifyPhoneOTPRequest  = DataObject & {
      * @type {string}
      * @memberof VerifyPhoneOTPRequest
      */
-    verificationId: string;
+    verificationId?: string;
     /**
      * Six-digit OTP code
      * @type {string}
      * @memberof VerifyPhoneOTPRequest
      */
-    otp: string;
+    otp?: string;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -109,8 +108,8 @@ export type VerifyPhoneOTPRequest  = DataObject & {
 export function VerifyPhoneOTPRequestFromJSON(json: any): VerifyPhoneOTPRequest {
     return {
         ...DataObjectFromJSON(json),
-        'verificationId': json['verificationId'],
-        'otp': json['otp'],
+        'verificationId': !exists(json, 'verificationId') ? undefined : json['verificationId'],
+        'otp': !exists(json, 'otp') ? undefined : json['otp'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),

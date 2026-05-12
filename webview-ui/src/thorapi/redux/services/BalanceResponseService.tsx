@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
@@ -19,6 +18,15 @@ import { BalanceResponse } from '@thorapi/model/BalanceResponse'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type BalanceResponseResponse = BalanceResponse[]
+
+const toBalanceResponseList = (result: unknown): BalanceResponseResponse => {
+  if (Array.isArray(result)) {
+    return result as BalanceResponseResponse
+  }
+
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as BalanceResponseResponse) : []
+}
 
 export const BalanceResponseService = createApi({
   reducerPath: 'BalanceResponse', // This should remain unique
@@ -33,13 +41,15 @@ export const BalanceResponseService = createApi({
         if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
         return `BalanceResponse?${q.join('&')}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'BalanceResponse' as const, id })),
-              { type: 'BalanceResponse', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toBalanceResponseList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'BalanceResponse' as const, id })),
+          { type: 'BalanceResponse', id: `PAGE_${page}` },
+        ]
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,13 +61,15 @@ export const BalanceResponseService = createApi({
         }
         return `BalanceResponse`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'BalanceResponse' as const, id })),
-              { type: 'BalanceResponse', id: 'LIST' },
-            ]
-          : [{ type: 'BalanceResponse', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toBalanceResponseList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'BalanceResponse' as const, id })),
+          { type: 'BalanceResponse', id: 'LIST' },
+        ]
+      },
     }),
 
     // 3) Create

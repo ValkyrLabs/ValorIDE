@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -37,6 +36,9 @@ import { AclGrantRequest, PermissionType } from '@valkyr/component-library/Permi
 import {
   ProductFeature,
   ProductFeatureTypeEnum,
+  ProductFeatureFeatureScopeEnum,
+  ProductFeatureValueTypeEnum,
+  ProductFeaturePlanTierEnum,
 } from '@thorapi/model';
 
 import { useAddProductFeatureMutation } from '../../services/ProductFeatureService';
@@ -49,7 +51,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -69,6 +70,33 @@ const TypeValidation = () => {
     'fixed',
   ];
 };
+const FeatureScopeValidation = () => {
+  return [
+    'platform',
+    'organization',
+    'application',
+    'agent',
+    'billing',
+    'ux',
+  ];
+};
+const ValueTypeValidation = () => {
+  return [
+    'number',
+    'boolean',
+    'string',
+  ];
+};
+const PlanTierValidation = () => {
+  return [
+    'free',
+    'solo',
+    'pro',
+    'team',
+    'reseller',
+    'enterprise',
+  ];
+};
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
@@ -84,6 +112,20 @@ const validationSchema = Yup.object().shape({
         ,
         name: Yup.string(),
         description: Yup.string(),
+        featureKey: Yup.string(),
+      featureScope: Yup.mixed()
+        .oneOf(FeatureScopeValidation(), "Invalid value for featureScope")
+        ,
+      valueType: Yup.mixed()
+        .oneOf(ValueTypeValidation(), "Invalid value for valueType")
+        ,
+        limitValue: asNumber(Yup.number().typeError("limitValue must be a number")),
+        booleanValue: Yup.boolean(),
+        stringValue: Yup.string(),
+        enabled: Yup.boolean(),
+      planTier: Yup.mixed()
+        .oneOf(PlanTierValidation(), "Invalid value for planTier")
+        ,
         trashed: Yup.boolean(),
 });
 
@@ -119,6 +161,14 @@ const ProductFeatureForm: React.FC = () => {
         type: undefined,
           name: '',
           description: '',
+          featureKey: '',
+        featureScope: undefined,
+        valueType: undefined,
+          limitValue: 0,
+          booleanValue: false,
+          stringValue: '',
+          enabled: false,
+        planTier: undefined,
           trashed: false,
   };
 
@@ -368,6 +418,293 @@ const ProductFeatureForm: React.FC = () => {
                       />
                     </label>
                     <br />
+                    <label htmlFor="featureKey" className="nice-form-control">
+                      <b>
+                        Feature Key:
+                        {touched.featureKey &&
+                         !errors.featureKey && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="featureKey"
+                            value={values?.featureKey}
+                            placeholder="Feature Key"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="featureKey"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="featureScope" className="nice-form-control">
+                      <b>
+                        Feature Scope:
+                        {touched.featureScope &&
+                         !errors.featureScope && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="featureScope"
+                          value={values.featureScope || ''}
+                          className={
+                            errors.featureScope
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('featureScope', true);
+                            setFieldValue('featureScope', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Feature Scope" />
+                          <FeatureScopeLookup />
+                        </BSForm.Select>
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="featureScope"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="valueType" className="nice-form-control">
+                      <b>
+                        Value Type:
+                        {touched.valueType &&
+                         !errors.valueType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="valueType"
+                          value={values.valueType || ''}
+                          className={
+                            errors.valueType
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('valueType', true);
+                            setFieldValue('valueType', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Value Type" />
+                          <ValueTypeLookup />
+                        </BSForm.Select>
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="valueType"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="limitValue" className="nice-form-control">
+                      <b>
+                        Limit Value:
+                        {touched.limitValue &&
+                         !errors.limitValue && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="limitValue"
+                            type="number"
+                            step="any"
+                            value={values.limitValue || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('limitValue', true);
+                              const v = e.target.value;
+                              setFieldValue('limitValue', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.limitValue
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="limitValue"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="booleanValue" className="nice-form-control">
+                      <b>
+                        Boolean Value:
+                        {touched.booleanValue &&
+                         !errors.booleanValue && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="booleanValue"
+                            name="booleanValue"
+                            checked={values.booleanValue || false}
+                            onChange={(e) => {
+                              setFieldTouched('booleanValue', true);
+                              setFieldValue('booleanValue', e.target.checked);
+                            }}
+                            isInvalid={!!errors.booleanValue}
+                            className={errors.booleanValue ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="booleanValue"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="stringValue" className="nice-form-control">
+                      <b>
+                        String Value:
+                        {touched.stringValue &&
+                         !errors.stringValue && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="stringValue"
+                            value={values?.stringValue}
+                            placeholder="String Value"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="stringValue"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="enabled" className="nice-form-control">
+                      <b>
+                        Enabled:
+                        {touched.enabled &&
+                         !errors.enabled && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="enabled"
+                            name="enabled"
+                            checked={values.enabled || false}
+                            onChange={(e) => {
+                              setFieldTouched('enabled', true);
+                              setFieldValue('enabled', e.target.checked);
+                            }}
+                            isInvalid={!!errors.enabled}
+                            className={errors.enabled ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="enabled"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="planTier" className="nice-form-control">
+                      <b>
+                        Plan Tier:
+                        {touched.planTier &&
+                         !errors.planTier && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="planTier"
+                          value={values.planTier || ''}
+                          className={
+                            errors.planTier
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('planTier', true);
+                            setFieldValue('planTier', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Plan Tier" />
+                          <PlanTierLookup />
+                        </BSForm.Select>
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="planTier"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
@@ -478,6 +815,69 @@ const TypeLookup = () => {
     <>
       <option value='percentage' label="Percentage" />
       <option value='fixed' label="Fixed" />
+    </>
+  );
+};
+
+/*
+lowercase featurescopelookup
+uppercase FEATURESCOPELOOKUP
+snakecase feature_scope_lookup
+pascalcase FeatureScopeLookup
+camelcase featureScopeLookup
+kebabcase feature-scope-lookup
+*/
+
+const FeatureScopeLookup = () => {
+  return (
+    <>
+      <option value='platform' label="Platform" />
+      <option value='organization' label="Organization" />
+      <option value='application' label="Application" />
+      <option value='agent' label="Agent" />
+      <option value='billing' label="Billing" />
+      <option value='ux' label="Ux" />
+    </>
+  );
+};
+
+/*
+lowercase valuetypelookup
+uppercase VALUETYPELOOKUP
+snakecase value_type_lookup
+pascalcase ValueTypeLookup
+camelcase valueTypeLookup
+kebabcase value-type-lookup
+*/
+
+const ValueTypeLookup = () => {
+  return (
+    <>
+      <option value='number' label="Number" />
+      <option value='boolean' label="Boolean" />
+      <option value='string' label="String" />
+    </>
+  );
+};
+
+/*
+lowercase plantierlookup
+uppercase PLANTIERLOOKUP
+snakecase plan_tier_lookup
+pascalcase PlanTierLookup
+camelcase planTierLookup
+kebabcase plan-tier-lookup
+*/
+
+const PlanTierLookup = () => {
+  return (
+    <>
+      <option value='free' label="Free" />
+      <option value='solo' label="Solo" />
+      <option value='pro' label="Pro" />
+      <option value='team' label="Team" />
+      <option value='reseller' label="Reseller" />
+      <option value='enterprise' label="Enterprise" />
     </>
   );
 };

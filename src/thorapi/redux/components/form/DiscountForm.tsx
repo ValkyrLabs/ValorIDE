@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -79,7 +77,6 @@ const asNumber = (schema: Yup.NumberSchema) =>
 
 const validationSchema = Yup.object().shape({
         code: Yup.string(),
-        lineItemId: Yup.string(),
         orderDiscount: Yup.boolean(),
       type: Yup.mixed()
         .oneOf(TypeValidation(), "Invalid value for type")
@@ -116,7 +113,6 @@ const DiscountForm: React.FC = () => {
   -------------------------------------------------------- */
   const initialValues: Partial<Discount> = {
           code: '',
-          lineItemId: '',
           orderDiscount: false,
         type: undefined,
           amount: 0,
@@ -222,39 +218,6 @@ const DiscountForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="code"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="lineItemId" className="nice-form-control">
-                      <b>
-                        Line Item Id:
-                        {touched.lineItemId &&
-                         !errors.lineItemId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="lineItemId"
-                            value={values?.lineItemId}
-                            placeholder="Line Item Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="lineItemId"
                         component="span"
                       />
                     </label>

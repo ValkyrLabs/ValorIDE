@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -52,12 +51,6 @@ import {
  * @interface Opportunity
  */
 export type Opportunity  = DataObject & {
-    /**
-     * Owning customer account
-     * @type {string}
-     * @memberof Opportunity
-     */
-    customerId: string;
     /**
      * Description of the opportunity.
      * @type {string}
@@ -165,7 +158,6 @@ export type Opportunity  = DataObject & {
 export function OpportunityFromJSON(json: any): Opportunity {
     return {
         ...DataObjectFromJSON(json),
-        'customerId': json['customerId'],
         'description': json['description'],
         'currentStatus': json['currentStatus'],
         'customer': !exists(json, 'customer') ? undefined : CustomerFromJSON(json['customer']),
@@ -192,7 +184,6 @@ export function OpportunityToJSON(value?: Opportunity): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'customerId': value.customerId,
         'description': value.description,
         'currentStatus': value.currentStatus,
         'customer': CustomerToJSON(value.customer),

@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetSolutionListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchSolutionByIdApiRequest {
+    id: string;
+    solution: Solution;
 }
 
 export interface PostSolutionApiRequest {
@@ -204,6 +208,60 @@ function getSolutionListRaw<T>(requestParameters: GetSolutionListApiRequest, req
 */
 export function getSolutionList<T>(requestParameters: GetSolutionListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Solution>>): QueryConfig<T> {
     return getSolutionListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing Solution.
+ * Partially update an existing Solution
+ */
+function patchSolutionByIdRaw<T>(requestParameters: PatchSolutionByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Solution> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchSolutionById.');
+    }
+
+    if (requestParameters.solution === null || requestParameters.solution === undefined) {
+        throw new runtime.RequiredError('solution','Required parameter requestParameters.solution was null or undefined when calling patchSolutionById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Solution/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || SolutionToJSON(requestParameters.solution),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SolutionFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing Solution.
+* Partially update an existing Solution
+*/
+export function patchSolutionById<T>(requestParameters: PatchSolutionByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Solution>): QueryConfig<T> {
+    return patchSolutionByIdRaw(requestParameters, requestConfig);
 }
 
 /**

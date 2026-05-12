@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -83,7 +81,6 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        customerId: Yup.string().required("customerId is required."),
         description: Yup.string().required("description is required."),
       currentStatus: Yup.mixed()
         .oneOf(CurrentStatusValidation(), "Invalid value for currentStatus")
@@ -135,7 +132,6 @@ const OpportunityForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Opportunity> = {
-          customerId: '',
           description: '',
         currentStatus: undefined,
           totalValue: 0,
@@ -214,39 +210,6 @@ const OpportunityForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New Opportunity
                 </Accordion.Header>
                 <Accordion.Body>
-                    <label htmlFor="customerId" className="nice-form-control">
-                      <b>
-                        Customer Id:
-                        {touched.customerId &&
-                         !errors.customerId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="customerId"
-                            value={values?.customerId}
-                            placeholder="Customer Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="customerId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:

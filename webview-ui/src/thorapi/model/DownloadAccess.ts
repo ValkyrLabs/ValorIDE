@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -49,18 +48,6 @@ import {
  * @interface DownloadAccess
  */
 export type DownloadAccess  = DataObject & {
-    /**
-     * DigitalAsset this access unlocks.
-     * @type {string}
-     * @memberof DownloadAccess
-     */
-    digitalAssetId: string;
-    /**
-     * Principal (customer/user) granted access.
-     * @type {string}
-     * @memberof DownloadAccess
-     */
-    principalId: string;
     /**
      * Reference to the LineItem that triggered this access grant. Links order fulfillment to access control. 
      * @type {string}
@@ -186,8 +173,6 @@ export type DownloadAccess  = DataObject & {
 export function DownloadAccessFromJSON(json: any): DownloadAccess {
     return {
         ...DataObjectFromJSON(json),
-        'digitalAssetId': json['digitalAssetId'],
-        'principalId': json['principalId'],
         'salesOrderLineItemId': json['salesOrderLineItemId'],
         'digitalAsset': !exists(json, 'digitalAsset') ? undefined : DigitalAssetFromJSON(json['digitalAsset']),
         'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
@@ -217,8 +202,6 @@ export function DownloadAccessToJSON(value?: DownloadAccess): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'digitalAssetId': value.digitalAssetId,
-        'principalId': value.principalId,
         'salesOrderLineItemId': value.salesOrderLineItemId,
         'digitalAsset': DigitalAssetToJSON(value.digitalAsset),
         'principal': PrincipalToJSON(value.principal),

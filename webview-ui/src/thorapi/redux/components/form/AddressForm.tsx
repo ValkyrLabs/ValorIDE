@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -80,18 +78,17 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        name: Yup.string().required("name is required."),
-        street1: Yup.string().required("street1 is required."),
-        city: Yup.string().required("city is required."),
-        state: Yup.string().required("state is required."),
-        postalCode: Yup.string().required("postalCode is required."),
         hasWifi: Yup.boolean(),
-        principalId: Yup.string(),
       addressType: Yup.mixed()
         .oneOf(AddressTypeValidation(), "Invalid value for addressType")
         ,
+        name: Yup.string(),
+        street1: Yup.string(),
         street2: Yup.string(),
+        city: Yup.string(),
+        state: Yup.string(),
         country: Yup.string(),
+        postalCode: Yup.string(),
         trashed: Yup.boolean(),
 });
 
@@ -122,16 +119,15 @@ const AddressForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Address> = {
+          hasWifi: false,
+        addressType: undefined,
           name: '',
           street1: '',
+          street2: '',
           city: '',
           state: '',
-          postalCode: '',
-          hasWifi: false,
-          principalId: '',
-        addressType: undefined,
-          street2: '',
           country: '',
+          postalCode: '',
           trashed: false,
   };
 
@@ -205,171 +201,6 @@ const AddressForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New Address
                 </Accordion.Header>
                 <Accordion.Body>
-                    <label htmlFor="name" className="nice-form-control">
-                      <b>
-                        Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="name"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="street1" className="nice-form-control">
-                      <b>
-                        Street 1:
-                        {touched.street1 &&
-                         !errors.street1 && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="street1"
-                            value={values?.street1}
-                            placeholder="Street 1"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="street1"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="city" className="nice-form-control">
-                      <b>
-                        City:
-                        {touched.city &&
-                         !errors.city && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="city"
-                            value={values?.city}
-                            placeholder="City"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="city"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="state" className="nice-form-control">
-                      <b>
-                        State:
-                        {touched.state &&
-                         !errors.state && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="state"
-                            value={values?.state}
-                            placeholder="State"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="state"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="postalCode" className="nice-form-control">
-                      <b>
-                        Postal _ code:
-                        {touched.postalCode &&
-                         !errors.postalCode && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="postalCode"
-                            value={values?.postalCode}
-                            placeholder="Postal _ code"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="postalCode"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="hasWifi" className="nice-form-control">
                       <b>
                         Has Wifi:
@@ -403,39 +234,6 @@ const AddressForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="hasWifi"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="principalId" className="nice-form-control">
-                      <b>
-                        Principal Id:
-                        {touched.principalId &&
-                         !errors.principalId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="principalId"
-                            value={values?.principalId}
-                            placeholder="Principal Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="principalId"
                         component="span"
                       />
                     </label>
@@ -525,6 +323,72 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
+                    <label htmlFor="name" className="nice-form-control">
+                      <b>
+                        Name:
+                        {touched.name &&
+                         !errors.name && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="name"
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="name"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="street1" className="nice-form-control">
+                      <b>
+                        Street 1:
+                        {touched.street1 &&
+                         !errors.street1 && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="street1"
+                            value={values?.street1}
+                            placeholder="Street 1"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="street1"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="street2" className="nice-form-control">
                       <b>
                         Street 2:
@@ -558,6 +422,72 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
+                    <label htmlFor="city" className="nice-form-control">
+                      <b>
+                        City:
+                        {touched.city &&
+                         !errors.city && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="city"
+                            value={values?.city}
+                            placeholder="City"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="city"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="state" className="nice-form-control">
+                      <b>
+                        State:
+                        {touched.state &&
+                         !errors.state && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="state"
+                            value={values?.state}
+                            placeholder="State"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="state"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="country" className="nice-form-control">
                       <b>
                         Country:
@@ -587,6 +517,39 @@ const AddressForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="country"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="postalCode" className="nice-form-control">
+                      <b>
+                        Postal _ code:
+                        {touched.postalCode &&
+                         !errors.postalCode && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="postalCode"
+                            value={values?.postalCode}
+                            placeholder="Postal _ code"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="postalCode"
                         component="span"
                       />
                     </label>

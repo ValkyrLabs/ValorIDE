@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -56,18 +55,6 @@ import {
  */
 export type OasOpenAPISpec  = DataObject & {
     /**
-     * the path to the source of this spec
-     * @type {string}
-     * @memberof OasOpenAPISpec
-     */
-    sourcePath: string;
-    /**
-     * the type of source for this spec
-     * @type {string}
-     * @memberof OasOpenAPISpec
-     */
-    sourceType: OasOpenAPISpecSourceTypeEnum;
-    /**
      * optionally link this spec to an executable
      * @type {string}
      * @memberof OasOpenAPISpec
@@ -79,6 +66,18 @@ export type OasOpenAPISpec  = DataObject & {
      * @memberof OasOpenAPISpec
      */
     sourceDetails?: string;
+    /**
+     * the path to the source of this spec
+     * @type {string}
+     * @memberof OasOpenAPISpec
+     */
+    sourcePath?: string;
+    /**
+     * the type of source for this spec
+     * @type {string}
+     * @memberof OasOpenAPISpec
+     */
+    sourceType?: OasOpenAPISpecSourceTypeEnum;
     /**
      * 
      * @type {string}
@@ -168,10 +167,10 @@ export type OasOpenAPISpec  = DataObject & {
 export function OasOpenAPISpecFromJSON(json: any): OasOpenAPISpec {
     return {
         ...DataObjectFromJSON(json),
-        'sourcePath': json['sourcePath'],
-        'sourceType': json['sourceType'],
         'execModuleId': !exists(json, 'execModuleId') ? undefined : json['execModuleId'],
         'sourceDetails': !exists(json, 'sourceDetails') ? undefined : json['sourceDetails'],
+        'sourcePath': !exists(json, 'sourcePath') ? undefined : json['sourcePath'],
+        'sourceType': !exists(json, 'sourceType') ? undefined : json['sourceType'],
         'openapi': !exists(json, 'openapi') ? undefined : json['openapi'],
         'info': !exists(json, 'info') ? undefined : OasInfoFromJSON(json['info']),
         'servers': !exists(json, 'servers') ? undefined : (json['servers'] as Array<any>).map(OasServerFromJSON),
@@ -195,10 +194,10 @@ export function OasOpenAPISpecToJSON(value?: OasOpenAPISpec): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'sourcePath': value.sourcePath,
-        'sourceType': value.sourceType,
         'execModuleId': value.execModuleId,
         'sourceDetails': value.sourceDetails,
+        'sourcePath': value.sourcePath,
+        'sourceType': value.sourceType,
         'openapi': value.openapi,
         'info': OasInfoToJSON(value.info),
         'servers': value.servers === undefined ? undefined : (value.servers as Array<any>).map(OasServerToJSON),

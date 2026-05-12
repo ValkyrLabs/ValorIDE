@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,7 +42,7 @@ export type Reaction  = DataObject & {
      * @type {string}
      * @memberof Reaction
      */
-    targetObject: string;
+    targetObject?: string;
     /**
      * the reaction to the item
      * @type {string}
@@ -109,7 +108,7 @@ export type Reaction  = DataObject & {
 export function ReactionFromJSON(json: any): Reaction {
     return {
         ...DataObjectFromJSON(json),
-        'targetObject': json['targetObject'],
+        'targetObject': !exists(json, 'targetObject') ? undefined : json['targetObject'],
         'reaction': !exists(json, 'reaction') ? undefined : json['reaction'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],

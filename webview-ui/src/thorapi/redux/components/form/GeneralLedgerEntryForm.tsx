@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -87,14 +85,14 @@ const validationSchema = Yup.object().shape({
             }
             const parsed = new Date(originalValue);
             return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).required("entryDate is required.").typeError("entryDate must be a valid date"),
-        debitAccount: Yup.string().required("debitAccount is required."),
-        creditAccount: Yup.string().required("creditAccount is required."),
-        amount: asNumber(Yup.number().typeError("amount must be a number")).required("amount is required."),
+          }).typeError("entryDate must be a valid date"),
+        debitAccount: Yup.string(),
+        creditAccount: Yup.string(),
+        amount: asNumber(Yup.number().typeError("amount must be a number")),
       referenceType: Yup.mixed()
         .oneOf(ReferenceTypeValidation(), "Invalid value for referenceType")
-        .required("referenceType is required."),
-        referenceId: Yup.string().required("referenceId is required."),
+        ,
+        referenceId: Yup.string(),
         notes: Yup.string(),
         trashed: Yup.boolean(),
 });

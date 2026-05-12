@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,37 +42,37 @@ export type Campaign  = DataObject & {
      * @type {string}
      * @memberof Campaign
      */
-    campaignId: string;
+    campaignId?: string;
     /**
      * Name of the campaign.
      * @type {string}
      * @memberof Campaign
      */
-    name: string;
-    /**
-     * 
-     * @type {Date}
-     * @memberof Campaign
-     */
-    startDate: Date;
-    /**
-     * 
-     * @type {Date}
-     * @memberof Campaign
-     */
-    endDate: Date;
-    /**
-     * 
-     * @type {string}
-     * @memberof Campaign
-     */
-    status: CampaignStatusEnum;
+    name?: string;
     /**
      * Details about the campaign.
      * @type {string}
      * @memberof Campaign
      */
     notes?: string;
+    /**
+     * 
+     * @type {Date}
+     * @memberof Campaign
+     */
+    startDate?: Date;
+    /**
+     * 
+     * @type {Date}
+     * @memberof Campaign
+     */
+    endDate?: Date;
+    /**
+     * 
+     * @type {string}
+     * @memberof Campaign
+     */
+    status?: CampaignStatusEnum;
     /**
      * Budget for the campaign.
      * @type {number}
@@ -139,12 +138,12 @@ export type Campaign  = DataObject & {
 export function CampaignFromJSON(json: any): Campaign {
     return {
         ...DataObjectFromJSON(json),
-        'campaignId': json['campaignId'],
-        'name': json['name'],
-        'startDate': new Date(json['startDate']),
-        'endDate': new Date(json['endDate']),
-        'status': json['status'],
+        'campaignId': !exists(json, 'campaignId') ? undefined : json['campaignId'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
         'notes': !exists(json, 'notes') ? undefined : json['notes'],
+        'startDate': !exists(json, 'startDate') ? undefined : new Date(json['startDate']),
+        'endDate': !exists(json, 'endDate') ? undefined : new Date(json['endDate']),
+        'status': !exists(json, 'status') ? undefined : json['status'],
         'budget': !exists(json, 'budget') ? undefined : json['budget'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
@@ -166,10 +165,10 @@ export function CampaignToJSON(value?: Campaign): any {
         ...DataObjectToJSON(value),
         'campaignId': value.campaignId,
         'name': value.name,
-        'startDate': value.startDate.toISOString(),
-        'endDate': value.endDate.toISOString(),
-        'status': value.status,
         'notes': value.notes,
+        'startDate': value.startDate === undefined ? undefined : value.startDate.toISOString(),
+        'endDate': value.endDate === undefined ? undefined : value.endDate.toISOString(),
+        'status': value.status,
         'budget': value.budget,
         'trashed': value.trashed,
     };

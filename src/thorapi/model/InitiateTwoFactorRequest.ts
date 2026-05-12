@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -29,6 +28,14 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists, mapValues } from '../src/runtime';
 import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import {
+
+
+    Principal,
+    PrincipalFromJSON,
+    PrincipalToJSON,
+} from './';
+
 
 // thorapi
 
@@ -39,11 +46,11 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  */
 export type InitiateTwoFactorRequest  = DataObject & {
     /**
-     * Principal to enable 2FA for
-     * @type {string}
+     * 
+     * @type {Principal}
      * @memberof InitiateTwoFactorRequest
      */
-    principalId: string;
+    principal?: Principal;
     /**
      * 2FA method (TOTP or SMS)
      * @type {string}
@@ -109,7 +116,7 @@ export type InitiateTwoFactorRequest  = DataObject & {
 export function InitiateTwoFactorRequestFromJSON(json: any): InitiateTwoFactorRequest {
     return {
         ...DataObjectFromJSON(json),
-        'principalId': json['principalId'],
+        'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
         'method': !exists(json, 'method') ? undefined : json['method'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
@@ -129,7 +136,7 @@ export function InitiateTwoFactorRequestToJSON(value?: InitiateTwoFactorRequest)
     }
     return {
         ...DataObjectToJSON(value),
-        'principalId': value.principalId,
+        'principal': PrincipalToJSON(value.principal),
         'method': value.method,
         'trashed': value.trashed,
     };

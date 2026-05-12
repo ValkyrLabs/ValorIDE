@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetFileRecordListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchFileRecordByIdApiRequest {
+    id: string;
+    fileRecord: FileRecord;
 }
 
 export interface PostFileRecordApiRequest {
@@ -204,6 +208,60 @@ function getFileRecordListRaw<T>(requestParameters: GetFileRecordListApiRequest,
 */
 export function getFileRecordList<T>(requestParameters: GetFileRecordListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<FileRecord>>): QueryConfig<T> {
     return getFileRecordListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing FileRecord.
+ * Partially update an existing FileRecord
+ */
+function patchFileRecordByIdRaw<T>(requestParameters: PatchFileRecordByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, FileRecord> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchFileRecordById.');
+    }
+
+    if (requestParameters.fileRecord === null || requestParameters.fileRecord === undefined) {
+        throw new runtime.RequiredError('fileRecord','Required parameter requestParameters.fileRecord was null or undefined when calling patchFileRecordById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/FileRecord/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || FileRecordToJSON(requestParameters.fileRecord),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(FileRecordFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing FileRecord.
+* Partially update an existing FileRecord
+*/
+export function patchFileRecordById<T>(requestParameters: PatchFileRecordByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, FileRecord>): QueryConfig<T> {
+    return patchFileRecordByIdRaw(requestParameters, requestConfig);
 }
 
 /**

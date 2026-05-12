@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -29,6 +28,14 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists, mapValues } from '../src/runtime';
 import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import {
+
+
+    Principal,
+    PrincipalFromJSON,
+    PrincipalToJSON,
+} from './';
+
 
 // thorapi
 
@@ -40,22 +47,22 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 export type UserPreference  = DataObject & {
     /**
      * 
-     * @type {string}
+     * @type {Principal}
      * @memberof UserPreference
      */
-    principalId: string;
+    principal?: Principal;
     /**
      * The value of the User Preferences
      * @type {string}
      * @memberof UserPreference
      */
-    preference: string;
+    preference?: string;
     /**
      * The type of the preference
      * @type {string}
      * @memberof UserPreference
      */
-    preferenceType: UserPreferencePreferenceTypeEnum;
+    preferenceType?: UserPreferencePreferenceTypeEnum;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -115,9 +122,9 @@ export type UserPreference  = DataObject & {
 export function UserPreferenceFromJSON(json: any): UserPreference {
     return {
         ...DataObjectFromJSON(json),
-        'principalId': json['principalId'],
-        'preference': json['preference'],
-        'preferenceType': json['preferenceType'],
+        'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
+        'preference': !exists(json, 'preference') ? undefined : json['preference'],
+        'preferenceType': !exists(json, 'preferenceType') ? undefined : json['preferenceType'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -136,7 +143,7 @@ export function UserPreferenceToJSON(value?: UserPreference): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'principalId': value.principalId,
+        'principal': PrincipalToJSON(value.principal),
         'preference': value.preference,
         'preferenceType': value.preferenceType,
         'trashed': value.trashed,

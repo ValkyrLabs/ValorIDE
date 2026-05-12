@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -36,9 +35,9 @@ import { AclGrantRequest, PermissionType } from '@valkyr/component-library/Permi
 
 import {
   ExecModule,
-  ExecModuleRoleEnum,
   ExecModuleModuleTypeEnum,
   ExecModuleStatusEnum,
+  ExecModuleRoleEnum,
 } from '@thorapi/model';
 
 import { useAddExecModuleMutation } from '../../services/ExecModuleService';
@@ -51,7 +50,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -59,19 +57,12 @@ Template file: typescript-redux-query/modelForm.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 
 Description:
-an ExecModule Instance -- an ExecModule is the execution unit of the ValkyrAI Workflow Engine
+ExecModule instance executed inside a Task. Configuration is provided via ExecModuleConfig (normalized). 
 */
 
 /* -----------------------------------------------------
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
-const RoleValidation = () => {
-  return [
-    'anonymous',
-    'user',
-    'admin',
-  ];
-};
 const ModuleTypeValidation = () => {
   return [
     'broadcast',
@@ -83,13 +74,20 @@ const ModuleTypeValidation = () => {
 };
 const StatusValidation = () => {
   return [
+    'ready',
     'running',
     'stopped',
-    'ready',
     'good',
     'warning',
     'error',
     'disabled',
+  ];
+};
+const RoleValidation = () => {
+  return [
+    'anonymous',
+    'user',
+    'admin',
   ];
 };
 
@@ -101,22 +99,21 @@ const asNumber = (schema: Yup.NumberSchema) =>
 
 const validationSchema = Yup.object().shape({
         systemId: Yup.string(),
-        taskId: Yup.string(),
-      role: Yup.mixed()
-        .oneOf(RoleValidation(), "Invalid value for role")
-        ,
         name: Yup.string(),
-        moduleOrder: asNumber(Yup.number().typeError("moduleOrder must be a number")),
-        notes: Yup.string(),
         longDescription: Yup.string(),
         className: Yup.string(),
       moduleType: Yup.mixed()
         .oneOf(ModuleTypeValidation(), "Invalid value for moduleType")
         ,
+        moduleOrder: asNumber(Yup.number().typeError("moduleOrder must be a number")),
         moduleData: Yup.string(),
-        config: Yup.string(),
+        taskId: Yup.string(),
+        notes: Yup.string(),
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
+        ,
+      role: Yup.mixed()
+        .oneOf(RoleValidation(), "Invalid value for role")
         ,
         trashed: Yup.boolean(),
 });
@@ -149,17 +146,16 @@ const ExecModuleForm: React.FC = () => {
   -------------------------------------------------------- */
   const initialValues: Partial<ExecModule> = {
           systemId: '',
-          taskId: '',
-        role: undefined,
           name: '',
-          moduleOrder: 0,
-          notes: '',
           longDescription: '',
           className: '',
         moduleType: undefined,
+          moduleOrder: 0,
           moduleData: '',
-          config: '',
+          taskId: '',
+          notes: '',
         status: undefined,
+        role: undefined,
           trashed: false,
   };
 
@@ -266,74 +262,6 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="taskId" className="nice-form-control">
-                      <b>
-                        Task Id:
-                        {touched.taskId &&
-                         !errors.taskId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="taskId"
-                            value={values?.taskId}
-                            placeholder="Task Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="taskId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="role" className="nice-form-control">
-                      <b>
-                        Role:
-                        {touched.role &&
-                         !errors.role && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="role"
-                          value={values.role || ''}
-                          className={
-                            errors.role
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('role', true);
-                            setFieldValue('role', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Role" />
-                          <RoleLookup />
-                        </BSForm.Select>
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="role"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
@@ -363,81 +291,6 @@ const ExecModuleForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="name"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="moduleOrder" className="nice-form-control">
-                      <b>
-                        Module Order:
-                        {touched.moduleOrder &&
-                         !errors.moduleOrder && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-
-
-                          {/* FLOAT FIELD */}
-                          <Field
-                            name="moduleOrder"
-                            type="number"
-                            step="any"
-                            value={values.moduleOrder || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('moduleOrder', true);
-                              const v = e.target.value;
-                              setFieldValue('moduleOrder', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.moduleOrder
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="moduleOrder"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="notes" className="nice-form-control">
-                      <b>
-                        Notes:
-                        {touched.notes &&
-                         !errors.notes && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="notes"
-                            value={values?.notes}
-                            placeholder="Notes"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="notes"
                         component="span"
                       />
                     </label>
@@ -543,6 +396,48 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
+                    <label htmlFor="moduleOrder" className="nice-form-control">
+                      <b>
+                        Module Order:
+                        {touched.moduleOrder &&
+                         !errors.moduleOrder && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+                          {/* FLOAT FIELD */}
+                          <Field
+                            name="moduleOrder"
+                            type="number"
+                            step="any"
+                            value={values.moduleOrder || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('moduleOrder', true);
+                              const v = e.target.value;
+                              setFieldValue('moduleOrder', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.moduleOrder
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="moduleOrder"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="moduleData" className="nice-form-control">
                       <b>
                         Module Data:
@@ -576,11 +471,11 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="config" className="nice-form-control">
+                    <label htmlFor="taskId" className="nice-form-control">
                       <b>
-                        Config:
-                        {touched.config &&
-                         !errors.config && (
+                        Task Id:
+                        {touched.taskId &&
+                         !errors.taskId && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
@@ -589,9 +484,9 @@ const ExecModuleForm: React.FC = () => {
 
                           {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
                           <SmartField
-                            name="config"
-                            value={values?.config}
-                            placeholder="Config"
+                            name="taskId"
+                            value={values?.taskId}
+                            placeholder="Task Id"
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
@@ -604,7 +499,40 @@ const ExecModuleForm: React.FC = () => {
 
                       <ErrorMessage
                         className="error"
-                        name="config"
+                        name="taskId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="notes" className="nice-form-control">
+                      <b>
+                        Notes:
+                        {touched.notes &&
+                         !errors.notes && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="notes"
+                            value={values?.notes}
+                            placeholder="Notes"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="notes"
                         component="span"
                       />
                     </label>
@@ -640,6 +568,41 @@ const ExecModuleForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="status"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="role" className="nice-form-control">
+                      <b>
+                        Role:
+                        {touched.role &&
+                         !errors.role && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="role"
+                          value={values.role || ''}
+                          className={
+                            errors.role
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('role', true);
+                            setFieldValue('role', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Role" />
+                          <RoleLookup />
+                        </BSForm.Select>
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="role"
                         component="span"
                       />
                     </label>
@@ -741,25 +704,6 @@ const ExecModuleForm: React.FC = () => {
 };
 
 /*
-lowercase rolelookup
-uppercase ROLELOOKUP
-snakecase role_lookup
-pascalcase RoleLookup
-camelcase roleLookup
-kebabcase role-lookup
-*/
-
-const RoleLookup = () => {
-  return (
-    <>
-      <option value='anonymous' label="Anonymous" />
-      <option value='user' label="User" />
-      <option value='admin' label="Admin" />
-    </>
-  );
-};
-
-/*
 lowercase moduletypelookup
 uppercase MODULETYPELOOKUP
 snakecase module_type_lookup
@@ -792,13 +736,32 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
+      <option value='ready' label="Ready" />
       <option value='running' label="Running" />
       <option value='stopped' label="Stopped" />
-      <option value='ready' label="Ready" />
       <option value='good' label="Good" />
       <option value='warning' label="Warning" />
       <option value='error' label="Error" />
       <option value='disabled' label="Disabled" />
+    </>
+  );
+};
+
+/*
+lowercase rolelookup
+uppercase ROLELOOKUP
+snakecase role_lookup
+pascalcase RoleLookup
+camelcase roleLookup
+kebabcase role-lookup
+*/
+
+const RoleLookup = () => {
+  return (
+    <>
+      <option value='anonymous' label="Anonymous" />
+      <option value='user' label="User" />
+      <option value='admin' label="Admin" />
     </>
   );
 };

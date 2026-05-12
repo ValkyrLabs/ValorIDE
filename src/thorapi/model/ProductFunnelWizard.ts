@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,7 +42,7 @@ export type ProductFunnelWizard  = DataObject & {
      * @type {string}
      * @memberof ProductFunnelWizard
      */
-    productId: string;
+    productId?: string;
     /**
      * Brand name for the funnel
      * @type {string}
@@ -181,7 +180,7 @@ export type ProductFunnelWizard  = DataObject & {
 export function ProductFunnelWizardFromJSON(json: any): ProductFunnelWizard {
     return {
         ...DataObjectFromJSON(json),
-        'productId': json['productId'],
+        'productId': !exists(json, 'productId') ? undefined : json['productId'],
         'brand': !exists(json, 'brand') ? undefined : json['brand'],
         'targetAudience': !exists(json, 'targetAudience') ? undefined : json['targetAudience'],
         'priceTier': !exists(json, 'priceTier') ? undefined : json['priceTier'],

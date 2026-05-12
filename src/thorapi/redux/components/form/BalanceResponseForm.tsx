@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -48,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -70,8 +68,8 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        currentBalance: asNumber(Yup.number().typeError("currentBalance must be a number")).required("currentBalance is required."),
         customerId: Yup.string(),
+        currentBalance: asNumber(Yup.number().integer().typeError("currentBalance must be a number")),
         trashed: Yup.boolean(),
 });
 
@@ -102,8 +100,8 @@ const BalanceResponseForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<BalanceResponse> = {
-          currentBalance: 0,
           customerId: '',
+          currentBalance: 0,
           trashed: false,
   };
 
@@ -177,48 +175,6 @@ const BalanceResponseForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New BalanceResponse
                 </Accordion.Header>
                 <Accordion.Body>
-                    <label htmlFor="currentBalance" className="nice-form-control">
-                      <b>
-                        Current Balance:
-                        {touched.currentBalance &&
-                         !errors.currentBalance && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-
-
-                          {/* FLOAT FIELD */}
-                          <Field
-                            name="currentBalance"
-                            type="number"
-                            step="any"
-                            value={values.currentBalance || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('currentBalance', true);
-                              const v = e.target.value;
-                              setFieldValue('currentBalance', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.currentBalance
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="currentBalance"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="customerId" className="nice-form-control">
                       <b>
                         Customer Id:
@@ -248,6 +204,47 @@ const BalanceResponseForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="customerId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="currentBalance" className="nice-form-control">
+                      <b>
+                        Current Balance:
+                        {touched.currentBalance &&
+                         !errors.currentBalance && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+
+                          {/* LONG FIELD */}
+                          <Field
+                            name="currentBalance"
+                            type="number"
+                            value={values.currentBalance || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('currentBalance', true);
+                              const v = e.target.value;
+                              setFieldValue('currentBalance', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.currentBalance
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="currentBalance"
                         component="span"
                       />
                     </label>

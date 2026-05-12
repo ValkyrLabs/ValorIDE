@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -50,7 +49,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -58,7 +56,7 @@ Template file: typescript-redux-query/modelForm.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 
 Description:
-ValkyrAI Workflow object manages execution and state of automation workflows
+ValkyrAI Workflow definition. Graph structure is defined explicitly via TaskEdge. Tasks are transactional containers; edges define execution flow. 
 */
 
 /* -----------------------------------------------------
@@ -73,10 +71,10 @@ const RoleValidation = () => {
 };
 const StatusValidation = () => {
   return [
-    'running',
-    'stopped',
-    'paused',
     'ready',
+    'running',
+    'paused',
+    'stopped',
     'warning',
     'error',
     'disabled',
@@ -538,10 +536,10 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value='running' label="Running" />
-      <option value='stopped' label="Stopped" />
-      <option value='paused' label="Paused" />
       <option value='ready' label="Ready" />
+      <option value='running' label="Running" />
+      <option value='paused' label="Paused" />
+      <option value='stopped' label="Stopped" />
       <option value='warning' label="Warning" />
       <option value='error' label="Error" />
       <option value='disabled' label="Disabled" />

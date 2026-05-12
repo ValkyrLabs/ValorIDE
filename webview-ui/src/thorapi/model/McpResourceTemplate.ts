@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,19 +42,19 @@ export type McpResourceTemplate  = DataObject & {
      * @type {string}
      * @memberof McpResourceTemplate
      */
-    uriTemplate: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpResourceTemplate
-     */
-    name: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpResourceTemplate
-     */
     mcpServerId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpResourceTemplate
+     */
+    uriTemplate?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpResourceTemplate
+     */
+    name?: string;
     /**
      * 
      * @type {string}
@@ -127,9 +126,9 @@ export type McpResourceTemplate  = DataObject & {
 export function McpResourceTemplateFromJSON(json: any): McpResourceTemplate {
     return {
         ...DataObjectFromJSON(json),
-        'uriTemplate': json['uriTemplate'],
-        'name': json['name'],
         'mcpServerId': !exists(json, 'mcpServerId') ? undefined : json['mcpServerId'],
+        'uriTemplate': !exists(json, 'uriTemplate') ? undefined : json['uriTemplate'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
         'description': !exists(json, 'description') ? undefined : json['description'],
         'mimeType': !exists(json, 'mimeType') ? undefined : json['mimeType'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -150,9 +149,9 @@ export function McpResourceTemplateToJSON(value?: McpResourceTemplate): any {
     }
     return {
         ...DataObjectToJSON(value),
+        'mcpServerId': value.mcpServerId,
         'uriTemplate': value.uriTemplate,
         'name': value.name,
-        'mcpServerId': value.mcpServerId,
         'description': value.description,
         'mimeType': value.mimeType,
         'trashed': value.trashed,

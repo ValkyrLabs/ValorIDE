@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetBalanceResponseListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchBalanceResponseByIdApiRequest {
+    id: string;
+    balanceResponse: BalanceResponse;
 }
 
 export interface PostBalanceResponseApiRequest {
@@ -204,6 +208,60 @@ function getBalanceResponseListRaw<T>(requestParameters: GetBalanceResponseListA
 */
 export function getBalanceResponseList<T>(requestParameters: GetBalanceResponseListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<BalanceResponse>>): QueryConfig<T> {
     return getBalanceResponseListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing BalanceResponse.
+ * Partially update an existing BalanceResponse
+ */
+function patchBalanceResponseByIdRaw<T>(requestParameters: PatchBalanceResponseByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, BalanceResponse> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchBalanceResponseById.');
+    }
+
+    if (requestParameters.balanceResponse === null || requestParameters.balanceResponse === undefined) {
+        throw new runtime.RequiredError('balanceResponse','Required parameter requestParameters.balanceResponse was null or undefined when calling patchBalanceResponseById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/BalanceResponse/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || BalanceResponseToJSON(requestParameters.balanceResponse),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BalanceResponseFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing BalanceResponse.
+* Partially update an existing BalanceResponse
+*/
+export function patchBalanceResponseById<T>(requestParameters: PatchBalanceResponseByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, BalanceResponse>): QueryConfig<T> {
+    return patchBalanceResponseByIdRaw(requestParameters, requestConfig);
 }
 
 /**

@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,43 +42,43 @@ export type ApiMetricSnapshot  = DataObject & {
      * @type {string}
      * @memberof ApiMetricSnapshot
      */
-    method: string;
+    method?: string;
     /**
      * Normalized request path.
      * @type {string}
      * @memberof ApiMetricSnapshot
      */
-    path: string;
+    path?: string;
     /**
      * Total request count captured for this endpoint.
      * @type {number}
      * @memberof ApiMetricSnapshot
      */
-    count: number;
+    count?: number;
     /**
      * Number of error responses (HTTP 4xx/5xx).
      * @type {number}
      * @memberof ApiMetricSnapshot
      */
-    errorCount: number;
+    errorCount?: number;
     /**
      * Average latency in milliseconds.
      * @type {number}
      * @memberof ApiMetricSnapshot
      */
-    averageLatencyMs: number;
+    averageLatencyMs?: number;
     /**
      * Maximum observed latency in milliseconds.
      * @type {number}
      * @memberof ApiMetricSnapshot
      */
-    maxLatencyMs: number;
+    maxLatencyMs?: number;
     /**
      * Most recent HTTP status code.
      * @type {number}
      * @memberof ApiMetricSnapshot
      */
-    lastStatus: number;
+    lastStatus?: number;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -139,13 +138,13 @@ export type ApiMetricSnapshot  = DataObject & {
 export function ApiMetricSnapshotFromJSON(json: any): ApiMetricSnapshot {
     return {
         ...DataObjectFromJSON(json),
-        'method': json['method'],
-        'path': json['path'],
-        'count': json['count'],
-        'errorCount': json['errorCount'],
-        'averageLatencyMs': json['averageLatencyMs'],
-        'maxLatencyMs': json['maxLatencyMs'],
-        'lastStatus': json['lastStatus'],
+        'method': !exists(json, 'method') ? undefined : json['method'],
+        'path': !exists(json, 'path') ? undefined : json['path'],
+        'count': !exists(json, 'count') ? undefined : json['count'],
+        'errorCount': !exists(json, 'errorCount') ? undefined : json['errorCount'],
+        'averageLatencyMs': !exists(json, 'averageLatencyMs') ? undefined : json['averageLatencyMs'],
+        'maxLatencyMs': !exists(json, 'maxLatencyMs') ? undefined : json['maxLatencyMs'],
+        'lastStatus': !exists(json, 'lastStatus') ? undefined : json['lastStatus'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),

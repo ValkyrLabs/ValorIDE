@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -48,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -70,7 +68,7 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        customerId: Yup.string().required("customerId is required."),
+        customerId: Yup.string(),
         spentAt: Yup.date()
           .transform((value, originalValue) => {
             if (!originalValue) {
@@ -78,11 +76,14 @@ const validationSchema = Yup.object().shape({
             }
             const parsed = new Date(originalValue);
             return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).required("spentAt is required.").typeError("spentAt must be a valid date"),
-        modelProvider: Yup.string().required("modelProvider is required."),
-        model: Yup.string().required("model is required."),
-        promptTokens: asNumber(Yup.number().integer().typeError("promptTokens must be a number")).required("promptTokens is required."),
-        completionTokens: asNumber(Yup.number().integer().typeError("completionTokens must be a number")).required("completionTokens is required."),
+          }).typeError("spentAt must be a valid date"),
+        usageType: Yup.string(),
+        meteredUnits: asNumber(Yup.number().typeError("meteredUnits must be a number")),
+        meterName: Yup.string(),
+        modelProvider: Yup.string(),
+        model: Yup.string(),
+        promptTokens: asNumber(Yup.number().integer().typeError("promptTokens must be a number")),
+        completionTokens: asNumber(Yup.number().integer().typeError("completionTokens must be a number")),
         idempotencyKey: Yup.string(),
         trashed: Yup.boolean(),
 });
@@ -116,6 +117,9 @@ const UsageTransactionForm: React.FC = () => {
   const initialValues: Partial<UsageTransaction> = {
           customerId: '',
           spentAt: new Date(),
+          usageType: '',
+          meteredUnits: 0,
+          meterName: '',
           modelProvider: '',
           model: '',
           promptTokens: 0,
@@ -291,6 +295,114 @@ const UsageTransactionForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="credits"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="usageType" className="nice-form-control">
+                      <b>
+                        Usage Type:
+                        {touched.usageType &&
+                         !errors.usageType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="usageType"
+                            value={values?.usageType}
+                            placeholder="Usage Type"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="usageType"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="meteredUnits" className="nice-form-control">
+                      <b>
+                        Metered Units:
+                        {touched.meteredUnits &&
+                         !errors.meteredUnits && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="meteredUnits"
+                            type="number"
+                            step="any"
+                            value={values.meteredUnits || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('meteredUnits', true);
+                              const v = e.target.value;
+                              setFieldValue('meteredUnits', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.meteredUnits
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="meteredUnits"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="meterName" className="nice-form-control">
+                      <b>
+                        Meter Name:
+                        {touched.meterName &&
+                         !errors.meterName && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="meterName"
+                            value={values?.meterName}
+                            placeholder="Meter Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="meterName"
                         component="span"
                       />
                     </label>

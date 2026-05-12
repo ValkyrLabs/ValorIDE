@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,37 +42,37 @@ export type GeneralLedgerEntry  = DataObject & {
      * @type {Date}
      * @memberof GeneralLedgerEntry
      */
-    entryDate: Date;
+    entryDate?: Date;
     /**
      * 
      * @type {string}
      * @memberof GeneralLedgerEntry
      */
-    debitAccount: string;
+    debitAccount?: string;
     /**
      * 
      * @type {string}
      * @memberof GeneralLedgerEntry
      */
-    creditAccount: string;
+    creditAccount?: string;
     /**
      * 
      * @type {number}
      * @memberof GeneralLedgerEntry
      */
-    amount: number;
+    amount?: number;
     /**
      * 
      * @type {string}
      * @memberof GeneralLedgerEntry
      */
-    referenceType: GeneralLedgerEntryReferenceTypeEnum;
+    referenceType?: GeneralLedgerEntryReferenceTypeEnum;
     /**
      * 
      * @type {string}
      * @memberof GeneralLedgerEntry
      */
-    referenceId: string;
+    referenceId?: string;
     /**
      * 
      * @type {string}
@@ -139,12 +138,12 @@ export type GeneralLedgerEntry  = DataObject & {
 export function GeneralLedgerEntryFromJSON(json: any): GeneralLedgerEntry {
     return {
         ...DataObjectFromJSON(json),
-        'entryDate': new Date(json['entryDate']),
-        'debitAccount': json['debitAccount'],
-        'creditAccount': json['creditAccount'],
-        'amount': json['amount'],
-        'referenceType': json['referenceType'],
-        'referenceId': json['referenceId'],
+        'entryDate': !exists(json, 'entryDate') ? undefined : new Date(json['entryDate']),
+        'debitAccount': !exists(json, 'debitAccount') ? undefined : json['debitAccount'],
+        'creditAccount': !exists(json, 'creditAccount') ? undefined : json['creditAccount'],
+        'amount': !exists(json, 'amount') ? undefined : json['amount'],
+        'referenceType': !exists(json, 'referenceType') ? undefined : json['referenceType'],
+        'referenceId': !exists(json, 'referenceId') ? undefined : json['referenceId'],
         'notes': !exists(json, 'notes') ? undefined : json['notes'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
@@ -164,7 +163,7 @@ export function GeneralLedgerEntryToJSON(value?: GeneralLedgerEntry): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'entryDate': value.entryDate.toISOString(),
+        'entryDate': value.entryDate === undefined ? undefined : value.entryDate.toISOString(),
         'debitAccount': value.debitAccount,
         'creditAccount': value.creditAccount,
         'amount': value.amount,

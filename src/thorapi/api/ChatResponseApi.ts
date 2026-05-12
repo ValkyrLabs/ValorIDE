@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetChatResponseListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchChatResponseByIdApiRequest {
+    id: string;
+    chatResponse: ChatResponse;
 }
 
 export interface PostChatResponseApiRequest {
@@ -204,6 +208,60 @@ function getChatResponseListRaw<T>(requestParameters: GetChatResponseListApiRequ
 */
 export function getChatResponseList<T>(requestParameters: GetChatResponseListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<ChatResponse>>): QueryConfig<T> {
     return getChatResponseListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing ChatResponse.
+ * Partially update an existing ChatResponse
+ */
+function patchChatResponseByIdRaw<T>(requestParameters: PatchChatResponseByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, ChatResponse> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchChatResponseById.');
+    }
+
+    if (requestParameters.chatResponse === null || requestParameters.chatResponse === undefined) {
+        throw new runtime.RequiredError('chatResponse','Required parameter requestParameters.chatResponse was null or undefined when calling patchChatResponseById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ChatResponse/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || ChatResponseToJSON(requestParameters.chatResponse),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ChatResponseFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing ChatResponse.
+* Partially update an existing ChatResponse
+*/
+export function patchChatResponseById<T>(requestParameters: PatchChatResponseByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ChatResponse>): QueryConfig<T> {
+    return patchChatResponseByIdRaw(requestParameters, requestConfig);
 }
 
 /**

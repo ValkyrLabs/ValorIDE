@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
@@ -19,6 +18,15 @@ import { BackupConfig } from '@thorapi/model/BackupConfig'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type BackupConfigResponse = BackupConfig[]
+
+const toBackupConfigList = (result: unknown): BackupConfigResponse => {
+  if (Array.isArray(result)) {
+    return result as BackupConfigResponse
+  }
+
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as BackupConfigResponse) : []
+}
 
 export const BackupConfigService = createApi({
   reducerPath: 'BackupConfig', // This should remain unique
@@ -33,13 +41,15 @@ export const BackupConfigService = createApi({
         if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
         return `BackupConfig?${q.join('&')}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'BackupConfig' as const, id })),
-              { type: 'BackupConfig', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toBackupConfigList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'BackupConfig' as const, id })),
+          { type: 'BackupConfig', id: `PAGE_${page}` },
+        ]
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,13 +61,15 @@ export const BackupConfigService = createApi({
         }
         return `BackupConfig`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'BackupConfig' as const, id })),
-              { type: 'BackupConfig', id: 'LIST' },
-            ]
-          : [{ type: 'BackupConfig', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toBackupConfigList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'BackupConfig' as const, id })),
+          { type: 'BackupConfig', id: 'LIST' },
+        ]
+      },
     }),
 
     // 3) Create

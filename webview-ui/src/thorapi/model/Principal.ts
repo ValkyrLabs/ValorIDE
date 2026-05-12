@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -68,36 +67,6 @@ import {
  */
 export type Principal  = DataObject & {
     /**
-     * Your account user name
-     * @type {string}
-     * @memberof Principal
-     */
-    username: string;
-    /**
-     * Your account password
-     * @type {string}
-     * @memberof Principal
-     */
-    password: string;
-    /**
-     * The main email address
-     * @type {string}
-     * @memberof Principal
-     */
-    email: string;
-    /**
-     * the roles the the Principal is a member of
-     * @type {Array<Role>}
-     * @memberof Principal
-     */
-    roleList: Array<Role>;
-    /**
-     * the granted authorities (or null if the granted authority cannot be expressed as a String with sufficient precision).
-     * @type {Array<Authority>}
-     * @memberof Principal
-     */
-    authorityList: Array<Authority>;
-    /**
      * first name of user (encrypted)
      * @type {string}
      * @memberof Principal
@@ -115,6 +84,18 @@ export type Principal  = DataObject & {
      * @memberof Principal
      */
     lastName?: string;
+    /**
+     * Your account user name
+     * @type {string}
+     * @memberof Principal
+     */
+    username?: string;
+    /**
+     * Your account password
+     * @type {string}
+     * @memberof Principal
+     */
+    password?: string;
     /**
      * Encrypted identity (Facial Recognition, Fingerprint Scanner, etc.)
      * @type {string}
@@ -145,6 +126,12 @@ export type Principal  = DataObject & {
      * @memberof Principal
      */
     residenceState?: string;
+    /**
+     * The main email address
+     * @type {string}
+     * @memberof Principal
+     */
+    email?: string;
     /**
      * The main phone number
      * @type {string}
@@ -230,7 +217,19 @@ export type Principal  = DataObject & {
      */
     accountNonExpired?: boolean;
     /**
+     * the roles the the Principal is a member of
+     * @type {Array<Role>}
+     * @memberof Principal
+     */
+    roles?: Array<Role>;
+    /**
      * the granted authorities (or null if the granted authority cannot be expressed as a String with sufficient precision).
+     * @type {Array<Authority>}
+     * @memberof Principal
+     */
+    grantedAuthorities?: Array<Authority>;
+    /**
+     * the user preferences
      * @type {Array<UserPreference>}
      * @memberof Principal
      */
@@ -336,19 +335,17 @@ export type Principal  = DataObject & {
 export function PrincipalFromJSON(json: any): Principal {
     return {
         ...DataObjectFromJSON(json),
-        'username': json['username'],
-        'password': json['password'],
-        'email': json['email'],
-        'roleList': (json['roleList'] as Array<any>).map(RoleFromJSON),
-        'authorityList': (json['authorityList'] as Array<any>).map(AuthorityFromJSON),
         'firstName': !exists(json, 'firstName') ? undefined : json['firstName'],
         'middleName': !exists(json, 'middleName') ? undefined : json['middleName'],
         'lastName': !exists(json, 'lastName') ? undefined : json['lastName'],
+        'username': !exists(json, 'username') ? undefined : json['username'],
+        'password': !exists(json, 'password') ? undefined : json['password'],
         'fingerprint': !exists(json, 'fingerprint') ? undefined : json['fingerprint'],
         'federalIdentification': !exists(json, 'federalIdentification') ? undefined : json['federalIdentification'],
         'residenceCountry': !exists(json, 'residenceCountry') ? undefined : json['residenceCountry'],
         'stateIdentification': !exists(json, 'stateIdentification') ? undefined : json['stateIdentification'],
         'residenceState': !exists(json, 'residenceState') ? undefined : json['residenceState'],
+        'email': !exists(json, 'email') ? undefined : json['email'],
         'phone': !exists(json, 'phone') ? undefined : json['phone'],
         'social': !exists(json, 'social') ? undefined : json['social'],
         'bio': !exists(json, 'bio') ? undefined : json['bio'],
@@ -363,6 +360,8 @@ export function PrincipalFromJSON(json: any): Principal {
         'accountEnabled': !exists(json, 'accountEnabled') ? undefined : json['accountEnabled'],
         'accountNonLocked': !exists(json, 'accountNonLocked') ? undefined : json['accountNonLocked'],
         'accountNonExpired': !exists(json, 'accountNonExpired') ? undefined : json['accountNonExpired'],
+        'roles': !exists(json, 'roles') ? undefined : (json['roles'] as Array<any>).map(RoleFromJSON),
+        'grantedAuthorities': !exists(json, 'grantedAuthorities') ? undefined : (json['grantedAuthorities'] as Array<any>).map(AuthorityFromJSON),
         'userPreferences': !exists(json, 'userPreferences') ? undefined : (json['userPreferences'] as Array<any>).map(UserPreferenceFromJSON),
         'twoFactorEnabled': !exists(json, 'twoFactorEnabled') ? undefined : json['twoFactorEnabled'],
         'twoFactorSecret': !exists(json, 'twoFactorSecret') ? undefined : TwoFactorSecretFromJSON(json['twoFactorSecret']),
@@ -389,18 +388,16 @@ export function PrincipalToJSON(value?: Principal): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'username': value.username,
-        'password': value.password,
-        'email': value.email,
-        'roleList': (value.roleList as Array<any>).map(RoleToJSON),
-        'authorityList': (value.authorityList as Array<any>).map(AuthorityToJSON),
         'firstName': value.firstName,
         'middleName': value.middleName,
         'lastName': value.lastName,
+        'username': value.username,
+        'password': value.password,
         'federalIdentification': value.federalIdentification,
         'residenceCountry': value.residenceCountry,
         'stateIdentification': value.stateIdentification,
         'residenceState': value.residenceState,
+        'email': value.email,
         'phone': value.phone,
         'social': value.social,
         'bio': value.bio,
@@ -415,6 +412,8 @@ export function PrincipalToJSON(value?: Principal): any {
         'accountEnabled': value.accountEnabled,
         'accountNonLocked': value.accountNonLocked,
         'accountNonExpired': value.accountNonExpired,
+        'roles': value.roles === undefined ? undefined : (value.roles as Array<any>).map(RoleToJSON),
+        'grantedAuthorities': value.grantedAuthorities === undefined ? undefined : (value.grantedAuthorities as Array<any>).map(AuthorityToJSON),
         'userPreferences': value.userPreferences === undefined ? undefined : (value.userPreferences as Array<any>).map(UserPreferenceToJSON),
         'twoFactorEnabled': value.twoFactorEnabled,
         'twoFactorSecret': TwoFactorSecretToJSON(value.twoFactorSecret),

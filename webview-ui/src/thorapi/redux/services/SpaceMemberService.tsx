@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
@@ -19,6 +18,15 @@ import { SpaceMember } from '@thorapi/model/SpaceMember'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type SpaceMemberResponse = SpaceMember[]
+
+const toSpaceMemberList = (result: unknown): SpaceMemberResponse => {
+  if (Array.isArray(result)) {
+    return result as SpaceMemberResponse
+  }
+
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as SpaceMemberResponse) : []
+}
 
 export const SpaceMemberService = createApi({
   reducerPath: 'SpaceMember', // This should remain unique
@@ -33,13 +41,15 @@ export const SpaceMemberService = createApi({
         if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
         return `SpaceMember?${q.join('&')}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'SpaceMember' as const, id })),
-              { type: 'SpaceMember', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toSpaceMemberList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'SpaceMember' as const, id })),
+          { type: 'SpaceMember', id: `PAGE_${page}` },
+        ]
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,13 +61,15 @@ export const SpaceMemberService = createApi({
         }
         return `SpaceMember`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'SpaceMember' as const, id })),
-              { type: 'SpaceMember', id: 'LIST' },
-            ]
-          : [{ type: 'SpaceMember', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toSpaceMemberList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'SpaceMember' as const, id })),
+          { type: 'SpaceMember', id: 'LIST' },
+        ]
+      },
     }),
 
     // 3) Create

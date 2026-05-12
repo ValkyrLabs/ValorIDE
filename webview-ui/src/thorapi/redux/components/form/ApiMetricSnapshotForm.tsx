@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -48,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -70,13 +68,13 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        method: Yup.string().required("method is required."),
-        path: Yup.string().required("path is required."),
-        count: asNumber(Yup.number().integer().typeError("count must be a number")).required("count is required."),
-        errorCount: asNumber(Yup.number().integer().typeError("errorCount must be a number")).required("errorCount is required."),
-        averageLatencyMs: asNumber(Yup.number().typeError("averageLatencyMs must be a number")).required("averageLatencyMs is required."),
-        maxLatencyMs: asNumber(Yup.number().integer().typeError("maxLatencyMs must be a number")).required("maxLatencyMs is required."),
-        lastStatus: asNumber(Yup.number().integer().typeError("lastStatus must be a number")).required("lastStatus is required."),
+        method: Yup.string(),
+        path: Yup.string(),
+        count: asNumber(Yup.number().integer().typeError("count must be a number")),
+        errorCount: asNumber(Yup.number().integer().typeError("errorCount must be a number")),
+        averageLatencyMs: asNumber(Yup.number().typeError("averageLatencyMs must be a number")),
+        maxLatencyMs: asNumber(Yup.number().integer().typeError("maxLatencyMs must be a number")),
+        lastStatus: asNumber(Yup.number().integer().typeError("lastStatus must be a number")),
         trashed: Yup.boolean(),
 });
 

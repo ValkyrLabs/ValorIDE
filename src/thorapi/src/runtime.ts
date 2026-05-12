@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/runtime.mustache
@@ -17,11 +16,16 @@ Template file: typescript-redux-query/runtime.mustache
 
 import { Meta, OptimisticUpdate, QueryKey, QueryOptions, Rollback, TransformStrategy, Update } from "redux-query";
 
-// un-comment for Vite apps
-export const BASE_PATH = import.meta.env.VITE_basePath.replace(/\/+$/, "");
+const sanitizeBasePath = (value?: string): string => {
+    const raw = (value ?? "").trim();
+    return raw ? raw.replace(/\/+$/, "") : "";
+};
+
+// Mutable base path so it can be overridden by runtime settings.
+export let BASE_PATH = sanitizeBasePath(import.meta.env?.VITE_basePath ?? "");
 
 // un-comment for Create REact APp apps
-// export const BASE_PATH = process.env.REACT_APP_BASE_PATH.replace(/\/+$/, "");
+// export let BASE_PATH = sanitizeBasePath(process.env.REACT_APP_BASE_PATH);
 
 
 
@@ -30,6 +34,14 @@ export const Configuration = {
                   // previous versions, the default is an empty string.  Other generators typically use
                   // BASE_PATH as the default.
 };
+
+export const setBasePath = (value?: string) => {
+    BASE_PATH = sanitizeBasePath(value ?? import.meta.env?.VITE_basePath ?? "");
+    Configuration.basePath = BASE_PATH;
+    return BASE_PATH;
+};
+
+export const getBasePath = () => BASE_PATH;
 
 export interface TypedQueryConfig<TState, TBody> {
     force?: boolean;

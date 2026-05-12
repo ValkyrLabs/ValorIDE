@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,19 +42,19 @@ export type PersistentLogin  = DataObject & {
      * @type {string}
      * @memberof PersistentLogin
      */
-    username: string;
+    username?: string;
     /**
      * 
      * @type {string}
      * @memberof PersistentLogin
      */
-    series: string;
+    series?: string;
     /**
      * 
      * @type {string}
      * @memberof PersistentLogin
      */
-    token: string;
+    token?: string;
     /**
      * 
      * @type {Date}
@@ -121,9 +120,9 @@ export type PersistentLogin  = DataObject & {
 export function PersistentLoginFromJSON(json: any): PersistentLogin {
     return {
         ...DataObjectFromJSON(json),
-        'username': json['username'],
-        'series': json['series'],
-        'token': json['token'],
+        'username': !exists(json, 'username') ? undefined : json['username'],
+        'series': !exists(json, 'series') ? undefined : json['series'],
+        'token': !exists(json, 'token') ? undefined : json['token'],
         'lastUsed': !exists(json, 'lastUsed') ? undefined : new Date(json['lastUsed']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],

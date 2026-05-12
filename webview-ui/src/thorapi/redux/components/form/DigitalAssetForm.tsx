@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -50,7 +49,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -90,8 +88,6 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        productId: Yup.string().required("productId is required."),
-        fileId: Yup.string().required("fileId is required."),
       deliveryMethod: Yup.mixed()
         .oneOf(DeliveryMethodValidation(), "Invalid value for deliveryMethod")
         .required("deliveryMethod is required."),
@@ -131,8 +127,6 @@ const DigitalAssetForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<DigitalAsset> = {
-          productId: '',
-          fileId: '',
         deliveryMethod: undefined,
         accessModel: undefined,
           maxDownloads: 0,
@@ -211,72 +205,6 @@ const DigitalAssetForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New DigitalAsset
                 </Accordion.Header>
                 <Accordion.Body>
-                    <label htmlFor="productId" className="nice-form-control">
-                      <b>
-                        Product Id:
-                        {touched.productId &&
-                         !errors.productId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="productId"
-                            value={values?.productId}
-                            placeholder="Product Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="productId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="fileId" className="nice-form-control">
-                      <b>
-                        File Id:
-                        {touched.fileId &&
-                         !errors.fileId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="fileId"
-                            value={values?.fileId}
-                            placeholder="File Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="fileId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="deliveryMethod" className="nice-form-control">
                       <b>
                         Delivery Method:

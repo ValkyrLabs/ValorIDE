@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -50,12 +49,6 @@ import {
  */
 export type FileAuditLog  = DataObject & {
     /**
-     * File that was acted upon.
-     * @type {string}
-     * @memberof FileAuditLog
-     */
-    fileId: string;
-    /**
      * Action that was performed.
      * @type {string}
      * @memberof FileAuditLog
@@ -67,12 +60,6 @@ export type FileAuditLog  = DataObject & {
      * @memberof FileAuditLog
      */
     file?: FileRecord;
-    /**
-     * Principal who performed the action.
-     * @type {string}
-     * @memberof FileAuditLog
-     */
-    actorId?: string;
     /**
      * 
      * @type {Principal}
@@ -156,10 +143,8 @@ export type FileAuditLog  = DataObject & {
 export function FileAuditLogFromJSON(json: any): FileAuditLog {
     return {
         ...DataObjectFromJSON(json),
-        'fileId': json['fileId'],
         'action': json['action'],
         'file': !exists(json, 'file') ? undefined : FileRecordFromJSON(json['file']),
-        'actorId': !exists(json, 'actorId') ? undefined : json['actorId'],
         'actor': !exists(json, 'actor') ? undefined : PrincipalFromJSON(json['actor']),
         'details': !exists(json, 'details') ? undefined : json['details'],
         'ipAddress': !exists(json, 'ipAddress') ? undefined : json['ipAddress'],
@@ -182,10 +167,8 @@ export function FileAuditLogToJSON(value?: FileAuditLog): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'fileId': value.fileId,
         'action': value.action,
         'file': FileRecordToJSON(value.file),
-        'actorId': value.actorId,
         'actor': PrincipalToJSON(value.actor),
         'details': value.details,
         'ipAddress': value.ipAddress,

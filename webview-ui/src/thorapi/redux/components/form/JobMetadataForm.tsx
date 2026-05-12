@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -80,29 +78,13 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        type: Yup.string().required("type is required."),
+        type: Yup.string(),
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
-        .required("status is required."),
-        createdAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).required("createdAt is required.").typeError("createdAt must be a valid date"),
+        ,
         inputJson: Yup.string(),
         outputJson: Yup.string(),
         error: Yup.string(),
-        updatedAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("updatedAt must be a valid date"),
         startedAt: Yup.date()
           .transform((value, originalValue) => {
             if (!originalValue) {
@@ -152,11 +134,9 @@ const JobMetadataForm: React.FC = () => {
   const initialValues: Partial<JobMetadata> = {
           type: '',
         status: undefined,
-          createdAt: new Date(),
           inputJson: '',
           outputJson: '',
           error: '',
-          updatedAt: new Date(),
           startedAt: new Date(),
           finishedAt: new Date(),
           idempotencyKey: '',
@@ -301,49 +281,6 @@ const JobMetadataForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="createdAt" className="nice-form-control">
-                      <b>
-                        Created At:
-                        {touched.createdAt &&
-                         !errors.createdAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="createdAt"
-                            type="datetime-local"
-                            value={values.createdAt ? 
-                              new Date(values.createdAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('createdAt', true);
-                              const v = e.target.value;
-                              setFieldValue('createdAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.createdAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-                      <ErrorMessage
-                        className="error"
-                        name="createdAt"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="inputJson" className="nice-form-control">
                       <b>
                         Input Json:
@@ -439,49 +376,6 @@ const JobMetadataForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="error"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="updatedAt" className="nice-form-control">
-                      <b>
-                        Updated At:
-                        {touched.updatedAt &&
-                         !errors.updatedAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="updatedAt"
-                            type="datetime-local"
-                            value={values.updatedAt ? 
-                              new Date(values.updatedAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('updatedAt', true);
-                              const v = e.target.value;
-                              setFieldValue('updatedAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.updatedAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-                      <ErrorMessage
-                        className="error"
-                        name="updatedAt"
                         component="span"
                       />
                     </label>

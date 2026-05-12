@@ -62,6 +62,8 @@ When the ThorAPI client is regenerated (e.g., after an OpenAPI spec update), the
 ## 7. **General Advice**
 
 - After each codegen, always:
+  - Run `npm run sync:thorapi` from the ValorIDE repo to copy the latest generated ThorAPI client from the sibling ValkyrAI checkout into both `webview-ui/src/thorapi` and `src/thorapi`.
+  - Override the source if needed with `VALKYRAI_THORAPI_SOURCE=/path/to/ValkyrAI/web/typescript/valkyr_labs_com/src/thorapi npm run sync:thorapi`.
   - Review the generated code for breaking changes.
   - Systematically update all consuming code to match the new API.
   - Run `yarn build` and fix all TypeScript errors before proceeding.

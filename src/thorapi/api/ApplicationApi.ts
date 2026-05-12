@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetApplicationListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchApplicationByIdApiRequest {
+    id: string;
+    application: Application;
 }
 
 export interface PostApplicationApiRequest {
@@ -204,6 +208,60 @@ function getApplicationListRaw<T>(requestParameters: GetApplicationListApiReques
 */
 export function getApplicationList<T>(requestParameters: GetApplicationListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Application>>): QueryConfig<T> {
     return getApplicationListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing Application.
+ * Partially update an existing Application
+ */
+function patchApplicationByIdRaw<T>(requestParameters: PatchApplicationByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Application> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchApplicationById.');
+    }
+
+    if (requestParameters.application === null || requestParameters.application === undefined) {
+        throw new runtime.RequiredError('application','Required parameter requestParameters.application was null or undefined when calling patchApplicationById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Application/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || ApplicationToJSON(requestParameters.application),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ApplicationFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing Application.
+* Partially update an existing Application
+*/
+export function patchApplicationById<T>(requestParameters: PatchApplicationByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Application>): QueryConfig<T> {
+    return patchApplicationByIdRaw(requestParameters, requestConfig);
 }
 
 /**

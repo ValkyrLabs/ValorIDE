@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetSalesActivityListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchSalesActivityByIdApiRequest {
+    id: string;
+    salesActivity: SalesActivity;
 }
 
 export interface PostSalesActivityApiRequest {
@@ -204,6 +208,60 @@ function getSalesActivityListRaw<T>(requestParameters: GetSalesActivityListApiRe
 */
 export function getSalesActivityList<T>(requestParameters: GetSalesActivityListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<SalesActivity>>): QueryConfig<T> {
     return getSalesActivityListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing SalesActivity.
+ * Partially update an existing SalesActivity
+ */
+function patchSalesActivityByIdRaw<T>(requestParameters: PatchSalesActivityByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, SalesActivity> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchSalesActivityById.');
+    }
+
+    if (requestParameters.salesActivity === null || requestParameters.salesActivity === undefined) {
+        throw new runtime.RequiredError('salesActivity','Required parameter requestParameters.salesActivity was null or undefined when calling patchSalesActivityById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/SalesActivity/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || SalesActivityToJSON(requestParameters.salesActivity),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SalesActivityFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing SalesActivity.
+* Partially update an existing SalesActivity
+*/
+export function patchSalesActivityById<T>(requestParameters: PatchSalesActivityByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SalesActivity>): QueryConfig<T> {
+    return patchSalesActivityByIdRaw(requestParameters, requestConfig);
 }
 
 /**

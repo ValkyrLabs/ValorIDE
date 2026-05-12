@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -48,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -70,13 +68,13 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        email: Yup.string().email("Invalid email").required("email is required."),
-        fullName: Yup.string().required("fullName is required."),
-        resume: Yup.string().required("resume is required."),
+        email: Yup.string().email("Invalid email"),
+        fullName: Yup.string(),
         linkedinUrl: Yup.string(),
         currentRole: Yup.string(),
         currentCompany: Yup.string(),
         yearsExperience: asNumber(Yup.number().integer().typeError("yearsExperience must be a number")),
+        resume: Yup.string(),
         coverLetter: Yup.string(),
         opportunityId: Yup.string(),
         preferredRoles: Yup.string(),
@@ -113,11 +111,11 @@ const JobApplicationRequestForm: React.FC = () => {
   const initialValues: Partial<JobApplicationRequest> = {
           email: '',
           fullName: '',
-          resume: '',
           linkedinUrl: '',
           currentRole: '',
           currentCompany: '',
           yearsExperience: 0,
+          resume: '',
           coverLetter: '',
           opportunityId: '',
           preferredRoles: '',
@@ -261,39 +259,6 @@ const JobApplicationRequestForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="resume" className="nice-form-control">
-                      <b>
-                        Resume:
-                        {touched.resume &&
-                         !errors.resume && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="resume"
-                            value={values?.resume}
-                            placeholder="Resume"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="resume"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="linkedinUrl" className="nice-form-control">
                       <b>
                         Linkedin Url:
@@ -430,6 +395,39 @@ const JobApplicationRequestForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="yearsExperience"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="resume" className="nice-form-control">
+                      <b>
+                        Resume:
+                        {touched.resume &&
+                         !errors.resume && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="resume"
+                            value={values?.resume}
+                            placeholder="Resume"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="resume"
                         component="span"
                       />
                     </label>

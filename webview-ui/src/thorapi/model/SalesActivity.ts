@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,31 +42,31 @@ export type SalesActivity  = DataObject & {
      * @type {string}
      * @memberof SalesActivity
      */
-    opportunityId: string;
+    opportunityId?: string;
     /**
      * Type of the sales activity.
      * @type {string}
      * @memberof SalesActivity
      */
-    type: SalesActivityTypeEnum;
-    /**
-     * Date and time of the activity.
-     * @type {Date}
-     * @memberof SalesActivity
-     */
-    activityDate: Date;
-    /**
-     * The user who performed the activity.
-     * @type {string}
-     * @memberof SalesActivity
-     */
-    performedBy: string;
+    type?: SalesActivityTypeEnum;
     /**
      * Details about the activity.
      * @type {string}
      * @memberof SalesActivity
      */
     details?: string;
+    /**
+     * Date and time of the activity.
+     * @type {Date}
+     * @memberof SalesActivity
+     */
+    activityDate?: Date;
+    /**
+     * The user who performed the activity.
+     * @type {string}
+     * @memberof SalesActivity
+     */
+    performedBy?: string;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -127,11 +126,11 @@ export type SalesActivity  = DataObject & {
 export function SalesActivityFromJSON(json: any): SalesActivity {
     return {
         ...DataObjectFromJSON(json),
-        'opportunityId': json['opportunityId'],
-        'type': json['type'],
-        'activityDate': new Date(json['activityDate']),
-        'performedBy': json['performedBy'],
+        'opportunityId': !exists(json, 'opportunityId') ? undefined : json['opportunityId'],
+        'type': !exists(json, 'type') ? undefined : json['type'],
         'details': !exists(json, 'details') ? undefined : json['details'],
+        'activityDate': !exists(json, 'activityDate') ? undefined : new Date(json['activityDate']),
+        'performedBy': !exists(json, 'performedBy') ? undefined : json['performedBy'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -152,9 +151,9 @@ export function SalesActivityToJSON(value?: SalesActivity): any {
         ...DataObjectToJSON(value),
         'opportunityId': value.opportunityId,
         'type': value.type,
-        'activityDate': value.activityDate.toISOString(),
-        'performedBy': value.performedBy,
         'details': value.details,
+        'activityDate': value.activityDate === undefined ? undefined : value.activityDate.toISOString(),
+        'performedBy': value.performedBy,
         'trashed': value.trashed,
     };
 }

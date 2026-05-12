@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -93,6 +92,12 @@ export type OasPath  = DataObject & {
      * @type {OasOperation}
      * @memberof OasPath
      */
+    patch?: OasOperation;
+    /**
+     * 
+     * @type {OasOperation}
+     * @memberof OasPath
+     */
     _delete?: OasOperation;
     /**
      * Unique identifier for object in the system
@@ -160,6 +165,7 @@ export function OasPathFromJSON(json: any): OasPath {
         'get': !exists(json, 'get') ? undefined : OasOperationFromJSON(json['get']),
         'put': !exists(json, 'put') ? undefined : OasOperationFromJSON(json['put']),
         'post': !exists(json, 'post') ? undefined : OasOperationFromJSON(json['post']),
+        'patch': !exists(json, 'patch') ? undefined : OasOperationFromJSON(json['patch']),
         '_delete': !exists(json, 'delete') ? undefined : OasOperationFromJSON(json['delete']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
@@ -186,6 +192,7 @@ export function OasPathToJSON(value?: OasPath): any {
         'get': OasOperationToJSON(value.get),
         'put': OasOperationToJSON(value.put),
         'post': OasOperationToJSON(value.post),
+        'patch': OasOperationToJSON(value.patch),
         'delete': OasOperationToJSON(value._delete),
         'trashed': value.trashed,
     };

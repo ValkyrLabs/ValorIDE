@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -38,6 +37,9 @@ import {
     Principal,
     PrincipalFromJSON,
     PrincipalToJSON,
+    Tag,
+    TagFromJSON,
+    TagToJSON,
 } from './';
 
 
@@ -68,11 +70,11 @@ export type ContentData  = DataObject & {
      */
     subtitle?: string;
     /**
-     * comma separated list of tags
-     * @type {string}
+     * list of tags
+     * @type {Array<Tag>}
      * @memberof ContentData
      */
-    tags?: string;
+    tags?: Array<Tag>;
     /**
      * 
      * @type {string}
@@ -249,7 +251,7 @@ export function ContentDataFromJSON(json: any): ContentData {
         'authorName': !exists(json, 'authorName') ? undefined : json['authorName'],
         'title': !exists(json, 'title') ? undefined : json['title'],
         'subtitle': !exists(json, 'subtitle') ? undefined : json['subtitle'],
-        'tags': !exists(json, 'tags') ? undefined : json['tags'],
+        'tags': !exists(json, 'tags') ? undefined : (json['tags'] as Array<any>).map(TagFromJSON),
         'fileName': !exists(json, 'fileName') ? undefined : json['fileName'],
         'contentUrl': !exists(json, 'contentUrl') ? undefined : json['contentUrl'],
         'contentData': !exists(json, 'contentData') ? undefined : json['contentData'],
@@ -290,7 +292,7 @@ export function ContentDataToJSON(value?: ContentData): any {
         'authorName': value.authorName,
         'title': value.title,
         'subtitle': value.subtitle,
-        'tags': value.tags,
+        'tags': value.tags === undefined ? undefined : (value.tags as Array<any>).map(TagToJSON),
         'fileName': value.fileName,
         'contentUrl': value.contentUrl,
         'contentData': value.contentData,

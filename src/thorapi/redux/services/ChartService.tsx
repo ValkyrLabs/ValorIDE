@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
@@ -19,6 +18,15 @@ import { Chart } from '@thorapi/model/Chart'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type ChartResponse = Chart[]
+
+const toChartList = (result: unknown): ChartResponse => {
+  if (Array.isArray(result)) {
+    return result as ChartResponse
+  }
+
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as ChartResponse) : []
+}
 
 export const ChartService = createApi({
   reducerPath: 'Chart', // This should remain unique
@@ -33,13 +41,15 @@ export const ChartService = createApi({
         if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
         return `Chart?${q.join('&')}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Chart' as const, id })),
-              { type: 'Chart', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toChartList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'Chart' as const, id })),
+          { type: 'Chart', id: `PAGE_${page}` },
+        ]
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,13 +61,15 @@ export const ChartService = createApi({
         }
         return `Chart`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Chart' as const, id })),
-              { type: 'Chart', id: 'LIST' },
-            ]
-          : [{ type: 'Chart', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toChartList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'Chart' as const, id })),
+          { type: 'Chart', id: 'LIST' },
+        ]
+      },
     }),
 
     // 3) Create

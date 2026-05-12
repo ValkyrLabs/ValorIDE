@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetBuildOutputListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchBuildOutputByIdApiRequest {
+    id: string;
+    buildOutput: BuildOutput;
 }
 
 export interface PostBuildOutputApiRequest {
@@ -204,6 +208,60 @@ function getBuildOutputListRaw<T>(requestParameters: GetBuildOutputListApiReques
 */
 export function getBuildOutputList<T>(requestParameters: GetBuildOutputListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<BuildOutput>>): QueryConfig<T> {
     return getBuildOutputListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing BuildOutput.
+ * Partially update an existing BuildOutput
+ */
+function patchBuildOutputByIdRaw<T>(requestParameters: PatchBuildOutputByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, BuildOutput> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchBuildOutputById.');
+    }
+
+    if (requestParameters.buildOutput === null || requestParameters.buildOutput === undefined) {
+        throw new runtime.RequiredError('buildOutput','Required parameter requestParameters.buildOutput was null or undefined when calling patchBuildOutputById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/BuildOutput/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || BuildOutputToJSON(requestParameters.buildOutput),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BuildOutputFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing BuildOutput.
+* Partially update an existing BuildOutput
+*/
+export function patchBuildOutputById<T>(requestParameters: PatchBuildOutputByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, BuildOutput>): QueryConfig<T> {
+    return patchBuildOutputByIdRaw(requestParameters, requestConfig);
 }
 
 /**

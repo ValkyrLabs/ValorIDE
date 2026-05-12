@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -49,18 +48,6 @@ import {
  * @interface DigitalAsset
  */
 export type DigitalAsset  = DataObject & {
-    /**
-     * Product this asset delivers (required link to canonical Product).
-     * @type {string}
-     * @memberof DigitalAsset
-     */
-    productId: string;
-    /**
-     * FileRecord containing the actual payload (e-book, PDF, binary, etc.).
-     * @type {string}
-     * @memberof DigitalAsset
-     */
-    fileId: string;
     /**
      * How the asset is made available to the customer.
      * @type {string}
@@ -162,8 +149,6 @@ export type DigitalAsset  = DataObject & {
 export function DigitalAssetFromJSON(json: any): DigitalAsset {
     return {
         ...DataObjectFromJSON(json),
-        'productId': json['productId'],
-        'fileId': json['fileId'],
         'deliveryMethod': json['deliveryMethod'],
         'product': !exists(json, 'product') ? undefined : ProductFromJSON(json['product']),
         'file': !exists(json, 'file') ? undefined : FileRecordFromJSON(json['file']),
@@ -189,8 +174,6 @@ export function DigitalAssetToJSON(value?: DigitalAsset): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'productId': value.productId,
-        'fileId': value.fileId,
         'deliveryMethod': value.deliveryMethod,
         'product': ProductToJSON(value.product),
         'file': FileRecordToJSON(value.file),

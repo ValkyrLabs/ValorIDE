@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -54,19 +53,13 @@ export type McpToolPreset  = DataObject & {
      * @type {string}
      * @memberof McpToolPreset
      */
-    slug: string;
+    slug?: string;
     /**
      * Human friendly name shown in UIs.
      * @type {string}
      * @memberof McpToolPreset
      */
-    displayName: string;
-    /**
-     * 
-     * @type {McpTool}
-     * @memberof McpToolPreset
-     */
-    tool: McpTool;
+    displayName?: string;
     /**
      * One-line explanation of what the preset does.
      * @type {string}
@@ -103,6 +96,12 @@ export type McpToolPreset  = DataObject & {
      * @memberof McpToolPreset
      */
     autoApprove?: boolean;
+    /**
+     * 
+     * @type {McpTool}
+     * @memberof McpToolPreset
+     */
+    tool?: McpTool;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -162,15 +161,15 @@ export type McpToolPreset  = DataObject & {
 export function McpToolPresetFromJSON(json: any): McpToolPreset {
     return {
         ...DataObjectFromJSON(json),
-        'slug': json['slug'],
-        'displayName': json['displayName'],
-        'tool': McpToolFromJSON(json['tool']),
+        'slug': !exists(json, 'slug') ? undefined : json['slug'],
+        'displayName': !exists(json, 'displayName') ? undefined : json['displayName'],
         'summary': !exists(json, 'summary') ? undefined : json['summary'],
         'category': !exists(json, 'category') ? undefined : json['category'],
         'tags': !exists(json, 'tags') ? undefined : (json['tags'] as Array<any>).map(McpMarketplaceItemTagFromJSON),
         'recommendedFor': !exists(json, 'recommendedFor') ? undefined : json['recommendedFor'],
         'documentationUrl': !exists(json, 'documentationUrl') ? undefined : json['documentationUrl'],
         'autoApprove': !exists(json, 'autoApprove') ? undefined : json['autoApprove'],
+        'tool': !exists(json, 'tool') ? undefined : McpToolFromJSON(json['tool']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -191,13 +190,13 @@ export function McpToolPresetToJSON(value?: McpToolPreset): any {
         ...DataObjectToJSON(value),
         'slug': value.slug,
         'displayName': value.displayName,
-        'tool': McpToolToJSON(value.tool),
         'summary': value.summary,
         'category': value.category,
         'tags': value.tags === undefined ? undefined : (value.tags as Array<any>).map(McpMarketplaceItemTagToJSON),
         'recommendedFor': value.recommendedFor,
         'documentationUrl': value.documentationUrl,
         'autoApprove': value.autoApprove,
+        'tool': McpToolToJSON(value.tool),
         'trashed': value.trashed,
     };
 }

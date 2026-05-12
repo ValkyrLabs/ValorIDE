@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetRatingListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchRatingByIdApiRequest {
+    id: string;
+    rating: Rating;
 }
 
 export interface PostRatingApiRequest {
@@ -204,6 +208,60 @@ function getRatingListRaw<T>(requestParameters: GetRatingListApiRequest, request
 */
 export function getRatingList<T>(requestParameters: GetRatingListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Rating>>): QueryConfig<T> {
     return getRatingListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing Rating.
+ * Partially update an existing Rating
+ */
+function patchRatingByIdRaw<T>(requestParameters: PatchRatingByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Rating> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchRatingById.');
+    }
+
+    if (requestParameters.rating === null || requestParameters.rating === undefined) {
+        throw new runtime.RequiredError('rating','Required parameter requestParameters.rating was null or undefined when calling patchRatingById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Rating/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || RatingToJSON(requestParameters.rating),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(RatingFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing Rating.
+* Partially update an existing Rating
+*/
+export function patchRatingById<T>(requestParameters: PatchRatingByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Rating>): QueryConfig<T> {
+    return patchRatingByIdRaw(requestParameters, requestConfig);
 }
 
 /**

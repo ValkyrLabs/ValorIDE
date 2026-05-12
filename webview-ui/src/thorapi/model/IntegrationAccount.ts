@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -33,7 +32,7 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 // thorapi
 
 /**
- * An integration account to authenticate workflows with various systems
+ * An integration account to authenticate with various systems
  * @export
  * @interface IntegrationAccount
  */
@@ -57,13 +56,13 @@ export type IntegrationAccount  = DataObject & {
      */
     password?: string;
     /**
-     * account password - encrypted
+     * account API key - encrypted
      * @type {string}
      * @memberof IntegrationAccount
      */
     apiKey?: string;
     /**
-     * 
+     * account identifier (if different from username)
      * @type {string}
      * @memberof IntegrationAccount
      */

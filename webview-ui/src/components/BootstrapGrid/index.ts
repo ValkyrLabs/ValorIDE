@@ -4,7 +4,14 @@
  */
 
 export interface ColumnSchema {
-  type?: "string" | "number" | "boolean" | "datetime" | "enum" | "object";
+  type?:
+    | "string"
+    | "number"
+    | "boolean"
+    | "date"
+    | "datetime"
+    | "enum"
+    | "object";
   enumValues?: string[] | number[];
   enumValueType?: "string" | "number";
   refType?: string;

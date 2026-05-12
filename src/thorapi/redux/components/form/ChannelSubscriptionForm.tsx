@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -36,7 +35,6 @@ import { AclGrantRequest, PermissionType } from '@valkyr/component-library/Permi
 
 import {
   ChannelSubscription,
-  ChannelSubscriptionChannelEnum,
 } from '@thorapi/model';
 
 import { useAddChannelSubscriptionMutation } from '../../services/ChannelSubscriptionService';
@@ -49,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -63,16 +60,6 @@ Subscription to a message/event channel for pub/sub and streaming.
 /* -----------------------------------------------------
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
-const ChannelValidation = () => {
-  return [
-    'EMAIL',
-    'SWARM',
-    'WORKFLOW',
-    'NOTIFICATIONS',
-    'ALERTS',
-    'SOCKET',
-  ];
-};
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
@@ -81,11 +68,10 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-      channel: Yup.mixed()
-        .oneOf(ChannelValidation(), "Invalid value for channel")
-        .required("channel is required."),
-        subscriberId: Yup.string().required("subscriberId is required."),
         name: Yup.string(),
+        channel: Yup.string(),
+        channelId: Yup.string(),
+        subscriberId: Yup.string(),
         subscribedAt: Yup.date()
           .transform((value, originalValue) => {
             if (!originalValue) {
@@ -125,9 +111,10 @@ const ChannelSubscriptionForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ChannelSubscription> = {
-        channel: undefined,
-          subscriberId: '',
           name: '',
+          channel: '',
+          channelId: '',
+          subscriberId: '',
           subscribedAt: new Date(),
           active: false,
           trashed: false,
@@ -203,6 +190,39 @@ const ChannelSubscriptionForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New ChannelSubscription
                 </Accordion.Header>
                 <Accordion.Body>
+                    <label htmlFor="name" className="nice-form-control">
+                      <b>
+                        Name:
+                        {touched.name &&
+                         !errors.name && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="name"
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="name"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="channel" className="nice-form-control">
                       <b>
                         Channel:
@@ -212,28 +232,59 @@ const ChannelSubscriptionForm: React.FC = () => {
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="channel"
-                          value={values.channel || ''}
-                          className={
-                            errors.channel
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('channel', true);
-                            setFieldValue('channel', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Channel" />
-                          <ChannelLookup />
-                        </BSForm.Select>
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="channel"
+                            value={values?.channel}
+                            placeholder="Channel"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
 
 
                       <ErrorMessage
                         className="error"
                         name="channel"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="channelId" className="nice-form-control">
+                      <b>
+                        Channel Id:
+                        {touched.channelId &&
+                         !errors.channelId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="channelId"
+                            value={values?.channelId}
+                            placeholder="Channel Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="channelId"
                         component="span"
                       />
                     </label>
@@ -267,39 +318,6 @@ const ChannelSubscriptionForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="subscriberId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="name" className="nice-form-control">
-                      <b>
-                        Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="name"
                         component="span"
                       />
                     </label>
@@ -477,28 +495,6 @@ const ChannelSubscriptionForm: React.FC = () => {
         />
       )}
     </div>
-  );
-};
-
-/*
-lowercase channellookup
-uppercase CHANNELLOOKUP
-snakecase channel_lookup
-pascalcase ChannelLookup
-camelcase channelLookup
-kebabcase channel-lookup
-*/
-
-const ChannelLookup = () => {
-  return (
-    <>
-      <option value='EMAIL' label="Email" />
-      <option value='SWARM' label="Swarm" />
-      <option value='WORKFLOW' label="Workflow" />
-      <option value='NOTIFICATIONS' label="Notifications" />
-      <option value='ALERTS' label="Alerts" />
-      <option value='SOCKET' label="Socket" />
-    </>
   );
 };
 

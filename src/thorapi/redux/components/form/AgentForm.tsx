@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -36,6 +35,7 @@ import { AclGrantRequest, PermissionType } from '@valkyr/component-library/Permi
 
 import {
   Agent,
+  AgentAutonomousTableCreationLevelEnum,
 } from '@thorapi/model';
 
 import { useAddAgentMutation } from '../../services/AgentService';
@@ -48,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -62,6 +61,15 @@ Agent configuration that composes Application, Workflows, Role, Schedule
 /* -----------------------------------------------------
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
+const AutonomousTableCreationLevelValidation = () => {
+  return [
+    'none',
+    'guided',
+    'bounded',
+    'high',
+    'unlimited',
+  ];
+};
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
@@ -73,6 +81,9 @@ const validationSchema = Yup.object().shape({
         name: Yup.string(),
         cronSchedule: Yup.string(),
         heartbeatEnabled: Yup.boolean(),
+      autonomousTableCreationLevel: Yup.mixed()
+        .oneOf(AutonomousTableCreationLevelValidation(), "Invalid value for autonomousTableCreationLevel")
+        ,
         trashed: Yup.boolean(),
 });
 
@@ -106,6 +117,7 @@ const AgentForm: React.FC = () => {
           name: '',
           cronSchedule: '',
           heartbeatEnabled: false,
+        autonomousTableCreationLevel: undefined,
           trashed: false,
   };
 
@@ -282,6 +294,41 @@ const AgentForm: React.FC = () => {
                       />
                     </label>
                     <br />
+                    <label htmlFor="autonomousTableCreationLevel" className="nice-form-control">
+                      <b>
+                        Autonomous Table Creation Level:
+                        {touched.autonomousTableCreationLevel &&
+                         !errors.autonomousTableCreationLevel && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="autonomousTableCreationLevel"
+                          value={values.autonomousTableCreationLevel || ''}
+                          className={
+                            errors.autonomousTableCreationLevel
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('autonomousTableCreationLevel', true);
+                            setFieldValue('autonomousTableCreationLevel', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Autonomous Table Creation Level" />
+                          <AutonomousTableCreationLevelLookup />
+                        </BSForm.Select>
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="autonomousTableCreationLevel"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
@@ -375,6 +422,27 @@ const AgentForm: React.FC = () => {
         />
       )}
     </div>
+  );
+};
+
+/*
+lowercase autonomoustablecreationlevellookup
+uppercase AUTONOMOUSTABLECREATIONLEVELLOOKUP
+snakecase autonomous_table_creation_level_lookup
+pascalcase AutonomousTableCreationLevelLookup
+camelcase autonomousTableCreationLevelLookup
+kebabcase autonomous-table-creation-level-lookup
+*/
+
+const AutonomousTableCreationLevelLookup = () => {
+  return (
+    <>
+      <option value='none' label="None" />
+      <option value='guided' label="Guided" />
+      <option value='bounded' label="Bounded" />
+      <option value='high' label="High" />
+      <option value='unlimited' label="Unlimited" />
+    </>
   );
 };
 

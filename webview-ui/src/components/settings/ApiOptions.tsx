@@ -41,6 +41,8 @@ import {
   geminiModels,
   moonshotDefaultModelId,
   moonshotModels,
+  minimaxDefaultModelId,
+  minimaxModels,
   mistralDefaultModelId,
   mistralModels,
   ModelInfo,
@@ -317,6 +319,7 @@ const ApiOptions = ({
           <VSCodeOption value="valoride">ValorIDE</VSCodeOption>
           <VSCodeOption value="openrouter">OpenRouter</VSCodeOption>
           <VSCodeOption value="moonshot">Moonshot (Kimi2 / Kimi2.5)</VSCodeOption>
+          <VSCodeOption value="minimax">MiniMax (M2.7)</VSCodeOption>
           <VSCodeOption value="anthropic">Anthropic</VSCodeOption>
           <VSCodeOption value="bedrock">Amazon Bedrock</VSCodeOption>
           <VSCodeOption value="openai">OpenAI Compatible</VSCodeOption>
@@ -453,9 +456,9 @@ const ApiOptions = ({
             style={{ width: "100%" }}
             type="password"
             onInput={handleInputChange("openAiNativeApiKey")}
-            placeholder="Enter API Key..."
+            placeholder="Optional: Enter API key to override OAuth..."
           >
-            <span style={{ fontWeight: 500 }}>OpenAI API Key</span>
+            <span style={{ fontWeight: 500 }}>OpenAI API Key (Optional)</span>
           </VSCodeTextField>
           <p
             style={{
@@ -464,8 +467,11 @@ const ApiOptions = ({
               color: "var(--vscode-descriptionForeground)",
             }}
           >
-            This key is stored locally and only used to make API requests from
-            this extension.
+            If this field is blank, ValorIDE uses Codex OAuth credentials from{" "}
+            <code>~/.codex/auth.json</code>. Run <code>codex login</code> to
+            set that up. Any API key entered here is stored locally and only
+            used to make API requests from this extension.
+            {" "}
             {!apiConfiguration?.openAiNativeApiKey && (
               <VSCodeLink
                 href="https://platform.openai.com/api-keys"
@@ -474,7 +480,7 @@ const ApiOptions = ({
                   fontSize: "inherit",
                 }}
               >
-                You can get an OpenAI API key by signing up here.
+                Get an OpenAI API key.
               </VSCodeLink>
             )}
           </p>
@@ -571,6 +577,63 @@ const ApiOptions = ({
                 }}
               >
                 You can get a Moonshot API key by signing up here.
+              </VSCodeLink>
+            )}
+          </p>
+        </div>
+      )}
+
+      {selectedProvider === "minimax" && (
+        <div>
+          <DropdownContainer
+            className="dropdown-container"
+            style={{ position: "inherit" }}
+          >
+            <label htmlFor="minimax-entrypoint">
+              <span style={{ fontWeight: 500, marginTop: 5 }}>
+                MiniMax Entrypoint
+              </span>
+            </label>
+            <VSCodeDropdown
+              id="minimax-entrypoint"
+              value={apiConfiguration?.minimaxApiLine || "international"}
+              onChange={handleInputChange("minimaxApiLine")}
+              style={{
+                minWidth: 130,
+                position: "relative",
+              }}
+            >
+              <VSCodeOption value="international">api.minimax.io</VSCodeOption>
+              <VSCodeOption value="china">api.minimaxi.com</VSCodeOption>
+            </VSCodeDropdown>
+          </DropdownContainer>
+          <VSCodeTextField
+            value={apiConfiguration?.minimaxApiKey || ""}
+            style={{ width: "100%" }}
+            type="password"
+            onInput={handleInputChange("minimaxApiKey")}
+            placeholder="Enter API Key..."
+          >
+            <span style={{ fontWeight: 500 }}>MiniMax API Key</span>
+          </VSCodeTextField>
+          <p
+            style={{
+              fontSize: "12px",
+              marginTop: 3,
+              color: "var(--vscode-descriptionForeground)",
+            }}
+          >
+            This key is stored locally and only used to make API requests from
+            this extension.
+            {!apiConfiguration?.minimaxApiKey && (
+              <VSCodeLink
+                href="https://platform.minimax.io/user-center/basic-information/interface-key"
+                style={{
+                  display: "inline",
+                  fontSize: "inherit",
+                }}
+              >
+                You can get a MiniMax API key by signing up here.
               </VSCodeLink>
             )}
           </p>
@@ -1772,70 +1835,273 @@ const ApiOptions = ({
           >
             <span style={{ fontWeight: 500 }}>Base URL (optional)</span>
           </VSCodeTextField>
+          <p
+            style={{
+              fontSize: "11px",
+              marginTop: "4px",
+              marginBottom: "12px",
+              color: "var(--vscode-descriptionForeground)",
+            }}
+          >
+            URL where Ollama service is running
+          </p>
+
           <VSCodeTextField
             value={apiConfiguration?.ollamaModelId || ""}
             style={{ width: "100%" }}
             onInput={handleInputChange("ollamaModelId")}
-            placeholder={"e.g. llama3.1"}
+            placeholder={"e.g. llama2, llama3.1, gemma2"}
           >
             <span style={{ fontWeight: 500 }}>Model ID</span>
           </VSCodeTextField>
+          <p
+            style={{
+              fontSize: "11px",
+              marginTop: "4px",
+              marginBottom: "12px",
+              color: "var(--vscode-descriptionForeground)",
+            }}
+          >
+            The Ollama model to use (e.g., llama3.1, mistral, gemma2)
+          </p>
+
+          {ollamaModels.length > 0 && (
+            <div style={{ marginBottom: "12px" }}>
+              <p style={{ fontSize: "12px", fontWeight: 500, marginBottom: "8px" }}>
+                Available Models:
+              </p>
+              <VSCodeRadioGroup
+                value={
+                  ollamaModels.includes(apiConfiguration?.ollamaModelId || "")
+                    ? apiConfiguration?.ollamaModelId
+                    : ""
+                }
+                onChange={(e) => {
+                  const value = (e.target as HTMLInputElement)?.value;
+                  if (value) {
+                    handleInputChange("ollamaModelId")({
+                      target: { value },
+                    });
+                  }
+                }}
+              >
+                {ollamaModels.map((model) => (
+                  <VSCodeRadio
+                    key={model}
+                    value={model}
+                    checked={apiConfiguration?.ollamaModelId === model}
+                  >
+                    {model}
+                  </VSCodeRadio>
+                ))}
+              </VSCodeRadioGroup>
+            </div>
+          )}
+
           <VSCodeTextField
             value={apiConfiguration?.ollamaApiOptionsCtxNum || "32768"}
             style={{ width: "100%" }}
             onInput={handleInputChange("ollamaApiOptionsCtxNum")}
             placeholder={"e.g. 32768"}
           >
-            <span style={{ fontWeight: 500 }}>Model Context Window</span>
+            <span style={{ fontWeight: 500 }}>Context Window</span>
           </VSCodeTextField>
-          {ollamaModels.length > 0 && (
-            <VSCodeRadioGroup
-              value={
-                ollamaModels.includes(apiConfiguration?.ollamaModelId || "")
-                  ? apiConfiguration?.ollamaModelId
-                  : ""
-              }
-              onChange={(e) => {
-                const value = (e.target as HTMLInputElement)?.value;
-                // need to check value first since radio group returns empty string sometimes
-                if (value) {
-                  handleInputChange("ollamaModelId")({
-                    target: { value },
-                  });
-                }
+          <p
+            style={{
+              fontSize: "11px",
+              marginTop: "4px",
+              marginBottom: "12px",
+              color: "var(--vscode-descriptionForeground)",
+            }}
+          >
+            Maximum context length for the model
+          </p>
+
+          <VSCodeTextField
+            value={apiConfiguration?.ollamaRequestTimeout || "300000"}
+            style={{ width: "100%" }}
+            onInput={handleInputChange("ollamaRequestTimeout")}
+            placeholder={"Default: 300000 (5 minutes)"}
+          >
+            <span style={{ fontWeight: 500 }}>Request Timeout (ms)</span>
+          </VSCodeTextField>
+          <p
+            style={{
+              fontSize: "11px",
+              marginTop: "4px",
+              marginBottom: "12px",
+              color: "var(--vscode-descriptionForeground)",
+            }}
+          >
+            Maximum time to wait for chunks while streaming. Increase for slow models or large context (1000ms - 600000ms / 10 minutes max)
+          </p>
+
+          <VSCodeTextField
+            value={apiConfiguration?.ollamaKeepAlive || "5m"}
+            style={{ width: "100%" }}
+            onInput={handleInputChange("ollamaKeepAlive")}
+            placeholder={"Default: 5m"}
+          >
+            <span style={{ fontWeight: 500 }}>Keep-Alive Duration</span>
+          </VSCodeTextField>
+          <p
+            style={{
+              fontSize: "11px",
+              marginTop: "4px",
+              marginBottom: "12px",
+              color: "var(--vscode-descriptionForeground)",
+            }}
+          >
+            How long to keep connection alive (e.g., 5m, 10s)
+          </p>
+
+          <div style={{ borderTop: "1px solid var(--vscode-widget-border)", paddingTop: "12px", marginBottom: "12px" }}>
+            <p style={{ fontSize: "12px", fontWeight: 500, marginBottom: "12px" }}>
+              Advanced Model Parameters (optional):
+            </p>
+
+            <VSCodeTextField
+              value={apiConfiguration?.ollamaTemperature || ""}
+              style={{ width: "100%" }}
+              onInput={handleInputChange("ollamaTemperature")}
+              placeholder={"Default: 0.7 (0.0 - 2.0)"}
+            >
+              <span style={{ fontWeight: 500 }}>Temperature</span>
+            </VSCodeTextField>
+            <p
+              style={{
+                fontSize: "11px",
+                marginTop: "4px",
+                marginBottom: "12px",
+                color: "var(--vscode-descriptionForeground)",
               }}
             >
-              {ollamaModels.map((model) => (
-                <VSCodeRadio
-                  key={model}
-                  value={model}
-                  checked={apiConfiguration?.ollamaModelId === model}
-                >
-                  {model}
-                </VSCodeRadio>
-              ))}
-            </VSCodeRadioGroup>
-          )}
+              Controls randomness (lower = more focused, higher = more diverse)
+            </p>
+
+            <VSCodeTextField
+              value={apiConfiguration?.ollamaTopP || ""}
+              style={{ width: "100%" }}
+              onInput={handleInputChange("ollamaTopP")}
+              placeholder={"Default: 0.9 (0.0 - 1.0)"}
+            >
+              <span style={{ fontWeight: 500 }}>Top P</span>
+            </VSCodeTextField>
+            <p
+              style={{
+                fontSize: "11px",
+                marginTop: "4px",
+                marginBottom: "12px",
+                color: "var(--vscode-descriptionForeground)",
+              }}
+            >
+              Nucleus sampling parameter for diversity control
+            </p>
+
+            <VSCodeTextField
+              value={apiConfiguration?.ollamaTopK || ""}
+              style={{ width: "100%" }}
+              onInput={handleInputChange("ollamaTopK")}
+              placeholder={"Default: 40"}
+            >
+              <span style={{ fontWeight: 500 }}>Top K</span>
+            </VSCodeTextField>
+            <p
+              style={{
+                fontSize: "11px",
+                marginTop: "4px",
+                marginBottom: "12px",
+                color: "var(--vscode-descriptionForeground)",
+              }}
+            >
+              Only consider top K tokens for generation
+            </p>
+
+            <VSCodeTextField
+              value={apiConfiguration?.ollamaRepeatPenalty || ""}
+              style={{ width: "100%" }}
+              onInput={handleInputChange("ollamaRepeatPenalty")}
+              placeholder={"Default: 1.1"}
+            >
+              <span style={{ fontWeight: 500 }}>Repeat Penalty</span>
+            </VSCodeTextField>
+            <p
+              style={{
+                fontSize: "11px",
+                marginTop: "4px",
+                marginBottom: "12px",
+                color: "var(--vscode-descriptionForeground)",
+              }}
+            >
+              Reduces probability of repeating tokens
+            </p>
+
+            <VSCodeTextField
+              value={apiConfiguration?.ollamaNumPredict || ""}
+              style={{ width: "100%" }}
+              onInput={handleInputChange("ollamaNumPredict")}
+              placeholder={"Default: unlimited"}
+            >
+              <span style={{ fontWeight: 500 }}>Max Tokens</span>
+            </VSCodeTextField>
+            <p
+              style={{
+                fontSize: "11px",
+                marginTop: "4px",
+                marginBottom: "12px",
+                color: "var(--vscode-descriptionForeground)",
+              }}
+            >
+              Maximum number of tokens to generate (-1 for unlimited)
+            </p>
+
+            <VSCodeTextField
+              value={apiConfiguration?.ollamaMirostat || ""}
+              style={{ width: "100%" }}
+              onInput={handleInputChange("ollamaMirostat")}
+              placeholder={"0 = disabled, 1 or 2 = enabled"}
+            >
+              <span style={{ fontWeight: 500 }}>Mirostat Mode</span>
+            </VSCodeTextField>
+            <p
+              style={{
+                fontSize: "11px",
+                marginTop: "4pt",
+                marginBottom: "12px",
+                color: "var(--vscode-descriptionForeground)",
+              }}
+            >
+              Advanced entropy control (0=off, 1 or 2=on)
+            </p>
+          </div>
+
           <p
             style={{
               fontSize: "12px",
-              marginTop: "5px",
+              marginTop: "8px",
               color: "var(--vscode-descriptionForeground)",
             }}
           >
             Ollama allows you to run models locally on your computer. For
-            instructions on how to get started, see their
+            instructions on how to get started, see their{" "}
             <VSCodeLink
               href="https://github.com/ollama/ollama/blob/main/README.md"
               style={{ display: "inline", fontSize: "inherit" }}
             >
-              quickstart guide.
+              quickstart guide
             </VSCodeLink>
-            <span style={{ color: "var(--vscode-errorForeground)" }}>
-              (<span style={{ fontWeight: 500 }}>Note:</span> ValorIDE uses
-              complex prompts and works best with Claude models. Less capable
-              models may not work as expected.)
-            </span>
+            .
+          </p>
+          <p
+            style={{
+              fontSize: "11px",
+              marginTop: "8px",
+              color: "var(--vscode-errorForeground)",
+            }}
+          >
+            <strong>Note:</strong> ValorIDE works best with capable models (e.g.,
+            Llama 3.1, Mistral, Gemma 2). Smaller models may not handle complex
+            prompts well.
           </p>
         </div>
       )}
@@ -2025,6 +2291,8 @@ const ApiOptions = ({
                 createDropdown(deepSeekModels)}
               {selectedProvider === "moonshot" &&
                 createDropdown(moonshotModels)}
+              {selectedProvider === "minimax" &&
+                createDropdown(minimaxModels)}
               {selectedProvider === "qwen" &&
                 createDropdown(
                   apiConfiguration?.qwenApiLine === "china"
@@ -2432,6 +2700,8 @@ export function normalizeApiConfiguration(
       return getProviderData(deepSeekModels, deepSeekDefaultModelId);
     case "moonshot":
       return getProviderData(moonshotModels, moonshotDefaultModelId);
+    case "minimax":
+      return getProviderData(minimaxModels, minimaxDefaultModelId);
     case "qwen":
       const qwenModels =
         apiConfiguration?.qwenApiLine === "china"

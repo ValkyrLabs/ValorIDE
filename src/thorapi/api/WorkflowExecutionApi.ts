@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -43,6 +42,11 @@ export interface GetWorkflowExecutionListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchWorkflowExecutionByIdApiRequest {
+    id: string;
+    workflowExecution: WorkflowExecution;
 }
 
 export interface PauseWorkflowExecutionApiRequest {
@@ -264,6 +268,60 @@ function getWorkflowExecutionListRaw<T>(requestParameters: GetWorkflowExecutionL
 */
 export function getWorkflowExecutionList<T>(requestParameters: GetWorkflowExecutionListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<WorkflowExecution>>): QueryConfig<T> {
     return getWorkflowExecutionListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing WorkflowExecution.
+ * Partially update an existing WorkflowExecution
+ */
+function patchWorkflowExecutionByIdRaw<T>(requestParameters: PatchWorkflowExecutionByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, WorkflowExecution> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchWorkflowExecutionById.');
+    }
+
+    if (requestParameters.workflowExecution === null || requestParameters.workflowExecution === undefined) {
+        throw new runtime.RequiredError('workflowExecution','Required parameter requestParameters.workflowExecution was null or undefined when calling patchWorkflowExecutionById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/WorkflowExecution/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || WorkflowExecutionToJSON(requestParameters.workflowExecution),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(WorkflowExecutionFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing WorkflowExecution.
+* Partially update an existing WorkflowExecution
+*/
+export function patchWorkflowExecutionById<T>(requestParameters: PatchWorkflowExecutionByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, WorkflowExecution>): QueryConfig<T> {
+    return patchWorkflowExecutionByIdRaw(requestParameters, requestConfig);
 }
 
 /**

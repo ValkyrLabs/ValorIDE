@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -76,12 +75,6 @@ export type SalesOrder  = DataObject & {
      * @memberof SalesOrder
      */
     status: SalesOrderStatusEnum;
-    /**
-     * Owning customer account
-     * @type {string}
-     * @memberof SalesOrder
-     */
-    customerId?: string;
     /**
      * 
      * @type {Array<LineItem>}
@@ -181,7 +174,6 @@ export function SalesOrderFromJSON(json: any): SalesOrder {
         'totalAmount': json['totalAmount'],
         'orderDate': new Date(json['orderDate']),
         'status': json['status'],
-        'customerId': !exists(json, 'customerId') ? undefined : json['customerId'],
         'orderItems': !exists(json, 'orderItems') ? undefined : (json['orderItems'] as Array<any>).map(LineItemFromJSON),
         'orderDiscounts': !exists(json, 'orderDiscounts') ? undefined : (json['orderDiscounts'] as Array<any>).map(DiscountFromJSON),
         'taxAmount': !exists(json, 'taxAmount') ? undefined : json['taxAmount'],
@@ -210,7 +202,6 @@ export function SalesOrderToJSON(value?: SalesOrder): any {
         'totalAmount': value.totalAmount,
         'orderDate': value.orderDate.toISOString(),
         'status': value.status,
-        'customerId': value.customerId,
         'orderItems': value.orderItems === undefined ? undefined : (value.orderItems as Array<any>).map(LineItemToJSON),
         'orderDiscounts': value.orderDiscounts === undefined ? undefined : (value.orderDiscounts as Array<any>).map(DiscountToJSON),
         'taxAmount': value.taxAmount,

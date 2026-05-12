@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetProductFeatureListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchProductFeatureByIdApiRequest {
+    id: string;
+    productFeature: ProductFeature;
 }
 
 export interface PostProductFeatureApiRequest {
@@ -204,6 +208,60 @@ function getProductFeatureListRaw<T>(requestParameters: GetProductFeatureListApi
 */
 export function getProductFeatureList<T>(requestParameters: GetProductFeatureListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<ProductFeature>>): QueryConfig<T> {
     return getProductFeatureListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing ProductFeature.
+ * Partially update an existing ProductFeature
+ */
+function patchProductFeatureByIdRaw<T>(requestParameters: PatchProductFeatureByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, ProductFeature> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchProductFeatureById.');
+    }
+
+    if (requestParameters.productFeature === null || requestParameters.productFeature === undefined) {
+        throw new runtime.RequiredError('productFeature','Required parameter requestParameters.productFeature was null or undefined when calling patchProductFeatureById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ProductFeature/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || ProductFeatureToJSON(requestParameters.productFeature),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ProductFeatureFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing ProductFeature.
+* Partially update an existing ProductFeature
+*/
+export function patchProductFeatureById<T>(requestParameters: PatchProductFeatureByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ProductFeature>): QueryConfig<T> {
+    return patchProductFeatureByIdRaw(requestParameters, requestConfig);
 }
 
 /**

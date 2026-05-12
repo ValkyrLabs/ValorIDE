@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -79,10 +77,11 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        opportunityId: Yup.string().required("opportunityId is required."),
+        opportunityId: Yup.string(),
       type: Yup.mixed()
         .oneOf(TypeValidation(), "Invalid value for type")
-        .required("type is required."),
+        ,
+        details: Yup.string(),
         activityDate: Yup.date()
           .transform((value, originalValue) => {
             if (!originalValue) {
@@ -90,9 +89,8 @@ const validationSchema = Yup.object().shape({
             }
             const parsed = new Date(originalValue);
             return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).required("activityDate is required.").typeError("activityDate must be a valid date"),
-        performedBy: Yup.string().required("performedBy is required."),
-        details: Yup.string(),
+          }).typeError("activityDate must be a valid date"),
+        performedBy: Yup.string(),
         trashed: Yup.boolean(),
 });
 
@@ -125,9 +123,9 @@ const SalesActivityForm: React.FC = () => {
   const initialValues: Partial<SalesActivity> = {
           opportunityId: '',
         type: undefined,
+          details: '',
           activityDate: new Date(),
           performedBy: '',
-          details: '',
           trashed: false,
   };
 
@@ -269,6 +267,39 @@ const SalesActivityForm: React.FC = () => {
                       />
                     </label>
                     <br />
+                    <label htmlFor="details" className="nice-form-control">
+                      <b>
+                        Details:
+                        {touched.details &&
+                         !errors.details && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="details"
+                            value={values?.details}
+                            placeholder="Details"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="details"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="activityDate" className="nice-form-control">
                       <b>
                         Activity Date:
@@ -341,39 +372,6 @@ const SalesActivityForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="performedBy"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="details" className="nice-form-control">
-                      <b>
-                        Details:
-                        {touched.details &&
-                         !errors.details && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="details"
-                            value={values?.details}
-                            placeholder="Details"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="details"
                         component="span"
                       />
                     </label>

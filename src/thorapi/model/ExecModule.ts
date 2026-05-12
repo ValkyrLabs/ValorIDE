@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -32,19 +31,25 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 import {
 
 
+    ExecModuleConfig,
+    ExecModuleConfigFromJSON,
+    ExecModuleConfigToJSON,
     IntegrationAccount,
     IntegrationAccountFromJSON,
     IntegrationAccountToJSON,
     OasOpenAPISpec,
     OasOpenAPISpecFromJSON,
     OasOpenAPISpecToJSON,
+    Task,
+    TaskFromJSON,
+    TaskToJSON,
 } from './';
 
 
 // thorapi
 
 /**
- * an ExecModule Instance -- an ExecModule is the execution unit of the ValkyrAI Workflow Engine
+ * ExecModule instance executed inside a Task. Configuration is provided via ExecModuleConfig (normalized). 
  * @export
  * @interface ExecModule
  */
@@ -56,41 +61,53 @@ export type ExecModule  = DataObject & {
      */
     systemId?: string;
     /**
-     * The task this module is executing in
-     * @type {string}
+     * 
+     * @type {Task}
      * @memberof ExecModule
      */
-    taskId?: string;
+    task?: Task;
     /**
-     * the RBAC role to use in mutating/reading any system object
-     * @type {string}
-     * @memberof ExecModule
-     */
-    role?: ExecModuleRoleEnum;
-    /**
-     * the name of the module
+     * Module display name
      * @type {string}
      * @memberof ExecModule
      */
     name?: string;
     /**
-     * the order in which the module is executed (low to high)
+     * Extended description displayed in module catalogs and UX palettes
+     * @type {string}
+     * @memberof ExecModule
+     */
+    longDescription?: string;
+    /**
+     * Implementation class
+     * @type {string}
+     * @memberof ExecModule
+     */
+    className?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ExecModule
+     */
+    moduleType?: ExecModuleModuleTypeEnum;
+    /**
+     * Execution order within the Task
      * @type {number}
      * @memberof ExecModule
      */
     moduleOrder?: number;
     /**
-     * notes about the module
-     * @type {string}
+     * 
+     * @type {ExecModuleConfig}
      * @memberof ExecModule
      */
-    notes?: string;
+    execModuleConfig?: ExecModuleConfig;
     /**
-     * extended description displayed in module catalogs and UX palettes
+     * Legacy JSON module configuration payload used by existing workflow tooling.
      * @type {string}
      * @memberof ExecModule
      */
-    longDescription?: string;
+    moduleData?: string;
     /**
      * 
      * @type {IntegrationAccount}
@@ -98,47 +115,35 @@ export type ExecModule  = DataObject & {
      */
     integrationAccount?: IntegrationAccount;
     /**
-     * the name of the implementation class for this module
+     * Legacy task identifier used by workflow editor payloads.
      * @type {string}
      * @memberof ExecModule
      */
-    className?: string;
+    taskId?: string;
     /**
-     * the type of module
+     * Operator notes for this module.
      * @type {string}
      * @memberof ExecModule
      */
-    moduleType?: ExecModuleModuleTypeEnum;
+    notes?: string;
     /**
-     * json for configuring the module
-     * @type {string}
+     * OpenAPI specs associated with this module
+     * @type {Array<OasOpenAPISpec>}
      * @memberof ExecModule
      */
-    moduleData?: string;
+    specs?: Array<OasOpenAPISpec>;
     /**
-     * Module configuration as object (parsed moduleData)
-     * @type {string}
-     * @memberof ExecModule
-     */
-    config?: string;
-    /**
-     * last known status of the module
+     * 
      * @type {string}
      * @memberof ExecModule
      */
     status?: ExecModuleStatusEnum;
     /**
-     * 
-     * @type {IntegrationAccount}
+     * the RBAC role to use in mutating/reading any system object
+     * @type {string}
      * @memberof ExecModule
      */
-    execModuleIntegrationAccount?: IntegrationAccount;
-    /**
-     * an array of OpenAPI specs to be referenced by the Tasks/Modules
-     * @type {Array<OasOpenAPISpec>}
-     * @memberof ExecModule
-     */
-    specs?: Array<OasOpenAPISpec>;
+    role?: ExecModuleRoleEnum;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -199,20 +204,20 @@ export function ExecModuleFromJSON(json: any): ExecModule {
     return {
         ...DataObjectFromJSON(json),
         'systemId': !exists(json, 'systemId') ? undefined : json['systemId'],
-        'taskId': !exists(json, 'taskId') ? undefined : json['taskId'],
-        'role': !exists(json, 'role') ? undefined : json['role'],
+        'task': !exists(json, 'task') ? undefined : TaskFromJSON(json['task']),
         'name': !exists(json, 'name') ? undefined : json['name'],
-        'moduleOrder': !exists(json, 'moduleOrder') ? undefined : json['moduleOrder'],
-        'notes': !exists(json, 'notes') ? undefined : json['notes'],
         'longDescription': !exists(json, 'longDescription') ? undefined : json['longDescription'],
-        'integrationAccount': !exists(json, 'integrationAccount') ? undefined : IntegrationAccountFromJSON(json['integrationAccount']),
         'className': !exists(json, 'className') ? undefined : json['className'],
         'moduleType': !exists(json, 'moduleType') ? undefined : json['moduleType'],
+        'moduleOrder': !exists(json, 'moduleOrder') ? undefined : json['moduleOrder'],
+        'execModuleConfig': !exists(json, 'execModuleConfig') ? undefined : ExecModuleConfigFromJSON(json['execModuleConfig']),
         'moduleData': !exists(json, 'moduleData') ? undefined : json['moduleData'],
-        'config': !exists(json, 'config') ? undefined : json['config'],
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'execModuleIntegrationAccount': !exists(json, 'execModuleIntegrationAccount') ? undefined : IntegrationAccountFromJSON(json['execModuleIntegrationAccount']),
+        'integrationAccount': !exists(json, 'integrationAccount') ? undefined : IntegrationAccountFromJSON(json['integrationAccount']),
+        'taskId': !exists(json, 'taskId') ? undefined : json['taskId'],
+        'notes': !exists(json, 'notes') ? undefined : json['notes'],
         'specs': !exists(json, 'specs') ? undefined : (json['specs'] as Array<any>).map(OasOpenAPISpecFromJSON),
+        'status': !exists(json, 'status') ? undefined : json['status'],
+        'role': !exists(json, 'role') ? undefined : json['role'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -232,33 +237,24 @@ export function ExecModuleToJSON(value?: ExecModule): any {
     return {
         ...DataObjectToJSON(value),
         'systemId': value.systemId,
-        'taskId': value.taskId,
-        'role': value.role,
+        'task': TaskToJSON(value.task),
         'name': value.name,
-        'moduleOrder': value.moduleOrder,
-        'notes': value.notes,
         'longDescription': value.longDescription,
-        'integrationAccount': IntegrationAccountToJSON(value.integrationAccount),
         'className': value.className,
         'moduleType': value.moduleType,
+        'moduleOrder': value.moduleOrder,
+        'execModuleConfig': ExecModuleConfigToJSON(value.execModuleConfig),
         'moduleData': value.moduleData,
-        'config': value.config,
-        'status': value.status,
-        'execModuleIntegrationAccount': IntegrationAccountToJSON(value.execModuleIntegrationAccount),
+        'integrationAccount': IntegrationAccountToJSON(value.integrationAccount),
+        'taskId': value.taskId,
+        'notes': value.notes,
         'specs': value.specs === undefined ? undefined : (value.specs as Array<any>).map(OasOpenAPISpecToJSON),
+        'status': value.status,
+        'role': value.role,
         'trashed': value.trashed,
     };
 }
 
-/**
-* @export
-* @enum {string}
-*/
-export enum ExecModuleRoleEnum {
-    ANONYMOUS = 'anonymous',
-    USER = 'user',
-    ADMIN = 'admin'
-}
 /**
 * @export
 * @enum {string}
@@ -275,13 +271,22 @@ export enum ExecModuleModuleTypeEnum {
 * @enum {string}
 */
 export enum ExecModuleStatusEnum {
+    READY = 'ready',
     RUNNING = 'running',
     STOPPED = 'stopped',
-    READY = 'ready',
     GOOD = 'good',
     WARNING = 'warning',
     ERROR = 'error',
     DISABLED = 'disabled'
+}
+/**
+* @export
+* @enum {string}
+*/
+export enum ExecModuleRoleEnum {
+    ANONYMOUS = 'anonymous',
+    USER = 'user',
+    ADMIN = 'admin'
 }
 
 

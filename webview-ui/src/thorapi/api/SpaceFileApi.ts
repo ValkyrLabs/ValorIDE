@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetSpaceFileListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchSpaceFileByIdApiRequest {
+    id: string;
+    spaceFile: SpaceFile;
 }
 
 export interface PostSpaceFileApiRequest {
@@ -204,6 +208,60 @@ function getSpaceFileListRaw<T>(requestParameters: GetSpaceFileListApiRequest, r
 */
 export function getSpaceFileList<T>(requestParameters: GetSpaceFileListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<SpaceFile>>): QueryConfig<T> {
     return getSpaceFileListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing SpaceFile.
+ * Partially update an existing SpaceFile
+ */
+function patchSpaceFileByIdRaw<T>(requestParameters: PatchSpaceFileByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, SpaceFile> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchSpaceFileById.');
+    }
+
+    if (requestParameters.spaceFile === null || requestParameters.spaceFile === undefined) {
+        throw new runtime.RequiredError('spaceFile','Required parameter requestParameters.spaceFile was null or undefined when calling patchSpaceFileById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/SpaceFile/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || SpaceFileToJSON(requestParameters.spaceFile),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SpaceFileFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing SpaceFile.
+* Partially update an existing SpaceFile
+*/
+export function patchSpaceFileById<T>(requestParameters: PatchSpaceFileByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SpaceFile>): QueryConfig<T> {
+    return patchSpaceFileByIdRaw(requestParameters, requestConfig);
 }
 
 /**

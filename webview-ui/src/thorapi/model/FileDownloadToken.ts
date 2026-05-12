@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -56,12 +55,6 @@ export type FileDownloadToken  = DataObject & {
      */
     token: string;
     /**
-     * File authorized for download.
-     * @type {string}
-     * @memberof FileDownloadToken
-     */
-    fileId: string;
-    /**
      * Token expiration timestamp.
      * @type {Date}
      * @memberof FileDownloadToken
@@ -85,12 +78,6 @@ export type FileDownloadToken  = DataObject & {
      * @memberof FileDownloadToken
      */
     maxDownloads?: number;
-    /**
-     * Principal the token was issued to, if scoped.
-     * @type {string}
-     * @memberof FileDownloadToken
-     */
-    issuedToId?: string;
     /**
      * 
      * @type {Principal}
@@ -163,12 +150,10 @@ export function FileDownloadTokenFromJSON(json: any): FileDownloadToken {
     return {
         ...DataObjectFromJSON(json),
         'token': json['token'],
-        'fileId': json['fileId'],
         'expiresAt': new Date(json['expiresAt']),
         'file': !exists(json, 'file') ? undefined : FileRecordFromJSON(json['file']),
         'downloadCount': !exists(json, 'downloadCount') ? undefined : json['downloadCount'],
         'maxDownloads': !exists(json, 'maxDownloads') ? undefined : json['maxDownloads'],
-        'issuedToId': !exists(json, 'issuedToId') ? undefined : json['issuedToId'],
         'issuedTo': !exists(json, 'issuedTo') ? undefined : PrincipalFromJSON(json['issuedTo']),
         'ipAddress': !exists(json, 'ipAddress') ? undefined : json['ipAddress'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -190,12 +175,10 @@ export function FileDownloadTokenToJSON(value?: FileDownloadToken): any {
     return {
         ...DataObjectToJSON(value),
         'token': value.token,
-        'fileId': value.fileId,
         'expiresAt': value.expiresAt.toISOString(),
         'file': FileRecordToJSON(value.file),
         'downloadCount': value.downloadCount,
         'maxDownloads': value.maxDownloads,
-        'issuedToId': value.issuedToId,
         'issuedTo': PrincipalToJSON(value.issuedTo),
         'ipAddress': value.ipAddress,
         'trashed': value.trashed,

@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetSalesOrderListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchSalesOrderByIdApiRequest {
+    id: string;
+    salesOrder: SalesOrder;
 }
 
 export interface PostSalesOrderApiRequest {
@@ -204,6 +208,60 @@ function getSalesOrderListRaw<T>(requestParameters: GetSalesOrderListApiRequest,
 */
 export function getSalesOrderList<T>(requestParameters: GetSalesOrderListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<SalesOrder>>): QueryConfig<T> {
     return getSalesOrderListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing SalesOrder.
+ * Partially update an existing SalesOrder
+ */
+function patchSalesOrderByIdRaw<T>(requestParameters: PatchSalesOrderByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, SalesOrder> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchSalesOrderById.');
+    }
+
+    if (requestParameters.salesOrder === null || requestParameters.salesOrder === undefined) {
+        throw new runtime.RequiredError('salesOrder','Required parameter requestParameters.salesOrder was null or undefined when calling patchSalesOrderById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/SalesOrder/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || SalesOrderToJSON(requestParameters.salesOrder),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SalesOrderFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing SalesOrder.
+* Partially update an existing SalesOrder
+*/
+export function patchSalesOrderById<T>(requestParameters: PatchSalesOrderByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SalesOrder>): QueryConfig<T> {
+    return patchSalesOrderByIdRaw(requestParameters, requestConfig);
 }
 
 /**

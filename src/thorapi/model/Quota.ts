@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -29,6 +28,14 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists, mapValues } from '../src/runtime';
 import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import {
+
+
+    Principal,
+    PrincipalFromJSON,
+    PrincipalToJSON,
+} from './';
+
 
 // thorapi
 
@@ -39,11 +46,11 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  */
 export type Quota  = DataObject & {
     /**
-     * Reference to the Principal this quota applies to
-     * @type {string}
+     * 
+     * @type {Principal}
      * @memberof Quota
      */
-    principalId?: string;
+    principal?: Principal;
     /**
      * Type of resource being limited
      * @type {string}
@@ -157,7 +164,7 @@ export type Quota  = DataObject & {
 export function QuotaFromJSON(json: any): Quota {
     return {
         ...DataObjectFromJSON(json),
-        'principalId': !exists(json, 'principalId') ? undefined : json['principalId'],
+        'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
         'resourceType': !exists(json, 'resourceType') ? undefined : json['resourceType'],
         'maxConcurrent': !exists(json, 'maxConcurrent') ? undefined : json['maxConcurrent'],
         'maxPerHour': !exists(json, 'maxPerHour') ? undefined : json['maxPerHour'],
@@ -185,7 +192,7 @@ export function QuotaToJSON(value?: Quota): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'principalId': value.principalId,
+        'principal': PrincipalToJSON(value.principal),
         'resourceType': value.resourceType,
         'maxConcurrent': value.maxConcurrent,
         'maxPerHour': value.maxPerHour,

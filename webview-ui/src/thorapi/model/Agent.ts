@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -98,6 +97,12 @@ export type Agent  = DataObject & {
      */
     heartbeatEnabled?: boolean;
     /**
+     * Agentic control level for autonomous table/schema creation. Use \"none\" for manual-only control and \"unlimited\" for fully autonomous creation. 
+     * @type {string}
+     * @memberof Agent
+     */
+    autonomousTableCreationLevel?: AgentAutonomousTableCreationLevelEnum;
+    /**
      * Unique identifier for object in the system
      * @type {string}
      * @memberof Agent
@@ -163,6 +168,7 @@ export function AgentFromJSON(json: any): Agent {
         'cronSchedule': !exists(json, 'cronSchedule') ? undefined : json['cronSchedule'],
         'eventTriggers': !exists(json, 'eventTriggers') ? undefined : (json['eventTriggers'] as Array<any>).map(AgentEventTriggerFromJSON),
         'heartbeatEnabled': !exists(json, 'heartbeatEnabled') ? undefined : json['heartbeatEnabled'],
+        'autonomousTableCreationLevel': !exists(json, 'autonomousTableCreationLevel') ? undefined : json['autonomousTableCreationLevel'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -188,8 +194,21 @@ export function AgentToJSON(value?: Agent): any {
         'cronSchedule': value.cronSchedule,
         'eventTriggers': value.eventTriggers === undefined ? undefined : (value.eventTriggers as Array<any>).map(AgentEventTriggerToJSON),
         'heartbeatEnabled': value.heartbeatEnabled,
+        'autonomousTableCreationLevel': value.autonomousTableCreationLevel,
         'trashed': value.trashed,
     };
+}
+
+/**
+* @export
+* @enum {string}
+*/
+export enum AgentAutonomousTableCreationLevelEnum {
+    NONE = 'none',
+    GUIDED = 'guided',
+    BOUNDED = 'bounded',
+    HIGH = 'high',
+    UNLIMITED = 'unlimited'
 }
 
 

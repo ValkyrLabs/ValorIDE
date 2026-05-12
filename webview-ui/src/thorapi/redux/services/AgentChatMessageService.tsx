@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
@@ -19,6 +18,15 @@ import { AgentChatMessage } from '@thorapi/model/AgentChatMessage'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type AgentChatMessageResponse = AgentChatMessage[]
+
+const toAgentChatMessageList = (result: unknown): AgentChatMessageResponse => {
+  if (Array.isArray(result)) {
+    return result as AgentChatMessageResponse
+  }
+
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as AgentChatMessageResponse) : []
+}
 
 export const AgentChatMessageService = createApi({
   reducerPath: 'AgentChatMessage', // This should remain unique
@@ -33,13 +41,15 @@ export const AgentChatMessageService = createApi({
         if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
         return `AgentChatMessage?${q.join('&')}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'AgentChatMessage' as const, id })),
-              { type: 'AgentChatMessage', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toAgentChatMessageList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'AgentChatMessage' as const, id })),
+          { type: 'AgentChatMessage', id: `PAGE_${page}` },
+        ]
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,13 +61,15 @@ export const AgentChatMessageService = createApi({
         }
         return `AgentChatMessage`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'AgentChatMessage' as const, id })),
-              { type: 'AgentChatMessage', id: 'LIST' },
-            ]
-          : [{ type: 'AgentChatMessage', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toAgentChatMessageList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'AgentChatMessage' as const, id })),
+          { type: 'AgentChatMessage', id: 'LIST' },
+        ]
+      },
     }),
 
     // 3) Create

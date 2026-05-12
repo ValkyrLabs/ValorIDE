@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type LoginRequest  = DataObject & {
      * @type {string}
      * @memberof LoginRequest
      */
-    username: string;
+    username?: string;
     /**
      * Password
      * @type {string}
      * @memberof LoginRequest
      */
-    password: string;
+    password?: string;
     /**
      * Extend session
      * @type {boolean}
@@ -115,8 +114,8 @@ export type LoginRequest  = DataObject & {
 export function LoginRequestFromJSON(json: any): LoginRequest {
     return {
         ...DataObjectFromJSON(json),
-        'username': json['username'],
-        'password': json['password'],
+        'username': !exists(json, 'username') ? undefined : json['username'],
+        'password': !exists(json, 'password') ? undefined : json['password'],
         'rememberMe': !exists(json, 'rememberMe') ? undefined : json['rememberMe'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],

@@ -9,5 +9,5 @@ export interface ChatSettings {
 
 export const DEFAULT_CHAT_SETTINGS: ChatSettings = {
   mode: "act",
-  apiFirstChunkTimeoutMs: 15_000,
+  apiFirstChunkTimeoutMs: 60_000, // 60 seconds for first chunk - timeout is per chunk, not total request
 };

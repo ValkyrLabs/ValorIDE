@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -51,7 +50,7 @@ export type SubscriberList  = DataObject & {
      * @type {string}
      * @memberof SubscriberList
      */
-    name: string;
+    name?: string;
     /**
      * Description of the list
      * @type {string}
@@ -123,7 +122,7 @@ export type SubscriberList  = DataObject & {
 export function SubscriberListFromJSON(json: any): SubscriberList {
     return {
         ...DataObjectFromJSON(json),
-        'name': json['name'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
         'description': !exists(json, 'description') ? undefined : json['description'],
         'subscribers': !exists(json, 'subscribers') ? undefined : (json['subscribers'] as Array<any>).map(PrincipalFromJSON),
         'id': !exists(json, 'id') ? undefined : json['id'],

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -80,7 +78,7 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        customerId: Yup.string().required("customerId is required."),
+        customerId: Yup.string(),
         invoiceDate: Yup.date()
           .transform((value, originalValue) => {
             if (!originalValue) {
@@ -88,7 +86,7 @@ const validationSchema = Yup.object().shape({
             }
             const parsed = new Date(originalValue);
             return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).required("invoiceDate is required.").typeError("invoiceDate must be a valid date"),
+          }).typeError("invoiceDate must be a valid date"),
         dueDate: Yup.date()
           .transform((value, originalValue) => {
             if (!originalValue) {
@@ -96,11 +94,11 @@ const validationSchema = Yup.object().shape({
             }
             const parsed = new Date(originalValue);
             return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).required("dueDate is required.").typeError("dueDate must be a valid date"),
-        amount: asNumber(Yup.number().typeError("amount must be a number")).required("amount is required."),
+          }).typeError("dueDate must be a valid date"),
+        amount: asNumber(Yup.number().typeError("amount must be a number")),
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
-        .required("status is required."),
+        ,
         trashed: Yup.boolean(),
 });
 

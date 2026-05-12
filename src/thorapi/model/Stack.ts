@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -39,18 +38,6 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  */
 export type Stack  = DataObject & {
     /**
-     * Name of the service API displayed in the UI
-     * @type {string}
-     * @memberof Stack
-     */
-    name: string;
-    /**
-     * YAML Swagger/OpenAPI Schema
-     * @type {string}
-     * @memberof Stack
-     */
-    schemaData: string;
-    /**
      * 
      * @type {string}
      * @memberof Stack
@@ -62,6 +49,12 @@ export type Stack  = DataObject & {
      * @memberof Stack
      */
     category?: StackCategoryEnum;
+    /**
+     * Name of the service API displayed in the UI
+     * @type {string}
+     * @memberof Stack
+     */
+    name?: string;
     /**
      * Name of the output build file(s) ie: mvn ArtifactID
      * @type {string}
@@ -195,6 +188,12 @@ export type Stack  = DataObject & {
      */
     templateRepo?: StackTemplateRepoEnum;
     /**
+     * YAML Swagger/OpenAPI Schema
+     * @type {string}
+     * @memberof Stack
+     */
+    schemaData?: string;
+    /**
      * File name containing Schema definition
      * @type {string}
      * @memberof Stack
@@ -265,10 +264,9 @@ export type Stack  = DataObject & {
 export function StackFromJSON(json: any): Stack {
     return {
         ...DataObjectFromJSON(json),
-        'name': json['name'],
-        'schemaData': json['schemaData'],
         'execModuleId': !exists(json, 'execModuleId') ? undefined : json['execModuleId'],
         'category': !exists(json, 'category') ? undefined : json['category'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
         'artifactId': !exists(json, 'artifactId') ? undefined : json['artifactId'],
         'applicationId': !exists(json, 'applicationId') ? undefined : json['applicationId'],
         'adminServerHost': !exists(json, 'adminServerHost') ? undefined : json['adminServerHost'],
@@ -291,6 +289,7 @@ export function StackFromJSON(json: any): Stack {
         'schemaName': !exists(json, 'schemaName') ? undefined : json['schemaName'],
         'language': !exists(json, 'language') ? undefined : json['language'],
         'templateRepo': !exists(json, 'templateRepo') ? undefined : json['templateRepo'],
+        'schemaData': !exists(json, 'schemaData') ? undefined : json['schemaData'],
         'schemaFileName': !exists(json, 'schemaFileName') ? undefined : json['schemaFileName'],
         'status': !exists(json, 'status') ? undefined : json['status'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -311,10 +310,9 @@ export function StackToJSON(value?: Stack): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'name': value.name,
-        'schemaData': value.schemaData,
         'execModuleId': value.execModuleId,
         'category': value.category,
+        'name': value.name,
         'artifactId': value.artifactId,
         'applicationId': value.applicationId,
         'adminServerHost': value.adminServerHost,
@@ -337,6 +335,7 @@ export function StackToJSON(value?: Stack): any {
         'schemaName': value.schemaName,
         'language': value.language,
         'templateRepo': value.templateRepo,
+        'schemaData': value.schemaData,
         'schemaFileName': value.schemaFileName,
         'status': value.status,
         'trashed': value.trashed,

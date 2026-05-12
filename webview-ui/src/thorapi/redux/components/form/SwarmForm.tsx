@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -80,11 +78,10 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
+        instanceId: Yup.string(),
       swarmType: Yup.mixed()
         .oneOf(SwarmTypeValidation(), "Invalid value for swarmType")
-        .required("swarmType is required."),
-        instanceId: Yup.string(),
-        principalId: Yup.string(),
+        ,
         username: Yup.string(),
         trashed: Yup.boolean(),
 });
@@ -116,9 +113,8 @@ const SwarmForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Swarm> = {
-        swarmType: undefined,
           instanceId: '',
-          principalId: '',
+        swarmType: undefined,
           username: '',
           trashed: false,
   };
@@ -193,41 +189,6 @@ const SwarmForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New Swarm
                 </Accordion.Header>
                 <Accordion.Body>
-                    <label htmlFor="swarmType" className="nice-form-control">
-                      <b>
-                        Swarm Type:
-                        {touched.swarmType &&
-                         !errors.swarmType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="swarmType"
-                          value={values.swarmType || ''}
-                          className={
-                            errors.swarmType
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('swarmType', true);
-                            setFieldValue('swarmType', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Swarm Type" />
-                          <SwarmTypeLookup />
-                        </BSForm.Select>
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="swarmType"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="instanceId" className="nice-form-control">
                       <b>
                         Instance Id:
@@ -261,35 +222,37 @@ const SwarmForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="principalId" className="nice-form-control">
+                    <label htmlFor="swarmType" className="nice-form-control">
                       <b>
-                        Principal Id:
-                        {touched.principalId &&
-                         !errors.principalId && (
+                        Swarm Type:
+                        {touched.swarmType &&
+                         !errors.swarmType && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="principalId"
-                            value={values?.principalId}
-                            placeholder="Principal Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="swarmType"
+                          value={values.swarmType || ''}
+                          className={
+                            errors.swarmType
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('swarmType', true);
+                            setFieldValue('swarmType', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Swarm Type" />
+                          <SwarmTypeLookup />
+                        </BSForm.Select>
 
 
                       <ErrorMessage
                         className="error"
-                        name="principalId"
+                        name="swarmType"
                         component="span"
                       />
                     </label>

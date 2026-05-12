@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
@@ -19,6 +18,15 @@ import { McpTransportConfig } from '@thorapi/model/McpTransportConfig'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type McpTransportConfigResponse = McpTransportConfig[]
+
+const toMcpTransportConfigList = (result: unknown): McpTransportConfigResponse => {
+  if (Array.isArray(result)) {
+    return result as McpTransportConfigResponse
+  }
+
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as McpTransportConfigResponse) : []
+}
 
 export const McpTransportConfigService = createApi({
   reducerPath: 'McpTransportConfig', // This should remain unique
@@ -33,13 +41,15 @@ export const McpTransportConfigService = createApi({
         if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
         return `McpTransportConfig?${q.join('&')}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'McpTransportConfig' as const, id })),
-              { type: 'McpTransportConfig', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toMcpTransportConfigList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'McpTransportConfig' as const, id })),
+          { type: 'McpTransportConfig', id: `PAGE_${page}` },
+        ]
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,13 +61,15 @@ export const McpTransportConfigService = createApi({
         }
         return `McpTransportConfig`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'McpTransportConfig' as const, id })),
-              { type: 'McpTransportConfig', id: 'LIST' },
-            ]
-          : [{ type: 'McpTransportConfig', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toMcpTransportConfigList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'McpTransportConfig' as const, id })),
+          { type: 'McpTransportConfig', id: 'LIST' },
+        ]
+      },
     }),
 
     // 3) Create

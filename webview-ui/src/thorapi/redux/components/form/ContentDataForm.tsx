@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -53,7 +52,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -151,7 +149,6 @@ const validationSchema = Yup.object().shape({
         authorName: Yup.string(),
         title: Yup.string(),
         subtitle: Yup.string(),
-        tags: Yup.string(),
         fileName: Yup.string(),
         contentUrl: Yup.string(),
         contentData: Yup.string(),
@@ -219,7 +216,6 @@ const ContentDataForm: React.FC = () => {
           authorName: '',
           title: '',
           subtitle: '',
-          tags: '',
           fileName: '',
           contentUrl: '',
           contentData: '',
@@ -405,39 +401,6 @@ const ContentDataForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="subtitle"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="tags" className="nice-form-control">
-                      <b>
-                        Tags:
-                        {touched.tags &&
-                         !errors.tags && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="tags"
-                            value={values?.tags}
-                            placeholder="Tags"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="tags"
                         component="span"
                       />
                     </label>

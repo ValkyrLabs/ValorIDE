@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type WizardStatusResponse  = DataObject & {
      * @type {string}
      * @memberof WizardStatusResponse
      */
-    wizardId: string;
+    wizardId?: string;
     /**
      * Current wizard status
      * @type {string}
      * @memberof WizardStatusResponse
      */
-    status: WizardStatusResponseStatusEnum;
+    status?: WizardStatusResponseStatusEnum;
     /**
      * Completion percentage
      * @type {number}
@@ -151,8 +150,8 @@ export type WizardStatusResponse  = DataObject & {
 export function WizardStatusResponseFromJSON(json: any): WizardStatusResponse {
     return {
         ...DataObjectFromJSON(json),
-        'wizardId': json['wizardId'],
-        'status': json['status'],
+        'wizardId': !exists(json, 'wizardId') ? undefined : json['wizardId'],
+        'status': !exists(json, 'status') ? undefined : json['status'],
         'progress': !exists(json, 'progress') ? undefined : json['progress'],
         'currentStep': !exists(json, 'currentStep') ? undefined : json['currentStep'],
         'errorMessage': !exists(json, 'errorMessage') ? undefined : json['errorMessage'],

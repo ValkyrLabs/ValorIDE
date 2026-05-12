@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetIdempotencyKeyListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchIdempotencyKeyByIdApiRequest {
+    id: string;
+    idempotencyKey: IdempotencyKey;
 }
 
 export interface PostIdempotencyKeyApiRequest {
@@ -204,6 +208,60 @@ function getIdempotencyKeyListRaw<T>(requestParameters: GetIdempotencyKeyListApi
 */
 export function getIdempotencyKeyList<T>(requestParameters: GetIdempotencyKeyListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<IdempotencyKey>>): QueryConfig<T> {
     return getIdempotencyKeyListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing IdempotencyKey.
+ * Partially update an existing IdempotencyKey
+ */
+function patchIdempotencyKeyByIdRaw<T>(requestParameters: PatchIdempotencyKeyByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, IdempotencyKey> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchIdempotencyKeyById.');
+    }
+
+    if (requestParameters.idempotencyKey === null || requestParameters.idempotencyKey === undefined) {
+        throw new runtime.RequiredError('idempotencyKey','Required parameter requestParameters.idempotencyKey was null or undefined when calling patchIdempotencyKeyById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/IdempotencyKey/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || IdempotencyKeyToJSON(requestParameters.idempotencyKey),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(IdempotencyKeyFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing IdempotencyKey.
+* Partially update an existing IdempotencyKey
+*/
+export function patchIdempotencyKeyById<T>(requestParameters: PatchIdempotencyKeyByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, IdempotencyKey>): QueryConfig<T> {
+    return patchIdempotencyKeyByIdRaw(requestParameters, requestConfig);
 }
 
 /**

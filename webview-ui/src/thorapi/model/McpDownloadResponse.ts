@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,37 +42,31 @@ export type McpDownloadResponse  = DataObject & {
      * @type {string}
      * @memberof McpDownloadResponse
      */
-    githubUrl: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpDownloadResponse
-     */
-    name: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpDownloadResponse
-     */
-    author: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpDownloadResponse
-     */
-    description: string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof McpDownloadResponse
-     */
-    requiresApiKey: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpDownloadResponse
-     */
     mcpId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpDownloadResponse
+     */
+    githubUrl?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpDownloadResponse
+     */
+    name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpDownloadResponse
+     */
+    author?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpDownloadResponse
+     */
+    description?: string;
     /**
      * 
      * @type {string}
@@ -86,6 +79,12 @@ export type McpDownloadResponse  = DataObject & {
      * @memberof McpDownloadResponse
      */
     llmsInstallationContent?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof McpDownloadResponse
+     */
+    requiresApiKey?: boolean;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -145,14 +144,14 @@ export type McpDownloadResponse  = DataObject & {
 export function McpDownloadResponseFromJSON(json: any): McpDownloadResponse {
     return {
         ...DataObjectFromJSON(json),
-        'githubUrl': json['githubUrl'],
-        'name': json['name'],
-        'author': json['author'],
-        'description': json['description'],
-        'requiresApiKey': json['requiresApiKey'],
         'mcpId': !exists(json, 'mcpId') ? undefined : json['mcpId'],
+        'githubUrl': !exists(json, 'githubUrl') ? undefined : json['githubUrl'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'author': !exists(json, 'author') ? undefined : json['author'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
         'readmeContent': !exists(json, 'readmeContent') ? undefined : json['readmeContent'],
         'llmsInstallationContent': !exists(json, 'llmsInstallationContent') ? undefined : json['llmsInstallationContent'],
+        'requiresApiKey': !exists(json, 'requiresApiKey') ? undefined : json['requiresApiKey'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -171,14 +170,14 @@ export function McpDownloadResponseToJSON(value?: McpDownloadResponse): any {
     }
     return {
         ...DataObjectToJSON(value),
+        'mcpId': value.mcpId,
         'githubUrl': value.githubUrl,
         'name': value.name,
         'author': value.author,
         'description': value.description,
-        'requiresApiKey': value.requiresApiKey,
-        'mcpId': value.mcpId,
         'readmeContent': value.readmeContent,
         'llmsInstallationContent': value.llmsInstallationContent,
+        'requiresApiKey': value.requiresApiKey,
         'trashed': value.trashed,
     };
 }

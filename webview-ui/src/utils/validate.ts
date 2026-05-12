@@ -38,9 +38,7 @@ export function validateApiConfiguration(
         }
         break;
       case "openai-native":
-        if (!apiConfiguration.openAiNativeApiKey) {
-          return "You must provide a valid API key or choose a different provider.";
-        }
+        // API key is optional: when omitted, extension attempts Codex OAuth from ~/.codex/auth.json
         break;
       case "deepseek":
         if (!apiConfiguration.deepSeekApiKey) {
@@ -49,6 +47,11 @@ export function validateApiConfiguration(
         break;
       case "moonshot":
         if (!apiConfiguration.moonshotApiKey) {
+          return "You must provide a valid API key or choose a different provider.";
+        }
+        break;
+      case "minimax":
+        if (!apiConfiguration.minimaxApiKey) {
           return "You must provide a valid API key or choose a different provider.";
         }
         break;

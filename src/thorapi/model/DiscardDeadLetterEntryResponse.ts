@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,7 +42,7 @@ export type DiscardDeadLetterEntryResponse  = DataObject & {
      * @type {string}
      * @memberof DiscardDeadLetterEntryResponse
      */
-    message: string;
+    message?: string;
     /**
      * ID of the DeadLetterQueue entry that was discarded
      * @type {string}
@@ -115,7 +114,7 @@ export type DiscardDeadLetterEntryResponse  = DataObject & {
 export function DiscardDeadLetterEntryResponseFromJSON(json: any): DiscardDeadLetterEntryResponse {
     return {
         ...DataObjectFromJSON(json),
-        'message': json['message'],
+        'message': !exists(json, 'message') ? undefined : json['message'],
         'dlqId': !exists(json, 'dlqId') ? undefined : json['dlqId'],
         'timestamp': !exists(json, 'timestamp') ? undefined : new Date(json['timestamp']),
         'id': !exists(json, 'id') ? undefined : json['id'],

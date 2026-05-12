@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,19 +42,19 @@ export type IdempotencyKey  = DataObject & {
      * @type {string}
      * @memberof IdempotencyKey
      */
-    idempotencyKey: string;
+    idempotencyKey?: string;
     /**
      * Owning account scope for the key
      * @type {string}
      * @memberof IdempotencyKey
      */
-    accountId: string;
+    accountId?: string;
     /**
      * SHA-256 hash of the request payload
      * @type {string}
      * @memberof IdempotencyKey
      */
-    requestHash: string;
+    requestHash?: string;
     /**
      * When the key was first recorded
      * @type {Date}
@@ -121,9 +120,9 @@ export type IdempotencyKey  = DataObject & {
 export function IdempotencyKeyFromJSON(json: any): IdempotencyKey {
     return {
         ...DataObjectFromJSON(json),
-        'idempotencyKey': json['idempotencyKey'],
-        'accountId': json['accountId'],
-        'requestHash': json['requestHash'],
+        'idempotencyKey': !exists(json, 'idempotencyKey') ? undefined : json['idempotencyKey'],
+        'accountId': !exists(json, 'accountId') ? undefined : json['accountId'],
+        'requestHash': !exists(json, 'requestHash') ? undefined : json['requestHash'],
         'processedAt': !exists(json, 'processedAt') ? undefined : new Date(json['processedAt']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],

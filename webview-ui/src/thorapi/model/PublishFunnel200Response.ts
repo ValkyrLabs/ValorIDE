@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,19 +42,19 @@ export type PublishFunnel200Response  = DataObject & {
      * @type {boolean}
      * @memberof PublishFunnel200Response
      */
-    success: boolean;
-    /**
-     * URL where the funnel is published
-     * @type {string}
-     * @memberof PublishFunnel200Response
-     */
-    funnelUrl: string;
+    success?: boolean;
     /**
      * Publication status flag
      * @type {boolean}
      * @memberof PublishFunnel200Response
      */
     published?: boolean;
+    /**
+     * URL where the funnel is published
+     * @type {string}
+     * @memberof PublishFunnel200Response
+     */
+    funnelUrl?: string;
     /**
      * URL path to the landing page
      * @type {string}
@@ -133,9 +132,9 @@ export type PublishFunnel200Response  = DataObject & {
 export function PublishFunnel200ResponseFromJSON(json: any): PublishFunnel200Response {
     return {
         ...DataObjectFromJSON(json),
-        'success': json['success'],
-        'funnelUrl': json['funnelUrl'],
+        'success': !exists(json, 'success') ? undefined : json['success'],
         'published': !exists(json, 'published') ? undefined : json['published'],
+        'funnelUrl': !exists(json, 'funnelUrl') ? undefined : json['funnelUrl'],
         'landingPageUrl': !exists(json, 'landingPageUrl') ? undefined : json['landingPageUrl'],
         'message': !exists(json, 'message') ? undefined : json['message'],
         'publishedAt': !exists(json, 'publishedAt') ? undefined : new Date(json['publishedAt']),
@@ -158,8 +157,8 @@ export function PublishFunnel200ResponseToJSON(value?: PublishFunnel200Response)
     return {
         ...DataObjectToJSON(value),
         'success': value.success,
-        'funnelUrl': value.funnelUrl,
         'published': value.published,
+        'funnelUrl': value.funnelUrl,
         'landingPageUrl': value.landingPageUrl,
         'message': value.message,
         'publishedAt': value.publishedAt === undefined ? undefined : value.publishedAt.toISOString(),

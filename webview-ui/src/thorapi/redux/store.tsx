@@ -20,6 +20,7 @@ import { exists, mapValues } from '../src/runtime';
 import middlewares from "./middlewares";
 // IMPORTant
 import { AccountBalanceService } from './services/AccountBalanceService';
+import { AccountPlanService } from './services/AccountPlanService';
 import { AclClassService } from './services/AclClassService';
 import { AclEntryService } from './services/AclEntryService';
 import { AclObjectIdentityService } from './services/AclObjectIdentityService';
@@ -36,10 +37,17 @@ import { AgentDiscoveryItemService } from './services/AgentDiscoveryItemService'
 import { AgentEventTriggerService } from './services/AgentEventTriggerService';
 import { AgentHierarchyService } from './services/AgentHierarchyService';
 import { AgentHierarchyNodeService } from './services/AgentHierarchyNodeService';
+import { ApiIdentityKpiSnapshotService } from './services/ApiIdentityKpiSnapshotService';
 import { ApiMetricSnapshotService } from './services/ApiMetricSnapshotService';
 import { ApiMetricsResponseService } from './services/ApiMetricsResponseService';
+import { ApiSpineKpiSnapshotService } from './services/ApiSpineKpiSnapshotService';
 import { ApiTrafficEventService } from './services/ApiTrafficEventService';
+import { AppendTrustEventRequestService } from './services/AppendTrustEventRequestService';
+import { AppendTrustEventResponseService } from './services/AppendTrustEventResponseService';
 import { ApplicationService } from './services/ApplicationService';
+import { ArrayIntegerItemService } from './services/ArrayIntegerItemService';
+import { ArrayNumberItemService } from './services/ArrayNumberItemService';
+import { ArrayStringItemService } from './services/ArrayStringItemService';
 import { AuthorityService } from './services/AuthorityService';
 import { BackupConfigService } from './services/BackupConfigService';
 import { BalanceResponseService } from './services/BalanceResponseService';
@@ -47,6 +55,7 @@ import { BlankRangeService } from './services/BlankRangeService';
 import { BorderService } from './services/BorderService';
 import { BudgetService } from './services/BudgetService';
 import { BuildService } from './services/BuildService';
+import { BuildArtifactService } from './services/BuildArtifactService';
 import { BuildOutputService } from './services/BuildOutputService';
 import { CampaignService } from './services/CampaignService';
 import { CareerOpportunityService } from './services/CareerOpportunityService';
@@ -58,7 +67,11 @@ import { ChatCompletionRequestService } from './services/ChatCompletionRequestSe
 import { ChatCompletionResponseService } from './services/ChatCompletionResponseService';
 import { ChatMessageService } from './services/ChatMessageService';
 import { ChatResponseService } from './services/ChatResponseService';
+import { CircuitBreakerConfigService } from './services/CircuitBreakerConfigService';
 import { CircuitBreakerStateService } from './services/CircuitBreakerStateService';
+import { CloudProviderService } from './services/CloudProviderService';
+import { CompleteTrustExecutionRequestService } from './services/CompleteTrustExecutionRequestService';
+import { CompleteTrustExecutionResponseService } from './services/CompleteTrustExecutionResponseService';
 import { CompleteUploadRequestService } from './services/CompleteUploadRequestService';
 import { CompleteUploadRequestPartsInnerService } from './services/CompleteUploadRequestPartsInnerService';
 import { ConfirmPasswordResetRequestService } from './services/ConfirmPasswordResetRequestService';
@@ -68,10 +81,16 @@ import { ContentDataService } from './services/ContentDataService';
 import { ContentMediaLinkService } from './services/ContentMediaLinkService';
 import { ConversationBranchService } from './services/ConversationBranchService';
 import { ConversationMemoryNodeService } from './services/ConversationMemoryNodeService';
+import { CreatorEarningsService } from './services/CreatorEarningsService';
+import { CreditAccountService } from './services/CreditAccountService';
+import { CreditBalanceSummaryService } from './services/CreditBalanceSummaryService';
 import { CustomerService } from './services/CustomerService';
 import { DeadLetterQueueService } from './services/DeadLetterQueueService';
 import { DefaultResponseService } from './services/DefaultResponseService';
 import { DependService } from './services/DependService';
+import { DeploymentService } from './services/DeploymentService';
+import { DeploymentSpecService } from './services/DeploymentSpecService';
+import { DeploymentTemplateService } from './services/DeploymentTemplateService';
 import { DigitalAssetService } from './services/DigitalAssetService';
 import { DiscardDeadLetterEntryRequestService } from './services/DiscardDeadLetterEntryRequestService';
 import { DiscardDeadLetterEntryResponseService } from './services/DiscardDeadLetterEntryResponseService';
@@ -79,6 +98,16 @@ import { DiscountService } from './services/DiscountService';
 import { DownloadAccessService } from './services/DownloadAccessService';
 import { EventLogService } from './services/EventLogService';
 import { ExecModuleService } from './services/ExecModuleService';
+import { ExecModuleAudienceConfigService } from './services/ExecModuleAudienceConfigService';
+import { ExecModuleAuthConfigService } from './services/ExecModuleAuthConfigService';
+import { ExecModuleConfigService } from './services/ExecModuleConfigService';
+import { ExecModuleExecutionConfigService } from './services/ExecModuleExecutionConfigService';
+import { ExecModuleIOConfigService } from './services/ExecModuleIOConfigService';
+import { ExecModuleObservabilityConfigService } from './services/ExecModuleObservabilityConfigService';
+import { ExecModulePayloadConfigService } from './services/ExecModulePayloadConfigService';
+import { ExecModuleRateLimitConfigService } from './services/ExecModuleRateLimitConfigService';
+import { ExecModuleResourceConfigService } from './services/ExecModuleResourceConfigService';
+import { ExecModuleTransportConfigService } from './services/ExecModuleTransportConfigService';
 import { ExecuteModuleRequestService } from './services/ExecuteModuleRequestService';
 import { ExpenseService } from './services/ExpenseService';
 import { FileAuditLogService } from './services/FileAuditLogService';
@@ -91,9 +120,15 @@ import { FileVersionService } from './services/FileVersionService';
 import { FormatService } from './services/FormatService';
 import { FormulaService } from './services/FormulaService';
 import { GeneralLedgerEntryService } from './services/GeneralLedgerEntryService';
+import { GenerateTrustKeyRequestService } from './services/GenerateTrustKeyRequestService';
+import { GenerateTrustKeyResponseService } from './services/GenerateTrustKeyResponseService';
+import { GenerateTrustProofRequestService } from './services/GenerateTrustProofRequestService';
+import { GenerateTrustProofResponseService } from './services/GenerateTrustProofResponseService';
 import { GoalService } from './services/GoalService';
 import { GoalDependencyService } from './services/GoalDependencyService';
 import { GrantPermissionRequestService } from './services/GrantPermissionRequestService';
+import { GraphLinkService } from './services/GraphLinkService';
+import { GrayMatterService } from './services/GrayMatterService';
 import { HostInstanceService } from './services/HostInstanceService';
 import { IdempotencyKeyService } from './services/IdempotencyKeyService';
 import { InitUploadRequestService } from './services/InitUploadRequestService';
@@ -109,14 +144,18 @@ import { JobApplicationResponseService } from './services/JobApplicationResponse
 import { JobMetadataService } from './services/JobMetadataService';
 import { JobSeekerService } from './services/JobSeekerService';
 import { KeyMetricService } from './services/KeyMetricService';
-import { LegalPrecedentService } from './services/LegalPrecedentService';
+import { LeaseTrustSecretRequestService } from './services/LeaseTrustSecretRequestService';
+import { LeaseTrustSecretResponseService } from './services/LeaseTrustSecretResponseService';
 import { LineItemService } from './services/LineItemService';
+import { ListDeployableApplications200ResponseInnerService } from './services/ListDeployableApplications200ResponseInnerService';
 import { LlmDetailsService } from './services/LlmDetailsService';
+import { LlmRoutingPolicyService } from './services/LlmRoutingPolicyService';
 import { LoginService } from './services/LoginService';
 import { LoginAuditService } from './services/LoginAuditService';
 import { LoginRequestService } from './services/LoginRequestService';
 import { LoginResponseService } from './services/LoginResponseService';
 import { LogoutService } from './services/LogoutService';
+import { ManagedMcpServiceService } from './services/ManagedMcpServiceService';
 import { McpService } from './services/McpService';
 import { McpContentService } from './services/McpContentService';
 import { McpDownloadResponseService } from './services/McpDownloadResponseService';
@@ -134,6 +173,16 @@ import { McpToolCallResponseService } from './services/McpToolCallResponseServic
 import { McpToolPresetService } from './services/McpToolPresetService';
 import { McpTransportConfigService } from './services/McpTransportConfigService';
 import { MediaObjectService } from './services/MediaObjectService';
+import { MemoryActionRequestService } from './services/MemoryActionRequestService';
+import { MemoryActionResponseService } from './services/MemoryActionResponseService';
+import { MemoryContextStatsService } from './services/MemoryContextStatsService';
+import { MemoryCostStatsService } from './services/MemoryCostStatsService';
+import { MemoryEntryService } from './services/MemoryEntryService';
+import { MemoryHitStatsService } from './services/MemoryHitStatsService';
+import { MemoryRecommendationService } from './services/MemoryRecommendationService';
+import { MemoryRetentionPolicyService } from './services/MemoryRetentionPolicyService';
+import { MemoryRunRecordService } from './services/MemoryRunRecordService';
+import { MemoryStatsService } from './services/MemoryStatsService';
 import { MergeRangeService } from './services/MergeRangeService';
 import { MetricsService } from './services/MetricsService';
 import { NamedRangeService } from './services/NamedRangeService';
@@ -153,8 +202,10 @@ import { OasServerService } from './services/OasServerService';
 import { OpportunityService } from './services/OpportunityService';
 import { OrderFulfillmentTaskService } from './services/OrderFulfillmentTaskService';
 import { OrganizationService } from './services/OrganizationService';
+import { OrganizationAddonSubscriptionService } from './services/OrganizationAddonSubscriptionService';
 import { PasswordResetTokenService } from './services/PasswordResetTokenService';
 import { PaymentTransactionService } from './services/PaymentTransactionService';
+import { PaymentTypeService } from './services/PaymentTypeService';
 import { PersistentLoginService } from './services/PersistentLoginService';
 import { PhoneVerificationService } from './services/PhoneVerificationService';
 import { PhoneVerificationRequestService } from './services/PhoneVerificationRequestService';
@@ -163,7 +214,6 @@ import { PivotTableService } from './services/PivotTableService';
 import { PresignRequestService } from './services/PresignRequestService';
 import { PresignResponseService } from './services/PresignResponseService';
 import { PrincipalService } from './services/PrincipalService';
-import { PrincipalRolesService } from './services/PrincipalRolesService';
 import { ProductService } from './services/ProductService';
 import { ProductDeliveryConfigService } from './services/ProductDeliveryConfigService';
 import { ProductFeatureService } from './services/ProductFeatureService';
@@ -178,17 +228,28 @@ import { QuotaService } from './services/QuotaService';
 import { RatingService } from './services/RatingService';
 import { ReactionService } from './services/ReactionService';
 import { ReferralLinkService } from './services/ReferralLinkService';
+import { RegisterTrustPolicyRequestService } from './services/RegisterTrustPolicyRequestService';
+import { RegisterTrustPolicyResponseService } from './services/RegisterTrustPolicyResponseService';
 import { RequestPasswordResetRequestService } from './services/RequestPasswordResetRequestService';
 import { RequestPasswordResetResponseService } from './services/RequestPasswordResetResponseService';
 import { RequeueDeadLetterEntryRequestService } from './services/RequeueDeadLetterEntryRequestService';
 import { RequeueDeadLetterEntryResponseService } from './services/RequeueDeadLetterEntryResponseService';
 import { RetryPolicyService } from './services/RetryPolicyService';
+import { RewrapTrustKeyRequestService } from './services/RewrapTrustKeyRequestService';
+import { RewrapTrustKeyResponseService } from './services/RewrapTrustKeyResponseService';
 import { RoleService } from './services/RoleService';
+import { RotateTrustKeyRequestService } from './services/RotateTrustKeyRequestService';
+import { RotateTrustKeyResponseService } from './services/RotateTrustKeyResponseService';
 import { RunService } from './services/RunService';
 import { SalesActivityService } from './services/SalesActivityService';
 import { SalesOrderService } from './services/SalesOrderService';
 import { SalesPipelineService } from './services/SalesPipelineService';
+import { ScanBuildArtifacts200ResponseService } from './services/ScanBuildArtifacts200ResponseService';
+import { ScanBuildArtifactsRequestService } from './services/ScanBuildArtifactsRequestService';
 import { SecureKeyService } from './services/SecureKeyService';
+import { SemanticIndexEntryService } from './services/SemanticIndexEntryService';
+import { ServiceInvocationEventService } from './services/ServiceInvocationEventService';
+import { ServiceSubscriptionService } from './services/ServiceSubscriptionService';
 import { SheetService } from './services/SheetService';
 import { SheetColumnService } from './services/SheetColumnService';
 import { SheetRowService } from './services/SheetRowService';
@@ -198,8 +259,13 @@ import { SpaceService } from './services/SpaceService';
 import { SpaceFileService } from './services/SpaceFileService';
 import { SpaceMemberService } from './services/SpaceMemberService';
 import { StackService } from './services/StackService';
+import { StartTrustExecutionRequestService } from './services/StartTrustExecutionRequestService';
+import { StartTrustExecutionResponseService } from './services/StartTrustExecutionResponseService';
 import { StrategicPriorityService } from './services/StrategicPriorityService';
+import { SubmitTrustAttestationEvidenceRequestService } from './services/SubmitTrustAttestationEvidenceRequestService';
+import { SubmitTrustAttestationEvidenceResponseService } from './services/SubmitTrustAttestationEvidenceResponseService';
 import { SubscriberListService } from './services/SubscriberListService';
+import { SubscriptionPlanService } from './services/SubscriptionPlanService';
 import { SwarmService } from './services/SwarmService';
 import { SwarmAgentSummaryService } from './services/SwarmAgentSummaryService';
 import { SwarmCommandRequestService } from './services/SwarmCommandRequestService';
@@ -214,13 +280,34 @@ import { SwarmRegisterResponseService } from './services/SwarmRegisterResponseSe
 import { SwarmSecurityService } from './services/SwarmSecurityService';
 import { SwarmUnregisterRequestService } from './services/SwarmUnregisterRequestService';
 import { SwarmUnregisterResponseService } from './services/SwarmUnregisterResponseService';
+import { TagService } from './services/TagService';
 import { TaskService } from './services/TaskService';
+import { ThorapiRuleService } from './services/ThorapiRuleService';
+import { TrustService } from './services/TrustService';
+import { TrustAttestationEvidenceService } from './services/TrustAttestationEvidenceService';
+import { TrustKeyService } from './services/TrustKeyService';
+import { TrustKeyProviderService } from './services/TrustKeyProviderService';
+import { TrustKeyRotationService } from './services/TrustKeyRotationService';
+import { TrustKeyVersionService } from './services/TrustKeyVersionService';
+import { TrustMerkleBatchService } from './services/TrustMerkleBatchService';
+import { TrustObjectKeyEnvelopeService } from './services/TrustObjectKeyEnvelopeService';
+import { TrustPolicyBindingService } from './services/TrustPolicyBindingService';
+import { TrustPolicyManifestService } from './services/TrustPolicyManifestService';
+import { TrustProofService } from './services/TrustProofService';
+import { TrustRuntimeEventService } from './services/TrustRuntimeEventService';
+import { TrustRuntimeExecutionService } from './services/TrustRuntimeExecutionService';
+import { TrustSecretAccessEventService } from './services/TrustSecretAccessEventService';
+import { TrustSecretLeaseService } from './services/TrustSecretLeaseService';
+import { TrustVerificationResultService } from './services/TrustVerificationResultService';
 import { TwoFactorSecretService } from './services/TwoFactorSecretService';
 import { UpdateFileRequestService } from './services/UpdateFileRequestService';
 import { UsageTransactionService } from './services/UsageTransactionService';
 import { UserPreferenceService } from './services/UserPreferenceService';
+import { ValidateDeploymentSpec200ResponseService } from './services/ValidateDeploymentSpec200ResponseService';
 import { ValkyrJobService } from './services/ValkyrJobService';
 import { VerifyPhoneOTPRequestService } from './services/VerifyPhoneOTPRequestService';
+import { VerifyTrustProofRequestService } from './services/VerifyTrustProofRequestService';
+import { VerifyTrustProofResponseService } from './services/VerifyTrustProofResponseService';
 import { VerifyTwoFactorRequestService } from './services/VerifyTwoFactorRequestService';
 import { VerifyTwoFactorResponseService } from './services/VerifyTwoFactorResponseService';
 import { WebsocketMessageService } from './services/WebsocketMessageService';
@@ -230,6 +317,17 @@ import { WizardStatusResponseService } from './services/WizardStatusResponseServ
 import { WorkbookService } from './services/WorkbookService';
 import { WorkflowService } from './services/WorkflowService';
 import { WorkflowExecutionService } from './services/WorkflowExecutionService';
+import { WorkflowGraphEdgeService } from './services/WorkflowGraphEdgeService';
+import { WorkflowGraphEdgeConfigService } from './services/WorkflowGraphEdgeConfigService';
+import { WorkflowGraphEdgeConnectionMappingService } from './services/WorkflowGraphEdgeConnectionMappingService';
+import { WorkflowGraphModuleService } from './services/WorkflowGraphModuleService';
+import { WorkflowGraphModuleMappingService } from './services/WorkflowGraphModuleMappingService';
+import { WorkflowGraphNodeService } from './services/WorkflowGraphNodeService';
+import { WorkflowGraphNodeTaskMappingService } from './services/WorkflowGraphNodeTaskMappingService';
+import { WorkflowGraphRequestService } from './services/WorkflowGraphRequestService';
+import { WorkflowGraphResponseService } from './services/WorkflowGraphResponseService';
+import { WorkflowGraphValidationErrorService } from './services/WorkflowGraphValidationErrorService';
+import { WorkflowGraphWorkflowDataService } from './services/WorkflowGraphWorkflowDataService';
 import { WorkflowStateService } from './services/WorkflowStateService';
 
 export const getQueries = (state) => state.queries;
@@ -237,6 +335,7 @@ export const getEntities = (state) => state.entities;
 
 export const reducer = {
   [AccountBalanceService.reducerPath]: AccountBalanceService.reducer,
+  [AccountPlanService.reducerPath]: AccountPlanService.reducer,
   [AclClassService.reducerPath]: AclClassService.reducer,
   [AclEntryService.reducerPath]: AclEntryService.reducer,
   [AclObjectIdentityService.reducerPath]: AclObjectIdentityService.reducer,
@@ -253,10 +352,17 @@ export const reducer = {
   [AgentEventTriggerService.reducerPath]: AgentEventTriggerService.reducer,
   [AgentHierarchyService.reducerPath]: AgentHierarchyService.reducer,
   [AgentHierarchyNodeService.reducerPath]: AgentHierarchyNodeService.reducer,
+  [ApiIdentityKpiSnapshotService.reducerPath]: ApiIdentityKpiSnapshotService.reducer,
   [ApiMetricSnapshotService.reducerPath]: ApiMetricSnapshotService.reducer,
   [ApiMetricsResponseService.reducerPath]: ApiMetricsResponseService.reducer,
+  [ApiSpineKpiSnapshotService.reducerPath]: ApiSpineKpiSnapshotService.reducer,
   [ApiTrafficEventService.reducerPath]: ApiTrafficEventService.reducer,
+  [AppendTrustEventRequestService.reducerPath]: AppendTrustEventRequestService.reducer,
+  [AppendTrustEventResponseService.reducerPath]: AppendTrustEventResponseService.reducer,
   [ApplicationService.reducerPath]: ApplicationService.reducer,
+  [ArrayIntegerItemService.reducerPath]: ArrayIntegerItemService.reducer,
+  [ArrayNumberItemService.reducerPath]: ArrayNumberItemService.reducer,
+  [ArrayStringItemService.reducerPath]: ArrayStringItemService.reducer,
   [AuthorityService.reducerPath]: AuthorityService.reducer,
   [BackupConfigService.reducerPath]: BackupConfigService.reducer,
   [BalanceResponseService.reducerPath]: BalanceResponseService.reducer,
@@ -264,6 +370,7 @@ export const reducer = {
   [BorderService.reducerPath]: BorderService.reducer,
   [BudgetService.reducerPath]: BudgetService.reducer,
   [BuildService.reducerPath]: BuildService.reducer,
+  [BuildArtifactService.reducerPath]: BuildArtifactService.reducer,
   [BuildOutputService.reducerPath]: BuildOutputService.reducer,
   [CampaignService.reducerPath]: CampaignService.reducer,
   [CareerOpportunityService.reducerPath]: CareerOpportunityService.reducer,
@@ -275,7 +382,11 @@ export const reducer = {
   [ChatCompletionResponseService.reducerPath]: ChatCompletionResponseService.reducer,
   [ChatMessageService.reducerPath]: ChatMessageService.reducer,
   [ChatResponseService.reducerPath]: ChatResponseService.reducer,
+  [CircuitBreakerConfigService.reducerPath]: CircuitBreakerConfigService.reducer,
   [CircuitBreakerStateService.reducerPath]: CircuitBreakerStateService.reducer,
+  [CloudProviderService.reducerPath]: CloudProviderService.reducer,
+  [CompleteTrustExecutionRequestService.reducerPath]: CompleteTrustExecutionRequestService.reducer,
+  [CompleteTrustExecutionResponseService.reducerPath]: CompleteTrustExecutionResponseService.reducer,
   [CompleteUploadRequestService.reducerPath]: CompleteUploadRequestService.reducer,
   [CompleteUploadRequestPartsInnerService.reducerPath]: CompleteUploadRequestPartsInnerService.reducer,
   [ConfirmPasswordResetRequestService.reducerPath]: ConfirmPasswordResetRequestService.reducer,
@@ -285,10 +396,16 @@ export const reducer = {
   [ContentMediaLinkService.reducerPath]: ContentMediaLinkService.reducer,
   [ConversationBranchService.reducerPath]: ConversationBranchService.reducer,
   [ConversationMemoryNodeService.reducerPath]: ConversationMemoryNodeService.reducer,
+  [CreatorEarningsService.reducerPath]: CreatorEarningsService.reducer,
+  [CreditAccountService.reducerPath]: CreditAccountService.reducer,
+  [CreditBalanceSummaryService.reducerPath]: CreditBalanceSummaryService.reducer,
   [CustomerService.reducerPath]: CustomerService.reducer,
   [DeadLetterQueueService.reducerPath]: DeadLetterQueueService.reducer,
   [DefaultResponseService.reducerPath]: DefaultResponseService.reducer,
   [DependService.reducerPath]: DependService.reducer,
+  [DeploymentService.reducerPath]: DeploymentService.reducer,
+  [DeploymentSpecService.reducerPath]: DeploymentSpecService.reducer,
+  [DeploymentTemplateService.reducerPath]: DeploymentTemplateService.reducer,
   [DigitalAssetService.reducerPath]: DigitalAssetService.reducer,
   [DiscardDeadLetterEntryRequestService.reducerPath]: DiscardDeadLetterEntryRequestService.reducer,
   [DiscardDeadLetterEntryResponseService.reducerPath]: DiscardDeadLetterEntryResponseService.reducer,
@@ -296,6 +413,16 @@ export const reducer = {
   [DownloadAccessService.reducerPath]: DownloadAccessService.reducer,
   [EventLogService.reducerPath]: EventLogService.reducer,
   [ExecModuleService.reducerPath]: ExecModuleService.reducer,
+  [ExecModuleAudienceConfigService.reducerPath]: ExecModuleAudienceConfigService.reducer,
+  [ExecModuleAuthConfigService.reducerPath]: ExecModuleAuthConfigService.reducer,
+  [ExecModuleConfigService.reducerPath]: ExecModuleConfigService.reducer,
+  [ExecModuleExecutionConfigService.reducerPath]: ExecModuleExecutionConfigService.reducer,
+  [ExecModuleIOConfigService.reducerPath]: ExecModuleIOConfigService.reducer,
+  [ExecModuleObservabilityConfigService.reducerPath]: ExecModuleObservabilityConfigService.reducer,
+  [ExecModulePayloadConfigService.reducerPath]: ExecModulePayloadConfigService.reducer,
+  [ExecModuleRateLimitConfigService.reducerPath]: ExecModuleRateLimitConfigService.reducer,
+  [ExecModuleResourceConfigService.reducerPath]: ExecModuleResourceConfigService.reducer,
+  [ExecModuleTransportConfigService.reducerPath]: ExecModuleTransportConfigService.reducer,
   [ExecuteModuleRequestService.reducerPath]: ExecuteModuleRequestService.reducer,
   [ExpenseService.reducerPath]: ExpenseService.reducer,
   [FileAuditLogService.reducerPath]: FileAuditLogService.reducer,
@@ -308,9 +435,15 @@ export const reducer = {
   [FormatService.reducerPath]: FormatService.reducer,
   [FormulaService.reducerPath]: FormulaService.reducer,
   [GeneralLedgerEntryService.reducerPath]: GeneralLedgerEntryService.reducer,
+  [GenerateTrustKeyRequestService.reducerPath]: GenerateTrustKeyRequestService.reducer,
+  [GenerateTrustKeyResponseService.reducerPath]: GenerateTrustKeyResponseService.reducer,
+  [GenerateTrustProofRequestService.reducerPath]: GenerateTrustProofRequestService.reducer,
+  [GenerateTrustProofResponseService.reducerPath]: GenerateTrustProofResponseService.reducer,
   [GoalService.reducerPath]: GoalService.reducer,
   [GoalDependencyService.reducerPath]: GoalDependencyService.reducer,
   [GrantPermissionRequestService.reducerPath]: GrantPermissionRequestService.reducer,
+  [GraphLinkService.reducerPath]: GraphLinkService.reducer,
+  [GrayMatterService.reducerPath]: GrayMatterService.reducer,
   [HostInstanceService.reducerPath]: HostInstanceService.reducer,
   [IdempotencyKeyService.reducerPath]: IdempotencyKeyService.reducer,
   [InitUploadRequestService.reducerPath]: InitUploadRequestService.reducer,
@@ -326,14 +459,18 @@ export const reducer = {
   [JobMetadataService.reducerPath]: JobMetadataService.reducer,
   [JobSeekerService.reducerPath]: JobSeekerService.reducer,
   [KeyMetricService.reducerPath]: KeyMetricService.reducer,
-  [LegalPrecedentService.reducerPath]: LegalPrecedentService.reducer,
+  [LeaseTrustSecretRequestService.reducerPath]: LeaseTrustSecretRequestService.reducer,
+  [LeaseTrustSecretResponseService.reducerPath]: LeaseTrustSecretResponseService.reducer,
   [LineItemService.reducerPath]: LineItemService.reducer,
+  [ListDeployableApplications200ResponseInnerService.reducerPath]: ListDeployableApplications200ResponseInnerService.reducer,
   [LlmDetailsService.reducerPath]: LlmDetailsService.reducer,
+  [LlmRoutingPolicyService.reducerPath]: LlmRoutingPolicyService.reducer,
   [LoginService.reducerPath]: LoginService.reducer,
   [LoginAuditService.reducerPath]: LoginAuditService.reducer,
   [LoginRequestService.reducerPath]: LoginRequestService.reducer,
   [LoginResponseService.reducerPath]: LoginResponseService.reducer,
   [LogoutService.reducerPath]: LogoutService.reducer,
+  [ManagedMcpServiceService.reducerPath]: ManagedMcpServiceService.reducer,
   [McpService.reducerPath]: McpService.reducer,
   [McpContentService.reducerPath]: McpContentService.reducer,
   [McpDownloadResponseService.reducerPath]: McpDownloadResponseService.reducer,
@@ -351,6 +488,16 @@ export const reducer = {
   [McpToolPresetService.reducerPath]: McpToolPresetService.reducer,
   [McpTransportConfigService.reducerPath]: McpTransportConfigService.reducer,
   [MediaObjectService.reducerPath]: MediaObjectService.reducer,
+  [MemoryActionRequestService.reducerPath]: MemoryActionRequestService.reducer,
+  [MemoryActionResponseService.reducerPath]: MemoryActionResponseService.reducer,
+  [MemoryContextStatsService.reducerPath]: MemoryContextStatsService.reducer,
+  [MemoryCostStatsService.reducerPath]: MemoryCostStatsService.reducer,
+  [MemoryEntryService.reducerPath]: MemoryEntryService.reducer,
+  [MemoryHitStatsService.reducerPath]: MemoryHitStatsService.reducer,
+  [MemoryRecommendationService.reducerPath]: MemoryRecommendationService.reducer,
+  [MemoryRetentionPolicyService.reducerPath]: MemoryRetentionPolicyService.reducer,
+  [MemoryRunRecordService.reducerPath]: MemoryRunRecordService.reducer,
+  [MemoryStatsService.reducerPath]: MemoryStatsService.reducer,
   [MergeRangeService.reducerPath]: MergeRangeService.reducer,
   [MetricsService.reducerPath]: MetricsService.reducer,
   [NamedRangeService.reducerPath]: NamedRangeService.reducer,
@@ -370,8 +517,10 @@ export const reducer = {
   [OpportunityService.reducerPath]: OpportunityService.reducer,
   [OrderFulfillmentTaskService.reducerPath]: OrderFulfillmentTaskService.reducer,
   [OrganizationService.reducerPath]: OrganizationService.reducer,
+  [OrganizationAddonSubscriptionService.reducerPath]: OrganizationAddonSubscriptionService.reducer,
   [PasswordResetTokenService.reducerPath]: PasswordResetTokenService.reducer,
   [PaymentTransactionService.reducerPath]: PaymentTransactionService.reducer,
+  [PaymentTypeService.reducerPath]: PaymentTypeService.reducer,
   [PersistentLoginService.reducerPath]: PersistentLoginService.reducer,
   [PhoneVerificationService.reducerPath]: PhoneVerificationService.reducer,
   [PhoneVerificationRequestService.reducerPath]: PhoneVerificationRequestService.reducer,
@@ -380,7 +529,6 @@ export const reducer = {
   [PresignRequestService.reducerPath]: PresignRequestService.reducer,
   [PresignResponseService.reducerPath]: PresignResponseService.reducer,
   [PrincipalService.reducerPath]: PrincipalService.reducer,
-  [PrincipalRolesService.reducerPath]: PrincipalRolesService.reducer,
   [ProductService.reducerPath]: ProductService.reducer,
   [ProductDeliveryConfigService.reducerPath]: ProductDeliveryConfigService.reducer,
   [ProductFeatureService.reducerPath]: ProductFeatureService.reducer,
@@ -395,17 +543,28 @@ export const reducer = {
   [RatingService.reducerPath]: RatingService.reducer,
   [ReactionService.reducerPath]: ReactionService.reducer,
   [ReferralLinkService.reducerPath]: ReferralLinkService.reducer,
+  [RegisterTrustPolicyRequestService.reducerPath]: RegisterTrustPolicyRequestService.reducer,
+  [RegisterTrustPolicyResponseService.reducerPath]: RegisterTrustPolicyResponseService.reducer,
   [RequestPasswordResetRequestService.reducerPath]: RequestPasswordResetRequestService.reducer,
   [RequestPasswordResetResponseService.reducerPath]: RequestPasswordResetResponseService.reducer,
   [RequeueDeadLetterEntryRequestService.reducerPath]: RequeueDeadLetterEntryRequestService.reducer,
   [RequeueDeadLetterEntryResponseService.reducerPath]: RequeueDeadLetterEntryResponseService.reducer,
   [RetryPolicyService.reducerPath]: RetryPolicyService.reducer,
+  [RewrapTrustKeyRequestService.reducerPath]: RewrapTrustKeyRequestService.reducer,
+  [RewrapTrustKeyResponseService.reducerPath]: RewrapTrustKeyResponseService.reducer,
   [RoleService.reducerPath]: RoleService.reducer,
+  [RotateTrustKeyRequestService.reducerPath]: RotateTrustKeyRequestService.reducer,
+  [RotateTrustKeyResponseService.reducerPath]: RotateTrustKeyResponseService.reducer,
   [RunService.reducerPath]: RunService.reducer,
   [SalesActivityService.reducerPath]: SalesActivityService.reducer,
   [SalesOrderService.reducerPath]: SalesOrderService.reducer,
   [SalesPipelineService.reducerPath]: SalesPipelineService.reducer,
+  [ScanBuildArtifacts200ResponseService.reducerPath]: ScanBuildArtifacts200ResponseService.reducer,
+  [ScanBuildArtifactsRequestService.reducerPath]: ScanBuildArtifactsRequestService.reducer,
   [SecureKeyService.reducerPath]: SecureKeyService.reducer,
+  [SemanticIndexEntryService.reducerPath]: SemanticIndexEntryService.reducer,
+  [ServiceInvocationEventService.reducerPath]: ServiceInvocationEventService.reducer,
+  [ServiceSubscriptionService.reducerPath]: ServiceSubscriptionService.reducer,
   [SheetService.reducerPath]: SheetService.reducer,
   [SheetColumnService.reducerPath]: SheetColumnService.reducer,
   [SheetRowService.reducerPath]: SheetRowService.reducer,
@@ -415,8 +574,13 @@ export const reducer = {
   [SpaceFileService.reducerPath]: SpaceFileService.reducer,
   [SpaceMemberService.reducerPath]: SpaceMemberService.reducer,
   [StackService.reducerPath]: StackService.reducer,
+  [StartTrustExecutionRequestService.reducerPath]: StartTrustExecutionRequestService.reducer,
+  [StartTrustExecutionResponseService.reducerPath]: StartTrustExecutionResponseService.reducer,
   [StrategicPriorityService.reducerPath]: StrategicPriorityService.reducer,
+  [SubmitTrustAttestationEvidenceRequestService.reducerPath]: SubmitTrustAttestationEvidenceRequestService.reducer,
+  [SubmitTrustAttestationEvidenceResponseService.reducerPath]: SubmitTrustAttestationEvidenceResponseService.reducer,
   [SubscriberListService.reducerPath]: SubscriberListService.reducer,
+  [SubscriptionPlanService.reducerPath]: SubscriptionPlanService.reducer,
   [SwarmService.reducerPath]: SwarmService.reducer,
   [SwarmAgentSummaryService.reducerPath]: SwarmAgentSummaryService.reducer,
   [SwarmCommandRequestService.reducerPath]: SwarmCommandRequestService.reducer,
@@ -431,13 +595,34 @@ export const reducer = {
   [SwarmSecurityService.reducerPath]: SwarmSecurityService.reducer,
   [SwarmUnregisterRequestService.reducerPath]: SwarmUnregisterRequestService.reducer,
   [SwarmUnregisterResponseService.reducerPath]: SwarmUnregisterResponseService.reducer,
+  [TagService.reducerPath]: TagService.reducer,
   [TaskService.reducerPath]: TaskService.reducer,
+  [ThorapiRuleService.reducerPath]: ThorapiRuleService.reducer,
+  [TrustService.reducerPath]: TrustService.reducer,
+  [TrustAttestationEvidenceService.reducerPath]: TrustAttestationEvidenceService.reducer,
+  [TrustKeyService.reducerPath]: TrustKeyService.reducer,
+  [TrustKeyProviderService.reducerPath]: TrustKeyProviderService.reducer,
+  [TrustKeyRotationService.reducerPath]: TrustKeyRotationService.reducer,
+  [TrustKeyVersionService.reducerPath]: TrustKeyVersionService.reducer,
+  [TrustMerkleBatchService.reducerPath]: TrustMerkleBatchService.reducer,
+  [TrustObjectKeyEnvelopeService.reducerPath]: TrustObjectKeyEnvelopeService.reducer,
+  [TrustPolicyBindingService.reducerPath]: TrustPolicyBindingService.reducer,
+  [TrustPolicyManifestService.reducerPath]: TrustPolicyManifestService.reducer,
+  [TrustProofService.reducerPath]: TrustProofService.reducer,
+  [TrustRuntimeEventService.reducerPath]: TrustRuntimeEventService.reducer,
+  [TrustRuntimeExecutionService.reducerPath]: TrustRuntimeExecutionService.reducer,
+  [TrustSecretAccessEventService.reducerPath]: TrustSecretAccessEventService.reducer,
+  [TrustSecretLeaseService.reducerPath]: TrustSecretLeaseService.reducer,
+  [TrustVerificationResultService.reducerPath]: TrustVerificationResultService.reducer,
   [TwoFactorSecretService.reducerPath]: TwoFactorSecretService.reducer,
   [UpdateFileRequestService.reducerPath]: UpdateFileRequestService.reducer,
   [UsageTransactionService.reducerPath]: UsageTransactionService.reducer,
   [UserPreferenceService.reducerPath]: UserPreferenceService.reducer,
+  [ValidateDeploymentSpec200ResponseService.reducerPath]: ValidateDeploymentSpec200ResponseService.reducer,
   [ValkyrJobService.reducerPath]: ValkyrJobService.reducer,
   [VerifyPhoneOTPRequestService.reducerPath]: VerifyPhoneOTPRequestService.reducer,
+  [VerifyTrustProofRequestService.reducerPath]: VerifyTrustProofRequestService.reducer,
+  [VerifyTrustProofResponseService.reducerPath]: VerifyTrustProofResponseService.reducer,
   [VerifyTwoFactorRequestService.reducerPath]: VerifyTwoFactorRequestService.reducer,
   [VerifyTwoFactorResponseService.reducerPath]: VerifyTwoFactorResponseService.reducer,
   [WebsocketMessageService.reducerPath]: WebsocketMessageService.reducer,
@@ -447,6 +632,17 @@ export const reducer = {
   [WorkbookService.reducerPath]: WorkbookService.reducer,
   [WorkflowService.reducerPath]: WorkflowService.reducer,
   [WorkflowExecutionService.reducerPath]: WorkflowExecutionService.reducer,
+  [WorkflowGraphEdgeService.reducerPath]: WorkflowGraphEdgeService.reducer,
+  [WorkflowGraphEdgeConfigService.reducerPath]: WorkflowGraphEdgeConfigService.reducer,
+  [WorkflowGraphEdgeConnectionMappingService.reducerPath]: WorkflowGraphEdgeConnectionMappingService.reducer,
+  [WorkflowGraphModuleService.reducerPath]: WorkflowGraphModuleService.reducer,
+  [WorkflowGraphModuleMappingService.reducerPath]: WorkflowGraphModuleMappingService.reducer,
+  [WorkflowGraphNodeService.reducerPath]: WorkflowGraphNodeService.reducer,
+  [WorkflowGraphNodeTaskMappingService.reducerPath]: WorkflowGraphNodeTaskMappingService.reducer,
+  [WorkflowGraphRequestService.reducerPath]: WorkflowGraphRequestService.reducer,
+  [WorkflowGraphResponseService.reducerPath]: WorkflowGraphResponseService.reducer,
+  [WorkflowGraphValidationErrorService.reducerPath]: WorkflowGraphValidationErrorService.reducer,
+  [WorkflowGraphWorkflowDataService.reducerPath]: WorkflowGraphWorkflowDataService.reducer,
   [WorkflowStateService.reducerPath]: WorkflowStateService.reducer,
 };
 
@@ -455,6 +651,7 @@ export const getMiddleWare : Middleware = () => {
   return () =>
     (middlewares as any)
     .concat(AccountBalanceService.middleware as Middleware)
+    .concat(AccountPlanService.middleware as Middleware)
     .concat(AclClassService.middleware as Middleware)
     .concat(AclEntryService.middleware as Middleware)
     .concat(AclObjectIdentityService.middleware as Middleware)
@@ -471,10 +668,17 @@ export const getMiddleWare : Middleware = () => {
     .concat(AgentEventTriggerService.middleware as Middleware)
     .concat(AgentHierarchyService.middleware as Middleware)
     .concat(AgentHierarchyNodeService.middleware as Middleware)
+    .concat(ApiIdentityKpiSnapshotService.middleware as Middleware)
     .concat(ApiMetricSnapshotService.middleware as Middleware)
     .concat(ApiMetricsResponseService.middleware as Middleware)
+    .concat(ApiSpineKpiSnapshotService.middleware as Middleware)
     .concat(ApiTrafficEventService.middleware as Middleware)
+    .concat(AppendTrustEventRequestService.middleware as Middleware)
+    .concat(AppendTrustEventResponseService.middleware as Middleware)
     .concat(ApplicationService.middleware as Middleware)
+    .concat(ArrayIntegerItemService.middleware as Middleware)
+    .concat(ArrayNumberItemService.middleware as Middleware)
+    .concat(ArrayStringItemService.middleware as Middleware)
     .concat(AuthorityService.middleware as Middleware)
     .concat(BackupConfigService.middleware as Middleware)
     .concat(BalanceResponseService.middleware as Middleware)
@@ -482,6 +686,7 @@ export const getMiddleWare : Middleware = () => {
     .concat(BorderService.middleware as Middleware)
     .concat(BudgetService.middleware as Middleware)
     .concat(BuildService.middleware as Middleware)
+    .concat(BuildArtifactService.middleware as Middleware)
     .concat(BuildOutputService.middleware as Middleware)
     .concat(CampaignService.middleware as Middleware)
     .concat(CareerOpportunityService.middleware as Middleware)
@@ -493,7 +698,11 @@ export const getMiddleWare : Middleware = () => {
     .concat(ChatCompletionResponseService.middleware as Middleware)
     .concat(ChatMessageService.middleware as Middleware)
     .concat(ChatResponseService.middleware as Middleware)
+    .concat(CircuitBreakerConfigService.middleware as Middleware)
     .concat(CircuitBreakerStateService.middleware as Middleware)
+    .concat(CloudProviderService.middleware as Middleware)
+    .concat(CompleteTrustExecutionRequestService.middleware as Middleware)
+    .concat(CompleteTrustExecutionResponseService.middleware as Middleware)
     .concat(CompleteUploadRequestService.middleware as Middleware)
     .concat(CompleteUploadRequestPartsInnerService.middleware as Middleware)
     .concat(ConfirmPasswordResetRequestService.middleware as Middleware)
@@ -503,10 +712,16 @@ export const getMiddleWare : Middleware = () => {
     .concat(ContentMediaLinkService.middleware as Middleware)
     .concat(ConversationBranchService.middleware as Middleware)
     .concat(ConversationMemoryNodeService.middleware as Middleware)
+    .concat(CreatorEarningsService.middleware as Middleware)
+    .concat(CreditAccountService.middleware as Middleware)
+    .concat(CreditBalanceSummaryService.middleware as Middleware)
     .concat(CustomerService.middleware as Middleware)
     .concat(DeadLetterQueueService.middleware as Middleware)
     .concat(DefaultResponseService.middleware as Middleware)
     .concat(DependService.middleware as Middleware)
+    .concat(DeploymentService.middleware as Middleware)
+    .concat(DeploymentSpecService.middleware as Middleware)
+    .concat(DeploymentTemplateService.middleware as Middleware)
     .concat(DigitalAssetService.middleware as Middleware)
     .concat(DiscardDeadLetterEntryRequestService.middleware as Middleware)
     .concat(DiscardDeadLetterEntryResponseService.middleware as Middleware)
@@ -514,6 +729,16 @@ export const getMiddleWare : Middleware = () => {
     .concat(DownloadAccessService.middleware as Middleware)
     .concat(EventLogService.middleware as Middleware)
     .concat(ExecModuleService.middleware as Middleware)
+    .concat(ExecModuleAudienceConfigService.middleware as Middleware)
+    .concat(ExecModuleAuthConfigService.middleware as Middleware)
+    .concat(ExecModuleConfigService.middleware as Middleware)
+    .concat(ExecModuleExecutionConfigService.middleware as Middleware)
+    .concat(ExecModuleIOConfigService.middleware as Middleware)
+    .concat(ExecModuleObservabilityConfigService.middleware as Middleware)
+    .concat(ExecModulePayloadConfigService.middleware as Middleware)
+    .concat(ExecModuleRateLimitConfigService.middleware as Middleware)
+    .concat(ExecModuleResourceConfigService.middleware as Middleware)
+    .concat(ExecModuleTransportConfigService.middleware as Middleware)
     .concat(ExecuteModuleRequestService.middleware as Middleware)
     .concat(ExpenseService.middleware as Middleware)
     .concat(FileAuditLogService.middleware as Middleware)
@@ -526,9 +751,15 @@ export const getMiddleWare : Middleware = () => {
     .concat(FormatService.middleware as Middleware)
     .concat(FormulaService.middleware as Middleware)
     .concat(GeneralLedgerEntryService.middleware as Middleware)
+    .concat(GenerateTrustKeyRequestService.middleware as Middleware)
+    .concat(GenerateTrustKeyResponseService.middleware as Middleware)
+    .concat(GenerateTrustProofRequestService.middleware as Middleware)
+    .concat(GenerateTrustProofResponseService.middleware as Middleware)
     .concat(GoalService.middleware as Middleware)
     .concat(GoalDependencyService.middleware as Middleware)
     .concat(GrantPermissionRequestService.middleware as Middleware)
+    .concat(GraphLinkService.middleware as Middleware)
+    .concat(GrayMatterService.middleware as Middleware)
     .concat(HostInstanceService.middleware as Middleware)
     .concat(IdempotencyKeyService.middleware as Middleware)
     .concat(InitUploadRequestService.middleware as Middleware)
@@ -544,14 +775,18 @@ export const getMiddleWare : Middleware = () => {
     .concat(JobMetadataService.middleware as Middleware)
     .concat(JobSeekerService.middleware as Middleware)
     .concat(KeyMetricService.middleware as Middleware)
-    .concat(LegalPrecedentService.middleware as Middleware)
+    .concat(LeaseTrustSecretRequestService.middleware as Middleware)
+    .concat(LeaseTrustSecretResponseService.middleware as Middleware)
     .concat(LineItemService.middleware as Middleware)
+    .concat(ListDeployableApplications200ResponseInnerService.middleware as Middleware)
     .concat(LlmDetailsService.middleware as Middleware)
+    .concat(LlmRoutingPolicyService.middleware as Middleware)
     .concat(LoginService.middleware as Middleware)
     .concat(LoginAuditService.middleware as Middleware)
     .concat(LoginRequestService.middleware as Middleware)
     .concat(LoginResponseService.middleware as Middleware)
     .concat(LogoutService.middleware as Middleware)
+    .concat(ManagedMcpServiceService.middleware as Middleware)
     .concat(McpService.middleware as Middleware)
     .concat(McpContentService.middleware as Middleware)
     .concat(McpDownloadResponseService.middleware as Middleware)
@@ -569,6 +804,16 @@ export const getMiddleWare : Middleware = () => {
     .concat(McpToolPresetService.middleware as Middleware)
     .concat(McpTransportConfigService.middleware as Middleware)
     .concat(MediaObjectService.middleware as Middleware)
+    .concat(MemoryActionRequestService.middleware as Middleware)
+    .concat(MemoryActionResponseService.middleware as Middleware)
+    .concat(MemoryContextStatsService.middleware as Middleware)
+    .concat(MemoryCostStatsService.middleware as Middleware)
+    .concat(MemoryEntryService.middleware as Middleware)
+    .concat(MemoryHitStatsService.middleware as Middleware)
+    .concat(MemoryRecommendationService.middleware as Middleware)
+    .concat(MemoryRetentionPolicyService.middleware as Middleware)
+    .concat(MemoryRunRecordService.middleware as Middleware)
+    .concat(MemoryStatsService.middleware as Middleware)
     .concat(MergeRangeService.middleware as Middleware)
     .concat(MetricsService.middleware as Middleware)
     .concat(NamedRangeService.middleware as Middleware)
@@ -588,8 +833,10 @@ export const getMiddleWare : Middleware = () => {
     .concat(OpportunityService.middleware as Middleware)
     .concat(OrderFulfillmentTaskService.middleware as Middleware)
     .concat(OrganizationService.middleware as Middleware)
+    .concat(OrganizationAddonSubscriptionService.middleware as Middleware)
     .concat(PasswordResetTokenService.middleware as Middleware)
     .concat(PaymentTransactionService.middleware as Middleware)
+    .concat(PaymentTypeService.middleware as Middleware)
     .concat(PersistentLoginService.middleware as Middleware)
     .concat(PhoneVerificationService.middleware as Middleware)
     .concat(PhoneVerificationRequestService.middleware as Middleware)
@@ -598,7 +845,6 @@ export const getMiddleWare : Middleware = () => {
     .concat(PresignRequestService.middleware as Middleware)
     .concat(PresignResponseService.middleware as Middleware)
     .concat(PrincipalService.middleware as Middleware)
-    .concat(PrincipalRolesService.middleware as Middleware)
     .concat(ProductService.middleware as Middleware)
     .concat(ProductDeliveryConfigService.middleware as Middleware)
     .concat(ProductFeatureService.middleware as Middleware)
@@ -613,17 +859,28 @@ export const getMiddleWare : Middleware = () => {
     .concat(RatingService.middleware as Middleware)
     .concat(ReactionService.middleware as Middleware)
     .concat(ReferralLinkService.middleware as Middleware)
+    .concat(RegisterTrustPolicyRequestService.middleware as Middleware)
+    .concat(RegisterTrustPolicyResponseService.middleware as Middleware)
     .concat(RequestPasswordResetRequestService.middleware as Middleware)
     .concat(RequestPasswordResetResponseService.middleware as Middleware)
     .concat(RequeueDeadLetterEntryRequestService.middleware as Middleware)
     .concat(RequeueDeadLetterEntryResponseService.middleware as Middleware)
     .concat(RetryPolicyService.middleware as Middleware)
+    .concat(RewrapTrustKeyRequestService.middleware as Middleware)
+    .concat(RewrapTrustKeyResponseService.middleware as Middleware)
     .concat(RoleService.middleware as Middleware)
+    .concat(RotateTrustKeyRequestService.middleware as Middleware)
+    .concat(RotateTrustKeyResponseService.middleware as Middleware)
     .concat(RunService.middleware as Middleware)
     .concat(SalesActivityService.middleware as Middleware)
     .concat(SalesOrderService.middleware as Middleware)
     .concat(SalesPipelineService.middleware as Middleware)
+    .concat(ScanBuildArtifacts200ResponseService.middleware as Middleware)
+    .concat(ScanBuildArtifactsRequestService.middleware as Middleware)
     .concat(SecureKeyService.middleware as Middleware)
+    .concat(SemanticIndexEntryService.middleware as Middleware)
+    .concat(ServiceInvocationEventService.middleware as Middleware)
+    .concat(ServiceSubscriptionService.middleware as Middleware)
     .concat(SheetService.middleware as Middleware)
     .concat(SheetColumnService.middleware as Middleware)
     .concat(SheetRowService.middleware as Middleware)
@@ -633,8 +890,13 @@ export const getMiddleWare : Middleware = () => {
     .concat(SpaceFileService.middleware as Middleware)
     .concat(SpaceMemberService.middleware as Middleware)
     .concat(StackService.middleware as Middleware)
+    .concat(StartTrustExecutionRequestService.middleware as Middleware)
+    .concat(StartTrustExecutionResponseService.middleware as Middleware)
     .concat(StrategicPriorityService.middleware as Middleware)
+    .concat(SubmitTrustAttestationEvidenceRequestService.middleware as Middleware)
+    .concat(SubmitTrustAttestationEvidenceResponseService.middleware as Middleware)
     .concat(SubscriberListService.middleware as Middleware)
+    .concat(SubscriptionPlanService.middleware as Middleware)
     .concat(SwarmService.middleware as Middleware)
     .concat(SwarmAgentSummaryService.middleware as Middleware)
     .concat(SwarmCommandRequestService.middleware as Middleware)
@@ -649,13 +911,34 @@ export const getMiddleWare : Middleware = () => {
     .concat(SwarmSecurityService.middleware as Middleware)
     .concat(SwarmUnregisterRequestService.middleware as Middleware)
     .concat(SwarmUnregisterResponseService.middleware as Middleware)
+    .concat(TagService.middleware as Middleware)
     .concat(TaskService.middleware as Middleware)
+    .concat(ThorapiRuleService.middleware as Middleware)
+    .concat(TrustService.middleware as Middleware)
+    .concat(TrustAttestationEvidenceService.middleware as Middleware)
+    .concat(TrustKeyService.middleware as Middleware)
+    .concat(TrustKeyProviderService.middleware as Middleware)
+    .concat(TrustKeyRotationService.middleware as Middleware)
+    .concat(TrustKeyVersionService.middleware as Middleware)
+    .concat(TrustMerkleBatchService.middleware as Middleware)
+    .concat(TrustObjectKeyEnvelopeService.middleware as Middleware)
+    .concat(TrustPolicyBindingService.middleware as Middleware)
+    .concat(TrustPolicyManifestService.middleware as Middleware)
+    .concat(TrustProofService.middleware as Middleware)
+    .concat(TrustRuntimeEventService.middleware as Middleware)
+    .concat(TrustRuntimeExecutionService.middleware as Middleware)
+    .concat(TrustSecretAccessEventService.middleware as Middleware)
+    .concat(TrustSecretLeaseService.middleware as Middleware)
+    .concat(TrustVerificationResultService.middleware as Middleware)
     .concat(TwoFactorSecretService.middleware as Middleware)
     .concat(UpdateFileRequestService.middleware as Middleware)
     .concat(UsageTransactionService.middleware as Middleware)
     .concat(UserPreferenceService.middleware as Middleware)
+    .concat(ValidateDeploymentSpec200ResponseService.middleware as Middleware)
     .concat(ValkyrJobService.middleware as Middleware)
     .concat(VerifyPhoneOTPRequestService.middleware as Middleware)
+    .concat(VerifyTrustProofRequestService.middleware as Middleware)
+    .concat(VerifyTrustProofResponseService.middleware as Middleware)
     .concat(VerifyTwoFactorRequestService.middleware as Middleware)
     .concat(VerifyTwoFactorResponseService.middleware as Middleware)
     .concat(WebsocketMessageService.middleware as Middleware)
@@ -665,6 +948,17 @@ export const getMiddleWare : Middleware = () => {
     .concat(WorkbookService.middleware as Middleware)
     .concat(WorkflowService.middleware as Middleware)
     .concat(WorkflowExecutionService.middleware as Middleware)
+    .concat(WorkflowGraphEdgeService.middleware as Middleware)
+    .concat(WorkflowGraphEdgeConfigService.middleware as Middleware)
+    .concat(WorkflowGraphEdgeConnectionMappingService.middleware as Middleware)
+    .concat(WorkflowGraphModuleService.middleware as Middleware)
+    .concat(WorkflowGraphModuleMappingService.middleware as Middleware)
+    .concat(WorkflowGraphNodeService.middleware as Middleware)
+    .concat(WorkflowGraphNodeTaskMappingService.middleware as Middleware)
+    .concat(WorkflowGraphRequestService.middleware as Middleware)
+    .concat(WorkflowGraphResponseService.middleware as Middleware)
+    .concat(WorkflowGraphValidationErrorService.middleware as Middleware)
+    .concat(WorkflowGraphWorkflowDataService.middleware as Middleware)
     .concat(WorkflowStateService.middleware as Middleware)
 ;
 };
@@ -675,6 +969,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
     .concat(AccountBalanceService.middleware as Middleware)
+    .concat(AccountPlanService.middleware as Middleware)
     .concat(AclClassService.middleware as Middleware)
     .concat(AclEntryService.middleware as Middleware)
     .concat(AclObjectIdentityService.middleware as Middleware)
@@ -691,10 +986,17 @@ export const store = configureStore({
     .concat(AgentEventTriggerService.middleware as Middleware)
     .concat(AgentHierarchyService.middleware as Middleware)
     .concat(AgentHierarchyNodeService.middleware as Middleware)
+    .concat(ApiIdentityKpiSnapshotService.middleware as Middleware)
     .concat(ApiMetricSnapshotService.middleware as Middleware)
     .concat(ApiMetricsResponseService.middleware as Middleware)
+    .concat(ApiSpineKpiSnapshotService.middleware as Middleware)
     .concat(ApiTrafficEventService.middleware as Middleware)
+    .concat(AppendTrustEventRequestService.middleware as Middleware)
+    .concat(AppendTrustEventResponseService.middleware as Middleware)
     .concat(ApplicationService.middleware as Middleware)
+    .concat(ArrayIntegerItemService.middleware as Middleware)
+    .concat(ArrayNumberItemService.middleware as Middleware)
+    .concat(ArrayStringItemService.middleware as Middleware)
     .concat(AuthorityService.middleware as Middleware)
     .concat(BackupConfigService.middleware as Middleware)
     .concat(BalanceResponseService.middleware as Middleware)
@@ -702,6 +1004,7 @@ export const store = configureStore({
     .concat(BorderService.middleware as Middleware)
     .concat(BudgetService.middleware as Middleware)
     .concat(BuildService.middleware as Middleware)
+    .concat(BuildArtifactService.middleware as Middleware)
     .concat(BuildOutputService.middleware as Middleware)
     .concat(CampaignService.middleware as Middleware)
     .concat(CareerOpportunityService.middleware as Middleware)
@@ -713,7 +1016,11 @@ export const store = configureStore({
     .concat(ChatCompletionResponseService.middleware as Middleware)
     .concat(ChatMessageService.middleware as Middleware)
     .concat(ChatResponseService.middleware as Middleware)
+    .concat(CircuitBreakerConfigService.middleware as Middleware)
     .concat(CircuitBreakerStateService.middleware as Middleware)
+    .concat(CloudProviderService.middleware as Middleware)
+    .concat(CompleteTrustExecutionRequestService.middleware as Middleware)
+    .concat(CompleteTrustExecutionResponseService.middleware as Middleware)
     .concat(CompleteUploadRequestService.middleware as Middleware)
     .concat(CompleteUploadRequestPartsInnerService.middleware as Middleware)
     .concat(ConfirmPasswordResetRequestService.middleware as Middleware)
@@ -723,10 +1030,16 @@ export const store = configureStore({
     .concat(ContentMediaLinkService.middleware as Middleware)
     .concat(ConversationBranchService.middleware as Middleware)
     .concat(ConversationMemoryNodeService.middleware as Middleware)
+    .concat(CreatorEarningsService.middleware as Middleware)
+    .concat(CreditAccountService.middleware as Middleware)
+    .concat(CreditBalanceSummaryService.middleware as Middleware)
     .concat(CustomerService.middleware as Middleware)
     .concat(DeadLetterQueueService.middleware as Middleware)
     .concat(DefaultResponseService.middleware as Middleware)
     .concat(DependService.middleware as Middleware)
+    .concat(DeploymentService.middleware as Middleware)
+    .concat(DeploymentSpecService.middleware as Middleware)
+    .concat(DeploymentTemplateService.middleware as Middleware)
     .concat(DigitalAssetService.middleware as Middleware)
     .concat(DiscardDeadLetterEntryRequestService.middleware as Middleware)
     .concat(DiscardDeadLetterEntryResponseService.middleware as Middleware)
@@ -734,6 +1047,16 @@ export const store = configureStore({
     .concat(DownloadAccessService.middleware as Middleware)
     .concat(EventLogService.middleware as Middleware)
     .concat(ExecModuleService.middleware as Middleware)
+    .concat(ExecModuleAudienceConfigService.middleware as Middleware)
+    .concat(ExecModuleAuthConfigService.middleware as Middleware)
+    .concat(ExecModuleConfigService.middleware as Middleware)
+    .concat(ExecModuleExecutionConfigService.middleware as Middleware)
+    .concat(ExecModuleIOConfigService.middleware as Middleware)
+    .concat(ExecModuleObservabilityConfigService.middleware as Middleware)
+    .concat(ExecModulePayloadConfigService.middleware as Middleware)
+    .concat(ExecModuleRateLimitConfigService.middleware as Middleware)
+    .concat(ExecModuleResourceConfigService.middleware as Middleware)
+    .concat(ExecModuleTransportConfigService.middleware as Middleware)
     .concat(ExecuteModuleRequestService.middleware as Middleware)
     .concat(ExpenseService.middleware as Middleware)
     .concat(FileAuditLogService.middleware as Middleware)
@@ -746,9 +1069,15 @@ export const store = configureStore({
     .concat(FormatService.middleware as Middleware)
     .concat(FormulaService.middleware as Middleware)
     .concat(GeneralLedgerEntryService.middleware as Middleware)
+    .concat(GenerateTrustKeyRequestService.middleware as Middleware)
+    .concat(GenerateTrustKeyResponseService.middleware as Middleware)
+    .concat(GenerateTrustProofRequestService.middleware as Middleware)
+    .concat(GenerateTrustProofResponseService.middleware as Middleware)
     .concat(GoalService.middleware as Middleware)
     .concat(GoalDependencyService.middleware as Middleware)
     .concat(GrantPermissionRequestService.middleware as Middleware)
+    .concat(GraphLinkService.middleware as Middleware)
+    .concat(GrayMatterService.middleware as Middleware)
     .concat(HostInstanceService.middleware as Middleware)
     .concat(IdempotencyKeyService.middleware as Middleware)
     .concat(InitUploadRequestService.middleware as Middleware)
@@ -764,14 +1093,18 @@ export const store = configureStore({
     .concat(JobMetadataService.middleware as Middleware)
     .concat(JobSeekerService.middleware as Middleware)
     .concat(KeyMetricService.middleware as Middleware)
-    .concat(LegalPrecedentService.middleware as Middleware)
+    .concat(LeaseTrustSecretRequestService.middleware as Middleware)
+    .concat(LeaseTrustSecretResponseService.middleware as Middleware)
     .concat(LineItemService.middleware as Middleware)
+    .concat(ListDeployableApplications200ResponseInnerService.middleware as Middleware)
     .concat(LlmDetailsService.middleware as Middleware)
+    .concat(LlmRoutingPolicyService.middleware as Middleware)
     .concat(LoginService.middleware as Middleware)
     .concat(LoginAuditService.middleware as Middleware)
     .concat(LoginRequestService.middleware as Middleware)
     .concat(LoginResponseService.middleware as Middleware)
     .concat(LogoutService.middleware as Middleware)
+    .concat(ManagedMcpServiceService.middleware as Middleware)
     .concat(McpService.middleware as Middleware)
     .concat(McpContentService.middleware as Middleware)
     .concat(McpDownloadResponseService.middleware as Middleware)
@@ -789,6 +1122,16 @@ export const store = configureStore({
     .concat(McpToolPresetService.middleware as Middleware)
     .concat(McpTransportConfigService.middleware as Middleware)
     .concat(MediaObjectService.middleware as Middleware)
+    .concat(MemoryActionRequestService.middleware as Middleware)
+    .concat(MemoryActionResponseService.middleware as Middleware)
+    .concat(MemoryContextStatsService.middleware as Middleware)
+    .concat(MemoryCostStatsService.middleware as Middleware)
+    .concat(MemoryEntryService.middleware as Middleware)
+    .concat(MemoryHitStatsService.middleware as Middleware)
+    .concat(MemoryRecommendationService.middleware as Middleware)
+    .concat(MemoryRetentionPolicyService.middleware as Middleware)
+    .concat(MemoryRunRecordService.middleware as Middleware)
+    .concat(MemoryStatsService.middleware as Middleware)
     .concat(MergeRangeService.middleware as Middleware)
     .concat(MetricsService.middleware as Middleware)
     .concat(NamedRangeService.middleware as Middleware)
@@ -808,8 +1151,10 @@ export const store = configureStore({
     .concat(OpportunityService.middleware as Middleware)
     .concat(OrderFulfillmentTaskService.middleware as Middleware)
     .concat(OrganizationService.middleware as Middleware)
+    .concat(OrganizationAddonSubscriptionService.middleware as Middleware)
     .concat(PasswordResetTokenService.middleware as Middleware)
     .concat(PaymentTransactionService.middleware as Middleware)
+    .concat(PaymentTypeService.middleware as Middleware)
     .concat(PersistentLoginService.middleware as Middleware)
     .concat(PhoneVerificationService.middleware as Middleware)
     .concat(PhoneVerificationRequestService.middleware as Middleware)
@@ -818,7 +1163,6 @@ export const store = configureStore({
     .concat(PresignRequestService.middleware as Middleware)
     .concat(PresignResponseService.middleware as Middleware)
     .concat(PrincipalService.middleware as Middleware)
-    .concat(PrincipalRolesService.middleware as Middleware)
     .concat(ProductService.middleware as Middleware)
     .concat(ProductDeliveryConfigService.middleware as Middleware)
     .concat(ProductFeatureService.middleware as Middleware)
@@ -833,17 +1177,28 @@ export const store = configureStore({
     .concat(RatingService.middleware as Middleware)
     .concat(ReactionService.middleware as Middleware)
     .concat(ReferralLinkService.middleware as Middleware)
+    .concat(RegisterTrustPolicyRequestService.middleware as Middleware)
+    .concat(RegisterTrustPolicyResponseService.middleware as Middleware)
     .concat(RequestPasswordResetRequestService.middleware as Middleware)
     .concat(RequestPasswordResetResponseService.middleware as Middleware)
     .concat(RequeueDeadLetterEntryRequestService.middleware as Middleware)
     .concat(RequeueDeadLetterEntryResponseService.middleware as Middleware)
     .concat(RetryPolicyService.middleware as Middleware)
+    .concat(RewrapTrustKeyRequestService.middleware as Middleware)
+    .concat(RewrapTrustKeyResponseService.middleware as Middleware)
     .concat(RoleService.middleware as Middleware)
+    .concat(RotateTrustKeyRequestService.middleware as Middleware)
+    .concat(RotateTrustKeyResponseService.middleware as Middleware)
     .concat(RunService.middleware as Middleware)
     .concat(SalesActivityService.middleware as Middleware)
     .concat(SalesOrderService.middleware as Middleware)
     .concat(SalesPipelineService.middleware as Middleware)
+    .concat(ScanBuildArtifacts200ResponseService.middleware as Middleware)
+    .concat(ScanBuildArtifactsRequestService.middleware as Middleware)
     .concat(SecureKeyService.middleware as Middleware)
+    .concat(SemanticIndexEntryService.middleware as Middleware)
+    .concat(ServiceInvocationEventService.middleware as Middleware)
+    .concat(ServiceSubscriptionService.middleware as Middleware)
     .concat(SheetService.middleware as Middleware)
     .concat(SheetColumnService.middleware as Middleware)
     .concat(SheetRowService.middleware as Middleware)
@@ -853,8 +1208,13 @@ export const store = configureStore({
     .concat(SpaceFileService.middleware as Middleware)
     .concat(SpaceMemberService.middleware as Middleware)
     .concat(StackService.middleware as Middleware)
+    .concat(StartTrustExecutionRequestService.middleware as Middleware)
+    .concat(StartTrustExecutionResponseService.middleware as Middleware)
     .concat(StrategicPriorityService.middleware as Middleware)
+    .concat(SubmitTrustAttestationEvidenceRequestService.middleware as Middleware)
+    .concat(SubmitTrustAttestationEvidenceResponseService.middleware as Middleware)
     .concat(SubscriberListService.middleware as Middleware)
+    .concat(SubscriptionPlanService.middleware as Middleware)
     .concat(SwarmService.middleware as Middleware)
     .concat(SwarmAgentSummaryService.middleware as Middleware)
     .concat(SwarmCommandRequestService.middleware as Middleware)
@@ -869,13 +1229,34 @@ export const store = configureStore({
     .concat(SwarmSecurityService.middleware as Middleware)
     .concat(SwarmUnregisterRequestService.middleware as Middleware)
     .concat(SwarmUnregisterResponseService.middleware as Middleware)
+    .concat(TagService.middleware as Middleware)
     .concat(TaskService.middleware as Middleware)
+    .concat(ThorapiRuleService.middleware as Middleware)
+    .concat(TrustService.middleware as Middleware)
+    .concat(TrustAttestationEvidenceService.middleware as Middleware)
+    .concat(TrustKeyService.middleware as Middleware)
+    .concat(TrustKeyProviderService.middleware as Middleware)
+    .concat(TrustKeyRotationService.middleware as Middleware)
+    .concat(TrustKeyVersionService.middleware as Middleware)
+    .concat(TrustMerkleBatchService.middleware as Middleware)
+    .concat(TrustObjectKeyEnvelopeService.middleware as Middleware)
+    .concat(TrustPolicyBindingService.middleware as Middleware)
+    .concat(TrustPolicyManifestService.middleware as Middleware)
+    .concat(TrustProofService.middleware as Middleware)
+    .concat(TrustRuntimeEventService.middleware as Middleware)
+    .concat(TrustRuntimeExecutionService.middleware as Middleware)
+    .concat(TrustSecretAccessEventService.middleware as Middleware)
+    .concat(TrustSecretLeaseService.middleware as Middleware)
+    .concat(TrustVerificationResultService.middleware as Middleware)
     .concat(TwoFactorSecretService.middleware as Middleware)
     .concat(UpdateFileRequestService.middleware as Middleware)
     .concat(UsageTransactionService.middleware as Middleware)
     .concat(UserPreferenceService.middleware as Middleware)
+    .concat(ValidateDeploymentSpec200ResponseService.middleware as Middleware)
     .concat(ValkyrJobService.middleware as Middleware)
     .concat(VerifyPhoneOTPRequestService.middleware as Middleware)
+    .concat(VerifyTrustProofRequestService.middleware as Middleware)
+    .concat(VerifyTrustProofResponseService.middleware as Middleware)
     .concat(VerifyTwoFactorRequestService.middleware as Middleware)
     .concat(VerifyTwoFactorResponseService.middleware as Middleware)
     .concat(WebsocketMessageService.middleware as Middleware)
@@ -885,6 +1266,17 @@ export const store = configureStore({
     .concat(WorkbookService.middleware as Middleware)
     .concat(WorkflowService.middleware as Middleware)
     .concat(WorkflowExecutionService.middleware as Middleware)
+    .concat(WorkflowGraphEdgeService.middleware as Middleware)
+    .concat(WorkflowGraphEdgeConfigService.middleware as Middleware)
+    .concat(WorkflowGraphEdgeConnectionMappingService.middleware as Middleware)
+    .concat(WorkflowGraphModuleService.middleware as Middleware)
+    .concat(WorkflowGraphModuleMappingService.middleware as Middleware)
+    .concat(WorkflowGraphNodeService.middleware as Middleware)
+    .concat(WorkflowGraphNodeTaskMappingService.middleware as Middleware)
+    .concat(WorkflowGraphRequestService.middleware as Middleware)
+    .concat(WorkflowGraphResponseService.middleware as Middleware)
+    .concat(WorkflowGraphValidationErrorService.middleware as Middleware)
+    .concat(WorkflowGraphWorkflowDataService.middleware as Middleware)
     .concat(WorkflowStateService.middleware as Middleware)
 });
 

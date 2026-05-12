@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type PresignResponse  = DataObject & {
      * @type {string}
      * @memberof PresignResponse
      */
-    token: string;
+    token?: string;
     /**
      * 
      * @type {Date}
      * @memberof PresignResponse
      */
-    expiresAt: Date;
+    expiresAt?: Date;
     /**
      * 
      * @type {string}
@@ -115,8 +114,8 @@ export type PresignResponse  = DataObject & {
 export function PresignResponseFromJSON(json: any): PresignResponse {
     return {
         ...DataObjectFromJSON(json),
-        'token': json['token'],
-        'expiresAt': new Date(json['expiresAt']),
+        'token': !exists(json, 'token') ? undefined : json['token'],
+        'expiresAt': !exists(json, 'expiresAt') ? undefined : new Date(json['expiresAt']),
         'downloadUrl': !exists(json, 'downloadUrl') ? undefined : json['downloadUrl'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
@@ -137,7 +136,7 @@ export function PresignResponseToJSON(value?: PresignResponse): any {
     return {
         ...DataObjectToJSON(value),
         'token': value.token,
-        'expiresAt': value.expiresAt.toISOString(),
+        'expiresAt': value.expiresAt === undefined ? undefined : value.expiresAt.toISOString(),
         'downloadUrl': value.downloadUrl,
         'trashed': value.trashed,
     };

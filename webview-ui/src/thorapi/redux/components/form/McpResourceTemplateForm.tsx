@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -48,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -70,9 +68,9 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        uriTemplate: Yup.string().required("uriTemplate is required."),
-        name: Yup.string().required("name is required."),
         mcpServerId: Yup.string(),
+        uriTemplate: Yup.string(),
+        name: Yup.string(),
         description: Yup.string(),
         mimeType: Yup.string(),
         trashed: Yup.boolean(),
@@ -105,9 +103,9 @@ const McpResourceTemplateForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<McpResourceTemplate> = {
+          mcpServerId: '',
           uriTemplate: '',
           name: '',
-          mcpServerId: '',
           description: '',
           mimeType: '',
           trashed: false,
@@ -183,6 +181,39 @@ const McpResourceTemplateForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New McpResourceTemplate
                 </Accordion.Header>
                 <Accordion.Body>
+                    <label htmlFor="mcpServerId" className="nice-form-control">
+                      <b>
+                        Mcp Server Id:
+                        {touched.mcpServerId &&
+                         !errors.mcpServerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="mcpServerId"
+                            value={values?.mcpServerId}
+                            placeholder="Mcp Server Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="mcpServerId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="uriTemplate" className="nice-form-control">
                       <b>
                         Uri Template:
@@ -245,39 +276,6 @@ const McpResourceTemplateForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="name"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="mcpServerId" className="nice-form-control">
-                      <b>
-                        Mcp Server Id:
-                        {touched.mcpServerId &&
-                         !errors.mcpServerId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="mcpServerId"
-                            value={values?.mcpServerId}
-                            placeholder="Mcp Server Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="mcpServerId"
                         component="span"
                       />
                     </label>

@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -47,17 +46,17 @@ import {
  */
 export type SwarmCommandRequest  = DataObject & {
     /**
-     * 
-     * @type {SwarmMessage}
-     * @memberof SwarmCommandRequest
-     */
-    message: SwarmMessage;
-    /**
      * Optional specific agent instance to receive the command.
      * @type {string}
      * @memberof SwarmCommandRequest
      */
     targetInstanceId?: string;
+    /**
+     * 
+     * @type {SwarmMessage}
+     * @memberof SwarmCommandRequest
+     */
+    message?: SwarmMessage;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -117,8 +116,8 @@ export type SwarmCommandRequest  = DataObject & {
 export function SwarmCommandRequestFromJSON(json: any): SwarmCommandRequest {
     return {
         ...DataObjectFromJSON(json),
-        'message': SwarmMessageFromJSON(json['message']),
         'targetInstanceId': !exists(json, 'targetInstanceId') ? undefined : json['targetInstanceId'],
+        'message': !exists(json, 'message') ? undefined : SwarmMessageFromJSON(json['message']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -137,8 +136,8 @@ export function SwarmCommandRequestToJSON(value?: SwarmCommandRequest): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'message': SwarmMessageToJSON(value.message),
         'targetInstanceId': value.targetInstanceId,
+        'message': SwarmMessageToJSON(value.message),
         'trashed': value.trashed,
     };
 }

@@ -6,7 +6,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/customBaseQuery.mustache
@@ -15,21 +14,58 @@ Template file: typescript-redux-query/customBaseQuery.mustache
 */
 
 /**
-  JWT Token handling for all API requests
+  Auth handling for generated ThorAPI services.
+  Cookie transport is default; bearer header fallback is opt-in.
 */
 import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { applyCsrfHeader } from '../../utils/csrfToken';
+import { getStoredJwtToken } from '../../utils/authTokenStorage';
 import { BASE_PATH } from '../src';
+
+const readBearerFallbackFlag = (): string => {
+  const procValue =
+    typeof process !== 'undefined'
+      ? (process as any)?.env?.VITE_AUTH_BEARER_HEADER_FALLBACK_ENABLED
+      : undefined;
+  const globalValue =
+    typeof globalThis !== 'undefined'
+      ? (globalThis as any)?.VITE_AUTH_BEARER_HEADER_FALLBACK_ENABLED
+      : undefined;
+  return String(procValue ?? globalValue ?? '');
+};
+
+const isBearerFallbackEnabled = (): boolean => {
+  try {
+    return readBearerFallbackFlag()
+      .trim()
+      .toLowerCase() === 'true';
+  } catch {
+    return false;
+  }
+};
 
 const customBaseQuery = fetchBaseQuery({
   baseUrl: BASE_PATH, // Replace with your base URL
-  prepareHeaders: (headers) => {
-    // Retrieve the token from session storage
-    const token = sessionStorage.getItem('jwtToken');
-    if (token) {
-      // Set the Authorization header
-      headers.set('authorization', `Bearer ${token}`);
+  credentials: 'include',
+  prepareHeaders: (headers, { arg }) => {
+    const storedToken = getStoredJwtToken();
+    if (storedToken) {
+      headers.set('Authorization', `Bearer ${storedToken}`);
+      headers.set('jwtSession', storedToken);
     }
-    return headers;
+
+    // Temporary global migration path only when explicitly enabled.
+    if (isBearerFallbackEnabled()) {
+      const token =
+        typeof globalThis !== 'undefined'
+          ? (globalThis as any).__VALKYR_AUTH_TOKEN__
+          : undefined;
+      if (token && !storedToken) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+    }
+    const method = typeof arg === 'string' ? undefined : arg?.method;
+    return applyCsrfHeader(headers, method);
   },
 });
 

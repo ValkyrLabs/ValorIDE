@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -50,12 +49,6 @@ import {
  */
 export type ProductDeliveryConfig  = DataObject & {
     /**
-     * Product this configuration applies to.
-     * @type {string}
-     * @memberof ProductDeliveryConfig
-     */
-    productId: string;
-    /**
      * Primary fulfillment strategy for this product.
      * @type {string}
      * @memberof ProductDeliveryConfig
@@ -73,12 +66,6 @@ export type ProductDeliveryConfig  = DataObject & {
      * @memberof ProductDeliveryConfig
      */
     autoFulfill?: boolean;
-    /**
-     * ValkyrAI Workflow to execute for orders of this product. If null, use default workflow for deliveryType. 
-     * @type {string}
-     * @memberof ProductDeliveryConfig
-     */
-    fulfillmentWorkflowId?: string;
     /**
      * 
      * @type {Workflow}
@@ -162,11 +149,9 @@ export type ProductDeliveryConfig  = DataObject & {
 export function ProductDeliveryConfigFromJSON(json: any): ProductDeliveryConfig {
     return {
         ...DataObjectFromJSON(json),
-        'productId': json['productId'],
         'deliveryType': json['deliveryType'],
         'product': !exists(json, 'product') ? undefined : ProductFromJSON(json['product']),
         'autoFulfill': !exists(json, 'autoFulfill') ? undefined : json['autoFulfill'],
-        'fulfillmentWorkflowId': !exists(json, 'fulfillmentWorkflowId') ? undefined : json['fulfillmentWorkflowId'],
         'fulfillmentWorkflow': !exists(json, 'fulfillmentWorkflow') ? undefined : WorkflowFromJSON(json['fulfillmentWorkflow']),
         'notificationTemplate': !exists(json, 'notificationTemplate') ? undefined : json['notificationTemplate'],
         'maxConcurrentFulfillments': !exists(json, 'maxConcurrentFulfillments') ? undefined : json['maxConcurrentFulfillments'],
@@ -189,11 +174,9 @@ export function ProductDeliveryConfigToJSON(value?: ProductDeliveryConfig): any 
     }
     return {
         ...DataObjectToJSON(value),
-        'productId': value.productId,
         'deliveryType': value.deliveryType,
         'product': ProductToJSON(value.product),
         'autoFulfill': value.autoFulfill,
-        'fulfillmentWorkflowId': value.fulfillmentWorkflowId,
         'fulfillmentWorkflow': WorkflowToJSON(value.fulfillmentWorkflow),
         'notificationTemplate': value.notificationTemplate,
         'maxConcurrentFulfillments': value.maxConcurrentFulfillments,

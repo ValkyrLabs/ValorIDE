@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
@@ -19,6 +18,15 @@ import { MergeRange } from '@thorapi/model/MergeRange'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type MergeRangeResponse = MergeRange[]
+
+const toMergeRangeList = (result: unknown): MergeRangeResponse => {
+  if (Array.isArray(result)) {
+    return result as MergeRangeResponse
+  }
+
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as MergeRangeResponse) : []
+}
 
 export const MergeRangeService = createApi({
   reducerPath: 'MergeRange', // This should remain unique
@@ -33,13 +41,15 @@ export const MergeRangeService = createApi({
         if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
         return `MergeRange?${q.join('&')}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'MergeRange' as const, id })),
-              { type: 'MergeRange', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toMergeRangeList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'MergeRange' as const, id })),
+          { type: 'MergeRange', id: `PAGE_${page}` },
+        ]
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,13 +61,15 @@ export const MergeRangeService = createApi({
         }
         return `MergeRange`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'MergeRange' as const, id })),
-              { type: 'MergeRange', id: 'LIST' },
-            ]
-          : [{ type: 'MergeRange', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toMergeRangeList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'MergeRange' as const, id })),
+          { type: 'MergeRange', id: 'LIST' },
+        ]
+      },
     }),
 
     // 3) Create

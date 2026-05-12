@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetSheetRowListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchSheetRowByIdApiRequest {
+    id: string;
+    sheetRow: SheetRow;
 }
 
 export interface PostSheetRowApiRequest {
@@ -204,6 +208,60 @@ function getSheetRowListRaw<T>(requestParameters: GetSheetRowListApiRequest, req
 */
 export function getSheetRowList<T>(requestParameters: GetSheetRowListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<SheetRow>>): QueryConfig<T> {
     return getSheetRowListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing SheetRow.
+ * Partially update an existing SheetRow
+ */
+function patchSheetRowByIdRaw<T>(requestParameters: PatchSheetRowByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, SheetRow> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchSheetRowById.');
+    }
+
+    if (requestParameters.sheetRow === null || requestParameters.sheetRow === undefined) {
+        throw new runtime.RequiredError('sheetRow','Required parameter requestParameters.sheetRow was null or undefined when calling patchSheetRowById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/SheetRow/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || SheetRowToJSON(requestParameters.sheetRow),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SheetRowFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing SheetRow.
+* Partially update an existing SheetRow
+*/
+export function patchSheetRowById<T>(requestParameters: PatchSheetRowByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SheetRow>): QueryConfig<T> {
+    return patchSheetRowByIdRaw(requestParameters, requestConfig);
 }
 
 /**

@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -35,6 +34,9 @@ import {
     IntegrationAccount,
     IntegrationAccountFromJSON,
     IntegrationAccountToJSON,
+    LlmRoutingPolicy,
+    LlmRoutingPolicyFromJSON,
+    LlmRoutingPolicyToJSON,
 } from './';
 
 
@@ -51,19 +53,7 @@ export type LlmDetails  = DataObject & {
      * @type {string}
      * @memberof LlmDetails
      */
-    name: string;
-    /**
-     * Upstream model provider.
-     * @type {string}
-     * @memberof LlmDetails
-     */
-    provider: LlmDetailsProviderEnum;
-    /**
-     * API style used to call the model.
-     * @type {string}
-     * @memberof LlmDetails
-     */
-    apiType: LlmDetailsApiTypeEnum;
+    name?: string;
     /**
      * The vendor-specific version of the LLM.
      * @type {string}
@@ -82,6 +72,24 @@ export type LlmDetails  = DataObject & {
      * @memberof LlmDetails
      */
     role?: LlmDetailsRoleEnum;
+    /**
+     * Upstream model provider.
+     * @type {string}
+     * @memberof LlmDetails
+     */
+    provider?: LlmDetailsProviderEnum;
+    /**
+     * API spec style used to call the model.
+     * @type {string}
+     * @memberof LlmDetails
+     */
+    apiType?: LlmDetailsApiTypeEnum;
+    /**
+     * 
+     * @type {LlmRoutingPolicy}
+     * @memberof LlmDetails
+     */
+    routingPolicy?: LlmRoutingPolicy;
     /**
      * The initial system prompt to instruct the LLM how to behave.
      * @type {string}
@@ -231,12 +239,13 @@ export type LlmDetails  = DataObject & {
 export function LlmDetailsFromJSON(json: any): LlmDetails {
     return {
         ...DataObjectFromJSON(json),
-        'name': json['name'],
-        'provider': json['provider'],
-        'apiType': json['apiType'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
         'version': !exists(json, 'version') ? undefined : json['version'],
         'notes': !exists(json, 'notes') ? undefined : json['notes'],
         'role': !exists(json, 'role') ? undefined : json['role'],
+        'provider': !exists(json, 'provider') ? undefined : json['provider'],
+        'apiType': !exists(json, 'apiType') ? undefined : json['apiType'],
+        'routingPolicy': !exists(json, 'routingPolicy') ? undefined : LlmRoutingPolicyFromJSON(json['routingPolicy']),
         'initialPrompt': !exists(json, 'initialPrompt') ? undefined : json['initialPrompt'],
         'apiKeyIntegrationAccount': !exists(json, 'apiKeyIntegrationAccount') ? undefined : IntegrationAccountFromJSON(json['apiKeyIntegrationAccount']),
         'credential': !exists(json, 'credential') ? undefined : json['credential'],
@@ -271,11 +280,12 @@ export function LlmDetailsToJSON(value?: LlmDetails): any {
     return {
         ...DataObjectToJSON(value),
         'name': value.name,
-        'provider': value.provider,
-        'apiType': value.apiType,
         'version': value.version,
         'notes': value.notes,
         'role': value.role,
+        'provider': value.provider,
+        'apiType': value.apiType,
+        'routingPolicy': LlmRoutingPolicyToJSON(value.routingPolicy),
         'initialPrompt': value.initialPrompt,
         'apiKeyIntegrationAccount': IntegrationAccountToJSON(value.apiKeyIntegrationAccount),
         'credential': value.credential,
@@ -299,15 +309,26 @@ export function LlmDetailsToJSON(value?: LlmDetails): any {
 * @export
 * @enum {string}
 */
+export enum LlmDetailsRoleEnum {
+    USER = 'user',
+    ASSISTANT = 'assistant'
+}
+/**
+* @export
+* @enum {string}
+*/
 export enum LlmDetailsProviderEnum {
     VALKYRAI = 'valkyrai',
     OPENAI = 'openai',
-    LLAMA = 'llama',
+    OLLAMA = 'ollama',
     PHI = 'phi',
     GEMMA = 'gemma',
     MISTRAL = 'mistral',
     CLAUDE = 'claude',
+    GROK = 'grok',
     GEMINI = 'gemini',
+    MOONSHOT = 'moonshot',
+    DEEPSEEK = 'deepseek',
     OTHER = 'other',
     CHATGPTPASSTHROUGH = 'chatgpt_pass_through'
 }
@@ -318,15 +339,10 @@ export enum LlmDetailsProviderEnum {
 export enum LlmDetailsApiTypeEnum {
     OPENAI = 'openai',
     OLLAMA = 'ollama',
+    ANTHROPIC = 'anthropic',
+    GROK = 'grok',
+    GEMINI = 'gemini',
     OTHER = 'other'
-}
-/**
-* @export
-* @enum {string}
-*/
-export enum LlmDetailsRoleEnum {
-    USER = 'user',
-    ASSISTANT = 'assistant'
 }
 
 

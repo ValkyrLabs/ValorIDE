@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -54,25 +53,7 @@ export type Build  = DataObject & {
      * @type {string}
      * @memberof Build
      */
-    name: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Build
-     */
-    status: BuildStatusEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof Build
-     */
-    projectPath: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Build
-     */
-    mavenHome: string;
+    name?: string;
     /**
      * 
      * @type {string}
@@ -81,10 +62,28 @@ export type Build  = DataObject & {
     applicationId?: string;
     /**
      * 
+     * @type {string}
+     * @memberof Build
+     */
+    status?: BuildStatusEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof Build
+     */
+    projectPath?: string;
+    /**
+     * 
      * @type {number}
      * @memberof Build
      */
     testEnumCodegen?: BuildTestEnumCodegenEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof Build
+     */
+    mavenHome?: string;
     /**
      * 
      * @type {Array<BuildOutput>}
@@ -156,12 +155,12 @@ export type Build  = DataObject & {
 export function BuildFromJSON(json: any): Build {
     return {
         ...DataObjectFromJSON(json),
-        'name': json['name'],
-        'status': json['status'],
-        'projectPath': json['projectPath'],
-        'mavenHome': json['mavenHome'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
         'applicationId': !exists(json, 'applicationId') ? undefined : json['applicationId'],
+        'status': !exists(json, 'status') ? undefined : json['status'],
+        'projectPath': !exists(json, 'projectPath') ? undefined : json['projectPath'],
         'testEnumCodegen': !exists(json, 'testEnumCodegen') ? undefined : json['testEnumCodegen'],
+        'mavenHome': !exists(json, 'mavenHome') ? undefined : json['mavenHome'],
         'outputs': !exists(json, 'outputs') ? undefined : (json['outputs'] as Array<any>).map(BuildOutputFromJSON),
         'dependencies': !exists(json, 'dependencies') ? undefined : (json['dependencies'] as Array<any>).map(DependFromJSON),
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -183,11 +182,11 @@ export function BuildToJSON(value?: Build): any {
     return {
         ...DataObjectToJSON(value),
         'name': value.name,
+        'applicationId': value.applicationId,
         'status': value.status,
         'projectPath': value.projectPath,
-        'mavenHome': value.mavenHome,
-        'applicationId': value.applicationId,
         'testEnumCodegen': value.testEnumCodegen,
+        'mavenHome': value.mavenHome,
         'outputs': value.outputs === undefined ? undefined : (value.outputs as Array<any>).map(BuildOutputToJSON),
         'dependencies': value.dependencies === undefined ? undefined : (value.dependencies as Array<any>).map(DependToJSON),
         'trashed': value.trashed,

@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,31 +42,43 @@ export type ApiTrafficEvent  = DataObject & {
      * @type {string}
      * @memberof ApiTrafficEvent
      */
-    method: string;
+    method?: string;
     /**
      * Normalized request path.
      * @type {string}
      * @memberof ApiTrafficEvent
      */
-    path: string;
+    path?: string;
     /**
      * HTTP status returned to the client.
      * @type {number}
      * @memberof ApiTrafficEvent
      */
-    status: number;
+    status?: number;
     /**
      * Request latency in milliseconds.
      * @type {number}
      * @memberof ApiTrafficEvent
      */
-    durationMs: number;
+    durationMs?: number;
+    /**
+     * Resolved customer/account identity for the request (or unknown).
+     * @type {string}
+     * @memberof ApiTrafficEvent
+     */
+    customerId?: string;
+    /**
+     * Resolved organization/tenant identity for the request (or unknown).
+     * @type {string}
+     * @memberof ApiTrafficEvent
+     */
+    organizationId?: string;
     /**
      * Timestamp when the request completed.
      * @type {Date}
      * @memberof ApiTrafficEvent
      */
-    timestamp: Date;
+    timestamp?: Date;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -127,11 +138,13 @@ export type ApiTrafficEvent  = DataObject & {
 export function ApiTrafficEventFromJSON(json: any): ApiTrafficEvent {
     return {
         ...DataObjectFromJSON(json),
-        'method': json['method'],
-        'path': json['path'],
-        'status': json['status'],
-        'durationMs': json['durationMs'],
-        'timestamp': new Date(json['timestamp']),
+        'method': !exists(json, 'method') ? undefined : json['method'],
+        'path': !exists(json, 'path') ? undefined : json['path'],
+        'status': !exists(json, 'status') ? undefined : json['status'],
+        'durationMs': !exists(json, 'durationMs') ? undefined : json['durationMs'],
+        'customerId': !exists(json, 'customerId') ? undefined : json['customerId'],
+        'organizationId': !exists(json, 'organizationId') ? undefined : json['organizationId'],
+        'timestamp': !exists(json, 'timestamp') ? undefined : new Date(json['timestamp']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -154,7 +167,9 @@ export function ApiTrafficEventToJSON(value?: ApiTrafficEvent): any {
         'path': value.path,
         'status': value.status,
         'durationMs': value.durationMs,
-        'timestamp': value.timestamp.toISOString(),
+        'customerId': value.customerId,
+        'organizationId': value.organizationId,
+        'timestamp': value.timestamp === undefined ? undefined : value.timestamp.toISOString(),
         'trashed': value.trashed,
     };
 }

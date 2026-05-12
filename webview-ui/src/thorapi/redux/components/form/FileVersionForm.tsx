@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -48,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -70,7 +68,6 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        fileId: Yup.string().required("fileId is required."),
         versionNumber: asNumber(Yup.number().integer().typeError("versionNumber must be a number")).required("versionNumber is required."),
         storageKey: Yup.string().required("storageKey is required."),
         sizeBytes: asNumber(Yup.number().integer().typeError("sizeBytes must be a number")).required("sizeBytes is required."),
@@ -78,7 +75,6 @@ const validationSchema = Yup.object().shape({
         checksumSha256: Yup.string(),
         contentType: Yup.string(),
         changeLog: Yup.string(),
-        createdById: Yup.string(),
         isCurrent: Yup.boolean(),
         trashed: Yup.boolean(),
 });
@@ -110,7 +106,6 @@ const FileVersionForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<FileVersion> = {
-          fileId: '',
           versionNumber: 0,
           storageKey: '',
           sizeBytes: 0,
@@ -118,7 +113,6 @@ const FileVersionForm: React.FC = () => {
           checksumSha256: '',
           contentType: '',
           changeLog: '',
-          createdById: '',
           isCurrent: false,
           trashed: false,
   };
@@ -193,39 +187,6 @@ const FileVersionForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New FileVersion
                 </Accordion.Header>
                 <Accordion.Body>
-                    <label htmlFor="fileId" className="nice-form-control">
-                      <b>
-                        File Id:
-                        {touched.fileId &&
-                         !errors.fileId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="fileId"
-                            value={values?.fileId}
-                            placeholder="File Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="fileId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="versionNumber" className="nice-form-control">
                       <b>
                         Version Number:
@@ -469,39 +430,6 @@ const FileVersionForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="changeLog"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="createdById" className="nice-form-control">
-                      <b>
-                        Created By Id:
-                        {touched.createdById &&
-                         !errors.createdById && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="createdById"
-                            value={values?.createdById}
-                            placeholder="Created By Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="createdById"
                         component="span"
                       />
                     </label>

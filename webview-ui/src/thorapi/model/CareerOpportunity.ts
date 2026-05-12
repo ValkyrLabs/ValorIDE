@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type CareerOpportunity  = DataObject & {
      * @type {string}
      * @memberof CareerOpportunity
      */
-    title: string;
+    title?: string;
     /**
      * Type of opportunity
      * @type {string}
      * @memberof CareerOpportunity
      */
-    opportunityType: CareerOpportunityOpportunityTypeEnum;
+    opportunityType?: CareerOpportunityOpportunityTypeEnum;
     /**
      * Full description of the role/engagement
      * @type {string}
@@ -93,11 +92,11 @@ export type CareerOpportunity  = DataObject & {
      */
     isActive?: boolean;
     /**
-     * Date of object creation
+     * When opportunity was posted
      * @type {Date}
      * @memberof CareerOpportunity
      */
-    readonly createdDate?: Date;
+    createdDate?: Date;
     /**
      * Last update time
      * @type {Date}
@@ -157,8 +156,8 @@ export type CareerOpportunity  = DataObject & {
 export function CareerOpportunityFromJSON(json: any): CareerOpportunity {
     return {
         ...DataObjectFromJSON(json),
-        'title': json['title'],
-        'opportunityType': json['opportunityType'],
+        'title': !exists(json, 'title') ? undefined : json['title'],
+        'opportunityType': !exists(json, 'opportunityType') ? undefined : json['opportunityType'],
         'description': !exists(json, 'description') ? undefined : json['description'],
         'requiredSkills': !exists(json, 'requiredSkills') ? undefined : json['requiredSkills'],
         'preferredSkills': !exists(json, 'preferredSkills') ? undefined : json['preferredSkills'],
@@ -194,6 +193,7 @@ export function CareerOpportunityToJSON(value?: CareerOpportunity): any {
         'experienceYearsMax': value.experienceYearsMax,
         'commitment': value.commitment,
         'isActive': value.isActive,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
         'updatedDate': value.updatedDate === undefined ? undefined : value.updatedDate.toISOString(),
         'trashed': value.trashed,
     };

@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -68,6 +67,54 @@ export type ProductFeature  = DataObject & {
      * @memberof ProductFeature
      */
     description?: string;
+    /**
+     * canonical machine-readable feature key (e.g. max_agents, allow_rbac)
+     * @type {string}
+     * @memberof ProductFeature
+     */
+    featureKey?: string;
+    /**
+     * logical area this feature applies to
+     * @type {string}
+     * @memberof ProductFeature
+     */
+    featureScope?: ProductFeatureFeatureScopeEnum;
+    /**
+     * semantic type used for gating evaluation
+     * @type {string}
+     * @memberof ProductFeature
+     */
+    valueType?: ProductFeatureValueTypeEnum;
+    /**
+     * numeric limit for quota features (used when valueType=number)
+     * @type {number}
+     * @memberof ProductFeature
+     */
+    limitValue?: number;
+    /**
+     * boolean toggle value for feature flags (used when valueType=boolean)
+     * @type {boolean}
+     * @memberof ProductFeature
+     */
+    booleanValue?: boolean;
+    /**
+     * string value for custom feature settings (used when valueType=string)
+     * @type {string}
+     * @memberof ProductFeature
+     */
+    stringValue?: string;
+    /**
+     * whether this feature record is active for entitlement resolution
+     * @type {boolean}
+     * @memberof ProductFeature
+     */
+    enabled?: boolean;
+    /**
+     * optional plan tier this feature applies to
+     * @type {string}
+     * @memberof ProductFeature
+     */
+    planTier?: ProductFeaturePlanTierEnum;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -132,6 +179,14 @@ export function ProductFeatureFromJSON(json: any): ProductFeature {
         'type': !exists(json, 'type') ? undefined : json['type'],
         'name': !exists(json, 'name') ? undefined : json['name'],
         'description': !exists(json, 'description') ? undefined : json['description'],
+        'featureKey': !exists(json, 'featureKey') ? undefined : json['featureKey'],
+        'featureScope': !exists(json, 'featureScope') ? undefined : json['featureScope'],
+        'valueType': !exists(json, 'valueType') ? undefined : json['valueType'],
+        'limitValue': !exists(json, 'limitValue') ? undefined : json['limitValue'],
+        'booleanValue': !exists(json, 'booleanValue') ? undefined : json['booleanValue'],
+        'stringValue': !exists(json, 'stringValue') ? undefined : json['stringValue'],
+        'enabled': !exists(json, 'enabled') ? undefined : json['enabled'],
+        'planTier': !exists(json, 'planTier') ? undefined : json['planTier'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -155,6 +210,14 @@ export function ProductFeatureToJSON(value?: ProductFeature): any {
         'type': value.type,
         'name': value.name,
         'description': value.description,
+        'featureKey': value.featureKey,
+        'featureScope': value.featureScope,
+        'valueType': value.valueType,
+        'limitValue': value.limitValue,
+        'booleanValue': value.booleanValue,
+        'stringValue': value.stringValue,
+        'enabled': value.enabled,
+        'planTier': value.planTier,
         'trashed': value.trashed,
     };
 }
@@ -166,6 +229,39 @@ export function ProductFeatureToJSON(value?: ProductFeature): any {
 export enum ProductFeatureTypeEnum {
     PERCENTAGE = 'percentage',
     FIXED = 'fixed'
+}
+/**
+* @export
+* @enum {string}
+*/
+export enum ProductFeatureFeatureScopeEnum {
+    PLATFORM = 'platform',
+    ORGANIZATION = 'organization',
+    APPLICATION = 'application',
+    AGENT = 'agent',
+    BILLING = 'billing',
+    UX = 'ux'
+}
+/**
+* @export
+* @enum {string}
+*/
+export enum ProductFeatureValueTypeEnum {
+    NUMBER = 'number',
+    BOOLEAN = 'boolean',
+    STRING = 'string'
+}
+/**
+* @export
+* @enum {string}
+*/
+export enum ProductFeaturePlanTierEnum {
+    FREE = 'free',
+    SOLO = 'solo',
+    PRO = 'pro',
+    TEAM = 'team',
+    RESELLER = 'reseller',
+    ENTERPRISE = 'enterprise'
 }
 
 

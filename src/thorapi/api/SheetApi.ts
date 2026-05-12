@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetSheetListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchSheetByIdApiRequest {
+    id: string;
+    sheet: Sheet;
 }
 
 export interface PostSheetApiRequest {
@@ -204,6 +208,60 @@ function getSheetListRaw<T>(requestParameters: GetSheetListApiRequest, requestCo
 */
 export function getSheetList<T>(requestParameters: GetSheetListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Sheet>>): QueryConfig<T> {
     return getSheetListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing Sheet.
+ * Partially update an existing Sheet
+ */
+function patchSheetByIdRaw<T>(requestParameters: PatchSheetByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Sheet> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchSheetById.');
+    }
+
+    if (requestParameters.sheet === null || requestParameters.sheet === undefined) {
+        throw new runtime.RequiredError('sheet','Required parameter requestParameters.sheet was null or undefined when calling patchSheetById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Sheet/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || SheetToJSON(requestParameters.sheet),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SheetFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing Sheet.
+* Partially update an existing Sheet
+*/
+export function patchSheetById<T>(requestParameters: PatchSheetByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Sheet>): QueryConfig<T> {
+    return patchSheetByIdRaw(requestParameters, requestConfig);
 }
 
 /**

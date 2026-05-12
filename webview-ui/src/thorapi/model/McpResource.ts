@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,19 +42,19 @@ export type McpResource  = DataObject & {
      * @type {string}
      * @memberof McpResource
      */
-    uri: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpResource
-     */
-    name: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpResource
-     */
     mcpServerId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpResource
+     */
+    uri?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpResource
+     */
+    name?: string;
     /**
      * 
      * @type {string}
@@ -127,9 +126,9 @@ export type McpResource  = DataObject & {
 export function McpResourceFromJSON(json: any): McpResource {
     return {
         ...DataObjectFromJSON(json),
-        'uri': json['uri'],
-        'name': json['name'],
         'mcpServerId': !exists(json, 'mcpServerId') ? undefined : json['mcpServerId'],
+        'uri': !exists(json, 'uri') ? undefined : json['uri'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
         'mimeType': !exists(json, 'mimeType') ? undefined : json['mimeType'],
         'description': !exists(json, 'description') ? undefined : json['description'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -150,9 +149,9 @@ export function McpResourceToJSON(value?: McpResource): any {
     }
     return {
         ...DataObjectToJSON(value),
+        'mcpServerId': value.mcpServerId,
         'uri': value.uri,
         'name': value.name,
-        'mcpServerId': value.mcpServerId,
         'mimeType': value.mimeType,
         'description': value.description,
         'trashed': value.trashed,

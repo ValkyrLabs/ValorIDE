@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -39,17 +38,17 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  */
 export type Rating  = DataObject & {
     /**
-     * The unique identifier for the content item
-     * @type {string}
-     * @memberof Rating
-     */
-    contentId: string;
-    /**
      * target object for the rating and comments
      * @type {string}
      * @memberof Rating
      */
     targetType?: RatingTargetTypeEnum;
+    /**
+     * The unique identifier for the content item
+     * @type {string}
+     * @memberof Rating
+     */
+    contentId?: string;
     /**
      * 
      * @type {string}
@@ -127,8 +126,8 @@ export type Rating  = DataObject & {
 export function RatingFromJSON(json: any): Rating {
     return {
         ...DataObjectFromJSON(json),
-        'contentId': json['contentId'],
         'targetType': !exists(json, 'targetType') ? undefined : json['targetType'],
+        'contentId': !exists(json, 'contentId') ? undefined : json['contentId'],
         'comments': !exists(json, 'comments') ? undefined : json['comments'],
         'url': !exists(json, 'url') ? undefined : json['url'],
         'rating': !exists(json, 'rating') ? undefined : json['rating'],
@@ -150,8 +149,8 @@ export function RatingToJSON(value?: Rating): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'contentId': value.contentId,
         'targetType': value.targetType,
+        'contentId': value.contentId,
         'comments': value.comments,
         'url': value.url,
         'rating': value.rating,

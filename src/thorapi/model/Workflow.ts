@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -44,61 +43,61 @@ import {
 // thorapi
 
 /**
- * ValkyrAI Workflow object manages execution and state of automation workflows
+ * ValkyrAI Workflow definition. Graph structure is defined explicitly via TaskEdge. Tasks are transactional containers; edges define execution flow. 
  * @export
  * @interface Workflow
  */
 export type Workflow  = DataObject & {
     /**
-     * an array of Tasks to be performed
-     * @type {Array<Task>}
-     * @memberof Workflow
-     */
-    tasks: Array<Task>;
-    /**
-     * short description of this workflow
+     * Short workflow name
      * @type {string}
      * @memberof Workflow
      */
     name?: string;
     /**
-     * detailed description of this workflow
+     * Detailed workflow description
      * @type {string}
      * @memberof Workflow
      */
     description?: string;
     /**
-     * the role with permissions to execute the workfow as
+     * Execution role context
      * @type {string}
      * @memberof Workflow
      */
     role?: WorkflowRoleEnum;
     /**
-     * cron string to determine when this runs
+     * Cron expression (optional)
      * @type {string}
      * @memberof Workflow
      */
     schedule?: string;
     /**
-     * metadata in any text format to be used in client code
+     * UI/editor metadata only (NOT execution truth)
      * @type {string}
      * @memberof Workflow
      */
     meta?: string;
     /**
-     * version number for optimistic locking (auto-incremented on each update)
+     * Optimistic locking version
      * @type {number}
      * @memberof Workflow
      */
     readonly version?: number;
     /**
-     * an array stateful objects to be used in the workflow
+     * Tasks participating in this workflow
+     * @type {Array<Task>}
+     * @memberof Workflow
+     */
+    tasks?: Array<Task>;
+    /**
+     * Stateful objects used in this workflow
      * @type {Array<WorkflowState>}
      * @memberof Workflow
      */
     workflowState?: Array<WorkflowState>;
     /**
-     * last known status of the workflow
+     * 
      * @type {string}
      * @memberof Workflow
      */
@@ -162,13 +161,13 @@ export type Workflow  = DataObject & {
 export function WorkflowFromJSON(json: any): Workflow {
     return {
         ...DataObjectFromJSON(json),
-        'tasks': (json['tasks'] as Array<any>).map(TaskFromJSON),
         'name': !exists(json, 'name') ? undefined : json['name'],
         'description': !exists(json, 'description') ? undefined : json['description'],
         'role': !exists(json, 'role') ? undefined : json['role'],
         'schedule': !exists(json, 'schedule') ? undefined : json['schedule'],
         'meta': !exists(json, 'meta') ? undefined : json['meta'],
         'version': !exists(json, 'version') ? undefined : json['version'],
+        'tasks': !exists(json, 'tasks') ? undefined : (json['tasks'] as Array<any>).map(TaskFromJSON),
         'workflowState': !exists(json, 'workflow_state') ? undefined : (json['workflow_state'] as Array<any>).map(WorkflowStateFromJSON),
         'status': !exists(json, 'status') ? undefined : json['status'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -189,12 +188,12 @@ export function WorkflowToJSON(value?: Workflow): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'tasks': (value.tasks as Array<any>).map(TaskToJSON),
         'name': value.name,
         'description': value.description,
         'role': value.role,
         'schedule': value.schedule,
         'meta': value.meta,
+        'tasks': value.tasks === undefined ? undefined : (value.tasks as Array<any>).map(TaskToJSON),
         'workflow_state': value.workflowState === undefined ? undefined : (value.workflowState as Array<any>).map(WorkflowStateToJSON),
         'status': value.status,
         'trashed': value.trashed,
@@ -215,10 +214,10 @@ export enum WorkflowRoleEnum {
 * @enum {string}
 */
 export enum WorkflowStatusEnum {
-    RUNNING = 'running',
-    STOPPED = 'stopped',
-    PAUSED = 'paused',
     READY = 'ready',
+    RUNNING = 'running',
+    PAUSED = 'paused',
+    STOPPED = 'stopped',
     WARNING = 'warning',
     ERROR = 'error',
     DISABLED = 'disabled'

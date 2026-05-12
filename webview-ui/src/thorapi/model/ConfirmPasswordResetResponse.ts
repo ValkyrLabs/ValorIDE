@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,7 +42,7 @@ export type ConfirmPasswordResetResponse  = DataObject & {
      * @type {boolean}
      * @memberof ConfirmPasswordResetResponse
      */
-    success: boolean;
+    success?: boolean;
     /**
      * Status message
      * @type {string}
@@ -115,7 +114,7 @@ export type ConfirmPasswordResetResponse  = DataObject & {
 export function ConfirmPasswordResetResponseFromJSON(json: any): ConfirmPasswordResetResponse {
     return {
         ...DataObjectFromJSON(json),
-        'success': json['success'],
+        'success': !exists(json, 'success') ? undefined : json['success'],
         'message': !exists(json, 'message') ? undefined : json['message'],
         'redirectUrl': !exists(json, 'redirectUrl') ? undefined : json['redirectUrl'],
         'id': !exists(json, 'id') ? undefined : json['id'],

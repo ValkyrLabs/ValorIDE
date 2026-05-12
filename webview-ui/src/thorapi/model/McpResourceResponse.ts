@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type McpResourceResponse  = DataObject & {
      * @type {string}
      * @memberof McpResourceResponse
      */
-    uri: string;
+    mcpResourceResponseId?: string;
     /**
      * 
      * @type {string}
      * @memberof McpResourceResponse
      */
-    mcpResourceResponseId?: string;
+    uri?: string;
     /**
      * 
      * @type {string}
@@ -127,8 +126,8 @@ export type McpResourceResponse  = DataObject & {
 export function McpResourceResponseFromJSON(json: any): McpResourceResponse {
     return {
         ...DataObjectFromJSON(json),
-        'uri': json['uri'],
         'mcpResourceResponseId': !exists(json, 'mcpResourceResponseId') ? undefined : json['mcpResourceResponseId'],
+        'uri': !exists(json, 'uri') ? undefined : json['uri'],
         'mimeType': !exists(json, 'mimeType') ? undefined : json['mimeType'],
         'text': !exists(json, 'text') ? undefined : json['text'],
         'binaryContent': !exists(json, 'binaryContent') ? undefined : json['binaryContent'],
@@ -150,8 +149,8 @@ export function McpResourceResponseToJSON(value?: McpResourceResponse): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'uri': value.uri,
         'mcpResourceResponseId': value.mcpResourceResponseId,
+        'uri': value.uri,
         'mimeType': value.mimeType,
         'text': value.text,
         'binaryContent': value.binaryContent,

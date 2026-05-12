@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,13 +42,13 @@ export type McpServiceResponse  = DataObject & {
      * @type {string}
      * @memberof McpServiceResponse
      */
-    serviceId: string;
+    serviceId?: string;
     /**
      * Service slug
      * @type {string}
      * @memberof McpServiceResponse
      */
-    slug: string;
+    slug?: string;
     /**
      * Publication status
      * @type {string}
@@ -127,8 +126,8 @@ export type McpServiceResponse  = DataObject & {
 export function McpServiceResponseFromJSON(json: any): McpServiceResponse {
     return {
         ...DataObjectFromJSON(json),
-        'serviceId': json['serviceId'],
-        'slug': json['slug'],
+        'serviceId': !exists(json, 'serviceId') ? undefined : json['serviceId'],
+        'slug': !exists(json, 'slug') ? undefined : json['slug'],
         'status': !exists(json, 'status') ? undefined : json['status'],
         'manifestUrl': !exists(json, 'manifestUrl') ? undefined : json['manifestUrl'],
         'message': !exists(json, 'message') ? undefined : json['message'],

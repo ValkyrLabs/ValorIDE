@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -50,7 +49,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -92,14 +90,12 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        salesOrderId: Yup.string().required("salesOrderId is required."),
       fulfillmentType: Yup.mixed()
         .oneOf(FulfillmentTypeValidation(), "Invalid value for fulfillmentType")
         .required("fulfillmentType is required."),
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
         ,
-        workflowId: Yup.string(),
         assignedTo: Yup.string(),
         attempts: asNumber(Yup.number().integer().typeError("attempts must be a number")),
         lastError: Yup.string(),
@@ -142,10 +138,8 @@ const OrderFulfillmentTaskForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<OrderFulfillmentTask> = {
-          salesOrderId: '',
         fulfillmentType: undefined,
         status: undefined,
-          workflowId: '',
           assignedTo: '',
           attempts: 0,
           lastError: '',
@@ -224,39 +218,6 @@ const OrderFulfillmentTaskForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New OrderFulfillmentTask
                 </Accordion.Header>
                 <Accordion.Body>
-                    <label htmlFor="salesOrderId" className="nice-form-control">
-                      <b>
-                        Sales Order Id:
-                        {touched.salesOrderId &&
-                         !errors.salesOrderId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="salesOrderId"
-                            value={values?.salesOrderId}
-                            placeholder="Sales Order Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="salesOrderId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="fulfillmentType" className="nice-form-control">
                       <b>
                         Fulfillment Type:
@@ -323,39 +284,6 @@ const OrderFulfillmentTaskForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="status"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="workflowId" className="nice-form-control">
-                      <b>
-                        Workflow Id:
-                        {touched.workflowId &&
-                         !errors.workflowId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="workflowId"
-                            value={values?.workflowId}
-                            placeholder="Workflow Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="workflowId"
                         component="span"
                       />
                     </label>

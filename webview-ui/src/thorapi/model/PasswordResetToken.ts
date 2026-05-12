@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -46,12 +45,6 @@ import {
  * @interface PasswordResetToken
  */
 export type PasswordResetToken  = DataObject & {
-    /**
-     * Reference to the Principal requesting password reset
-     * @type {string}
-     * @memberof PasswordResetToken
-     */
-    principalId: string;
     /**
      * Secure token hash (SHA-256 hashed for DB storage)
      * @type {string}
@@ -82,12 +75,6 @@ export type PasswordResetToken  = DataObject & {
      * @memberof PasswordResetToken
      */
     readonly usedAt?: Date;
-    /**
-     * When the token was created
-     * @type {Date}
-     * @memberof PasswordResetToken
-     */
-    readonly createdAt?: Date;
     /**
      * IP address of the requester (for security audit)
      * @type {string}
@@ -159,13 +146,11 @@ export type PasswordResetToken  = DataObject & {
 export function PasswordResetTokenFromJSON(json: any): PasswordResetToken {
     return {
         ...DataObjectFromJSON(json),
-        'principalId': json['principalId'],
         'token': json['token'],
         'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
         'tokenHash': !exists(json, 'tokenHash') ? undefined : json['tokenHash'],
         'expiresAt': !exists(json, 'expiresAt') ? undefined : new Date(json['expiresAt']),
         'usedAt': !exists(json, 'usedAt') ? undefined : new Date(json['usedAt']),
-        'createdAt': !exists(json, 'createdAt') ? undefined : new Date(json['createdAt']),
         'ipAddress': !exists(json, 'ipAddress') ? undefined : json['ipAddress'],
         'userAgent': !exists(json, 'userAgent') ? undefined : json['userAgent'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -186,7 +171,6 @@ export function PasswordResetTokenToJSON(value?: PasswordResetToken): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'principalId': value.principalId,
         'token': value.token,
         'principal': PrincipalToJSON(value.principal),
         'expiresAt': value.expiresAt === undefined ? undefined : value.expiresAt.toISOString(),

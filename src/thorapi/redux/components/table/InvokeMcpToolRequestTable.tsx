@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelTable.mustache
@@ -18,11 +17,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Form as BSForm, ButtonGroup, Modal , Container} from 'react-bootstrap';
 import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
 import { BASE_PATH } from '@thorapi/src';
+import { getStoredJwtToken } from '../../../../utils/authTokenStorage';
 import {
   FaArrowDown, FaFilter, FaSync, FaEye, FaChevronRight, FaChevronLeft, FaChevronDown,
-  FaPlus, FaTrash, FaCopy, FaPaste, FaUserShield
+  FaPlus, FaTrash, FaCopy, FaPaste, FaUserShield, FaFileExport, FaFileImport
 } from 'react-icons/fa';
-const ICON_SIZE = 22;
+const ICON_SIZE = 18;
+const IMPORT_MAX_FILE_BYTES = 5 * 1024 * 1024;
+const IMPORT_MAX_ROWS = 500;
+const EXPORT_MAX_ROWS = 1000;
 import { InvokeMcpToolRequest } from '@thorapi/model';
 import InvokeMcpToolRequestForm from '@thorapi/redux/components/form/InvokeMcpToolRequestForm';
 
@@ -63,8 +66,13 @@ const stringFieldCandidates = [
   'input',
 ];
 
+const refTypeOverrides: Record<string, string> = {
+  apiKeyIntegrationAccount: 'IntegrationAccount',
+};
+
 const computeRefType = (field: string): string | null => {
   if (!field) return null;
+  if (refTypeOverrides[field]) return refTypeOverrides[field];
   if (/^id$/i.test(field)) return null;
   
   // Handle fields ending in 'Id' (including compound names like apiKeyIntegrationAccountId)
@@ -90,19 +98,121 @@ const computeRefType = (field: string): string | null => {
   return null;
 };
 
+const asReadableScalar = (input: any): string | null => {
+  if (input == null) return null;
+  if (typeof input === 'string') {
+    const trimmed = input.trim();
+    return trimmed.length ? trimmed : null;
+  }
+  if (typeof input === 'number' || typeof input === 'boolean') {
+    return String(input);
+  }
+  return null;
+};
+
+const firstReadable = (value: any, fields: string[]): string | null => {
+  if (!value || typeof value !== 'object') return null;
+  for (const field of fields) {
+    const scalar = asReadableScalar((value as any)[field]);
+    if (scalar) return scalar;
+  }
+  return null;
+};
+
 const refLabelFromRecord = (value: any) => {
   if (!value) return '';
-  return value.label || value.name || value.description || value.title || value.id || value.keyHash || '';
+  const primary = firstReadable(value, [
+    'label',
+    'name',
+    'accountName',
+    'displayName',
+    'title',
+    'username',
+    'email',
+  ]);
+  const description = firstReadable(value, ['description']);
+  if (primary && description && description !== primary) return `${primary} — ${description}`;
+  if (primary) return primary;
+  if (description) return description;
+  const identity = firstReadable(value, ['id', 'keyHash', 'uuid']);
+  if (identity) return identity;
+
+  // Last-resort fallback: first scalar field found on object
+  if (typeof value === 'object') {
+    for (const candidate of Object.values(value)) {
+      const scalar = asReadableScalar(candidate);
+      if (scalar) return scalar;
+    }
+  }
+  return '';
 };
 
 const normalizeRefValue = (value: any) => {
   if (!value) return null;
+  const source =
+    value && typeof value === 'object' && value.raw && typeof value.raw === 'object'
+      ? value.raw
+      : value;
   return {
-    id: value.id ?? value.keyHash ?? value.uuid ?? value.value ?? null,
-    label: refLabelFromRecord(value),
-    raw: value,
+    id: source.id ?? source.keyHash ?? source.uuid ?? value.id ?? value.value ?? null,
+    label: refLabelFromRecord(source),
+    raw: source,
   };
 };
+
+const shouldStoreReferenceObject = (fieldKey: string) => {
+  if (!fieldKey) return false;
+  return !/id$/i.test(fieldKey) && !/uuid$/i.test(fieldKey);
+};
+
+const resolveReferenceFieldValue = (fieldKey: string, picked: any) => {
+  if (!picked) return null;
+  const source =
+    picked && typeof picked === 'object' && picked.raw && typeof picked.raw === 'object'
+      ? picked.raw
+      : picked;
+  const resolvedId =
+    picked?.id ?? source?.id ?? source?.keyHash ?? source?.uuid ?? source?.value ?? null;
+  const resolvedLabel =
+    picked?.label ??
+    refLabelFromRecord(source) ??
+    asReadableScalar(source?.name) ??
+    asReadableScalar(source?.accountName) ??
+    asReadableScalar(source?.displayName) ??
+    null;
+
+  if (shouldStoreReferenceObject(fieldKey)) {
+    return {
+      id: resolvedId,
+      ...(resolvedLabel ? { label: resolvedLabel } : {}),
+      ...(resolvedLabel ? { name: resolvedLabel } : {}),
+      ...(resolvedLabel ? { accountName: resolvedLabel } : {}),
+    };
+  }
+  return resolvedId;
+};
+
+const buildAuthHeaders = (contentType: string = 'application/json') => {
+  const token = getStoredJwtToken();
+  const fallbackToken =
+    typeof globalThis !== 'undefined'
+      ? (globalThis as any).__VALKYR_AUTH_TOKEN__
+      : undefined;
+  const authToken = token || fallbackToken;
+  return {
+    'Content-Type': contentType,
+    ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+    ...(token ? { 'jwtSession': token } : {}),
+  };
+};
+
+const mergeUpdatedRow = (rows: any[], rowId: string, replacement: any) =>
+  rows.map((row: any) => {
+    const currentId = (row as any).id ?? (row as any).keyHash;
+    return currentId === rowId ? replacement : row;
+  });
+
+const buildResourcePath = (rowId: string) => `${BASE_PATH}/InvokeMcpToolRequest/${rowId}`;
 
 const InvokeMcpToolRequestTable: React.FC = () => {
   // -------------------------------------------------------------------
@@ -149,7 +259,7 @@ const InvokeMcpToolRequestTable: React.FC = () => {
         const updated = [...prev];
         for (const item of fetchedPageData as any[]) {
           const id = (item as any).id ?? (item as any).keyHash;
-          if (id == null) continue;
+          if (id === null) continue;
           const idx = updated.findIndex((r: any) => (r.id ?? r.keyHash) === id);
           if (idx >= 0) updated[idx] = item as any;
           else updated.push(item as any);
@@ -190,6 +300,8 @@ const InvokeMcpToolRequestTable: React.FC = () => {
   const [qbeExample, setQbeExample] = useState<any | null>(null);
   const [copiedRow, setCopiedRow] = useState<InvokeMcpToolRequest | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const [isImporting, setIsImporting] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [showAllFields, setShowAllFields] = useState(false);
   const [lastLoadedAt, setLastLoadedAt] = useState<string | null>(null);
   // QBE reference picker state
@@ -232,11 +344,54 @@ const InvokeMcpToolRequestTable: React.FC = () => {
     objectId: string;
   } | null>(null);
 
+  const reloadRowById = async (rowId: string): Promise<InvokeMcpToolRequest | null> => {
+    if (!rowId) return null;
+    try {
+      const response = await fetch(buildResourcePath(rowId), {
+        method: 'GET',
+        headers: buildAuthHeaders(),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        return null;
+      }
+      return (await response.json()) as InvokeMcpToolRequest;
+    } catch (err) {
+      console.warn('Could not reload InvokeMcpToolRequest row', rowId, err);
+      return null;
+    }
+  };
 
-  // const token: string = sessionStorage.getItem("jwtToken"); // for testing
-  const currentUser = JSON.parse(
-    sessionStorage.getItem("authenticatedPrincipal"),
-  );
+  const persistRowUpdate = async (
+    rowId: string,
+    updatedItem: Partial<InvokeMcpToolRequest>,
+    successField?: string,
+  ) => {
+    try {
+      const saved = await updateInvokeMcpToolRequest(updatedItem as any).unwrap();
+      const persistedId = String((saved as any)?.id ?? rowId);
+      const hydrated = (await reloadRowById(persistedId)) ?? (saved as any) ?? updatedItem;
+      setAllData((prev) => mergeUpdatedRow(prev as any[], rowId, hydrated as any) as InvokeMcpToolRequest[]);
+      if (successField) {
+        setSaveSuccess(`${successField} saved successfully`);
+        setTimeout(() => setSaveSuccess(null), 3000);
+      }
+      return hydrated;
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Failed to update InvokeMcpToolRequest';
+      console.error('Failed to update InvokeMcpToolRequest:', error);
+      setSaveError(errorMsg);
+      setTimeout(() => setSaveError(null), 5000);
+      throw error;
+    }
+  };
+
+
+  // Auth principal is runtime-injected in memory only; do not persist/read from web storage.
+  const currentUser =
+    typeof globalThis !== "undefined"
+      ? (globalThis as any).__VALKYR_AUTH_PRINCIPAL__ ?? null
+      : null;
 
 
   // -------------------------------------------------------------------
@@ -285,28 +440,36 @@ const InvokeMcpToolRequestTable: React.FC = () => {
       }
     });
 
-    if (tableData.length) {
-      const sample = tableData[0] as any;
-      Object.keys(sample).forEach((key) => {
-        if (schema[key]) return;
+    // Scan ALL data rows and ALL fields to detect reference patterns
+    for (const row of tableData) {
+      const rowObj = row as any;
+      for (const key of Object.keys(rowObj)) {
+        if (schema[key]) continue; // Already processed
         
-        const value = sample[key];
-        // Detect complex nested objects
-        if (value && typeof value === 'object' && !Array.isArray(value)) {
-          // Check if it's a simple reference object (only has id/name/label) vs complex object
-          const keys = Object.keys(value);
-          if (keys.length > 3 || (keys.length > 0 && !keys.every(k => ['id', 'name', 'label', 'description', 'keyHash', 'uuid'].includes(k)))) {
-            // It's a complex nested object
-            schema[key] = { type: 'object' };
-          }
+        const value = rowObj[key];
+        
+        // Try FK pattern first (ending in Id/Uuid)
+        const fkRefType = computeRefType(key);
+        if (fkRefType) {
+          schema[key] = { ...(schema[key] ?? {}), refType: fkRefType };
+          continue;
         }
         
-        // Only infer refType for fields ending in 'Id' or 'Uuid' (foreign key pattern)
-        const refType = computeRefType(key);
-        if (refType && !schema[key]) {
-          schema[key] = { ...(schema[key] ?? {}), refType };
+        // Try reference object pattern (field name suggests it's a reference)
+        // Matches: Account, User, Principal, Role, etc. at end of field name
+        const refPatternMatch = key.match(/([A-Z][a-z]+Account|Account|User|Principal|Role|Group|Owner|Creator|Assignee|Reviewer|Approver|Manager|Workspace|Project|Team|Organization|Department|Application)$/);
+        if (refPatternMatch && value && typeof value === 'object' && !Array.isArray(value)) {
+          const inferredRefType = refPatternMatch[1];
+          schema[key] = { ...(schema[key] ?? {}), refType: inferredRefType };
+          continue;
         }
-      });
+        
+        // Even if value is null, check field name pattern
+        if (refPatternMatch) {
+          const inferredRefType = refPatternMatch[1];
+          schema[key] = { ...(schema[key] ?? {}), refType: inferredRefType };
+        }
+      }
     }
 
     return schema;
@@ -431,6 +594,154 @@ const InvokeMcpToolRequestTable: React.FC = () => {
     }
   };
 
+  const handleExportSelected = async () => {
+    if (selectedRows.size === 0) {
+      alert('Select at least one row to export.');
+      return;
+    }
+
+    if (selectedRows.size > EXPORT_MAX_ROWS) {
+      alert(`Please export at most ${EXPORT_MAX_ROWS} rows at once.`);
+      return;
+    }
+
+    setIsExporting(true);
+    try {
+      const ids = Array.from(selectedRows);
+      const exportedRows: any[] = [];
+      const failedIds: string[] = [];
+
+      for (const id of ids) {
+        try {
+          const response = await fetch(buildResourcePath(id), {
+            method: 'GET',
+            headers: buildAuthHeaders(),
+            credentials: 'include',
+          });
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          exportedRows.push(await response.json());
+        } catch (err) {
+          failedIds.push(id);
+          console.error('Failed to export row', id, err);
+        }
+      }
+
+      if (!exportedRows.length) {
+        alert('No rows could be exported from the API.');
+        return;
+      }
+
+      const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const blob = new Blob([JSON.stringify(exportedRows, null, 2)], {
+        type: 'application/json;charset=utf-8',
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `InvokeMcpToolRequest-export-${stamp}.json`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+
+      if (failedIds.length) {
+        alert(`Exported ${exportedRows.length} row(s). Failed to export ${failedIds.length} row(s).`);
+      }
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const parseImportPayload = (raw: any): any[] => {
+    if (Array.isArray(raw)) return raw;
+    if (raw && Array.isArray(raw.items)) return raw.items;
+    if (raw && Array.isArray(raw.rows)) return raw.rows;
+    return [];
+  };
+
+  const resetImportInput = () => {
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
+  };
+
+  const handleImportFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > IMPORT_MAX_FILE_BYTES) {
+      alert(`Import file is too large. Maximum size is ${Math.round(IMPORT_MAX_FILE_BYTES / (1024 * 1024))}MB.`);
+      resetImportInput();
+      return;
+    }
+
+    setIsImporting(true);
+    try {
+      const text = await file.text();
+      let parsed: any;
+      try {
+        parsed = JSON.parse(text);
+      } catch (err) {
+        alert('Invalid JSON file. Please provide a JSON array of records.');
+        return;
+      }
+
+      const records = parseImportPayload(parsed).filter((r) => r && typeof r === 'object' && !Array.isArray(r));
+      if (!records.length) {
+        alert('No valid records found in import file.');
+        return;
+      }
+
+      if (records.length > IMPORT_MAX_ROWS) {
+        alert(`Import contains ${records.length} rows. Maximum allowed is ${IMPORT_MAX_ROWS} rows per import.`);
+        return;
+      }
+
+      let created = 0;
+      let updated = 0;
+      let failed = 0;
+
+      for (const record of records) {
+        const payload: any = { ...record };
+        const incomingId = payload.id ?? null;
+
+        if (incomingId == null || incomingId === '') {
+          delete payload.id;
+          try {
+            await addInvokeMcpToolRequest(payload).unwrap();
+            created += 1;
+          } catch (err) {
+            failed += 1;
+            console.error('Import create failed for new record', err);
+          }
+          continue;
+        }
+
+        payload.id = String(incomingId);
+        try {
+          await addInvokeMcpToolRequest(payload).unwrap();
+          created += 1;
+        } catch (addErr) {
+          try {
+            await updateInvokeMcpToolRequest(payload).unwrap();
+            updated += 1;
+          } catch (updateErr) {
+            failed += 1;
+            console.error('Import upsert failed for id', payload.id, { addErr, updateErr });
+          }
+        }
+      }
+
+      handleLoadData();
+      alert(`Import complete. Created: ${created}, Updated: ${updated}, Failed: ${failed}`);
+    } finally {
+      setIsImporting(false);
+      resetImportInput();
+    }
+  };
+
   // -------------------------------------------------------------------
   // Editing (inline & modal)
   // -------------------------------------------------------------------
@@ -444,32 +755,21 @@ const InvokeMcpToolRequestTable: React.FC = () => {
       setQbePicker({ 
         show: true, 
         refType, 
-        resolve: (picked) => {
+        resolve: async (picked) => {
           if (picked) {
-            // Update formData and then save
             const idToUpdate = id;
             const keyToUpdate = key;
-            const newValue = picked.id;
-            
-            setFormData({ [keyToUpdate]: newValue });
-            setEditRowId(`${idToUpdate}~${keyToUpdate}`);
-            
-            // Use a small delay to ensure formData is updated before saving
-            setTimeout(() => {
-              setFormData((prev) => {
-                const row = allData.find((item) => item.id === idToUpdate);
-                if (!row) return prev;
-                const updated = { ...row, [keyToUpdate]: newValue };
-                try {
-                  updateInvokeMcpToolRequest(updated);
-                  setAllData((prevData) => prevData.map((i) => (i.id === idToUpdate ? updated : i)));
-                } catch (error) {
-                  console.error('Failed to update InvokeMcpToolRequest:', error);
-                }
-                setEditRowId(null);
-                return {};
-              });
-            }, 50);
+            const newValue = resolveReferenceFieldValue(keyToUpdate, picked);
+
+            const row = allData.find((item) => item.id === idToUpdate);
+            if (!row) {
+              return;
+            }
+
+            const updated = { ...row, [keyToUpdate]: newValue };
+            await persistRowUpdate(idToUpdate, updated, keyToUpdate);
+            setEditRowId(null);
+            setFormData({});
           }
         }, 
         allowCreate: true 
@@ -536,15 +836,9 @@ const InvokeMcpToolRequestTable: React.FC = () => {
 
     const updatedItem = { ...row, [key]: formData[key] };
     try {
-      await updateInvokeMcpToolRequest(updatedItem).unwrap();
-      setAllData((prev) => prev.map((i) => (i.id === id ? updatedItem : i)));
-      setSaveSuccess(`${key} saved successfully`);
-      setTimeout(() => setSaveSuccess(null), 3000);
+      await persistRowUpdate(id, updatedItem, key);
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Failed to update InvokeMcpToolRequest';
-      console.error('Failed to update InvokeMcpToolRequest:', error);
-      setSaveError(errorMsg);
-      setTimeout(() => setSaveError(null), 5000);
+      // handled by persistRowUpdate
     } finally {
       setSavingCellId(null);
       setEditRowId(null);
@@ -669,15 +963,9 @@ const InvokeMcpToolRequestTable: React.FC = () => {
     }
     const updatedItem = { ...row, [key]: value };
     try {
-      await updateInvokeMcpToolRequest(updatedItem).unwrap();
-      setAllData((prev) => prev.map((d) => (d.id === id ? updatedItem : d)));
-      setSaveSuccess(`${key} saved successfully`);
-      setTimeout(() => setSaveSuccess(null), 3000);
+      await persistRowUpdate(id, updatedItem, key);
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Failed to update InvokeMcpToolRequest';
-      console.error('Failed to update from modal:', error);
-      setSaveError(errorMsg);
-      setTimeout(() => setSaveError(null), 5000);
+      // handled by persistRowUpdate
     } finally {
       setSavingModalId(false);
       setModalVisible(false);
@@ -732,9 +1020,8 @@ const InvokeMcpToolRequestTable: React.FC = () => {
 
     const res = await fetch(`${BASE_PATH}/${refType}`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: buildAuthHeaders(),
+      credentials: 'include',
       body: JSON.stringify(payload),
     });
     if (!res.ok) {
@@ -856,30 +1143,48 @@ const InvokeMcpToolRequestTable: React.FC = () => {
               <div>
                 <ButtonGroup>
                   <CoolButton 
-                   variant="secondary" onClick={handleLoadData} className="py-3 px-3">
+                   variant="secondary" onClick={handleLoadData} className="py-2 px-2">
                     <FaSync size={ICON_SIZE} />
                   </CoolButton>
                   <CoolButton 
-                    variant="primary" onClick={() => setShowCreateModal(true)} className="py-3 px-3">
+                    variant="primary" onClick={() => setShowCreateModal(true)} className="py-2 px-2">
                     <FaPlus size={ICON_SIZE} />
                   </CoolButton>
                   <CoolButton 
                     disabled={selectedRows.size !== 1}
-                    variant="secondary" onClick={handleCopyRow} className="py-3 px-3">
+                    variant="secondary" onClick={handleCopyRow} className="py-2 px-2">
                     <FaCopy size={ICON_SIZE} />
                   </CoolButton>
                   <CoolButton 
-                    variant="secondary" onClick={handlePasteRow} className="py-3 px-3">
+                    variant="secondary" onClick={handlePasteRow} className="py-2 px-2">
                     <FaPaste size={ICON_SIZE} />
                   </CoolButton>
+                  <CoolButton
+                    variant="secondary"
+                    onClick={handleExportSelected}
+                    disabled={selectedRows.size === 0 || isExporting || isImporting}
+                    className="py-2 px-2"
+                    title="Export selected rows"
+                  >
+                    <FaFileExport size={ICON_SIZE} />
+                  </CoolButton>
+                  <CoolButton
+                    variant="secondary"
+                    onClick={() => inputRef.current?.click()}
+                    disabled={isImporting || isExporting}
+                    className="py-2 px-2"
+                    title="Import JSON rows"
+                  >
+                    <FaFileImport size={ICON_SIZE} />
+                  </CoolButton>
                   <CoolButton 
-                  variant="secondary" onClick={() => setShowQbeModal(true)} className="py-3 px-3">
+                  variant="secondary" onClick={() => setShowQbeModal(true)} className="py-2 px-2">
                     <FaFilter size={ICON_SIZE} /> Filter (QBE)
                   </CoolButton>
                   <CoolButton 
                   variant="warning" onClick={handleDelete} 
                    disabled={selectedRows.size === 0}
-                   className="py-3 px-3"
+                   className="py-2 px-2"
                   >
                     <FaTrash size={ICON_SIZE} />
                   </CoolButton>
@@ -887,11 +1192,18 @@ const InvokeMcpToolRequestTable: React.FC = () => {
                     variant="info"
                     onClick={handleManagePermissions}
                     disabled={selectedRows.size !== 1}
-                    className="py-3 px-3"
+                    className="py-2 px-2"
                   >
                     <FaUserShield size={ICON_SIZE} />
                   </CoolButton>
                 </ButtonGroup>
+                <input
+                  ref={inputRef}
+                  type="file"
+                  accept="application/json,.json"
+                  onChange={handleImportFile}
+                  style={ { display: 'none' } }
+                />
               </div>
             </FloatingControlPanel>
           </div>

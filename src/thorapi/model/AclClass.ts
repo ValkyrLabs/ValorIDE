@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,7 +42,7 @@ export type AclClass  = DataObject & {
      * @type {string}
      * @memberof AclClass
      */
-    _class: string;
+    _class?: string;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -103,7 +102,7 @@ export type AclClass  = DataObject & {
 export function AclClassFromJSON(json: any): AclClass {
     return {
         ...DataObjectFromJSON(json),
-        '_class': json['_class'],
+        '_class': !exists(json, '_class') ? undefined : json['_class'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -49,7 +48,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -85,7 +83,6 @@ const validationSchema = Yup.object().shape({
         .oneOf(LocationValidation(), "Invalid value for location")
         ,
         description: Yup.string(),
-        required: Yup.boolean(),
         trashed: Yup.boolean(),
 });
 
@@ -120,7 +117,6 @@ const OasParameterForm: React.FC = () => {
           name: '',
         location: undefined,
           description: '',
-          required: false,
           trashed: false,
   };
 
@@ -324,43 +320,6 @@ const OasParameterForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="description"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="required" className="nice-form-control">
-                      <b>
-                        Required:
-                        {touched.required &&
-                         !errors.required && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="required"
-                            name="required"
-                            checked={values.required || false}
-                            onChange={(e) => {
-                              setFieldTouched('required', true);
-                              setFieldValue('required', e.target.checked);
-                            }}
-                            isInvalid={!!errors.required}
-                            className={errors.required ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="required"
                         component="span"
                       />
                     </label>

@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,19 +42,7 @@ export type FileMetadata  = DataObject & {
      * @type {string}
      * @memberof FileMetadata
      */
-    filename: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof FileMetadata
-     */
-    status: FileMetadataStatusEnum;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof FileMetadata
-     */
-    readonly id: string;
+    filename?: string;
     /**
      * 
      * @type {string}
@@ -70,16 +57,16 @@ export type FileMetadata  = DataObject & {
     sizeBytes?: number;
     /**
      * 
-     * @type {Date}
+     * @type {string}
      * @memberof FileMetadata
      */
-    createdAt?: Date;
+    status?: FileMetadataStatusEnum;
     /**
-     * 
-     * @type {Date}
+     * Unique identifier for object in the system
+     * @type {string}
      * @memberof FileMetadata
      */
-    updatedAt?: Date;
+    readonly id?: string;
     /**
      * UUID of owner of the object in the system
      * @type {string}
@@ -133,13 +120,11 @@ export type FileMetadata  = DataObject & {
 export function FileMetadataFromJSON(json: any): FileMetadata {
     return {
         ...DataObjectFromJSON(json),
-        'filename': json['filename'],
-        'status': json['status'],
-        'id': json['id'],
+        'filename': !exists(json, 'filename') ? undefined : json['filename'],
         'mimeType': !exists(json, 'mimeType') ? undefined : json['mimeType'],
         'sizeBytes': !exists(json, 'sizeBytes') ? undefined : json['sizeBytes'],
-        'createdAt': !exists(json, 'createdAt') ? undefined : new Date(json['createdAt']),
-        'updatedAt': !exists(json, 'updatedAt') ? undefined : new Date(json['updatedAt']),
+        'status': !exists(json, 'status') ? undefined : json['status'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
         'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
@@ -158,11 +143,9 @@ export function FileMetadataToJSON(value?: FileMetadata): any {
     return {
         ...DataObjectToJSON(value),
         'filename': value.filename,
-        'status': value.status,
         'mimeType': value.mimeType,
         'sizeBytes': value.sizeBytes,
-        'createdAt': value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
-        'updatedAt': value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
+        'status': value.status,
         'trashed': value.trashed,
     };
 }

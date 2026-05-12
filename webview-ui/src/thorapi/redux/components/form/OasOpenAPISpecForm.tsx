@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -50,7 +49,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -93,12 +91,12 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        sourcePath: Yup.string().required("sourcePath is required."),
-      sourceType: Yup.mixed()
-        .oneOf(SourceTypeValidation(), "Invalid value for sourceType")
-        .required("sourceType is required."),
         execModuleId: Yup.string(),
         sourceDetails: Yup.string(),
+        sourcePath: Yup.string(),
+      sourceType: Yup.mixed()
+        .oneOf(SourceTypeValidation(), "Invalid value for sourceType")
+        ,
       openapi: Yup.mixed()
         .oneOf(OpenapiValidation(), "Invalid value for openapi")
         ,
@@ -132,10 +130,10 @@ const OasOpenAPISpecForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<OasOpenAPISpec> = {
-          sourcePath: '',
-        sourceType: undefined,
           execModuleId: '',
           sourceDetails: '',
+          sourcePath: '',
+        sourceType: undefined,
         openapi: undefined,
           trashed: false,
   };
@@ -210,6 +208,72 @@ const OasOpenAPISpecForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New OasOpenAPISpec
                 </Accordion.Header>
                 <Accordion.Body>
+                    <label htmlFor="execModuleId" className="nice-form-control">
+                      <b>
+                        Exec Module Id:
+                        {touched.execModuleId &&
+                         !errors.execModuleId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="execModuleId"
+                            value={values?.execModuleId}
+                            placeholder="Exec Module Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="execModuleId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="sourceDetails" className="nice-form-control">
+                      <b>
+                        Source Details:
+                        {touched.sourceDetails &&
+                         !errors.sourceDetails && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="sourceDetails"
+                            value={values?.sourceDetails}
+                            placeholder="Source Details"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="sourceDetails"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="sourcePath" className="nice-form-control">
                       <b>
                         Source Path:
@@ -274,72 +338,6 @@ const OasOpenAPISpecForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="sourceType"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="execModuleId" className="nice-form-control">
-                      <b>
-                        Exec Module Id:
-                        {touched.execModuleId &&
-                         !errors.execModuleId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="execModuleId"
-                            value={values?.execModuleId}
-                            placeholder="Exec Module Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="execModuleId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="sourceDetails" className="nice-form-control">
-                      <b>
-                        Source Details:
-                        {touched.sourceDetails &&
-                         !errors.sourceDetails && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="sourceDetails"
-                            value={values?.sourceDetails}
-                            placeholder="Source Details"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="sourceDetails"
                         component="span"
                       />
                     </label>

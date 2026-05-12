@@ -1,4 +1,8 @@
-import { UserPreference, UserPreferencePreferenceTypeEnum } from "@thorapi/model"; // UserPreference";
+import {
+  Principal,
+  UserPreference,
+  UserPreferencePreferenceTypeEnum,
+} from "@thorapi/model"; // UserPreference";
 import store from "../redux/store";
 import {
   setThemeMode,
@@ -8,11 +12,33 @@ import {
 } from "../redux/slices/themeSlice";
 import { UserPreferenceService as UserPreferenceApi } from "@thorapi/redux/services/UserPreferenceService";
 
+const getStoredPrincipalReference = (): Principal | undefined => {
+  try {
+    const raw = sessionStorage.getItem("authenticatedPrincipal") || "{}";
+    const parsed = JSON.parse(raw);
+    const id = parsed?.id ?? parsed?.principalId;
+    return id ? ({ id: String(id) } as Principal) : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+const getPreferencePrincipalId = (
+  preference?: Partial<UserPreference> | null,
+): string | undefined => {
+  const id =
+    preference?.principal?.id ??
+    preference?.principal?.ownerId ??
+    (preference as any)?.principalId ??
+    preference?.ownerId;
+  return id === undefined || id === null ? undefined : String(id);
+};
+
 export class UserPreferenceService {
   private static instance: UserPreferenceService;
   private preferences: Map<string, UserPreference> = new Map();
 
-  private constructor() { }
+  private constructor() {}
 
   public static getInstance(): UserPreferenceService {
     if (!UserPreferenceService.instance) {
@@ -37,7 +63,7 @@ export class UserPreferenceService {
             // Update Redux store for theme preference
             if (
               pref.preferenceType ===
-              UserPreferencePreferenceTypeEnum.UXTHEME &&
+                UserPreferencePreferenceTypeEnum.UXTHEME &&
               pref.preference
             ) {
               store.dispatch(setThemeMode(pref.preference as ThemeMode));
@@ -84,17 +110,7 @@ export class UserPreferenceService {
       const preferenceData: Partial<UserPreference> = {
         preferenceType: UserPreferencePreferenceTypeEnum.UXTHEME,
         preference: mode,
-        // WRAPPER: Extract ID only, sanitizing Symbol corruption
-        principalId: (() => {
-          try {
-            const raw =
-              sessionStorage.getItem("authenticatedPrincipal") || "{}";
-            const parsed = JSON.parse(raw);
-            return parsed?.id;
-          } catch {
-            return undefined;
-          }
-        })(),
+        principal: getStoredPrincipalReference(),
       };
 
       let result;
@@ -159,17 +175,7 @@ export class UserPreferenceService {
       const preferenceData: Partial<UserPreference> = {
         preferenceType: UserPreferencePreferenceTypeEnum.UXLAYOUT,
         preference: JSON.stringify(currentJson),
-        // WRAPPER: Extract ID only, sanitizing Symbol corruption
-        principalId: (() => {
-          try {
-            const raw =
-              sessionStorage.getItem("authenticatedPrincipal") || "{}";
-            const parsed = JSON.parse(raw);
-            return parsed?.id;
-          } catch {
-            return undefined;
-          }
-        })(),
+        principal: getStoredPrincipalReference(),
       };
 
       let result;
@@ -256,7 +262,7 @@ export class UserPreferenceService {
         }
         return parsed;
       }
-    } catch { }
+    } catch {}
     // legacy: plain string stored previously
     return { layoutMode: pref, grids: {} };
   }
@@ -276,15 +282,8 @@ export class UserPreferenceService {
       let existingPref = this.preferences.get(
         UserPreferencePreferenceTypeEnum.UXLAYOUT,
       );
-      const principalId = (() => {
-        try {
-          const raw = sessionStorage.getItem("authenticatedPrincipal") || "{}";
-          const parsed = JSON.parse(raw);
-          return parsed?.id;
-        } catch {
-          return undefined;
-        }
-      })();
+      const principal = getStoredPrincipalReference();
+      const principalId = principal?.id ? String(principal.id) : undefined;
       // If we don't have the preference loaded yet, fetch all and locate it to avoid duplicates.
       if (!existingPref) {
         const res = await store.dispatch(
@@ -295,7 +294,7 @@ export class UserPreferenceService {
           const found = items.find(
             (p) =>
               p.preferenceType === UserPreferencePreferenceTypeEnum.UXLAYOUT &&
-              (!principalId || p.principalId === principalId),
+              (!principalId || getPreferencePrincipalId(p) === principalId),
           );
           if (found) {
             existingPref = found;
@@ -314,7 +313,7 @@ export class UserPreferenceService {
       const preferenceData: Partial<UserPreference> = {
         preferenceType: UserPreferencePreferenceTypeEnum.UXLAYOUT,
         preference: JSON.stringify(base),
-        principalId,
+        principal,
       };
       let result;
       if (existingPref?.id) {

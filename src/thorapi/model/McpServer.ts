@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -57,19 +56,19 @@ export type McpServer  = DataObject & {
      * @type {string}
      * @memberof McpServer
      */
-    name: string;
+    name?: string;
     /**
      * 
      * @type {string}
      * @memberof McpServer
      */
-    config: string;
+    config?: string;
     /**
      * 
      * @type {string}
      * @memberof McpServer
      */
-    status: McpServerStatusEnum;
+    status?: McpServerStatusEnum;
     /**
      * 
      * @type {string}
@@ -159,9 +158,9 @@ export type McpServer  = DataObject & {
 export function McpServerFromJSON(json: any): McpServer {
     return {
         ...DataObjectFromJSON(json),
-        'name': json['name'],
-        'config': json['config'],
-        'status': json['status'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'config': !exists(json, 'config') ? undefined : json['config'],
+        'status': !exists(json, 'status') ? undefined : json['status'],
         'error': !exists(json, 'error') ? undefined : json['error'],
         'tools': !exists(json, 'tools') ? undefined : (json['tools'] as Array<any>).map(McpToolFromJSON),
         'resources': !exists(json, 'resources') ? undefined : (json['resources'] as Array<any>).map(McpResourceFromJSON),

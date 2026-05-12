@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -51,31 +50,31 @@ export type CompleteUploadRequest  = DataObject & {
      * @type {string}
      * @memberof CompleteUploadRequest
      */
-    sessionId: string;
+    sessionId?: string;
     /**
      * 
      * @type {string}
      * @memberof CompleteUploadRequest
      */
-    uploadId: string;
+    uploadId?: string;
     /**
      * 
      * @type {string}
      * @memberof CompleteUploadRequest
      */
-    checksumSha256: string;
-    /**
-     * 
-     * @type {Array<CompleteUploadRequestPartsInner>}
-     * @memberof CompleteUploadRequest
-     */
-    parts: Array<CompleteUploadRequestPartsInner>;
+    checksumSha256?: string;
     /**
      * 
      * @type {string}
      * @memberof CompleteUploadRequest
      */
     providerEtag?: string;
+    /**
+     * 
+     * @type {Array<CompleteUploadRequestPartsInner>}
+     * @memberof CompleteUploadRequest
+     */
+    parts?: Array<CompleteUploadRequestPartsInner>;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -135,11 +134,11 @@ export type CompleteUploadRequest  = DataObject & {
 export function CompleteUploadRequestFromJSON(json: any): CompleteUploadRequest {
     return {
         ...DataObjectFromJSON(json),
-        'sessionId': json['sessionId'],
-        'uploadId': json['uploadId'],
-        'checksumSha256': json['checksumSha256'],
-        'parts': (json['parts'] as Array<any>).map(CompleteUploadRequestPartsInnerFromJSON),
+        'sessionId': !exists(json, 'sessionId') ? undefined : json['sessionId'],
+        'uploadId': !exists(json, 'uploadId') ? undefined : json['uploadId'],
+        'checksumSha256': !exists(json, 'checksumSha256') ? undefined : json['checksumSha256'],
         'providerEtag': !exists(json, 'providerEtag') ? undefined : json['providerEtag'],
+        'parts': !exists(json, 'parts') ? undefined : (json['parts'] as Array<any>).map(CompleteUploadRequestPartsInnerFromJSON),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -161,8 +160,8 @@ export function CompleteUploadRequestToJSON(value?: CompleteUploadRequest): any 
         'sessionId': value.sessionId,
         'uploadId': value.uploadId,
         'checksumSha256': value.checksumSha256,
-        'parts': (value.parts as Array<any>).map(CompleteUploadRequestPartsInnerToJSON),
         'providerEtag': value.providerEtag,
+        'parts': value.parts === undefined ? undefined : (value.parts as Array<any>).map(CompleteUploadRequestPartsInnerToJSON),
         'trashed': value.trashed,
     };
 }

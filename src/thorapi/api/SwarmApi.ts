@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetSwarmListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchSwarmByIdApiRequest {
+    id: string;
+    swarm: Swarm;
 }
 
 export interface PostSwarmApiRequest {
@@ -204,6 +208,60 @@ function getSwarmListRaw<T>(requestParameters: GetSwarmListApiRequest, requestCo
 */
 export function getSwarmList<T>(requestParameters: GetSwarmListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Swarm>>): QueryConfig<T> {
     return getSwarmListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing Swarm.
+ * Partially update an existing Swarm
+ */
+function patchSwarmByIdRaw<T>(requestParameters: PatchSwarmByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Swarm> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchSwarmById.');
+    }
+
+    if (requestParameters.swarm === null || requestParameters.swarm === undefined) {
+        throw new runtime.RequiredError('swarm','Required parameter requestParameters.swarm was null or undefined when calling patchSwarmById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Swarm/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || SwarmToJSON(requestParameters.swarm),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SwarmFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing Swarm.
+* Partially update an existing Swarm
+*/
+export function patchSwarmById<T>(requestParameters: PatchSwarmByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Swarm>): QueryConfig<T> {
+    return patchSwarmByIdRaw(requestParameters, requestConfig);
 }
 
 /**

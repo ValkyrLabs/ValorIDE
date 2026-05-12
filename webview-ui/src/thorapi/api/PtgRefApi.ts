@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetPtgRefListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchPtgRefByIdApiRequest {
+    id: string;
+    ptgRef: PtgRef;
 }
 
 export interface PostPtgRefApiRequest {
@@ -204,6 +208,60 @@ function getPtgRefListRaw<T>(requestParameters: GetPtgRefListApiRequest, request
 */
 export function getPtgRefList<T>(requestParameters: GetPtgRefListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<PtgRef>>): QueryConfig<T> {
     return getPtgRefListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing PtgRef.
+ * Partially update an existing PtgRef
+ */
+function patchPtgRefByIdRaw<T>(requestParameters: PatchPtgRefByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, PtgRef> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchPtgRefById.');
+    }
+
+    if (requestParameters.ptgRef === null || requestParameters.ptgRef === undefined) {
+        throw new runtime.RequiredError('ptgRef','Required parameter requestParameters.ptgRef was null or undefined when calling patchPtgRefById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/PtgRef/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || PtgRefToJSON(requestParameters.ptgRef),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(PtgRefFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing PtgRef.
+* Partially update an existing PtgRef
+*/
+export function patchPtgRefById<T>(requestParameters: PatchPtgRefByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, PtgRef>): QueryConfig<T> {
+    return patchPtgRefByIdRaw(requestParameters, requestConfig);
 }
 
 /**

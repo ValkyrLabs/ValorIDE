@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetFormulaListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchFormulaByIdApiRequest {
+    id: string;
+    formula: Formula;
 }
 
 export interface PostFormulaApiRequest {
@@ -204,6 +208,60 @@ function getFormulaListRaw<T>(requestParameters: GetFormulaListApiRequest, reque
 */
 export function getFormulaList<T>(requestParameters: GetFormulaListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Formula>>): QueryConfig<T> {
     return getFormulaListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing Formula.
+ * Partially update an existing Formula
+ */
+function patchFormulaByIdRaw<T>(requestParameters: PatchFormulaByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Formula> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchFormulaById.');
+    }
+
+    if (requestParameters.formula === null || requestParameters.formula === undefined) {
+        throw new runtime.RequiredError('formula','Required parameter requestParameters.formula was null or undefined when calling patchFormulaById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Formula/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || FormulaToJSON(requestParameters.formula),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(FormulaFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing Formula.
+* Partially update an existing Formula
+*/
+export function patchFormulaById<T>(requestParameters: PatchFormulaByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Formula>): QueryConfig<T> {
+    return patchFormulaByIdRaw(requestParameters, requestConfig);
 }
 
 /**

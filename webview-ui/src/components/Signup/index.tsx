@@ -18,8 +18,8 @@ const initialPrincipal: Principal = {
   email: "",
   createdDate: new Date(),
   lastModifiedDate: new Date(),
-  roleList: [],
-  authorityList: [],
+  roles: [],
+  grantedAuthorities: [],
 };
 
 const Signup = (props) => {

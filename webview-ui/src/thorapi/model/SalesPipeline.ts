@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -43,7 +42,7 @@ export type SalesPipeline  = DataObject & {
      * @type {string}
      * @memberof SalesPipeline
      */
-    name: SalesPipelineNameEnum;
+    name?: SalesPipelineNameEnum;
     /**
      * The order in which the stages are followed in the sales process.
      * @type {number}
@@ -109,7 +108,7 @@ export type SalesPipeline  = DataObject & {
 export function SalesPipelineFromJSON(json: any): SalesPipeline {
     return {
         ...DataObjectFromJSON(json),
-        'name': json['name'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
         'sequenceOrder': !exists(json, 'sequenceOrder') ? undefined : json['sequenceOrder'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],

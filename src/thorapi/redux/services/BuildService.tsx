@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
@@ -19,6 +18,15 @@ import { Build } from '@thorapi/model/Build'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type BuildResponse = Build[]
+
+const toBuildList = (result: unknown): BuildResponse => {
+  if (Array.isArray(result)) {
+    return result as BuildResponse
+  }
+
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as BuildResponse) : []
+}
 
 export const BuildService = createApi({
   reducerPath: 'Build', // This should remain unique
@@ -33,13 +41,15 @@ export const BuildService = createApi({
         if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
         return `Build?${q.join('&')}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Build' as const, id })),
-              { type: 'Build', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toBuildList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'Build' as const, id })),
+          { type: 'Build', id: `PAGE_${page}` },
+        ]
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,13 +61,15 @@ export const BuildService = createApi({
         }
         return `Build`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Build' as const, id })),
-              { type: 'Build', id: 'LIST' },
-            ]
-          : [{ type: 'Build', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toBuildList(result)
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: 'Build' as const, id })),
+          { type: 'Build', id: 'LIST' },
+        ]
+      },
     }),
 
     // 3) Create

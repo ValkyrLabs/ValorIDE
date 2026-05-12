@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetBlankRangeListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchBlankRangeByIdApiRequest {
+    id: string;
+    blankRange: BlankRange;
 }
 
 export interface PostBlankRangeApiRequest {
@@ -204,6 +208,60 @@ function getBlankRangeListRaw<T>(requestParameters: GetBlankRangeListApiRequest,
 */
 export function getBlankRangeList<T>(requestParameters: GetBlankRangeListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<BlankRange>>): QueryConfig<T> {
     return getBlankRangeListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing BlankRange.
+ * Partially update an existing BlankRange
+ */
+function patchBlankRangeByIdRaw<T>(requestParameters: PatchBlankRangeByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, BlankRange> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchBlankRangeById.');
+    }
+
+    if (requestParameters.blankRange === null || requestParameters.blankRange === undefined) {
+        throw new runtime.RequiredError('blankRange','Required parameter requestParameters.blankRange was null or undefined when calling patchBlankRangeById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/BlankRange/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || BlankRangeToJSON(requestParameters.blankRange),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BlankRangeFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing BlankRange.
+* Partially update an existing BlankRange
+*/
+export function patchBlankRangeById<T>(requestParameters: PatchBlankRangeByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, BlankRange>): QueryConfig<T> {
+    return patchBlankRangeByIdRaw(requestParameters, requestConfig);
 }
 
 /**

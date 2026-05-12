@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -39,6 +38,11 @@ export interface GetSecureKeyListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface PatchSecureKeyByIdApiRequest {
+    id: string;
+    secureKey: SecureKey;
 }
 
 export interface PostSecureKeyApiRequest {
@@ -204,6 +208,60 @@ function getSecureKeyListRaw<T>(requestParameters: GetSecureKeyListApiRequest, r
 */
 export function getSecureKeyList<T>(requestParameters: GetSecureKeyListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<SecureKey>>): QueryConfig<T> {
     return getSecureKeyListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing SecureKey.
+ * Partially update an existing SecureKey
+ */
+function patchSecureKeyByIdRaw<T>(requestParameters: PatchSecureKeyByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, SecureKey> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchSecureKeyById.');
+    }
+
+    if (requestParameters.secureKey === null || requestParameters.secureKey === undefined) {
+        throw new runtime.RequiredError('secureKey','Required parameter requestParameters.secureKey was null or undefined when calling patchSecureKeyById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/SecureKey/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || SecureKeyToJSON(requestParameters.secureKey),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SecureKeyFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing SecureKey.
+* Partially update an existing SecureKey
+*/
+export function patchSecureKeyById<T>(requestParameters: PatchSecureKeyByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SecureKey>): QueryConfig<T> {
+    return patchSecureKeyByIdRaw(requestParameters, requestConfig);
 }
 
 /**

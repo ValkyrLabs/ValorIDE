@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -43,6 +42,17 @@ export interface GetContentDataListApiRequest {
     page?: number;
     size?: number;
     sort?: Array<string>;
+}
+
+export interface ListPublicContentArticlesApiRequest {
+    limit?: number;
+    offset?: number;
+    tag?: string;
+}
+
+export interface PatchContentDataByIdApiRequest {
+    id: string;
+    contentData: ContentData;
 }
 
 export interface PostContentDataApiRequest {
@@ -151,7 +161,7 @@ export function getContentData<T>(requestParameters: GetContentDataApiRequest, r
 }
 
 /**
- * Retrieves a single ContentData item using its slug identifier.
+ * Retrieves a single ContentData item using its slug identifier. Canonical contract path is /v1/ContentData/slug/{slug}; this unversioned path is legacy compatibility. Slugs are normalized to lowercase ASCII with punctuation and whitespace collapsed to single dashes.
  * Retrieve ContentData by slug
  */
 function getContentDataBySlugRaw<T>(requestParameters: GetContentDataBySlugApiRequest, requestConfig: runtime.TypedQueryConfig<T, ContentData> = {}): QueryConfig<T> {
@@ -191,7 +201,7 @@ function getContentDataBySlugRaw<T>(requestParameters: GetContentDataBySlugApiRe
 }
 
 /**
-* Retrieves a single ContentData item using its slug identifier.
+* Retrieves a single ContentData item using its slug identifier. Canonical contract path is /v1/ContentData/slug/{slug}; this unversioned path is legacy compatibility. Slugs are normalized to lowercase ASCII with punctuation and whitespace collapsed to single dashes.
 * Retrieve ContentData by slug
 */
 export function getContentDataBySlug<T>(requestParameters: GetContentDataBySlugApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ContentData>): QueryConfig<T> {
@@ -256,6 +266,120 @@ function getContentDataListRaw<T>(requestParameters: GetContentDataListApiReques
 */
 export function getContentDataList<T>(requestParameters: GetContentDataListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<ContentData>>): QueryConfig<T> {
     return getContentDataListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Returns ContentData records intended for public automation workflows. This endpoint is scoped to published blog/article records and excludes draft/private content.
+ * List public published blog articles
+ */
+function listPublicContentArticlesRaw<T>(requestParameters: ListPublicContentArticlesApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<ContentData>> = {}): QueryConfig<T> {
+    let queryParameters = null;
+
+    queryParameters = {};
+
+
+    if (requestParameters.limit !== undefined) {
+        queryParameters['limit'] = requestParameters.limit;
+    }
+
+
+    if (requestParameters.offset !== undefined) {
+        queryParameters['offset'] = requestParameters.offset;
+    }
+
+
+    if (requestParameters.tag !== undefined) {
+        queryParameters['tag'] = requestParameters.tag;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/content/public/articles`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(ContentDataFromJSON), text);
+    }
+
+    return config;
+}
+
+/**
+* Returns ContentData records intended for public automation workflows. This endpoint is scoped to published blog/article records and excludes draft/private content.
+* List public published blog articles
+*/
+export function listPublicContentArticles<T>(requestParameters: ListPublicContentArticlesApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<ContentData>>): QueryConfig<T> {
+    return listPublicContentArticlesRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing ContentData.
+ * Partially update an existing ContentData
+ */
+function patchContentDataByIdRaw<T>(requestParameters: PatchContentDataByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, ContentData> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchContentDataById.');
+    }
+
+    if (requestParameters.contentData === null || requestParameters.contentData === undefined) {
+        throw new runtime.RequiredError('contentData','Required parameter requestParameters.contentData was null or undefined when calling patchContentDataById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ContentData/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || ContentDataToJSON(requestParameters.contentData),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ContentDataFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing ContentData.
+* Partially update an existing ContentData
+*/
+export function patchContentDataById<T>(requestParameters: PatchContentDataByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ContentData>): QueryConfig<T> {
+    return patchContentDataByIdRaw(requestParameters, requestConfig);
 }
 
 /**

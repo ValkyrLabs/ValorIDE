@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -54,25 +53,19 @@ export type Product  = DataObject & {
      * @type {string}
      * @memberof Product
      */
-    name: string;
-    /**
-     * the base price of the product before features
-     * @type {number}
-     * @memberof Product
-     */
-    price: number;
-    /**
-     * Availability status of the product.
-     * @type {string}
-     * @memberof Product
-     */
-    status: ProductStatusEnum;
+    name?: string;
     /**
      * 
      * @type {string}
      * @memberof Product
      */
     description?: string;
+    /**
+     * the base price of the product before features
+     * @type {number}
+     * @memberof Product
+     */
+    price?: number;
     /**
      * the sale price of the product if any
      * @type {number}
@@ -92,6 +85,12 @@ export type Product  = DataObject & {
      */
     duration?: number;
     /**
+     * the stock keeping unit identifier for the product (aka STRIPE product id)
+     * @type {string}
+     * @memberof Product
+     */
+    sku?: string;
+    /**
      * 
      * @type {Array<ContentData>}
      * @memberof Product
@@ -103,6 +102,12 @@ export type Product  = DataObject & {
      * @memberof Product
      */
     type?: ProductTypeEnum;
+    /**
+     * Availability status of the product.
+     * @type {string}
+     * @memberof Product
+     */
+    status?: ProductStatusEnum;
     /**
      * 
      * @type {Array<ProductFeature>}
@@ -174,15 +179,16 @@ export type Product  = DataObject & {
 export function ProductFromJSON(json: any): Product {
     return {
         ...DataObjectFromJSON(json),
-        'name': json['name'],
-        'price': json['price'],
-        'status': json['status'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
         'description': !exists(json, 'description') ? undefined : json['description'],
+        'price': !exists(json, 'price') ? undefined : json['price'],
         'salePrice': !exists(json, 'salePrice') ? undefined : json['salePrice'],
         'taxRate': !exists(json, 'taxRate') ? undefined : json['taxRate'],
         'duration': !exists(json, 'duration') ? undefined : json['duration'],
+        'sku': !exists(json, 'sku') ? undefined : json['sku'],
         'productContentData': !exists(json, 'productContentData') ? undefined : (json['productContentData'] as Array<any>).map(ContentDataFromJSON),
         'type': !exists(json, 'type') ? undefined : json['type'],
+        'status': !exists(json, 'status') ? undefined : json['status'],
         'features': !exists(json, 'features') ? undefined : (json['features'] as Array<any>).map(ProductFeatureFromJSON),
         'countryOfOrigin': !exists(json, 'countryOfOrigin') ? undefined : json['countryOfOrigin'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -204,32 +210,21 @@ export function ProductToJSON(value?: Product): any {
     return {
         ...DataObjectToJSON(value),
         'name': value.name,
-        'price': value.price,
-        'status': value.status,
         'description': value.description,
+        'price': value.price,
         'salePrice': value.salePrice,
         'taxRate': value.taxRate,
         'duration': value.duration,
+        'sku': value.sku,
         'productContentData': value.productContentData === undefined ? undefined : (value.productContentData as Array<any>).map(ContentDataToJSON),
         'type': value.type,
+        'status': value.status,
         'features': value.features === undefined ? undefined : (value.features as Array<any>).map(ProductFeatureToJSON),
         'countryOfOrigin': value.countryOfOrigin,
         'trashed': value.trashed,
     };
 }
 
-/**
-* @export
-* @enum {string}
-*/
-export enum ProductStatusEnum {
-    PENDING = 'pending',
-    SALE = 'sale',
-    CLEARANCE = 'clearance',
-    AVAILABLE = 'available',
-    DISCONTINUED = 'discontinued',
-    OUTOFSTOCK = 'out_of_stock'
-}
 /**
 * @export
 * @enum {string}
@@ -247,6 +242,18 @@ export enum ProductTypeEnum {
     MEDIA = 'media',
     PERFORMANCE = 'performance',
     OTHER = 'other'
+}
+/**
+* @export
+* @enum {string}
+*/
+export enum ProductStatusEnum {
+    PENDING = 'pending',
+    SALE = 'sale',
+    CLEARANCE = 'clearance',
+    AVAILABLE = 'available',
+    DISCONTINUED = 'discontinued',
+    OUTOFSTOCK = 'out_of_stock'
 }
 
 

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -48,7 +47,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -70,9 +68,9 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        aceOrder: asNumber(Yup.number().integer().typeError("aceOrder must be a number")).required("aceOrder is required."),
-        mask: asNumber(Yup.number().integer().typeError("mask must be a number")).required("mask is required."),
-        granting: Yup.boolean().required("granting is required."),
+        aceOrder: asNumber(Yup.number().integer().typeError("aceOrder must be a number")),
+        mask: asNumber(Yup.number().integer().typeError("mask must be a number")),
+        granting: Yup.boolean(),
         auditSuccess: Yup.boolean(),
         auditFailure: Yup.boolean(),
         sid: Yup.string(),

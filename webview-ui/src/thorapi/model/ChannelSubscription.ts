@@ -20,7 +20,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -29,6 +28,14 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists, mapValues } from '../src/runtime';
 import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import {
+
+
+    SubscriberList,
+    SubscriberListFromJSON,
+    SubscriberListToJSON,
+} from './';
+
 
 // thorapi
 
@@ -39,23 +46,35 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  */
 export type ChannelSubscription  = DataObject & {
     /**
-     * Channel/topic name.
-     * @type {string}
-     * @memberof ChannelSubscription
-     */
-    channel: ChannelSubscriptionChannelEnum;
-    /**
-     * Unique identifier for the subscriber (user, agent, service).
-     * @type {string}
-     * @memberof ChannelSubscription
-     */
-    subscriberId: string;
-    /**
      * the name of the subscription
      * @type {string}
      * @memberof ChannelSubscription
      */
     name?: string;
+    /**
+     * Channel identifier (e.g. EMAIL, NOTIFICATIONS, ALERTS, SWARM, WORKFLOW, SOCKET).
+     * @type {string}
+     * @memberof ChannelSubscription
+     */
+    channel?: string;
+    /**
+     * 
+     * @type {SubscriberList}
+     * @memberof ChannelSubscription
+     */
+    subscriberList?: SubscriberList;
+    /**
+     * Unique identifier for the specific channel or topic subscribed to.
+     * @type {string}
+     * @memberof ChannelSubscription
+     */
+    channelId?: string;
+    /**
+     * Unique identifier for the subscriber (user, agent, service).
+     * @type {string}
+     * @memberof ChannelSubscription
+     */
+    subscriberId?: string;
     /**
      * 
      * @type {Date}
@@ -127,9 +146,11 @@ export type ChannelSubscription  = DataObject & {
 export function ChannelSubscriptionFromJSON(json: any): ChannelSubscription {
     return {
         ...DataObjectFromJSON(json),
-        'channel': json['channel'],
-        'subscriberId': json['subscriberId'],
         'name': !exists(json, 'name') ? undefined : json['name'],
+        'channel': !exists(json, 'channel') ? undefined : json['channel'],
+        'subscriberList': !exists(json, 'subscriberList') ? undefined : SubscriberListFromJSON(json['subscriberList']),
+        'channelId': !exists(json, 'channelId') ? undefined : json['channelId'],
+        'subscriberId': !exists(json, 'subscriberId') ? undefined : json['subscriberId'],
         'subscribedAt': !exists(json, 'subscribedAt') ? undefined : new Date(json['subscribedAt']),
         'active': !exists(json, 'active') ? undefined : json['active'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -150,26 +171,15 @@ export function ChannelSubscriptionToJSON(value?: ChannelSubscription): any {
     }
     return {
         ...DataObjectToJSON(value),
-        'channel': value.channel,
-        'subscriberId': value.subscriberId,
         'name': value.name,
+        'channel': value.channel,
+        'subscriberList': SubscriberListToJSON(value.subscriberList),
+        'channelId': value.channelId,
+        'subscriberId': value.subscriberId,
         'subscribedAt': value.subscribedAt === undefined ? undefined : value.subscribedAt.toISOString(),
         'active': value.active,
         'trashed': value.trashed,
     };
-}
-
-/**
-* @export
-* @enum {string}
-*/
-export enum ChannelSubscriptionChannelEnum {
-    EMAIL = 'email',
-    SWARM = 'swarm',
-    WORKFLOW = 'workflow',
-    NOTIFICATIONS = 'notifications',
-    ALERTS = 'alerts',
-    SOCKET = 'socket'
 }
 
 
