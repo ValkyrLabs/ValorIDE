@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.818",
+  "version": "3.20.827",
   "icon": "assets/icons/icon.png",
   "pricing": "Free",
   "galleryBanner": {
@@ -372,7 +372,7 @@
         },
         "valoride.valkyrai.host": {
           "type": "string",
-          "default": "https://api-0.valkyrlabs.com",
+          "default": "https://api-0.valkyrlabs.com/v1",
           "markdownDescription": "Base URL used for ValkyrAI API calls (synced across machines).",
           "scope": "application"
         },
