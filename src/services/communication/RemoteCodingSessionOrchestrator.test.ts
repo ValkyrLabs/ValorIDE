@@ -38,4 +38,20 @@ describe("RemoteCodingSessionOrchestrator", () => {
     });
     expect(cancelled.session?.status).toBe("cancelled");
   });
+
+  it("expires timed-out sessions via command", () => {
+    const registry = new RemoteCodingSessionRegistry();
+    const orchestrator = new RemoteCodingSessionOrchestrator(registry);
+
+    registry.start({ id: "s2", task: "Long run", timeoutMs: 1, createdAt: 100 });
+
+    const expired = orchestrator.handle({
+      id: "cmd-6",
+      type: "remote-coding-session-expire-timeouts",
+    });
+
+    expect(expired.sessions?.length).toBe(1);
+    expect(expired.sessions?.[0].id).toBe("s2");
+    expect(expired.sessions?.[0].status).toBe("timed_out");
+  });
 });

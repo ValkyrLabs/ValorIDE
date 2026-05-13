@@ -10,6 +10,7 @@ export type RemoteCodingCommandType =
   | "remote-coding-session-artifact"
   | "remote-coding-session-stop"
   | "remote-coding-session-cancel"
+  | "remote-coding-session-expire-timeouts"
   | "remote-coding-session-list";
 
 export interface RemoteCodingCommand {
@@ -65,6 +66,11 @@ export class RemoteCodingSessionOrchestrator {
         return {
           event: "session-updated",
           session: this.registry.cancel(String(sessionId), String(payload.reason ?? "user_cancelled")),
+        };
+      case "remote-coding-session-expire-timeouts":
+        return {
+          event: "session-list",
+          sessions: this.registry.expireTimedOutSessions(),
         };
       case "remote-coding-session-list":
         return {
