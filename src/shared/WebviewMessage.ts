@@ -104,6 +104,7 @@ export interface WebviewMessage {
   | "startServer"
   | "uploadOpenAPISpec"
   | "uploadOpenAPISpecResult"
+  | "remoteCodingSessionCommand"
   | "openFile";
 
   // | "relaunchChromeDebugMode"
@@ -183,6 +184,19 @@ export interface WebviewMessage {
   llmDetails?: LlmDetailsSummary;
   taskIntent?: string;
   valkyraiHost?: string;
+  remoteCodingCommand?: {
+    id: string;
+    type:
+      | "remote-coding-session-start"
+      | "remote-coding-session-heartbeat"
+      | "remote-coding-session-log"
+      | "remote-coding-session-artifact"
+      | "remote-coding-session-stop"
+      | "remote-coding-session-cancel"
+      | "remote-coding-session-expire-timeouts"
+      | "remote-coding-session-list";
+    payload?: Record<string, any>;
+  };
 }
 
 export type ValorIDEAskResponse =
