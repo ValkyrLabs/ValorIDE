@@ -16,7 +16,12 @@ export const SYSTEM_PROMPT = async (
   thorapi_project: string,
   browserSettings: BrowserSettings,
   chatSettings: ChatSettings,
-) => `
+  agentContextSection?: string,
+) => {
+  const isPlanMode = chatSettings.mode === "plan";
+  const browserUseEnabled = supportsBrowserUse && !isPlanMode;
+
+  return `
 ================================================================================
 §0 CORE IDENTITY — VALOR = INTEGRITY + AUTONOMY + EXECUTION
 ================================================================================
@@ -90,6 +95,19 @@ ONLY set <requires_approval>true</requires_approval> for:
 - rm -rf, sudo, chmod -R, git push --force, npm publish, docker push to prod
 - Database migrations in production context
 - Destructive ops outside project root
+
+================================================================================
+§0.9 MODE
+================================================================================
+${
+  isPlanMode
+    ? `PLAN MODE — TOOL USE IS OFF
+- Inspect context, reason carefully, and respond with <plan_mode_respond>.
+- Do not execute browser, shell, file-write, MCP, or destructive tools until the user switches to Act mode.`
+    : `ACT MODE — FULL TOOL USE ENABLED
+- Execute available non-destructive tools directly.
+- Use approval gates only for the high-risk operations listed above.`
+}
 
 ================================================================================
 §1 TOOL-FIRST EXECUTION
@@ -201,7 +219,8 @@ for p in 3000 5173 5174 6006; do !lsof -i :$p > /dev/null 2>&1 && PORT=$p && bre
 
 **Dev server:** \`cd ${cwd} && { pm } run dev --port $PORT\`
 
-${supportsBrowserUse
+${
+  browserUseEnabled
     ? `**Browser flow (${browserSettings.viewport.width}x${browserSettings.viewport.height}):**
 <browser_action><action>launch</action><url>http://localhost:{PORT}/workflow/builder</url></browser_action>
 <browser_action><action>scroll_down</action></browser_action>
@@ -214,7 +233,7 @@ Confirm key selectors via screenshot/logs:
 - [data-testid="task-node"]
 - [data-testid="exec-module-chip"]`
     : `(Browser unavailable — use Playwright for UI verification)`
-  }
+}
 
 ================================================================================
 §5 ## THORAPI RULES — NON-NEGOTIABLE RULES
@@ -314,30 +333,39 @@ Ingest agent rules from:
 - .cursorrules, .windsurfrules
 - README.md
 
+${
+  agentContextSection?.trim()
+    ? `================================================================================
+§6.5 GRAYMATTER OPERATING CONTEXT
+================================================================================
+${agentContextSection.trim()}`
+    : ""
+}
+
 ================================================================================
 §7 MCP INTEGRATION — LEVERAGE CONNECTED TOOLS
 ================================================================================
 ${(() => {
-    const servers = mcpHub.getServers().filter((s) => s.status === "connected");
-    if (!servers.length)
-      return "**No MCP servers connected** — focus on built-in tools.";
-    return (
-      "**Connected MCP servers:**\n" +
-      servers
-        .map((s) => {
-          const cfg = JSON.parse(s.config || "{}");
-          const cmd =
-            cfg.command +
-            (Array.isArray(cfg.args) && cfg.args.length
-              ? ` ${cfg.args.join(" ")}`
-              : "");
-          const toolList = s.tools?.map((t) => t.name).join(", ") || "no tools";
-          return `- **${s.name}** (\`${cmd}\`) — tools: ${toolList}`;
-        })
-        .join("\n") +
-      "\n\n**USE MCP TOOLS AGGRESSIVELY** — they extend your capabilities."
-    );
-  })()}
+  const servers = mcpHub.getServers().filter((s) => s.status === "connected");
+  if (!servers.length)
+    return "**No MCP servers connected** — focus on built-in tools.";
+  return (
+    "**Connected MCP servers:**\n" +
+    servers
+      .map((s) => {
+        const cfg = JSON.parse(s.config || "{}");
+        const cmd =
+          cfg.command +
+          (Array.isArray(cfg.args) && cfg.args.length
+            ? ` ${cfg.args.join(" ")}`
+            : "");
+        const toolList = s.tools?.map((t) => t.name).join(", ") || "no tools";
+        return `- **${s.name}** (\`${cmd}\`) — tools: ${toolList}`;
+      })
+      .join("\n") +
+    "\n\n**USE MCP TOOLS AGGRESSIVELY** — they extend your capabilities."
+  );
+})()}
 
 Call MCP tools via (use real server/tool names from **Connected MCP servers**; do NOT use placeholders):
 \`\`\`xml
@@ -581,7 +609,7 @@ If no → Take another pass.
 - **Shell:** ${getShell()}
 - **Home:** ${os.homedir().replace(/\\/g, "/")}
 - **CWD:** ${cwd.replace(/\\/g, "/")}
-- **Browser:** ${supportsBrowserUse ? `Enabled (${browserSettings.viewport.width}x${browserSettings.viewport.height})` : "Disabled"}
+- **Browser:** ${browserUseEnabled ? `Enabled (${browserSettings.viewport.width}x${browserSettings.viewport.height})` : "Disabled"}
 
 
 - testing-anti-patterns: Prevent mocking behavior, production pollution, dependency confusion
@@ -636,6 +664,7 @@ Execute immediately. Verify ruthlessly. Ship confidently.
 
 LFG. 🔥
 `;
+};
 
 export function addUserInstructions(
   settingsCustomInstructions?: string,

@@ -129,5 +129,6 @@ describe("apiErrorListener", () => {
     expect(localStorage.getItem("jwtToken")).toBeNull();
     expect(sessionStorage.getItem("authenticatedPrincipal")).toBeNull();
     expect(localStorage.getItem("authenticatedPrincipal")).toBeNull();
+    expect(store.getState().apiErrors.lastError).toBeNull();
   });
 });

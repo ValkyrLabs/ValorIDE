@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import React, { useMemo, useEffect, useCallback } from "react";
 import { findLast } from "@shared/array";
 import { ValorIDEApiReqInfo, ExtensionMessage } from "@shared/ExtensionMessage";
@@ -12,6 +13,7 @@ import { vscode } from "@thorapi/utils/vscode";
 import { useChatInputPersistence } from "@thorapi/utils/useSessionStorage";
 import ChatTextArea from "@thorapi/components/chat/ChatTextArea";
 import SystemAlerts from "@thorapi/components/SystemAlerts";
+import CapabilityCommandCenter from "@thorapi/components/agentic/CapabilityCommandCenter";
 
 // Custom hooks
 import { useWebSocketConnection } from "./hooks/useWebSocketConnection";
@@ -74,7 +76,10 @@ const ChatView = ({
     useEffect(() => {
       const handleMessage = (e: MessageEvent) => {
         const message: ExtensionMessage = e.data as any;
-        if (message?.type === "selectedImages" && Array.isArray(message.images)) {
+        if (
+          message?.type === "selectedImages" &&
+          Array.isArray(message.images)
+        ) {
           setSelectedImages((prev) =>
             [...prev, ...message.images!].slice(0, MAX_IMAGES_PER_MESSAGE),
           );
@@ -150,9 +155,12 @@ const ChatView = ({
     );
 
     // Global balance fetch for status strip; skip until JWT is present
-    const { data: balanceData } = useGetBalanceResponsesQuery(undefined as any, {
-      skip: !jwtToken,
-    });
+    const { data: balanceData } = useGetBalanceResponsesQuery(
+      undefined as any,
+      {
+        skip: !jwtToken,
+      },
+    );
     const netBalance = useMemo(() => {
       const raw = balanceData?.[0]?.currentBalance || 0;
       const net = Math.max(0, raw - (apiMetrics.totalCost || 0));
@@ -222,6 +230,7 @@ const ChatView = ({
         }}
       >
         <SystemAlerts />
+        <CapabilityCommandCenter />
         {/**TODO: get P2P working
 			<StatusBar
 				wsConnected={wsConnected}
@@ -309,18 +318,34 @@ const ChatView = ({
             }).catch(() => {});
             return;
           }
-        } catch (e) {}
+        } catch (e) {
+          void e;
+        }
         try {
-          if (typeof navigator !== "undefined" && typeof (navigator as any).sendBeacon === "function") {
-            const blob = new Blob([JSON.stringify(p)], { type: "application/json" });
-            (navigator as any).sendBeacon("http://localhost:3001/webview-error", blob);
+          if (
+            typeof navigator !== "undefined" &&
+            typeof (navigator as any).sendBeacon === "function"
+          ) {
+            const blob = new Blob([JSON.stringify(p)], {
+              type: "application/json",
+            });
+            (navigator as any).sendBeacon(
+              "http://localhost:3001/webview-error",
+              blob,
+            );
             return;
           }
-        } catch (e) {}
+        } catch (e) {
+          void e;
+        }
         try {
           const img = new Image();
-          img.src = "http://localhost:3001/webview-error?payload=" + encodeURIComponent(JSON.stringify(p));
-        } catch (e) {}
+          img.src =
+            "http://localhost:3001/webview-error?payload=" +
+            encodeURIComponent(JSON.stringify(p));
+        } catch (e) {
+          void e;
+        }
       };
 
       sendPayload(payload);

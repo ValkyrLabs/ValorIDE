@@ -9,6 +9,17 @@ const rawDefault =
 
 const trimTrailingSlashes = (value: string) => value.replace(/\/+$/, "");
 
+const ensureApiBasePath = (value: string) => {
+  try {
+    const parsed = new URL(value);
+    const pathname = parsed.pathname.replace(/\/+$/, "");
+    parsed.pathname = pathname && pathname !== "/" ? pathname : "/v1";
+    return `${parsed.protocol}//${parsed.host}${parsed.pathname}${parsed.search}${parsed.hash}`;
+  } catch {
+    return value;
+  }
+};
+
 const listeners = new Set<HostListener>();
 
 const sanitizeHost = (value?: string): string => {
@@ -18,8 +29,7 @@ const sanitizeHost = (value?: string): string => {
   }
   try {
     // Validate the URL – this throws if invalid
-    const parsed = new URL(candidate);
-    const normalized = `${parsed.protocol}//${parsed.host}${parsed.pathname || ""}${parsed.search || ""}${parsed.hash || ""}`;
+    const normalized = ensureApiBasePath(candidate);
     return trimTrailingSlashes(normalized);
   } catch {
     return trimTrailingSlashes(rawDefault);

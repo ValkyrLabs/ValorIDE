@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { useAddUsageTransactionMutation } from "@thorapi/redux/services/UsageTransactionService";
-import { useGetBalanceResponsesQuery } from "@thorapi/redux/services/BalanceResponseService";
+import { useGetAccountBalanceQuery } from "@thorapi/services/creditsApi";
 import { UsageTransaction } from "@thorapi/model";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 
 interface UsageTrackingMessage {
   type: "usage_tracking";
@@ -11,11 +12,18 @@ interface UsageTrackingMessage {
 
 /**
  * Component that handles usage tracking messages from the extension
- * and submits them via the RTQ system
+ * and submits them via the generated TypeScript RTK Query clients
  */
 export const UsageTrackingHandler: React.FC = () => {
   const [addUsageTransaction] = useAddUsageTransactionMutation();
-  const { refetch: refetchBalance } = useGetBalanceResponsesQuery();
+  const { authenticatedUser } = useExtensionState();
+  
+  // Use the custom credits API endpoint for actual credit balance
+  // GET /v1/credits/{accountId}/balance
+  const { refetch: refetchAccountBalance } = useGetAccountBalanceQuery(
+    authenticatedUser?.id ?? "",
+    { skip: !authenticatedUser?.id }
+  );
 
   useEffect(() => {
     const handleMessage = async (event: MessageEvent) => {
@@ -35,7 +43,7 @@ export const UsageTrackingHandler: React.FC = () => {
 
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, [addUsageTransaction, refetchBalance]);
+  }, [addUsageTransaction, refetchAccountBalance]);
 
   const waitForJwtToken = async (timeoutMs = 3000): Promise<string | null> => {
     // Try immediate read
@@ -99,7 +107,12 @@ export const UsageTrackingHandler: React.FC = () => {
 
   const handleRequestBalance = async () => {
     try {
-      const result = await refetchBalance();
+      if (!authenticatedUser?.id) {
+        console.warn("Cannot fetch balance: no authenticated user");
+        return;
+      }
+
+      const result = await refetchAccountBalance();
 
       // Send balance data back to extension
       if (window.parent && window.parent.postMessage) {
@@ -113,7 +126,7 @@ export const UsageTrackingHandler: React.FC = () => {
         );
       }
     } catch (error) {
-      console.error("Failed to fetch balance:", error);
+      console.error("Failed to fetch account balance:", error);
     }
   };
 

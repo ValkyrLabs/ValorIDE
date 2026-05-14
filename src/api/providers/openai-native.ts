@@ -140,8 +140,17 @@ export class OpenAiNativeHandler implements ApiHandler {
         break;
       }
       case "nectarine-alpha-new-reasoning-effort-2025-07-25":
+      case "gpt-5.5":
+      case "gpt-5.5-chat-latest":
+      case "gpt-5.5-codex":
+      case "gpt-5.4":
+      case "gpt-5.4-mini":
+      case "gpt-5.4-nano":
+      case "gpt-5.3-codex":
+      case "gpt-5.3-codex-spark":
       case "gpt-5.2":
       case "gpt-5.2-chat-latest":
+      case "gpt-5.2-codex":
       case "gpt-5.1-2025-11-13":
       case "gpt-5.1":
       case "gpt-5.1-codex":

@@ -143,9 +143,32 @@ export interface OpenAiCompatibleModelInfo extends ModelInfo {
 // Anthropic
 // https://docs.anthropic.com/en/docs/about-valoride/models // prices updated 2025-01-02
 export type AnthropicModelId = keyof typeof anthropicModels;
-export const anthropicDefaultModelId: AnthropicModelId =
-  "claude-sonnet-4-5-20250929";
+export const anthropicDefaultModelId: AnthropicModelId = "claude-sonnet-4-7x";
 export const anthropicModels = {
+  "claude-sonnet-4-7x": {
+    maxTokens: 64_000,
+    contextWindow: 200_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 3.0,
+    outputPrice: 15.0,
+    cacheWritesPrice: 3.75,
+    cacheReadsPrice: 0.3,
+    description:
+      "Claude Sonnet 4.7x - frontier Sonnet preset for agentic coding, long tool loops, and high-context repository work.",
+  },
+  "claude-opus-4-7x": {
+    maxTokens: 128_000,
+    contextWindow: 200_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 5.0,
+    outputPrice: 25.0,
+    cacheWritesPrice: 6.25,
+    cacheReadsPrice: 0.5,
+    description:
+      "Claude Opus 4.7x - highest-capability Claude preset for complex planning, architecture, and agent orchestration.",
+  },
   "claude-sonnet-4-6": {
     maxTokens: 64_000,
     contextWindow: 200_000,
@@ -567,8 +590,7 @@ export const minimaxModels = {
   },
 } as const satisfies Record<string, OpenAiCompatibleModelInfo>;
 export type MinimaxModelId = keyof typeof minimaxModels;
-export const minimaxDefaultModelId =
-  "MiniMax-M2.7" satisfies MinimaxModelId;
+export const minimaxDefaultModelId = "MiniMax-M2.7" satisfies MinimaxModelId;
 
 // Vertex AI
 // https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-valoride
@@ -957,12 +979,149 @@ export const geminiModels = {
   },
 } as const satisfies Record<string, ModelInfo>;
 
+// Ollama local models
+export const ollamaDefaultModelId = "gemma4";
+export const ollamaModelPresets = {
+  gemma4: {
+    maxTokens: 8192,
+    contextWindow: 128_000,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPrice: 0,
+    outputPrice: 0,
+    temperature: 1,
+    description:
+      "Gemma4 local default in Ollama. 128K context, multimodal input, and strong agentic coding performance on local hardware.",
+  },
+  "gemma4:latest": {
+    maxTokens: 8192,
+    contextWindow: 128_000,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPrice: 0,
+    outputPrice: 0,
+    temperature: 1,
+    description:
+      "Gemma4 latest Ollama tag with 128K context and text/image input.",
+  },
+  "gemma4:e2b": {
+    maxTokens: 8192,
+    contextWindow: 128_000,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPrice: 0,
+    outputPrice: 0,
+    temperature: 1,
+    description:
+      "Gemma4 E2B local model: smaller 128K-context multimodal Gemma4 variant for faster local runs.",
+  },
+  "gemma4:e4b": {
+    maxTokens: 8192,
+    contextWindow: 128_000,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPrice: 0,
+    outputPrice: 0,
+    temperature: 1,
+    description:
+      "Gemma4 E4B local model: balanced 128K-context multimodal Gemma4 variant.",
+  },
+  "gemma4:26b": {
+    maxTokens: 8192,
+    contextWindow: 256_000,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPrice: 0,
+    outputPrice: 0,
+    temperature: 1,
+    description:
+      "Gemma4 26B local model: 256K context MoE variant for high-quality local agent work.",
+  },
+  "gemma4:31b": {
+    maxTokens: 8192,
+    contextWindow: 256_000,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPrice: 0,
+    outputPrice: 0,
+    temperature: 1,
+    description:
+      "Gemma4 31B local model: 256K context dense variant for capable local reasoning.",
+  },
+} as const satisfies Record<string, OpenAiCompatibleModelInfo>;
+export type OllamaModelPresetId = keyof typeof ollamaModelPresets;
+
 // OpenAI Native
 // https://openai.com/api/pricing/
 export type OpenAiNativeModelId = keyof typeof openAiNativeModels;
-export const openAiNativeDefaultModelId: OpenAiNativeModelId =
-  "gpt-5.2";
+export const openAiNativeDefaultModelId: OpenAiNativeModelId = "gpt-5.5";
 export const openAiNativeModels = {
+  "gpt-5.5": {
+    maxTokens: 128_000,
+    contextWindow: 1_050_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 5.0,
+    outputPrice: 30.0,
+    cacheReadsPrice: 0.5,
+    description:
+      "GPT-5.5 frontier model preset for high-capability coding and agentic workflows.",
+  },
+  "gpt-5.5-chat-latest": {
+    maxTokens: 128_000,
+    contextWindow: 1_050_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 5.0,
+    outputPrice: 30.0,
+    cacheReadsPrice: 0.5,
+    description:
+      "GPT-5.5 ChatGPT-style latest alias for interactive assistant workflows.",
+  },
+  "gpt-5.5-codex": {
+    maxTokens: 128_000,
+    contextWindow: 1_050_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 5.0,
+    outputPrice: 30.0,
+    cacheReadsPrice: 0.5,
+    description:
+      "GPT-5.5 Codex preset for long-horizon code editing and autonomous engineering tasks.",
+  },
+  "gpt-5.4": {
+    maxTokens: 128_000,
+    contextWindow: 1_050_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 2.5,
+    outputPrice: 15.0,
+    cacheReadsPrice: 0.25,
+    description:
+      "GPT-5.4 frontier model for agentic, coding, and professional workflows.",
+  },
+  "gpt-5.4-mini": {
+    maxTokens: 128_000,
+    contextWindow: 400_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 0.75,
+    outputPrice: 4.5,
+    cacheReadsPrice: 0.075,
+    description:
+      "GPT-5.4 mini for lower-latency coding, computer use, and subagent workflows.",
+  },
+  "gpt-5.4-nano": {
+    maxTokens: 128_000,
+    contextWindow: 400_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 0.2,
+    outputPrice: 1.25,
+    cacheReadsPrice: 0.02,
+    description:
+      "GPT-5.4 nano for fast, low-cost classification, extraction, ranking, and subagent tasks.",
+  },
   "gpt-5.3-codex": {
     maxTokens: 128_000,
     contextWindow: 400_000,

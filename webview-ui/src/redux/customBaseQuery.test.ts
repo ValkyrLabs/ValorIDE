@@ -115,6 +115,37 @@ describe("customBaseQuery", () => {
     );
 
     expect(headersFromFetchCall(fetchMock).get("authorization")).toBeNull();
+    expect(credentialsFromFetchCall(fetchMock)).toBe("omit");
+    expect(urlFromFetchCall(fetchMock)).toBe(
+      "https://api.example.test/v1/auth/login",
+    );
+  });
+
+  it("keeps login on the /v1 API base when the configured host is a bare origin", async () => {
+    setValkyraiHost("https://api.example.test");
+    const fetchMock = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ token: "fresh-token" }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await customBaseQuery(
+      {
+        url: "/auth/login",
+        method: "POST",
+        body: { username: "super", password: "password" },
+      },
+      baseQueryApi,
+      {},
+    );
+
+    expect(urlFromFetchCall(fetchMock)).toBe(
+      "https://api.example.test/v1/auth/login",
+    );
+    expect(credentialsFromFetchCall(fetchMock)).toBe("omit");
   });
 
   it("clears persisted auth when api-0 rejects a replaced session", async () => {

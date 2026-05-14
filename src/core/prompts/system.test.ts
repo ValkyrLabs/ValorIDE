@@ -6,11 +6,8 @@ jest.mock("os-name", () => ({
   default: () => "Mock OS",
 }));
 
-// Use dynamic import so the mock above is applied before loading the module under test.
-let SYSTEM_PROMPT: typeof import("./system").SYSTEM_PROMPT;
-beforeAll(async () => {
-  ({ SYSTEM_PROMPT } = await import("./system"));
-});
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { SYSTEM_PROMPT } = require("./system") as typeof import("./system");
 
 describe("SYSTEM_PROMPT", () => {
   const mcpHubStub = {
@@ -31,7 +28,9 @@ describe("SYSTEM_PROMPT", () => {
 
     expect(prompt).toContain("PLAN MODE — TOOL USE IS OFF");
     expect(prompt).toContain("plan_mode_respond");
-    expect(prompt).toContain("(Browser unavailable — use Playwright for UI verification)");
+    expect(prompt).toContain(
+      "(Browser unavailable — use Playwright for UI verification)",
+    );
     expect(prompt).not.toContain("**Browser flow");
   });
 
@@ -48,5 +47,22 @@ describe("SYSTEM_PROMPT", () => {
 
     expect(prompt).toContain("ACT MODE — FULL TOOL USE ENABLED");
     expect(prompt).toContain("**Browser flow");
+  });
+
+  it("injects GrayMatter agent context when supplied by the task runtime", async () => {
+    const chatSettings: ChatSettings = { mode: "act" };
+    const prompt = await SYSTEM_PROMPT(
+      "/tmp",
+      false,
+      mcpHubStub,
+      "/tmp/thorapi",
+      DEFAULT_BROWSER_SETTINGS,
+      chatSettings,
+      "GRAYMATTER OPERATING CONTEXT\n- [gm:memory-1] decision Use generated ThorAPI services.",
+    );
+
+    expect(prompt).toContain("§6.5 GRAYMATTER OPERATING CONTEXT");
+    expect(prompt).toContain("[gm:memory-1] decision");
+    expect(prompt).toContain("Use generated ThorAPI services.");
   });
 });

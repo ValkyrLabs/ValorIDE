@@ -2367,9 +2367,15 @@ export const ChatRowContent = ({
           // the prompt next to the built summary card while still showing rich
           // completion details when provided.
           const initialPromptText = valorideMessages?.[0]?.text;
+          const hasSummary = !!message.summaryMarkdown;
+          // Only hide text if there's a summary AND text matches the initial prompt
           const shouldHideText = Boolean(
+            hasSummary &&
             initialPromptText && text?.trim() === initialPromptText.trim(),
           );
+          if (!text && !hasSummary && !hasChanges) {
+            return null; // nothing to show
+          }
           return (
             <>
               <div

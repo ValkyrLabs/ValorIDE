@@ -1,0 +1,128 @@
+.capability-command-center {
+  border-bottom: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.25));
+  background: var(--vscode-sideBar-background, rgba(30, 30, 30, 0.92));
+  color: var(--vscode-foreground);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.capability-command-center__topline,
+.capability-command-center__grid {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+}
+
+.capability-command-center__topline {
+  justify-content: space-between;
+}
+
+.capability-command-center__identity,
+.capability-command-center__model {
+  align-items: center;
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+}
+
+.capability-command-center__identity strong,
+.capability-command-center__model span,
+.capability-command-center__host,
+.capability-command-center__command-id {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.capability-command-center__identity strong {
+  max-width: 150px;
+}
+
+.capability-command-center__host {
+  color: var(--vscode-descriptionForeground);
+  max-width: 240px;
+}
+
+.capability-command-center__model {
+  color: var(--vscode-descriptionForeground);
+  justify-content: flex-end;
+  max-width: 45%;
+}
+
+.capability-command-center__grid {
+  flex-wrap: wrap;
+}
+
+.capability-command-center__pill,
+.capability-command-center__command {
+  align-items: center;
+  border: 1px solid var(--vscode-input-border, rgba(128, 128, 128, 0.28));
+  border-radius: 6px;
+  display: inline-flex;
+  gap: 6px;
+  min-height: 28px;
+  min-width: 0;
+  padding: 4px 8px;
+}
+
+.capability-command-center__pill {
+  background: var(--vscode-editorWidget-background, rgba(36, 36, 36, 0.82));
+}
+
+.capability-command-center__pill-title {
+  font-weight: 600;
+}
+
+.capability-command-center__pill-detail {
+  color: var(--vscode-descriptionForeground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.capability-command-center__pill--ok {
+  border-color: rgba(56, 166, 103, 0.6);
+}
+
+.capability-command-center__pill--warn {
+  border-color: rgba(210, 153, 34, 0.65);
+}
+
+.capability-command-center__pill--error {
+  border-color: rgba(248, 81, 73, 0.65);
+}
+
+.capability-command-center__command {
+  background: var(--vscode-editor-background, rgba(24, 24, 24, 0.76));
+  flex: 1 1 280px;
+  justify-content: space-between;
+}
+
+.capability-command-center__command-meta {
+  align-items: center;
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+}
+
+.capability-command-center__command-status {
+  color: var(--vscode-descriptionForeground);
+  flex: 0 0 auto;
+}
+
+@media (max-width: 640px) {
+  .capability-command-center__topline {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .capability-command-center__model {
+    justify-content: flex-start;
+    max-width: 100%;
+  }
+}

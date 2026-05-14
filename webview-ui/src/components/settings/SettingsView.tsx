@@ -8,7 +8,10 @@ import {
 } from "@vscode/webview-ui-toolkit/react";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
-import { validateApiConfiguration, validateModelId } from "@thorapi/utils/validate";
+import {
+  validateApiConfiguration,
+  validateModelId,
+} from "@thorapi/utils/validate";
 import { vscode } from "@thorapi/utils/vscode";
 import SettingsButton from "@thorapi/components/common/SettingsButton";
 import ApiOptions from "./ApiOptions";
@@ -531,7 +534,9 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
                 label="P2P"
                 value={value}
                 kind={kind as any}
-                title={hasError ? String(communicationService.error) : undefined}
+                title={
+                  hasError ? String(communicationService.error) : undefined
+                }
               />
             </div>
             <p className="text-xs text-(--vscode-descriptionForeground) mb-2">
@@ -541,7 +546,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
             <VSCodeTextField
               value={valkyraiHostInput}
               onInput={(e: any) => setValkyraiHostInput(e.target?.value ?? "")}
-              placeholder="https://api-0.valkyrlabs.com"
+              placeholder="https://api-0.valkyrlabs.com/v1"
             >
               Base URL
             </VSCodeTextField>
@@ -549,9 +554,12 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
               <div
                 className="text-xs mt-1 px-2 py-1 rounded"
                 style={{
-                  color: "var(--vscode-inputValidation-errorForeground, #f48771)",
-                  background: "var(--vscode-inputValidation-errorBackground, #5a1d1d)",
-                  border: "1px solid var(--vscode-inputValidation-errorBorder, #f48771)",
+                  color:
+                    "var(--vscode-inputValidation-errorForeground, #f48771)",
+                  background:
+                    "var(--vscode-inputValidation-errorBackground, #5a1d1d)",
+                  border:
+                    "1px solid var(--vscode-inputValidation-errorBorder, #f48771)",
                 }}
               >
                 {valkyraiHostError}

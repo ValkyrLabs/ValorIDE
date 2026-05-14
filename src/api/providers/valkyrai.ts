@@ -7,7 +7,10 @@ import {
 } from "@shared/api";
 import { ApiStream } from "../transform/stream";
 import { callValkyraiLlm } from "../../services/ValkyraiLlmService";
-import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
+import {
+  getValkyraiBasePath,
+  normalizeValkyraiHost,
+} from "@utils/serverValkyraiHost";
 
 function extractUserText(
   message: Anthropic.Messages.MessageParam | undefined,
@@ -52,7 +55,9 @@ export class ValkyraiHandler implements ApiHandler {
     _systemPrompt: string,
     messages: Anthropic.Messages.MessageParam[],
   ): ApiStream {
-    const host = this.options.valkyraiHost || getValkyraiBasePath();
+    const host = normalizeValkyraiHost(
+      this.options.valkyraiHost || getValkyraiBasePath(),
+    );
     const serviceId =
       this.options.valkyraiServiceId || this.options.apiModelId || "";
     const jwt = this.options.valkyraiJwt;

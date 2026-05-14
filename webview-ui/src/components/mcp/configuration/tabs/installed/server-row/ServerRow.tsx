@@ -20,6 +20,7 @@ import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import { McpServiceClient } from "@thorapi/services/grpc-client";
 import { convertProtoMcpServersToMcpServers } from "@shared/proto-conversions/mcp/mcp-server-conversion";
 import { McpServers, UpdateMcpTimeoutRequest } from "@shared/proto/mcp";
+import McpDiagnosticsPanel from "./McpDiagnosticsPanel";
 // constant JSX.Elements
 const TimeoutOptions = [
   { value: "30", label: "30 seconds" },
@@ -314,6 +315,9 @@ const ServerRow = ({
           >
             {isDeleting ? "Deleting..." : "Delete Server"}
           </DangerButton>
+          <div style={{ padding: "0 10px 10px 10px" }}>
+            <McpDiagnosticsPanel server={server} />
+          </div>
         </div>
       ) : (
         isExpanded && (
@@ -337,6 +341,7 @@ const ServerRow = ({
                 ].length || 0}
                 )
               </VSCodePanelTab>
+              <VSCodePanelTab id="diagnostics">Diagnostics</VSCodePanelTab>
 
               <VSCodePanelView id="tools-view">
                 {server.tools && server.tools.length > 0 ? (
@@ -384,8 +389,8 @@ const ServerRow = ({
 
               <VSCodePanelView id="resources-view">
                 {(server.resources && server.resources.length > 0) ||
-                  (server.resourceTemplates &&
-                    server.resourceTemplates.length > 0) ? (
+                (server.resourceTemplates &&
+                  server.resourceTemplates.length > 0) ? (
                   <div
                     style={{
                       display: "flex",
@@ -416,6 +421,9 @@ const ServerRow = ({
                     No resources found
                   </div>
                 )}
+              </VSCodePanelView>
+              <VSCodePanelView id="diagnostics-view">
+                <McpDiagnosticsPanel server={server} />
               </VSCodePanelView>
             </VSCodePanels>
 

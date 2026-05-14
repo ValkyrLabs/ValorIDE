@@ -144,7 +144,7 @@ Expected: PASS.
 
 ```tsx
 render(
-  <TaskListWidget tasks={[{ id: "1", title: "Do X", status: "completed" }]} />
+  <TaskListWidget tasks={[{ id: "1", title: "Do X", status: "completed" }]} />,
 );
 expect(screen.getByText("Do X")).toBeInTheDocument();
 expect(screen.getByLabelText(/Task status/i)).toHaveTextContent("completed");

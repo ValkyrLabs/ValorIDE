@@ -13,15 +13,26 @@ import {
 } from "@shared/api";
 
 describe("model catalog defaults", () => {
-  it("uses latest Anthropic Claude 4.5 as default", () => {
-    expect(anthropicDefaultModelId).toBe("claude-sonnet-4-5-20250929");
+  it("uses the requested Claude 4.7x generation as the Anthropic default", () => {
+    expect(anthropicDefaultModelId).toBe("claude-sonnet-4-7x");
+    expect(anthropicModels).toHaveProperty("claude-sonnet-4-7x");
+    expect(anthropicModels).toHaveProperty("claude-opus-4-7x");
     expect(anthropicModels).toHaveProperty("claude-opus-4-5-20251101");
     expect(anthropicModels).toHaveProperty("claude-opus-4-6");
     expect(anthropicModels).toHaveProperty("claude-sonnet-4-6");
   });
 
-  it("exposes ChatGPT 5.2 as the OpenAI native default", () => {
-    expect(openAiNativeDefaultModelId).toBe("gpt-5.2");
+  it("exposes GPT 5.5 as the OpenAI native default while keeping official GPT 5.2 entries", () => {
+    expect(openAiNativeDefaultModelId).toBe("gpt-5.5");
+    expect(openAiNativeModels["gpt-5.5"]).toBeDefined();
+    expect(openAiNativeModels["gpt-5.5"]?.contextWindow).toBe(1_050_000);
+    expect(openAiNativeModels["gpt-5.5"]?.inputPrice).toBe(5);
+    expect(openAiNativeModels["gpt-5.5"]?.outputPrice).toBe(30);
+    expect(openAiNativeModels["gpt-5.5-chat-latest"]).toBeDefined();
+    expect(openAiNativeModels["gpt-5.5-codex"]).toBeDefined();
+    expect(openAiNativeModels["gpt-5.4"]).toBeDefined();
+    expect(openAiNativeModels["gpt-5.4-mini"]).toBeDefined();
+    expect(openAiNativeModels["gpt-5.4-nano"]).toBeDefined();
     expect(openAiNativeModels["gpt-5.2"]).toBeDefined();
     expect(openAiNativeModels["gpt-5.2"]?.supportsPromptCache).toBe(true);
     expect(openAiNativeModels["gpt-5.2-chat-latest"]).toBeDefined();
@@ -33,8 +44,11 @@ describe("model catalog defaults", () => {
 
   it("defaults Gemini to the Gemini 3 generation", () => {
     expect(geminiDefaultModelId).toBe("gemini-3-pro-preview");
-    expect((Object.keys(geminiModels) as string[])).toEqual(
-      expect.arrayContaining(["gemini-3.1-pro-preview", "gemini-3-flash-preview"]),
+    expect(Object.keys(geminiModels) as string[]).toEqual(
+      expect.arrayContaining([
+        "gemini-3.1-pro-preview",
+        "gemini-3-flash-preview",
+      ]),
     );
   });
 

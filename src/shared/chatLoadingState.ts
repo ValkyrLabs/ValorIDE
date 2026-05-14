@@ -88,12 +88,18 @@ export function deriveChatLoadingState({
     inlineSources.push("command");
   }
 
+  // Check if the response is complete (completion_result or successful final message)
+  const isResponseComplete =
+    (lastMessage?.say === "completion_result" && lastMessage?.partial !== true) ||
+    (lastMessage?.ask === "completion_result" && lastMessage?.partial !== true);
+
   const isWaitingForResponse =
-    apiReqInFlight ||
-    lastMessage?.partial === true ||
-    (textAreaDisabled && !enableButtons) ||
-    (lastMessage?.ask === "followup" && lastMessage?.partial) ||
-    isCommandStillRunning;
+    !isResponseComplete &&
+    (apiReqInFlight ||
+      lastMessage?.partial === true ||
+      (textAreaDisabled && !enableButtons) ||
+      (lastMessage?.ask === "followup" && lastMessage?.partial) ||
+      isCommandStillRunning);
 
   return {
     isChatLoading: isWaitingForResponse,

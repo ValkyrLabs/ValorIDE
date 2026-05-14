@@ -10,6 +10,9 @@ import { BrowserSettings } from "@shared/BrowserSettings";
 import { ChatSettings } from "@shared/ChatSettings";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
 import { SelectedLlmDetails } from "@shared/llm";
+import { normalizeValkyraiHost } from "@utils/serverValkyraiHost";
+import type { GrayMatterSessionState } from "@services/graymatter/GrayMatterSessionService";
+import type { AgenticCapabilityCommandCenterState } from "@shared/AgenticState";
 
 import { ValorIDERulesToggles } from "@shared/valoride-rules";
 /*
@@ -99,6 +102,14 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     ollamaModelId,
     ollamaBaseUrl,
     ollamaApiOptionsCtxNum,
+    ollamaRequestTimeout,
+    ollamaKeepAlive,
+    ollamaTemperature,
+    ollamaTopP,
+    ollamaTopK,
+    ollamaRepeatPenalty,
+    ollamaNumPredict,
+    ollamaMirostat,
     lmStudioModelId,
     lmStudioBaseUrl,
     anthropicBaseUrl,
@@ -157,6 +168,8 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     globalValorIDERulesToggles,
     authenticatedPrincipal,
     isLoggedIn,
+    grayMatterSession,
+    agenticState,
     selectedLlmDetails,
   ] = await Promise.all([
     getGlobalState(context, "apiProvider") as Promise<ApiProvider | undefined>,
@@ -195,6 +208,18 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     getGlobalState(context, "ollamaApiOptionsCtxNum") as Promise<
       string | undefined
     >,
+    getGlobalState(context, "ollamaRequestTimeout") as Promise<
+      string | undefined
+    >,
+    getGlobalState(context, "ollamaKeepAlive") as Promise<string | undefined>,
+    getGlobalState(context, "ollamaTemperature") as Promise<string | undefined>,
+    getGlobalState(context, "ollamaTopP") as Promise<string | undefined>,
+    getGlobalState(context, "ollamaTopK") as Promise<string | undefined>,
+    getGlobalState(context, "ollamaRepeatPenalty") as Promise<
+      string | undefined
+    >,
+    getGlobalState(context, "ollamaNumPredict") as Promise<string | undefined>,
+    getGlobalState(context, "ollamaMirostat") as Promise<string | undefined>,
     getGlobalState(context, "lmStudioModelId") as Promise<string | undefined>,
     getGlobalState(context, "lmStudioBaseUrl") as Promise<string | undefined>,
     getGlobalState(context, "anthropicBaseUrl") as Promise<string | undefined>,
@@ -299,6 +324,12 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
       any | undefined
     >,
     getGlobalState(context, "isLoggedIn") as Promise<boolean | undefined>,
+    getGlobalState(context, "grayMatterSession") as Promise<
+      GrayMatterSessionState | undefined
+    >,
+    getGlobalState(context, "agenticState") as Promise<
+      AgenticCapabilityCommandCenterState | undefined
+    >,
     getGlobalState(context, "selectedLlmDetails") as Promise<
       SelectedLlmDetails | undefined
     >,
@@ -362,8 +393,9 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     );
   }
 
-  const normalizedValkyraiHost =
-    configuredValkyraiHost?.trim() || valkyraiHost || undefined;
+  const normalizedValkyraiHost = normalizeValkyraiHost(
+    configuredValkyraiHost || valkyraiHost,
+  );
 
   return {
     apiConfiguration: {
@@ -391,6 +423,14 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
       ollamaModelId,
       ollamaBaseUrl,
       ollamaApiOptionsCtxNum,
+      ollamaRequestTimeout,
+      ollamaKeepAlive,
+      ollamaTemperature,
+      ollamaTopP,
+      ollamaTopK,
+      ollamaRepeatPenalty,
+      ollamaNumPredict,
+      ollamaMirostat,
       lmStudioModelId,
       lmStudioBaseUrl,
       anthropicBaseUrl,
@@ -454,6 +494,8 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     planActSeparateModelsSetting,
     authenticatedPrincipal,
     isLoggedIn: isLoggedIn || false,
+    grayMatterSession,
+    agenticState,
     selectedLlmDetails,
   };
 }
@@ -486,6 +528,14 @@ export async function updateApiConfiguration(
     ollamaModelId,
     ollamaBaseUrl,
     ollamaApiOptionsCtxNum,
+    ollamaRequestTimeout,
+    ollamaKeepAlive,
+    ollamaTemperature,
+    ollamaTopP,
+    ollamaTopK,
+    ollamaRepeatPenalty,
+    ollamaNumPredict,
+    ollamaMirostat,
     lmStudioModelId,
     lmStudioBaseUrl,
     anthropicBaseUrl,
@@ -563,6 +613,18 @@ export async function updateApiConfiguration(
     "ollamaApiOptionsCtxNum",
     ollamaApiOptionsCtxNum,
   );
+  await updateGlobalState(
+    context,
+    "ollamaRequestTimeout",
+    ollamaRequestTimeout,
+  );
+  await updateGlobalState(context, "ollamaKeepAlive", ollamaKeepAlive);
+  await updateGlobalState(context, "ollamaTemperature", ollamaTemperature);
+  await updateGlobalState(context, "ollamaTopP", ollamaTopP);
+  await updateGlobalState(context, "ollamaTopK", ollamaTopK);
+  await updateGlobalState(context, "ollamaRepeatPenalty", ollamaRepeatPenalty);
+  await updateGlobalState(context, "ollamaNumPredict", ollamaNumPredict);
+  await updateGlobalState(context, "ollamaMirostat", ollamaMirostat);
   await updateGlobalState(context, "lmStudioModelId", lmStudioModelId);
   await updateGlobalState(context, "lmStudioBaseUrl", lmStudioBaseUrl);
   await updateGlobalState(context, "anthropicBaseUrl", anthropicBaseUrl);
@@ -616,7 +678,11 @@ export async function updateApiConfiguration(
   await storeSecret(context, "valorideApiKey", valorideApiKey);
   await storeSecret(context, "sambanovaApiKey", sambanovaApiKey);
   // Valkyrai pass-through
-  await updateGlobalState(context, "valkyraiHost", valkyraiHost);
+  await updateGlobalState(
+    context,
+    "valkyraiHost",
+    normalizeValkyraiHost(valkyraiHost),
+  );
   await updateGlobalState(context, "valkyraiServiceId", valkyraiServiceId);
   await storeSecret(context, "valkyraiJwt", valkyraiJwt);
   await updateGlobalState(context, "favoritedModelIds", favoritedModelIds);

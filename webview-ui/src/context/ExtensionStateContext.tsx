@@ -267,30 +267,30 @@ export const ExtensionStateContextProvider: React.FC<{
         const config = incoming.apiConfiguration;
         const hasKey = config
           ? [
-              config.apiKey,
-              config.openRouterApiKey,
-              config.awsRegion,
-              config.vertexProjectId,
-              config.openAiApiKey,
-              config.ollamaModelId,
-              config.lmStudioModelId,
-              config.liteLlmApiKey,
-              config.geminiApiKey,
-              config.openAiNativeApiKey,
-              config.deepSeekApiKey,
-              config.moonshotApiKey,
-              config.minimaxApiKey,
-              config.requestyApiKey,
-              config.togetherApiKey,
-              config.qwenApiKey,
-              config.doubaoApiKey,
-              config.mistralApiKey,
-              config.vsCodeLmModelSelector,
-              config.valorideApiKey,
-              config.asksageApiKey,
-              config.xaiApiKey,
-              config.sambanovaApiKey,
-            ].some((key) => key !== undefined)
+            config.apiKey,
+            config.openRouterApiKey,
+            config.awsRegion,
+            config.vertexProjectId,
+            config.openAiApiKey,
+            config.ollamaModelId,
+            config.lmStudioModelId,
+            config.liteLlmApiKey,
+            config.geminiApiKey,
+            config.openAiNativeApiKey,
+            config.deepSeekApiKey,
+            config.moonshotApiKey,
+            config.minimaxApiKey,
+            config.requestyApiKey,
+            config.togetherApiKey,
+            config.qwenApiKey,
+            config.doubaoApiKey,
+            config.mistralApiKey,
+            config.vsCodeLmModelSelector,
+            config.valorideApiKey,
+            config.asksageApiKey,
+            config.xaiApiKey,
+            config.sambanovaApiKey,
+          ].some((key) => key !== undefined)
           : false;
         // Show welcome only if NO API keys AND NOT authenticated (both backend + local storage)
         const isAuthed = incoming.isLoggedIn || incoming.authenticatedPrincipal;
@@ -315,7 +315,9 @@ export const ExtensionStateContextProvider: React.FC<{
               if (n.includes("dark")) themeName = "dark";
             }
             setValkyrTheme(themeName, { persist: false });
-          } catch {}
+          } catch (error) {
+            console.warn("Failed to apply theme metadata", error);
+          }
         }
         break;
       }
@@ -366,6 +368,15 @@ export const ExtensionStateContextProvider: React.FC<{
         setMcpServers(message.mcpServers ?? []);
         setMcpServersLoading(false);
         setMcpServersError(null);
+        break;
+      }
+      case "agenticState": {
+        if (message.agenticState) {
+          setState((prevState) => ({
+            ...prevState,
+            agenticState: message.agenticState,
+          }));
+        }
         break;
       }
       case "mcpMarketplaceCatalog": {
@@ -434,6 +445,41 @@ export const ExtensionStateContextProvider: React.FC<{
           setApplications(apps);
           setApplicationsLoading(false);
           setApplicationsError(null);
+        }
+        break;
+      }
+      case "clearClientAuthState": {
+        // Clear all client-side authentication state
+        try {
+          // Clear sessionStorage
+          sessionStorage.removeItem("jwtToken");
+          sessionStorage.removeItem("authenticatedPrincipal");
+          sessionStorage.removeItem("authenticatedUser");
+          sessionStorage.removeItem("valoride.persistJwt");
+          sessionStorage.removeItem("valoride.instanceId");
+          sessionStorage.removeItem("valoride.startupDebit.sent");
+
+          // Clear localStorage
+          localStorage.removeItem("jwtToken");
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("authenticatedPrincipal");
+          localStorage.removeItem("authenticatedUser");
+          localStorage.removeItem("valoride.persistJwt");
+          localStorage.removeItem("valoride.instanceId");
+          localStorage.removeItem("valoride.startupDebit.sent");
+
+          // Clear React state
+          setJwtToken(undefined);
+          setAuthenticatedUser(undefined);
+
+          // Dispatch event to notify other components/bridges of logout
+          window.dispatchEvent(
+            new CustomEvent("jwtTokenChanged", {
+              detail: { token: null, source: "logout" },
+            }),
+          );
+        } catch (error) {
+          console.warn("Error clearing client auth state:", error);
         }
         break;
       }

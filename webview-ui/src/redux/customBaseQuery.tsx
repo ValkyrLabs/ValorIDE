@@ -1,6 +1,10 @@
 // customBaseQuery.ts
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { BaseQueryFn, FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import type {
+  BaseQueryFn,
+  FetchArgs,
+  FetchBaseQueryError,
+} from "@reduxjs/toolkit/query";
 import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 import { clearStoredAuthSession } from "@thorapi/utils/accessControl";
 
@@ -58,12 +62,22 @@ const buildBaseQuery = () =>
     },
   });
 
+const omitCredentials = (args: string | FetchArgs): FetchArgs =>
+  typeof args === "string"
+    ? { url: args, credentials: "omit" }
+    : { ...args, credentials: "omit" };
+
 const customBaseQuery: BaseQueryFn = async (args, api, extraOptions) => {
-  if (isLoginRequest(args)) {
+  const isLogin = isLoginRequest(args);
+  if (isLogin) {
     clearStoredAuthSession("pre-login");
   }
   const baseQuery = buildBaseQuery();
-  const result = await baseQuery(args, api, extraOptions);
+  const result = await baseQuery(
+    isLogin ? omitCredentials(args as string | FetchArgs) : args,
+    api,
+    extraOptions,
+  );
   if (isExpiredSessionError(result.error)) {
     clearStoredAuthSession("api-auth-error");
   }

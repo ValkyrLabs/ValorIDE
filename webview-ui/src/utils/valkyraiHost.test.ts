@@ -29,6 +29,16 @@ describe("valkyrai host overrides connection URLs", () => {
     expect(runtime.BASE_PATH).not.toBe(originalBasePath);
   });
 
+  it("normalizes a bare ValkyrAI origin to the /v1 API base path", async () => {
+    const runtime = await import("../thorapi/src/runtime");
+    const hostUtils = await import("./valkyraiHost");
+
+    hostUtils.setValkyraiHost("https://api-0.valkyrlabs.com");
+
+    expect(hostUtils.getValkyraiHost()).toBe("https://api-0.valkyrlabs.com/v1");
+    expect(runtime.BASE_PATH).toBe("https://api-0.valkyrlabs.com/v1");
+  });
+
   it("updates the websocket URL when the host changes even if an env websocket base is set", async () => {
     const { getWebsocketUrl } = await import("../websocket/websocket");
     const hostUtils = await import("./valkyraiHost");

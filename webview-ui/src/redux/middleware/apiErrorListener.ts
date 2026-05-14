@@ -5,6 +5,7 @@ import {
 } from "@reduxjs/toolkit";
 import {
   apiErrorReceived,
+  clearLastError,
   insufficientCreditsDetected,
   type ApiErrorPayload,
 } from "../slices/apiErrorsSlice";
@@ -76,6 +77,8 @@ apiErrorListener.startListening({
 
     if (isExpiredSessionPayload(status, data)) {
       clearStoredAuthSession("api-error-listener");
+      listenerApi.dispatch(clearLastError());
+      return;
     }
 
     if (isInsufficientCreditsPayload(data)) {

@@ -51,22 +51,29 @@ import {
   writeStoredPrincipal,
   readStoredPrincipal,
 } from "@thorapi/utils/accessControl";
+import { buildAccountLoginSuccessMessage } from "./accountAuthBridge";
 
 type AccountViewProps = {
   onDone: () => void;
   serverConsoleNeedsAttention: boolean;
   initialActiveTab?:
-  | "login"
-  | "account"
-  | "applications"
-  | "generatedFiles"
-  | "userPreferences"
-  | "serverConsole";
+    | "login"
+    | "account"
+    | "applications"
+    | "generatedFiles"
+    | "userPreferences"
+    | "serverConsole";
   onConsumeInitialActiveTab?: () => void;
   onClearServerConsoleNeedsAttention: () => void;
 };
 
-const AccountView = ({ onDone, serverConsoleNeedsAttention, onClearServerConsoleNeedsAttention, initialActiveTab, onConsumeInitialActiveTab }: AccountViewProps) => {
+const AccountView = ({
+  onDone,
+  serverConsoleNeedsAttention,
+  onClearServerConsoleNeedsAttention,
+  initialActiveTab,
+  onConsumeInitialActiveTab,
+}: AccountViewProps) => {
   const { userInfo, authenticatedUser, isLoggedIn, jwtToken } =
     useExtensionState();
   // Read live messages once at top-level to respect Hooks rules
@@ -103,7 +110,12 @@ const AccountView = ({ onDone, serverConsoleNeedsAttention, onClearServerConsole
 
   // Default to login tab when unauthenticated, otherwise account
   const [activeTab, setActiveTab] = useState<
-    "login" | "account" | "applications" | "generatedFiles" | "userPreferences" | "serverConsole"
+    | "login"
+    | "account"
+    | "applications"
+    | "generatedFiles"
+    | "userPreferences"
+    | "serverConsole"
   >(authed ? "account" : "login");
 
   // Keep active tab in sync with authentication state
@@ -184,6 +196,7 @@ const AccountView = ({ onDone, serverConsoleNeedsAttention, onClearServerConsole
       if (result.user) {
         writeStoredPrincipal(result.user as any);
       }
+      vscode.postMessage(buildAccountLoginSuccessMessage(result));
 
       try {
         const instanceId = (() => {

@@ -49,6 +49,8 @@ import {
   openAiModelInfoSaneDefaults,
   openAiNativeDefaultModelId,
   openAiNativeModels,
+  ollamaDefaultModelId,
+  ollamaModelPresets,
   openRouterDefaultModelId,
   openRouterDefaultModelInfo,
   requestyDefaultModelId,
@@ -293,6 +295,25 @@ const ApiOptions = ({
     );
   };
 
+  const selectOllamaPreset = (modelId: string) => {
+    const preset =
+      ollamaModelPresets[modelId as keyof typeof ollamaModelPresets];
+    setApiConfiguration({
+      ...apiConfiguration,
+      ollamaModelId: modelId,
+      ollamaApiOptionsCtxNum:
+        preset?.contextWindow?.toString() ||
+        apiConfiguration?.ollamaApiOptionsCtxNum,
+      ollamaTemperature:
+        apiConfiguration?.ollamaTemperature ||
+        (preset && "temperature" in preset && preset.temperature !== undefined
+          ? String(preset.temperature)
+          : "1"),
+      ollamaTopP: apiConfiguration?.ollamaTopP || "0.95",
+      ollamaTopK: apiConfiguration?.ollamaTopK || "64",
+    });
+  };
+
   return (
     <div
       style={{
@@ -318,7 +339,9 @@ const ApiOptions = ({
           <VSCodeOption value="valkyrai">Valkyrai (LLM Details)</VSCodeOption>
           <VSCodeOption value="valoride">ValorIDE</VSCodeOption>
           <VSCodeOption value="openrouter">OpenRouter</VSCodeOption>
-          <VSCodeOption value="moonshot">Moonshot (Kimi2 / Kimi2.5)</VSCodeOption>
+          <VSCodeOption value="moonshot">
+            Moonshot (Kimi2 / Kimi2.5)
+          </VSCodeOption>
           <VSCodeOption value="minimax">MiniMax (M2.7)</VSCodeOption>
           <VSCodeOption value="anthropic">Anthropic</VSCodeOption>
           <VSCodeOption value="bedrock">Amazon Bedrock</VSCodeOption>
@@ -468,10 +491,9 @@ const ApiOptions = ({
             }}
           >
             If this field is blank, ValorIDE uses Codex OAuth credentials from{" "}
-            <code>~/.codex/auth.json</code>. Run <code>codex login</code> to
-            set that up. Any API key entered here is stored locally and only
-            used to make API requests from this extension.
-            {" "}
+            <code>~/.codex/auth.json</code>. Run <code>codex login</code> to set
+            that up. Any API key entered here is stored locally and only used to
+            make API requests from this extension.{" "}
             {!apiConfiguration?.openAiNativeApiKey && (
               <VSCodeLink
                 href="https://platform.openai.com/api-keys"
@@ -1847,10 +1869,10 @@ const ApiOptions = ({
           </p>
 
           <VSCodeTextField
-            value={apiConfiguration?.ollamaModelId || ""}
+            value={apiConfiguration?.ollamaModelId || ollamaDefaultModelId}
             style={{ width: "100%" }}
             onInput={handleInputChange("ollamaModelId")}
-            placeholder={"e.g. llama2, llama3.1, gemma2"}
+            placeholder={"e.g. gemma4, gemma4:26b, llama3.1"}
           >
             <span style={{ fontWeight: 500 }}>Model ID</span>
           </VSCodeTextField>
@@ -1862,12 +1884,54 @@ const ApiOptions = ({
               color: "var(--vscode-descriptionForeground)",
             }}
           >
-            The Ollama model to use (e.g., llama3.1, mistral, gemma2)
+            The Ollama model to use (e.g., gemma4, gemma4:26b, llama3.1)
           </p>
+
+          <div style={{ marginBottom: "12px" }}>
+            <p
+              style={{ fontSize: "12px", fontWeight: 500, marginBottom: "8px" }}
+            >
+              Recommended Local Models
+            </p>
+            <VSCodeRadioGroup
+              value={
+                Object.keys(ollamaModelPresets).includes(
+                  apiConfiguration?.ollamaModelId || ollamaDefaultModelId,
+                )
+                  ? apiConfiguration?.ollamaModelId || ollamaDefaultModelId
+                  : ""
+              }
+              onChange={(e) => {
+                const value = (e.target as HTMLInputElement)?.value;
+                if (value) {
+                  selectOllamaPreset(value);
+                }
+              }}
+            >
+              {Object.keys(ollamaModelPresets).map((model) => (
+                <VSCodeRadio
+                  key={model}
+                  value={model}
+                  checked={
+                    (apiConfiguration?.ollamaModelId ||
+                      ollamaDefaultModelId) === model
+                  }
+                >
+                  {model}
+                </VSCodeRadio>
+              ))}
+            </VSCodeRadioGroup>
+          </div>
 
           {ollamaModels.length > 0 && (
             <div style={{ marginBottom: "12px" }}>
-              <p style={{ fontSize: "12px", fontWeight: 500, marginBottom: "8px" }}>
+              <p
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 500,
+                  marginBottom: "8px",
+                }}
+              >
                 Available Models:
               </p>
               <VSCodeRadioGroup
@@ -1918,12 +1982,12 @@ const ApiOptions = ({
           </p>
 
           <VSCodeTextField
-            value={apiConfiguration?.ollamaRequestTimeout || "300000"}
+            value={apiConfiguration?.ollamaRequestTimeout || "600000"}
             style={{ width: "100%" }}
             onInput={handleInputChange("ollamaRequestTimeout")}
-            placeholder={"Default: 300000 (5 minutes)"}
+            placeholder={"Default: 600000 (10 minutes)"}
           >
-            <span style={{ fontWeight: 500 }}>Request Timeout (ms)</span>
+            <span style={{ fontWeight: 500 }}>Startup Timeout (ms)</span>
           </VSCodeTextField>
           <p
             style={{
@@ -1933,14 +1997,15 @@ const ApiOptions = ({
               color: "var(--vscode-descriptionForeground)",
             }}
           >
-            Maximum time to wait for chunks while streaming. Increase for slow models or large context (1000ms - 600000ms / 10 minutes max)
+            Maximum time to wait for the Ollama stream to start. Once streaming
+            begins, slow steady chunks keep running.
           </p>
 
           <VSCodeTextField
-            value={apiConfiguration?.ollamaKeepAlive || "5m"}
+            value={apiConfiguration?.ollamaKeepAlive || "30m"}
             style={{ width: "100%" }}
             onInput={handleInputChange("ollamaKeepAlive")}
-            placeholder={"Default: 5m"}
+            placeholder={"Default: 30m"}
           >
             <span style={{ fontWeight: 500 }}>Keep-Alive Duration</span>
           </VSCodeTextField>
@@ -1955,8 +2020,20 @@ const ApiOptions = ({
             How long to keep connection alive (e.g., 5m, 10s)
           </p>
 
-          <div style={{ borderTop: "1px solid var(--vscode-widget-border)", paddingTop: "12px", marginBottom: "12px" }}>
-            <p style={{ fontSize: "12px", fontWeight: 500, marginBottom: "12px" }}>
+          <div
+            style={{
+              borderTop: "1px solid var(--vscode-widget-border)",
+              paddingTop: "12px",
+              marginBottom: "12px",
+            }}
+          >
+            <p
+              style={{
+                fontSize: "12px",
+                fontWeight: 500,
+                marginBottom: "12px",
+              }}
+            >
               Advanced Model Parameters (optional):
             </p>
 
@@ -2099,9 +2176,9 @@ const ApiOptions = ({
               color: "var(--vscode-errorForeground)",
             }}
           >
-            <strong>Note:</strong> ValorIDE works best with capable models (e.g.,
-            Llama 3.1, Mistral, Gemma 2). Smaller models may not handle complex
-            prompts well.
+            <strong>Note:</strong> ValorIDE works best with capable models
+            (e.g., Llama 3.1, Mistral, Gemma 2). Smaller models may not handle
+            complex prompts well.
           </p>
         </div>
       )}
@@ -2291,8 +2368,7 @@ const ApiOptions = ({
                 createDropdown(deepSeekModels)}
               {selectedProvider === "moonshot" &&
                 createDropdown(moonshotModels)}
-              {selectedProvider === "minimax" &&
-                createDropdown(minimaxModels)}
+              {selectedProvider === "minimax" && createDropdown(minimaxModels)}
               {selectedProvider === "qwen" &&
                 createDropdown(
                   apiConfiguration?.qwenApiLine === "china"
@@ -2311,14 +2387,14 @@ const ApiOptions = ({
               selectedModelId === "claude-3-7-sonnet-20250219") ||
               (selectedProvider === "bedrock" &&
                 selectedModelId ===
-                "anthropic.claude-3-7-sonnet-20250219-v1:0") ||
+                  "anthropic.claude-3-7-sonnet-20250219-v1:0") ||
               (selectedProvider === "vertex" &&
                 selectedModelId === "claude-3-7-sonnet@20250219")) && (
-                <ThinkingBudgetSlider
-                  apiConfiguration={apiConfiguration}
-                  setApiConfiguration={setApiConfiguration}
-                />
-              )}
+              <ThinkingBudgetSlider
+                apiConfiguration={apiConfiguration}
+                setApiConfiguration={setApiConfiguration}
+              />
+            )}
 
             {selectedProvider === "xai" &&
               selectedModelId.includes("3-mini") && (
@@ -2750,10 +2826,27 @@ export function normalizeApiConfiguration(
           apiConfiguration?.openAiModelInfo || openAiModelInfoSaneDefaults,
       };
     case "ollama":
+      const ollamaModelId =
+        apiConfiguration?.ollamaModelId || ollamaDefaultModelId;
+      const ollamaPreset =
+        ollamaModelPresets[ollamaModelId as keyof typeof ollamaModelPresets];
+      const ollamaConfiguredContext = Number(
+        apiConfiguration?.ollamaApiOptionsCtxNum,
+      );
       return {
         selectedProvider: provider,
-        selectedModelId: apiConfiguration?.ollamaModelId || "",
-        selectedModelInfo: openAiModelInfoSaneDefaults,
+        selectedModelId: ollamaModelId,
+        selectedModelInfo: {
+          ...openAiModelInfoSaneDefaults,
+          ...(ollamaPreset || {}),
+          supportsPromptCache: false,
+          contextWindow:
+            Number.isFinite(ollamaConfiguredContext) &&
+            ollamaConfiguredContext > 0
+              ? ollamaConfiguredContext
+              : ollamaPreset?.contextWindow ||
+                openAiModelInfoSaneDefaults.contextWindow,
+        },
       };
     case "lmstudio":
       return {
