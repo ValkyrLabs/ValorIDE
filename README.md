@@ -9,7 +9,7 @@
 | [**Download on VS Marketplace**](https://marketplace.visualstudio.com/items?itemName=ValkyrLabsInc.valoride-dev) | [**Feature Requests**](https://github.com/valkyrlabs/valoride/discussions/categories/feature-requests?discussions_q=is%3Aopen+category%3A%22Feature+Requests%22+sort%3Atop) | [**Getting Started**](https://valkyrlabs.com/v1/docs/Products/ValorIDE/getting-started-new-coders/getting-started-with-valoride) |
 | :--------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------: |
 
-> ⚡ NEW: Claude 4.5 and GPT-5 Support
+> ⚡ Feb 20 - NEW MODELS: Gemini 3.1-pro, Claude 4.6, OpenAI GPT-5.3-Codex, Moonshot Kimi2.5, and more!
 
 ## What is Valor IDE?
 
@@ -357,7 +357,7 @@ Push → Open PR → CI runs → Changesetbot handles versioning + release.
 
 #### P2P Communication & WebSocket Integration
 
-- **WebSocket Mothership Integration**: Complete real-time communication system with Thor/STOMP broker connectivity, featuring bidirectional message routing and auto-reconnect capabilities.
+- **WebSocket Mothership Integration**: Complete real-time communication system with ThorAPI/STOMP broker connectivity, featuring bidirectional message routing and auto-reconnect capabilities.
 
 - **P2P Peer Discovery**: VSCode inter-instance communication with real-time peer count tracking, ping/ack/nack protocol, and visual status indicators.
 

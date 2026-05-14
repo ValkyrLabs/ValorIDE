@@ -6,7 +6,7 @@
 
 **Architecture:** Extend core task result payload with deterministic `summaryMarkdown`, surface it in chat inline + dedicated Summary tab using shared store selectors, consolidate provider config to a single VALKYRAI entry wired to LLMDetails, add a Task List widget backed by task state, and enhance streaming/UX (Gemini 3 + thermometer) in chat header using existing status signals.
 
-**Tech Stack:** TypeScript, VS Code extension API, React (webview-ui), Yarn, Jest/React Testing Library (webview-ui tests), ESLint/Prettier, Thor/ValkyrAI LLMDetails services.
+**Tech Stack:** TypeScript, VS Code extension API, React (webview-ui), Yarn, Jest/React Testing Library (webview-ui tests), ESLint/Prettier, ThorAPI/ValkyrAI LLMDetails services.
 
 ---
 
@@ -144,7 +144,7 @@ Expected: PASS.
 
 ```tsx
 render(
-  <TaskListWidget tasks={[{ id: "1", title: "Do X", status: "completed" }]} />,
+  <TaskListWidget tasks={[{ id: "1", title: "Do X", status: "completed" }]} />
 );
 expect(screen.getByText("Do X")).toBeInTheDocument();
 expect(screen.getByLabelText(/Task status/i)).toHaveTextContent("completed");

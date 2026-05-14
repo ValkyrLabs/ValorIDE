@@ -221,7 +221,6 @@ export class ThorAPIGeneratorService {
                 dependencies: {
                     react: "^18.0.0",
                     "@reduxjs/toolkit": "^1.9.0",
-                    "@tanstack/react-query": "^4.0.0",
                 },
             };
             fs.writeFileSync(path.join(appDir, "package.json"), JSON.stringify(packageJson, null, 2));

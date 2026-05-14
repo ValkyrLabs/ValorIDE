@@ -1,0 +1,299 @@
+openapi: 3.0.0
+info:
+  title: Analytics Platform API
+  version: 1.0.0
+paths:
+  /events:
+    post:
+      summary: Track event
+      operationId: trackEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EventCreate"
+      responses:
+        "201":
+          description: Event tracked
+  /metrics:
+    get:
+      summary: Get metrics
+      operationId: getMetrics
+      parameters:
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: metric
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Metrics data
+  /dashboards:
+    get:
+      summary: List dashboards
+      operationId: listDashboards
+      responses:
+        "200":
+          description: Dashboard list
+    post:
+      summary: Create dashboard
+      operationId: createDashboard
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DashboardCreate"
+      responses:
+        "201":
+          description: Dashboard created
+  /dashboards/{id}:
+    get:
+      summary: Get dashboard
+      operationId: getDashboard
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Dashboard details
+    put:
+      summary: Update dashboard
+      operationId: updateDashboard
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DashboardUpdate"
+      responses:
+        "200":
+          description: Dashboard updated
+  /alerts:
+    get:
+      summary: List alerts
+      operationId: listAlerts
+      responses:
+        "200":
+          description: Alert list
+    post:
+      summary: Create alert
+      operationId: createAlert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AlertCreate"
+      responses:
+        "201":
+          description: Alert created
+  /alerts/{id}:
+    get:
+      summary: Get alert
+      operationId: getAlert
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Alert details
+    put:
+      summary: Update alert
+      operationId: updateAlert
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AlertUpdate"
+      responses:
+        "200":
+          description: Alert updated
+
+components:
+  schemas:
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        properties:
+          type: object
+        userId:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    EventCreate:
+      type: object
+      required:
+        - name
+        - userId
+      properties:
+        name:
+          type: string
+        properties:
+          type: object
+        userId:
+          type: string
+    Metric:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        value:
+          type: number
+        timestamp:
+          type: string
+          format: date-time
+    Dashboard:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        widgets:
+          type: array
+          items:
+            $ref: "#/components/schemas/Widget"
+        createdAt:
+          type: string
+          format: date-time
+    DashboardCreate:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        widgets:
+          type: array
+          items:
+            $ref: "#/components/schemas/WidgetCreate"
+    DashboardUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        widgets:
+          type: array
+          items:
+            $ref: "#/components/schemas/WidgetCreate"
+    Widget:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - CHART
+            - TABLE
+            - GAUGE
+            - MAP
+        title:
+          type: string
+        metric:
+          type: string
+    WidgetCreate:
+      type: object
+      required:
+        - type
+        - title
+        - metric
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        metric:
+          type: string
+    Alert:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        metric:
+          type: string
+        condition:
+          type: string
+        threshold:
+          type: number
+        enabled:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+    AlertCreate:
+      type: object
+      required:
+        - name
+        - metric
+        - condition
+        - threshold
+      properties:
+        name:
+          type: string
+        metric:
+          type: string
+        condition:
+          type: string
+          enum:
+            - GT
+            - LT
+            - EQ
+            - GTE
+            - LTE
+        threshold:
+          type: number
+    AlertUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        threshold:
+          type: number
+        enabled:
+          type: boolean

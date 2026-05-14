@@ -252,22 +252,12 @@ h6 {
 }
 
 .card-header {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 153, 0, 0.15),
-    rgba(30, 229, 255, 0.1)
-  );
   border-bottom: 2px solid var(--glass-border);
   border-radius: var(--valkyr-border-radius) var(--valkyr-border-radius) 0 0 !important;
   padding: 1.5rem;
 }
 
 .card-header-fade {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 153, 0, 0.1),
-    rgba(30, 229, 255, 0.05)
-  );
   border-radius: var(--valkyr-border-radius) var(--valkyr-border-radius) 0 0 !important;
 }
 

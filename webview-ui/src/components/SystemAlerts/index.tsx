@@ -16,6 +16,7 @@ import { getApiMetrics } from "@shared/getApiMetrics";
 import BuyCredits from "@thorapi/components/BuyCredits";
 import { vscode } from "@thorapi/utils/vscode";
 import CoolButton from "../CoolButton";
+import { useSelector } from "react-redux";
 interface SystemAlert {
   id: string;
   type: "budget" | "blocker";
@@ -39,6 +40,7 @@ const SystemAlerts: React.FC = () => {
     new Set(),
   );
   const [showBuyCreditsModal, setShowBuyCreditsModal] = useState(false);
+  const apiErrors = useSelector((state: any) => state?.apiErrors);
 
   const accountId = useMemo(() => {
     const rawId = authenticatedUser?.id ?? userInfo?.id;
@@ -137,6 +139,38 @@ const SystemAlerts: React.FC = () => {
       }
     }
   }, [budgetAlerts, effectiveBalance, jwtToken, dismissedAlerts]);
+
+  // Check for API errors from RTK Query
+  useEffect(() => {
+    const apiError = apiErrors?.lastError;
+    if (!apiError) return;
+
+    const alertId = `api-${apiError.id}`;
+    if (dismissedAlerts.has(alertId)) return;
+
+    const isInsufficientCredits =
+      apiError?.data?.error === "INSUFFICIENT_CREDITS" ||
+      apiError?.data?.error === "INSUFFICIENT_FUNDS";
+
+    const newAlert: SystemAlert = {
+      id: alertId,
+      type: "blocker",
+      severity: "danger",
+      title: isInsufficientCredits ? "Insufficient Credits" : "API Error",
+      message: isInsufficientCredits
+        ? "You don't have enough credits to complete this request. Please add credits to continue."
+        : apiError.message || "ValorIDE encountered an error processing your request.",
+      timestamp: Date.now(),
+    };
+
+    setAlerts((prev) => {
+      const existing = prev.find((a) => a.id === alertId);
+      if (!existing) {
+        return [...prev, newAlert];
+      }
+      return prev;
+    });
+  }, [apiErrors?.lastError, dismissedAlerts]);
 
   // Check for blocker alerts (error states)
   useEffect(() => {
@@ -257,9 +291,9 @@ const SystemAlerts: React.FC = () => {
     typeof balanceData?.currentBalance === "number" &&
     balanceData.currentBalance <= budgetAlerts.criticalThreshold;
 
-  // Only show if user is logged in
-  const isLoggedIn = Boolean(jwtToken && (authenticatedUser || userInfo));
-  if (!isLoggedIn || (activeAlerts.length === 0 && !shouldShowBuyCreditsModal)) return null;
+  const hasVisibleAlerts =
+    activeAlerts.length > 0 || shouldShowBuyCreditsModal;
+  if (!hasVisibleAlerts) return null;
 
   return (
     <>

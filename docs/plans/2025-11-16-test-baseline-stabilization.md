@@ -41,7 +41,7 @@ Update the `"types"` array inside `compilerOptions` to include `"jest"` (keep ex
 
 Run: `npx tsc -p ./tsconfig.test.json --outDir out`
 
-Expected: `expect`/`jest` errors disappear, but the `rootDir` violation for `webview-ui/src/thor/*` still shows (addressed in Task 2).
+Expected: `expect`/`jest` errors disappear, but the `rootDir` violation for `webview-ui/src//*` still shows (addressed in Task 2).
 
 ---
 

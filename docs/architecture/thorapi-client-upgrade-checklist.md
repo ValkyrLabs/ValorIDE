@@ -8,7 +8,7 @@ When the ThorAPI client is regenerated (e.g., after an OpenAPI spec update), the
 
 - **Error:** `has no exported member named 'useGenerateApplicationMutation'`
 - **Action:**
-  - Open `src/thor/redux/services/ApplicationService.tsx`
+  - Open `src//redux/services/ApplicationService.tsx`
   - Use only the hooks/mutations that are actually exported (e.g., `useDeleteApplicationMutation`)
   - Remove or update any usage of missing hooks in your components.
 
@@ -18,7 +18,7 @@ When the ThorAPI client is regenerated (e.g., after an OpenAPI spec update), the
 
 - **Error:** `Expected 1-2 arguments, but got 0.`
 - **Action:**
-  - Open the relevant API file (e.g., `src/thor/api/LoginApi.ts`)
+  - Open the relevant API file (e.g., `src//api/LoginApi.ts`)
   - Update all calls to `getLoginList`, `getLogoutList`, `getPrincipalList`, etc. to provide the required `requestParameters` argument.
 
 ---

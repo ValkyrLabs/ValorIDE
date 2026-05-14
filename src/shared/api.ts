@@ -135,6 +135,30 @@ export type AnthropicModelId = keyof typeof anthropicModels;
 export const anthropicDefaultModelId: AnthropicModelId =
   "claude-sonnet-4-5-20250929";
 export const anthropicModels = {
+  "claude-sonnet-4-6": {
+    maxTokens: 64_000,
+    contextWindow: 200_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 3.0,
+    outputPrice: 15.0,
+    cacheWritesPrice: 3.75,
+    cacheReadsPrice: 0.3,
+    description:
+      "Claude Sonnet 4.6 - latest Sonnet generation with strong coding and agent performance.",
+  },
+  "claude-opus-4-6": {
+    maxTokens: 128_000,
+    contextWindow: 200_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 5.0,
+    outputPrice: 25.0,
+    cacheWritesPrice: 6.25,
+    cacheReadsPrice: 0.5,
+    description:
+      "Claude Opus 4.6 - most capable Claude model for complex coding and agent workflows.",
+  },
   "claude-sonnet-4-5-20250929": {
     maxTokens: 8_192,
     contextWindow: 200_000,
@@ -416,6 +440,19 @@ export const kimiOpenRouterModelIds = [
 // Moonshot AI Studio
 // https://platform.moonshot.ai/docs/pricing/chat
 export const moonshotModels = {
+  "kimi-k2.5": {
+    maxTokens: 32_768,
+    contextWindow: 262_144,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 0.6,
+    outputPrice: 3.0,
+    cacheWritesPrice: 0,
+    cacheReadsPrice: 0.1,
+    temperature: 1.0,
+    description:
+      "Kimi K2.5 multimodal model with 262K context, thinking/non-thinking modes, and prompt caching.",
+  },
   "kimi-k2-0711-preview": {
     maxTokens: 32_000,
     contextWindow: 131_072,
@@ -699,6 +736,20 @@ export const openAiModelInfoSaneDefaults: OpenAiCompatibleModelInfo = {
 export type GeminiModelId = keyof typeof geminiModels;
 export const geminiDefaultModelId: GeminiModelId = "gemini-3-pro-preview";
 export const geminiModels = {
+  "gemini-3.1-pro-preview": {
+    maxTokens: 65_536,
+    contextWindow: 1_048_576,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPriceTiers: [
+      { tokenLimit: 200_000, price: 2.0 },
+      { tokenLimit: Infinity, price: 4.0 },
+    ],
+    outputPriceTiers: [
+      { tokenLimit: 200_000, price: 12.0 },
+      { tokenLimit: Infinity, price: 18.0 },
+    ],
+  },
   "gemini-3-pro-preview": {
     maxTokens: 65_536, // 64k output
     contextWindow: 1_048_576, // 1M input
@@ -715,6 +766,15 @@ export const geminiModels = {
     // Optional: if you want to mirror Cline’s thinking-level UI,
     // you'll control that via ApiHandlerOptions (planMode / actMode),
     // not via this ModelInfo.
+  },
+  "gemini-3-flash-preview": {
+    maxTokens: 65_536,
+    contextWindow: 1_048_576,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPrice: 0.5,
+    outputPrice: 3.0,
+    cacheReadsPrice: 0.05,
   },
 
   "gemini-2.5-flash-lite": {
@@ -855,6 +915,28 @@ export type OpenAiNativeModelId = keyof typeof openAiNativeModels;
 export const openAiNativeDefaultModelId: OpenAiNativeModelId =
   "gpt-5.2";
 export const openAiNativeModels = {
+  "gpt-5.3-codex": {
+    maxTokens: 128_000,
+    contextWindow: 400_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 0,
+    outputPrice: 0,
+    cacheReadsPrice: 0,
+    description:
+      "GPT-5.3 Codex coding model (ChatGPT subscription/OAuth route in some providers).",
+  },
+  "gpt-5.3-codex-spark": {
+    maxTokens: 8_192,
+    contextWindow: 128_000,
+    supportsImages: false,
+    supportsPromptCache: true,
+    inputPrice: 0,
+    outputPrice: 0,
+    cacheReadsPrice: 0,
+    description:
+      "GPT-5.3 Codex Spark fast text-only coding model (ChatGPT subscription/OAuth route in some providers).",
+  },
   "gpt-5.2": {
     maxTokens: 8_192,
     contextWindow: 272000,
@@ -867,6 +949,15 @@ export const openAiNativeModels = {
   "gpt-5.2-chat-latest": {
     maxTokens: 16_384,
     contextWindow: 128_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 1.75,
+    outputPrice: 14.0,
+    cacheReadsPrice: 0.175,
+  },
+  "gpt-5.2-codex": {
+    maxTokens: 128_000,
+    contextWindow: 400_000,
     supportsImages: true,
     supportsPromptCache: true,
     inputPrice: 1.75,
@@ -917,6 +1008,15 @@ export const openAiNativeModels = {
     inputPrice: 1.25,
     outputPrice: 10.0,
     cacheReadsPrice: 0.125,
+  },
+  "gpt-5.1-codex-mini": {
+    maxTokens: 128_000,
+    contextWindow: 400_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 0.25,
+    outputPrice: 2.0,
+    cacheReadsPrice: 0.025,
   },
   "gpt-5.1-chat-latest": {
     maxTokens: 8_192,
