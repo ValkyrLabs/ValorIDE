@@ -17,6 +17,7 @@ export type RemoteCodingCommandType =
   | "remote-coding-session-artifact"
   | "remote-coding-session-stop"
   | "remote-coding-session-cancel"
+  | "remote-coding-session-list";
   | "remote-coding-session-expire-timeouts"
   | "remote-coding-session-list"
   | "remote-coding-template-list"
@@ -30,6 +31,13 @@ export interface RemoteCodingCommand {
 }
 
 export interface RemoteCodingCommandResult {
+  event: "session-updated" | "session-list";
+  session?: RemoteCodingSession;
+  sessions?: RemoteCodingSession[];
+}
+
+export class RemoteCodingSessionOrchestrator {
+  constructor(private readonly registry: RemoteCodingSessionRegistry) {}
   event: "session-updated" | "session-list" | "template-list" | "preset-list" | "preset-updated";
   session?: RemoteCodingSession;
   sessions?: RemoteCodingSession[];
