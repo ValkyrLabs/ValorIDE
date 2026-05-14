@@ -100,6 +100,8 @@ import {
   deleteRuleFile,
   refreshValorIDERulesToggles,
 } from "../context/instructions/user-instructions/valoride-rules";
+import { RemoteCodingSessionOrchestrator } from "@services/communication/RemoteCodingSessionOrchestrator";
+import { RemoteCodingSessionRegistry } from "@services/communication/RemoteCodingSessionRegistry";
 
 /*
 https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
@@ -116,6 +118,7 @@ export class Controller {
   workspaceTracker: WorkspaceTracker;
   mcpHub: McpHub;
   accountService: ValorIDEAccountService;
+  private remoteCodingSessionOrchestrator = new RemoteCodingSessionOrchestrator(new RemoteCodingSessionRegistry());
   private latestAnnouncementId = "april-18-2025_21:15::00"; // update to some unique identifier when we add a new announcement
   private webviewIndexSourceMapPromise: Promise<any | null> | null = null;
 
@@ -1456,6 +1459,18 @@ export class Controller {
         } else {
           vscode.window.showInformationMessage("API throttle cleared");
         }
+        break;
+      }
+      case "remoteCodingSessionCommand": {
+        if (!message.remoteCodingCommand) {
+          break;
+        }
+
+        const result = this.remoteCodingSessionOrchestrator.handle(message.remoteCodingCommand);
+        await this.postMessageToWebview({
+          type: "remoteCodingSessionEvent",
+          remoteCodingSessionEvent: result,
+        });
         break;
       }
       case "clearAllTaskHistory": {
