@@ -96,6 +96,7 @@ export interface ExtensionMessage {
   | "swarm:broadcast"
   | "valkyraiHostTestResult"
   | "swarm:private-message"
+  | "remoteCodingSessionEvent"
   | "taskCompletionFilePreview"
   | "webviewError"
   | "serverConsoleNewMessage";
@@ -118,6 +119,11 @@ export interface ExtensionMessage {
   | "serverConsoleButtonClicked";
 
 invoke ?: Invoke;
+  remoteCodingSessionEvent?: {
+    event: "session-updated" | "session-list";
+    session?: Record<string, any>;
+    sessions?: Record<string, any>[];
+  };
 state ?: ExtensionState;
 images ?: string[];
 ollamaModels ?: string[];
