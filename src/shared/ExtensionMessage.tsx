@@ -84,6 +84,7 @@ export interface ExtensionMessage {
   | "fileSearchResults"
   | "grpc_response" // New type for gRPC responses
   | "loginSuccess"
+  | "clearClientAuthState"
   | "streamToThorapiResult"
   | "openFileExplorerResult"
   | "workspaceFiles"
