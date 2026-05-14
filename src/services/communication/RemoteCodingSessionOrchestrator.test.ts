@@ -54,4 +54,40 @@ describe("RemoteCodingSessionOrchestrator", () => {
     expect(expired.sessions?.[0].id).toBe("s2");
     expect(expired.sessions?.[0].status).toBe("timed_out");
   });
+
+  it("supports template listing and preset-driven starts", () => {
+    const orchestrator = new RemoteCodingSessionOrchestrator(new RemoteCodingSessionRegistry());
+
+    const templates = orchestrator.handle({
+      id: "cmd-7",
+      type: "remote-coding-template-list",
+    });
+    expect(templates.templates?.length).toBeGreaterThan(0);
+
+    const saved = orchestrator.handle({
+      id: "cmd-8",
+      type: "remote-coding-preset-save",
+      payload: {
+        id: "org-docs",
+        name: "Org docs preset",
+        scope: "org",
+        ownerId: "valkyrlabs",
+        templateId: "docs",
+        params: {
+          area: "remote sessions",
+        },
+      },
+    });
+    expect(saved.preset?.id).toBe("org-docs");
+
+    const startedFromPreset = orchestrator.handle({
+      id: "cmd-9",
+      type: "remote-coding-session-start",
+      payload: {
+        sessionId: "s9",
+        presetId: "org-docs",
+      },
+    });
+    expect(startedFromPreset.session?.task).toContain("remote sessions");
+  });
 });
