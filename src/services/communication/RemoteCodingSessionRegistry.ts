@@ -1,3 +1,4 @@
+
 export type RemoteCodingSessionStatus =
   | "queued"
   | "running"
@@ -50,6 +51,15 @@ export class RemoteCodingSessionRegistry {
       heartbeatAt: now,
       status: "running",
       logs: [],
+      artifacts: []
+    };
+
+    this.sessions.set(input.id, session);
+    return { ...session, logs: [...session.logs], artifacts: [...session.artifacts] };
+  }
+
+  list(): RemoteCodingSession[] {
+    return Array.from(this.sessions.values()).map(s => ({ ...s, logs: [...s.logs], artifacts: [...s.artifacts] }));
       artifacts: [],
     };
 
