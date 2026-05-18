@@ -7,39 +7,43 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  Expense,
-  ExpenseCategoryEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddExpenseMutation } from '../../services/ExpenseService';
+import { Expense, ExpenseCategoryEnum } from "@thorapi/model";
+
+import { useAddExpenseMutation } from "../../services/ExpenseService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -49,7 +53,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -64,37 +67,34 @@ Track company expenses as part of GL
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const CategoryValidation = () => {
-  return [
-    'marketing',
-    'travel',
-    'payroll',
-    'hosting',
-    'software',
-    'other',
-  ];
+  return ["marketing", "travel", "payroll", "hosting", "software", "other"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        expenseDate: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).required("expenseDate is required.").typeError("expenseDate must be a valid date"),
-        amount: asNumber(Yup.number().typeError("amount must be a number")).required("amount is required."),
-      category: Yup.mixed()
-        .oneOf(CategoryValidation(), "Invalid value for category")
-        .required("category is required."),
-        description: Yup.string(),
-        trashed: Yup.boolean(),
+  expenseDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("expenseDate must be a valid date"),
+  amount: asNumber(Yup.number().typeError("amount must be a number")),
+  description: Yup.string(),
+  category: Yup.mixed().oneOf(
+    CategoryValidation(),
+    "Invalid value for category",
+  ),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -111,12 +111,18 @@ const ExpenseForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -124,11 +130,11 @@ const ExpenseForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Expense> = {
-          expenseDate: new Date(),
-          amount: 0,
-        category: undefined,
-          description: '',
-          trashed: false,
+    expenseDate: new Date(),
+    amount: 0,
+    description: "",
+    category: undefined,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -143,11 +149,14 @@ const ExpenseForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new Expense:', grants);
+    console.log("Permissions saved for new Expense:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Expense>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<Expense>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -158,7 +167,7 @@ const ExpenseForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Expense created successfully! Would you like to set permissions for this object?`
+          `Expense created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -166,8 +175,8 @@ const ExpenseForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create Expense:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create Expense:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -188,54 +197,53 @@ const ExpenseForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addExpenseResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New Expense
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New Expense
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="expenseDate" className="nice-form-control">
                       <b>
                         Expense Date:
-                        {touched.expenseDate &&
-                         !errors.expenseDate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.expenseDate && !errors.expenseDate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="expenseDate"
-                            type="datetime-local"
-                            value={values.expenseDate ? 
-                              new Date(values.expenseDate).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('expenseDate', true);
-                              const v = e.target.value;
-                              setFieldValue('expenseDate', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.expenseDate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="expenseDate"
+                        type="datetime-local"
+                        value={
+                          values.expenseDate
+                            ? new Date(values.expenseDate)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("expenseDate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "expenseDate",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.expenseDate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -247,37 +255,33 @@ const ExpenseForm: React.FC = () => {
                     <label htmlFor="amount" className="nice-form-control">
                       <b>
                         Amount:
-                        {touched.amount &&
-                         !errors.amount && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.amount && !errors.amount && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="amount"
-                            type="number"
-                            step="any"
-                            value={values.amount || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('amount', true);
-                              const v = e.target.value;
-                              setFieldValue('amount', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.amount
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="amount"
+                        type="number"
+                        step="any"
+                        value={values.amount || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("amount", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "amount",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.amount
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -286,66 +290,24 @@ const ExpenseForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="category" className="nice-form-control">
-                      <b>
-                        Category:
-                        {touched.category &&
-                         !errors.category && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="category"
-                          value={values.category || ''}
-                          className={
-                            errors.category
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('category', true);
-                            setFieldValue('category', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Category" />
-                          <CategoryLookup />
-                        </BSForm.Select>
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="category"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
-                        {touched.description &&
-                         !errors.description && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.description && !errors.description && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="description"
-                            value={values?.description}
-                            placeholder="Description"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="description"
+                        value={values?.description}
+                        placeholder="Description"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -354,35 +316,66 @@ const ExpenseForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="trashed" className="nice-form-control">
+                    <label htmlFor="category" className="nice-form-control">
                       <b>
-                        Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        Category:
+                        {touched.category && !errors.category && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="category"
+                        value={values.category || ""}
+                        className={
+                          errors.category
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("category", true);
+                          setFieldValue(
+                            "category",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Category" />
+                        <CategoryLookup />
+                      </BSForm.Select>
 
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
+                      <ErrorMessage
+                        className="error"
+                        name="category"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="trashed" className="nice-form-control">
+                      <b>
+                        Trashed:
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
+                        )}
+                      </b>
 
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -392,45 +385,58 @@ const ExpenseForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New Expense
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New Expense
+                    </CoolButton>
 
-                  {(addExpenseResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addExpenseResult as any).error ? (addExpenseResult as any).error.data : (addExpenseResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addExpenseResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addExpenseResult as any).error
+                              ? (addExpenseResult as any).error.data
+                              : (addExpenseResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addExpenseResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addExpenseResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addExpenseResult: {JSON.stringify(addExpenseResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addExpenseResult: {JSON.stringify(addExpenseResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -462,18 +468,15 @@ kebabcase category-lookup
 const CategoryLookup = () => {
   return (
     <>
-      <option value='marketing' label="Marketing" />
-      <option value='travel' label="Travel" />
-      <option value='payroll' label="Payroll" />
-      <option value='hosting' label="Hosting" />
-      <option value='software' label="Software" />
-      <option value='other' label="Other" />
+      <option value="marketing" label="Marketing" />
+      <option value="travel" label="Travel" />
+      <option value="payroll" label="Payroll" />
+      <option value="hosting" label="Hosting" />
+      <option value="software" label="Software" />
+      <option value="other" label="Other" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default ExpenseForm;
-

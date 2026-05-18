@@ -7,39 +7,57 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { Swarm } from '@thorapi/model/Swarm'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { Swarm } from "@thorapi/model/Swarm";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type SwarmResponse = Swarm[]
+type SwarmResponse = Swarm[];
+
+const toSwarmList = (result: unknown): SwarmResponse => {
+  if (Array.isArray(result)) {
+    return result as SwarmResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as SwarmResponse) : [];
+};
 
 export const SwarmService = createApi({
-  reducerPath: 'Swarm', // This should remain unique
+  reducerPath: "Swarm", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['Swarm'],
+  tagTypes: ["Swarm"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSwarmsPaged: build.query<SwarmResponse, { page: number; size?: number; example?: Partial<Swarm> }>({
+    getSwarmsPaged: build.query<
+      SwarmResponse,
+      { page: number; size?: number; example?: Partial<Swarm> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Swarm?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Swarm?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Swarm' as const, id })),
-              { type: 'Swarm', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toSwarmList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "Swarm" as const, id })),
+          { type: "Swarm", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,55 +69,57 @@ export const SwarmService = createApi({
         }
         return `Swarm`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Swarm' as const, id })),
-              { type: 'Swarm', id: 'LIST' },
-            ]
-          : [{ type: 'Swarm', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toSwarmList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "Swarm" as const, id })),
+          { type: "Swarm", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
     addSwarm: build.mutation<Swarm, Partial<Swarm>>({
       query: (body) => ({
         url: `Swarm`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'Swarm', id: 'LIST' }],
+      invalidatesTags: [{ type: "Swarm", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getSwarm: build.query<Swarm, string>({
       query: (id) => `Swarm/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Swarm', id }],
+      providesTags: (result, error, id) => [{ type: "Swarm", id }],
     }),
 
     // 5) Update
-    updateSwarm: build.mutation<void, Pick<Swarm, 'id'> & Partial<Swarm>>({
+    updateSwarm: build.mutation<void, Pick<Swarm, "id"> & Partial<Swarm>>({
       query: ({ id, ...patch }) => ({
         url: `Swarm/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            SwarmService.util.updateQueryData('getSwarm', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            SwarmService.util.updateQueryData("getSwarm", id, (draft) => {
+              Object.assign(draft, patch);
+            }),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<Swarm, 'id'>) => [
-        { type: 'Swarm', id },
-        { type: 'Swarm', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<Swarm, "id">) => [
+        { type: "Swarm", id },
+        { type: "Swarm", id: "LIST" },
       ],
     }),
 
@@ -108,29 +128,35 @@ export const SwarmService = createApi({
       query(id) {
         return {
           url: `Swarm/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'Swarm', id }],
+      invalidatesTags: (result, error, id) => [{ type: "Swarm", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSwarmCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteSwarmCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `Swarm/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Swarm', id }, { type: 'Swarm', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Swarm", id },
+        { type: "Swarm", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetSwarmsPagedQuery`
 export const {
-  useGetSwarmsPagedQuery,     // immediate fetch
+  useGetSwarmsPagedQuery, // immediate fetch
   useLazyGetSwarmsPagedQuery, // lazy fetch
   useGetSwarmQuery,
   useGetSwarmsQuery,
@@ -138,4 +164,4 @@ export const {
   useUpdateSwarmMutation,
   useDeleteSwarmMutation,
   useDeleteSwarmCascadeMutation,
-} = SwarmService
+} = SwarmService;

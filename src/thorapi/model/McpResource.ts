@@ -20,143 +20,150 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
 /**
- * 
+ *
  * @export
  * @interface McpResource
  */
-export type McpResource  = DataObject & {
-    /**
-     * 
-     * @type {string}
-     * @memberof McpResource
-     */
-    uri: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpResource
-     */
-    name: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpResource
-     */
-    mcpServerId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpResource
-     */
-    mimeType?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpResource
-     */
-    description?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof McpResource
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof McpResource
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof McpResource
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof McpResource
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof McpResource
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof McpResource
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof McpResource
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof McpResource
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof McpResource
-     */
-    trashed?: boolean;
-}
+export type McpResource = DataObject & {
+  /**
+   *
+   * @type {string}
+   * @memberof McpResource
+   */
+  mcpServerId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpResource
+   */
+  uri?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpResource
+   */
+  name?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpResource
+   */
+  mimeType?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpResource
+   */
+  description?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof McpResource
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof McpResource
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof McpResource
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof McpResource
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof McpResource
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof McpResource
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof McpResource
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof McpResource
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof McpResource
+   */
+  trashed?: boolean;
+};
 
 export function McpResourceFromJSON(json: any): McpResource {
-    return {
-        ...DataObjectFromJSON(json),
-        'uri': json['uri'],
-        'name': json['name'],
-        'mcpServerId': !exists(json, 'mcpServerId') ? undefined : json['mcpServerId'],
-        'mimeType': !exists(json, 'mimeType') ? undefined : json['mimeType'],
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    mcpServerId: !exists(json, "mcpServerId") ? undefined : json["mcpServerId"],
+    uri: !exists(json, "uri") ? undefined : json["uri"],
+    name: !exists(json, "name") ? undefined : json["name"],
+    mimeType: !exists(json, "mimeType") ? undefined : json["mimeType"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function McpResourceToJSON(value?: McpResource): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'uri': value.uri,
-        'name': value.name,
-        'mcpServerId': value.mcpServerId,
-        'mimeType': value.mimeType,
-        'description': value.description,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    mcpServerId: value.mcpServerId,
+    uri: value.uri,
+    name: value.name,
+    mimeType: value.mimeType,
+    description: value.description,
+    trashed: value.trashed,
+  };
 }
-
-

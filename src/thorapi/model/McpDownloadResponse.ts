@@ -20,167 +20,180 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
 /**
- * 
+ *
  * @export
  * @interface McpDownloadResponse
  */
-export type McpDownloadResponse  = DataObject & {
-    /**
-     * 
-     * @type {string}
-     * @memberof McpDownloadResponse
-     */
-    githubUrl: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpDownloadResponse
-     */
-    name: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpDownloadResponse
-     */
-    author: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpDownloadResponse
-     */
-    description: string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof McpDownloadResponse
-     */
-    requiresApiKey: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpDownloadResponse
-     */
-    mcpId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpDownloadResponse
-     */
-    readmeContent?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpDownloadResponse
-     */
-    llmsInstallationContent?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof McpDownloadResponse
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof McpDownloadResponse
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof McpDownloadResponse
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof McpDownloadResponse
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof McpDownloadResponse
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof McpDownloadResponse
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof McpDownloadResponse
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof McpDownloadResponse
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof McpDownloadResponse
-     */
-    trashed?: boolean;
-}
+export type McpDownloadResponse = DataObject & {
+  /**
+   *
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  mcpId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  githubUrl?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  name?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  author?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  description?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  readmeContent?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  llmsInstallationContent?: string;
+  /**
+   *
+   * @type {boolean}
+   * @memberof McpDownloadResponse
+   */
+  requiresApiKey?: boolean;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof McpDownloadResponse
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof McpDownloadResponse
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof McpDownloadResponse
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof McpDownloadResponse
+   */
+  trashed?: boolean;
+};
 
 export function McpDownloadResponseFromJSON(json: any): McpDownloadResponse {
-    return {
-        ...DataObjectFromJSON(json),
-        'githubUrl': json['githubUrl'],
-        'name': json['name'],
-        'author': json['author'],
-        'description': json['description'],
-        'requiresApiKey': json['requiresApiKey'],
-        'mcpId': !exists(json, 'mcpId') ? undefined : json['mcpId'],
-        'readmeContent': !exists(json, 'readmeContent') ? undefined : json['readmeContent'],
-        'llmsInstallationContent': !exists(json, 'llmsInstallationContent') ? undefined : json['llmsInstallationContent'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    mcpId: !exists(json, "mcpId") ? undefined : json["mcpId"],
+    githubUrl: !exists(json, "githubUrl") ? undefined : json["githubUrl"],
+    name: !exists(json, "name") ? undefined : json["name"],
+    author: !exists(json, "author") ? undefined : json["author"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    readmeContent: !exists(json, "readmeContent")
+      ? undefined
+      : json["readmeContent"],
+    llmsInstallationContent: !exists(json, "llmsInstallationContent")
+      ? undefined
+      : json["llmsInstallationContent"],
+    requiresApiKey: !exists(json, "requiresApiKey")
+      ? undefined
+      : json["requiresApiKey"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function McpDownloadResponseToJSON(value?: McpDownloadResponse): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'githubUrl': value.githubUrl,
-        'name': value.name,
-        'author': value.author,
-        'description': value.description,
-        'requiresApiKey': value.requiresApiKey,
-        'mcpId': value.mcpId,
-        'readmeContent': value.readmeContent,
-        'llmsInstallationContent': value.llmsInstallationContent,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    mcpId: value.mcpId,
+    githubUrl: value.githubUrl,
+    name: value.name,
+    author: value.author,
+    description: value.description,
+    readmeContent: value.readmeContent,
+    llmsInstallationContent: value.llmsInstallationContent,
+    requiresApiKey: value.requiresApiKey,
+    trashed: value.trashed,
+  };
 }
-
-

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ChannelSubscription } from '@thorapi/model/ChannelSubscription';
+import { ChannelSubscription } from "@thorapi/model/ChannelSubscription";
 
 const ChannelSubscriptionSlice = createSlice({
   name: "ChannelSubscriptions",
@@ -28,20 +27,25 @@ const ChannelSubscriptionSlice = createSlice({
     },
 
     ChannelSubscriptionValueToggled(state, action) {
-      console.log("ChannelSubscription TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ChannelSubscription:ChannelSubscription = state.find((ChannelSubscription) => ChannelSubscription.id === action.payload.ChannelSubscriptionId);
+      console.log("ChannelSubscription TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ChannelSubscription: ChannelSubscription = state.find(
+        (ChannelSubscription) =>
+          ChannelSubscription.id === action.payload.ChannelSubscriptionId,
+      );
       if (ChannelSubscription) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ChannelSubscriptionpropertySet(state, action) {
-      const ChannelSubscription = state.find((ChannelSubscription) => ChannelSubscription.id === action.payload.ChannelSubscriptionId);
+      const ChannelSubscription = state.find(
+        (ChannelSubscription) =>
+          ChannelSubscription.id === action.payload.ChannelSubscriptionId,
+      );
       if (ChannelSubscription) {
-      //  ChannelSubscription[action.property] = action.payload[action.property];
+        //  ChannelSubscription[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const ChannelSubscriptionSlice = createSlice({
 export const {
   ChannelSubscriptionAdded,
   ChannelSubscriptionValueToggled,
-  ChannelSubscriptionpropertySet
+  ChannelSubscriptionpropertySet,
 } = ChannelSubscriptionSlice.actions;
 export default ChannelSubscriptionSlice.reducer;

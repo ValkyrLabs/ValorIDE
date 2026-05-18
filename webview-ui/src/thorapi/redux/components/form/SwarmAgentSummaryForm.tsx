@@ -7,38 +7,43 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  SwarmAgentSummary,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddSwarmAgentSummaryMutation } from '../../services/SwarmAgentSummaryService';
+import { SwarmAgentSummary } from "@thorapi/model";
+
+import { useAddSwarmAgentSummaryMutation } from "../../services/SwarmAgentSummaryService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -48,7 +53,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -67,28 +71,32 @@ Summary information about a registered agent.
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        instanceId: Yup.string(),
-        lastSeen: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("lastSeen must be a valid date"),
-        status: Yup.string(),
-        metadata: Yup.string(),
-        trashed: Yup.boolean(),
+  instanceId: Yup.string(),
+  lastSeen: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("lastSeen must be a valid date"),
+  status: Yup.string(),
+  metadata: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const SwarmAgentSummaryForm: React.FC = () => {
-  const [addSwarmAgentSummary, addSwarmAgentSummaryResult] = useAddSwarmAgentSummaryMutation();
+  const [addSwarmAgentSummary, addSwarmAgentSummaryResult] =
+    useAddSwarmAgentSummaryMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -98,12 +106,18 @@ const SwarmAgentSummaryForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -111,11 +125,11 @@ const SwarmAgentSummaryForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<SwarmAgentSummary> = {
-          instanceId: '',
-          lastSeen: new Date(),
-          status: '',
-          metadata: '',
-          trashed: false,
+    instanceId: "",
+    lastSeen: new Date(),
+    status: "",
+    metadata: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -130,11 +144,14 @@ const SwarmAgentSummaryForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new SwarmAgentSummary:', grants);
+    console.log("Permissions saved for new SwarmAgentSummary:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<SwarmAgentSummary>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<SwarmAgentSummary>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -145,7 +162,7 @@ const SwarmAgentSummaryForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `SwarmAgentSummary created successfully! Would you like to set permissions for this object?`
+          `SwarmAgentSummary created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -153,8 +170,8 @@ const SwarmAgentSummaryForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create SwarmAgentSummary:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create SwarmAgentSummary:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -175,44 +192,37 @@ const SwarmAgentSummaryForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addSwarmAgentSummaryResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New SwarmAgentSummary
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    SwarmAgentSummary
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="instanceId" className="nice-form-control">
                       <b>
                         Instance Id:
-                        {touched.instanceId &&
-                         !errors.instanceId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.instanceId && !errors.instanceId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="instanceId"
-                            value={values?.instanceId}
-                            placeholder="Instance Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="instanceId"
+                        value={values?.instanceId}
+                        placeholder="Instance Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -224,38 +234,38 @@ const SwarmAgentSummaryForm: React.FC = () => {
                     <label htmlFor="lastSeen" className="nice-form-control">
                       <b>
                         Last Seen:
-                        {touched.lastSeen &&
-                         !errors.lastSeen && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.lastSeen && !errors.lastSeen && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="lastSeen"
-                            type="datetime-local"
-                            value={values.lastSeen ? 
-                              new Date(values.lastSeen).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('lastSeen', true);
-                              const v = e.target.value;
-                              setFieldValue('lastSeen', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.lastSeen
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="lastSeen"
+                        type="datetime-local"
+                        value={
+                          values.lastSeen
+                            ? new Date(values.lastSeen)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("lastSeen", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "lastSeen",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.lastSeen
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -267,28 +277,21 @@ const SwarmAgentSummaryForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="status"
-                            value={values?.status}
-                            placeholder="Status"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="status"
+                        value={values?.status}
+                        placeholder="Status"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -300,28 +303,21 @@ const SwarmAgentSummaryForm: React.FC = () => {
                     <label htmlFor="metadata" className="nice-form-control">
                       <b>
                         Metadata:
-                        {touched.metadata &&
-                         !errors.metadata && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.metadata && !errors.metadata && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="metadata"
-                            value={values?.metadata}
-                            placeholder="Metadata"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="metadata"
+                        value={values?.metadata}
+                        placeholder="Metadata"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -333,32 +329,25 @@ const SwarmAgentSummaryForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -368,45 +357,60 @@ const SwarmAgentSummaryForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New SwarmAgentSummary
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New SwarmAgentSummary
+                    </CoolButton>
 
-                  {(addSwarmAgentSummaryResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addSwarmAgentSummaryResult as any).error ? (addSwarmAgentSummaryResult as any).error.data : (addSwarmAgentSummaryResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addSwarmAgentSummaryResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addSwarmAgentSummaryResult as any).error
+                              ? (addSwarmAgentSummaryResult as any).error.data
+                              : (addSwarmAgentSummaryResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addSwarmAgentSummaryResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addSwarmAgentSummaryResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addSwarmAgentSummaryResult: {JSON.stringify(addSwarmAgentSummaryResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addSwarmAgentSummaryResult:{" "}
+                    {JSON.stringify(addSwarmAgentSummaryResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -426,8 +430,5 @@ const SwarmAgentSummaryForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default SwarmAgentSummaryForm;
-

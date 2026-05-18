@@ -32,8 +32,14 @@ import { searchWorkspaceFiles } from "@services/search/file-search";
 import { getLLMPromptService } from "@services/llmPromptService";
 import { getSwarmPromptBroadcaster } from "@services/swarmPromptBroadcaster";
 import { StartupAuthService } from "@services/auth/StartupAuthService";
+import { createGrayMatterSessionState } from "@services/graymatter/GrayMatterSessionService";
 import { ApiProvider, ModelInfo } from "@shared/api";
 import { LlmDetailsSummary, SelectedLlmDetails } from "@shared/llm";
+import {
+  SwarmMessageType,
+  SwarmEntityType,
+  buildSwarmMessage,
+} from "@shared/swarm-protocol";
 import { ChatContent } from "@shared/ChatContent";
 import { ChatSettings } from "@shared/ChatSettings";
 import {
@@ -62,7 +68,10 @@ import { searchCommits } from "@utils/git";
 import { getReadablePath, getWorkspacePath } from "@utils/path";
 import { openUrlWithSimpleBrowser } from "@utils/openUrl";
 import { resolveThorapiFolderPath } from "@utils/thorapi";
-import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
+import {
+  getValkyraiBasePath,
+  normalizeValkyraiHost,
+} from "@utils/serverValkyraiHost";
 import { getTotalTasksSize } from "@utils/storage";
 import { openMention } from "../mentions";
 import {
@@ -215,9 +224,15 @@ export class Controller {
         undefined,
       );
       await updateGlobalState(this.context, "isLoggedIn", false);
+      await this.refreshGrayMatterSessionState(undefined);
 
       // Reset API provider to default
       await updateGlobalState(this.context, "apiProvider", "openrouter");
+
+      // Clear webview client-side state (sessionStorage, localStorage, cookies)
+      await this.postMessageToWebview({
+        type: "clearClientAuthState",
+      });
 
       await this.postStateToWebview();
       vscode.window.showInformationMessage(
@@ -335,11 +350,7 @@ export class Controller {
     const traceMap = await this.getWebviewIndexSourceMap();
     if (!traceMap) return null;
 
-
-    for (const column of [
-      generatedColumn,
-      Math.max(0, generatedColumn - 1),
-    ]) {
+    for (const column of [generatedColumn, Math.max(0, generatedColumn - 1)]) {
       const original = originalPositionFor(traceMap, {
         line: generatedLine,
         column,
@@ -361,8 +372,6 @@ export class Controller {
 
     const traceMap = await this.getWebviewIndexSourceMap();
     if (!traceMap) return null;
-
-
 
     const mappedLines = stack.split("\n").map((rawLine) => {
       const line = rawLine ?? "";
@@ -449,12 +458,18 @@ export class Controller {
 
         const info = (message as any).info ?? (message as any).payload ?? null;
         const stack =
-          typeof (message as any).stack === "string" ? (message as any).stack : null;
+          typeof (message as any).stack === "string"
+            ? (message as any).stack
+            : null;
         const filename = (message as any).filename ?? null;
         const lineno =
-          typeof (message as any).lineno === "number" ? (message as any).lineno : null;
+          typeof (message as any).lineno === "number"
+            ? (message as any).lineno
+            : null;
         const colno =
-          typeof (message as any).colno === "number" ? (message as any).colno : null;
+          typeof (message as any).colno === "number"
+            ? (message as any).colno
+            : null;
 
         this.outputChannel.appendLine(`Webview encountered an error: ${text}`);
         if (filename || lineno != null || colno != null) {
@@ -530,14 +545,40 @@ export class Controller {
         await this.setUserInfo(
           message.user
             ? {
-              username: message.user.name || null,
-              email: null, // Replace with actual email if available
-              avatarUrl: null, // Replace with actual avatar URL if available
-            }
+                username: message.user.name || null,
+                email: null, // Replace with actual email if available
+                avatarUrl: null, // Replace with actual avatar URL if available
+              }
             : undefined,
         );
         await this.postStateToWebview();
         break;
+      case "accountLoginSuccess": {
+        const customToken = message.customToken?.trim();
+        if (customToken) {
+          await storeSecret(this.context, "jwtToken", customToken);
+        }
+        if (message.authenticatedPrincipal) {
+          await updateGlobalState(
+            this.context,
+            "authenticatedPrincipal",
+            message.authenticatedPrincipal,
+          );
+          await updateGlobalState(
+            this.context,
+            "userInfo",
+            message.authenticatedPrincipal,
+          );
+        }
+        await updateGlobalState(
+          this.context,
+          "isLoggedIn",
+          Boolean(customToken),
+        );
+        await this.refreshGrayMatterSessionState(customToken);
+        await this.postStateToWebview();
+        break;
+      }
       case "webviewDidLaunch":
         try {
           await this.postStateToWebview();
@@ -593,7 +634,6 @@ export class Controller {
             }
           }
         });
-
 
         break;
       case "showChatView": {
@@ -795,10 +835,11 @@ export class Controller {
         break;
       }
       case "updateValkyraiHost": {
-        const nextHost = message.valkyraiHost?.trim();
-        if (!nextHost) {
+        const requestedHost = message.valkyraiHost?.trim();
+        if (!requestedHost) {
           break;
         }
+        const nextHost = normalizeValkyraiHost(requestedHost);
         await vscode.workspace
           .getConfiguration("valoride.valkyrai")
           .update("host", nextHost, vscode.ConfigurationTarget.Global);
@@ -925,7 +966,8 @@ export class Controller {
               isBinary: preview?.isBinary,
             });
           } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : String(error);
+            const errorMessage =
+              error instanceof Error ? error.message : String(error);
             await this.postMessageToWebview({
               type: "taskCompletionFilePreview",
               number: message.number,
@@ -1011,7 +1053,6 @@ export class Controller {
         break;
       }
       case "taskFeedback":
-
         break;
       // case "openMcpMarketplaceServerDetails": {
       // 	if (message.text) {
@@ -1550,7 +1591,6 @@ export class Controller {
           // Capture telemetry for model favorite toggle
           const isFavorited = !favoritedModelIds.includes(message.modelId);
 
-
           // Post state to webview without changing any other configuration
           await this.postStateToWebview();
         }
@@ -1988,9 +2028,10 @@ export class Controller {
               );
             } catch (extractionError) {
               throw new Error(
-                `Failed to extract archive: ${extractionError instanceof Error
-                  ? extractionError.message
-                  : String(extractionError)
+                `Failed to extract archive: ${
+                  extractionError instanceof Error
+                    ? extractionError.message
+                    : String(extractionError)
                 }`,
               );
             }
@@ -2005,9 +2046,10 @@ export class Controller {
 
             await fs.unlink(filePath).catch((unlinkError) => {
               console.warn(
-                `Failed to delete archive ${filePath}: ${unlinkError instanceof Error
-                  ? unlinkError.message
-                  : String(unlinkError)
+                `Failed to delete archive ${filePath}: ${
+                  unlinkError instanceof Error
+                    ? unlinkError.message
+                    : String(unlinkError)
                 }`,
               );
             });
@@ -2058,7 +2100,6 @@ export class Controller {
   async updateTelemetrySetting(telemetrySetting: TelemetrySetting) {
     await updateGlobalState(this.context, "telemetrySetting", telemetrySetting);
     const isOptedIn = telemetrySetting === "enabled";
-
   }
 
   async togglePlanActModeWithChatSettings(
@@ -2066,7 +2107,6 @@ export class Controller {
     chatContent?: ChatContent,
   ) {
     const didSwitchToActMode = chatSettings.mode === "act";
-
 
     // Get previous model info that we will revert to after saving current mode api info
     const {
@@ -2109,6 +2149,7 @@ export class Controller {
         case "qwen":
         case "deepseek":
         case "moonshot":
+        case "minimax":
         case "xai":
           await updateGlobalState(
             this.context,
@@ -2209,13 +2250,14 @@ export class Controller {
           case "vertex":
           case "gemini":
           case "asksage":
-        case "openai-native":
-        case "qwen":
-        case "deepseek":
-        case "moonshot":
-        case "xai":
-          await updateGlobalState(this.context, "apiModelId", newModelId);
-          break;
+          case "openai-native":
+          case "qwen":
+          case "deepseek":
+          case "moonshot":
+          case "minimax":
+          case "xai":
+            await updateGlobalState(this.context, "apiModelId", newModelId);
+            break;
           case "openrouter":
           case "valoride":
             await updateGlobalState(
@@ -2396,11 +2438,9 @@ export class Controller {
 
   async fetchUserCreditsData() {
     try {
-      await Promise.all([
-        // this.accountService?.fetchBalance(),
-        // this.accountService?.fetchUsageTransactions(),
-        // this.accountService?.fetchPaymentTransactions(),
-      ]);
+      // Request balance refresh via webview RTK Query system
+      // This delegates to UsageTrackingHandler which uses generated TypeScript clients
+      await this.accountService?.requestBalanceRefresh();
     } catch (error) {
       console.error("Failed to fetch user credits data:", error);
     }
@@ -2445,6 +2485,7 @@ export class Controller {
 
       // Store authentication state flags
       await updateGlobalState(this.context, "isLoggedIn", true);
+      await this.refreshGrayMatterSessionState(customToken);
 
       // Send login success message to webview with all auth data
       await this.postMessageToWebview({
@@ -2478,6 +2519,20 @@ export class Controller {
       // Even on login failure, we preserve any existing tokens
       // Only clear tokens on explicit logout
     }
+  }
+
+  private async refreshGrayMatterSessionState(token?: string) {
+    const resolvedToken = token || (await getSecret(this.context, "jwtToken"));
+    const grayMatterSession = await createGrayMatterSessionState({
+      baseUrl: getValkyraiBasePath(),
+      token: resolvedToken,
+    });
+    await updateGlobalState(
+      this.context,
+      "grayMatterSession",
+      grayMatterSession,
+    );
+    return grayMatterSession;
   }
 
   // MCP Marketplace
@@ -2602,10 +2657,9 @@ export class Controller {
         headers["authorization"] = `Bearer ${token}`;
       }
 
-      // Fetch server details from marketplace using same URL pattern as ApplicationService
-      const response = await axios.post<McpDownloadResponse>(
-        `${getValkyraiBasePath()}/McpServer`,
-        { mcpId },
+      // Fetch server details from marketplace API using the correct endpoint
+      const response = await axios.get<any>(
+        `${getValkyraiBasePath()}/mcp/services/${encodeURIComponent(mcpId)}`,
         {
           headers,
           timeout: 10000,
@@ -2616,17 +2670,30 @@ export class Controller {
         throw new Error("Invalid response from MCP marketplace API");
       }
 
-      console.log("[downloadMcp] Response from download API", { response });
+      console.log("[downloadMcp] Response from MCP services API", { response });
 
-      const mcpDetails = response.data;
+      const mcpService = response.data;
 
       // Validate required fields
-      if (!mcpDetails.githubUrl) {
-        throw new Error("Missing GitHub URL in MCP download response");
+      if (!mcpService.apiBaseUrl && !mcpService.manifestUrl) {
+        throw new Error("Missing service configuration in MCP service details");
       }
-      if (!mcpDetails.readmeContent) {
-        throw new Error("Missing README content in MCP download response");
-      }
+
+      // Construct the download details response from the service registry
+      const mcpDetails: McpDownloadResponse = {
+        mcpId: mcpId,
+        name: mcpService.displayName || mcpService.slug || mcpId,
+        author: mcpService.author || "Unknown",
+        description: mcpService.description || "",
+        githubUrl: "", // Will be populated from manifest or service details
+        llmsInstallationContent: "",
+        readmeContent: "", // Will be populated from manifest or README
+        requiresApiKey: false,
+      };
+
+      // Try to fetch README from GitHub if there's a pattern we can detect
+      // For now, set a placeholder README
+      mcpDetails.readmeContent = `# ${mcpDetails.name}\n\n${mcpDetails.description}\n\nAuthor: ${mcpDetails.author}`;
 
       // Send details to webview
       await this.postMessageToWebview({
@@ -2947,16 +3014,19 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       }
 
       // Fetch LLM details from ValkyrAI
-      const valkyraiUrl = apiConfiguration.valkyraiHost.replace(/\/$/, ""); // Remove trailing slash
+      const valkyraiUrl = normalizeValkyraiHost(apiConfiguration.valkyraiHost);
       const endpoint = `${valkyraiUrl}/LlmDetails`;
 
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
       };
 
-      // Add JWT token if available
-      if (apiConfiguration?.valkyraiJwt) {
-        headers["Authorization"] = `Bearer ${apiConfiguration.valkyraiJwt}`;
+      // Prefer explicit ValkyrAI token, otherwise fall back to login JWT.
+      const authToken =
+        apiConfiguration?.valkyraiJwt ||
+        (await getSecret(this.context, "jwtToken"));
+      if (authToken) {
+        headers["Authorization"] = `Bearer ${authToken}`;
       }
 
       const response = await axios.get(endpoint, { headers });
@@ -3001,9 +3071,17 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
         console.error("Invalid response from ValkyrAI LLMDetails endpoint");
       }
     } catch (error) {
-      console.error("Error fetching LLMDetails from ValkyrAI:", error);
-      lastError =
-        error instanceof Error ? error.message : "Unknown LLMDetails error";
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        lastError =
+          "Authentication required for ValkyrAI LLMDetails. Sign in again or provide a ValkyrAI JWT.";
+        console.warn(
+          "Unauthorized when fetching LLMDetails from ValkyrAI (401).",
+        );
+      } else {
+        console.error("Error fetching LLMDetails from ValkyrAI:", error);
+        lastError =
+          error instanceof Error ? error.message : "Unknown LLMDetails error";
+      }
     }
 
     await this.postMessageToWebview({
@@ -3018,7 +3096,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
   private async testValkyraiHostConnection(host: string) {
     let success = false;
     let errorMessage: string | undefined;
-    const normalizedHost = host.replace(/\/$/, "");
+    const normalizedHost = normalizeValkyraiHost(host);
     const endpoints = [
       `${normalizedHost}/health`,
       `${normalizedHost}/status`,
@@ -3040,6 +3118,11 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
           error instanceof Error ? error.message : "Unable to reach host.";
       }
     }
+
+    if (success) {
+      void this.registerSwarmSession(normalizedHost);
+    }
+
     await this.postMessageToWebview({
       type: "valkyraiHostTestResult",
       host: normalizedHost,
@@ -3048,12 +3131,68 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
     });
   }
 
+  /**
+   * Registers this ValorIDE instance as a SWARM session with the ValkyrAI backend.
+   * Non-fatal: errors are logged but do not affect normal operation.
+   */
+  private async registerSwarmSession(host: string): Promise<void> {
+    try {
+      const jwtToken = await getSecret(this.context, "jwtToken");
+      const instanceId = vscode.env.machineId || crypto.randomUUID();
+      const version = this.context.extension?.packageJSON?.version ?? "unknown";
+      const workspaceName =
+        vscode.workspace.workspaceFolders?.map((f) => f.name).join(", ") ??
+        "unknown";
+
+      const sessionMessage = buildSwarmMessage(
+        SwarmMessageType.EVENT,
+        { type: SwarmEntityType.AGENT, instanceId, username: "valoride" },
+        { type: SwarmEntityType.SERVER },
+        "register",
+        {
+          agentType: "valoride-ide",
+          version,
+          machineId: instanceId,
+          workspace: workspaceName,
+        },
+      );
+
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (jwtToken) {
+        headers["Authorization"] = `Bearer ${jwtToken}`;
+      }
+
+      await axios.post(`${host}/swarm/sessions`, sessionMessage, {
+        headers,
+        timeout: 5000,
+      });
+      console.log(`[SWARM] ValorIDE session registered with ${host}`);
+
+      await this.postMessageToWebview({
+        type: "swarm:broadcast",
+        payload: { action: "sessionRegistered", data: { host, instanceId } },
+      });
+    } catch (error) {
+      // Non-fatal: SWARM registration is best-effort
+      console.warn(
+        "[SWARM] Session registration skipped:",
+        error instanceof Error ? error.message : error,
+      );
+    }
+  }
+
   private async handleValkyraiHostConfigChange() {
     try {
       const configuredHost = vscode.workspace
         .getConfiguration("valoride.valkyrai")
         .get<string>("host");
-      await updateGlobalState(this.context, "valkyraiHost", configuredHost);
+      await updateGlobalState(
+        this.context,
+        "valkyraiHost",
+        normalizeValkyraiHost(configuredHost),
+      );
       await this.postStateToWebview();
       await this.refreshLLMDetails();
     } catch (error) {
@@ -3369,8 +3508,16 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       // Log and notify webview of failure to initialize state. Avoid throwing to keep extension running.
       const msg = error instanceof Error ? error.message : String(error);
       console.error("postStateToWebview failed:", error);
-      await this.postMessageToWebview({ type: "state", state: { /* minimal fallback state */ } as any });
-      await this.postMessageToWebview({ type: "webviewError", text: `Failed to initialize UI: ${msg}` });
+      await this.postMessageToWebview({
+        type: "state",
+        state: {
+          /* minimal fallback state */
+        } as any,
+      });
+      await this.postMessageToWebview({
+        type: "webviewError",
+        text: `Failed to initialize UI: ${msg}`,
+      });
     }
   }
 
@@ -3390,6 +3537,8 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       globalValorIDERulesToggles,
       authenticatedPrincipal,
       isLoggedIn,
+      grayMatterSession,
+      agenticState,
     } = await getAllExtensionState(this.context);
 
     // Build advanced settings from VS Code configuration
@@ -3512,6 +3661,8 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       thorapiFolderPath,
       // Include authentication state fields
       authenticatedPrincipal,
+      grayMatterSession,
+      agenticState,
       isLoggedIn,
       jwtToken,
     };
@@ -3670,16 +3821,18 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
           }
         } catch (subdirError) {
           console.warn(
-            `findReadmeFile: unable to scan ${subdir}: ${subdirError instanceof Error
-              ? subdirError.message
-              : String(subdirError)
+            `findReadmeFile: unable to scan ${subdir}: ${
+              subdirError instanceof Error
+                ? subdirError.message
+                : String(subdirError)
             }`,
           );
         }
       }
     } catch (error) {
       console.warn(
-        `findReadmeFile: unable to scan ${directory}: ${error instanceof Error ? error.message : String(error)
+        `findReadmeFile: unable to scan ${directory}: ${
+          error instanceof Error ? error.message : String(error)
         }`,
       );
     }

@@ -7,39 +7,43 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  Address,
-  AddressAddressTypeEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddAddressMutation } from '../../services/AddressService';
+import { Address, AddressAddressTypeEnum } from "@thorapi/model";
+
+import { useAddAddressMutation } from "../../services/AddressService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -49,7 +53,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -64,35 +67,31 @@ Address represents a physically and legally addressable location
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const AddressTypeValidation = () => {
-  return [
-    'home',
-    'mail',
-    'work',
-    'school',
-    'other',
-  ];
+  return ["home", "mail", "work", "school", "other"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        name: Yup.string().required("name is required."),
-        street1: Yup.string().required("street1 is required."),
-        city: Yup.string().required("city is required."),
-        state: Yup.string().required("state is required."),
-        postalCode: Yup.string().required("postalCode is required."),
-        hasWifi: Yup.boolean(),
-        principalId: Yup.string(),
-      addressType: Yup.mixed()
-        .oneOf(AddressTypeValidation(), "Invalid value for addressType")
-        ,
-        street2: Yup.string(),
-        country: Yup.string(),
-        trashed: Yup.boolean(),
+  hasWifi: Yup.boolean(),
+  addressType: Yup.mixed().oneOf(
+    AddressTypeValidation(),
+    "Invalid value for addressType",
+  ),
+  name: Yup.string(),
+  street1: Yup.string(),
+  street2: Yup.string(),
+  city: Yup.string(),
+  state: Yup.string(),
+  country: Yup.string(),
+  postalCode: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -109,12 +108,18 @@ const AddressForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -122,17 +127,16 @@ const AddressForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Address> = {
-          name: '',
-          street1: '',
-          city: '',
-          state: '',
-          postalCode: '',
-          hasWifi: false,
-          principalId: '',
-        addressType: undefined,
-          street2: '',
-          country: '',
-          trashed: false,
+    hasWifi: false,
+    addressType: undefined,
+    name: "",
+    street1: "",
+    street2: "",
+    city: "",
+    state: "",
+    country: "",
+    postalCode: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -147,11 +151,14 @@ const AddressForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new Address:', grants);
+    console.log("Permissions saved for new Address:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Address>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<Address>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -162,7 +169,7 @@ const AddressForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Address created successfully! Would you like to set permissions for this object?`
+          `Address created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -170,8 +177,8 @@ const AddressForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create Address:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create Address:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -192,44 +199,146 @@ const AddressForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addAddressResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New Address
-                </Accordion.Header>
-                <Accordion.Body>
-                    <label htmlFor="name" className="nice-form-control">
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New Address
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <label htmlFor="hasWifi" className="nice-form-control">
                       <b>
-                        Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        Has Wifi:
+                        {touched.hasWifi && !errors.hasWifi && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="hasWifi"
+                        name="hasWifi"
+                        checked={values.hasWifi || false}
+                        onChange={(e) => {
+                          setFieldTouched("hasWifi", true);
+                          setFieldValue("hasWifi", e.target.checked);
+                        }}
+                        isInvalid={!!errors.hasWifi}
+                        className={errors.hasWifi ? "error" : ""}
+                      />
 
+                      <ErrorMessage
+                        className="error"
+                        name="hasWifi"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="addressType" className="nice-form-control">
+                      <b>
+                        Address Type:
+                        {touched.addressType && !errors.addressType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
+                        )}
+                      </b>
 
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="addressType"
+                        value={values.addressType || ""}
+                        className={
+                          errors.addressType
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("addressType", true);
+                          setFieldValue(
+                            "addressType",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Address Type" />
+                        <AddressTypeLookup />
+                      </BSForm.Select>
 
+                      <ErrorMessage
+                        className="error"
+                        name="addressType"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label
+                      htmlFor="gpsCoordinateLat"
+                      className="nice-form-control"
+                    >
+                      <b>
+                        Gps _ coordinate _ lat:
+                        {touched.gpsCoordinateLat &&
+                          !errors.gpsCoordinateLat && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
+                      </b>
 
+                      <ErrorMessage
+                        className="error"
+                        name="gpsCoordinateLat"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label
+                      htmlFor="gpsCoordinateLong"
+                      className="nice-form-control"
+                    >
+                      <b>
+                        Gps _ coordinate _ long:
+                        {touched.gpsCoordinateLong &&
+                          !errors.gpsCoordinateLong && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
+                      </b>
 
+                      <ErrorMessage
+                        className="error"
+                        name="gpsCoordinateLong"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="name" className="nice-form-control">
+                      <b>
+                        Name:
+                        {touched.name && !errors.name && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
+                        )}
+                      </b>
 
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="name"
+                        value={values?.name}
+                        placeholder="Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -241,28 +350,21 @@ const AddressForm: React.FC = () => {
                     <label htmlFor="street1" className="nice-form-control">
                       <b>
                         Street 1:
-                        {touched.street1 &&
-                         !errors.street1 && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.street1 && !errors.street1 && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="street1"
-                            value={values?.street1}
-                            placeholder="Street 1"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="street1"
+                        value={values?.street1}
+                        placeholder="Street 1"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -271,31 +373,50 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="city" className="nice-form-control">
+                    <label htmlFor="street2" className="nice-form-control">
                       <b>
-                        City:
-                        {touched.city &&
-                         !errors.city && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        Street 2:
+                        {touched.street2 && !errors.street2 && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="street2"
+                        value={values?.street2}
+                        placeholder="Street 2"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
+                      <ErrorMessage
+                        className="error"
+                        name="street2"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="city" className="nice-form-control">
+                      <b>
+                        City:
+                        {touched.city && !errors.city && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
+                        )}
+                      </b>
 
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="city"
-                            value={values?.city}
-                            placeholder="City"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="city"
+                        value={values?.city}
+                        placeholder="City"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -307,28 +428,21 @@ const AddressForm: React.FC = () => {
                     <label htmlFor="state" className="nice-form-control">
                       <b>
                         State:
-                        {touched.state &&
-                         !errors.state && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.state && !errors.state && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="state"
-                            value={values?.state}
-                            placeholder="State"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="state"
+                        value={values?.state}
+                        placeholder="State"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -337,252 +451,24 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="postalCode" className="nice-form-control">
-                      <b>
-                        Postal _ code:
-                        {touched.postalCode &&
-                         !errors.postalCode && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="postalCode"
-                            value={values?.postalCode}
-                            placeholder="Postal _ code"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="postalCode"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="hasWifi" className="nice-form-control">
-                      <b>
-                        Has Wifi:
-                        {touched.hasWifi &&
-                         !errors.hasWifi && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="hasWifi"
-                            name="hasWifi"
-                            checked={values.hasWifi || false}
-                            onChange={(e) => {
-                              setFieldTouched('hasWifi', true);
-                              setFieldValue('hasWifi', e.target.checked);
-                            }}
-                            isInvalid={!!errors.hasWifi}
-                            className={errors.hasWifi ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="hasWifi"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="principalId" className="nice-form-control">
-                      <b>
-                        Principal Id:
-                        {touched.principalId &&
-                         !errors.principalId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="principalId"
-                            value={values?.principalId}
-                            placeholder="Principal Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="principalId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="addressType" className="nice-form-control">
-                      <b>
-                        Address Type:
-                        {touched.addressType &&
-                         !errors.addressType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="addressType"
-                          value={values.addressType || ''}
-                          className={
-                            errors.addressType
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('addressType', true);
-                            setFieldValue('addressType', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Address Type" />
-                          <AddressTypeLookup />
-                        </BSForm.Select>
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="addressType"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="gpsCoordinateLat" className="nice-form-control">
-                      <b>
-                        Gps _ coordinate _ lat:
-                        {touched.gpsCoordinateLat &&
-                         !errors.gpsCoordinateLat && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="gpsCoordinateLat"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="gpsCoordinateLong" className="nice-form-control">
-                      <b>
-                        Gps _ coordinate _ long:
-                        {touched.gpsCoordinateLong &&
-                         !errors.gpsCoordinateLong && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="gpsCoordinateLong"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="street2" className="nice-form-control">
-                      <b>
-                        Street 2:
-                        {touched.street2 &&
-                         !errors.street2 && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="street2"
-                            value={values?.street2}
-                            placeholder="Street 2"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="street2"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="country" className="nice-form-control">
                       <b>
                         Country:
-                        {touched.country &&
-                         !errors.country && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.country && !errors.country && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="country"
-                            value={values?.country}
-                            placeholder="Country"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="country"
+                        value={values?.country}
+                        placeholder="Country"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -591,35 +477,54 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="trashed" className="nice-form-control">
+                    <label htmlFor="postalCode" className="nice-form-control">
                       <b>
-                        Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        Postal _ code:
+                        {touched.postalCode && !errors.postalCode && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="postalCode"
+                        value={values?.postalCode}
+                        placeholder="Postal _ code"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
+                      <ErrorMessage
+                        className="error"
+                        name="postalCode"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="trashed" className="nice-form-control">
+                      <b>
+                        Trashed:
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
+                        )}
+                      </b>
 
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -629,45 +534,58 @@ const AddressForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New Address
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New Address
+                    </CoolButton>
 
-                  {(addAddressResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addAddressResult as any).error ? (addAddressResult as any).error.data : (addAddressResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addAddressResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addAddressResult as any).error
+                              ? (addAddressResult as any).error.data
+                              : (addAddressResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addAddressResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addAddressResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addAddressResult: {JSON.stringify(addAddressResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addAddressResult: {JSON.stringify(addAddressResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -699,17 +617,14 @@ kebabcase address-type-lookup
 const AddressTypeLookup = () => {
   return (
     <>
-      <option value='home' label="Home" />
-      <option value='mail' label="Mail" />
-      <option value='work' label="Work" />
-      <option value='school' label="School" />
-      <option value='other' label="Other" />
+      <option value="home" label="Home" />
+      <option value="mail" label="Mail" />
+      <option value="work" label="Work" />
+      <option value="school" label="School" />
+      <option value="other" label="Other" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default AddressForm;
-

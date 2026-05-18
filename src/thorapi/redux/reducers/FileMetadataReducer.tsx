@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { FileMetadata } from '@thorapi/model/FileMetadata';
+import { FileMetadata } from "@thorapi/model/FileMetadata";
 
 const FileMetadataSlice = createSlice({
   name: "FileMetadatas",
@@ -28,20 +27,23 @@ const FileMetadataSlice = createSlice({
     },
 
     FileMetadataValueToggled(state, action) {
-      console.log("FileMetadata TOGGLE")
-      console.warn(JSON.stringify(action))
-      const FileMetadata:FileMetadata = state.find((FileMetadata) => FileMetadata.id === action.payload.FileMetadataId);
+      console.log("FileMetadata TOGGLE");
+      console.warn(JSON.stringify(action));
+      const FileMetadata: FileMetadata = state.find(
+        (FileMetadata) => FileMetadata.id === action.payload.FileMetadataId,
+      );
       if (FileMetadata) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     FileMetadatapropertySet(state, action) {
-      const FileMetadata = state.find((FileMetadata) => FileMetadata.id === action.payload.FileMetadataId);
+      const FileMetadata = state.find(
+        (FileMetadata) => FileMetadata.id === action.payload.FileMetadataId,
+      );
       if (FileMetadata) {
-      //  FileMetadata[action.property] = action.payload[action.property];
+        //  FileMetadata[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +52,6 @@ const FileMetadataSlice = createSlice({
 export const {
   FileMetadataAdded,
   FileMetadataValueToggled,
-  FileMetadatapropertySet
+  FileMetadatapropertySet,
 } = FileMetadataSlice.actions;
 export default FileMetadataSlice.reducer;

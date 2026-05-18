@@ -104,7 +104,8 @@ root.render(
         context={{
           component: "main.tsx root",
           location: typeof window !== "undefined" ? window.location.href : "",
-          userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "",
+          userAgent:
+            typeof navigator !== "undefined" ? navigator.userAgent : "",
         }}
       >
         <App />

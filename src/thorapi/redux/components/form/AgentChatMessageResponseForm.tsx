@@ -7,39 +7,46 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   AgentChatMessageResponse,
   AgentChatMessageResponseStatusEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddAgentChatMessageResponseMutation } from '../../services/AgentChatMessageResponseService';
+import { useAddAgentChatMessageResponseMutation } from "../../services/AgentChatMessageResponseService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -49,7 +56,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -64,40 +70,38 @@ Acknowledgement of a chat message.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const StatusValidation = () => {
-  return [
-    'QUEUED',
-    'DELIVERED',
-    'READ',
-  ];
+  return ["QUEUED", "DELIVERED", "READ"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        messageId: Yup.string(),
-      status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        ,
-        timestamp: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("timestamp must be a valid date"),
-        trashed: Yup.boolean(),
+  messageId: Yup.string(),
+  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
+  timestamp: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("timestamp must be a valid date"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const AgentChatMessageResponseForm: React.FC = () => {
-  const [addAgentChatMessageResponse, addAgentChatMessageResponseResult] = useAddAgentChatMessageResponseMutation();
+  const [addAgentChatMessageResponse, addAgentChatMessageResponseResult] =
+    useAddAgentChatMessageResponseMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -107,12 +111,18 @@ const AgentChatMessageResponseForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -120,10 +130,10 @@ const AgentChatMessageResponseForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<AgentChatMessageResponse> = {
-          messageId: '',
-        status: undefined,
-          timestamp: new Date(),
-          trashed: false,
+    messageId: "",
+    status: undefined,
+    timestamp: new Date(),
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -138,11 +148,14 @@ const AgentChatMessageResponseForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new AgentChatMessageResponse:', grants);
+    console.log("Permissions saved for new AgentChatMessageResponse:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<AgentChatMessageResponse>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<AgentChatMessageResponse>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -153,7 +166,7 @@ const AgentChatMessageResponseForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `AgentChatMessageResponse created successfully! Would you like to set permissions for this object?`
+          `AgentChatMessageResponse created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -161,8 +174,8 @@ const AgentChatMessageResponseForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create AgentChatMessageResponse:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create AgentChatMessageResponse:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -183,44 +196,38 @@ const AgentChatMessageResponseForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addAgentChatMessageResponseResult.isLoading;
+          const isSaving =
+            isSubmitting || addAgentChatMessageResponseResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New AgentChatMessageResponse
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    AgentChatMessageResponse
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="messageId" className="nice-form-control">
                       <b>
                         Message Id:
-                        {touched.messageId &&
-                         !errors.messageId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.messageId && !errors.messageId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="messageId"
-                            value={values?.messageId}
-                            placeholder="Message Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="messageId"
+                        value={values?.messageId}
+                        placeholder="Message Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -232,30 +239,30 @@ const AgentChatMessageResponseForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="status"
-                          value={values.status || ''}
-                          className={
-                            errors.status
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Status" />
-                          <StatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="status"
+                        value={values.status || ""}
+                        className={
+                          errors.status
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("status", true);
+                          setFieldValue("status", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Status" />
+                        <StatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -267,38 +274,38 @@ const AgentChatMessageResponseForm: React.FC = () => {
                     <label htmlFor="timestamp" className="nice-form-control">
                       <b>
                         Timestamp:
-                        {touched.timestamp &&
-                         !errors.timestamp && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.timestamp && !errors.timestamp && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="timestamp"
-                            type="datetime-local"
-                            value={values.timestamp ? 
-                              new Date(values.timestamp).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('timestamp', true);
-                              const v = e.target.value;
-                              setFieldValue('timestamp', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.timestamp
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="timestamp"
+                        type="datetime-local"
+                        value={
+                          values.timestamp
+                            ? new Date(values.timestamp)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("timestamp", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "timestamp",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.timestamp
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -310,32 +317,25 @@ const AgentChatMessageResponseForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -345,45 +345,65 @@ const AgentChatMessageResponseForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New AgentChatMessageResponse
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      AgentChatMessageResponse
+                    </CoolButton>
 
-                  {(addAgentChatMessageResponseResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addAgentChatMessageResponseResult as any).error ? (addAgentChatMessageResponseResult as any).error.data : (addAgentChatMessageResponseResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addAgentChatMessageResponseResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addAgentChatMessageResponseResult as any).error
+                              ? (addAgentChatMessageResponseResult as any).error
+                                  .data
+                              : (addAgentChatMessageResponseResult as any)
+                                  .error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addAgentChatMessageResponseResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addAgentChatMessageResponseResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addAgentChatMessageResponseResult: {JSON.stringify(addAgentChatMessageResponseResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addAgentChatMessageResponseResult:{" "}
+                    {JSON.stringify(addAgentChatMessageResponseResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -415,15 +435,12 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value='QUEUED' label="Queued" />
-      <option value='DELIVERED' label="Delivered" />
-      <option value='READ' label="Read" />
+      <option value="QUEUED" label="Queued" />
+      <option value="DELIVERED" label="Delivered" />
+      <option value="READ" label="Read" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default AgentChatMessageResponseForm;
-

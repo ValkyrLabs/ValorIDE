@@ -7,43 +7,68 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { InvokeMcpToolRequest } from '@thorapi/model/InvokeMcpToolRequest'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { InvokeMcpToolRequest } from "@thorapi/model/InvokeMcpToolRequest";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type InvokeMcpToolRequestResponse = InvokeMcpToolRequest[]
+type InvokeMcpToolRequestResponse = InvokeMcpToolRequest[];
+
+const toInvokeMcpToolRequestList = (
+  result: unknown,
+): InvokeMcpToolRequestResponse => {
+  if (Array.isArray(result)) {
+    return result as InvokeMcpToolRequestResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as InvokeMcpToolRequestResponse)
+    : [];
+};
 
 export const InvokeMcpToolRequestService = createApi({
-  reducerPath: 'InvokeMcpToolRequest', // This should remain unique
+  reducerPath: "InvokeMcpToolRequest", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['InvokeMcpToolRequest'],
+  tagTypes: ["InvokeMcpToolRequest"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getInvokeMcpToolRequestsPaged: build.query<InvokeMcpToolRequestResponse, { page: number; size?: number; example?: Partial<InvokeMcpToolRequest> }>({
+    getInvokeMcpToolRequestsPaged: build.query<
+      InvokeMcpToolRequestResponse,
+      { page: number; size?: number; example?: Partial<InvokeMcpToolRequest> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `InvokeMcpToolRequest?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `InvokeMcpToolRequest?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'InvokeMcpToolRequest' as const, id })),
-              { type: 'InvokeMcpToolRequest', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toInvokeMcpToolRequestList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "InvokeMcpToolRequest" as const, id })),
+          { type: "InvokeMcpToolRequest", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getInvokeMcpToolRequests: build.query<InvokeMcpToolRequestResponse, { example?: Partial<InvokeMcpToolRequest> } | void>({
+    getInvokeMcpToolRequests: build.query<
+      InvokeMcpToolRequestResponse,
+      { example?: Partial<InvokeMcpToolRequest> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +76,115 @@ export const InvokeMcpToolRequestService = createApi({
         }
         return `InvokeMcpToolRequest`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'InvokeMcpToolRequest' as const, id })),
-              { type: 'InvokeMcpToolRequest', id: 'LIST' },
-            ]
-          : [{ type: 'InvokeMcpToolRequest', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toInvokeMcpToolRequestList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "InvokeMcpToolRequest" as const, id })),
+          { type: "InvokeMcpToolRequest", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
-    addInvokeMcpToolRequest: build.mutation<InvokeMcpToolRequest, Partial<InvokeMcpToolRequest>>({
+    addInvokeMcpToolRequest: build.mutation<
+      InvokeMcpToolRequest,
+      Partial<InvokeMcpToolRequest>
+    >({
       query: (body) => ({
         url: `InvokeMcpToolRequest`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'InvokeMcpToolRequest', id: 'LIST' }],
+      invalidatesTags: [{ type: "InvokeMcpToolRequest", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getInvokeMcpToolRequest: build.query<InvokeMcpToolRequest, string>({
       query: (id) => `InvokeMcpToolRequest/${id}`,
-      providesTags: (result, error, id) => [{ type: 'InvokeMcpToolRequest', id }],
+      providesTags: (result, error, id) => [
+        { type: "InvokeMcpToolRequest", id },
+      ],
     }),
 
     // 5) Update
-    updateInvokeMcpToolRequest: build.mutation<void, Pick<InvokeMcpToolRequest, 'id'> & Partial<InvokeMcpToolRequest>>({
+    updateInvokeMcpToolRequest: build.mutation<
+      void,
+      Pick<InvokeMcpToolRequest, "id"> & Partial<InvokeMcpToolRequest>
+    >({
       query: ({ id, ...patch }) => ({
         url: `InvokeMcpToolRequest/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            InvokeMcpToolRequestService.util.updateQueryData('getInvokeMcpToolRequest', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            InvokeMcpToolRequestService.util.updateQueryData(
+              "getInvokeMcpToolRequest",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<InvokeMcpToolRequest, 'id'>) => [
-        { type: 'InvokeMcpToolRequest', id },
-        { type: 'InvokeMcpToolRequest', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<InvokeMcpToolRequest, "id">,
+      ) => [
+        { type: "InvokeMcpToolRequest", id },
+        { type: "InvokeMcpToolRequest", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteInvokeMcpToolRequest: build.mutation<{ success: boolean; id: string }, number>({
+    deleteInvokeMcpToolRequest: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `InvokeMcpToolRequest/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'InvokeMcpToolRequest', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "InvokeMcpToolRequest", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteInvokeMcpToolRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteInvokeMcpToolRequestCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `InvokeMcpToolRequest/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'InvokeMcpToolRequest', id }, { type: 'InvokeMcpToolRequest', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "InvokeMcpToolRequest", id },
+        { type: "InvokeMcpToolRequest", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetInvokeMcpToolRequestsPagedQuery`
 export const {
-  useGetInvokeMcpToolRequestsPagedQuery,     // immediate fetch
+  useGetInvokeMcpToolRequestsPagedQuery, // immediate fetch
   useLazyGetInvokeMcpToolRequestsPagedQuery, // lazy fetch
   useGetInvokeMcpToolRequestQuery,
   useGetInvokeMcpToolRequestsQuery,
@@ -138,4 +192,4 @@ export const {
   useUpdateInvokeMcpToolRequestMutation,
   useDeleteInvokeMcpToolRequestMutation,
   useDeleteInvokeMcpToolRequestCascadeMutation,
-} = InvokeMcpToolRequestService
+} = InvokeMcpToolRequestService;

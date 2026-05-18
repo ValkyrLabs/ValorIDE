@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { WebsocketMessage } from '@thorapi/model/WebsocketMessage';
+import { WebsocketMessage } from "@thorapi/model/WebsocketMessage";
 
 const WebsocketMessageSlice = createSlice({
   name: "WebsocketMessages",
@@ -28,20 +27,25 @@ const WebsocketMessageSlice = createSlice({
     },
 
     WebsocketMessageValueToggled(state, action) {
-      console.log("WebsocketMessage TOGGLE")
-      console.warn(JSON.stringify(action))
-      const WebsocketMessage:WebsocketMessage = state.find((WebsocketMessage) => WebsocketMessage.id === action.payload.WebsocketMessageId);
+      console.log("WebsocketMessage TOGGLE");
+      console.warn(JSON.stringify(action));
+      const WebsocketMessage: WebsocketMessage = state.find(
+        (WebsocketMessage) =>
+          WebsocketMessage.id === action.payload.WebsocketMessageId,
+      );
       if (WebsocketMessage) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     WebsocketMessagepropertySet(state, action) {
-      const WebsocketMessage = state.find((WebsocketMessage) => WebsocketMessage.id === action.payload.WebsocketMessageId);
+      const WebsocketMessage = state.find(
+        (WebsocketMessage) =>
+          WebsocketMessage.id === action.payload.WebsocketMessageId,
+      );
       if (WebsocketMessage) {
-      //  WebsocketMessage[action.property] = action.payload[action.property];
+        //  WebsocketMessage[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const WebsocketMessageSlice = createSlice({
 export const {
   WebsocketMessageAdded,
   WebsocketMessageValueToggled,
-  WebsocketMessagepropertySet
+  WebsocketMessagepropertySet,
 } = WebsocketMessageSlice.actions;
 export default WebsocketMessageSlice.reducer;

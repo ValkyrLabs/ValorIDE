@@ -243,8 +243,24 @@ export const useChatState = ({ messages, chatSettings }: UseChatStateProps) => {
                 setSecondaryButtonText(undefined);
               }
               break;
+            case "reasoning":
+              // Reasoning messages should not affect loading state
+              // They stream with partial: true, then partial: false when complete
+              if (!lastMessage.partial) {
+                // Reasoning is complete, allow UI interaction to resume
+                setTextAreaDisabled(false);
+              }
+              break;
+            case "completion_result":
+              // Response is complete - clear loading indicators and show results
+              if (!lastMessage.partial) {
+                setTextAreaDisabled(false);
+                setEnableButtons(true);
+                setValorIDEAsk(undefined);
+              }
+              break;
             default:
-              if (!lastMessage.partial && lastMessage.say !== "reasoning") {
+              if (!lastMessage.partial) {
                 setTextAreaDisabled(false);
                 if (valorideAsk === "command_output") {
                   setValorIDEAsk(undefined);

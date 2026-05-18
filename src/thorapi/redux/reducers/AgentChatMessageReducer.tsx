@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AgentChatMessage } from '@thorapi/model/AgentChatMessage';
+import { AgentChatMessage } from "@thorapi/model/AgentChatMessage";
 
 const AgentChatMessageSlice = createSlice({
   name: "AgentChatMessages",
@@ -28,20 +27,25 @@ const AgentChatMessageSlice = createSlice({
     },
 
     AgentChatMessageValueToggled(state, action) {
-      console.log("AgentChatMessage TOGGLE")
-      console.warn(JSON.stringify(action))
-      const AgentChatMessage:AgentChatMessage = state.find((AgentChatMessage) => AgentChatMessage.id === action.payload.AgentChatMessageId);
+      console.log("AgentChatMessage TOGGLE");
+      console.warn(JSON.stringify(action));
+      const AgentChatMessage: AgentChatMessage = state.find(
+        (AgentChatMessage) =>
+          AgentChatMessage.id === action.payload.AgentChatMessageId,
+      );
       if (AgentChatMessage) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     AgentChatMessagepropertySet(state, action) {
-      const AgentChatMessage = state.find((AgentChatMessage) => AgentChatMessage.id === action.payload.AgentChatMessageId);
+      const AgentChatMessage = state.find(
+        (AgentChatMessage) =>
+          AgentChatMessage.id === action.payload.AgentChatMessageId,
+      );
       if (AgentChatMessage) {
-      //  AgentChatMessage[action.property] = action.payload[action.property];
+        //  AgentChatMessage[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const AgentChatMessageSlice = createSlice({
 export const {
   AgentChatMessageAdded,
   AgentChatMessageValueToggled,
-  AgentChatMessagepropertySet
+  AgentChatMessagepropertySet,
 } = AgentChatMessageSlice.actions;
 export default AgentChatMessageSlice.reducer;

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { PasswordResetToken } from '@thorapi/model/PasswordResetToken';
+import { PasswordResetToken } from "@thorapi/model/PasswordResetToken";
 
 const PasswordResetTokenSlice = createSlice({
   name: "PasswordResetTokens",
@@ -28,20 +27,25 @@ const PasswordResetTokenSlice = createSlice({
     },
 
     PasswordResetTokenValueToggled(state, action) {
-      console.log("PasswordResetToken TOGGLE")
-      console.warn(JSON.stringify(action))
-      const PasswordResetToken:PasswordResetToken = state.find((PasswordResetToken) => PasswordResetToken.id === action.payload.PasswordResetTokenId);
+      console.log("PasswordResetToken TOGGLE");
+      console.warn(JSON.stringify(action));
+      const PasswordResetToken: PasswordResetToken = state.find(
+        (PasswordResetToken) =>
+          PasswordResetToken.id === action.payload.PasswordResetTokenId,
+      );
       if (PasswordResetToken) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     PasswordResetTokenpropertySet(state, action) {
-      const PasswordResetToken = state.find((PasswordResetToken) => PasswordResetToken.id === action.payload.PasswordResetTokenId);
+      const PasswordResetToken = state.find(
+        (PasswordResetToken) =>
+          PasswordResetToken.id === action.payload.PasswordResetTokenId,
+      );
       if (PasswordResetToken) {
-      //  PasswordResetToken[action.property] = action.payload[action.property];
+        //  PasswordResetToken[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const PasswordResetTokenSlice = createSlice({
 export const {
   PasswordResetTokenAdded,
   PasswordResetTokenValueToggled,
-  PasswordResetTokenpropertySet
+  PasswordResetTokenpropertySet,
 } = PasswordResetTokenSlice.actions;
 export default PasswordResetTokenSlice.reducer;

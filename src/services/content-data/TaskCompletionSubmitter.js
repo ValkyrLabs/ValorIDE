@@ -40,7 +40,7 @@ export class TaskCompletionSubmitter {
       const result = await bridge.createContentData(contentData);
       if (result) {
         console.log(
-          `Successfully submitted task completion to ContentData: ${data.taskId}`
+          `Successfully submitted task completion to ContentData: ${data.taskId}`,
         );
         return true;
       }

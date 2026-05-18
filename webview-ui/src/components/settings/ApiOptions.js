@@ -105,25 +105,25 @@ const ApiOptions = ({
   const [lmStudioModels, setLmStudioModels] = useState([]);
   const [vsCodeLmModels, setVsCodeLmModels] = useState([]);
   const [anthropicBaseUrlSelected, setAnthropicBaseUrlSelected] = useState(
-    !!apiConfiguration?.anthropicBaseUrl
+    !!apiConfiguration?.anthropicBaseUrl,
   );
   const [geminiBaseUrlSelected, setGeminiBaseUrlSelected] = useState(
-    !!apiConfiguration?.geminiBaseUrl
+    !!apiConfiguration?.geminiBaseUrl,
   );
   const [azureApiVersionSelected, setAzureApiVersionSelected] = useState(
-    !!apiConfiguration?.azureApiVersion
+    !!apiConfiguration?.azureApiVersion,
   );
   const [awsEndpointSelected, setAwsEndpointSelected] = useState(
-    !!apiConfiguration?.awsBedrockEndpoint
+    !!apiConfiguration?.awsBedrockEndpoint,
   );
   const [modelConfigurationSelected, setModelConfigurationSelected] =
     useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [providerSortingSelected, setProviderSortingSelected] = useState(
-    !!apiConfiguration?.openRouterProviderSorting
+    !!apiConfiguration?.openRouterProviderSorting,
   );
   const [reasoningEffortSelected, setReasoningEffortSelected] = useState(
-    !!apiConfiguration?.reasoningEffort
+    !!apiConfiguration?.reasoningEffort,
   );
   const handleInputChange = (field) => (event) => {
     const newValue = event.target.value;
@@ -184,7 +184,7 @@ const ApiOptions = ({
       selectedProvider === "lmstudio" ||
       selectedProvider === "vscode-lm"
       ? 2000
-      : null
+      : null,
   );
   const handleMessage = useCallback((event) => {
     const message = event.data;
@@ -204,7 +204,7 @@ const ApiOptions = ({
   // when the available options change, preserving the selected value.
   const valkyraiOptionsKey = useMemo(
     () => JSON.stringify((llmDetailsList || []).map((m) => m.id || "")),
-    [llmDetailsList]
+    [llmDetailsList],
   );
   const valkyraiModels = useMemo(() => {
     const models = {};
@@ -252,8 +252,8 @@ const ApiOptions = ({
               },
               children: modelId,
             },
-            modelId
-          )
+            modelId,
+          ),
         ),
       ],
     });
@@ -658,40 +658,6 @@ const ApiOptions = ({
                     children:
                       "You can get a Mistral API key by signing up here.",
                   }),
-              ],
-            }),
-          ],
-        }),
-      selectedProvider === "openrouter" &&
-        _jsxs("div", {
-          children: [
-            _jsx(VSCodeTextField, {
-              value: apiConfiguration?.openRouterApiKey || "",
-              style: { width: "100%" },
-              type: "password",
-              onInput: handleInputChange("openRouterApiKey"),
-              placeholder: "Enter API Key...",
-              children: _jsx("span", {
-                style: { fontWeight: 500 },
-                children: "OpenRouter API Key",
-              }),
-            }),
-            !apiConfiguration?.openRouterApiKey &&
-              _jsx(VSCodeButtonLink, {
-                href: getOpenRouterAuthUrl(uriScheme),
-                style: { margin: "5px 0 0 0" },
-                appearance: "secondary",
-                children: "Get OpenRouter API Key",
-              }),
-            _jsxs("p", {
-              style: {
-                fontSize: "12px",
-                marginTop: "5px",
-                color: "var(--vscode-descriptionForeground)",
-              },
-              children: [
-                "This key is stored locally and only used to make API requests from this extension.",
-                " ",
               ],
             }),
           ],
@@ -1139,7 +1105,7 @@ const ApiOptions = ({
             }),
             (() => {
               const headerEntries = Object.entries(
-                apiConfiguration?.openAiHeaders ?? {}
+                apiConfiguration?.openAiHeaders ?? {},
               );
               return _jsxs("div", {
                 style: { marginBottom: 10 },
@@ -1233,8 +1199,8 @@ const ApiOptions = ({
                             }),
                           ],
                         },
-                        index
-                      )
+                        index,
+                      ),
                     ),
                   }),
                 ],
@@ -1590,8 +1556,8 @@ const ApiOptions = ({
                             value: `${model.vendor}/${model.family}`,
                             children: [model.vendor, " - ", model.family],
                           },
-                          `${model.vendor}/${model.family}`
-                        )
+                          `${model.vendor}/${model.family}`,
+                        ),
                       ),
                     ],
                   })
@@ -1644,7 +1610,7 @@ const ApiOptions = ({
             lmStudioModels.length > 0 &&
               _jsx(VSCodeRadioGroup, {
                 value: lmStudioModels.includes(
-                  apiConfiguration?.lmStudioModelId || ""
+                  apiConfiguration?.lmStudioModelId || "",
                 )
                   ? apiConfiguration?.lmStudioModelId
                   : "",
@@ -1665,8 +1631,8 @@ const ApiOptions = ({
                       checked: apiConfiguration?.lmStudioModelId === model,
                       children: model,
                     },
-                    model
-                  )
+                    model,
+                  ),
                 ),
               }),
             _jsxs("p", {
@@ -1861,7 +1827,7 @@ const ApiOptions = ({
             ollamaModels.length > 0 &&
               _jsx(VSCodeRadioGroup, {
                 value: ollamaModels.includes(
-                  apiConfiguration?.ollamaModelId || ""
+                  apiConfiguration?.ollamaModelId || "",
                 )
                   ? apiConfiguration?.ollamaModelId
                   : "",
@@ -1882,8 +1848,8 @@ const ApiOptions = ({
                       checked: apiConfiguration?.ollamaModelId === model,
                       children: model,
                     },
-                    model
-                  )
+                    model,
+                  ),
                 ),
               }),
             _jsxs("p", {
@@ -2101,7 +2067,7 @@ const ApiOptions = ({
                   createDropdown(
                     apiConfiguration?.qwenApiLine === "china"
                       ? mainlandQwenModels
-                      : internationalQwenModels
+                      : internationalQwenModels,
                   ),
                 selectedProvider === "doubao" && createDropdown(doubaoModels),
                 selectedProvider === "mistral" && createDropdown(mistralModels),
@@ -2251,7 +2217,7 @@ const formatTiers = (tiers) => {
           index < arr.length - 1 && _jsx("br", {}),
         ],
       },
-      index
+      index,
     );
   });
 };
@@ -2278,7 +2244,7 @@ export const ModelInfoView = ({
             formatTiers(modelInfo.inputPriceTiers),
           ],
         },
-        "inputPriceTiers"
+        "inputPriceTiers",
       )
     : modelInfo.inputPrice !== undefined && modelInfo.inputPrice > 0
       ? _jsxs(
@@ -2294,7 +2260,7 @@ export const ModelInfoView = ({
               "/million tokens",
             ],
           },
-          "inputPrice"
+          "inputPrice",
         )
       : null;
   // --- Output Price Logic ---
@@ -2326,7 +2292,7 @@ export const ModelInfoView = ({
           "/million tokens",
         ],
       },
-      "outputPriceConditional"
+      "outputPriceConditional",
     );
   } else if (modelInfo.outputPriceTiers) {
     // Display tiered output pricing
@@ -2346,7 +2312,7 @@ export const ModelInfoView = ({
           formatTiers(modelInfo.outputPriceTiers),
         ],
       },
-      "outputPriceTiers"
+      "outputPriceTiers",
     );
   } else if (modelInfo.outputPrice !== undefined && modelInfo.outputPrice > 0) {
     // Display single standard output price
@@ -2363,7 +2329,7 @@ export const ModelInfoView = ({
           "/million tokens",
         ],
       },
-      "outputPrice"
+      "outputPrice",
     );
   }
   // --- End Output Price Logic ---
@@ -2377,7 +2343,7 @@ export const ModelInfoView = ({
           setIsExpanded: setIsDescriptionExpanded,
           isPopup: isPopup,
         },
-        "description"
+        "description",
       ),
     _jsx(
       ModelInfoSupportsItem,
@@ -2386,7 +2352,7 @@ export const ModelInfoView = ({
         supportsLabel: "Supports images",
         doesNotSupportLabel: "Does not support images",
       },
-      "supportsImages"
+      "supportsImages",
     ),
     _jsx(
       ModelInfoSupportsItem,
@@ -2395,7 +2361,7 @@ export const ModelInfoView = ({
         supportsLabel: "Supports browser use",
         doesNotSupportLabel: "Does not support browser use",
       },
-      "supportsBrowserUse"
+      "supportsBrowserUse",
     ),
     !isGemini &&
       _jsx(
@@ -2405,7 +2371,7 @@ export const ModelInfoView = ({
           supportsLabel: "Supports prompt caching",
           doesNotSupportLabel: "Does not support prompt caching",
         },
-        "supportsPromptCache"
+        "supportsPromptCache",
       ),
     modelInfo.maxTokens !== undefined &&
       modelInfo.maxTokens > 0 &&
@@ -2422,7 +2388,7 @@ export const ModelInfoView = ({
             " tokens",
           ],
         },
-        "maxTokens"
+        "maxTokens",
       ),
     inputPriceElement, // Add the generated input price block
     modelInfo.supportsPromptCache &&
@@ -2440,7 +2406,7 @@ export const ModelInfoView = ({
             "/million tokens",
           ],
         },
-        "cacheWritesPrice"
+        "cacheWritesPrice",
       ),
     modelInfo.supportsPromptCache &&
       modelInfo.cacheReadsPrice &&
@@ -2457,7 +2423,7 @@ export const ModelInfoView = ({
             "/million tokens",
           ],
         },
-        "cacheReadsPrice"
+        "cacheReadsPrice",
       ),
     outputPriceElement, // Add the generated output price block
     isGemini &&
@@ -2479,7 +2445,7 @@ export const ModelInfoView = ({
             }),
           ],
         },
-        "geminiInfo"
+        "geminiInfo",
       ),
   ].filter(Boolean);
   return _jsx("p", {
@@ -2492,8 +2458,8 @@ export const ModelInfoView = ({
       _jsxs(
         Fragment,
         { children: [item, index < infoItems.length - 1 && _jsx("br", {})] },
-        index
-      )
+        index,
+      ),
     ),
   });
 };

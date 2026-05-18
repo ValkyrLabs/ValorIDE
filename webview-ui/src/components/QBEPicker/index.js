@@ -87,8 +87,8 @@ export const QBEPicker = ({
                     }),
                   ],
                 },
-                r.id || r.keyHash || JSON.stringify(r)
-              )
+                r.id || r.keyHash || JSON.stringify(r),
+              ),
             ),
             !busy &&
               results.length === 0 &&

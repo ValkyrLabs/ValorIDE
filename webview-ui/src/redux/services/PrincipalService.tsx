@@ -15,9 +15,9 @@ export const PrincipalService = createApi({
       providesTags: (result) =>
         result
           ? [
-            ...result.map(({ id }) => ({ type: "Principal" as const, id })),
-            { type: "Principal", id: "LIST" },
-          ]
+              ...result.map(({ id }) => ({ type: "Principal" as const, id })),
+              { type: "Principal", id: "LIST" },
+            ]
           : [{ type: "Principal", id: "LIST" }],
     }),
     // the only thing we need to override. leave the rest for now

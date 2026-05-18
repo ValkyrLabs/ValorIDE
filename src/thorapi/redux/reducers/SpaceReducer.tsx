@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Space } from '@thorapi/model/Space';
+import { Space } from "@thorapi/model/Space";
 
 const SpaceSlice = createSlice({
   name: "Spaces",
@@ -28,28 +27,26 @@ const SpaceSlice = createSlice({
     },
 
     SpaceValueToggled(state, action) {
-      console.log("Space TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Space:Space = state.find((Space) => Space.id === action.payload.SpaceId);
+      console.log("Space TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Space: Space = state.find(
+        (Space) => Space.id === action.payload.SpaceId,
+      );
       if (Space) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SpacepropertySet(state, action) {
       const Space = state.find((Space) => Space.id === action.payload.SpaceId);
       if (Space) {
-      //  Space[action.property] = action.payload[action.property];
+        //  Space[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  SpaceAdded,
-  SpaceValueToggled,
-  SpacepropertySet
-} = SpaceSlice.actions;
+export const { SpaceAdded, SpaceValueToggled, SpacepropertySet } =
+  SpaceSlice.actions;
 export default SpaceSlice.reducer;

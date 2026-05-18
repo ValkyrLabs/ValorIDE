@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Application } from '@thorapi/model/Application';
+import { Application } from "@thorapi/model/Application";
 
 const ApplicationSlice = createSlice({
   name: "Applications",
@@ -28,20 +27,23 @@ const ApplicationSlice = createSlice({
     },
 
     ApplicationValueToggled(state, action) {
-      console.log("Application TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Application:Application = state.find((Application) => Application.id === action.payload.ApplicationId);
+      console.log("Application TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Application: Application = state.find(
+        (Application) => Application.id === action.payload.ApplicationId,
+      );
       if (Application) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ApplicationpropertySet(state, action) {
-      const Application = state.find((Application) => Application.id === action.payload.ApplicationId);
+      const Application = state.find(
+        (Application) => Application.id === action.payload.ApplicationId,
+      );
       if (Application) {
-      //  Application[action.property] = action.payload[action.property];
+        //  Application[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +52,6 @@ const ApplicationSlice = createSlice({
 export const {
   ApplicationAdded,
   ApplicationValueToggled,
-  ApplicationpropertySet
+  ApplicationpropertySet,
 } = ApplicationSlice.actions;
 export default ApplicationSlice.reducer;

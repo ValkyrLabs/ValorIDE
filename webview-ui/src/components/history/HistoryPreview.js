@@ -180,8 +180,8 @@ const HistoryPreview = ({ showHistoryView }) => {
                     ],
                   }),
                 },
-                item.id
-              )
+                item.id,
+              ),
             ),
           _jsx("div", {
             style: {

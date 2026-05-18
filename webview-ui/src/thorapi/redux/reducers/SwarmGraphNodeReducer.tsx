@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SwarmGraphNode } from '@thorapi/model/SwarmGraphNode';
+import { SwarmGraphNode } from "@thorapi/model/SwarmGraphNode";
 
 const SwarmGraphNodeSlice = createSlice({
   name: "SwarmGraphNodes",
@@ -28,20 +27,25 @@ const SwarmGraphNodeSlice = createSlice({
     },
 
     SwarmGraphNodeValueToggled(state, action) {
-      console.log("SwarmGraphNode TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SwarmGraphNode:SwarmGraphNode = state.find((SwarmGraphNode) => SwarmGraphNode.id === action.payload.SwarmGraphNodeId);
+      console.log("SwarmGraphNode TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SwarmGraphNode: SwarmGraphNode = state.find(
+        (SwarmGraphNode) =>
+          SwarmGraphNode.id === action.payload.SwarmGraphNodeId,
+      );
       if (SwarmGraphNode) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SwarmGraphNodepropertySet(state, action) {
-      const SwarmGraphNode = state.find((SwarmGraphNode) => SwarmGraphNode.id === action.payload.SwarmGraphNodeId);
+      const SwarmGraphNode = state.find(
+        (SwarmGraphNode) =>
+          SwarmGraphNode.id === action.payload.SwarmGraphNodeId,
+      );
       if (SwarmGraphNode) {
-      //  SwarmGraphNode[action.property] = action.payload[action.property];
+        //  SwarmGraphNode[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const SwarmGraphNodeSlice = createSlice({
 export const {
   SwarmGraphNodeAdded,
   SwarmGraphNodeValueToggled,
-  SwarmGraphNodepropertySet
+  SwarmGraphNodepropertySet,
 } = SwarmGraphNodeSlice.actions;
 export default SwarmGraphNodeSlice.reducer;

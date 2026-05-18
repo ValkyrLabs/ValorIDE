@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AclEntry } from '@thorapi/model/AclEntry';
+import { AclEntry } from "@thorapi/model/AclEntry";
 
 const AclEntrySlice = createSlice({
   name: "AclEntrys",
@@ -28,28 +27,28 @@ const AclEntrySlice = createSlice({
     },
 
     AclEntryValueToggled(state, action) {
-      console.log("AclEntry TOGGLE")
-      console.warn(JSON.stringify(action))
-      const AclEntry:AclEntry = state.find((AclEntry) => AclEntry.id === action.payload.AclEntryId);
+      console.log("AclEntry TOGGLE");
+      console.warn(JSON.stringify(action));
+      const AclEntry: AclEntry = state.find(
+        (AclEntry) => AclEntry.id === action.payload.AclEntryId,
+      );
       if (AclEntry) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     AclEntrypropertySet(state, action) {
-      const AclEntry = state.find((AclEntry) => AclEntry.id === action.payload.AclEntryId);
+      const AclEntry = state.find(
+        (AclEntry) => AclEntry.id === action.payload.AclEntryId,
+      );
       if (AclEntry) {
-      //  AclEntry[action.property] = action.payload[action.property];
+        //  AclEntry[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  AclEntryAdded,
-  AclEntryValueToggled,
-  AclEntrypropertySet
-} = AclEntrySlice.actions;
+export const { AclEntryAdded, AclEntryValueToggled, AclEntrypropertySet } =
+  AclEntrySlice.actions;
 export default AclEntrySlice.reducer;

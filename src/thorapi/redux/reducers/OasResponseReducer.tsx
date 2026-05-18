@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasResponse } from '@thorapi/model/OasResponse';
+import { OasResponse } from "@thorapi/model/OasResponse";
 
 const OasResponseSlice = createSlice({
   name: "OasResponses",
@@ -28,20 +27,23 @@ const OasResponseSlice = createSlice({
     },
 
     OasResponseValueToggled(state, action) {
-      console.log("OasResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const OasResponse:OasResponse = state.find((OasResponse) => OasResponse.id === action.payload.OasResponseId);
+      console.log("OasResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const OasResponse: OasResponse = state.find(
+        (OasResponse) => OasResponse.id === action.payload.OasResponseId,
+      );
       if (OasResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     OasResponsepropertySet(state, action) {
-      const OasResponse = state.find((OasResponse) => OasResponse.id === action.payload.OasResponseId);
+      const OasResponse = state.find(
+        (OasResponse) => OasResponse.id === action.payload.OasResponseId,
+      );
       if (OasResponse) {
-      //  OasResponse[action.property] = action.payload[action.property];
+        //  OasResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +52,6 @@ const OasResponseSlice = createSlice({
 export const {
   OasResponseAdded,
   OasResponseValueToggled,
-  OasResponsepropertySet
+  OasResponsepropertySet,
 } = OasResponseSlice.actions;
 export default OasResponseSlice.reducer;

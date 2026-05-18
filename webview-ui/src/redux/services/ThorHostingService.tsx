@@ -1,6 +1,9 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import customBaseQuery from "../..//redux/customBaseQuery";
-import { HostInstance, HostInstanceStatusEnum } from "@thorapi/model/HostInstance";
+import {
+  HostInstance,
+  HostInstanceStatusEnum,
+} from "@thorapi/model/HostInstance";
 
 // Provision now accepts a HostInstance JSON payload
 export type ProvisionArgs = Pick<HostInstance, "name" | "cpus" | "memory">;
@@ -41,12 +44,12 @@ export const ThorHostingService = createApi({
       providesTags: (result) =>
         result
           ? [
-            ...result.map(({ id }) => ({
-              type: "HostInstance" as const,
-              id,
-            })),
-            { type: "HostInstance", id: "LIST" },
-          ]
+              ...result.map(({ id }) => ({
+                type: "HostInstance" as const,
+                id,
+              })),
+              { type: "HostInstance", id: "LIST" },
+            ]
           : [{ type: "HostInstance", id: "LIST" }],
     }),
 

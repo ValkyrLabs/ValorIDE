@@ -7,43 +7,64 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { PersistentLogin } from '@thorapi/model/PersistentLogin'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { PersistentLogin } from "@thorapi/model/PersistentLogin";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type PersistentLoginResponse = PersistentLogin[]
+type PersistentLoginResponse = PersistentLogin[];
+
+const toPersistentLoginList = (result: unknown): PersistentLoginResponse => {
+  if (Array.isArray(result)) {
+    return result as PersistentLoginResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as PersistentLoginResponse) : [];
+};
 
 export const PersistentLoginService = createApi({
-  reducerPath: 'PersistentLogin', // This should remain unique
+  reducerPath: "PersistentLogin", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['PersistentLogin'],
+  tagTypes: ["PersistentLogin"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getPersistentLoginsPaged: build.query<PersistentLoginResponse, { page: number; size?: number; example?: Partial<PersistentLogin> }>({
+    getPersistentLoginsPaged: build.query<
+      PersistentLoginResponse,
+      { page: number; size?: number; example?: Partial<PersistentLogin> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `PersistentLogin?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `PersistentLogin?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'PersistentLogin' as const, id })),
-              { type: 'PersistentLogin', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toPersistentLoginList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "PersistentLogin" as const, id })),
+          { type: "PersistentLogin", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getPersistentLogins: build.query<PersistentLoginResponse, { example?: Partial<PersistentLogin> } | void>({
+    getPersistentLogins: build.query<
+      PersistentLoginResponse,
+      { example?: Partial<PersistentLogin> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +72,107 @@ export const PersistentLoginService = createApi({
         }
         return `PersistentLogin`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'PersistentLogin' as const, id })),
-              { type: 'PersistentLogin', id: 'LIST' },
-            ]
-          : [{ type: 'PersistentLogin', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toPersistentLoginList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "PersistentLogin" as const, id })),
+          { type: "PersistentLogin", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
-    addPersistentLogin: build.mutation<PersistentLogin, Partial<PersistentLogin>>({
+    addPersistentLogin: build.mutation<
+      PersistentLogin,
+      Partial<PersistentLogin>
+    >({
       query: (body) => ({
         url: `PersistentLogin`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'PersistentLogin', id: 'LIST' }],
+      invalidatesTags: [{ type: "PersistentLogin", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getPersistentLogin: build.query<PersistentLogin, string>({
       query: (id) => `PersistentLogin/${id}`,
-      providesTags: (result, error, id) => [{ type: 'PersistentLogin', id }],
+      providesTags: (result, error, id) => [{ type: "PersistentLogin", id }],
     }),
 
     // 5) Update
-    updatePersistentLogin: build.mutation<void, Pick<PersistentLogin, 'id'> & Partial<PersistentLogin>>({
+    updatePersistentLogin: build.mutation<
+      void,
+      Pick<PersistentLogin, "id"> & Partial<PersistentLogin>
+    >({
       query: ({ id, ...patch }) => ({
         url: `PersistentLogin/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            PersistentLoginService.util.updateQueryData('getPersistentLogin', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            PersistentLoginService.util.updateQueryData(
+              "getPersistentLogin",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<PersistentLogin, 'id'>) => [
-        { type: 'PersistentLogin', id },
-        { type: 'PersistentLogin', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<PersistentLogin, "id">) => [
+        { type: "PersistentLogin", id },
+        { type: "PersistentLogin", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deletePersistentLogin: build.mutation<{ success: boolean; id: string }, number>({
+    deletePersistentLogin: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `PersistentLogin/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'PersistentLogin', id }],
+      invalidatesTags: (result, error, id) => [{ type: "PersistentLogin", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deletePersistentLoginCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deletePersistentLoginCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `PersistentLogin/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'PersistentLogin', id }, { type: 'PersistentLogin', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "PersistentLogin", id },
+        { type: "PersistentLogin", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetPersistentLoginsPagedQuery`
 export const {
-  useGetPersistentLoginsPagedQuery,     // immediate fetch
+  useGetPersistentLoginsPagedQuery, // immediate fetch
   useLazyGetPersistentLoginsPagedQuery, // lazy fetch
   useGetPersistentLoginQuery,
   useGetPersistentLoginsQuery,
@@ -138,4 +180,4 @@ export const {
   useUpdatePersistentLoginMutation,
   useDeletePersistentLoginMutation,
   useDeletePersistentLoginCascadeMutation,
-} = PersistentLoginService
+} = PersistentLoginService;

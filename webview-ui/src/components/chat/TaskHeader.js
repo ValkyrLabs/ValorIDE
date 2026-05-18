@@ -59,7 +59,7 @@ const TaskHeader = ({
   const textRef = useRef(null);
   const { selectedModelInfo } = useMemo(
     () => normalizeApiConfiguration(apiConfiguration),
-    [apiConfiguration]
+    [apiConfiguration],
   );
   const contextWindow = selectedModelInfo?.contextWindow;
   // Open task header when checkpoint tracker error message is set
@@ -651,10 +651,10 @@ const TaskHeader = ({
                           children: [
                             checkpointTrackerErrorMessage.replace(
                               /disabling checkpoints\.$/,
-                              ""
+                              "",
                             ),
                             checkpointTrackerErrorMessage.endsWith(
-                              "disabling checkpoints."
+                              "disabling checkpoints.",
                             ) &&
                               _jsx(_Fragment, {
                                 children: _jsx("a", {
@@ -673,7 +673,7 @@ const TaskHeader = ({
                                 }),
                               }),
                             checkpointTrackerErrorMessage.includes(
-                              "Git must be installed to use checkpoints."
+                              "Git must be installed to use checkpoints.",
                             ) &&
                               _jsxs(_Fragment, {
                                 children: [
@@ -726,7 +726,7 @@ const highlightSlashCommands = (text, withShadow = true) => {
           : "mention-context-highlight",
         children: ["/", commandName],
       },
-      "slashCommand"
+      "slashCommand",
     ),
     afterCommand,
   ];
@@ -753,7 +753,7 @@ export const highlightMentions = (text, withShadow = true) => {
             vscode.postMessage({ type: "openMention", text: part }),
           children: ["@", part],
         },
-        index
+        index,
       );
     }
   });

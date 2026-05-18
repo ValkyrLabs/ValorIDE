@@ -61,7 +61,7 @@ const McpMarketplaceView = () => {
       mcpServers,
       convertThorMcpServersToShared,
       [],
-      "McpMarketplaceView - MCP Servers"
+      "McpMarketplaceView - MCP Servers",
     );
   }, [mcpServers]);
   const sharedMarketplaceCatalog = React.useMemo(() => {
@@ -69,7 +69,7 @@ const McpMarketplaceView = () => {
       marketplaceCatalogs,
       convertThorMcpMarketplaceCatalogsToShared,
       { items: [] },
-      "McpMarketplaceView - Marketplace Catalog"
+      "McpMarketplaceView - Marketplace Catalog",
     );
   }, [marketplaceCatalogs]);
   // Convert marketplace items directly
@@ -78,7 +78,7 @@ const McpMarketplaceView = () => {
       marketplaceItems,
       convertThorMcpMarketplaceItemsToShared,
       [],
-      "McpMarketplaceView - Marketplace Items"
+      "McpMarketplaceView - Marketplace Items",
     );
   }, [marketplaceItems]);
   // Use direct marketplace items if available, otherwise fall back to catalog items
@@ -111,7 +111,7 @@ const McpMarketplaceView = () => {
           item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
           item.tags.some((tag) =>
-            tag.toLowerCase().includes(searchQuery.toLowerCase())
+            tag.toLowerCase().includes(searchQuery.toLowerCase()),
           );
         const matchesCategory =
           !selectedCategory || item.category === selectedCategory;
@@ -320,8 +320,8 @@ const McpMarketplaceView = () => {
                           _jsx(
                             VSCodeOption,
                             { value: category, children: category },
-                            category
-                          )
+                            category,
+                          ),
                         ),
                       ],
                     }),
@@ -413,8 +413,8 @@ const McpMarketplaceView = () => {
                     _jsx(
                       McpMarketplaceCard,
                       { item: item, installedServers: sharedMcpServers },
-                      item.mcpId
-                    )
+                      item.mcpId,
+                    ),
                   ),
               _jsx(McpSubmitCard, {}),
             ],

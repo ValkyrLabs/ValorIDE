@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpTool } from '@thorapi/model/McpTool';
+import { McpTool } from "@thorapi/model/McpTool";
 
 const McpToolSlice = createSlice({
   name: "McpTools",
@@ -28,28 +27,28 @@ const McpToolSlice = createSlice({
     },
 
     McpToolValueToggled(state, action) {
-      console.log("McpTool TOGGLE")
-      console.warn(JSON.stringify(action))
-      const McpTool:McpTool = state.find((McpTool) => McpTool.id === action.payload.McpToolId);
+      console.log("McpTool TOGGLE");
+      console.warn(JSON.stringify(action));
+      const McpTool: McpTool = state.find(
+        (McpTool) => McpTool.id === action.payload.McpToolId,
+      );
       if (McpTool) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     McpToolpropertySet(state, action) {
-      const McpTool = state.find((McpTool) => McpTool.id === action.payload.McpToolId);
+      const McpTool = state.find(
+        (McpTool) => McpTool.id === action.payload.McpToolId,
+      );
       if (McpTool) {
-      //  McpTool[action.property] = action.payload[action.property];
+        //  McpTool[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  McpToolAdded,
-  McpToolValueToggled,
-  McpToolpropertySet
-} = McpToolSlice.actions;
+export const { McpToolAdded, McpToolValueToggled, McpToolpropertySet } =
+  McpToolSlice.actions;
 export default McpToolSlice.reducer;

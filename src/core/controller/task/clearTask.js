@@ -6,8 +6,8 @@ import { Empty } from "../../../shared/proto/common";
  * @returns Empty response
  */
 export async function clearTask(controller, _request) {
-    await controller.clearTask();
-    await controller.postStateToWebview();
-    return Empty.create();
+  await controller.clearTask();
+  await controller.postStateToWebview();
+  return Empty.create();
 }
 //# sourceMappingURL=clearTask.js.map

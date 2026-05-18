@@ -7,38 +7,43 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  SwarmGraphEdge,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddSwarmGraphEdgeMutation } from '../../services/SwarmGraphEdgeService';
+import { SwarmGraphEdge } from "@thorapi/model";
+
+import { useAddSwarmGraphEdgeMutation } from "../../services/SwarmGraphEdgeService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -48,7 +53,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -67,29 +71,33 @@ Edge describing a command, event, or workflow linkage in the swarm graph.
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        source: Yup.string().required("source is required."),
-        target: Yup.string().required("target is required."),
-        timestamp: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).required("timestamp is required.").typeError("timestamp must be a valid date"),
-        action: Yup.string(),
-        status: Yup.string(),
-        trashed: Yup.boolean(),
+  source: Yup.string(),
+  target: Yup.string(),
+  action: Yup.string(),
+  status: Yup.string(),
+  timestamp: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("timestamp must be a valid date"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const SwarmGraphEdgeForm: React.FC = () => {
-  const [addSwarmGraphEdge, addSwarmGraphEdgeResult] = useAddSwarmGraphEdgeMutation();
+  const [addSwarmGraphEdge, addSwarmGraphEdgeResult] =
+    useAddSwarmGraphEdgeMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -99,12 +107,18 @@ const SwarmGraphEdgeForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -112,12 +126,12 @@ const SwarmGraphEdgeForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<SwarmGraphEdge> = {
-          source: '',
-          target: '',
-          timestamp: new Date(),
-          action: '',
-          status: '',
-          trashed: false,
+    source: "",
+    target: "",
+    action: "",
+    status: "",
+    timestamp: new Date(),
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -132,11 +146,14 @@ const SwarmGraphEdgeForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new SwarmGraphEdge:', grants);
+    console.log("Permissions saved for new SwarmGraphEdge:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<SwarmGraphEdge>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<SwarmGraphEdge>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -147,7 +164,7 @@ const SwarmGraphEdgeForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `SwarmGraphEdge created successfully! Would you like to set permissions for this object?`
+          `SwarmGraphEdge created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -155,8 +172,8 @@ const SwarmGraphEdgeForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create SwarmGraphEdge:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create SwarmGraphEdge:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -177,44 +194,36 @@ const SwarmGraphEdgeForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addSwarmGraphEdgeResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New SwarmGraphEdge
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New SwarmGraphEdge
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="source" className="nice-form-control">
                       <b>
                         Source:
-                        {touched.source &&
-                         !errors.source && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.source && !errors.source && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="source"
-                            value={values?.source}
-                            placeholder="Source"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="source"
+                        value={values?.source}
+                        placeholder="Source"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -226,28 +235,21 @@ const SwarmGraphEdgeForm: React.FC = () => {
                     <label htmlFor="target" className="nice-form-control">
                       <b>
                         Target:
-                        {touched.target &&
-                         !errors.target && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.target && !errors.target && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="target"
-                            value={values?.target}
-                            placeholder="Target"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="target"
+                        value={values?.target}
+                        placeholder="Target"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -256,74 +258,24 @@ const SwarmGraphEdgeForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="timestamp" className="nice-form-control">
-                      <b>
-                        Timestamp:
-                        {touched.timestamp &&
-                         !errors.timestamp && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="timestamp"
-                            type="datetime-local"
-                            value={values.timestamp ? 
-                              new Date(values.timestamp).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('timestamp', true);
-                              const v = e.target.value;
-                              setFieldValue('timestamp', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.timestamp
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-                      <ErrorMessage
-                        className="error"
-                        name="timestamp"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="action" className="nice-form-control">
                       <b>
                         Action:
-                        {touched.action &&
-                         !errors.action && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.action && !errors.action && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="action"
-                            value={values?.action}
-                            placeholder="Action"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="action"
+                        value={values?.action}
+                        placeholder="Action"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -335,28 +287,21 @@ const SwarmGraphEdgeForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="status"
-                            value={values?.status}
-                            placeholder="Status"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="status"
+                        value={values?.status}
+                        placeholder="Status"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -365,35 +310,71 @@ const SwarmGraphEdgeForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="trashed" className="nice-form-control">
+                    <label htmlFor="timestamp" className="nice-form-control">
                       <b>
-                        Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        Timestamp:
+                        {touched.timestamp && !errors.timestamp && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="timestamp"
+                        type="datetime-local"
+                        value={
+                          values.timestamp
+                            ? new Date(values.timestamp)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("timestamp", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "timestamp",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.timestamp
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
+                      <ErrorMessage
+                        className="error"
+                        name="timestamp"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="trashed" className="nice-form-control">
+                      <b>
+                        Trashed:
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
+                        )}
+                      </b>
 
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -403,45 +384,59 @@ const SwarmGraphEdgeForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New SwarmGraphEdge
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New SwarmGraphEdge
+                    </CoolButton>
 
-                  {(addSwarmGraphEdgeResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addSwarmGraphEdgeResult as any).error ? (addSwarmGraphEdgeResult as any).error.data : (addSwarmGraphEdgeResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addSwarmGraphEdgeResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addSwarmGraphEdgeResult as any).error
+                              ? (addSwarmGraphEdgeResult as any).error.data
+                              : (addSwarmGraphEdgeResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addSwarmGraphEdgeResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addSwarmGraphEdgeResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addSwarmGraphEdgeResult: {JSON.stringify(addSwarmGraphEdgeResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addSwarmGraphEdgeResult:{" "}
+                    {JSON.stringify(addSwarmGraphEdgeResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -461,8 +456,5 @@ const SwarmGraphEdgeForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default SwarmGraphEdgeForm;
-

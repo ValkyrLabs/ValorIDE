@@ -1,0 +1,630 @@
+import { memo, useState, useCallback, useEffect, useMemo } from "react";
+
+import { UsageTransaction, PaymentTransaction } from "@thorapi/model";
+import { useGetAccountBalanceQuery } from "@thorapi/services/creditsApi";
+import {
+  useAddUsageTransactionMutation,
+  useGetUsageTransactionsQuery,
+} from "@thorapi/redux/services/UsageTransactionService";
+import { useGetPaymentTransactionsQuery } from "@thorapi/redux/services/PaymentTransactionService";
+import VSCodeButtonLink from "../common/VSCodeButtonLink";
+import ValorIDELogoWhite from "../../assets/ValorIDELogoWhite";
+import ContentFlipCard from "../content-data/ContentFlipCard";
+import "./AccountView.css";
+import CountUp from "react-countup";
+import CreditsHistoryTable from "./CreditsHistoryTable";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { getApiMetrics } from "@shared/getApiMetrics";
+import ApplicationsList from "./ApplicationsList";
+import OpenAPIFilePicker from "./OpenAPIFilePicker";
+import Form from "../Login/form";
+import FileExplorer from "../FileExplorer/FileExplorer";
+
+import {
+  VSCodeButton,
+  VSCodeDivider,
+  VSCodeLink,
+} from "@vscode/webview-ui-toolkit/react";
+import { vscode } from "@thorapi/utils/vscode";
+import {
+  FaAppStore,
+  FaBackward,
+  FaFileArchive,
+  FaRecycle,
+  FaUserEdit,
+  FaServer,
+} from "react-icons/fa";
+import ServerConsole from "../ServerConsole";
+import "./AccountView.css";
+import CoolButton from "../CoolButton";
+import { Card } from "react-bootstrap";
+import { Login } from "@thorapi/model";
+import { FormikHelpers } from "formik";
+import { useLoginUserMutation } from "../../redux/services/AuthService";
+import StatusBadge from "@thorapi/components/common/StatusBadge";
+import OfflineBanner from "@thorapi/components/common/OfflineBanner";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
+import LoadingSpinner from "@thorapi/components/LoadingSpinner";
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
+import UserPreferences from "./UserPreferences";
+import BuyCredits from "@thorapi/components/BuyCredits";
+import {
+  storeJwtToken,
+  useAccessControl,
+  writeStoredPrincipal,
+  readStoredPrincipal,
+} from "@thorapi/utils/accessControl";
+
+type AccountViewProps = {
+  onDone: () => void;
+  serverConsoleNeedsAttention?: boolean;
+  onClearServerConsoleNeedsAttention?: () => void;
+  initialActiveTab?:
+  | "login"
+  | "account"
+  | "applications"
+  | "generatedFiles"
+  | "userPreferences"
+  | "serverConsole";
+  onConsumeInitialActiveTab?: () => void;
+};
+
+const AccountView = ({
+  onDone,
+  serverConsoleNeedsAttention = false,
+  onClearServerConsoleNeedsAttention,
+  initialActiveTab,
+  onConsumeInitialActiveTab,
+}: AccountViewProps) => {
+  const { userInfo, authenticatedUser, isLoggedIn, jwtToken } =
+    useExtensionState();
+  const { advancedSettings } = useExtensionState() as any;
+  // Read live messages once at top-level to respect Hooks rules
+  const { valorideMessages } = useExtensionState();
+  // Compute API metrics from messages once using useMemo
+  const apiMetrics = useMemo(
+    () => getApiMetrics(valorideMessages || []),
+    [valorideMessages],
+  );
+
+  const budgetAlerts = useMemo(
+    () =>
+      advancedSettings?.budgetAlerts || {
+        depletedThreshold: 0,
+        criticalThreshold: 1,
+        lowThreshold: 5,
+        alertThreshold: 10,
+      },
+    [advancedSettings?.budgetAlerts],
+  );
+
+  // Determine authenticated status
+  const isAuthenticated = Boolean(
+    isLoggedIn || authenticatedUser || userInfo || jwtToken,
+  );
+
+  // Also consider presence of a stored JWT to avoid timing gaps
+  const hasStoredJwt = useMemo(() => {
+    try {
+      const storedPrincipal = readStoredPrincipal();
+      const storedToken =
+        sessionStorage.getItem("jwtToken") ||
+        localStorage.getItem("jwtToken") ||
+        localStorage.getItem("authToken");
+      // Both principal AND token must exist for auth to be valid
+      return Boolean(storedPrincipal && storedToken);
+    } catch {
+      return false;
+    }
+  }, [jwtToken]);
+
+  // Local immediate login flag to reveal tabs before context updates
+  const [didLogin, setDidLogin] = useState(false);
+  const authed = isAuthenticated || didLogin || hasStoredJwt;
+
+  // Default to login tab when unauthenticated, otherwise account
+  const [activeTab, setActiveTab] = useState<
+    "login" | "account" | "applications" | "generatedFiles" | "userPreferences" | "serverConsole"
+  >(authed ? "account" : "login");
+
+  // Keep active tab in sync with authentication state
+  useEffect(() => {
+    if (authed) {
+      setActiveTab((tab) => (tab === "login" ? "account" : tab));
+    } else {
+      setActiveTab("login");
+    }
+  }, [authed]);
+
+  useEffect(() => {
+    if (initialActiveTab) {
+      setActiveTab(initialActiveTab);
+      onConsumeInitialActiveTab?.();
+    }
+  }, [initialActiveTab, onConsumeInitialActiveTab]);
+
+  useEffect(() => {
+    if (activeTab === "serverConsole" && serverConsoleNeedsAttention) {
+      onClearServerConsoleNeedsAttention?.();
+    }
+  }, [activeTab, serverConsoleNeedsAttention, onClearServerConsoleNeedsAttention]);
+
+  const { principal: resolvedPrincipal } = useAccessControl(
+    authenticatedUser || userInfo,
+  );
+  const principalId = resolvedPrincipal?.id;
+  const accountId =
+    typeof principalId === "string"
+      ? principalId
+      : principalId !== undefined && principalId !== null
+        ? String(principalId)
+        : "";
+
+  const {
+    data: balanceData,
+    isLoading: isBalanceLoading,
+    isFetching: isBalanceFetching,
+    refetch: refetchBalance,
+  } = useGetAccountBalanceQuery(accountId, {
+    skip: !accountId,
+  });
+
+  const {
+    data: usageData,
+    isLoading: isUsageLoading,
+    refetch: refetchUsage,
+  } = useGetUsageTransactionsQuery(undefined, {
+    // Use broader auth signal so queries mount as soon as a token exists
+    skip: !authed,
+  });
+  const {
+    data: paymentsData,
+    isLoading: isPaymentsLoading,
+    refetch: refetchPayments,
+  } = useGetPaymentTransactionsQuery(undefined, {
+    // Use broader auth signal so queries mount as soon as a token exists
+    skip: !authed,
+  });
+
+  // Combined loading state
+  const loading =
+    isBalanceLoading ||
+    isBalanceFetching ||
+    isUsageLoading ||
+    isPaymentsLoading;
+
+  const effectiveBalance = useMemo(() => {
+    const rawBalance = balanceData?.currentBalance ?? 0;
+    return Math.max(0, rawBalance - (apiMetrics.totalCost || 0));
+  }, [balanceData?.currentBalance, apiMetrics.totalCost]);
+
+  const shouldShowBuyCredits = useMemo(
+    () =>
+      Boolean(
+        typeof balanceData?.currentBalance === "number" &&
+        effectiveBalance <= budgetAlerts.criticalThreshold
+      ),
+    [balanceData?.currentBalance, effectiveBalance, budgetAlerts.criticalThreshold],
+  );
+
+  const [loginUser] = useLoginUserMutation();
+  const [addUsageTransaction] = useAddUsageTransactionMutation();
+
+  const handleLogin = async (
+    values: Login,
+    { setSubmitting }: FormikHelpers<Login>,
+  ) => {
+    try {
+      const result = await loginUser(values).unwrap();
+      if (result.token) {
+        storeJwtToken(result.token, "account-login");
+      }
+      if (result.user) {
+        writeStoredPrincipal(result.user as any);
+      }
+
+      try {
+        const instanceId = (() => {
+          try {
+            return (
+              localStorage.getItem("valoride.instanceId") ||
+              (() => {
+                const id = `valoride-${Math.random()
+                  .toString(36)
+                  .substring(2, 12)}`;
+                localStorage.setItem("valoride.instanceId", id);
+                return id;
+              })()
+            );
+          } catch {
+            return `valoride-${Math.random().toString(36).substring(2, 12)}`;
+          }
+        })();
+
+        const send = (type: string, payload: any) => {
+          const appMessage = {
+            type,
+            payload,
+            senderId: instanceId,
+            messageId: Math.random().toString(36).slice(2, 12),
+            timestamp: Date.now(),
+          };
+          window.dispatchEvent(
+            new CustomEvent("websocket-send", { detail: appMessage }),
+          );
+        };
+
+        send("presence:join", { id: instanceId });
+        send("auth:ack", { id: instanceId });
+        send("presence:rollcall", { id: instanceId });
+      } catch {
+        // ignore transport issues
+      }
+
+      setDidLogin(true);
+      setActiveTab("account");
+
+      try {
+        const debit = {
+          spentAt: new Date(),
+          credits: 0.01,
+          modelProvider: "valoride",
+          model: "login-connect",
+          promptTokens: 0,
+          completionTokens: 0,
+        } as any;
+        await addUsageTransaction(debit).unwrap();
+      } catch (e) {
+        console.warn("Usage debit failed post-login:", e);
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      try {
+        const instanceId = localStorage.getItem("valoride.instanceId") || "";
+        const appMessage = {
+          type: "auth:nack",
+          payload: { id: instanceId },
+          senderId: instanceId || "",
+          messageId: Math.random().toString(36).slice(2, 12),
+          timestamp: Date.now(),
+        } as any;
+        window.dispatchEvent(
+          new CustomEvent("websocket-send", { detail: appMessage }),
+        );
+      } catch {
+        // ignore transport issues
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleLogout = () => {
+    vscode.postMessage({ type: "accountLogoutClicked" });
+    setDidLogin(false);
+  };
+
+  const handleFileSelect = useCallback((filePath: string) => {
+    vscode.postMessage({
+      type: "openMention",
+      text: filePath,
+    });
+  }, []);
+
+  const handleOpenAPIFileSelected = useCallback((file: File) => {
+    console.log("OpenAPI file selected:", file.name);
+  }, []);
+
+  const communicationService = useCommunicationService() as any;
+  const [peers, setPeers] = useState<string[]>([]);
+  const [phase, setPhase] = useState<string | undefined>(undefined);
+  const ready = !!communicationService?.ready;
+  const hasError = !!communicationService?.error;
+  const hubConnected = !!communicationService?.hubConnected;
+  const thorConnected = !!communicationService?.thorConnected;
+  useEffect(() => {
+    if (!communicationService) {
+      return undefined;
+    }
+    const handlePresence = (list: string[]) => setPeers(list);
+    const handleStatus = (s: any) => setPhase(s?.phase);
+    communicationService.on?.("presence", handlePresence);
+    communicationService.on?.("status", handleStatus);
+    return () => {
+      communicationService.off?.("presence", handlePresence);
+      communicationService.off?.("status", handleStatus);
+    };
+  }, [communicationService]);
+  const value = ready
+    ? hubConnected && thorConnected
+      ? "Online (Hub+Server)"
+      : hubConnected
+        ? "Online (Local)"
+        : "Online (Server)"
+    : hasError
+      ? "Error"
+      : phase === "connecting"
+        ? "Connecting..."
+        : "Offline";
+  const kind = ready ? "ok" : hasError ? "error" : "warn";
+
+  return (
+    <div
+      className="account-view-root"
+      style={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        margin: "1em",
+        padding: ".5em",
+        position: "relative",
+        background: "transparent",
+      }}
+    >
+      {/* Centered logo banner */}
+      <div className="account-header">
+        <div className="account-logo" aria-hidden>
+          <h1>ValkyrAI</h1>
+        </div>
+      </div>
+      <SystemAlerts />
+
+      {peers.length > 0 && (
+        <div className="border border-solid border-(--vscode-panel-border) rounded-md p-[10px] mb-3 bg-[var(--vscode-panel-background)] text-[var(--vscode-foreground)]">
+          <div className="mb-2 font-semibold">Active instances</div>
+          <div className="flex flex-wrap gap-2">
+            {peers.map((id) => (
+              <span
+                key={id}
+                style={{
+                  border: "1px solid var(--vscode-panel-border)",
+                  borderRadius: 6,
+                  padding: "2px 6px",
+                  fontSize: 12,
+                  background: "var(--vscode-editor-background)",
+                }}
+              >
+                {id}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Tab navigation + content. This wrapper enables responsive layout: on wide screens the tabs become a vertical sidebar */}
+      <div className="account-body" style={{ flex: 1, minHeight: 0, display: 'flex', gap: '16px' }}>
+        <div className="scroll-tabs-container">
+          <div className="nav-tabs scroll-tabs" role="tablist">
+            {/* Removed Login tab button as requested */}
+            {authed && (
+              <>
+                <div
+                  className={`nav-link ${activeTab === "account" ? "active" : ""}`}
+                  onClick={() => setActiveTab("account")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <FaUserEdit />
+                </div>
+                <div
+                  className={`nav-link ${activeTab === "applications" ? "active" : ""}`}
+                  onClick={() => setActiveTab("applications")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <FaAppStore />
+                </div>
+                <div
+                  className={`nav-link ${activeTab === "generatedFiles" ? "active" : ""}`}
+                  onClick={() => setActiveTab("generatedFiles")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <FaFileArchive />
+                </div>
+                <div
+                  className={`nav-link ${activeTab === "serverConsole" ? "active" : ""} ${serverConsoleNeedsAttention && activeTab !== "serverConsole"
+                    ? "needs-attention"
+                    : ""
+                    }`}
+                  onClick={() => setActiveTab("serverConsole")}
+                  style={{ cursor: "pointer" }}
+                  title="Server Console"
+                >
+                  <FaServer />
+                </div>
+                <div
+                  className={`nav-link ${activeTab === "userPreferences" ? "active" : ""}`}
+                  onClick={() => setActiveTab("userPreferences")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <FaUserEdit />
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Tab content */}
+        <div className="account-content">
+          {activeTab === "login" ? (
+            <div className="flex justify-center">
+              {!authed && (
+                <Card>
+                  {/* Removed "Login to Access Your Account" header as requested */}
+                  <Card.Body>
+                    <Form onSubmit={handleLogin} isLoggedIn={false} />
+                  </Card.Body>
+                  <Card.Footer>
+                    <div
+                      style={{
+                        fontSize: "0.85em",
+                        color: "var(--vscode-descriptionForeground)",
+                      }}
+                    >
+                      Don't have an account?{" "}
+                      <VSCodeLink
+                        href="https://valkyrlabs.com/sign-up"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Signup Now
+                      </VSCodeLink>
+                      <br />
+                      Forgot your username?{" "}
+                      <VSCodeLink
+                        href="https://valkyrlabs.com/forgot-password"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Forgot Password
+                      </VSCodeLink>
+                    </div>
+                  </Card.Footer>
+                </Card>
+              )}
+              {/* When authenticated, login view is hidden and tab list updates */}
+            </div>
+          ) : activeTab === "applications" ? (
+            <div className="h-full flex flex-col pr-3 overflow-y-auto">
+              {loading && (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    minHeight: "200px",
+                  }}
+                >
+                  <LoadingSpinner label="Loading applications..." size={32} />
+                </div>
+              )}
+              {/* Applications List */}
+              <div style={{ marginBottom: "1em" }}>
+                <OpenAPIFilePicker onFileSelected={handleOpenAPIFileSelected} />
+                <ApplicationsList showTitle={true} title="Available Applications" />
+              </div>
+            </div>
+          ) : activeTab === "generatedFiles" ? (
+            <div className="h-full flex flex-col pr-3 overflow-y-auto">
+              <div className="grow flex flex-col min-h-0">
+                <h3 style={{ marginBottom: "16px" }}>Generated Files</h3>
+                <FileExplorer
+                  onFileSelect={handleFileSelect}
+                  highlightNewFiles={true}
+                  autoRefresh={true}
+                  refreshInterval={5000}
+                />
+              </div>
+            </div>
+          ) : activeTab === "userPreferences" ? (
+            <div className="h-full flex flex-col pr-3 overflow-y-auto">
+              <div className="grow flex flex-col min-h-0">
+                <h3 style={{ marginBottom: "16px" }}>User Preferences</h3>
+                <UserPreferences />
+              </div>
+            </div>
+          ) : activeTab === "serverConsole" ? (
+            <div className="h-full flex flex-col pr-3 overflow-y-auto">
+              <ServerConsole />
+            </div>
+          ) : activeTab === "account" ? (
+            <>
+              <div className="account-main h-full flex flex-col pr-3 overflow-y-auto">
+                <div className="w-full flex gap-2 flex-col min-[225px]:flex-row mt-4">
+                  <div className="w-full min-[225px]:w-1/2">
+                    <VSCodeButtonLink
+                      href="https://valkyrlabs.com/dashboard"
+                      appearance="primary"
+                      className="w-full"
+                    >
+                      Dashboard
+                    </VSCodeButtonLink>
+                  </div>
+                  <VSCodeButton
+                    appearance="secondary"
+                    onClick={handleLogout}
+                    className="w-full min-[225px]:w-1/2"
+                  >
+                    <FaBackward />
+                  </VSCodeButton>
+                </div>
+
+                {/* Content flip card spotlight 
+                <div style={{ width: "100%", marginTop: 16 }}>
+                  <ContentFlipCard />
+                </div>
+                */}
+
+                <div className="w-full flex flex-col items-center">
+                  <div className="text-sm text-(--vscode-descriptionForeground) mb-3">
+                    CURRENT BALANCE
+                  </div>
+
+                  <div className="text-4xl font-bold text-(--vscode-foreground) mb-6 flex items-center gap-2">
+                    {loading ? (
+                      <LoadingSpinner label="Loading balance..." size={28} />
+                    ) : (
+                      <>
+                        <>
+                          <span>$</span>
+                          <CountUp
+                            end={effectiveBalance}
+                            duration={0.66}
+                            decimals={2}
+                          />
+                        </>
+                        <VSCodeButton
+                          appearance="icon"
+                          className="mt-1"
+                          disabled={!accountId}
+                          onClick={async () => {
+                            await refetchBalance();
+                            if (authed) {
+                              refetchUsage();
+                              refetchPayments();
+                            }
+                          }}
+                        >
+                          <FaRecycle />
+                        </VSCodeButton>
+                      </>
+                    )}
+                  </div>
+
+                  {shouldShowBuyCredits && (
+                    <div className="w-full">
+                      <BuyCredits
+                        authenticatedPrincipal={
+                          resolvedPrincipal || authenticatedUser || userInfo
+                        }
+                        onPurchaseSuccess={async () => {
+                          await refetchBalance();
+                          refetchUsage();
+                          refetchPayments();
+                        }}
+                        className="w-full"
+                      />
+                      <p>budgetAlerts.criticalThreshold: {budgetAlerts.criticalThreshold}</p>
+                    </div>
+                  )}
+                </div>
+
+                <VSCodeDivider className="mt-6 mb-3 w-full" />
+
+                <div className="grow flex flex-col min-h-0 pb-0">
+                  <CreditsHistoryTable
+                    isLoading={loading}
+                    usageData={usageData || []}
+                    paymentsData={paymentsData || []}
+                  />
+                </div>
+              </div>
+            </>
+          ) : (
+            <>nothing selected</>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default memo(AccountView);

@@ -7,38 +7,43 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  DownloadAccess,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddDownloadAccessMutation } from '../../services/DownloadAccessService';
+import { DownloadAccess } from "@thorapi/model";
+
+import { useAddDownloadAccessMutation } from "../../services/DownloadAccessService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -48,7 +53,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -67,56 +71,67 @@ Row-level permission grant for a Principal to download a DigitalAsset. Represent
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        digitalAssetId: Yup.string().required("digitalAssetId is required."),
-        principalId: Yup.string().required("principalId is required."),
-        salesOrderLineItemId: Yup.string().required("salesOrderLineItemId is required."),
-        downloadToken: Yup.string(),
-        downloadCount: asNumber(Yup.number().integer().typeError("downloadCount must be a number")),
-        maxDownloadsRemaining: asNumber(Yup.number().integer().typeError("maxDownloadsRemaining must be a number")),
-        grantedAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("grantedAt must be a valid date"),
-        expiresAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("expiresAt must be a valid date"),
-        lastDownloadedAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("lastDownloadedAt must be a valid date"),
-        revokedAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("revokedAt must be a valid date"),
-        revokedReason: Yup.string(),
-        trashed: Yup.boolean(),
+  salesOrderLineItemId: Yup.string().required(
+    "salesOrderLineItemId is required.",
+  ),
+  downloadToken: Yup.string(),
+  downloadCount: asNumber(
+    Yup.number().integer().typeError("downloadCount must be a number"),
+  ),
+  maxDownloadsRemaining: asNumber(
+    Yup.number().integer().typeError("maxDownloadsRemaining must be a number"),
+  ),
+  grantedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("grantedAt must be a valid date"),
+  expiresAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("expiresAt must be a valid date"),
+  lastDownloadedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("lastDownloadedAt must be a valid date"),
+  revokedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("revokedAt must be a valid date"),
+  revokedReason: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const DownloadAccessForm: React.FC = () => {
-  const [addDownloadAccess, addDownloadAccessResult] = useAddDownloadAccessMutation();
+  const [addDownloadAccess, addDownloadAccessResult] =
+    useAddDownloadAccessMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -126,12 +141,18 @@ const DownloadAccessForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -139,18 +160,16 @@ const DownloadAccessForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<DownloadAccess> = {
-          digitalAssetId: '',
-          principalId: '',
-          salesOrderLineItemId: '',
-          downloadToken: '',
-          downloadCount: 0,
-          maxDownloadsRemaining: 0,
-          grantedAt: new Date(),
-          expiresAt: new Date(),
-          lastDownloadedAt: new Date(),
-          revokedAt: new Date(),
-          revokedReason: '',
-          trashed: false,
+    salesOrderLineItemId: "",
+    downloadToken: "",
+    downloadCount: 0,
+    maxDownloadsRemaining: 0,
+    grantedAt: new Date(),
+    expiresAt: new Date(),
+    lastDownloadedAt: new Date(),
+    revokedAt: new Date(),
+    revokedReason: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -165,11 +184,14 @@ const DownloadAccessForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new DownloadAccess:', grants);
+    console.log("Permissions saved for new DownloadAccess:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<DownloadAccess>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<DownloadAccess>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -180,7 +202,7 @@ const DownloadAccessForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `DownloadAccess created successfully! Would you like to set permissions for this object?`
+          `DownloadAccess created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -188,8 +210,8 @@ const DownloadAccessForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create DownloadAccess:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create DownloadAccess:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -210,110 +232,40 @@ const DownloadAccessForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addDownloadAccessResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New DownloadAccess
-                </Accordion.Header>
-                <Accordion.Body>
-                    <label htmlFor="digitalAssetId" className="nice-form-control">
-                      <b>
-                        Digital Asset Id:
-                        {touched.digitalAssetId &&
-                         !errors.digitalAssetId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="digitalAssetId"
-                            value={values?.digitalAssetId}
-                            placeholder="Digital Asset Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="digitalAssetId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="principalId" className="nice-form-control">
-                      <b>
-                        Principal Id:
-                        {touched.principalId &&
-                         !errors.principalId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="principalId"
-                            value={values?.principalId}
-                            placeholder="Principal Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="principalId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="salesOrderLineItemId" className="nice-form-control">
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New DownloadAccess
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <label
+                      htmlFor="salesOrderLineItemId"
+                      className="nice-form-control"
+                    >
                       <b>
                         Sales Order Line Item Id:
                         {touched.salesOrderLineItemId &&
-                         !errors.salesOrderLineItemId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.salesOrderLineItemId && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="salesOrderLineItemId"
-                            value={values?.salesOrderLineItemId}
-                            placeholder="Sales Order Line Item Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="salesOrderLineItemId"
+                        value={values?.salesOrderLineItemId}
+                        placeholder="Sales Order Line Item Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -322,31 +274,27 @@ const DownloadAccessForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="downloadToken" className="nice-form-control">
+                    <label
+                      htmlFor="downloadToken"
+                      className="nice-form-control"
+                    >
                       <b>
                         Download Token:
-                        {touched.downloadToken &&
-                         !errors.downloadToken && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.downloadToken && !errors.downloadToken && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="downloadToken"
-                            value={values?.downloadToken}
-                            placeholder="Download Token"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="downloadToken"
+                        value={values?.downloadToken}
+                        placeholder="Download Token"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -355,39 +303,38 @@ const DownloadAccessForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="downloadCount" className="nice-form-control">
+                    <label
+                      htmlFor="downloadCount"
+                      className="nice-form-control"
+                    >
                       <b>
                         Download Count:
-                        {touched.downloadCount &&
-                         !errors.downloadCount && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.downloadCount && !errors.downloadCount && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="downloadCount"
-                            type="number"
-                            value={values.downloadCount || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('downloadCount', true);
-                              const v = e.target.value;
-                              setFieldValue('downloadCount', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.downloadCount
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="downloadCount"
+                        type="number"
+                        value={values.downloadCount || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("downloadCount", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "downloadCount",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.downloadCount
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -396,39 +343,39 @@ const DownloadAccessForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="maxDownloadsRemaining" className="nice-form-control">
+                    <label
+                      htmlFor="maxDownloadsRemaining"
+                      className="nice-form-control"
+                    >
                       <b>
                         Max Downloads Remaining:
                         {touched.maxDownloadsRemaining &&
-                         !errors.maxDownloadsRemaining && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.maxDownloadsRemaining && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="maxDownloadsRemaining"
-                            type="number"
-                            value={values.maxDownloadsRemaining || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('maxDownloadsRemaining', true);
-                              const v = e.target.value;
-                              setFieldValue('maxDownloadsRemaining', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.maxDownloadsRemaining
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="maxDownloadsRemaining"
+                        type="number"
+                        value={values.maxDownloadsRemaining || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("maxDownloadsRemaining", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "maxDownloadsRemaining",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.maxDownloadsRemaining
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -440,38 +387,38 @@ const DownloadAccessForm: React.FC = () => {
                     <label htmlFor="grantedAt" className="nice-form-control">
                       <b>
                         Granted At:
-                        {touched.grantedAt &&
-                         !errors.grantedAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.grantedAt && !errors.grantedAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="grantedAt"
-                            type="datetime-local"
-                            value={values.grantedAt ? 
-                              new Date(values.grantedAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('grantedAt', true);
-                              const v = e.target.value;
-                              setFieldValue('grantedAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.grantedAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="grantedAt"
+                        type="datetime-local"
+                        value={
+                          values.grantedAt
+                            ? new Date(values.grantedAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("grantedAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "grantedAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.grantedAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -483,38 +430,38 @@ const DownloadAccessForm: React.FC = () => {
                     <label htmlFor="expiresAt" className="nice-form-control">
                       <b>
                         Expires At:
-                        {touched.expiresAt &&
-                         !errors.expiresAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.expiresAt && !errors.expiresAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="expiresAt"
-                            type="datetime-local"
-                            value={values.expiresAt ? 
-                              new Date(values.expiresAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('expiresAt', true);
-                              const v = e.target.value;
-                              setFieldValue('expiresAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.expiresAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="expiresAt"
+                        type="datetime-local"
+                        value={
+                          values.expiresAt
+                            ? new Date(values.expiresAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("expiresAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "expiresAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.expiresAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -523,41 +470,45 @@ const DownloadAccessForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="lastDownloadedAt" className="nice-form-control">
+                    <label
+                      htmlFor="lastDownloadedAt"
+                      className="nice-form-control"
+                    >
                       <b>
                         Last Downloaded At:
                         {touched.lastDownloadedAt &&
-                         !errors.lastDownloadedAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.lastDownloadedAt && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="lastDownloadedAt"
-                            type="datetime-local"
-                            value={values.lastDownloadedAt ? 
-                              new Date(values.lastDownloadedAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('lastDownloadedAt', true);
-                              const v = e.target.value;
-                              setFieldValue('lastDownloadedAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.lastDownloadedAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="lastDownloadedAt"
+                        type="datetime-local"
+                        value={
+                          values.lastDownloadedAt
+                            ? new Date(values.lastDownloadedAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("lastDownloadedAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "lastDownloadedAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.lastDownloadedAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -569,38 +520,38 @@ const DownloadAccessForm: React.FC = () => {
                     <label htmlFor="revokedAt" className="nice-form-control">
                       <b>
                         Revoked At:
-                        {touched.revokedAt &&
-                         !errors.revokedAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.revokedAt && !errors.revokedAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="revokedAt"
-                            type="datetime-local"
-                            value={values.revokedAt ? 
-                              new Date(values.revokedAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('revokedAt', true);
-                              const v = e.target.value;
-                              setFieldValue('revokedAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.revokedAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="revokedAt"
+                        type="datetime-local"
+                        value={
+                          values.revokedAt
+                            ? new Date(values.revokedAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("revokedAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "revokedAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.revokedAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -609,31 +560,27 @@ const DownloadAccessForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="revokedReason" className="nice-form-control">
+                    <label
+                      htmlFor="revokedReason"
+                      className="nice-form-control"
+                    >
                       <b>
                         Revoked Reason:
-                        {touched.revokedReason &&
-                         !errors.revokedReason && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.revokedReason && !errors.revokedReason && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="revokedReason"
-                            value={values?.revokedReason}
-                            placeholder="Revoked Reason"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="revokedReason"
+                        value={values?.revokedReason}
+                        placeholder="Revoked Reason"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -645,32 +592,25 @@ const DownloadAccessForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -680,45 +620,59 @@ const DownloadAccessForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New DownloadAccess
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New DownloadAccess
+                    </CoolButton>
 
-                  {(addDownloadAccessResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addDownloadAccessResult as any).error ? (addDownloadAccessResult as any).error.data : (addDownloadAccessResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addDownloadAccessResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addDownloadAccessResult as any).error
+                              ? (addDownloadAccessResult as any).error.data
+                              : (addDownloadAccessResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addDownloadAccessResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addDownloadAccessResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addDownloadAccessResult: {JSON.stringify(addDownloadAccessResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addDownloadAccessResult:{" "}
+                    {JSON.stringify(addDownloadAccessResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -738,8 +692,5 @@ const DownloadAccessForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default DownloadAccessForm;
-

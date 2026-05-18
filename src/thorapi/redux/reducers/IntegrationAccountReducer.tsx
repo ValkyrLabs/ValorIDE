@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { IntegrationAccount } from '@thorapi/model/IntegrationAccount';
+import { IntegrationAccount } from "@thorapi/model/IntegrationAccount";
 
 const IntegrationAccountSlice = createSlice({
   name: "IntegrationAccounts",
@@ -28,20 +27,25 @@ const IntegrationAccountSlice = createSlice({
     },
 
     IntegrationAccountValueToggled(state, action) {
-      console.log("IntegrationAccount TOGGLE")
-      console.warn(JSON.stringify(action))
-      const IntegrationAccount:IntegrationAccount = state.find((IntegrationAccount) => IntegrationAccount.id === action.payload.IntegrationAccountId);
+      console.log("IntegrationAccount TOGGLE");
+      console.warn(JSON.stringify(action));
+      const IntegrationAccount: IntegrationAccount = state.find(
+        (IntegrationAccount) =>
+          IntegrationAccount.id === action.payload.IntegrationAccountId,
+      );
       if (IntegrationAccount) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     IntegrationAccountpropertySet(state, action) {
-      const IntegrationAccount = state.find((IntegrationAccount) => IntegrationAccount.id === action.payload.IntegrationAccountId);
+      const IntegrationAccount = state.find(
+        (IntegrationAccount) =>
+          IntegrationAccount.id === action.payload.IntegrationAccountId,
+      );
       if (IntegrationAccount) {
-      //  IntegrationAccount[action.property] = action.payload[action.property];
+        //  IntegrationAccount[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const IntegrationAccountSlice = createSlice({
 export const {
   IntegrationAccountAdded,
   IntegrationAccountValueToggled,
-  IntegrationAccountpropertySet
+  IntegrationAccountpropertySet,
 } = IntegrationAccountSlice.actions;
 export default IntegrationAccountSlice.reducer;

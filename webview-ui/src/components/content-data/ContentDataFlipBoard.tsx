@@ -33,7 +33,7 @@ const ContentDataFlipBoard: React.FC<ContentDataFlipBoardProps> = ({
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const cardsRef = useRef<THREE.Group[]>([]);
   const animationIdRef = useRef<number | null>(null);
-  
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [cards, setCards] = useState<CardData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,14 +46,16 @@ const ContentDataFlipBoard: React.FC<ContentDataFlipBoardProps> = ({
   // Transform ContentData to CardData
   useEffect(() => {
     if (pageData && Array.isArray(pageData)) {
-      const transformedCards = pageData.slice(0, itemsPerPage).map((item: any) => ({
-        id: item.id || item.keyHash || Math.random().toString(),
-        title: item.title || "Untitled",
-        description: item.contentData || item.description || "No description",
-        imageUrl: item.thumbnailImage || item.largeImage || undefined,
-        category: item.category || "Other",
-        status: item.status || "unknown",
-      }));
+      const transformedCards = pageData
+        .slice(0, itemsPerPage)
+        .map((item: any) => ({
+          id: item.id || item.keyHash || Math.random().toString(),
+          title: item.title || "Untitled",
+          description: item.contentData || item.description || "No description",
+          imageUrl: item.thumbnailImage || item.largeImage || undefined,
+          category: item.category || "Other",
+          status: item.status || "unknown",
+        }));
       setCards(transformedCards);
       setIsLoading(false);
     }
@@ -123,16 +125,18 @@ const ContentDataFlipBoard: React.FC<ContentDataFlipBoardProps> = ({
       ctx.fillStyle = "#00ff88";
       ctx.font = "bold 48px Inter, sans-serif";
       ctx.textAlign = "left";
-      const titleLines = card.title.split(" ").reduce((lines: string[], word) => {
-        const lastLine = lines[lines.length - 1] || "";
-        const testLine = lastLine ? `${lastLine} ${word}` : word;
-        if (ctx.measureText(testLine).width > 900) {
-          lines.push(word);
-        } else {
-          lines[lines.length - 1] = testLine;
-        }
-        return lines;
-      }, []);
+      const titleLines = card.title
+        .split(" ")
+        .reduce((lines: string[], word) => {
+          const lastLine = lines[lines.length - 1] || "";
+          const testLine = lastLine ? `${lastLine} ${word}` : word;
+          if (ctx.measureText(testLine).width > 900) {
+            lines.push(word);
+          } else {
+            lines[lines.length - 1] = testLine;
+          }
+          return lines;
+        }, []);
       titleLines.forEach((line, i) => {
         ctx.fillText(line, 60, 120 + i * 60);
       });
@@ -164,8 +168,7 @@ const ContentDataFlipBoard: React.FC<ContentDataFlipBoardProps> = ({
       if (currentLine) ctx.fillText(currentLine, 60, yOffset);
 
       // Status indicator
-      const statusColor =
-        card.status === "published" ? "#10b981" : "#f59e0b";
+      const statusColor = card.status === "published" ? "#10b981" : "#f59e0b";
       ctx.fillStyle = statusColor;
       ctx.beginPath();
       ctx.arc(80, 1100, 15, 0, Math.PI * 2);
@@ -368,9 +371,7 @@ const ContentDataFlipBoard: React.FC<ContentDataFlipBoardProps> = ({
       {cards[currentIndex] && (
         <div className="flipboard-info">
           <h2>{cards[currentIndex].title}</h2>
-          <p className="flipboard-category">
-            {cards[currentIndex].category}
-          </p>
+          <p className="flipboard-category">{cards[currentIndex].category}</p>
           <p className="flipboard-description">
             {cards[currentIndex].description.substring(0, 200)}...
           </p>

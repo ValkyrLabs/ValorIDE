@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/defaultTable.mustache
@@ -18,9 +17,7 @@ Template file: typescript-redux-query/defaultTable.mustache
 // Generic table for displaying tabular data
 // Props: columns (array of { key, label }), data (array of objects)
 const DefaultTable = () => {
-    return (
-        <h1>default table</h1>
-    );
+  return <h1>default table</h1>;
 };
 
 export default DefaultTable;

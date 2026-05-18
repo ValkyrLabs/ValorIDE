@@ -41,7 +41,7 @@ const ContextMenu = ({
       searchQuery,
       selectedType,
       queryItems,
-      dynamicSearchResults
+      dynamicSearchResults,
     );
     return options;
   }, [searchQuery, selectedType, queryItems, dynamicSearchResults]);
@@ -282,8 +282,8 @@ const ContextMenu = ({
                   }),
               ],
             },
-            `${option.type}-${option.value || index}`
-          )
+            `${option.type}-${option.value || index}`,
+          ),
         ),
       ],
     }),

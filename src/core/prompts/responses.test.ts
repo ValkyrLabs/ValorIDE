@@ -14,4 +14,3 @@ describe("formatResponse.noToolsUsed", () => {
     expect(message).toContain("ask_followup_question");
   });
 });
-

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { CircuitBreakerState } from '@thorapi/model/CircuitBreakerState';
+import { CircuitBreakerState } from "@thorapi/model/CircuitBreakerState";
 
 const CircuitBreakerStateSlice = createSlice({
   name: "CircuitBreakerStates",
@@ -28,20 +27,25 @@ const CircuitBreakerStateSlice = createSlice({
     },
 
     CircuitBreakerStateValueToggled(state, action) {
-      console.log("CircuitBreakerState TOGGLE")
-      console.warn(JSON.stringify(action))
-      const CircuitBreakerState:CircuitBreakerState = state.find((CircuitBreakerState) => CircuitBreakerState.id === action.payload.CircuitBreakerStateId);
+      console.log("CircuitBreakerState TOGGLE");
+      console.warn(JSON.stringify(action));
+      const CircuitBreakerState: CircuitBreakerState = state.find(
+        (CircuitBreakerState) =>
+          CircuitBreakerState.id === action.payload.CircuitBreakerStateId,
+      );
       if (CircuitBreakerState) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     CircuitBreakerStatepropertySet(state, action) {
-      const CircuitBreakerState = state.find((CircuitBreakerState) => CircuitBreakerState.id === action.payload.CircuitBreakerStateId);
+      const CircuitBreakerState = state.find(
+        (CircuitBreakerState) =>
+          CircuitBreakerState.id === action.payload.CircuitBreakerStateId,
+      );
       if (CircuitBreakerState) {
-      //  CircuitBreakerState[action.property] = action.payload[action.property];
+        //  CircuitBreakerState[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const CircuitBreakerStateSlice = createSlice({
 export const {
   CircuitBreakerStateAdded,
   CircuitBreakerStateValueToggled,
-  CircuitBreakerStatepropertySet
+  CircuitBreakerStatepropertySet,
 } = CircuitBreakerStateSlice.actions;
 export default CircuitBreakerStateSlice.reducer;

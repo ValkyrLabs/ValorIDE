@@ -8,17 +8,14 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "lib": [
-      "es2022",
-      "esnext.disposable",
-      "DOM"
-    ],
+    "lib": ["es2022", "esnext.disposable", "DOM"],
     "module": "esnext",
     "moduleResolution": "Bundler",
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noUnusedLocals": false,
+    "downlevelIteration": true,
     "resolveJsonModule": true,
     "rootDir": ".",
     "skipLibCheck": true,
@@ -29,9 +26,7 @@
     "useUnknownInCatchVariables": false,
     "baseUrl": ".",
     "paths": {
-      "@api/*": [
-        "src/api/*"
-      ],
+      "@api/*": ["src/api/*"],
       "@thorapi/model": [
         "webview-ui/src/thorapi/model/index.ts",
         "src/thorapi/model/index.ts"
@@ -64,40 +59,16 @@
         "webview-ui/src/api/index.ts",
         "src/api/index.ts"
       ],
-      "@thorapi/*": [
-        "webview-ui/src/*",
-        "src/*"
-      ],
-      "@websocket/*": [
-        "webview-ui/src/websocket/*"
-      ],
-      "@core/*": [
-        "src/core/*"
-      ],
-      "@integrations/*": [
-        "src/integrations/*"
-      ],
-      "@services/*": [
-        "src/services/*"
-      ],
-      "@valkyr/component-library/*": [
-        "webview-ui/src/components/*"
-      ],
-      "@shared/*": [
-        "src/shared/*"
-      ],
-      "@utils/*": [
-        "src/utils/*"
-      ]
+      "@thorapi/*": ["webview-ui/src/*", "src/*"],
+      "@websocket/*": ["webview-ui/src/websocket/*"],
+      "@core/*": ["src/core/*"],
+      "@integrations/*": ["src/integrations/*"],
+      "@services/*": ["src/services/*"],
+      "@valkyr/component-library/*": ["webview-ui/src/components/*"],
+      "@shared/*": ["src/shared/*"],
+      "@utils/*": ["src/utils/*"]
     }
   },
-  "include": [
-    "src/**/*",
-    "scripts/**/*",
-    "webview-ui/src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    ".vscode-test"
-  ]
+  "include": ["src/**/*", "scripts/**/*", "webview-ui/src/**/*"],
+  "exclude": ["node_modules", ".vscode-test"]
 }

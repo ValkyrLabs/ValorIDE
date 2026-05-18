@@ -41,8 +41,9 @@ export default function TaskThermometer({
         {TASK_PHASES.map((p, idx) => (
           <span
             key={p}
-            className={`task-thermo__label ${idx <= activeIndex ? "on" : ""} ${hasAnchor(p) && onPhaseSelect ? "clickable" : ""
-              }`}
+            className={`task-thermo__label ${idx <= activeIndex ? "on" : ""} ${
+              hasAnchor(p) && onPhaseSelect ? "clickable" : ""
+            }`}
             role={onPhaseSelect && hasAnchor(p) ? "button" : undefined}
             onClick={() => {
               if (onPhaseSelect && hasAnchor(p)) {

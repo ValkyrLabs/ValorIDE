@@ -7,43 +7,68 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { JobApplicationResponse } from '@thorapi/model/JobApplicationResponse'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { JobApplicationResponse } from "@thorapi/model/JobApplicationResponse";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type JobApplicationResponseResponse = JobApplicationResponse[]
+type JobApplicationResponseResponse = JobApplicationResponse[];
+
+const toJobApplicationResponseList = (
+  result: unknown,
+): JobApplicationResponseResponse => {
+  if (Array.isArray(result)) {
+    return result as JobApplicationResponseResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as JobApplicationResponseResponse)
+    : [];
+};
 
 export const JobApplicationResponseService = createApi({
-  reducerPath: 'JobApplicationResponse', // This should remain unique
+  reducerPath: "JobApplicationResponse", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['JobApplicationResponse'],
+  tagTypes: ["JobApplicationResponse"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getJobApplicationResponsesPaged: build.query<JobApplicationResponseResponse, { page: number; size?: number; example?: Partial<JobApplicationResponse> }>({
+    getJobApplicationResponsesPaged: build.query<
+      JobApplicationResponseResponse,
+      { page: number; size?: number; example?: Partial<JobApplicationResponse> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `JobApplicationResponse?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `JobApplicationResponse?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'JobApplicationResponse' as const, id })),
-              { type: 'JobApplicationResponse', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toJobApplicationResponseList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "JobApplicationResponse" as const, id })),
+          { type: "JobApplicationResponse", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getJobApplicationResponses: build.query<JobApplicationResponseResponse, { example?: Partial<JobApplicationResponse> } | void>({
+    getJobApplicationResponses: build.query<
+      JobApplicationResponseResponse,
+      { example?: Partial<JobApplicationResponse> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +76,115 @@ export const JobApplicationResponseService = createApi({
         }
         return `JobApplicationResponse`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'JobApplicationResponse' as const, id })),
-              { type: 'JobApplicationResponse', id: 'LIST' },
-            ]
-          : [{ type: 'JobApplicationResponse', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toJobApplicationResponseList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "JobApplicationResponse" as const, id })),
+          { type: "JobApplicationResponse", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
-    addJobApplicationResponse: build.mutation<JobApplicationResponse, Partial<JobApplicationResponse>>({
+    addJobApplicationResponse: build.mutation<
+      JobApplicationResponse,
+      Partial<JobApplicationResponse>
+    >({
       query: (body) => ({
         url: `JobApplicationResponse`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'JobApplicationResponse', id: 'LIST' }],
+      invalidatesTags: [{ type: "JobApplicationResponse", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getJobApplicationResponse: build.query<JobApplicationResponse, string>({
       query: (id) => `JobApplicationResponse/${id}`,
-      providesTags: (result, error, id) => [{ type: 'JobApplicationResponse', id }],
+      providesTags: (result, error, id) => [
+        { type: "JobApplicationResponse", id },
+      ],
     }),
 
     // 5) Update
-    updateJobApplicationResponse: build.mutation<void, Pick<JobApplicationResponse, 'id'> & Partial<JobApplicationResponse>>({
+    updateJobApplicationResponse: build.mutation<
+      void,
+      Pick<JobApplicationResponse, "id"> & Partial<JobApplicationResponse>
+    >({
       query: ({ id, ...patch }) => ({
         url: `JobApplicationResponse/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            JobApplicationResponseService.util.updateQueryData('getJobApplicationResponse', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            JobApplicationResponseService.util.updateQueryData(
+              "getJobApplicationResponse",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<JobApplicationResponse, 'id'>) => [
-        { type: 'JobApplicationResponse', id },
-        { type: 'JobApplicationResponse', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<JobApplicationResponse, "id">,
+      ) => [
+        { type: "JobApplicationResponse", id },
+        { type: "JobApplicationResponse", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteJobApplicationResponse: build.mutation<{ success: boolean; id: string }, number>({
+    deleteJobApplicationResponse: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `JobApplicationResponse/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'JobApplicationResponse', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "JobApplicationResponse", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteJobApplicationResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteJobApplicationResponseCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `JobApplicationResponse/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'JobApplicationResponse', id }, { type: 'JobApplicationResponse', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "JobApplicationResponse", id },
+        { type: "JobApplicationResponse", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetJobApplicationResponsesPagedQuery`
 export const {
-  useGetJobApplicationResponsesPagedQuery,     // immediate fetch
+  useGetJobApplicationResponsesPagedQuery, // immediate fetch
   useLazyGetJobApplicationResponsesPagedQuery, // lazy fetch
   useGetJobApplicationResponseQuery,
   useGetJobApplicationResponsesQuery,
@@ -138,4 +192,4 @@ export const {
   useUpdateJobApplicationResponseMutation,
   useDeleteJobApplicationResponseMutation,
   useDeleteJobApplicationResponseCascadeMutation,
-} = JobApplicationResponseService
+} = JobApplicationResponseService;

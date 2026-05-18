@@ -35,9 +35,7 @@ subscribeToValkyraiHost((host) => {
 export const setWebsocketBaseUrl = (value?: string) => {
   const normalized = sanitizeWsBase(value);
   websocketBaseUrl =
-    normalized ||
-    deriveWsUrlFromHost(getValkyraiHost()) ||
-    getValkyraiWsBase();
+    normalized || deriveWsUrlFromHost(getValkyraiHost()) || getValkyraiWsBase();
   return websocketBaseUrl;
 };
 

@@ -29,7 +29,7 @@ export const MonetizationSettings = ({ applicationId, onSuccess, onError }) => {
       const result = await enableMonetization(
         applicationId,
         pricingModel,
-        costPerCall
+        costPerCall,
       );
       setIsMonetized(result.isMonetized ?? false);
       setSuccess(true);
@@ -122,8 +122,8 @@ export const MonetizationSettings = ({ applicationId, onSuccess, onError }) => {
                         }),
                       ],
                     },
-                    model
-                  )
+                    model,
+                  ),
                 ),
               }),
             ],

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ApiTrafficEvent } from '@thorapi/model/ApiTrafficEvent';
+import { ApiTrafficEvent } from "@thorapi/model/ApiTrafficEvent";
 
 const ApiTrafficEventSlice = createSlice({
   name: "ApiTrafficEvents",
@@ -28,20 +27,25 @@ const ApiTrafficEventSlice = createSlice({
     },
 
     ApiTrafficEventValueToggled(state, action) {
-      console.log("ApiTrafficEvent TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ApiTrafficEvent:ApiTrafficEvent = state.find((ApiTrafficEvent) => ApiTrafficEvent.id === action.payload.ApiTrafficEventId);
+      console.log("ApiTrafficEvent TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ApiTrafficEvent: ApiTrafficEvent = state.find(
+        (ApiTrafficEvent) =>
+          ApiTrafficEvent.id === action.payload.ApiTrafficEventId,
+      );
       if (ApiTrafficEvent) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ApiTrafficEventpropertySet(state, action) {
-      const ApiTrafficEvent = state.find((ApiTrafficEvent) => ApiTrafficEvent.id === action.payload.ApiTrafficEventId);
+      const ApiTrafficEvent = state.find(
+        (ApiTrafficEvent) =>
+          ApiTrafficEvent.id === action.payload.ApiTrafficEventId,
+      );
       if (ApiTrafficEvent) {
-      //  ApiTrafficEvent[action.property] = action.payload[action.property];
+        //  ApiTrafficEvent[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const ApiTrafficEventSlice = createSlice({
 export const {
   ApiTrafficEventAdded,
   ApiTrafficEventValueToggled,
-  ApiTrafficEventpropertySet
+  ApiTrafficEventpropertySet,
 } = ApiTrafficEventSlice.actions;
 export default ApiTrafficEventSlice.reducer;

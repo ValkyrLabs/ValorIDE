@@ -110,7 +110,7 @@ describe("Mention Regex", () => {
     it("matches only until invalid characters", () => {
       const result = testMention(
         "@thorapi/C:\\folder\\file.txt invalid suffix",
-        "@thorapi/C:\\folder\\file.txt"
+        "@thorapi/C:\\folder\\file.txt",
       );
       assertMatch(result);
     });

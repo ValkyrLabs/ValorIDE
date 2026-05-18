@@ -133,12 +133,12 @@ describe.skip("AccountView - BuyCredits integration", () => {
   it("renders the embedded BuyCredits component instead of an external link when authenticated", () => {
     render(_jsx(AccountView, { onDone: () => {} }));
     expect(
-      screen.queryByRole("link", { name: /buy credits/i })
+      screen.queryByRole("link", { name: /buy credits/i }),
     ).not.toBeInTheDocument();
     expect(mockBuyCredits).toHaveBeenCalledWith(
       expect.objectContaining({
         authenticatedPrincipal: expect.objectContaining({ id: "user-123" }),
-      })
+      }),
     );
   });
   it("fetches balance using userInfo when authenticatedUser is missing", () => {
@@ -150,12 +150,12 @@ describe.skip("AccountView - BuyCredits integration", () => {
     render(_jsx(AccountView, { onDone: () => {} }));
     expect(mockUseGetAccountBalanceQuery).toHaveBeenCalledWith(
       "user-123",
-      expect.objectContaining({ skip: false })
+      expect.objectContaining({ skip: false }),
     );
     expect(mockBuyCredits).toHaveBeenCalledWith(
       expect.objectContaining({
         authenticatedPrincipal: expect.objectContaining({ id: "user-123" }),
-      })
+      }),
     );
   });
 });

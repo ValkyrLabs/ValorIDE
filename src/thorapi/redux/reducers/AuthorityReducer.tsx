@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Authority } from '@thorapi/model/Authority';
+import { Authority } from "@thorapi/model/Authority";
 
 const AuthoritySlice = createSlice({
   name: "Authoritys",
@@ -28,28 +27,28 @@ const AuthoritySlice = createSlice({
     },
 
     AuthorityValueToggled(state, action) {
-      console.log("Authority TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Authority:Authority = state.find((Authority) => Authority.id === action.payload.AuthorityId);
+      console.log("Authority TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Authority: Authority = state.find(
+        (Authority) => Authority.id === action.payload.AuthorityId,
+      );
       if (Authority) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     AuthoritypropertySet(state, action) {
-      const Authority = state.find((Authority) => Authority.id === action.payload.AuthorityId);
+      const Authority = state.find(
+        (Authority) => Authority.id === action.payload.AuthorityId,
+      );
       if (Authority) {
-      //  Authority[action.property] = action.payload[action.property];
+        //  Authority[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  AuthorityAdded,
-  AuthorityValueToggled,
-  AuthoritypropertySet
-} = AuthoritySlice.actions;
+export const { AuthorityAdded, AuthorityValueToggled, AuthoritypropertySet } =
+  AuthoritySlice.actions;
 export default AuthoritySlice.reducer;

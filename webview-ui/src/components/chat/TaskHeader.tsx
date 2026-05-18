@@ -676,40 +676,40 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                     {checkpointTrackerErrorMessage.endsWith(
                       "disabling checkpoints.",
                     ) && (
-                        <>
-                          <a
-                            onClick={() => {
-                              vscode.postMessage({
-                                type: "openExtensionSettings",
-                                text: "enableCheckpoints",
-                              });
-                            }}
-                            style={{
-                              color: "inherit",
-                              textDecoration: "underline",
-                              cursor: "pointer",
-                            }}
-                          >
-                            disabling checkpoints.
-                          </a>
-                        </>
-                      )}
+                      <>
+                        <a
+                          onClick={() => {
+                            vscode.postMessage({
+                              type: "openExtensionSettings",
+                              text: "enableCheckpoints",
+                            });
+                          }}
+                          style={{
+                            color: "inherit",
+                            textDecoration: "underline",
+                            cursor: "pointer",
+                          }}
+                        >
+                          disabling checkpoints.
+                        </a>
+                      </>
+                    )}
                     {checkpointTrackerErrorMessage.includes(
                       "Git must be installed to use checkpoints.",
                     ) && (
-                        <>
-                          {" "}
-                          <a
-                            href="https://git-scm.com/install/"
-                            style={{
-                              color: "inherit",
-                              textDecoration: "underline",
-                            }}
-                          >
-                            Git Installation Instructions
-                          </a>
-                        </>
-                      )}
+                      <>
+                        {" "}
+                        <a
+                          href="https://git-scm.com/install/"
+                          style={{
+                            color: "inherit",
+                            textDecoration: "underline",
+                          }}
+                        >
+                          Git Installation Instructions
+                        </a>
+                      </>
+                    )}
                   </span>
                 </div>
               )}

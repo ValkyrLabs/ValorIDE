@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { GeneralLedgerEntry } from '@thorapi/model/GeneralLedgerEntry';
+import { GeneralLedgerEntry } from "@thorapi/model/GeneralLedgerEntry";
 
 const GeneralLedgerEntrySlice = createSlice({
   name: "GeneralLedgerEntrys",
@@ -28,20 +27,25 @@ const GeneralLedgerEntrySlice = createSlice({
     },
 
     GeneralLedgerEntryValueToggled(state, action) {
-      console.log("GeneralLedgerEntry TOGGLE")
-      console.warn(JSON.stringify(action))
-      const GeneralLedgerEntry:GeneralLedgerEntry = state.find((GeneralLedgerEntry) => GeneralLedgerEntry.id === action.payload.GeneralLedgerEntryId);
+      console.log("GeneralLedgerEntry TOGGLE");
+      console.warn(JSON.stringify(action));
+      const GeneralLedgerEntry: GeneralLedgerEntry = state.find(
+        (GeneralLedgerEntry) =>
+          GeneralLedgerEntry.id === action.payload.GeneralLedgerEntryId,
+      );
       if (GeneralLedgerEntry) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     GeneralLedgerEntrypropertySet(state, action) {
-      const GeneralLedgerEntry = state.find((GeneralLedgerEntry) => GeneralLedgerEntry.id === action.payload.GeneralLedgerEntryId);
+      const GeneralLedgerEntry = state.find(
+        (GeneralLedgerEntry) =>
+          GeneralLedgerEntry.id === action.payload.GeneralLedgerEntryId,
+      );
       if (GeneralLedgerEntry) {
-      //  GeneralLedgerEntry[action.property] = action.payload[action.property];
+        //  GeneralLedgerEntry[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const GeneralLedgerEntrySlice = createSlice({
 export const {
   GeneralLedgerEntryAdded,
   GeneralLedgerEntryValueToggled,
-  GeneralLedgerEntrypropertySet
+  GeneralLedgerEntrypropertySet,
 } = GeneralLedgerEntrySlice.actions;
 export default GeneralLedgerEntrySlice.reducer;

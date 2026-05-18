@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { VerifyPhoneOTPRequest } from '@thorapi/model/VerifyPhoneOTPRequest';
+import { VerifyPhoneOTPRequest } from "@thorapi/model/VerifyPhoneOTPRequest";
 
 const VerifyPhoneOTPRequestSlice = createSlice({
   name: "VerifyPhoneOTPRequests",
@@ -28,20 +27,25 @@ const VerifyPhoneOTPRequestSlice = createSlice({
     },
 
     VerifyPhoneOTPRequestValueToggled(state, action) {
-      console.log("VerifyPhoneOTPRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const VerifyPhoneOTPRequest:VerifyPhoneOTPRequest = state.find((VerifyPhoneOTPRequest) => VerifyPhoneOTPRequest.id === action.payload.VerifyPhoneOTPRequestId);
+      console.log("VerifyPhoneOTPRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const VerifyPhoneOTPRequest: VerifyPhoneOTPRequest = state.find(
+        (VerifyPhoneOTPRequest) =>
+          VerifyPhoneOTPRequest.id === action.payload.VerifyPhoneOTPRequestId,
+      );
       if (VerifyPhoneOTPRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     VerifyPhoneOTPRequestpropertySet(state, action) {
-      const VerifyPhoneOTPRequest = state.find((VerifyPhoneOTPRequest) => VerifyPhoneOTPRequest.id === action.payload.VerifyPhoneOTPRequestId);
+      const VerifyPhoneOTPRequest = state.find(
+        (VerifyPhoneOTPRequest) =>
+          VerifyPhoneOTPRequest.id === action.payload.VerifyPhoneOTPRequestId,
+      );
       if (VerifyPhoneOTPRequest) {
-      //  VerifyPhoneOTPRequest[action.property] = action.payload[action.property];
+        //  VerifyPhoneOTPRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const VerifyPhoneOTPRequestSlice = createSlice({
 export const {
   VerifyPhoneOTPRequestAdded,
   VerifyPhoneOTPRequestValueToggled,
-  VerifyPhoneOTPRequestpropertySet
+  VerifyPhoneOTPRequestpropertySet,
 } = VerifyPhoneOTPRequestSlice.actions;
 export default VerifyPhoneOTPRequestSlice.reducer;

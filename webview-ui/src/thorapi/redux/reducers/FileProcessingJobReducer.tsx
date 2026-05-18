@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { FileProcessingJob } from '@thorapi/model/FileProcessingJob';
+import { FileProcessingJob } from "@thorapi/model/FileProcessingJob";
 
 const FileProcessingJobSlice = createSlice({
   name: "FileProcessingJobs",
@@ -28,20 +27,25 @@ const FileProcessingJobSlice = createSlice({
     },
 
     FileProcessingJobValueToggled(state, action) {
-      console.log("FileProcessingJob TOGGLE")
-      console.warn(JSON.stringify(action))
-      const FileProcessingJob:FileProcessingJob = state.find((FileProcessingJob) => FileProcessingJob.id === action.payload.FileProcessingJobId);
+      console.log("FileProcessingJob TOGGLE");
+      console.warn(JSON.stringify(action));
+      const FileProcessingJob: FileProcessingJob = state.find(
+        (FileProcessingJob) =>
+          FileProcessingJob.id === action.payload.FileProcessingJobId,
+      );
       if (FileProcessingJob) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     FileProcessingJobpropertySet(state, action) {
-      const FileProcessingJob = state.find((FileProcessingJob) => FileProcessingJob.id === action.payload.FileProcessingJobId);
+      const FileProcessingJob = state.find(
+        (FileProcessingJob) =>
+          FileProcessingJob.id === action.payload.FileProcessingJobId,
+      );
       if (FileProcessingJob) {
-      //  FileProcessingJob[action.property] = action.payload[action.property];
+        //  FileProcessingJob[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const FileProcessingJobSlice = createSlice({
 export const {
   FileProcessingJobAdded,
   FileProcessingJobValueToggled,
-  FileProcessingJobpropertySet
+  FileProcessingJobpropertySet,
 } = FileProcessingJobSlice.actions;
 export default FileProcessingJobSlice.reducer;

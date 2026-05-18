@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { CompleteUploadRequest } from '@thorapi/model/CompleteUploadRequest';
+import { CompleteUploadRequest } from "@thorapi/model/CompleteUploadRequest";
 
 const CompleteUploadRequestSlice = createSlice({
   name: "CompleteUploadRequests",
@@ -28,20 +27,25 @@ const CompleteUploadRequestSlice = createSlice({
     },
 
     CompleteUploadRequestValueToggled(state, action) {
-      console.log("CompleteUploadRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const CompleteUploadRequest:CompleteUploadRequest = state.find((CompleteUploadRequest) => CompleteUploadRequest.id === action.payload.CompleteUploadRequestId);
+      console.log("CompleteUploadRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const CompleteUploadRequest: CompleteUploadRequest = state.find(
+        (CompleteUploadRequest) =>
+          CompleteUploadRequest.id === action.payload.CompleteUploadRequestId,
+      );
       if (CompleteUploadRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     CompleteUploadRequestpropertySet(state, action) {
-      const CompleteUploadRequest = state.find((CompleteUploadRequest) => CompleteUploadRequest.id === action.payload.CompleteUploadRequestId);
+      const CompleteUploadRequest = state.find(
+        (CompleteUploadRequest) =>
+          CompleteUploadRequest.id === action.payload.CompleteUploadRequestId,
+      );
       if (CompleteUploadRequest) {
-      //  CompleteUploadRequest[action.property] = action.payload[action.property];
+        //  CompleteUploadRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const CompleteUploadRequestSlice = createSlice({
 export const {
   CompleteUploadRequestAdded,
   CompleteUploadRequestValueToggled,
-  CompleteUploadRequestpropertySet
+  CompleteUploadRequestpropertySet,
 } = CompleteUploadRequestSlice.actions;
 export default CompleteUploadRequestSlice.reducer;

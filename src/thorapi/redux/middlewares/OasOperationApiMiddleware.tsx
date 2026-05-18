@@ -6,7 +6,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_OASOPERATION_REQUEST,
-    FETCH_OASOPERATION_REQUEST,
-    LIST_OASOPERATION_REQUEST,
-    UPDATE_OASOPERATION_REQUEST,
-    DELETE_OASOPERATION_REQUEST,
-
-    addOasOperationFailure,
-    addOasOperationSuccess,
-
-    fetchOasOperationFailure,
-    fetchOasOperationSuccess,
-    
-    listOasOperationFailure,
-    listOasOperationSuccess,
-
-    updateOasOperationFailure,
-    updateOasOperationSuccess,
-    
-    deleteOasOperationFailure,
-    deleteOasOperationSuccess,
-    
-} from '../actions/OasOperationApiAction';
+  ADD_OASOPERATION_REQUEST,
+  FETCH_OASOPERATION_REQUEST,
+  LIST_OASOPERATION_REQUEST,
+  UPDATE_OASOPERATION_REQUEST,
+  DELETE_OASOPERATION_REQUEST,
+  addOasOperationFailure,
+  addOasOperationSuccess,
+  fetchOasOperationFailure,
+  fetchOasOperationSuccess,
+  listOasOperationFailure,
+  listOasOperationSuccess,
+  updateOasOperationFailure,
+  updateOasOperationSuccess,
+  deleteOasOperationFailure,
+  deleteOasOperationSuccess,
+} from "../actions/OasOperationApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -59,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: OasOperation
 */
 
-
-
-export const OasOperationMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("OasOperation MIDDLEWARE: " + JSON.stringify(action) )
+export const OasOperationMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("OasOperation MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

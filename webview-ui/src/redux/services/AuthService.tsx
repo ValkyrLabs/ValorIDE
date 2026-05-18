@@ -18,9 +18,9 @@ export const AuthService = createApi({
       providesTags: (result) =>
         result
           ? [
-            ...result.map(({ id }) => ({ type: "Auth" as const, id })),
-            { type: "Auth", id: "LIST" },
-          ]
+              ...result.map(({ id }) => ({ type: "Auth" as const, id })),
+              { type: "Auth", id: "LIST" },
+            ]
           : [{ type: "Auth", id: "LIST" }],
     }),
 

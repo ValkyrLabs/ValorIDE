@@ -7,43 +7,64 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { Invoice } from '@thorapi/model/Invoice'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { Invoice } from "@thorapi/model/Invoice";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type InvoiceResponse = Invoice[]
+type InvoiceResponse = Invoice[];
+
+const toInvoiceList = (result: unknown): InvoiceResponse => {
+  if (Array.isArray(result)) {
+    return result as InvoiceResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as InvoiceResponse) : [];
+};
 
 export const InvoiceService = createApi({
-  reducerPath: 'Invoice', // This should remain unique
+  reducerPath: "Invoice", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['Invoice'],
+  tagTypes: ["Invoice"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getInvoicesPaged: build.query<InvoiceResponse, { page: number; size?: number; example?: Partial<Invoice> }>({
+    getInvoicesPaged: build.query<
+      InvoiceResponse,
+      { page: number; size?: number; example?: Partial<Invoice> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Invoice?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Invoice?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Invoice' as const, id })),
-              { type: 'Invoice', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toInvoiceList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "Invoice" as const, id })),
+          { type: "Invoice", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getInvoices: build.query<InvoiceResponse, { example?: Partial<Invoice> } | void>({
+    getInvoices: build.query<
+      InvoiceResponse,
+      { example?: Partial<Invoice> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +72,96 @@ export const InvoiceService = createApi({
         }
         return `Invoice`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Invoice' as const, id })),
-              { type: 'Invoice', id: 'LIST' },
-            ]
-          : [{ type: 'Invoice', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toInvoiceList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "Invoice" as const, id })),
+          { type: "Invoice", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
     addInvoice: build.mutation<Invoice, Partial<Invoice>>({
       query: (body) => ({
         url: `Invoice`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'Invoice', id: 'LIST' }],
+      invalidatesTags: [{ type: "Invoice", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getInvoice: build.query<Invoice, string>({
       query: (id) => `Invoice/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Invoice', id }],
+      providesTags: (result, error, id) => [{ type: "Invoice", id }],
     }),
 
     // 5) Update
-    updateInvoice: build.mutation<void, Pick<Invoice, 'id'> & Partial<Invoice>>({
-      query: ({ id, ...patch }) => ({
-        url: `Invoice/${id}`,
-        method: 'PUT',
-        body: patch,
-      }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            InvoiceService.util.updateQueryData('getInvoice', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
-          try {
-            await queryFulfilled
-          } catch {
-            patchResult.undo()
+    updateInvoice: build.mutation<void, Pick<Invoice, "id"> & Partial<Invoice>>(
+      {
+        query: ({ id, ...patch }) => ({
+          url: `Invoice/${id}`,
+          method: "PUT",
+          body: patch,
+        }),
+        async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+          if (id) {
+            const patchResult = dispatch(
+              InvoiceService.util.updateQueryData("getInvoice", id, (draft) => {
+                Object.assign(draft, patch);
+              }),
+            );
+            try {
+              await queryFulfilled;
+            } catch {
+              patchResult.undo();
+            }
           }
-        }
+        },
+        invalidatesTags: (result, error, { id }: Pick<Invoice, "id">) => [
+          { type: "Invoice", id },
+          { type: "Invoice", id: "LIST" },
+        ],
       },
-      invalidatesTags: (result, error, { id }: Pick<Invoice, 'id'>) => [
-        { type: 'Invoice', id },
-        { type: 'Invoice', id: 'LIST' },
-      ],
-    }),
+    ),
 
     // 6) Delete
     deleteInvoice: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `Invoice/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'Invoice', id }],
+      invalidatesTags: (result, error, id) => [{ type: "Invoice", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteInvoiceCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteInvoiceCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `Invoice/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Invoice', id }, { type: 'Invoice', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Invoice", id },
+        { type: "Invoice", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetInvoicesPagedQuery`
 export const {
-  useGetInvoicesPagedQuery,     // immediate fetch
+  useGetInvoicesPagedQuery, // immediate fetch
   useLazyGetInvoicesPagedQuery, // lazy fetch
   useGetInvoiceQuery,
   useGetInvoicesQuery,
@@ -138,4 +169,4 @@ export const {
   useUpdateInvoiceMutation,
   useDeleteInvoiceMutation,
   useDeleteInvoiceCascadeMutation,
-} = InvoiceService
+} = InvoiceService;

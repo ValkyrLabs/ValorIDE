@@ -31,6 +31,7 @@ import { secondsToMs } from "@utils/time";
 import { GlobalFileNames } from "@core/storage/disk";
 import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
+import { appendMcpServerLog, markMcpServerStatus } from "./McpDiagnostics";
 
 // Default timeout for internal MCP data requests in milliseconds; is not the same as the user facing timeout stored as DEFAULT_MCP_TIMEOUT_SECONDS
 const DEFAULT_REQUEST_TIMEOUT_MS = 5000;
@@ -235,8 +236,14 @@ export class McpHub {
           (conn) => conn.server.name === name,
         );
         if (connection) {
-          connection.server.status = "disconnected";
-          this.appendErrorMessage(connection, error.message);
+          connection.server = appendMcpServerLog(
+            markMcpServerStatus(connection.server, "disconnected"),
+            {
+              level: "error",
+              message: error.message,
+              source: "transport",
+            },
+          );
         }
         await this.notifyWebviewOfServerChanges();
       };
@@ -246,7 +253,14 @@ export class McpHub {
           (conn) => conn.server.name === name,
         );
         if (connection) {
-          connection.server.status = "disconnected";
+          connection.server = appendMcpServerLog(
+            markMcpServerStatus(connection.server, "disconnected"),
+            {
+              level: "warn",
+              message: "Transport closed",
+              source: "transport",
+            },
+          );
         }
         await this.notifyWebviewOfServerChanges();
       };
@@ -257,10 +271,19 @@ export class McpHub {
           config: JSON.stringify(config),
           status: "connecting",
           disabled: config.disabled,
+          timeout: config.timeout,
         },
         client,
         transport,
       };
+      connection.server = appendMcpServerLog(
+        markMcpServerStatus(connection.server, "connecting"),
+        {
+          level: "info",
+          message: "Starting MCP server",
+          source: "lifecycle",
+        },
+      );
       this.connections.push(connection);
 
       if (config.transportType === "stdio") {
@@ -277,6 +300,16 @@ export class McpHub {
             if (isInfoLog) {
               // Log normal informational messages
               console.info(`Server "${name}" info:`, output);
+              const connection = this.connections.find(
+                (conn) => conn.server.name === name,
+              );
+              if (connection) {
+                connection.server = appendMcpServerLog(connection.server, {
+                  level: "info",
+                  message: output,
+                  source: "stderr",
+                });
+              }
             } else {
               // Treat as error log
               console.error(`Server "${name}" stderr:`, output);
@@ -284,7 +317,11 @@ export class McpHub {
                 (conn) => conn.server.name === name,
               );
               if (connection) {
-                this.appendErrorMessage(connection, output);
+                connection.server = appendMcpServerLog(connection.server, {
+                  level: "error",
+                  message: output,
+                  source: "stderr",
+                });
                 // Only notify webview if server is already disconnected
                 if (connection.server.status === "disconnected") {
                   await this.notifyWebviewOfServerChanges();
@@ -295,14 +332,23 @@ export class McpHub {
         } else {
           console.error(`No stderr stream for ${name}`);
         }
-        transport.start = async () => { }; // No-op now, .connect() won't fail
+        transport.start = async () => {}; // No-op now, .connect() won't fail
       }
 
       // Connect
       await client.connect(transport);
 
-      connection.server.status = "connected";
-      connection.server.error = "";
+      connection.server = appendMcpServerLog(
+        {
+          ...markMcpServerStatus(connection.server, "connected"),
+          error: "",
+        },
+        {
+          level: "info",
+          message: "MCP server connected",
+          source: "lifecycle",
+        },
+      );
 
       // Initial fetch of tools and resources
       connection.server.tools = await this.fetchToolsList(name);
@@ -315,21 +361,17 @@ export class McpHub {
         (conn) => conn.server.name === name,
       );
       if (connection) {
-        connection.server.status = "disconnected";
-        this.appendErrorMessage(
-          connection,
-          error instanceof Error ? error.message : String(error),
+        connection.server = appendMcpServerLog(
+          markMcpServerStatus(connection.server, "disconnected"),
+          {
+            level: "error",
+            message: error instanceof Error ? error.message : String(error),
+            source: "lifecycle",
+          },
         );
       }
       throw error;
     }
-  }
-
-  private appendErrorMessage(connection: McpConnection, error: string) {
-    const newError = connection.server.error
-      ? `${connection.server.error}\n${error}`
-      : error;
-    connection.server.error = newError; //.slice(0, 800)
   }
 
   private async fetchToolsList(serverName: string): Promise<McpTool[]> {
@@ -587,6 +629,14 @@ export class McpHub {
       );
       connection.server.status = "connecting";
       connection.server.error = "";
+      connection.server = appendMcpServerLog(
+        markMcpServerStatus(connection.server, "connecting"),
+        {
+          level: "info",
+          message: "Restarting MCP server",
+          source: "lifecycle",
+        },
+      );
       await this.notifyWebviewOfServerChanges();
       await setTimeoutPromise(500); // artificial delay to show user that server is restarting
       try {
@@ -611,9 +661,18 @@ export class McpHub {
   private async notifyWebviewOfServerChanges(): Promise<void> {
     // servers should always be sorted in the order they are defined in the settings file
     const settingsPath = await this.getMcpSettingsFilePath();
-    const content = await fs.readFile(settingsPath, "utf-8");
-    const config = JSON.parse(content);
-    const serverOrder = Object.keys(config.mcpServers || {});
+    let serverOrder: string[] = [];
+    try {
+      const content = await fs.readFile(settingsPath, "utf-8");
+      const config = JSON.parse(content);
+      serverOrder = Object.keys(config.mcpServers || {});
+    } catch (error) {
+      // Settings file doesn't exist yet or is corrupted - continue with empty server order
+      console.debug(
+        "MCP settings file not found or corrupted, using empty server order",
+        error,
+      );
+    }
     await this.postMessageToWebview({
       type: "mcpServers",
       mcpServers: [...this.connections]

@@ -33,8 +33,8 @@ export default function TaskThermometer({
               },
               children: p,
             },
-            p
-          )
+            p,
+          ),
         ),
       }),
       _jsx("div", {

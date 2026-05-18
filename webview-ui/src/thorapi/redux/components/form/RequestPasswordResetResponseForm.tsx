@@ -7,39 +7,46 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   RequestPasswordResetResponse,
   RequestPasswordResetResponseStatusEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddRequestPasswordResetResponseMutation } from '../../services/RequestPasswordResetResponseService';
+import { useAddRequestPasswordResetResponseMutation } from "../../services/RequestPasswordResetResponseService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -49,7 +56,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -64,33 +70,32 @@ Response to password reset request
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const StatusValidation = () => {
-  return [
-    'SENT',
-    'USER_NOT_FOUND',
-    'ACCOUNT_LOCKED',
-  ];
+  return ["SENT", "USER_NOT_FOUND", "ACCOUNT_LOCKED"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-      status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        .required("status is required."),
-        message: Yup.string(),
-        requiresPhoneVerification: Yup.boolean(),
-        trashed: Yup.boolean(),
+  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
+  message: Yup.string(),
+  requiresPhoneVerification: Yup.boolean(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const RequestPasswordResetResponseForm: React.FC = () => {
-  const [addRequestPasswordResetResponse, addRequestPasswordResetResponseResult] = useAddRequestPasswordResetResponseMutation();
+  const [
+    addRequestPasswordResetResponse,
+    addRequestPasswordResetResponseResult,
+  ] = useAddRequestPasswordResetResponseMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -100,12 +105,18 @@ const RequestPasswordResetResponseForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -113,10 +124,10 @@ const RequestPasswordResetResponseForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<RequestPasswordResetResponse> = {
-        status: undefined,
-          message: '',
-          requiresPhoneVerification: false,
-          trashed: false,
+    status: undefined,
+    message: "",
+    requiresPhoneVerification: false,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -131,22 +142,30 @@ const RequestPasswordResetResponseForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new RequestPasswordResetResponse:', grants);
+    console.log(
+      "Permissions saved for new RequestPasswordResetResponse:",
+      grants,
+    );
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<RequestPasswordResetResponse>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<RequestPasswordResetResponse>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
       console.log("RequestPasswordResetResponse form values:", values);
 
       // NOTE: depending on your generated endpoint, you may need { body: values }
-      const result = await addRequestPasswordResetResponse(values as any).unwrap();
+      const result = await addRequestPasswordResetResponse(
+        values as any,
+      ).unwrap();
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `RequestPasswordResetResponse created successfully! Would you like to set permissions for this object?`
+          `RequestPasswordResetResponse created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -154,8 +173,8 @@ const RequestPasswordResetResponseForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create RequestPasswordResetResponse:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create RequestPasswordResetResponse:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -176,46 +195,47 @@ const RequestPasswordResetResponseForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addRequestPasswordResetResponseResult.isLoading;
+          const isSaving =
+            isSubmitting || addRequestPasswordResetResponseResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New RequestPasswordResetResponse
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    RequestPasswordResetResponse
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="status"
-                          value={values.status || ''}
-                          className={
-                            errors.status
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Status" />
-                          <StatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="status"
+                        value={values.status || ""}
+                        className={
+                          errors.status
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("status", true);
+                          setFieldValue("status", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Status" />
+                        <StatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -227,28 +247,21 @@ const RequestPasswordResetResponseForm: React.FC = () => {
                     <label htmlFor="message" className="nice-form-control">
                       <b>
                         Message:
-                        {touched.message &&
-                         !errors.message && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.message && !errors.message && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="message"
-                            value={values?.message}
-                            placeholder="Message"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="message"
+                        value={values?.message}
+                        placeholder="Message"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -257,35 +270,37 @@ const RequestPasswordResetResponseForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="requiresPhoneVerification" className="nice-form-control">
+                    <label
+                      htmlFor="requiresPhoneVerification"
+                      className="nice-form-control"
+                    >
                       <b>
                         Requires Phone Verification:
                         {touched.requiresPhoneVerification &&
-                         !errors.requiresPhoneVerification && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.requiresPhoneVerification && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="requiresPhoneVerification"
-                            name="requiresPhoneVerification"
-                            checked={values.requiresPhoneVerification || false}
-                            onChange={(e) => {
-                              setFieldTouched('requiresPhoneVerification', true);
-                              setFieldValue('requiresPhoneVerification', e.target.checked);
-                            }}
-                            isInvalid={!!errors.requiresPhoneVerification}
-                            className={errors.requiresPhoneVerification ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="requiresPhoneVerification"
+                        name="requiresPhoneVerification"
+                        checked={values.requiresPhoneVerification || false}
+                        onChange={(e) => {
+                          setFieldTouched("requiresPhoneVerification", true);
+                          setFieldValue(
+                            "requiresPhoneVerification",
+                            e.target.checked,
+                          );
+                        }}
+                        isInvalid={!!errors.requiresPhoneVerification}
+                        className={
+                          errors.requiresPhoneVerification ? "error" : ""
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -297,32 +312,25 @@ const RequestPasswordResetResponseForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -332,45 +340,66 @@ const RequestPasswordResetResponseForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New RequestPasswordResetResponse
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      RequestPasswordResetResponse
+                    </CoolButton>
 
-                  {(addRequestPasswordResetResponseResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addRequestPasswordResetResponseResult as any).error ? (addRequestPasswordResetResponseResult as any).error.data : (addRequestPasswordResetResponseResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addRequestPasswordResetResponseResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addRequestPasswordResetResponseResult as any)
+                                .error
+                              ? (addRequestPasswordResetResponseResult as any)
+                                  .error.data
+                              : (addRequestPasswordResetResponseResult as any)
+                                  .error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addRequestPasswordResetResponseResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addRequestPasswordResetResponseResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addRequestPasswordResetResponseResult: {JSON.stringify(addRequestPasswordResetResponseResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addRequestPasswordResetResponseResult:{" "}
+                    {JSON.stringify(addRequestPasswordResetResponseResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -402,15 +431,12 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value='SENT' label="Sent" />
-      <option value='USER_NOT_FOUND' label="User Not Found" />
-      <option value='ACCOUNT_LOCKED' label="Account Locked" />
+      <option value="SENT" label="Sent" />
+      <option value="USER_NOT_FOUND" label="User Not Found" />
+      <option value="ACCOUNT_LOCKED" label="Account Locked" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default RequestPasswordResetResponseForm;
-

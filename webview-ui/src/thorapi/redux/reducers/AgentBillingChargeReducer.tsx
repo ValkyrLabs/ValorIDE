@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AgentBillingCharge } from '@thorapi/model/AgentBillingCharge';
+import { AgentBillingCharge } from "@thorapi/model/AgentBillingCharge";
 
 const AgentBillingChargeSlice = createSlice({
   name: "AgentBillingCharges",
@@ -28,20 +27,25 @@ const AgentBillingChargeSlice = createSlice({
     },
 
     AgentBillingChargeValueToggled(state, action) {
-      console.log("AgentBillingCharge TOGGLE")
-      console.warn(JSON.stringify(action))
-      const AgentBillingCharge:AgentBillingCharge = state.find((AgentBillingCharge) => AgentBillingCharge.id === action.payload.AgentBillingChargeId);
+      console.log("AgentBillingCharge TOGGLE");
+      console.warn(JSON.stringify(action));
+      const AgentBillingCharge: AgentBillingCharge = state.find(
+        (AgentBillingCharge) =>
+          AgentBillingCharge.id === action.payload.AgentBillingChargeId,
+      );
       if (AgentBillingCharge) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     AgentBillingChargepropertySet(state, action) {
-      const AgentBillingCharge = state.find((AgentBillingCharge) => AgentBillingCharge.id === action.payload.AgentBillingChargeId);
+      const AgentBillingCharge = state.find(
+        (AgentBillingCharge) =>
+          AgentBillingCharge.id === action.payload.AgentBillingChargeId,
+      );
       if (AgentBillingCharge) {
-      //  AgentBillingCharge[action.property] = action.payload[action.property];
+        //  AgentBillingCharge[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const AgentBillingChargeSlice = createSlice({
 export const {
   AgentBillingChargeAdded,
   AgentBillingChargeValueToggled,
-  AgentBillingChargepropertySet
+  AgentBillingChargepropertySet,
 } = AgentBillingChargeSlice.actions;
 export default AgentBillingChargeSlice.reducer;

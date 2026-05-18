@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SwarmGraphSnapshot } from '@thorapi/model/SwarmGraphSnapshot';
+import { SwarmGraphSnapshot } from "@thorapi/model/SwarmGraphSnapshot";
 
 const SwarmGraphSnapshotSlice = createSlice({
   name: "SwarmGraphSnapshots",
@@ -28,20 +27,25 @@ const SwarmGraphSnapshotSlice = createSlice({
     },
 
     SwarmGraphSnapshotValueToggled(state, action) {
-      console.log("SwarmGraphSnapshot TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SwarmGraphSnapshot:SwarmGraphSnapshot = state.find((SwarmGraphSnapshot) => SwarmGraphSnapshot.id === action.payload.SwarmGraphSnapshotId);
+      console.log("SwarmGraphSnapshot TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SwarmGraphSnapshot: SwarmGraphSnapshot = state.find(
+        (SwarmGraphSnapshot) =>
+          SwarmGraphSnapshot.id === action.payload.SwarmGraphSnapshotId,
+      );
       if (SwarmGraphSnapshot) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SwarmGraphSnapshotpropertySet(state, action) {
-      const SwarmGraphSnapshot = state.find((SwarmGraphSnapshot) => SwarmGraphSnapshot.id === action.payload.SwarmGraphSnapshotId);
+      const SwarmGraphSnapshot = state.find(
+        (SwarmGraphSnapshot) =>
+          SwarmGraphSnapshot.id === action.payload.SwarmGraphSnapshotId,
+      );
       if (SwarmGraphSnapshot) {
-      //  SwarmGraphSnapshot[action.property] = action.payload[action.property];
+        //  SwarmGraphSnapshot[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const SwarmGraphSnapshotSlice = createSlice({
 export const {
   SwarmGraphSnapshotAdded,
   SwarmGraphSnapshotValueToggled,
-  SwarmGraphSnapshotpropertySet
+  SwarmGraphSnapshotpropertySet,
 } = SwarmGraphSnapshotSlice.actions;
 export default SwarmGraphSnapshotSlice.reducer;

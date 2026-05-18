@@ -7,7 +7,29 @@ import {
 } from "./MothershipService";
 import { Logger } from "../logging/Logger";
 import { WebviewProvider } from "../../core/webview";
+<<<<<<< HEAD
 import { WidgetCommandEnvelope } from "@shared/ExtensionMessage";
+=======
+import {
+  CapabilityAnnouncement,
+  CapabilityRegistry,
+  createDefaultValorCapabilities,
+} from "../agentic/CapabilityRegistry";
+import {
+  createAgenticCommandCenterState,
+  updateSwarmState,
+} from "../agentic/AgenticStateModel";
+import { MothershipSwarmTransport } from "../swarm/MothershipSwarmTransport";
+import {
+  SwarmNodeRegistrationError,
+  SwarmNodeService,
+} from "../swarm/SwarmNodeService";
+import type {
+  AgenticCapabilityCommandCenterState,
+  AgenticSwarmState,
+} from "@shared/AgenticState";
+import type { ApiConfiguration } from "@shared/api";
+>>>>>>> e007b234 (feat(core): rc wip login and reliability fixes)
 
 type GitExtension = {
   getAPI(version: number): GitAPI;
@@ -57,6 +79,7 @@ type CapabilityEnvelope = {
   gitEnabled: boolean;
   repositories: string[];
   commands: string[];
+  swarm: CapabilityAnnouncement;
   languages: string[];
   features: Record<string, boolean>;
 };
@@ -78,6 +101,17 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
   private repositoryCommits = new Map<string, string | undefined>();
   private activeAssignments = new Map<string, TaskAssignment>();
   private capabilityCache: CapabilityEnvelope | null = null;
+  private readonly capabilityRegistry = new CapabilityRegistry(
+    createDefaultValorCapabilities(),
+  );
+  private principalId: string | undefined;
+  private swarmNode: SwarmNodeService | null = null;
+  private swarmTransport: MothershipSwarmTransport | null = null;
+  private heartbeatInterval: NodeJS.Timeout | null = null;
+  private agenticState: AgenticCapabilityCommandCenterState =
+    createAgenticCommandCenterState({
+      approvalPolicy: "local-confirmation-required",
+    });
   private isInitialized = false;
 
   constructor(context: vscode.ExtensionContext) {
@@ -104,6 +138,11 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     }
 
     this.instanceId = await this.ensureInstanceId();
+    this.principalId = principal?.id;
+    this.setSwarmState({
+      instanceId: this.instanceId,
+      status: "registering",
+    });
 
     const options: MothershipConnectionOptions = {
       jwtToken,
@@ -127,6 +166,8 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     this.gitDisposables = [];
     if (this.mothership) {
       try {
+        this.swarmTransport?.dispose();
+        this.stopHeartbeat();
         this.mothership.removeAllListeners?.();
         this.mothership.disconnect();
       } catch (error) {
@@ -134,6 +175,8 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       }
     }
     this.mothership = null;
+    this.swarmNode = null;
+    this.swarmTransport = null;
   }
 
   private async ensureMothership(
@@ -145,17 +188,33 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     }
 
     this.mothership = new MothershipService(options);
+    this.swarmTransport = new MothershipSwarmTransport(this.mothership);
     this.mothership.on("connected", () => {
       Logger.log("Mothership connected");
+      this.setSwarmState({
+        instanceId: this.instanceId ?? undefined,
+        status: "registering",
+      });
       void this.publishCapabilities();
+      void this.registerSwarmNode();
     });
 
     this.mothership.on("disconnected", () => {
       Logger.log("Mothership disconnected");
+      this.stopHeartbeat();
+      this.setSwarmState({
+        instanceId: this.instanceId ?? undefined,
+        status: "offline",
+      });
     });
 
     this.mothership.on("error", (error) => {
       Logger.log(`Mothership error: ${String(error)}`);
+      this.setSwarmState({
+        instanceId: this.instanceId ?? undefined,
+        lastError: this.errorMessage(error),
+        status: "error",
+      });
     });
 
     this.mothership.on("remoteCommand", (command: RemoteCommand) => {
@@ -203,6 +262,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     const commands = await vscode.commands.getCommands(true);
     const languages = await vscode.languages.getLanguages();
     const version = this.context.extension.packageJSON?.version ?? "0.0.0";
+    const workspaceFolders = this.getWorkspaceFolders();
 
     const envelope: CapabilityEnvelope = {
       instanceId: this.instanceId ?? "unknown",
@@ -214,11 +274,19 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       repositories,
       commands: commands.slice(0, 80),
       languages: languages.slice(0, 40),
+      swarm: this.capabilityRegistry.toSwarmAnnouncement({
+        instanceId: this.instanceId ?? "unknown",
+        version,
+        workspaceFolders,
+      }),
       features: {
+        grayMatterMemory: true,
         mcpMarketplace: !!(await this.context.globalState.get<boolean>(
           "valoride.mcpMarketplace.enabled",
         )),
         browserAutomation: true,
+        precisionSearchReplace: true,
+        swarmProtocol: true,
         terminal: true,
         restClient: true,
       },
@@ -232,6 +300,77 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     return Array.from(this.repositoryCommits.keys()).map((key) =>
       key.replace(/^file:\/\//, ""),
     );
+  }
+
+  private getWorkspaceFolders(): string[] {
+    return (
+      vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath) ??
+      []
+    );
+  }
+
+  private async registerSwarmNode(): Promise<void> {
+    if (
+      !this.mothership ||
+      !this.mothership.isConnected() ||
+      !this.swarmTransport ||
+      !this.instanceId
+    ) {
+      return;
+    }
+
+    const version = this.context.extension.packageJSON?.version ?? "0.0.0";
+    const { apiConfiguration, selectedLlmDetails } = await getAllExtensionState(
+      this.context,
+    );
+    const capabilityIds = this.capabilityRegistry
+      .listCapabilities()
+      .filter((capability) => capability.enabled)
+      .map((capability) => capability.id);
+    this.setSwarmState({
+      capabilities: capabilityIds,
+      instanceId: this.instanceId,
+      status: "registering",
+    });
+    this.swarmNode = new SwarmNodeService({
+      approvalPolicy: "local-confirmation-required",
+      capabilities: this.capabilityRegistry,
+      instance: {
+        instanceId: this.instanceId,
+        principalId: this.principalId,
+      },
+      selectedModelId: this.resolveSelectedModelId(apiConfiguration),
+      selectedPromptId: selectedLlmDetails?.id,
+      selectedPromptName: selectedLlmDetails?.name,
+      transport: this.swarmTransport,
+      version,
+      workspaceFolders: this.getWorkspaceFolders(),
+    });
+
+    try {
+      const response = await this.swarmNode.register({
+        sessionId: this.instanceId,
+      });
+      Logger.log(`ValorIDE SWARM registration acknowledged: ${response.type}`);
+      this.setSwarmState({
+        capabilities: capabilityIds,
+        instanceId: this.instanceId,
+        lastAckAt: new Date().toISOString(),
+        lastError: undefined,
+        status: "online",
+      });
+      this.startHeartbeat();
+    } catch (error) {
+      Logger.log(`ValorIDE SWARM registration failed: ${String(error)}`);
+      this.stopHeartbeat();
+      this.setSwarmState({
+        capabilities: capabilityIds,
+        instanceId: this.instanceId,
+        lastError: this.errorMessage(error),
+        status:
+          error instanceof SwarmNodeRegistrationError ? "rejected" : "error",
+      });
+    }
   }
 
   private async setupGitTelemetry(): Promise<void> {
@@ -404,6 +543,12 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
 
     if (assignment.taskId) {
       this.activeAssignments.set(assignment.taskId, assignment);
+      this.setSwarmState({
+        activeTaskId: assignment.taskId,
+        instanceId: this.instanceId ?? undefined,
+        projectId: assignment.projectId,
+        status: "busy",
+      });
     }
 
     if (this.mothership && this.instanceId && command.id) {
@@ -424,6 +569,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     const taskId = payload?.taskId;
     if (taskId && this.activeAssignments.has(taskId)) {
       this.activeAssignments.delete(taskId);
+      this.setSwarmState(this.nextIdleSwarmState());
     }
     this.forwardTaskToWebviews("swarm:task-cancelled", {
       commandId: command.id,
@@ -546,6 +692,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     });
 
     this.activeAssignments.delete(taskId);
+    this.setSwarmState(this.nextIdleSwarmState());
   }
 
   private safeParse<T = any>(input: string): T | undefined {
@@ -554,6 +701,105 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     } catch {
       return undefined;
     }
+  }
+
+  private startHeartbeat(): void {
+    this.stopHeartbeat();
+    this.sendHeartbeat();
+    this.heartbeatInterval = setInterval(() => this.sendHeartbeat(), 30000);
+  }
+
+  private stopHeartbeat(): void {
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+      this.heartbeatInterval = null;
+    }
+  }
+
+  private sendHeartbeat(): void {
+    if (!this.swarmNode) {
+      return;
+    }
+    const active = this.firstActiveAssignment();
+    this.swarmNode
+      .heartbeat({
+        activeTaskId: active?.taskId,
+        projectId: active?.projectId,
+        status: active ? "busy" : "online",
+      })
+      .then(() => {
+        this.setSwarmState({
+          activeTaskId: active?.taskId,
+          instanceId: this.instanceId ?? undefined,
+          lastHeartbeatAt: new Date().toISOString(),
+          projectId: active?.projectId,
+          status: active ? "busy" : "online",
+        });
+      })
+      .catch((error) => {
+        this.setSwarmState({
+          instanceId: this.instanceId ?? undefined,
+          lastError: this.errorMessage(error),
+          status: "error",
+        });
+      });
+  }
+
+  private firstActiveAssignment(): TaskAssignment | undefined {
+    const first = this.activeAssignments.values().next();
+    return first.done ? undefined : first.value;
+  }
+
+  private nextIdleSwarmState(): Partial<AgenticSwarmState> &
+    Pick<AgenticSwarmState, "status"> {
+    const active = this.firstActiveAssignment();
+    return {
+      activeTaskId: active?.taskId,
+      instanceId: this.instanceId ?? undefined,
+      projectId: active?.projectId,
+      status: active ? "busy" : "online",
+    };
+  }
+
+  private setSwarmState(
+    swarm: Partial<AgenticSwarmState> & Pick<AgenticSwarmState, "status">,
+  ): void {
+    this.agenticState = updateSwarmState(this.agenticState, swarm);
+    void this.publishAgenticState();
+  }
+
+  private async publishAgenticState(): Promise<void> {
+    try {
+      await updateGlobalState(this.context, "agenticState", this.agenticState);
+      WebviewProvider.getAllInstances().forEach((instance) => {
+        instance.controller.postMessageToWebview({
+          type: "agenticState",
+          agenticState: this.agenticState,
+        });
+      });
+    } catch (error) {
+      Logger.log(`Failed to publish agentic state: ${String(error)}`);
+    }
+  }
+
+  private resolveSelectedModelId(
+    config?: ApiConfiguration,
+  ): string | undefined {
+    return (
+      config?.apiModelId ||
+      config?.openRouterModelId ||
+      config?.requestyModelId ||
+      config?.togetherModelId ||
+      config?.ollamaModelId ||
+      config?.lmStudioModelId ||
+      config?.openAiModelId ||
+      config?.liteLlmModelId ||
+      config?.vsCodeLmModelSelector?.id
+    );
+  }
+
+  private errorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
   }
 
   private registerCommands(): void {
@@ -614,6 +860,7 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
         }
         this.capabilityCache = null;
         await this.publishCapabilities(true);
+        await this.registerSwarmNode();
         vscode.window.showInformationMessage(
           "ValorIDE capabilities re-announced to swarm.",
         );

@@ -1,0 +1,321 @@
+{
+  "workbook": {
+    "id": "wb-email-notif-001",
+    "name": "Email Notification & Lead Enrichment Workflow",
+    "workflows": [
+      {
+        "id": "wf-email-notif-lead",
+        "ownerId": "9a08c0c8-670d-45a9-9271-e872febe502c",
+        "createdDate": "2025-12-20T10:35:00.000Z",
+        "lastModifiedDate": "2025-12-20T10:35:00.000Z",
+        "name": "Email Notification & Lead Enrichment",
+        "description": "Production workflow: Fetch leads from database, enrich via REST API, validate, filter by preferences, and send personalized email notifications.",
+        "role": "user",
+        "schedule": "0 9 * * MON",
+        "meta": {
+          "ui": {
+            "zoom": 1,
+            "pan": { "x": 0, "y": 0 },
+            "viewport": { "width": 1024, "height": 768 }
+          },
+          "graph": {
+            "nodes": [
+              {
+                "id": "start",
+                "type": "start",
+                "position": { "x": 100, "y": 100 },
+                "data": { "label": "Start" },
+                "taskId": null
+              },
+              {
+                "id": "fetch-leads",
+                "type": "task",
+                "position": { "x": 100, "y": 250 },
+                "data": { "label": "Fetch Leads from Database" },
+                "taskId": "task-fetch-leads"
+              },
+              {
+                "id": "enrich-via-api",
+                "type": "task",
+                "position": { "x": 100, "y": 400 },
+                "data": { "label": "Enrich Data via REST API" },
+                "taskId": "task-enrich-api"
+              },
+              {
+                "id": "validate-data",
+                "type": "task",
+                "position": { "x": 100, "y": 550 },
+                "data": { "label": "Validate Lead Data" },
+                "taskId": "task-validate"
+              },
+              {
+                "id": "filter-preferences",
+                "type": "task",
+                "position": { "x": 100, "y": 700 },
+                "data": { "label": "Filter by Preferences" },
+                "taskId": "task-filter-prefs"
+              },
+              {
+                "id": "looper-leads",
+                "type": "looper",
+                "position": { "x": 100, "y": 850 },
+                "data": {
+                  "label": "Loop Leads",
+                  "listPath": "state.filteredLeads",
+                  "itemAlias": "lead"
+                }
+              },
+              {
+                "id": "prepare-email",
+                "type": "task",
+                "position": { "x": 300, "y": 850 },
+                "data": { "label": "Prepare Email Content" },
+                "taskId": "task-prepare-email"
+              },
+              {
+                "id": "send-email",
+                "type": "task",
+                "position": { "x": 500, "y": 850 },
+                "data": { "label": "Send Email" },
+                "taskId": "task-send-email"
+              },
+              {
+                "id": "collect-stats",
+                "type": "task",
+                "position": { "x": 100, "y": 1000 },
+                "data": { "label": "Collect Statistics" },
+                "taskId": "task-stats"
+              },
+              {
+                "id": "end-success",
+                "type": "end",
+                "position": { "x": 100, "y": 1150 },
+                "data": { "label": "End (Success)" },
+                "taskId": null
+              },
+              {
+                "id": "end-error",
+                "type": "end",
+                "position": { "x": 300, "y": 1150 },
+                "data": { "label": "End (Error)" },
+                "taskId": null
+              }
+            ],
+            "edges": [
+              {
+                "source": "start",
+                "target": "fetch-leads",
+                "label": "begin workflow",
+                "data": { "flow": "Initialize execution" }
+              },
+              {
+                "source": "fetch-leads",
+                "target": "enrich-via-api",
+                "label": "leads fetched",
+                "data": { "flow": "Array of lead records" }
+              },
+              {
+                "source": "enrich-via-api",
+                "target": "validate-data",
+                "label": "enriched data",
+                "data": { "flow": "Leads with additional fields from API" }
+              },
+              {
+                "source": "validate-data",
+                "target": "filter-preferences",
+                "label": "validation complete",
+                "data": { "flow": "Valid lead records" }
+              },
+              {
+                "source": "filter-preferences",
+                "target": "looper-leads",
+                "label": "filtered leads",
+                "data": { "flow": "Leads matching preference criteria" }
+              },
+              {
+                "source": "looper-leads",
+                "target": "prepare-email",
+                "label": "each",
+                "data": { "flow": "Individual lead item" }
+              },
+              {
+                "source": "prepare-email",
+                "target": "send-email",
+                "label": "email template",
+                "data": { "flow": "Merged email content" }
+              },
+              {
+                "source": "send-email",
+                "target": "looper-leads",
+                "label": "email sent",
+                "data": { "flow": "Continue loop iteration" }
+              },
+              {
+                "source": "looper-leads",
+                "target": "collect-stats",
+                "label": "complete",
+                "data": { "flow": "Loop finished" }
+              },
+              {
+                "source": "collect-stats",
+                "target": "end-success",
+                "label": "stats collected",
+                "data": { "flow": "Workflow summary metrics" }
+              }
+            ]
+          }
+        },
+        "tasks": [
+          {
+            "id": "task-fetch-leads",
+            "name": "Fetch Leads",
+            "description": "Query database for active leads",
+            "workflowId": "wf-email-notif-lead",
+            "taskOrder": 1,
+            "modules": [
+              {
+                "id": "mod-db-poller",
+                "name": "DatabasePoller",
+                "className": "com.valkyrlabs.workflow.modules.database.DatabasePollerModule",
+                "moduleType": "DatabasePoller",
+                "status": "ready",
+                "moduleData": "{\"source_path\": \"leads\", \"output_field\": \"fetchedLeads\", \"query\": \"SELECT id, email, firstName, lastName, company FROM leads WHERE status = 'active' AND created_at > NOW() - INTERVAL 7 DAY LIMIT 1000\"}",
+                "config": {}
+              }
+            ]
+          },
+          {
+            "id": "task-enrich-api",
+            "name": "Enrich Via API",
+            "description": "Call external enrichment API for each lead",
+            "workflowId": "wf-email-notif-lead",
+            "taskOrder": 2,
+            "modules": [
+              {
+                "id": "mod-rest-generic",
+                "name": "RestGeneric",
+                "className": "com.valkyrlabs.workflow.modules.rest.RestGenericModule",
+                "moduleType": "RestGeneric",
+                "status": "ready",
+                "moduleData": "{\"operationId\": \"enrichLead\", \"params\": {\"email\": \"{{lead.email}}\"}, \"body\": {}, \"headers\": {\"Authorization\": \"Bearer {{enrichmentApiKey}}\"}}",
+                "integrationAccount": {
+                  "id": "ia-enrichment-api",
+                  "accountName": "ENRICHMENT_API",
+                  "apiKey": "***",
+                  "status": "ready",
+                  "verified": true
+                },
+                "config": {
+                  "openapi_url": "https://api.enrichment-provider.com/openapi.yaml"
+                }
+              }
+            ]
+          },
+          {
+            "id": "task-validate",
+            "name": "Validate Data",
+            "description": "Validate lead data against schema",
+            "workflowId": "wf-email-notif-lead",
+            "taskOrder": 3,
+            "modules": [
+              {
+                "id": "mod-validation",
+                "name": "DataValidation",
+                "className": "com.valkyrlabs.workflow.modules.quality.DataValidationModule",
+                "moduleType": "DataValidation",
+                "status": "ready",
+                "moduleData": "{\"source_path\": \"state.enrichedLeads\", \"output_field\": \"validationResult\", \"mode\": \"collect\", \"schema\": {\"type\": \"object\", \"required\": [\"email\", \"firstName\", \"lastName\"], \"properties\": {\"email\": {\"type\": \"string\", \"format\": \"email\"}, \"firstName\": {\"type\": \"string\", \"minLength\": 1, \"maxLength\": 100}, \"lastName\": {\"type\": \"string\", \"minLength\": 1, \"maxLength\": 100}, \"company\": {\"type\": \"string\", \"maxLength\": 255}, \"enrichmentScore\": {\"type\": \"number\", \"minimum\": 0, \"maximum\": 100}}}}",
+                "config": {}
+              }
+            ]
+          },
+          {
+            "id": "task-filter-prefs",
+            "name": "Filter Preferences",
+            "description": "Filter leads by opt-in status and consent",
+            "workflowId": "wf-email-notif-lead",
+            "taskOrder": 4,
+            "modules": [
+              {
+                "id": "mod-pref-filter",
+                "name": "PreferenceFilter",
+                "className": "com.valkyrlabs.workflow.modules.valkyr.PreferenceFilterModule",
+                "moduleType": "PreferenceFilter",
+                "status": "ready",
+                "moduleData": "{\"defaultOptIn\": false}",
+                "config": {}
+              }
+            ]
+          },
+          {
+            "id": "task-prepare-email",
+            "name": "Prepare Email",
+            "description": "Merge template with lead data",
+            "workflowId": "wf-email-notif-lead",
+            "taskOrder": 5,
+            "modules": [
+              {
+                "id": "mod-template-merge",
+                "name": "TemplateMerge",
+                "className": "com.valkyrlabs.workflow.modules.transform.TemplateMergeModule",
+                "moduleType": "TemplateMerge",
+                "status": "ready",
+                "moduleData": "{\"format\": \"html\", \"defaultSubject\": \"Hello {{firstName}}, check out what's new!\"}",
+                "config": {}
+              }
+            ]
+          },
+          {
+            "id": "task-send-email",
+            "name": "Send Email",
+            "description": "Send email via Mailtrap",
+            "workflowId": "wf-email-notif-lead",
+            "taskOrder": 6,
+            "modules": [
+              {
+                "id": "mod-mailtrap-send",
+                "name": "MailtrapSend",
+                "className": "com.valkyrlabs.workflow.modules.email.MailtrapSendModule",
+                "moduleType": "MailtrapSend",
+                "status": "ready",
+                "moduleData": "{}",
+                "integrationAccount": {
+                  "id": "ia-mailtrap",
+                  "accountName": "MAILTRAP_PRIMARY",
+                  "apiKey": "***",
+                  "status": "ready",
+                  "verified": true
+                },
+                "config": {
+                  "emailAccount": "MAILTRAP_PRIMARY",
+                  "from": "notifications@valkyr.io",
+                  "cc": "",
+                  "bcc": "",
+                  "replyTo": "support@valkyr.io"
+                }
+              }
+            ]
+          },
+          {
+            "id": "task-stats",
+            "name": "Collect Statistics",
+            "description": "Aggregate execution metrics",
+            "workflowId": "wf-email-notif-lead",
+            "taskOrder": 7,
+            "modules": [
+              {
+                "id": "mod-stats-collector",
+                "name": "StatisticsCollector",
+                "className": "com.valkyrlabs.workflow.modules.analytics.StatisticsCollectorExecModule",
+                "moduleType": "StatisticsCollectorExecModule",
+                "status": "ready",
+                "moduleData": "{}",
+                "config": {}
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

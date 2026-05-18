@@ -62,8 +62,8 @@ export const OptionsButtons = ({
           },
           children: option,
         },
-        index
-      )
+        index,
+      ),
     ),
   });
 };

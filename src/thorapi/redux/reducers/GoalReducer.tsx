@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Goal } from '@thorapi/model/Goal';
+import { Goal } from "@thorapi/model/Goal";
 
 const GoalSlice = createSlice({
   name: "Goals",
@@ -28,28 +27,26 @@ const GoalSlice = createSlice({
     },
 
     GoalValueToggled(state, action) {
-      console.log("Goal TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Goal:Goal = state.find((Goal) => Goal.id === action.payload.GoalId);
+      console.log("Goal TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Goal: Goal = state.find(
+        (Goal) => Goal.id === action.payload.GoalId,
+      );
       if (Goal) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     GoalpropertySet(state, action) {
       const Goal = state.find((Goal) => Goal.id === action.payload.GoalId);
       if (Goal) {
-      //  Goal[action.property] = action.payload[action.property];
+        //  Goal[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  GoalAdded,
-  GoalValueToggled,
-  GoalpropertySet
-} = GoalSlice.actions;
+export const { GoalAdded, GoalValueToggled, GoalpropertySet } =
+  GoalSlice.actions;
 export default GoalSlice.reducer;

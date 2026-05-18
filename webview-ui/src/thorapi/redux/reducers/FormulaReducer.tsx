@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Formula } from '@thorapi/model/Formula';
+import { Formula } from "@thorapi/model/Formula";
 
 const FormulaSlice = createSlice({
   name: "Formulas",
@@ -28,28 +27,28 @@ const FormulaSlice = createSlice({
     },
 
     FormulaValueToggled(state, action) {
-      console.log("Formula TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Formula:Formula = state.find((Formula) => Formula.id === action.payload.FormulaId);
+      console.log("Formula TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Formula: Formula = state.find(
+        (Formula) => Formula.id === action.payload.FormulaId,
+      );
       if (Formula) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     FormulapropertySet(state, action) {
-      const Formula = state.find((Formula) => Formula.id === action.payload.FormulaId);
+      const Formula = state.find(
+        (Formula) => Formula.id === action.payload.FormulaId,
+      );
       if (Formula) {
-      //  Formula[action.property] = action.payload[action.property];
+        //  Formula[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  FormulaAdded,
-  FormulaValueToggled,
-  FormulapropertySet
-} = FormulaSlice.actions;
+export const { FormulaAdded, FormulaValueToggled, FormulapropertySet } =
+  FormulaSlice.actions;
 export default FormulaSlice.reducer;

@@ -7,43 +7,64 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { AclClass } from '@thorapi/model/AclClass'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { AclClass } from "@thorapi/model/AclClass";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type AclClassResponse = AclClass[]
+type AclClassResponse = AclClass[];
+
+const toAclClassList = (result: unknown): AclClassResponse => {
+  if (Array.isArray(result)) {
+    return result as AclClassResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as AclClassResponse) : [];
+};
 
 export const AclClassService = createApi({
-  reducerPath: 'AclClass', // This should remain unique
+  reducerPath: "AclClass", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['AclClass'],
+  tagTypes: ["AclClass"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getAclClasssPaged: build.query<AclClassResponse, { page: number; size?: number; example?: Partial<AclClass> }>({
+    getAclClasssPaged: build.query<
+      AclClassResponse,
+      { page: number; size?: number; example?: Partial<AclClass> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `AclClass?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `AclClass?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'AclClass' as const, id })),
-              { type: 'AclClass', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toAclClassList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "AclClass" as const, id })),
+          { type: "AclClass", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getAclClasss: build.query<AclClassResponse, { example?: Partial<AclClass> } | void>({
+    getAclClasss: build.query<
+      AclClassResponse,
+      { example?: Partial<AclClass> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,55 +72,60 @@ export const AclClassService = createApi({
         }
         return `AclClass`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'AclClass' as const, id })),
-              { type: 'AclClass', id: 'LIST' },
-            ]
-          : [{ type: 'AclClass', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toAclClassList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "AclClass" as const, id })),
+          { type: "AclClass", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
     addAclClass: build.mutation<AclClass, Partial<AclClass>>({
       query: (body) => ({
         url: `AclClass`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'AclClass', id: 'LIST' }],
+      invalidatesTags: [{ type: "AclClass", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getAclClass: build.query<AclClass, string>({
       query: (id) => `AclClass/${id}`,
-      providesTags: (result, error, id) => [{ type: 'AclClass', id }],
+      providesTags: (result, error, id) => [{ type: "AclClass", id }],
     }),
 
     // 5) Update
-    updateAclClass: build.mutation<void, Pick<AclClass, 'id'> & Partial<AclClass>>({
+    updateAclClass: build.mutation<
+      void,
+      Pick<AclClass, "id"> & Partial<AclClass>
+    >({
       query: ({ id, ...patch }) => ({
         url: `AclClass/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            AclClassService.util.updateQueryData('getAclClass', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            AclClassService.util.updateQueryData("getAclClass", id, (draft) => {
+              Object.assign(draft, patch);
+            }),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<AclClass, 'id'>) => [
-        { type: 'AclClass', id },
-        { type: 'AclClass', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<AclClass, "id">) => [
+        { type: "AclClass", id },
+        { type: "AclClass", id: "LIST" },
       ],
     }),
 
@@ -108,29 +134,35 @@ export const AclClassService = createApi({
       query(id) {
         return {
           url: `AclClass/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'AclClass', id }],
+      invalidatesTags: (result, error, id) => [{ type: "AclClass", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteAclClassCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteAclClassCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `AclClass/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'AclClass', id }, { type: 'AclClass', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "AclClass", id },
+        { type: "AclClass", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetAclClasssPagedQuery`
 export const {
-  useGetAclClasssPagedQuery,     // immediate fetch
+  useGetAclClasssPagedQuery, // immediate fetch
   useLazyGetAclClasssPagedQuery, // lazy fetch
   useGetAclClassQuery,
   useGetAclClasssQuery,
@@ -138,4 +170,4 @@ export const {
   useUpdateAclClassMutation,
   useDeleteAclClassMutation,
   useDeleteAclClassCascadeMutation,
-} = AclClassService
+} = AclClassService;

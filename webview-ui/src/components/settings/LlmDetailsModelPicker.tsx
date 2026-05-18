@@ -56,7 +56,7 @@ const DropdownItem = styled.div<{ isSelected?: boolean }>`
       : "inherit"};
   border-left: 3px solid
     ${(props) =>
-    props.isSelected ? "var(--vscode-terminal-ansiBlue)" : "transparent"};
+      props.isSelected ? "var(--vscode-terminal-ansiBlue)" : "transparent"};
   user-select: none;
   white-space: nowrap;
   overflow: hidden;
@@ -87,9 +87,9 @@ const FeatureCard = styled.div<{ isSelected?: boolean }>`
   padding: 8px;
   border: 1px solid
     ${(props) =>
-    props.isSelected
-      ? "var(--vscode-terminal-ansiBlue)"
-      : "var(--vscode-panel-border)"};
+      props.isSelected
+        ? "var(--vscode-terminal-ansiBlue)"
+        : "var(--vscode-panel-border)"};
   border-radius: 4px;
   background-color: ${(props) =>
     props.isSelected

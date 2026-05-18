@@ -6,7 +6,7 @@ import { Empty } from "../../../shared/proto/common";
  * @returns Empty response
  */
 export async function newTask(controller, request) {
-    await controller.initTask(request.text, request.images);
-    return Empty.create();
+  await controller.initTask(request.text, request.images);
+  return Empty.create();
 }
 //# sourceMappingURL=newTask.js.map

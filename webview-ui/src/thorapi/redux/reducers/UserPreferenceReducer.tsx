@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { UserPreference } from '@thorapi/model/UserPreference';
+import { UserPreference } from "@thorapi/model/UserPreference";
 
 const UserPreferenceSlice = createSlice({
   name: "UserPreferences",
@@ -28,20 +27,25 @@ const UserPreferenceSlice = createSlice({
     },
 
     UserPreferenceValueToggled(state, action) {
-      console.log("UserPreference TOGGLE")
-      console.warn(JSON.stringify(action))
-      const UserPreference:UserPreference = state.find((UserPreference) => UserPreference.id === action.payload.UserPreferenceId);
+      console.log("UserPreference TOGGLE");
+      console.warn(JSON.stringify(action));
+      const UserPreference: UserPreference = state.find(
+        (UserPreference) =>
+          UserPreference.id === action.payload.UserPreferenceId,
+      );
       if (UserPreference) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     UserPreferencepropertySet(state, action) {
-      const UserPreference = state.find((UserPreference) => UserPreference.id === action.payload.UserPreferenceId);
+      const UserPreference = state.find(
+        (UserPreference) =>
+          UserPreference.id === action.payload.UserPreferenceId,
+      );
       if (UserPreference) {
-      //  UserPreference[action.property] = action.payload[action.property];
+        //  UserPreference[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const UserPreferenceSlice = createSlice({
 export const {
   UserPreferenceAdded,
   UserPreferenceValueToggled,
-  UserPreferencepropertySet
+  UserPreferencepropertySet,
 } = UserPreferenceSlice.actions;
 export default UserPreferenceSlice.reducer;

@@ -1,0 +1,270 @@
+openapi: 3.0.0
+info:
+  title: E-Commerce Catalog API
+  version: 1.0.0
+paths:
+  /products:
+    get:
+      summary: List products
+      operationId: listProducts
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Product list
+    post:
+      summary: Create product
+      operationId: createProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductCreate"
+      responses:
+        "201":
+          description: Product created
+  /products/{id}:
+    get:
+      summary: Get product
+      operationId: getProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Product details
+    put:
+      summary: Update product
+      operationId: updateProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductUpdate"
+      responses:
+        "200":
+          description: Product updated
+  /orders:
+    get:
+      summary: List orders
+      operationId: listOrders
+      responses:
+        "200":
+          description: Order list
+    post:
+      summary: Create order
+      operationId: createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderCreate"
+      responses:
+        "201":
+          description: Order created
+  /orders/{id}:
+    get:
+      summary: Get order
+      operationId: getOrder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Order details
+    put:
+      summary: Update order status
+      operationId: updateOrderStatus
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderStatusUpdate"
+      responses:
+        "200":
+          description: Order updated
+  /inventory:
+    get:
+      summary: Get inventory
+      operationId: getInventory
+      parameters:
+        - name: productId
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Inventory details
+    post:
+      summary: Update inventory
+      operationId: updateInventory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InventoryUpdate"
+      responses:
+        "200":
+          description: Inventory updated
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        category:
+          $ref: "#/components/schemas/Category"
+        inventory:
+          type: integer
+    ProductCreate:
+      type: object
+      required:
+        - name
+        - price
+        - categoryId
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        categoryId:
+          type: string
+    ProductUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        price:
+          type: number
+        description:
+          type: string
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+        total:
+          type: number
+        status:
+          type: string
+          enum:
+            - PENDING
+            - PROCESSING
+            - SHIPPED
+            - DELIVERED
+            - CANCELLED
+    OrderCreate:
+      type: object
+      required:
+        - items
+        - customerId
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItemCreate"
+        customerId:
+          type: string
+    OrderItem:
+      type: object
+      properties:
+        productId:
+          type: string
+        quantity:
+          type: integer
+        price:
+          type: number
+    OrderItemCreate:
+      type: object
+      required:
+        - productId
+        - quantity
+      properties:
+        productId:
+          type: string
+        quantity:
+          type: integer
+    OrderStatusUpdate:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum:
+            - PENDING
+            - PROCESSING
+            - SHIPPED
+            - DELIVERED
+            - CANCELLED
+    Inventory:
+      type: object
+      properties:
+        productId:
+          type: string
+        quantity:
+          type: integer
+        lastUpdated:
+          type: string
+          format: date-time
+    InventoryUpdate:
+      type: object
+      required:
+        - productId
+        - quantity
+      properties:
+        productId:
+          type: string
+        quantity:
+          type: integer

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Note } from '@thorapi/model/Note';
+import { Note } from "@thorapi/model/Note";
 
 const NoteSlice = createSlice({
   name: "Notes",
@@ -28,28 +27,26 @@ const NoteSlice = createSlice({
     },
 
     NoteValueToggled(state, action) {
-      console.log("Note TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Note:Note = state.find((Note) => Note.id === action.payload.NoteId);
+      console.log("Note TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Note: Note = state.find(
+        (Note) => Note.id === action.payload.NoteId,
+      );
       if (Note) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     NotepropertySet(state, action) {
       const Note = state.find((Note) => Note.id === action.payload.NoteId);
       if (Note) {
-      //  Note[action.property] = action.payload[action.property];
+        //  Note[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  NoteAdded,
-  NoteValueToggled,
-  NotepropertySet
-} = NoteSlice.actions;
+export const { NoteAdded, NoteValueToggled, NotepropertySet } =
+  NoteSlice.actions;
 export default NoteSlice.reducer;

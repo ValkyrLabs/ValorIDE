@@ -7,43 +7,68 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { OasSecurityScheme } from '@thorapi/model/OasSecurityScheme'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { OasSecurityScheme } from "@thorapi/model/OasSecurityScheme";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type OasSecuritySchemeResponse = OasSecurityScheme[]
+type OasSecuritySchemeResponse = OasSecurityScheme[];
+
+const toOasSecuritySchemeList = (
+  result: unknown,
+): OasSecuritySchemeResponse => {
+  if (Array.isArray(result)) {
+    return result as OasSecuritySchemeResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as OasSecuritySchemeResponse)
+    : [];
+};
 
 export const OasSecuritySchemeService = createApi({
-  reducerPath: 'OasSecurityScheme', // This should remain unique
+  reducerPath: "OasSecurityScheme", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['OasSecurityScheme'],
+  tagTypes: ["OasSecurityScheme"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getOasSecuritySchemesPaged: build.query<OasSecuritySchemeResponse, { page: number; size?: number; example?: Partial<OasSecurityScheme> }>({
+    getOasSecuritySchemesPaged: build.query<
+      OasSecuritySchemeResponse,
+      { page: number; size?: number; example?: Partial<OasSecurityScheme> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `OasSecurityScheme?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `OasSecurityScheme?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'OasSecurityScheme' as const, id })),
-              { type: 'OasSecurityScheme', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toOasSecuritySchemeList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "OasSecurityScheme" as const, id })),
+          { type: "OasSecurityScheme", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOasSecuritySchemes: build.query<OasSecuritySchemeResponse, { example?: Partial<OasSecurityScheme> } | void>({
+    getOasSecuritySchemes: build.query<
+      OasSecuritySchemeResponse,
+      { example?: Partial<OasSecurityScheme> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +76,113 @@ export const OasSecuritySchemeService = createApi({
         }
         return `OasSecurityScheme`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'OasSecurityScheme' as const, id })),
-              { type: 'OasSecurityScheme', id: 'LIST' },
-            ]
-          : [{ type: 'OasSecurityScheme', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toOasSecuritySchemeList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "OasSecurityScheme" as const, id })),
+          { type: "OasSecurityScheme", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
-    addOasSecurityScheme: build.mutation<OasSecurityScheme, Partial<OasSecurityScheme>>({
+    addOasSecurityScheme: build.mutation<
+      OasSecurityScheme,
+      Partial<OasSecurityScheme>
+    >({
       query: (body) => ({
         url: `OasSecurityScheme`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'OasSecurityScheme', id: 'LIST' }],
+      invalidatesTags: [{ type: "OasSecurityScheme", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getOasSecurityScheme: build.query<OasSecurityScheme, string>({
       query: (id) => `OasSecurityScheme/${id}`,
-      providesTags: (result, error, id) => [{ type: 'OasSecurityScheme', id }],
+      providesTags: (result, error, id) => [{ type: "OasSecurityScheme", id }],
     }),
 
     // 5) Update
-    updateOasSecurityScheme: build.mutation<void, Pick<OasSecurityScheme, 'id'> & Partial<OasSecurityScheme>>({
+    updateOasSecurityScheme: build.mutation<
+      void,
+      Pick<OasSecurityScheme, "id"> & Partial<OasSecurityScheme>
+    >({
       query: ({ id, ...patch }) => ({
         url: `OasSecurityScheme/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            OasSecuritySchemeService.util.updateQueryData('getOasSecurityScheme', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            OasSecuritySchemeService.util.updateQueryData(
+              "getOasSecurityScheme",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<OasSecurityScheme, 'id'>) => [
-        { type: 'OasSecurityScheme', id },
-        { type: 'OasSecurityScheme', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<OasSecurityScheme, "id">,
+      ) => [
+        { type: "OasSecurityScheme", id },
+        { type: "OasSecurityScheme", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteOasSecurityScheme: build.mutation<{ success: boolean; id: string }, number>({
+    deleteOasSecurityScheme: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `OasSecurityScheme/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'OasSecurityScheme', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "OasSecurityScheme", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteOasSecuritySchemeCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteOasSecuritySchemeCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `OasSecurityScheme/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'OasSecurityScheme', id }, { type: 'OasSecurityScheme', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "OasSecurityScheme", id },
+        { type: "OasSecurityScheme", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetOasSecuritySchemesPagedQuery`
 export const {
-  useGetOasSecuritySchemesPagedQuery,     // immediate fetch
+  useGetOasSecuritySchemesPagedQuery, // immediate fetch
   useLazyGetOasSecuritySchemesPagedQuery, // lazy fetch
   useGetOasSecuritySchemeQuery,
   useGetOasSecuritySchemesQuery,
@@ -138,4 +190,4 @@ export const {
   useUpdateOasSecuritySchemeMutation,
   useDeleteOasSecuritySchemeMutation,
   useDeleteOasSecuritySchemeCascadeMutation,
-} = OasSecuritySchemeService
+} = OasSecuritySchemeService;

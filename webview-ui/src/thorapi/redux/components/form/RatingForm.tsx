@@ -7,39 +7,43 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  Rating,
-  RatingTargetTypeEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddRatingMutation } from '../../services/RatingService';
+import { Rating, RatingTargetTypeEnum } from "@thorapi/model";
+
+import { useAddRatingMutation } from "../../services/RatingService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -49,7 +53,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -65,20 +68,20 @@ TODO Rating CLASS DESCRIPTION
 -------------------------------------------------------- */
 const TargetTypeValidation = () => {
   return [
-    'homepage',
-    'webpage',
-    'application',
-    'function',
-    'api',
-    'service',
-    'content',
-    'schema',
-    'application',
-    'feature',
-    'helpfulness',
-    'satisfaction',
-    'product',
-    'none',
+    "homepage",
+    "webpage",
+    "application",
+    "function",
+    "api",
+    "service",
+    "content",
+    "schema",
+    "application",
+    "feature",
+    "helpfulness",
+    "satisfaction",
+    "product",
+    "none",
   ];
 };
 
@@ -86,16 +89,20 @@ const TargetTypeValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        contentId: Yup.string().required("contentId is required."),
-      targetType: Yup.mixed()
-        .oneOf(TargetTypeValidation(), "Invalid value for targetType")
-        ,
-        comments: Yup.string(),
-        url: Yup.string(),
-        trashed: Yup.boolean(),
+  targetType: Yup.mixed().oneOf(
+    TargetTypeValidation(),
+    "Invalid value for targetType",
+  ),
+  contentId: Yup.string(),
+  comments: Yup.string(),
+  url: Yup.string(),
+  rating: asNumber(Yup.number().typeError("rating must be a number")),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -112,12 +119,18 @@ const RatingForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -125,11 +138,12 @@ const RatingForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Rating> = {
-          contentId: '',
-        targetType: undefined,
-          comments: '',
-          url: '',
-          trashed: false,
+    targetType: undefined,
+    contentId: "",
+    comments: "",
+    url: "",
+    rating: 0,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -144,11 +158,14 @@ const RatingForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new Rating:', grants);
+    console.log("Permissions saved for new Rating:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Rating>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<Rating>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -159,7 +176,7 @@ const RatingForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Rating created successfully! Would you like to set permissions for this object?`
+          `Rating created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -167,8 +184,8 @@ const RatingForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create Rating:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create Rating:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -189,79 +206,48 @@ const RatingForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addRatingResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New Rating
-                </Accordion.Header>
-                <Accordion.Body>
-                    <label htmlFor="contentId" className="nice-form-control">
-                      <b>
-                        Content Id:
-                        {touched.contentId &&
-                         !errors.contentId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="contentId"
-                            value={values?.contentId}
-                            placeholder="Content Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="contentId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New Rating
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="targetType" className="nice-form-control">
                       <b>
                         Target Type:
-                        {touched.targetType &&
-                         !errors.targetType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.targetType && !errors.targetType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="targetType"
-                          value={values.targetType || ''}
-                          className={
-                            errors.targetType
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('targetType', true);
-                            setFieldValue('targetType', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Target Type" />
-                          <TargetTypeLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="targetType"
+                        value={values.targetType || ""}
+                        className={
+                          errors.targetType
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("targetType", true);
+                          setFieldValue(
+                            "targetType",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Target Type" />
+                        <TargetTypeLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -270,31 +256,50 @@ const RatingForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="comments" className="nice-form-control">
+                    <label htmlFor="contentId" className="nice-form-control">
                       <b>
-                        Comments:
-                        {touched.comments &&
-                         !errors.comments && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        Content Id:
+                        {touched.contentId && !errors.contentId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="contentId"
+                        value={values?.contentId}
+                        placeholder="Content Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
+                      <ErrorMessage
+                        className="error"
+                        name="contentId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="comments" className="nice-form-control">
+                      <b>
+                        Comments:
+                        {touched.comments && !errors.comments && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
+                        )}
+                      </b>
 
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="comments"
-                            value={values?.comments}
-                            placeholder="Comments"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="comments"
+                        value={values?.comments}
+                        placeholder="Comments"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -306,28 +311,21 @@ const RatingForm: React.FC = () => {
                     <label htmlFor="url" className="nice-form-control">
                       <b>
                         Url:
-                        {touched.url &&
-                         !errors.url && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.url && !errors.url && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="url"
-                            value={values?.url}
-                            placeholder="Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="url"
+                        value={values?.url}
+                        placeholder="Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -339,20 +337,33 @@ const RatingForm: React.FC = () => {
                     <label htmlFor="rating" className="nice-form-control">
                       <b>
                         Rating:
-                        {touched.rating &&
-                         !errors.rating && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.rating && !errors.rating && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="rating"
+                        type="number"
+                        step="any"
+                        value={values.rating || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("rating", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "rating",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.rating
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -364,32 +375,25 @@ const RatingForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -399,45 +403,58 @@ const RatingForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New Rating
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New Rating
+                    </CoolButton>
 
-                  {(addRatingResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addRatingResult as any).error ? (addRatingResult as any).error.data : (addRatingResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addRatingResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addRatingResult as any).error
+                              ? (addRatingResult as any).error.data
+                              : (addRatingResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addRatingResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addRatingResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addRatingResult: {JSON.stringify(addRatingResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addRatingResult: {JSON.stringify(addRatingResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -469,26 +486,23 @@ kebabcase target-type-lookup
 const TargetTypeLookup = () => {
   return (
     <>
-      <option value='homepage' label="Homepage" />
-      <option value='webpage' label="Webpage" />
-      <option value='application' label="Application" />
-      <option value='function' label="Function" />
-      <option value='api' label="Api" />
-      <option value='service' label="Service" />
-      <option value='content' label="Content" />
-      <option value='schema' label="Schema" />
-      <option value='application' label="Application 2" />
-      <option value='feature' label="Feature" />
-      <option value='helpfulness' label="Helpfulness" />
-      <option value='satisfaction' label="Satisfaction" />
-      <option value='product' label="Product" />
-      <option value='none' label="None" />
+      <option value="homepage" label="Homepage" />
+      <option value="webpage" label="Webpage" />
+      <option value="application" label="Application" />
+      <option value="function" label="Function" />
+      <option value="api" label="Api" />
+      <option value="service" label="Service" />
+      <option value="content" label="Content" />
+      <option value="schema" label="Schema" />
+      <option value="application" label="Application 2" />
+      <option value="feature" label="Feature" />
+      <option value="helpfulness" label="Helpfulness" />
+      <option value="satisfaction" label="Satisfaction" />
+      <option value="product" label="Product" />
+      <option value="none" label="None" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default RatingForm;
-

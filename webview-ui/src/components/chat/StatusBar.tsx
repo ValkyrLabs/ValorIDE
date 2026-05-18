@@ -105,9 +105,9 @@ const StatusBar: React.FC<StatusBarProps> = ({
           style={
             isConnectingMothership
               ? {
-                border: "1px solid #61dafb",
-                boxShadow: "0 0 8px #61dafb",
-              }
+                  border: "1px solid #61dafb",
+                  boxShadow: "0 0 8px #61dafb",
+                }
               : undefined
           }
         />

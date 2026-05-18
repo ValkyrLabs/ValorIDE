@@ -313,11 +313,11 @@ const TaskView: React.FC<TaskViewProps> = ({
           messageCount: messageOrGroup.length,
           lastModifiedMessage: lastModified
             ? {
-              ts: lastModified.ts,
-              type: lastModified.type,
-              say: lastModified.say,
-              ask: lastModified.ask,
-            }
+                ts: lastModified.ts,
+                type: lastModified.type,
+                say: lastModified.say,
+                ask: lastModified.ask,
+              }
             : undefined,
           sampleMessages: messageOrGroup.slice(0, 3).map((m) => ({
             ts: m.ts,
@@ -345,11 +345,11 @@ const TaskView: React.FC<TaskViewProps> = ({
         isExpanded: expandedRows[messageOrGroup.ts] ?? false,
         lastModifiedMessage: lastModified
           ? {
-            ts: lastModified.ts,
-            type: lastModified.type,
-            say: lastModified.say,
-            ask: lastModified.ask,
-          }
+              ts: lastModified.ts,
+              type: lastModified.type,
+              say: lastModified.say,
+              ask: lastModified.ask,
+            }
           : undefined,
       };
     },
@@ -369,7 +369,7 @@ const TaskView: React.FC<TaskViewProps> = ({
               messages={messageOrGroup}
               isLast={index === groupedMessages.length - 1}
               lastModifiedMessage={modifiedMessages.at(-1)}
-              onHeightChange={() => { }}
+              onHeightChange={() => {}}
               isExpanded={(messageTs: number) =>
                 expandedRows[messageTs] ?? false
               }
@@ -401,7 +401,7 @@ const TaskView: React.FC<TaskViewProps> = ({
             }}
             lastModifiedMessage={modifiedMessages.at(-1)}
             isLast={index === groupedMessages.length - 1}
-            onHeightChange={() => { }}
+            onHeightChange={() => {}}
             inputValue={inputValue}
             setInputValue={setInputValue}
             sendMessageFromChatRow={sendMessageFromChatRow}

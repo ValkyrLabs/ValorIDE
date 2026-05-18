@@ -129,15 +129,15 @@ const McpToolRow = ({ tool, serverName }) => {
                         }),
                       ],
                     },
-                    paramName
+                    paramName,
                   );
-                }
+                },
               ),
             ],
           }),
       ],
     },
-    tool.name
+    tool.name,
   );
 };
 export default McpToolRow;

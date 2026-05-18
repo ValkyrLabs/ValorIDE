@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { VSCodeButton, VSCodeTextArea } from "@vscode/webview-ui-toolkit/react";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 
 interface ConnectionStatus {
   thorConnected: boolean;
@@ -15,6 +16,7 @@ interface AppMessage {
 }
 
 const ServerConsole: React.FC = () => {
+  const { jwtToken, authenticatedUser } = useExtensionState();
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>({
     thorConnected: false,
     phase: "disconnected",
@@ -54,13 +56,16 @@ const ServerConsole: React.FC = () => {
       handleWebsocketMessage as EventListener,
     );
 
-    // Check current JWT token status
-    const jwtToken = sessionStorage.getItem("jwtToken");
-    if (jwtToken) {
-      addLog("JWT token found in sessionStorage");
+    // Check current authentication status using cookie session
+    if (jwtToken && authenticatedUser) {
+      addLog(
+        `Authenticated as ${authenticatedUser.username || authenticatedUser.email} - cookie session active`,
+      );
+    } else if (jwtToken) {
+      addLog("JWT token available - cookie session should be active");
     } else {
       addLog(
-        "WARNING: No JWT token found in sessionStorage - connection will fail",
+        "WARNING: No active authentication session - connection will fail",
       );
     }
 
@@ -77,7 +82,7 @@ const ServerConsole: React.FC = () => {
         handleWebsocketMessage as EventListener,
       );
     };
-  }, []);
+  }, [jwtToken, authenticatedUser]);
 
   useEffect(() => {
     scrollToBottom();
@@ -85,21 +90,26 @@ const ServerConsole: React.FC = () => {
 
   const handleConnect = () => {
     addLog("Manual connection attempt triggered");
-    // The thorBridge should automatically handle connection, but we can trigger a refresh
-    const jwtToken = sessionStorage.getItem("jwtToken");
-    if (!jwtToken) {
-      addLog("ERROR: Cannot connect - No JWT token in sessionStorage");
+
+    // Check if authenticated with cookie session
+    if (!jwtToken && !authenticatedUser) {
+      addLog(
+        "ERROR: Cannot connect - no active authentication session (cookie not available)",
+      );
       return;
     }
 
-    // Trigger a storage event to force reconnection
+    // Trigger a jwt-token-updated event to force reconnection via cookie session
     window.dispatchEvent(
-      new StorageEvent("storage", {
-        key: "jwtToken",
-        newValue: jwtToken,
-        storageArea: sessionStorage,
+      new CustomEvent("jwt-token-updated", {
+        detail: {
+          token: jwtToken,
+          timestamp: Date.now(),
+          source: "manual-reconnect",
+        },
       }),
     );
+    addLog("Connection request sent - using cookie session for authentication");
   };
 
   const handleSendTestMessage = () => {

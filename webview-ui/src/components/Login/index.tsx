@@ -22,8 +22,8 @@ const initialUser: Principal = {
   email: "",
   createdDate: new Date(),
   lastModifiedDate: new Date(),
-  roleList: [],
-  authorityList: [],
+  roles: [],
+  grantedAuthorities: [],
 };
 
 const Login = (props) => {
@@ -48,17 +48,24 @@ const Login = (props) => {
                 <Col md={3}>
                   <Nav.Link>
                     <Link to="/sign-up">
-                      <button className="aurora-button" style={{ width: "100%" }}>
-                        <FiUserPlus size={18} style={{ marginRight: 8 }} /> Free Signup
+                      <button
+                        className="aurora-button"
+                        style={{ width: "100%" }}
+                      >
+                        <FiUserPlus size={18} style={{ marginRight: 8 }} /> Free
+                        Signup
                       </button>
                     </Link>
                   </Nav.Link>
                   <br />
                   <Nav.Link>
                     <Link to="/forgot-password">
-                      <button className="aurora-button" style={{ width: "100%" }}>
-                        <FiUserCheck size={18} style={{ marginRight: 8 }} /> Reset
-                        Password
+                      <button
+                        className="aurora-button"
+                        style={{ width: "100%" }}
+                      >
+                        <FiUserCheck size={18} style={{ marginRight: 8 }} />{" "}
+                        Reset Password
                       </button>
                     </Link>
                   </Nav.Link>

@@ -7,43 +7,64 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { SwarmGraphEdge } from '@thorapi/model/SwarmGraphEdge'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { SwarmGraphEdge } from "@thorapi/model/SwarmGraphEdge";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type SwarmGraphEdgeResponse = SwarmGraphEdge[]
+type SwarmGraphEdgeResponse = SwarmGraphEdge[];
+
+const toSwarmGraphEdgeList = (result: unknown): SwarmGraphEdgeResponse => {
+  if (Array.isArray(result)) {
+    return result as SwarmGraphEdgeResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as SwarmGraphEdgeResponse) : [];
+};
 
 export const SwarmGraphEdgeService = createApi({
-  reducerPath: 'SwarmGraphEdge', // This should remain unique
+  reducerPath: "SwarmGraphEdge", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['SwarmGraphEdge'],
+  tagTypes: ["SwarmGraphEdge"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSwarmGraphEdgesPaged: build.query<SwarmGraphEdgeResponse, { page: number; size?: number; example?: Partial<SwarmGraphEdge> }>({
+    getSwarmGraphEdgesPaged: build.query<
+      SwarmGraphEdgeResponse,
+      { page: number; size?: number; example?: Partial<SwarmGraphEdge> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SwarmGraphEdge?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SwarmGraphEdge?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'SwarmGraphEdge' as const, id })),
-              { type: 'SwarmGraphEdge', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toSwarmGraphEdgeList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "SwarmGraphEdge" as const, id })),
+          { type: "SwarmGraphEdge", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSwarmGraphEdges: build.query<SwarmGraphEdgeResponse, { example?: Partial<SwarmGraphEdge> } | void>({
+    getSwarmGraphEdges: build.query<
+      SwarmGraphEdgeResponse,
+      { example?: Partial<SwarmGraphEdge> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +72,104 @@ export const SwarmGraphEdgeService = createApi({
         }
         return `SwarmGraphEdge`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'SwarmGraphEdge' as const, id })),
-              { type: 'SwarmGraphEdge', id: 'LIST' },
-            ]
-          : [{ type: 'SwarmGraphEdge', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toSwarmGraphEdgeList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "SwarmGraphEdge" as const, id })),
+          { type: "SwarmGraphEdge", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
     addSwarmGraphEdge: build.mutation<SwarmGraphEdge, Partial<SwarmGraphEdge>>({
       query: (body) => ({
         url: `SwarmGraphEdge`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'SwarmGraphEdge', id: 'LIST' }],
+      invalidatesTags: [{ type: "SwarmGraphEdge", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getSwarmGraphEdge: build.query<SwarmGraphEdge, string>({
       query: (id) => `SwarmGraphEdge/${id}`,
-      providesTags: (result, error, id) => [{ type: 'SwarmGraphEdge', id }],
+      providesTags: (result, error, id) => [{ type: "SwarmGraphEdge", id }],
     }),
 
     // 5) Update
-    updateSwarmGraphEdge: build.mutation<void, Pick<SwarmGraphEdge, 'id'> & Partial<SwarmGraphEdge>>({
+    updateSwarmGraphEdge: build.mutation<
+      void,
+      Pick<SwarmGraphEdge, "id"> & Partial<SwarmGraphEdge>
+    >({
       query: ({ id, ...patch }) => ({
         url: `SwarmGraphEdge/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            SwarmGraphEdgeService.util.updateQueryData('getSwarmGraphEdge', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            SwarmGraphEdgeService.util.updateQueryData(
+              "getSwarmGraphEdge",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<SwarmGraphEdge, 'id'>) => [
-        { type: 'SwarmGraphEdge', id },
-        { type: 'SwarmGraphEdge', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<SwarmGraphEdge, "id">) => [
+        { type: "SwarmGraphEdge", id },
+        { type: "SwarmGraphEdge", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteSwarmGraphEdge: build.mutation<{ success: boolean; id: string }, number>({
+    deleteSwarmGraphEdge: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `SwarmGraphEdge/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'SwarmGraphEdge', id }],
+      invalidatesTags: (result, error, id) => [{ type: "SwarmGraphEdge", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSwarmGraphEdgeCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteSwarmGraphEdgeCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `SwarmGraphEdge/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'SwarmGraphEdge', id }, { type: 'SwarmGraphEdge', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "SwarmGraphEdge", id },
+        { type: "SwarmGraphEdge", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetSwarmGraphEdgesPagedQuery`
 export const {
-  useGetSwarmGraphEdgesPagedQuery,     // immediate fetch
+  useGetSwarmGraphEdgesPagedQuery, // immediate fetch
   useLazyGetSwarmGraphEdgesPagedQuery, // lazy fetch
   useGetSwarmGraphEdgeQuery,
   useGetSwarmGraphEdgesQuery,
@@ -138,4 +177,4 @@ export const {
   useUpdateSwarmGraphEdgeMutation,
   useDeleteSwarmGraphEdgeMutation,
   useDeleteSwarmGraphEdgeCascadeMutation,
-} = SwarmGraphEdgeService
+} = SwarmGraphEdgeService;

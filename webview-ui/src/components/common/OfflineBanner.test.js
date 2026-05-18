@@ -35,7 +35,7 @@ describe("OfflineBanner", () => {
     render(_jsx(OfflineBanner, {}));
     expect(screen.getByRole("status")).toBeInTheDocument();
     expect(
-      screen.getByText("Communication service unreachable. Features limited.")
+      screen.getByText("Communication service unreachable. Features limited."),
     ).toBeVisible();
   });
   it("should hide after 5 seconds if communication service is noop", () => {

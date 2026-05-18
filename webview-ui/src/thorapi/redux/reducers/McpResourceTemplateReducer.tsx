@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpResourceTemplate } from '@thorapi/model/McpResourceTemplate';
+import { McpResourceTemplate } from "@thorapi/model/McpResourceTemplate";
 
 const McpResourceTemplateSlice = createSlice({
   name: "McpResourceTemplates",
@@ -28,20 +27,25 @@ const McpResourceTemplateSlice = createSlice({
     },
 
     McpResourceTemplateValueToggled(state, action) {
-      console.log("McpResourceTemplate TOGGLE")
-      console.warn(JSON.stringify(action))
-      const McpResourceTemplate:McpResourceTemplate = state.find((McpResourceTemplate) => McpResourceTemplate.id === action.payload.McpResourceTemplateId);
+      console.log("McpResourceTemplate TOGGLE");
+      console.warn(JSON.stringify(action));
+      const McpResourceTemplate: McpResourceTemplate = state.find(
+        (McpResourceTemplate) =>
+          McpResourceTemplate.id === action.payload.McpResourceTemplateId,
+      );
       if (McpResourceTemplate) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     McpResourceTemplatepropertySet(state, action) {
-      const McpResourceTemplate = state.find((McpResourceTemplate) => McpResourceTemplate.id === action.payload.McpResourceTemplateId);
+      const McpResourceTemplate = state.find(
+        (McpResourceTemplate) =>
+          McpResourceTemplate.id === action.payload.McpResourceTemplateId,
+      );
       if (McpResourceTemplate) {
-      //  McpResourceTemplate[action.property] = action.payload[action.property];
+        //  McpResourceTemplate[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const McpResourceTemplateSlice = createSlice({
 export const {
   McpResourceTemplateAdded,
   McpResourceTemplateValueToggled,
-  McpResourceTemplatepropertySet
+  McpResourceTemplatepropertySet,
 } = McpResourceTemplateSlice.actions;
 export default McpResourceTemplateSlice.reducer;

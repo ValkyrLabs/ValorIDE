@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ExecModule } from '@thorapi/model/ExecModule';
+import { ExecModule } from "@thorapi/model/ExecModule";
 
 const ExecModuleSlice = createSlice({
   name: "ExecModules",
@@ -28,20 +27,23 @@ const ExecModuleSlice = createSlice({
     },
 
     ExecModuleValueToggled(state, action) {
-      console.log("ExecModule TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ExecModule:ExecModule = state.find((ExecModule) => ExecModule.id === action.payload.ExecModuleId);
+      console.log("ExecModule TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ExecModule: ExecModule = state.find(
+        (ExecModule) => ExecModule.id === action.payload.ExecModuleId,
+      );
       if (ExecModule) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ExecModulepropertySet(state, action) {
-      const ExecModule = state.find((ExecModule) => ExecModule.id === action.payload.ExecModuleId);
+      const ExecModule = state.find(
+        (ExecModule) => ExecModule.id === action.payload.ExecModuleId,
+      );
       if (ExecModule) {
-      //  ExecModule[action.property] = action.payload[action.property];
+        //  ExecModule[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +52,6 @@ const ExecModuleSlice = createSlice({
 export const {
   ExecModuleAdded,
   ExecModuleValueToggled,
-  ExecModulepropertySet
+  ExecModulepropertySet,
 } = ExecModuleSlice.actions;
 export default ExecModuleSlice.reducer;

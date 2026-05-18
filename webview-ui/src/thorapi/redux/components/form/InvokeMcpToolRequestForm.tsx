@@ -7,38 +7,43 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  InvokeMcpToolRequest,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddInvokeMcpToolRequestMutation } from '../../services/InvokeMcpToolRequestService';
+import { InvokeMcpToolRequest } from "@thorapi/model";
+
+import { useAddInvokeMcpToolRequestMutation } from "../../services/InvokeMcpToolRequestService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -48,7 +53,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -67,18 +71,21 @@ InvokeMcpToolRequest
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        toolName: Yup.string().required("toolName is required."),
-        input: Yup.string(),
+  toolName: Yup.string().required("toolName is required."),
+  input: Yup.string(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const InvokeMcpToolRequestForm: React.FC = () => {
-  const [addInvokeMcpToolRequest, addInvokeMcpToolRequestResult] = useAddInvokeMcpToolRequestMutation();
+  const [addInvokeMcpToolRequest, addInvokeMcpToolRequestResult] =
+    useAddInvokeMcpToolRequestMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -88,12 +95,18 @@ const InvokeMcpToolRequestForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -101,8 +114,8 @@ const InvokeMcpToolRequestForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<InvokeMcpToolRequest> = {
-          toolName: '',
-          input: '',
+    toolName: "",
+    input: "",
   };
 
   // Permission Management Handlers
@@ -117,11 +130,14 @@ const InvokeMcpToolRequestForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new InvokeMcpToolRequest:', grants);
+    console.log("Permissions saved for new InvokeMcpToolRequest:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<InvokeMcpToolRequest>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<InvokeMcpToolRequest>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -132,7 +148,7 @@ const InvokeMcpToolRequestForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `InvokeMcpToolRequest created successfully! Would you like to set permissions for this object?`
+          `InvokeMcpToolRequest created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -140,8 +156,8 @@ const InvokeMcpToolRequestForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create InvokeMcpToolRequest:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create InvokeMcpToolRequest:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -162,44 +178,38 @@ const InvokeMcpToolRequestForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addInvokeMcpToolRequestResult.isLoading;
+          const isSaving =
+            isSubmitting || addInvokeMcpToolRequestResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New InvokeMcpToolRequest
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    InvokeMcpToolRequest
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="toolName" className="nice-form-control">
                       <b>
                         Tool Name:
-                        {touched.toolName &&
-                         !errors.toolName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.toolName && !errors.toolName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="toolName"
-                            value={values?.toolName}
-                            placeholder="Tool Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="toolName"
+                        value={values?.toolName}
+                        placeholder="Tool Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -211,28 +221,21 @@ const InvokeMcpToolRequestForm: React.FC = () => {
                     <label htmlFor="input" className="nice-form-control">
                       <b>
                         Input:
-                        {touched.input &&
-                         !errors.input && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.input && !errors.input && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="input"
-                            value={values?.input}
-                            placeholder="Input"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="input"
+                        value={values?.input}
+                        placeholder="Input"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -242,45 +245,64 @@ const InvokeMcpToolRequestForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New InvokeMcpToolRequest
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      InvokeMcpToolRequest
+                    </CoolButton>
 
-                  {(addInvokeMcpToolRequestResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addInvokeMcpToolRequestResult as any).error ? (addInvokeMcpToolRequestResult as any).error.data : (addInvokeMcpToolRequestResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addInvokeMcpToolRequestResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addInvokeMcpToolRequestResult as any).error
+                              ? (addInvokeMcpToolRequestResult as any).error
+                                  .data
+                              : (addInvokeMcpToolRequestResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addInvokeMcpToolRequestResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addInvokeMcpToolRequestResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addInvokeMcpToolRequestResult: {JSON.stringify(addInvokeMcpToolRequestResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addInvokeMcpToolRequestResult:{" "}
+                    {JSON.stringify(addInvokeMcpToolRequestResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -300,8 +322,5 @@ const InvokeMcpToolRequestForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default InvokeMcpToolRequestForm;
-

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { DigitalAsset } from '@thorapi/model/DigitalAsset';
+import { DigitalAsset } from "@thorapi/model/DigitalAsset";
 
 const DigitalAssetSlice = createSlice({
   name: "DigitalAssets",
@@ -28,20 +27,23 @@ const DigitalAssetSlice = createSlice({
     },
 
     DigitalAssetValueToggled(state, action) {
-      console.log("DigitalAsset TOGGLE")
-      console.warn(JSON.stringify(action))
-      const DigitalAsset:DigitalAsset = state.find((DigitalAsset) => DigitalAsset.id === action.payload.DigitalAssetId);
+      console.log("DigitalAsset TOGGLE");
+      console.warn(JSON.stringify(action));
+      const DigitalAsset: DigitalAsset = state.find(
+        (DigitalAsset) => DigitalAsset.id === action.payload.DigitalAssetId,
+      );
       if (DigitalAsset) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     DigitalAssetpropertySet(state, action) {
-      const DigitalAsset = state.find((DigitalAsset) => DigitalAsset.id === action.payload.DigitalAssetId);
+      const DigitalAsset = state.find(
+        (DigitalAsset) => DigitalAsset.id === action.payload.DigitalAssetId,
+      );
       if (DigitalAsset) {
-      //  DigitalAsset[action.property] = action.payload[action.property];
+        //  DigitalAsset[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +52,6 @@ const DigitalAssetSlice = createSlice({
 export const {
   DigitalAssetAdded,
   DigitalAssetValueToggled,
-  DigitalAssetpropertySet
+  DigitalAssetpropertySet,
 } = DigitalAssetSlice.actions;
 export default DigitalAssetSlice.reducer;

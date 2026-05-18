@@ -84,8 +84,9 @@ const NewRuleRow: React.FC<NewRuleRowProps> = ({ isGlobal }) => {
       onClick={() => !isExpanded && setIsExpanded(true)}
     >
       <div
-        className={`flex items-center p-2 rounded bg-[var(--vscode-input-background)] transition-all duration-300 ease-in-out h-[18px] ${isExpanded ? "shadow-sm" : ""
-          }`}
+        className={`flex items-center p-2 rounded bg-[var(--vscode-input-background)] transition-all duration-300 ease-in-out h-[18px] ${
+          isExpanded ? "shadow-sm" : ""
+        }`}
       >
         {isExpanded ? (
           <form onSubmit={handleSubmit} className="flex flex-1 items-center">

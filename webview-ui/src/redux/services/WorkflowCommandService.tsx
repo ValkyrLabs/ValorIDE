@@ -19,9 +19,9 @@ export const WorkflowService = createApi({
       providesTags: (result, page) =>
         result
           ? [
-            ...result.map(({ id }) => ({ type: "Workflow" as const, id })),
-            { type: "Workflow", id: `PAGE_${page}` },
-          ]
+              ...result.map(({ id }) => ({ type: "Workflow" as const, id })),
+              { type: "Workflow", id: `PAGE_${page}` },
+            ]
           : [],
     }),
     getWorkflows: build.query<WorkflowResponse, void>({
@@ -29,9 +29,9 @@ export const WorkflowService = createApi({
       providesTags: (result) =>
         result
           ? [
-            ...result.map(({ id }) => ({ type: "Workflow" as const, id })),
-            { type: "Workflow", id: "LIST" },
-          ]
+              ...result.map(({ id }) => ({ type: "Workflow" as const, id })),
+              { type: "Workflow", id: "LIST" },
+            ]
           : [{ type: "Workflow", id: "LIST" }],
     }),
     addWorkflow: build.mutation<Workflow, Partial<Workflow>>({

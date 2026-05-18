@@ -21,7 +21,7 @@ const CreditsHistoryTable = ({ isLoading, usageData, paymentsData }) => {
       event.stopPropagation();
       setSelectedUsageRow(selectedUsageRow === index ? null : index);
     },
-    [selectedUsageRow]
+    [selectedUsageRow],
   );
   const handlePaymentRowClick = useCallback(
     (index, event) => {
@@ -29,7 +29,7 @@ const CreditsHistoryTable = ({ isLoading, usageData, paymentsData }) => {
       event.stopPropagation();
       setSelectedPaymentRow(selectedPaymentRow === index ? null : index);
     },
-    [selectedPaymentRow]
+    [selectedPaymentRow],
   );
   return _jsxs("div", {
     className: "flex flex-col flex-grow h-full",
@@ -117,8 +117,8 @@ const CreditsHistoryTable = ({ isLoading, usageData, paymentsData }) => {
                                       }),
                                     ],
                                   },
-                                  index
-                                )
+                                  index,
+                                ),
                               ),
                             ],
                           })
@@ -187,8 +187,8 @@ const CreditsHistoryTable = ({ isLoading, usageData, paymentsData }) => {
                                       }),
                                     ],
                                   },
-                                  index
-                                )
+                                  index,
+                                ),
                               ),
                             ],
                           })

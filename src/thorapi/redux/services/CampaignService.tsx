@@ -7,43 +7,64 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { Campaign } from '@thorapi/model/Campaign'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { Campaign } from "@thorapi/model/Campaign";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type CampaignResponse = Campaign[]
+type CampaignResponse = Campaign[];
+
+const toCampaignList = (result: unknown): CampaignResponse => {
+  if (Array.isArray(result)) {
+    return result as CampaignResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as CampaignResponse) : [];
+};
 
 export const CampaignService = createApi({
-  reducerPath: 'Campaign', // This should remain unique
+  reducerPath: "Campaign", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['Campaign'],
+  tagTypes: ["Campaign"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getCampaignsPaged: build.query<CampaignResponse, { page: number; size?: number; example?: Partial<Campaign> }>({
+    getCampaignsPaged: build.query<
+      CampaignResponse,
+      { page: number; size?: number; example?: Partial<Campaign> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Campaign?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Campaign?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Campaign' as const, id })),
-              { type: 'Campaign', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toCampaignList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "Campaign" as const, id })),
+          { type: "Campaign", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getCampaigns: build.query<CampaignResponse, { example?: Partial<Campaign> } | void>({
+    getCampaigns: build.query<
+      CampaignResponse,
+      { example?: Partial<Campaign> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,55 +72,60 @@ export const CampaignService = createApi({
         }
         return `Campaign`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Campaign' as const, id })),
-              { type: 'Campaign', id: 'LIST' },
-            ]
-          : [{ type: 'Campaign', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toCampaignList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "Campaign" as const, id })),
+          { type: "Campaign", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
     addCampaign: build.mutation<Campaign, Partial<Campaign>>({
       query: (body) => ({
         url: `Campaign`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'Campaign', id: 'LIST' }],
+      invalidatesTags: [{ type: "Campaign", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getCampaign: build.query<Campaign, string>({
       query: (id) => `Campaign/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Campaign', id }],
+      providesTags: (result, error, id) => [{ type: "Campaign", id }],
     }),
 
     // 5) Update
-    updateCampaign: build.mutation<void, Pick<Campaign, 'id'> & Partial<Campaign>>({
+    updateCampaign: build.mutation<
+      void,
+      Pick<Campaign, "id"> & Partial<Campaign>
+    >({
       query: ({ id, ...patch }) => ({
         url: `Campaign/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            CampaignService.util.updateQueryData('getCampaign', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            CampaignService.util.updateQueryData("getCampaign", id, (draft) => {
+              Object.assign(draft, patch);
+            }),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<Campaign, 'id'>) => [
-        { type: 'Campaign', id },
-        { type: 'Campaign', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<Campaign, "id">) => [
+        { type: "Campaign", id },
+        { type: "Campaign", id: "LIST" },
       ],
     }),
 
@@ -108,29 +134,35 @@ export const CampaignService = createApi({
       query(id) {
         return {
           url: `Campaign/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'Campaign', id }],
+      invalidatesTags: (result, error, id) => [{ type: "Campaign", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteCampaignCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteCampaignCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `Campaign/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Campaign', id }, { type: 'Campaign', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Campaign", id },
+        { type: "Campaign", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetCampaignsPagedQuery`
 export const {
-  useGetCampaignsPagedQuery,     // immediate fetch
+  useGetCampaignsPagedQuery, // immediate fetch
   useLazyGetCampaignsPagedQuery, // lazy fetch
   useGetCampaignQuery,
   useGetCampaignsQuery,
@@ -138,4 +170,4 @@ export const {
   useUpdateCampaignMutation,
   useDeleteCampaignMutation,
   useDeleteCampaignCascadeMutation,
-} = CampaignService
+} = CampaignService;

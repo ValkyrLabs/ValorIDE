@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { InvokeMcpToolRequest } from '@thorapi/model/InvokeMcpToolRequest';
+import { InvokeMcpToolRequest } from "@thorapi/model/InvokeMcpToolRequest";
 
 const InvokeMcpToolRequestSlice = createSlice({
   name: "InvokeMcpToolRequests",
@@ -28,20 +27,25 @@ const InvokeMcpToolRequestSlice = createSlice({
     },
 
     InvokeMcpToolRequestValueToggled(state, action) {
-      console.log("InvokeMcpToolRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const InvokeMcpToolRequest:InvokeMcpToolRequest = state.find((InvokeMcpToolRequest) => InvokeMcpToolRequest.id === action.payload.InvokeMcpToolRequestId);
+      console.log("InvokeMcpToolRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const InvokeMcpToolRequest: InvokeMcpToolRequest = state.find(
+        (InvokeMcpToolRequest) =>
+          InvokeMcpToolRequest.id === action.payload.InvokeMcpToolRequestId,
+      );
       if (InvokeMcpToolRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     InvokeMcpToolRequestpropertySet(state, action) {
-      const InvokeMcpToolRequest = state.find((InvokeMcpToolRequest) => InvokeMcpToolRequest.id === action.payload.InvokeMcpToolRequestId);
+      const InvokeMcpToolRequest = state.find(
+        (InvokeMcpToolRequest) =>
+          InvokeMcpToolRequest.id === action.payload.InvokeMcpToolRequestId,
+      );
       if (InvokeMcpToolRequest) {
-      //  InvokeMcpToolRequest[action.property] = action.payload[action.property];
+        //  InvokeMcpToolRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const InvokeMcpToolRequestSlice = createSlice({
 export const {
   InvokeMcpToolRequestAdded,
   InvokeMcpToolRequestValueToggled,
-  InvokeMcpToolRequestpropertySet
+  InvokeMcpToolRequestpropertySet,
 } = InvokeMcpToolRequestSlice.actions;
 export default InvokeMcpToolRequestSlice.reducer;

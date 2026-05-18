@@ -6,7 +6,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_CONTENTMEDIALINK_REQUEST,
-    FETCH_CONTENTMEDIALINK_REQUEST,
-    LIST_CONTENTMEDIALINK_REQUEST,
-    UPDATE_CONTENTMEDIALINK_REQUEST,
-    DELETE_CONTENTMEDIALINK_REQUEST,
-
-    addContentMediaLinkFailure,
-    addContentMediaLinkSuccess,
-
-    fetchContentMediaLinkFailure,
-    fetchContentMediaLinkSuccess,
-    
-    listContentMediaLinkFailure,
-    listContentMediaLinkSuccess,
-
-    updateContentMediaLinkFailure,
-    updateContentMediaLinkSuccess,
-    
-    deleteContentMediaLinkFailure,
-    deleteContentMediaLinkSuccess,
-    
-} from '../actions/ContentMediaLinkApiAction';
+  ADD_CONTENTMEDIALINK_REQUEST,
+  FETCH_CONTENTMEDIALINK_REQUEST,
+  LIST_CONTENTMEDIALINK_REQUEST,
+  UPDATE_CONTENTMEDIALINK_REQUEST,
+  DELETE_CONTENTMEDIALINK_REQUEST,
+  addContentMediaLinkFailure,
+  addContentMediaLinkSuccess,
+  fetchContentMediaLinkFailure,
+  fetchContentMediaLinkSuccess,
+  listContentMediaLinkFailure,
+  listContentMediaLinkSuccess,
+  updateContentMediaLinkFailure,
+  updateContentMediaLinkSuccess,
+  deleteContentMediaLinkFailure,
+  deleteContentMediaLinkSuccess,
+} from "../actions/ContentMediaLinkApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -59,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: ContentMediaLink
 */
 
-
-
-export const ContentMediaLinkMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("ContentMediaLink MIDDLEWARE: " + JSON.stringify(action) )
+export const ContentMediaLinkMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("ContentMediaLink MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Metrics } from '@thorapi/model/Metrics';
+import { Metrics } from "@thorapi/model/Metrics";
 
 const MetricsSlice = createSlice({
   name: "Metricss",
@@ -28,28 +27,28 @@ const MetricsSlice = createSlice({
     },
 
     MetricsValueToggled(state, action) {
-      console.log("Metrics TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Metrics:Metrics = state.find((Metrics) => Metrics.id === action.payload.MetricsId);
+      console.log("Metrics TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Metrics: Metrics = state.find(
+        (Metrics) => Metrics.id === action.payload.MetricsId,
+      );
       if (Metrics) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     MetricspropertySet(state, action) {
-      const Metrics = state.find((Metrics) => Metrics.id === action.payload.MetricsId);
+      const Metrics = state.find(
+        (Metrics) => Metrics.id === action.payload.MetricsId,
+      );
       if (Metrics) {
-      //  Metrics[action.property] = action.payload[action.property];
+        //  Metrics[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  MetricsAdded,
-  MetricsValueToggled,
-  MetricspropertySet
-} = MetricsSlice.actions;
+export const { MetricsAdded, MetricsValueToggled, MetricspropertySet } =
+  MetricsSlice.actions;
 export default MetricsSlice.reducer;

@@ -31,8 +31,8 @@ const TimeoutOptions = [
   _jsx(
     VSCodeOption,
     { value: option.value, children: option.label },
-    option.value
-  )
+    option.value,
+  ),
 );
 const ServerRow = ({ server, isExpandable = true, hasTrashIcon = true }) => {
   const { mcpMarketplaceCatalog, autoApprovalSettings, setMcpServers } =
@@ -75,7 +75,7 @@ const ServerRow = ({ server, isExpandable = true, hasTrashIcon = true }) => {
     })
       .then((response) => {
         const mcpServers = convertProtoMcpServersToMcpServers(
-          response.mcpServers
+          response.mcpServers,
         );
         setMcpServers(mcpServers);
       })
@@ -112,7 +112,7 @@ const ServerRow = ({ server, isExpandable = true, hasTrashIcon = true }) => {
     })
       .then((response) => {
         const mcpServers = convertProtoMcpServersToMcpServers(
-          response.mcpServers
+          response.mcpServers,
         );
         setMcpServers(mcpServers);
       })
@@ -156,7 +156,7 @@ const ServerRow = ({ server, isExpandable = true, hasTrashIcon = true }) => {
             },
             children: getMcpServerDisplayName(
               server.name,
-              mcpMarketplaceCatalog
+              mcpMarketplaceCatalog,
             ),
           }),
           !server.error &&
@@ -331,8 +331,8 @@ const ServerRow = ({ server, isExpandable = true, hasTrashIcon = true }) => {
                                 _jsx(
                                   McpToolRow,
                                   { tool: tool, serverName: server.name },
-                                  tool.name
-                                )
+                                  tool.name,
+                                ),
                               ),
                               server.name &&
                                 autoApprovalSettings.enabled &&
@@ -340,7 +340,7 @@ const ServerRow = ({ server, isExpandable = true, hasTrashIcon = true }) => {
                                 _jsx(VSCodeCheckbox, {
                                   style: { marginBottom: -10 },
                                   checked: server.tools.every(
-                                    (tool) => tool.autoApprove
+                                    (tool) => tool.autoApprove,
                                   ),
                                   onChange: handleAutoApproveChange,
                                   "data-tool": "all-tools",
@@ -378,8 +378,8 @@ const ServerRow = ({ server, isExpandable = true, hasTrashIcon = true }) => {
                                 { item: item },
                                 "uriTemplate" in item
                                   ? item.uriTemplate
-                                  : item.uri
-                              )
+                                  : item.uri,
+                              ),
                             ),
                           })
                         : _jsx("div", {

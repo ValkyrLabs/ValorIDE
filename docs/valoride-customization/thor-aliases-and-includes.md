@@ -1,16 +1,16 @@
-# Add Thor Aliases and Includes
+# Add ThorAPI Aliases and Includes
 
-This command helps you wire an extracted Thor project folder into your existing TypeScript workspace by:
+This command helps you wire an extracted ThorAPI project folder into your existing TypeScript workspace by:
 
-- Updating `compilerOptions.paths` for `@thor/*`, `@valkyr/component-library/*`, and `@thor/redux/services/*`.
+- Updating `compilerOptions.paths` for `@thorapi/*`, `@valkyr/component-library/*`, and `@thorapi/redux/services/*`.
 - Optionally adding the selected project `src` folder(s) to the `include` array so the TS server type-checks them.
 - Letting you target specific `tsconfig*.json` files with a multi-select picker.
 - Optional preview of the updated `tsconfig` contents before saving.
 
 ## How to use
 
-1. Right-click any Thor project folder (e.g., `thorapi/vX.Y/`) in the Explorer or select a project in the Projects view.
-2. Run `ValorIDE: Add @thor Aliases From Folder`.
+1. Right-click any ThorAPI project folder (e.g., `thorapi/vX.Y/`) in the Explorer or select a project in the Projects view.
+2. Run `ValorIDE: Add @ Aliases From Folder`.
 3. Pick one or more project folders to add.
 4. Select the `tsconfig*.json` files you want to update.
 5. Choose options:
@@ -28,16 +28,16 @@ In each selected `tsconfig`:
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@thor/*": ["<rel>/src/thor/*"],
+      "@thorapi/*": ["<rel>/src//*"],
       "@valkyr/component-library/*": ["<rel>/src/components/*"],
-      "@thor/redux/services/*": ["<rel>/src/thor/redux/services/*"]
+      "@thorapi/redux/services/*": ["<rel>/src//redux/services/*"]
     }
   },
   "include": ["<rel>/src"]
 }
 ```
 
-Where `<rel>` is the path from the `tsconfig` file to the selected Thor project root.
+Where `<rel>` is the path from the `tsconfig` file to the selected ThorAPI project root.
 
 ## Notes
 

@@ -62,7 +62,10 @@ const MarkdownEditorModal: React.FC<MarkdownEditorModalProps> = ({
             if (textarea) {
               const start = textarea.selectionStart;
               const end = textarea.selectionEnd;
-              const newContent = content.substring(0, start) + markdownImage + content.substring(end);
+              const newContent =
+                content.substring(0, start) +
+                markdownImage +
+                content.substring(end);
               setContent(newContent);
             } else {
               setContent((prev) => prev + markdownImage);
@@ -93,7 +96,9 @@ const MarkdownEditorModal: React.FC<MarkdownEditorModalProps> = ({
             onDrop={handleDrop}
             placeholder="Enter markdown content... (drag & drop images here)"
             style={{
-              backgroundColor: isDragOver ? "var(--vscode-editor-hoverHighlightBackground)" : undefined,
+              backgroundColor: isDragOver
+                ? "var(--vscode-editor-hoverHighlightBackground)"
+                : undefined,
               transition: "background-color 0.2s ease",
             }}
           />

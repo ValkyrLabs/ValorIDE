@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { LineItem } from '@thorapi/model/LineItem';
+import { LineItem } from "@thorapi/model/LineItem";
 
 const LineItemSlice = createSlice({
   name: "LineItems",
@@ -28,28 +27,28 @@ const LineItemSlice = createSlice({
     },
 
     LineItemValueToggled(state, action) {
-      console.log("LineItem TOGGLE")
-      console.warn(JSON.stringify(action))
-      const LineItem:LineItem = state.find((LineItem) => LineItem.id === action.payload.LineItemId);
+      console.log("LineItem TOGGLE");
+      console.warn(JSON.stringify(action));
+      const LineItem: LineItem = state.find(
+        (LineItem) => LineItem.id === action.payload.LineItemId,
+      );
       if (LineItem) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     LineItempropertySet(state, action) {
-      const LineItem = state.find((LineItem) => LineItem.id === action.payload.LineItemId);
+      const LineItem = state.find(
+        (LineItem) => LineItem.id === action.payload.LineItemId,
+      );
       if (LineItem) {
-      //  LineItem[action.property] = action.payload[action.property];
+        //  LineItem[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  LineItemAdded,
-  LineItemValueToggled,
-  LineItempropertySet
-} = LineItemSlice.actions;
+export const { LineItemAdded, LineItemValueToggled, LineItempropertySet } =
+  LineItemSlice.actions;
 export default LineItemSlice.reducer;

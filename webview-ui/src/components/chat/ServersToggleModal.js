@@ -56,7 +56,7 @@ const ServersToggleModal = () => {
       mcpServers,
       convertThorMcpServersToShared,
       [],
-      "ServersToggleModal"
+      "ServersToggleModal",
     );
   }, [mcpServers]);
   return _jsxs("div", {

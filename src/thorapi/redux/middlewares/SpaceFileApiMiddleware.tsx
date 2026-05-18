@@ -6,7 +6,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_SPACEFILE_REQUEST,
-    FETCH_SPACEFILE_REQUEST,
-    LIST_SPACEFILE_REQUEST,
-    UPDATE_SPACEFILE_REQUEST,
-    DELETE_SPACEFILE_REQUEST,
-
-    addSpaceFileFailure,
-    addSpaceFileSuccess,
-
-    fetchSpaceFileFailure,
-    fetchSpaceFileSuccess,
-    
-    listSpaceFileFailure,
-    listSpaceFileSuccess,
-
-    updateSpaceFileFailure,
-    updateSpaceFileSuccess,
-    
-    deleteSpaceFileFailure,
-    deleteSpaceFileSuccess,
-    
-} from '../actions/SpaceFileApiAction';
+  ADD_SPACEFILE_REQUEST,
+  FETCH_SPACEFILE_REQUEST,
+  LIST_SPACEFILE_REQUEST,
+  UPDATE_SPACEFILE_REQUEST,
+  DELETE_SPACEFILE_REQUEST,
+  addSpaceFileFailure,
+  addSpaceFileSuccess,
+  fetchSpaceFileFailure,
+  fetchSpaceFileSuccess,
+  listSpaceFileFailure,
+  listSpaceFileSuccess,
+  updateSpaceFileFailure,
+  updateSpaceFileSuccess,
+  deleteSpaceFileFailure,
+  deleteSpaceFileSuccess,
+} from "../actions/SpaceFileApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -59,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: SpaceFile
 */
 
-
-
-export const SpaceFileMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("SpaceFile MIDDLEWARE: " + JSON.stringify(action) )
+export const SpaceFileMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("SpaceFile MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

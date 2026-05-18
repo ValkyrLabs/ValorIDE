@@ -1,4 +1,9 @@
-import { isAllowedCommand, loadCommandAllowlist, loadToolAllowlist, toResultCard } from "./toolUserLane";
+import {
+  isAllowedCommand,
+  loadCommandAllowlist,
+  loadToolAllowlist,
+  toResultCard,
+} from "./toolUserLane";
 
 describe("toolUserLane", () => {
   it("loads explicit tool allowlist", () => {
@@ -14,7 +19,11 @@ describe("toolUserLane", () => {
   });
 
   it("returns structured execute_command card", () => {
-    const card = toResultCard("execute_command", { command: "yarn test", stdout: "ok", stderr: "" });
+    const card = toResultCard("execute_command", {
+      command: "yarn test",
+      stdout: "ok",
+      stderr: "",
+    });
     expect(card.summary).toBe("ok");
     expect(card.logs[0]).toBe("$ yarn test");
     expect(card.artifacts).toEqual([]);

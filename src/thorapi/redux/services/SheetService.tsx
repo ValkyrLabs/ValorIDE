@@ -7,39 +7,57 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { Sheet } from '@thorapi/model/Sheet'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { Sheet } from "@thorapi/model/Sheet";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type SheetResponse = Sheet[]
+type SheetResponse = Sheet[];
+
+const toSheetList = (result: unknown): SheetResponse => {
+  if (Array.isArray(result)) {
+    return result as SheetResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as SheetResponse) : [];
+};
 
 export const SheetService = createApi({
-  reducerPath: 'Sheet', // This should remain unique
+  reducerPath: "Sheet", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['Sheet'],
+  tagTypes: ["Sheet"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSheetsPaged: build.query<SheetResponse, { page: number; size?: number; example?: Partial<Sheet> }>({
+    getSheetsPaged: build.query<
+      SheetResponse,
+      { page: number; size?: number; example?: Partial<Sheet> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Sheet?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Sheet?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Sheet' as const, id })),
-              { type: 'Sheet', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toSheetList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "Sheet" as const, id })),
+          { type: "Sheet", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,55 +69,57 @@ export const SheetService = createApi({
         }
         return `Sheet`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Sheet' as const, id })),
-              { type: 'Sheet', id: 'LIST' },
-            ]
-          : [{ type: 'Sheet', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toSheetList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "Sheet" as const, id })),
+          { type: "Sheet", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
     addSheet: build.mutation<Sheet, Partial<Sheet>>({
       query: (body) => ({
         url: `Sheet`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'Sheet', id: 'LIST' }],
+      invalidatesTags: [{ type: "Sheet", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getSheet: build.query<Sheet, string>({
       query: (id) => `Sheet/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Sheet', id }],
+      providesTags: (result, error, id) => [{ type: "Sheet", id }],
     }),
 
     // 5) Update
-    updateSheet: build.mutation<void, Pick<Sheet, 'id'> & Partial<Sheet>>({
+    updateSheet: build.mutation<void, Pick<Sheet, "id"> & Partial<Sheet>>({
       query: ({ id, ...patch }) => ({
         url: `Sheet/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            SheetService.util.updateQueryData('getSheet', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            SheetService.util.updateQueryData("getSheet", id, (draft) => {
+              Object.assign(draft, patch);
+            }),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<Sheet, 'id'>) => [
-        { type: 'Sheet', id },
-        { type: 'Sheet', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<Sheet, "id">) => [
+        { type: "Sheet", id },
+        { type: "Sheet", id: "LIST" },
       ],
     }),
 
@@ -108,29 +128,35 @@ export const SheetService = createApi({
       query(id) {
         return {
           url: `Sheet/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'Sheet', id }],
+      invalidatesTags: (result, error, id) => [{ type: "Sheet", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSheetCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteSheetCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `Sheet/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Sheet', id }, { type: 'Sheet', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Sheet", id },
+        { type: "Sheet", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetSheetsPagedQuery`
 export const {
-  useGetSheetsPagedQuery,     // immediate fetch
+  useGetSheetsPagedQuery, // immediate fetch
   useLazyGetSheetsPagedQuery, // lazy fetch
   useGetSheetQuery,
   useGetSheetsQuery,
@@ -138,4 +164,4 @@ export const {
   useUpdateSheetMutation,
   useDeleteSheetMutation,
   useDeleteSheetCascadeMutation,
-} = SheetService
+} = SheetService;

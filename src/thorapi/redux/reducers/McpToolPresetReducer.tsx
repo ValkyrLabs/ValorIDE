@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpToolPreset } from '@thorapi/model/McpToolPreset';
+import { McpToolPreset } from "@thorapi/model/McpToolPreset";
 
 const McpToolPresetSlice = createSlice({
   name: "McpToolPresets",
@@ -28,20 +27,23 @@ const McpToolPresetSlice = createSlice({
     },
 
     McpToolPresetValueToggled(state, action) {
-      console.log("McpToolPreset TOGGLE")
-      console.warn(JSON.stringify(action))
-      const McpToolPreset:McpToolPreset = state.find((McpToolPreset) => McpToolPreset.id === action.payload.McpToolPresetId);
+      console.log("McpToolPreset TOGGLE");
+      console.warn(JSON.stringify(action));
+      const McpToolPreset: McpToolPreset = state.find(
+        (McpToolPreset) => McpToolPreset.id === action.payload.McpToolPresetId,
+      );
       if (McpToolPreset) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     McpToolPresetpropertySet(state, action) {
-      const McpToolPreset = state.find((McpToolPreset) => McpToolPreset.id === action.payload.McpToolPresetId);
+      const McpToolPreset = state.find(
+        (McpToolPreset) => McpToolPreset.id === action.payload.McpToolPresetId,
+      );
       if (McpToolPreset) {
-      //  McpToolPreset[action.property] = action.payload[action.property];
+        //  McpToolPreset[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +52,6 @@ const McpToolPresetSlice = createSlice({
 export const {
   McpToolPresetAdded,
   McpToolPresetValueToggled,
-  McpToolPresetpropertySet
+  McpToolPresetpropertySet,
 } = McpToolPresetSlice.actions;
 export default McpToolPresetSlice.reducer;

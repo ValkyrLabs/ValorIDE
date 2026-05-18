@@ -132,7 +132,7 @@ const StartServerModal = ({
                     }),
                     _jsx("ul", {
                       children: serverInfo.features.map((feature, index) =>
-                        _jsx("li", { children: feature }, index)
+                        _jsx("li", { children: feature }, index),
                       ),
                     }),
                   ],

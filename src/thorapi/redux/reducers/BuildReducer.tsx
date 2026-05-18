@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Build } from '@thorapi/model/Build';
+import { Build } from "@thorapi/model/Build";
 
 const BuildSlice = createSlice({
   name: "Builds",
@@ -28,28 +27,26 @@ const BuildSlice = createSlice({
     },
 
     BuildValueToggled(state, action) {
-      console.log("Build TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Build:Build = state.find((Build) => Build.id === action.payload.BuildId);
+      console.log("Build TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Build: Build = state.find(
+        (Build) => Build.id === action.payload.BuildId,
+      );
       if (Build) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     BuildpropertySet(state, action) {
       const Build = state.find((Build) => Build.id === action.payload.BuildId);
       if (Build) {
-      //  Build[action.property] = action.payload[action.property];
+        //  Build[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  BuildAdded,
-  BuildValueToggled,
-  BuildpropertySet
-} = BuildSlice.actions;
+export const { BuildAdded, BuildValueToggled, BuildpropertySet } =
+  BuildSlice.actions;
 export default BuildSlice.reducer;

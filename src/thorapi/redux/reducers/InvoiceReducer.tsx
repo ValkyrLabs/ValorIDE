@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Invoice } from '@thorapi/model/Invoice';
+import { Invoice } from "@thorapi/model/Invoice";
 
 const InvoiceSlice = createSlice({
   name: "Invoices",
@@ -28,28 +27,28 @@ const InvoiceSlice = createSlice({
     },
 
     InvoiceValueToggled(state, action) {
-      console.log("Invoice TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Invoice:Invoice = state.find((Invoice) => Invoice.id === action.payload.InvoiceId);
+      console.log("Invoice TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Invoice: Invoice = state.find(
+        (Invoice) => Invoice.id === action.payload.InvoiceId,
+      );
       if (Invoice) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     InvoicepropertySet(state, action) {
-      const Invoice = state.find((Invoice) => Invoice.id === action.payload.InvoiceId);
+      const Invoice = state.find(
+        (Invoice) => Invoice.id === action.payload.InvoiceId,
+      );
       if (Invoice) {
-      //  Invoice[action.property] = action.payload[action.property];
+        //  Invoice[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  InvoiceAdded,
-  InvoiceValueToggled,
-  InvoicepropertySet
-} = InvoiceSlice.actions;
+export const { InvoiceAdded, InvoiceValueToggled, InvoicepropertySet } =
+  InvoiceSlice.actions;
 export default InvoiceSlice.reducer;

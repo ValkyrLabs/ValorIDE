@@ -17,10 +17,13 @@ import BuyCredits from "@thorapi/components/BuyCredits";
 import { vscode } from "@thorapi/utils/vscode";
 import CoolButton from "../CoolButton";
 import { CREDIT_INTENT_EVENT, CreditIntent } from "@thorapi/types/creditIntent";
+import { useSelector } from "react-redux";
+type AlertSeverity = "warning" | "danger" | "info";
+
 interface SystemAlert {
   id: string;
   type: "budget" | "blocker";
-  severity: "warning" | "danger" | "info";
+  severity: AlertSeverity;
   title: string;
   message: string;
   timestamp: number;
@@ -40,6 +43,7 @@ const SystemAlerts: React.FC = () => {
     new Set(),
   );
   const [showBuyCreditsModal, setShowBuyCreditsModal] = useState(false);
+  const apiErrors = useSelector((state: any) => state?.apiErrors);
 
   const accountId = useMemo(() => {
     const rawId = authenticatedUser?.id ?? userInfo?.id;
@@ -138,6 +142,39 @@ const SystemAlerts: React.FC = () => {
       }
     }
   }, [budgetAlerts, effectiveBalance, jwtToken, dismissedAlerts]);
+
+  // Check for API errors from RTK Query
+  useEffect(() => {
+    const apiError = apiErrors?.lastError;
+    if (!apiError) return;
+
+    const alertId = `api-${apiError.id}`;
+    if (dismissedAlerts.has(alertId)) return;
+
+    const isInsufficientCredits =
+      apiError?.data?.error === "INSUFFICIENT_CREDITS" ||
+      apiError?.data?.error === "INSUFFICIENT_FUNDS";
+
+    const newAlert: SystemAlert = {
+      id: alertId,
+      type: "blocker",
+      severity: "danger",
+      title: isInsufficientCredits ? "Insufficient Credits" : "API Error",
+      message: isInsufficientCredits
+        ? "You don't have enough credits to complete this request. Please add credits to continue."
+        : apiError.message ||
+          "ValorIDE encountered an error processing your request.",
+      timestamp: Date.now(),
+    };
+
+    setAlerts((prev) => {
+      const existing = prev.find((a) => a.id === alertId);
+      if (!existing) {
+        return [...prev, newAlert];
+      }
+      return prev;
+    });
+  }, [apiErrors?.lastError, dismissedAlerts]);
 
   // Check for blocker alerts (error states)
   useEffect(() => {
@@ -274,20 +311,54 @@ const SystemAlerts: React.FC = () => {
     typeof balanceData?.currentBalance === "number" &&
     balanceData.currentBalance <= budgetAlerts.criticalThreshold;
 
-  // Only show if user is logged in
-  const isLoggedIn = Boolean(jwtToken && (authenticatedUser || userInfo));
-  if (!isLoggedIn || (activeAlerts.length === 0 && !shouldShowBuyCreditsModal)) return null;
+  const hasVisibleAlerts = activeAlerts.length > 0 || shouldShowBuyCreditsModal;
+  if (!hasVisibleAlerts) return null;
+
+  const alertBg = (severity: AlertSeverity) => {
+    switch (severity) {
+      case "danger":
+        return "var(--vscode-inputValidation-errorBackground, #5a1d1d)";
+      case "info":
+        return "var(--vscode-inputValidation-infoBackground, #1e3a5f)";
+      default:
+        return "var(--vscode-inputValidation-warningBackground, #352a05)";
+    }
+  };
+  const alertFg = (severity: AlertSeverity) => {
+    switch (severity) {
+      case "danger":
+        return "var(--vscode-inputValidation-errorForeground, #f48771)";
+      case "info":
+        return "var(--vscode-notificationsInfoIcon-foreground, #75beff)";
+      default:
+        return "var(--vscode-inputValidation-warningForeground, #cca700)";
+    }
+  };
+  const alertBorder = (severity: AlertSeverity) => {
+    switch (severity) {
+      case "danger":
+        return "1px solid var(--vscode-inputValidation-errorBorder, #f48771)";
+      case "info":
+        return "1px solid var(--vscode-notificationsInfoIcon-foreground, #3794ff)";
+      default:
+        return "1px solid var(--vscode-inputValidation-warningBorder, #cca700)";
+    }
+  };
 
   return (
     <>
       <div
         style={{
-          // No explicit background, use default
+          position: "fixed",
+          top: 48,
+          right: 12,
           zIndex: 9999,
-          maxWidth: "350px",
+          maxWidth: "360px",
+          width: "calc(100vw - 24px)",
           display: "flex",
           flexDirection: "column",
           gap: "8px",
+          pointerEvents: "auto",
         }}
       >
         {activeAlerts.map((alert) => (
@@ -302,21 +373,11 @@ const SystemAlerts: React.FC = () => {
             }
             style={{
               margin: 0,
-              boxShadow: "0 4px 12px rgba(0,0,0,0.10)",
-              border:
-                alert.severity === "danger"
-                  ? `1px solid var(--vscode-errorForeground)`
-                  : alert.severity === "info"
-                    ? `1px solid var(--vscode-notificationsInfoIcon-foreground, #3794ff)`
-                    : `1px solid var(--vscode-warningForeground)`,
-              backgroundColor: "inherit",
-              color:
-                alert.severity === "danger"
-                  ? `var(--vscode-errorForeground)`
-                  : alert.severity === "info"
-                    ? `var(--vscode-notificationsInfoIcon-foreground, #3794ff)`
-                    : `var(--vscode-warningForeground)`,
-              fontSize: "14px",
+              boxShadow: "0 4px 16px rgba(0,0,0,0.45)",
+              border: alertBorder(alert.severity),
+              backgroundColor: alertBg(alert.severity),
+              color: alertFg(alert.severity),
+              fontSize: "13px",
               borderRadius: "6px",
             }}
           >
@@ -324,11 +385,15 @@ const SystemAlerts: React.FC = () => {
               style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}
             >
               <div style={{ marginTop: "2px" }}>
-                {alert.type === "budget"
-                  ? alert.severity === "info"
-                    ? <FaExclamationTriangle size={16} />
-                    : <FaDollarSign size={16} />
-                  : <FaSadTear size={16} />}
+                {alert.type === "budget" ? (
+                  alert.severity === "info" ? (
+                    <FaExclamationTriangle size={16} />
+                  ) : (
+                    <FaDollarSign size={16} />
+                  )
+                ) : (
+                  <FaSadTear size={16} />
+                )}
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 600, marginBottom: "4px" }}>
@@ -347,8 +412,13 @@ const SystemAlerts: React.FC = () => {
                       });
 
                       // If there's no VS Code webview API (dev server / browser), open in a new tab
-                      if (typeof (window as any)?.acquireVsCodeApi !== "function") {
-                        window.open("https://valkyrlabs.com/buy-credits", "_blank");
+                      if (
+                        typeof (window as any)?.acquireVsCodeApi !== "function"
+                      ) {
+                        window.open(
+                          "https://valkyrlabs.com/buy-credits",
+                          "_blank",
+                        );
                       }
                     }}
                     style={{

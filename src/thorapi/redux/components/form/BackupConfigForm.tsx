@@ -7,40 +7,47 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   BackupConfig,
   BackupConfigTypeEnum,
   BackupConfigPriorityLevelEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddBackupConfigMutation } from '../../services/BackupConfigService';
+import { useAddBackupConfigMutation } from "../../services/BackupConfigService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -50,7 +57,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -65,45 +71,39 @@ System backup configuration for backup jobs workstation and server
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const TypeValidation = () => {
-  return [
-    'workstation',
-    'server',
-    'desktop',
-    'laptop',
-    'device',
-  ];
+  return ["workstation", "server", "desktop", "laptop", "device"];
 };
 const PriorityLevelValidation = () => {
-  return [
-    'low',
-    'medium',
-    'high',
-    'critical',
-  ];
+  return ["low", "medium", "high", "critical"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        name: Yup.string(),
-        description: Yup.string(),
-        remoteConfigUrl: Yup.string(),
-        runNumber: asNumber(Yup.number().integer().typeError("runNumber must be a number")),
-        percentComplete: asNumber(Yup.number().integer().typeError("percentComplete must be a number")),
-      type: Yup.mixed()
-        .oneOf(TypeValidation(), "Invalid value for type")
-        ,
-      priorityLevel: Yup.mixed()
-        .oneOf(PriorityLevelValidation(), "Invalid value for priorityLevel")
-        ,
-        backupDir: Yup.string(),
-        workingDir: Yup.string(),
-        skiplist: Yup.string(),
-        trashed: Yup.boolean(),
+  name: Yup.string(),
+  description: Yup.string(),
+  remoteConfigUrl: Yup.string(),
+  runNumber: asNumber(
+    Yup.number().integer().typeError("runNumber must be a number"),
+  ),
+  percentComplete: asNumber(
+    Yup.number().integer().typeError("percentComplete must be a number"),
+  ),
+  type: Yup.mixed().oneOf(TypeValidation(), "Invalid value for type"),
+  priorityLevel: Yup.mixed().oneOf(
+    PriorityLevelValidation(),
+    "Invalid value for priorityLevel",
+  ),
+  backupDir: Yup.string(),
+  workingDir: Yup.string(),
+  skiplist: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -120,12 +120,18 @@ const BackupConfigForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -133,17 +139,17 @@ const BackupConfigForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<BackupConfig> = {
-          name: '',
-          description: '',
-          remoteConfigUrl: '',
-          runNumber: 0,
-          percentComplete: 0,
-        type: undefined,
-        priorityLevel: undefined,
-          backupDir: '',
-          workingDir: '',
-          skiplist: '',
-          trashed: false,
+    name: "",
+    description: "",
+    remoteConfigUrl: "",
+    runNumber: 0,
+    percentComplete: 0,
+    type: undefined,
+    priorityLevel: undefined,
+    backupDir: "",
+    workingDir: "",
+    skiplist: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -158,11 +164,14 @@ const BackupConfigForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new BackupConfig:', grants);
+    console.log("Permissions saved for new BackupConfig:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<BackupConfig>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<BackupConfig>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -173,7 +182,7 @@ const BackupConfigForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `BackupConfig created successfully! Would you like to set permissions for this object?`
+          `BackupConfig created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -181,8 +190,8 @@ const BackupConfigForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create BackupConfig:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create BackupConfig:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -203,44 +212,36 @@ const BackupConfigForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addBackupConfigResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New BackupConfig
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New BackupConfig
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.name && !errors.name && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="name"
+                        value={values?.name}
+                        placeholder="Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -252,28 +253,21 @@ const BackupConfigForm: React.FC = () => {
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
-                        {touched.description &&
-                         !errors.description && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.description && !errors.description && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="description"
-                            value={values?.description}
-                            placeholder="Description"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="description"
+                        value={values?.description}
+                        placeholder="Description"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -282,31 +276,27 @@ const BackupConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="remoteConfigUrl" className="nice-form-control">
+                    <label
+                      htmlFor="remoteConfigUrl"
+                      className="nice-form-control"
+                    >
                       <b>
                         Remote Config Url:
-                        {touched.remoteConfigUrl &&
-                         !errors.remoteConfigUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.remoteConfigUrl && !errors.remoteConfigUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="remoteConfigUrl"
-                            value={values?.remoteConfigUrl}
-                            placeholder="Remote Config Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="remoteConfigUrl"
+                        value={values?.remoteConfigUrl}
+                        placeholder="Remote Config Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -318,36 +308,32 @@ const BackupConfigForm: React.FC = () => {
                     <label htmlFor="runNumber" className="nice-form-control">
                       <b>
                         Run Number:
-                        {touched.runNumber &&
-                         !errors.runNumber && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.runNumber && !errors.runNumber && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="runNumber"
-                            type="number"
-                            value={values.runNumber || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('runNumber', true);
-                              const v = e.target.value;
-                              setFieldValue('runNumber', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.runNumber
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="runNumber"
+                        type="number"
+                        value={values.runNumber || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("runNumber", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "runNumber",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.runNumber
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -356,39 +342,38 @@ const BackupConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="percentComplete" className="nice-form-control">
+                    <label
+                      htmlFor="percentComplete"
+                      className="nice-form-control"
+                    >
                       <b>
                         Percent Complete:
-                        {touched.percentComplete &&
-                         !errors.percentComplete && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.percentComplete && !errors.percentComplete && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="percentComplete"
-                            type="number"
-                            value={values.percentComplete || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('percentComplete', true);
-                              const v = e.target.value;
-                              setFieldValue('percentComplete', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.percentComplete
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="percentComplete"
+                        type="number"
+                        value={values.percentComplete || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("percentComplete", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "percentComplete",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.percentComplete
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -400,30 +385,30 @@ const BackupConfigForm: React.FC = () => {
                     <label htmlFor="type" className="nice-form-control">
                       <b>
                         Type:
-                        {touched.type &&
-                         !errors.type && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.type && !errors.type && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="type"
-                          value={values.type || ''}
-                          className={
-                            errors.type
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('type', true);
-                            setFieldValue('type', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Type" />
-                          <TypeLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="type"
+                        value={values.type || ""}
+                        className={
+                          errors.type
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("type", true);
+                          setFieldValue("type", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Type" />
+                        <TypeLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -432,33 +417,39 @@ const BackupConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="priorityLevel" className="nice-form-control">
+                    <label
+                      htmlFor="priorityLevel"
+                      className="nice-form-control"
+                    >
                       <b>
                         Priority Level:
-                        {touched.priorityLevel &&
-                         !errors.priorityLevel && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.priorityLevel && !errors.priorityLevel && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="priorityLevel"
-                          value={values.priorityLevel || ''}
-                          className={
-                            errors.priorityLevel
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('priorityLevel', true);
-                            setFieldValue('priorityLevel', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Priority Level" />
-                          <PriorityLevelLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="priorityLevel"
+                        value={values.priorityLevel || ""}
+                        className={
+                          errors.priorityLevel
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("priorityLevel", true);
+                          setFieldValue(
+                            "priorityLevel",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Priority Level" />
+                        <PriorityLevelLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -470,28 +461,21 @@ const BackupConfigForm: React.FC = () => {
                     <label htmlFor="backupDir" className="nice-form-control">
                       <b>
                         Backup Dir:
-                        {touched.backupDir &&
-                         !errors.backupDir && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.backupDir && !errors.backupDir && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="backupDir"
-                            value={values?.backupDir}
-                            placeholder="Backup Dir"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="backupDir"
+                        value={values?.backupDir}
+                        placeholder="Backup Dir"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -503,28 +487,21 @@ const BackupConfigForm: React.FC = () => {
                     <label htmlFor="workingDir" className="nice-form-control">
                       <b>
                         Working Dir:
-                        {touched.workingDir &&
-                         !errors.workingDir && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.workingDir && !errors.workingDir && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="workingDir"
-                            value={values?.workingDir}
-                            placeholder="Working Dir"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="workingDir"
+                        value={values?.workingDir}
+                        placeholder="Working Dir"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -536,28 +513,21 @@ const BackupConfigForm: React.FC = () => {
                     <label htmlFor="skiplist" className="nice-form-control">
                       <b>
                         Skiplist:
-                        {touched.skiplist &&
-                         !errors.skiplist && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.skiplist && !errors.skiplist && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="skiplist"
-                            value={values?.skiplist}
-                            placeholder="Skiplist"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="skiplist"
+                        value={values?.skiplist}
+                        placeholder="Skiplist"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -569,32 +539,25 @@ const BackupConfigForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -604,45 +567,59 @@ const BackupConfigForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New BackupConfig
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New BackupConfig
+                    </CoolButton>
 
-                  {(addBackupConfigResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addBackupConfigResult as any).error ? (addBackupConfigResult as any).error.data : (addBackupConfigResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addBackupConfigResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addBackupConfigResult as any).error
+                              ? (addBackupConfigResult as any).error.data
+                              : (addBackupConfigResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addBackupConfigResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addBackupConfigResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addBackupConfigResult: {JSON.stringify(addBackupConfigResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addBackupConfigResult:{" "}
+                    {JSON.stringify(addBackupConfigResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -674,11 +651,11 @@ kebabcase type-lookup
 const TypeLookup = () => {
   return (
     <>
-      <option value='workstation' label="Workstation" />
-      <option value='server' label="Server" />
-      <option value='desktop' label="Desktop" />
-      <option value='laptop' label="Laptop" />
-      <option value='device' label="Device" />
+      <option value="workstation" label="Workstation" />
+      <option value="server" label="Server" />
+      <option value="desktop" label="Desktop" />
+      <option value="laptop" label="Laptop" />
+      <option value="device" label="Device" />
     </>
   );
 };
@@ -695,16 +672,13 @@ kebabcase priority-level-lookup
 const PriorityLevelLookup = () => {
   return (
     <>
-      <option value='low' label="Low" />
-      <option value='medium' label="Medium" />
-      <option value='high' label="High" />
-      <option value='critical' label="Critical" />
+      <option value="low" label="Low" />
+      <option value="medium" label="Medium" />
+      <option value="high" label="High" />
+      <option value="critical" label="Critical" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default BackupConfigForm;
-

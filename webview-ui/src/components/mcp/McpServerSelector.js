@@ -44,8 +44,8 @@ export const McpServerSelector = ({ selectedServer, onSelect, isOwner }) => {
                 }),
               ],
             },
-            server.name
-          )
+            server.name,
+          ),
         ),
       }),
       detailsServer &&

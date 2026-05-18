@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Product } from '@thorapi/model/Product';
+import { Product } from "@thorapi/model/Product";
 
 const ProductSlice = createSlice({
   name: "Products",
@@ -28,28 +27,28 @@ const ProductSlice = createSlice({
     },
 
     ProductValueToggled(state, action) {
-      console.log("Product TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Product:Product = state.find((Product) => Product.id === action.payload.ProductId);
+      console.log("Product TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Product: Product = state.find(
+        (Product) => Product.id === action.payload.ProductId,
+      );
       if (Product) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ProductpropertySet(state, action) {
-      const Product = state.find((Product) => Product.id === action.payload.ProductId);
+      const Product = state.find(
+        (Product) => Product.id === action.payload.ProductId,
+      );
       if (Product) {
-      //  Product[action.property] = action.payload[action.property];
+        //  Product[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  ProductAdded,
-  ProductValueToggled,
-  ProductpropertySet
-} = ProductSlice.actions;
+export const { ProductAdded, ProductValueToggled, ProductpropertySet } =
+  ProductSlice.actions;
 export default ProductSlice.reducer;

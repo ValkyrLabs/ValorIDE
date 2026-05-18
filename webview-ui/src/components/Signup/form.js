@@ -36,7 +36,7 @@ const validationSchema = Yup.object().shape({
   password: Yup.string()
     .matches(
       /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/,
-      "Password must contain a lowercase character, an uppercase character, and a number"
+      "Password must contain a lowercase character, an uppercase character, and a number",
     )
     .required()
     .min(8, "Password must be at least 8 characters"),

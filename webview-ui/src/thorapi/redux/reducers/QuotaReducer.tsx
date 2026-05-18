@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Quota } from '@thorapi/model/Quota';
+import { Quota } from "@thorapi/model/Quota";
 
 const QuotaSlice = createSlice({
   name: "Quotas",
@@ -28,28 +27,26 @@ const QuotaSlice = createSlice({
     },
 
     QuotaValueToggled(state, action) {
-      console.log("Quota TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Quota:Quota = state.find((Quota) => Quota.id === action.payload.QuotaId);
+      console.log("Quota TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Quota: Quota = state.find(
+        (Quota) => Quota.id === action.payload.QuotaId,
+      );
       if (Quota) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     QuotapropertySet(state, action) {
       const Quota = state.find((Quota) => Quota.id === action.payload.QuotaId);
       if (Quota) {
-      //  Quota[action.property] = action.payload[action.property];
+        //  Quota[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  QuotaAdded,
-  QuotaValueToggled,
-  QuotapropertySet
-} = QuotaSlice.actions;
+export const { QuotaAdded, QuotaValueToggled, QuotapropertySet } =
+  QuotaSlice.actions;
 export default QuotaSlice.reducer;

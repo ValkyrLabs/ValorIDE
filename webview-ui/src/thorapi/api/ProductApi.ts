@@ -8,7 +8,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -19,294 +18,421 @@ Template file: typescript-redux-query/apis.mustache
 Description: ProductApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    Product,
-    ProductFromJSON,
-    ProductToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { Product, ProductFromJSON, ProductToJSON } from "../model";
 
 export interface DeleteProductApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetProductApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetProductListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
+}
+
+export interface PatchProductByIdApiRequest {
+  id: string;
+  product: Product;
 }
 
 export interface PostProductApiRequest {
-    product: Product;
+  product: Product;
 }
 
 export interface UpdateProductApiRequest {
-    id: string;
-    product: Product;
+  id: string;
+  product: Product;
 }
-
 
 /**
  * Deletes a specific Product.
  * Delete a Product.
  */
-function deleteProductRaw<T>(requestParameters: DeleteProductApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteProduct.');
-    }
+function deleteProductRaw<T>(
+  requestParameters: DeleteProductApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteProduct.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Product/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Product/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific Product.
-* Delete a Product.
-*/
-export function deleteProduct<T>(requestParameters: DeleteProductApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteProductRaw(requestParameters, requestConfig);
+ * Deletes a specific Product.
+ * Delete a Product.
+ */
+export function deleteProduct<T>(
+  requestParameters: DeleteProductApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteProductRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single Product for a specific uid.
  * Retrieve a single Product
  */
-function getProductRaw<T>(requestParameters: GetProductApiRequest, requestConfig: runtime.TypedQueryConfig<T, Product> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getProduct.');
-    }
+function getProductRaw<T>(
+  requestParameters: GetProductApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Product> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getProduct.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Product/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ProductFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Product/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ProductFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single Product for a specific uid.
-* Retrieve a single Product
-*/
-export function getProduct<T>(requestParameters: GetProductApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Product>): QueryConfig<T> {
-    return getProductRaw(requestParameters, requestConfig);
+ * Retrieves a single Product for a specific uid.
+ * Retrieve a single Product
+ */
+export function getProduct<T>(
+  requestParameters: GetProductApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Product>,
+): QueryConfig<T> {
+  return getProductRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Products.
  * Retrieve a list of Products
  */
-function getProductListRaw<T>(requestParameters: GetProductListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<Product>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getProductListRaw<T>(
+  requestParameters: GetProductListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<Product>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Product`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(ProductFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Product`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(ProductFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of Products.
-* Retrieve a list of Products
-*/
-export function getProductList<T>(requestParameters: GetProductListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Product>>): QueryConfig<T> {
-    return getProductListRaw(requestParameters, requestConfig);
+ * Retrieves a list of Products.
+ * Retrieve a list of Products
+ */
+export function getProductList<T>(
+  requestParameters: GetProductListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<Product>>,
+): QueryConfig<T> {
+  return getProductListRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Updates an existing Product.
+ * Partially update an existing Product
+ */
+function patchProductByIdRaw<T>(
+  requestParameters: PatchProductByIdApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Product> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling patchProductById.",
+    );
+  }
+
+  if (
+    requestParameters.product === null ||
+    requestParameters.product === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "product",
+      "Required parameter requestParameters.product was null or undefined when calling patchProductById.",
+    );
+  }
+
+  let queryParameters = null;
+
+  const headerParameters: runtime.HttpHeaders = {};
+
+  headerParameters["Content-Type"] = "application/merge-patch+json";
+
+  const { meta = {} } = requestConfig;
+
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Product/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PATCH",
+      headers: headerParameters,
+    },
+    body: queryParameters || ProductToJSON(requestParameters.product),
+  };
+
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ProductFromJSON(body), text);
+  }
+
+  return config;
+}
+
+/**
+ * Updates an existing Product.
+ * Partially update an existing Product
+ */
+export function patchProductById<T>(
+  requestParameters: PatchProductByIdApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Product>,
+): QueryConfig<T> {
+  return patchProductByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new Product.
  * Create a new Product
  */
-function postProductRaw<T>(requestParameters: PostProductApiRequest, requestConfig: runtime.TypedQueryConfig<T, Product> = {}): QueryConfig<T> {
-    if (requestParameters.product === null || requestParameters.product === undefined) {
-        throw new runtime.RequiredError('product','Required parameter requestParameters.product was null or undefined when calling postProduct.');
-    }
+function postProductRaw<T>(
+  requestParameters: PostProductApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Product> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.product === null ||
+    requestParameters.product === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "product",
+      "Required parameter requestParameters.product was null or undefined when calling postProduct.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Product`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || ProductToJSON(requestParameters.product),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ProductFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Product`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || ProductToJSON(requestParameters.product),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ProductFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new Product.
-* Create a new Product
-*/
-export function postProduct<T>(requestParameters: PostProductApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Product>): QueryConfig<T> {
-    return postProductRaw(requestParameters, requestConfig);
+ * Creates a new Product.
+ * Create a new Product
+ */
+export function postProduct<T>(
+  requestParameters: PostProductApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Product>,
+): QueryConfig<T> {
+  return postProductRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing Product.
  * Update an existing Product
  */
-function updateProductRaw<T>(requestParameters: UpdateProductApiRequest, requestConfig: runtime.TypedQueryConfig<T, Product> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateProduct.');
-    }
+function updateProductRaw<T>(
+  requestParameters: UpdateProductApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Product> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateProduct.",
+    );
+  }
 
-    if (requestParameters.product === null || requestParameters.product === undefined) {
-        throw new runtime.RequiredError('product','Required parameter requestParameters.product was null or undefined when calling updateProduct.');
-    }
+  if (
+    requestParameters.product === null ||
+    requestParameters.product === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "product",
+      "Required parameter requestParameters.product was null or undefined when calling updateProduct.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Product/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || ProductToJSON(requestParameters.product),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ProductFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Product/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || ProductToJSON(requestParameters.product),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ProductFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing Product.
-* Update an existing Product
-*/
-export function updateProduct<T>(requestParameters: UpdateProductApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Product>): QueryConfig<T> {
-    return updateProductRaw(requestParameters, requestConfig);
+ * Updates an existing Product.
+ * Update an existing Product
+ */
+export function updateProduct<T>(
+  requestParameters: UpdateProductApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Product>,
+): QueryConfig<T> {
+  return updateProductRaw(requestParameters, requestConfig);
 }
-

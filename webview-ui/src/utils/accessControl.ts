@@ -9,8 +9,8 @@
  *
  * SOLUTION: Two-layer sanitization
  * 1. WRITE (writeStoredPrincipal): Extract ONLY primitive fields + string arrays before stringify
- *    - roleList[] → roleNames[] (extract name/id only)
- *    - authorityList[] → authorityStrings[] (extract string representation)
+ *    - roles[] → roleNames[] (extract name/id only)
+ *    - grantedAuthorities[] → authorityStrings[] (extract string representation)
  * 2. READ (coercePrincipalFromString): Rebuild Principal from stored primitives only
  *    - Never re-serialize complex objects back to storage
  *
@@ -28,6 +28,33 @@ const JWT_STORAGE_KEY = "jwtToken";
 const AUTH_TOKEN_KEY = "authToken";
 const AUTH_USER_STORAGE_KEY = "authenticatedUser";
 const JWT_PERSIST_FLAG_KEY = "valoride.persistJwt";
+const AUTH_SESSION_INVALIDATED_EVENT = "authSessionInvalidated";
+const AUTH_STORAGE_KEYS = [
+  STORAGE_KEY,
+  AUTH_USER_STORAGE_KEY,
+  JWT_STORAGE_KEY,
+  AUTH_TOKEN_KEY,
+  "jwtSession",
+  "auth_token",
+  "valoride_jwt",
+  "temp_auth_token",
+  "VALKYR_AUTH",
+  "2fa_methods",
+  "oauth_post_login_redirect",
+  "oauth_last_event",
+  "remember_me",
+] as const;
+const AUTH_COOKIE_NAMES = [
+  "jwtSession",
+  "jwtToken",
+  "auth_token",
+  "valoride_jwt",
+  "temp_auth_token",
+  "VALKYR_AUTH",
+  "JSESSIONID",
+  "SESSION",
+  "XSRF-TOKEN",
+] as const;
 
 type PrincipalLike = Principal | Record<string, any>;
 
@@ -89,13 +116,17 @@ const normalizePrincipalShape = (
       username: typeof existing.username === "string" ? existing.username : "",
       password: typeof existing.password === "string" ? existing.password : "",
       email: typeof existing.email === "string" ? existing.email : "",
-      roleList: Array.isArray(existing.roleList)
-        ? (existing.roleList as Role[])
-        : [],
-      authorityList: Array.isArray(existing.authorityList)
-        ? (existing.authorityList as Authority[])
-        : [],
       ...(principal as any),
+      roles: Array.isArray(existing.roles)
+        ? (existing.roles as Role[])
+        : Array.isArray(existing.roleList)
+          ? (existing.roleList as Role[])
+          : [],
+      grantedAuthorities: Array.isArray(existing.grantedAuthorities)
+        ? (existing.grantedAuthorities as Authority[])
+        : Array.isArray(existing.authorityList)
+          ? (existing.authorityList as Authority[])
+          : [],
       id: (principal as any).id ?? resolvedId,
       ownerId: (principal as any).ownerId ?? resolvedId,
     };
@@ -107,8 +138,8 @@ const normalizePrincipalShape = (
 };
 
 /**
- * Principal is now stored and retrieved with REAL field names (roleList, authorityList).
- * No conversion functions needed - we use the actual model everywhere.
+ * Principal is stored with current ThorAPI field names, while reads still accept legacy
+ * roleList/authorityList payloads that may already exist in a user's webview storage.
  */
 
 /**
@@ -125,8 +156,7 @@ const coercePrincipalFromString = (
   try {
     const parsed = JSON.parse(raw);
 
-    // STANDARDIZE ON REAL MODEL: Use exact same field names as Principal.tsx
-    // Support both 'roleList' (correct) and 'roles' (legacy fallback from server error)
+    // Support both current and legacy role/authority names while normalizing storage.
     if (parsed && typeof parsed === "object") {
       const safe: any = {
         id: parsed.id,
@@ -140,9 +170,9 @@ const coercePrincipalFromString = (
         phone: parsed.phone,
         bio: parsed.bio,
         avatarUrl: parsed.avatarUrl,
-        // Support both 'roleList' (correct) and 'roles' (legacy fallback)
-        roleList: parsed.roleList || parsed.roles || [],
-        authorityList: parsed.authorityList || [],
+        roles: parsed.roles || parsed.roleList || [],
+        grantedAuthorities:
+          parsed.grantedAuthorities || parsed.authorityList || [],
       };
       // Filter out undefined values
       Object.keys(safe).forEach((k) => safe[k] === undefined && delete safe[k]);
@@ -226,7 +256,7 @@ const dispatchPrincipalChange = () => {
 /**
  * Sanitize Principal to safe serializable object before stringify.
  * Removes Symbol fields and complex objects that cannot be JSON serialized.
- * CRITICAL: Keeps the REAL model structure - roleList stays roleList, authorityList stays authorityList
+ * CRITICAL: Keeps the current model structure while accepting legacy roleList/authorityList input.
  */
 const sanitizePrincipalForStorage = (
   principal: Principal | PrincipalLike | null,
@@ -236,41 +266,50 @@ const sanitizePrincipalForStorage = (
   try {
     const p = principal as any;
 
-    // Convert roleList items to strings (they might be objects with Symbols)
-    const roleList = Array.isArray(p.roleList)
-      ? p.roleList.map((r: any) => {
-        if (typeof r === "string") return r;
-        if (r && typeof r === "object") {
-          // If it's an object, try to get the string representation
-          return (
-            r.roleName ||
-            r.role ||
-            r.name ||
-            r.authority ||
-            String(r).replace(/\[object Object\]/g, "")
-          );
-        }
-        return String(r);
-      })
+    // Convert role items to strings (they might be objects with Symbols)
+    const rawRoles = Array.isArray(p.roles)
+      ? p.roles
+      : Array.isArray(p.roleList)
+        ? p.roleList
+        : undefined;
+    const roles = rawRoles
+      ? rawRoles.map((r: any) => {
+          if (typeof r === "string") return r;
+          if (r && typeof r === "object") {
+            // If it's an object, try to get the string representation
+            return (
+              r.roleName ||
+              r.role ||
+              r.name ||
+              r.authority ||
+              String(r).replace(/\[object Object\]/g, "")
+            );
+          }
+          return String(r);
+        })
       : undefined;
 
-    // Convert authorityList items to strings (they might be objects with Symbols)
-    const authorityList = Array.isArray(p.authorityList)
-      ? p.authorityList.map((a: any) => {
-        if (typeof a === "string") return a;
-        if (a && typeof a === "object") {
-          return (
-            a.authority ||
-            a.name ||
-            a.id ||
-            String(a).replace(/\[object Object\]/g, "")
-          );
-        }
-        return String(a);
-      })
+    // Convert authority items to strings (they might be objects with Symbols)
+    const rawAuthorities = Array.isArray(p.grantedAuthorities)
+      ? p.grantedAuthorities
+      : Array.isArray(p.authorityList)
+        ? p.authorityList
+        : undefined;
+    const grantedAuthorities = rawAuthorities
+      ? rawAuthorities.map((a: any) => {
+          if (typeof a === "string") return a;
+          if (a && typeof a === "object") {
+            return (
+              a.authority ||
+              a.name ||
+              a.id ||
+              String(a).replace(/\[object Object\]/g, "")
+            );
+          }
+          return String(a);
+        })
       : undefined;
 
-    // STANDARDIZE ON REAL MODEL: Use exact same field names as Principal.tsx
     const sanitized: Record<string, any> = {
       id: p.id,
       username: p.username,
@@ -286,11 +325,11 @@ const sanitizePrincipalForStorage = (
       // Omit complex nested objects that might have Symbols
     };
 
-    if (roleList !== undefined) {
-      sanitized.roleList = roleList;
+    if (roles !== undefined) {
+      sanitized.roles = roles;
     }
-    if (authorityList !== undefined) {
-      sanitized.authorityList = authorityList;
+    if (grantedAuthorities !== undefined) {
+      sanitized.grantedAuthorities = grantedAuthorities;
     }
 
     return sanitized;
@@ -333,23 +372,25 @@ export const writeStoredPrincipal = (
     const normalizeRoles = (list?: any[]) =>
       Array.isArray(list)
         ? list
-          .map((r) => {
-            if (!r) return null;
-            if (typeof r === "string") return r;
-            return r.roleName || r.name || r.authority || r.role || null;
-          })
-          .filter(Boolean)
-          .join("|")
+            .map((r) => {
+              if (!r) return null;
+              if (typeof r === "string") return r;
+              return r.roleName || r.name || r.authority || r.role || null;
+            })
+            .filter(Boolean)
+            .join("|")
         : "";
     if (
-      normalizeRoles((a as any).roleList) !==
-      normalizeRoles((b as any).roleList)
+      normalizeRoles((a as any).roles ?? (a as any).roleList) !==
+      normalizeRoles((b as any).roles ?? (b as any).roleList)
     ) {
       return false;
     }
     if (
-      normalizeRoles((a as any).authorityList) !==
-      normalizeRoles((b as any).authorityList)
+      normalizeRoles(
+        (a as any).grantedAuthorities ?? (a as any).authorityList,
+      ) !==
+      normalizeRoles((b as any).grantedAuthorities ?? (b as any).authorityList)
     ) {
       return false;
     }
@@ -470,6 +511,84 @@ export const clearStoredJwtToken = (source?: string): void => {
   }
 };
 
+const removeAuthStorageKeys = (storage?: Storage | null): void => {
+  if (!storage) {
+    return;
+  }
+  for (const key of AUTH_STORAGE_KEYS) {
+    try {
+      storage.removeItem(key);
+    } catch {
+      // ignore storage sandbox failures
+    }
+  }
+};
+
+const getCookieDomains = (): Array<string | undefined> => {
+  if (typeof window === "undefined") {
+    return [undefined];
+  }
+  const hostname = window.location.hostname;
+  if (
+    !hostname ||
+    hostname === "localhost" ||
+    /^\d+\.\d+\.\d+\.\d+$/.test(hostname)
+  ) {
+    return [undefined];
+  }
+  const parts = hostname.split(".");
+  const rootDomain =
+    parts.length > 2
+      ? `.${parts.slice(parts.length - 2).join(".")}`
+      : undefined;
+  return Array.from(new Set([undefined, hostname, `.${hostname}`, rootDomain]));
+};
+
+const getReadableCookieNames = (): string[] => {
+  if (typeof document === "undefined") {
+    return [...AUTH_COOKIE_NAMES];
+  }
+  const visibleNames = document.cookie
+    .split(";")
+    .map((cookie) => cookie.split("=")[0]?.trim())
+    .filter((name): name is string => Boolean(name));
+  return Array.from(new Set([...visibleNames, ...AUTH_COOKIE_NAMES]));
+};
+
+export const clearReadableAuthCookies = (): void => {
+  if (typeof document === "undefined") {
+    return;
+  }
+  const paths = new Set<string>(["/", "/v1"]);
+  if (typeof window !== "undefined" && window.location.pathname) {
+    paths.add(window.location.pathname);
+  }
+  for (const name of getReadableCookieNames()) {
+    for (const path of Array.from(paths)) {
+      for (const domain of getCookieDomains()) {
+        const domainPart = domain ? `; domain=${domain}` : "";
+        document.cookie = `${name}=; Max-Age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path}${domainPart}; SameSite=Lax`;
+      }
+    }
+  }
+};
+
+export const clearStoredAuthSession = (source?: string): void => {
+  clearStoredJwtToken(source);
+  clearStoredPrincipal(source);
+
+  if (typeof window !== "undefined") {
+    removeAuthStorageKeys(window.sessionStorage);
+    removeAuthStorageKeys(window.localStorage);
+    clearReadableAuthCookies();
+    window.dispatchEvent?.(
+      new CustomEvent(AUTH_SESSION_INVALIDATED_EVENT, {
+        detail: { source },
+      }),
+    );
+  }
+};
+
 export const hydrateStoredCredentials = (source?: string) => {
   let token: string | undefined;
   let principal: Principal | null = null;
@@ -544,8 +663,8 @@ export const useStoredPrincipal = () =>
     getStoredPrincipalSnapshot,
   );
 
-const extractRolesFromRoleList = (
-  roleList?: Array<Role | null | undefined>,
+const extractRolesFromRoleCollection = (
+  roleList?: Array<Role | string | null | undefined>,
 ): string[] => {
   if (!roleList || !Array.isArray(roleList)) {
     return [];
@@ -569,7 +688,7 @@ const extractRolesFromRoleList = (
 };
 
 const extractRolesFromAuthorities = (
-  authorityList?: Array<Authority | null | undefined>,
+  authorityList?: Array<Authority | string | null | undefined>,
 ): string[] => {
   if (!authorityList || !Array.isArray(authorityList)) {
     return [];
@@ -595,11 +714,12 @@ export const getPrincipalRoles = (
   }
 
   try {
-    const roleList = (principal as any).roleList;
-    const authorityList = (principal as any).authorityList;
+    const roleList = (principal as any).roles ?? (principal as any).roleList;
+    const authorityList =
+      (principal as any).grantedAuthorities ?? (principal as any).authorityList;
 
     const deduped = new Set<string>();
-    const rolesFromRoleList = extractRolesFromRoleList(roleList);
+    const rolesFromRoleList = extractRolesFromRoleCollection(roleList);
     const rolesFromAuthorities = extractRolesFromAuthorities(authorityList);
 
     rolesFromRoleList?.forEach((role) => deduped.add(role));
@@ -690,6 +810,8 @@ export const accessControl = {
   clearStoredPrincipal,
   storeJwtToken,
   clearStoredJwtToken,
+  clearStoredAuthSession,
+  clearReadableAuthCookies,
   hydrateStoredCredentials,
   resolvePrincipal,
   getPrincipalRoles,

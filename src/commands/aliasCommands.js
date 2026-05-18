@@ -7,7 +7,7 @@ async function updateTsconfigPaths(tsconfigUri, rootAliasTargets, options) {
     json = JSON.parse(Buffer.from(doc).toString("utf8"));
   } catch (e) {
     vscode.window.showWarningMessage(
-      `Skipping invalid JSON: ${tsconfigUri.fsPath}`
+      `Skipping invalid JSON: ${tsconfigUri.fsPath}`,
     );
     return;
   }
@@ -53,11 +53,11 @@ export function registerAliasCommands(context) {
       // 2) Choose which tsconfig files to update
       const allTsconfigs = await vscode.workspace.findFiles(
         "**/tsconfig*.json",
-        "**/node_modules/**"
+        "**/node_modules/**",
       );
       if (allTsconfigs.length === 0) {
         vscode.window.showWarningMessage(
-          "No tsconfig files found in workspace to update."
+          "No tsconfig files found in workspace to update.",
         );
         return;
       }
@@ -67,7 +67,7 @@ export function registerAliasCommands(context) {
           description: u.fsPath,
           uri: u,
         })),
-        { canPickMany: true, title: "Select tsconfig files to update" }
+        { canPickMany: true, title: "Select tsconfig files to update" },
       );
       if (!picks || picks.length === 0) return;
       const optionPicks = await vscode.window.showQuickPick(
@@ -88,7 +88,7 @@ export function registerAliasCommands(context) {
             key: "preview",
           },
         ],
-        { canPickMany: true, title: "What should be updated?" }
+        { canPickMany: true, title: "What should be updated?" },
       );
       const doPaths = optionPicks?.some((p) => p.key === "paths") !== false;
       const doInclude = optionPicks?.some((p) => p.key === "include") !== false;
@@ -119,7 +119,7 @@ export function registerAliasCommands(context) {
           combinedTargets = { componentLib, reduxServices, thorAll };
           if (doInclude)
             includePatterns.push(
-              path.join(relToFolder, "src").replace(/\\/g, "/")
+              path.join(relToFolder, "src").replace(/\\/g, "/"),
             );
         }
         if (doPreview) {
@@ -167,7 +167,7 @@ export function registerAliasCommands(context) {
             "vscode.diff",
             left.uri,
             right.uri,
-            title
+            title,
           );
         } else {
           await updateTsconfigPaths(tsUri, combinedTargets, {
@@ -177,14 +177,14 @@ export function registerAliasCommands(context) {
       }
       if (!doPreview) {
         vscode.window.showInformationMessage(
-          "Aliases and includes updated in selected tsconfig files."
+          "Aliases and includes updated in selected tsconfig files.",
         );
       } else {
         vscode.window.showInformationMessage(
-          "Preview(s) opened. Save changes manually if desired."
+          "Preview(s) opened. Save changes manually if desired.",
         );
       }
-    }
+    },
   );
   context.subscriptions.push(disposable);
 }

@@ -7,43 +7,68 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { ChatCompletionRequest } from '@thorapi/model/ChatCompletionRequest'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { ChatCompletionRequest } from "@thorapi/model/ChatCompletionRequest";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type ChatCompletionRequestResponse = ChatCompletionRequest[]
+type ChatCompletionRequestResponse = ChatCompletionRequest[];
+
+const toChatCompletionRequestList = (
+  result: unknown,
+): ChatCompletionRequestResponse => {
+  if (Array.isArray(result)) {
+    return result as ChatCompletionRequestResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as ChatCompletionRequestResponse)
+    : [];
+};
 
 export const ChatCompletionRequestService = createApi({
-  reducerPath: 'ChatCompletionRequest', // This should remain unique
+  reducerPath: "ChatCompletionRequest", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['ChatCompletionRequest'],
+  tagTypes: ["ChatCompletionRequest"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getChatCompletionRequestsPaged: build.query<ChatCompletionRequestResponse, { page: number; size?: number; example?: Partial<ChatCompletionRequest> }>({
+    getChatCompletionRequestsPaged: build.query<
+      ChatCompletionRequestResponse,
+      { page: number; size?: number; example?: Partial<ChatCompletionRequest> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ChatCompletionRequest?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ChatCompletionRequest?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'ChatCompletionRequest' as const, id })),
-              { type: 'ChatCompletionRequest', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toChatCompletionRequestList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "ChatCompletionRequest" as const, id })),
+          { type: "ChatCompletionRequest", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getChatCompletionRequests: build.query<ChatCompletionRequestResponse, { example?: Partial<ChatCompletionRequest> } | void>({
+    getChatCompletionRequests: build.query<
+      ChatCompletionRequestResponse,
+      { example?: Partial<ChatCompletionRequest> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +76,115 @@ export const ChatCompletionRequestService = createApi({
         }
         return `ChatCompletionRequest`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'ChatCompletionRequest' as const, id })),
-              { type: 'ChatCompletionRequest', id: 'LIST' },
-            ]
-          : [{ type: 'ChatCompletionRequest', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toChatCompletionRequestList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "ChatCompletionRequest" as const, id })),
+          { type: "ChatCompletionRequest", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
-    addChatCompletionRequest: build.mutation<ChatCompletionRequest, Partial<ChatCompletionRequest>>({
+    addChatCompletionRequest: build.mutation<
+      ChatCompletionRequest,
+      Partial<ChatCompletionRequest>
+    >({
       query: (body) => ({
         url: `ChatCompletionRequest`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'ChatCompletionRequest', id: 'LIST' }],
+      invalidatesTags: [{ type: "ChatCompletionRequest", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getChatCompletionRequest: build.query<ChatCompletionRequest, string>({
       query: (id) => `ChatCompletionRequest/${id}`,
-      providesTags: (result, error, id) => [{ type: 'ChatCompletionRequest', id }],
+      providesTags: (result, error, id) => [
+        { type: "ChatCompletionRequest", id },
+      ],
     }),
 
     // 5) Update
-    updateChatCompletionRequest: build.mutation<void, Pick<ChatCompletionRequest, 'id'> & Partial<ChatCompletionRequest>>({
+    updateChatCompletionRequest: build.mutation<
+      void,
+      Pick<ChatCompletionRequest, "id"> & Partial<ChatCompletionRequest>
+    >({
       query: ({ id, ...patch }) => ({
         url: `ChatCompletionRequest/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            ChatCompletionRequestService.util.updateQueryData('getChatCompletionRequest', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            ChatCompletionRequestService.util.updateQueryData(
+              "getChatCompletionRequest",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<ChatCompletionRequest, 'id'>) => [
-        { type: 'ChatCompletionRequest', id },
-        { type: 'ChatCompletionRequest', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<ChatCompletionRequest, "id">,
+      ) => [
+        { type: "ChatCompletionRequest", id },
+        { type: "ChatCompletionRequest", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteChatCompletionRequest: build.mutation<{ success: boolean; id: string }, number>({
+    deleteChatCompletionRequest: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `ChatCompletionRequest/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'ChatCompletionRequest', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "ChatCompletionRequest", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteChatCompletionRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteChatCompletionRequestCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `ChatCompletionRequest/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ChatCompletionRequest', id }, { type: 'ChatCompletionRequest', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "ChatCompletionRequest", id },
+        { type: "ChatCompletionRequest", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetChatCompletionRequestsPagedQuery`
 export const {
-  useGetChatCompletionRequestsPagedQuery,     // immediate fetch
+  useGetChatCompletionRequestsPagedQuery, // immediate fetch
   useLazyGetChatCompletionRequestsPagedQuery, // lazy fetch
   useGetChatCompletionRequestQuery,
   useGetChatCompletionRequestsQuery,
@@ -138,4 +192,4 @@ export const {
   useUpdateChatCompletionRequestMutation,
   useDeleteChatCompletionRequestMutation,
   useDeleteChatCompletionRequestCascadeMutation,
-} = ChatCompletionRequestService
+} = ChatCompletionRequestService;

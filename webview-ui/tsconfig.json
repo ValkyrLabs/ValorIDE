@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -37,15 +33,9 @@
       "@shared/*": ["../src/shared/*"],
       "@valkyr/component-library/*": ["src/components/*"],
       "@utils/*": ["src/utils/*", "../src/utils/*"],
-      "@utils/serverValkyraiHost": ["src/utils/serverValkyraiHost.ts"],
+      "@utils/serverValkyraiHost": ["src/utils/serverValkyraiHost.ts"]
     }
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "src/**/*.spec.ts",
-    "setupTests.js",
-    "matchMedia.js"
-  ]
+  "include": ["src"],
+  "exclude": ["src/**/*.spec.ts", "setupTests.js", "matchMedia.js"]
 }

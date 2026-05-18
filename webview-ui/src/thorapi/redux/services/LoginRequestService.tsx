@@ -7,43 +7,64 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { LoginRequest } from '@thorapi/model/LoginRequest'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { LoginRequest } from "@thorapi/model/LoginRequest";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type LoginRequestResponse = LoginRequest[]
+type LoginRequestResponse = LoginRequest[];
+
+const toLoginRequestList = (result: unknown): LoginRequestResponse => {
+  if (Array.isArray(result)) {
+    return result as LoginRequestResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as LoginRequestResponse) : [];
+};
 
 export const LoginRequestService = createApi({
-  reducerPath: 'LoginRequest', // This should remain unique
+  reducerPath: "LoginRequest", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['LoginRequest'],
+  tagTypes: ["LoginRequest"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getLoginRequestsPaged: build.query<LoginRequestResponse, { page: number; size?: number; example?: Partial<LoginRequest> }>({
+    getLoginRequestsPaged: build.query<
+      LoginRequestResponse,
+      { page: number; size?: number; example?: Partial<LoginRequest> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `LoginRequest?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `LoginRequest?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'LoginRequest' as const, id })),
-              { type: 'LoginRequest', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toLoginRequestList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "LoginRequest" as const, id })),
+          { type: "LoginRequest", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getLoginRequests: build.query<LoginRequestResponse, { example?: Partial<LoginRequest> } | void>({
+    getLoginRequests: build.query<
+      LoginRequestResponse,
+      { example?: Partial<LoginRequest> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +72,104 @@ export const LoginRequestService = createApi({
         }
         return `LoginRequest`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'LoginRequest' as const, id })),
-              { type: 'LoginRequest', id: 'LIST' },
-            ]
-          : [{ type: 'LoginRequest', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toLoginRequestList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "LoginRequest" as const, id })),
+          { type: "LoginRequest", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
     addLoginRequest: build.mutation<LoginRequest, Partial<LoginRequest>>({
       query: (body) => ({
         url: `LoginRequest`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'LoginRequest', id: 'LIST' }],
+      invalidatesTags: [{ type: "LoginRequest", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getLoginRequest: build.query<LoginRequest, string>({
       query: (id) => `LoginRequest/${id}`,
-      providesTags: (result, error, id) => [{ type: 'LoginRequest', id }],
+      providesTags: (result, error, id) => [{ type: "LoginRequest", id }],
     }),
 
     // 5) Update
-    updateLoginRequest: build.mutation<void, Pick<LoginRequest, 'id'> & Partial<LoginRequest>>({
+    updateLoginRequest: build.mutation<
+      void,
+      Pick<LoginRequest, "id"> & Partial<LoginRequest>
+    >({
       query: ({ id, ...patch }) => ({
         url: `LoginRequest/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            LoginRequestService.util.updateQueryData('getLoginRequest', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            LoginRequestService.util.updateQueryData(
+              "getLoginRequest",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<LoginRequest, 'id'>) => [
-        { type: 'LoginRequest', id },
-        { type: 'LoginRequest', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<LoginRequest, "id">) => [
+        { type: "LoginRequest", id },
+        { type: "LoginRequest", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteLoginRequest: build.mutation<{ success: boolean; id: string }, number>({
+    deleteLoginRequest: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `LoginRequest/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'LoginRequest', id }],
+      invalidatesTags: (result, error, id) => [{ type: "LoginRequest", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteLoginRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteLoginRequestCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `LoginRequest/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'LoginRequest', id }, { type: 'LoginRequest', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "LoginRequest", id },
+        { type: "LoginRequest", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetLoginRequestsPagedQuery`
 export const {
-  useGetLoginRequestsPagedQuery,     // immediate fetch
+  useGetLoginRequestsPagedQuery, // immediate fetch
   useLazyGetLoginRequestsPagedQuery, // lazy fetch
   useGetLoginRequestQuery,
   useGetLoginRequestsQuery,
@@ -138,4 +177,4 @@ export const {
   useUpdateLoginRequestMutation,
   useDeleteLoginRequestMutation,
   useDeleteLoginRequestCascadeMutation,
-} = LoginRequestService
+} = LoginRequestService;

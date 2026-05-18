@@ -7,43 +7,64 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { Expense } from '@thorapi/model/Expense'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { Expense } from "@thorapi/model/Expense";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type ExpenseResponse = Expense[]
+type ExpenseResponse = Expense[];
+
+const toExpenseList = (result: unknown): ExpenseResponse => {
+  if (Array.isArray(result)) {
+    return result as ExpenseResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as ExpenseResponse) : [];
+};
 
 export const ExpenseService = createApi({
-  reducerPath: 'Expense', // This should remain unique
+  reducerPath: "Expense", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['Expense'],
+  tagTypes: ["Expense"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getExpensesPaged: build.query<ExpenseResponse, { page: number; size?: number; example?: Partial<Expense> }>({
+    getExpensesPaged: build.query<
+      ExpenseResponse,
+      { page: number; size?: number; example?: Partial<Expense> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Expense?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Expense?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Expense' as const, id })),
-              { type: 'Expense', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toExpenseList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "Expense" as const, id })),
+          { type: "Expense", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getExpenses: build.query<ExpenseResponse, { example?: Partial<Expense> } | void>({
+    getExpenses: build.query<
+      ExpenseResponse,
+      { example?: Partial<Expense> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +72,96 @@ export const ExpenseService = createApi({
         }
         return `Expense`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Expense' as const, id })),
-              { type: 'Expense', id: 'LIST' },
-            ]
-          : [{ type: 'Expense', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toExpenseList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "Expense" as const, id })),
+          { type: "Expense", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
     addExpense: build.mutation<Expense, Partial<Expense>>({
       query: (body) => ({
         url: `Expense`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'Expense', id: 'LIST' }],
+      invalidatesTags: [{ type: "Expense", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getExpense: build.query<Expense, string>({
       query: (id) => `Expense/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Expense', id }],
+      providesTags: (result, error, id) => [{ type: "Expense", id }],
     }),
 
     // 5) Update
-    updateExpense: build.mutation<void, Pick<Expense, 'id'> & Partial<Expense>>({
-      query: ({ id, ...patch }) => ({
-        url: `Expense/${id}`,
-        method: 'PUT',
-        body: patch,
-      }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            ExpenseService.util.updateQueryData('getExpense', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
-          try {
-            await queryFulfilled
-          } catch {
-            patchResult.undo()
+    updateExpense: build.mutation<void, Pick<Expense, "id"> & Partial<Expense>>(
+      {
+        query: ({ id, ...patch }) => ({
+          url: `Expense/${id}`,
+          method: "PUT",
+          body: patch,
+        }),
+        async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+          if (id) {
+            const patchResult = dispatch(
+              ExpenseService.util.updateQueryData("getExpense", id, (draft) => {
+                Object.assign(draft, patch);
+              }),
+            );
+            try {
+              await queryFulfilled;
+            } catch {
+              patchResult.undo();
+            }
           }
-        }
+        },
+        invalidatesTags: (result, error, { id }: Pick<Expense, "id">) => [
+          { type: "Expense", id },
+          { type: "Expense", id: "LIST" },
+        ],
       },
-      invalidatesTags: (result, error, { id }: Pick<Expense, 'id'>) => [
-        { type: 'Expense', id },
-        { type: 'Expense', id: 'LIST' },
-      ],
-    }),
+    ),
 
     // 6) Delete
     deleteExpense: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `Expense/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'Expense', id }],
+      invalidatesTags: (result, error, id) => [{ type: "Expense", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteExpenseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteExpenseCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `Expense/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Expense', id }, { type: 'Expense', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Expense", id },
+        { type: "Expense", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetExpensesPagedQuery`
 export const {
-  useGetExpensesPagedQuery,     // immediate fetch
+  useGetExpensesPagedQuery, // immediate fetch
   useLazyGetExpensesPagedQuery, // lazy fetch
   useGetExpenseQuery,
   useGetExpensesQuery,
@@ -138,4 +169,4 @@ export const {
   useUpdateExpenseMutation,
   useDeleteExpenseMutation,
   useDeleteExpenseCascadeMutation,
-} = ExpenseService
+} = ExpenseService;

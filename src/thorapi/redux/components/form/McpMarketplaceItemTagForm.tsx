@@ -7,38 +7,43 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  McpMarketplaceItemTag,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddMcpMarketplaceItemTagMutation } from '../../services/McpMarketplaceItemTagService';
+import { McpMarketplaceItemTag } from "@thorapi/model";
+
+import { useAddMcpMarketplaceItemTagMutation } from "../../services/McpMarketplaceItemTagService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -48,7 +53,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -67,21 +71,24 @@ McpMarketplaceItemTag
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        mcpMarketplaceItemId: Yup.string(),
-        name: Yup.string(),
-        description: Yup.string(),
-        notes: Yup.string(),
-        trashed: Yup.boolean(),
+  mcpMarketplaceItemId: Yup.string(),
+  name: Yup.string(),
+  description: Yup.string(),
+  notes: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const McpMarketplaceItemTagForm: React.FC = () => {
-  const [addMcpMarketplaceItemTag, addMcpMarketplaceItemTagResult] = useAddMcpMarketplaceItemTagMutation();
+  const [addMcpMarketplaceItemTag, addMcpMarketplaceItemTagResult] =
+    useAddMcpMarketplaceItemTagMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -91,12 +98,18 @@ const McpMarketplaceItemTagForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -104,11 +117,11 @@ const McpMarketplaceItemTagForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<McpMarketplaceItemTag> = {
-          mcpMarketplaceItemId: '',
-          name: '',
-          description: '',
-          notes: '',
-          trashed: false,
+    mcpMarketplaceItemId: "",
+    name: "",
+    description: "",
+    notes: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -123,11 +136,14 @@ const McpMarketplaceItemTagForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new McpMarketplaceItemTag:', grants);
+    console.log("Permissions saved for new McpMarketplaceItemTag:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<McpMarketplaceItemTag>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<McpMarketplaceItemTag>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -138,7 +154,7 @@ const McpMarketplaceItemTagForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `McpMarketplaceItemTag created successfully! Would you like to set permissions for this object?`
+          `McpMarketplaceItemTag created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -146,8 +162,8 @@ const McpMarketplaceItemTagForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create McpMarketplaceItemTag:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create McpMarketplaceItemTag:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -168,44 +184,42 @@ const McpMarketplaceItemTagForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addMcpMarketplaceItemTagResult.isLoading;
+          const isSaving =
+            isSubmitting || addMcpMarketplaceItemTagResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New McpMarketplaceItemTag
-                </Accordion.Header>
-                <Accordion.Body>
-                    <label htmlFor="mcpMarketplaceItemId" className="nice-form-control">
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    McpMarketplaceItemTag
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <label
+                      htmlFor="mcpMarketplaceItemId"
+                      className="nice-form-control"
+                    >
                       <b>
                         Mcp Marketplace Item Id:
                         {touched.mcpMarketplaceItemId &&
-                         !errors.mcpMarketplaceItemId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.mcpMarketplaceItemId && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="mcpMarketplaceItemId"
-                            value={values?.mcpMarketplaceItemId}
-                            placeholder="Mcp Marketplace Item Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="mcpMarketplaceItemId"
+                        value={values?.mcpMarketplaceItemId}
+                        placeholder="Mcp Marketplace Item Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -217,28 +231,21 @@ const McpMarketplaceItemTagForm: React.FC = () => {
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.name && !errors.name && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="name"
+                        value={values?.name}
+                        placeholder="Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -250,28 +257,21 @@ const McpMarketplaceItemTagForm: React.FC = () => {
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
-                        {touched.description &&
-                         !errors.description && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.description && !errors.description && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="description"
-                            value={values?.description}
-                            placeholder="Description"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="description"
+                        value={values?.description}
+                        placeholder="Description"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -283,28 +283,21 @@ const McpMarketplaceItemTagForm: React.FC = () => {
                     <label htmlFor="notes" className="nice-form-control">
                       <b>
                         Notes:
-                        {touched.notes &&
-                         !errors.notes && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.notes && !errors.notes && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="notes"
-                            value={values?.notes}
-                            placeholder="Notes"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="notes"
+                        value={values?.notes}
+                        placeholder="Notes"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -316,32 +309,25 @@ const McpMarketplaceItemTagForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -351,45 +337,64 @@ const McpMarketplaceItemTagForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New McpMarketplaceItemTag
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      McpMarketplaceItemTag
+                    </CoolButton>
 
-                  {(addMcpMarketplaceItemTagResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addMcpMarketplaceItemTagResult as any).error ? (addMcpMarketplaceItemTagResult as any).error.data : (addMcpMarketplaceItemTagResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addMcpMarketplaceItemTagResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addMcpMarketplaceItemTagResult as any).error
+                              ? (addMcpMarketplaceItemTagResult as any).error
+                                  .data
+                              : (addMcpMarketplaceItemTagResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addMcpMarketplaceItemTagResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addMcpMarketplaceItemTagResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addMcpMarketplaceItemTagResult: {JSON.stringify(addMcpMarketplaceItemTagResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addMcpMarketplaceItemTagResult:{" "}
+                    {JSON.stringify(addMcpMarketplaceItemTagResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -409,8 +414,5 @@ const McpMarketplaceItemTagForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default McpMarketplaceItemTagForm;
-

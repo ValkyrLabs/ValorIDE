@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { MergeRange } from '@thorapi/model/MergeRange';
+import { MergeRange } from "@thorapi/model/MergeRange";
 
 const MergeRangeSlice = createSlice({
   name: "MergeRanges",
@@ -28,20 +27,23 @@ const MergeRangeSlice = createSlice({
     },
 
     MergeRangeValueToggled(state, action) {
-      console.log("MergeRange TOGGLE")
-      console.warn(JSON.stringify(action))
-      const MergeRange:MergeRange = state.find((MergeRange) => MergeRange.id === action.payload.MergeRangeId);
+      console.log("MergeRange TOGGLE");
+      console.warn(JSON.stringify(action));
+      const MergeRange: MergeRange = state.find(
+        (MergeRange) => MergeRange.id === action.payload.MergeRangeId,
+      );
       if (MergeRange) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     MergeRangepropertySet(state, action) {
-      const MergeRange = state.find((MergeRange) => MergeRange.id === action.payload.MergeRangeId);
+      const MergeRange = state.find(
+        (MergeRange) => MergeRange.id === action.payload.MergeRangeId,
+      );
       if (MergeRange) {
-      //  MergeRange[action.property] = action.payload[action.property];
+        //  MergeRange[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +52,6 @@ const MergeRangeSlice = createSlice({
 export const {
   MergeRangeAdded,
   MergeRangeValueToggled,
-  MergeRangepropertySet
+  MergeRangepropertySet,
 } = MergeRangeSlice.actions;
 export default MergeRangeSlice.reducer;

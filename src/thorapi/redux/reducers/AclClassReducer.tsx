@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AclClass } from '@thorapi/model/AclClass';
+import { AclClass } from "@thorapi/model/AclClass";
 
 const AclClassSlice = createSlice({
   name: "AclClasss",
@@ -28,28 +27,28 @@ const AclClassSlice = createSlice({
     },
 
     AclClassValueToggled(state, action) {
-      console.log("AclClass TOGGLE")
-      console.warn(JSON.stringify(action))
-      const AclClass:AclClass = state.find((AclClass) => AclClass.id === action.payload.AclClassId);
+      console.log("AclClass TOGGLE");
+      console.warn(JSON.stringify(action));
+      const AclClass: AclClass = state.find(
+        (AclClass) => AclClass.id === action.payload.AclClassId,
+      );
       if (AclClass) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     AclClasspropertySet(state, action) {
-      const AclClass = state.find((AclClass) => AclClass.id === action.payload.AclClassId);
+      const AclClass = state.find(
+        (AclClass) => AclClass.id === action.payload.AclClassId,
+      );
       if (AclClass) {
-      //  AclClass[action.property] = action.payload[action.property];
+        //  AclClass[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  AclClassAdded,
-  AclClassValueToggled,
-  AclClasspropertySet
-} = AclClassSlice.actions;
+export const { AclClassAdded, AclClassValueToggled, AclClasspropertySet } =
+  AclClassSlice.actions;
 export default AclClassSlice.reducer;

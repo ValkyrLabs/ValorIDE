@@ -8,18 +8,19 @@ import { findLast } from "@shared/array";
 import { UsageTrackingService } from "../../services/usage-tracking/UsageTrackingService";
 import { TelecomHub } from "@services/P2P/TelecomHub";
 import { thorapiSettingChanged } from "@utils/thorapi";
+import { normalizeValkyraiHost } from "@utils/serverValkyraiHost";
 
 const FALLBACK_VALKYRAI_BASE =
   (process.env.VITE_basePath && process.env.VITE_basePath.trim()) ||
-  "http://localhost:8080/v1";
+  "https://api-0.valkyrlabs.com/v1";
 
 const resolveValkyraiBasePath = () => {
   const configured = vscode.workspace
     .getConfiguration("valoride.valkyrai")
     .get<string>("host");
   const normalized =
-    (configured && configured.trim().replace(/\/+$/, "")) ||
-    FALLBACK_VALKYRAI_BASE.replace(/\/+$/, "");
+    normalizeValkyraiHost(configured) ||
+    normalizeValkyraiHost(FALLBACK_VALKYRAI_BASE);
   return normalized;
 };
 
@@ -47,6 +48,7 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
   private disposables: vscode.Disposable[] = [];
   controller: Controller;
   private usageTrackingService: UsageTrackingService;
+  private cachedWebviewHtml: string = "";
 
   constructor(
     readonly context: vscode.ExtensionContext,
@@ -137,10 +139,14 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
       localResourceRoots: [this.context.extensionUri],
     };
 
-    webviewView.webview.html =
+    const htmlContent =
       this.context.extensionMode === vscode.ExtensionMode.Development
         ? await this.getHMRHtmlContent(webviewView.webview)
         : this.getHtmlContent(webviewView.webview);
+
+    // Cache the HTML for restoration if webview gets cleared
+    this.cachedWebviewHtml = htmlContent;
+    webviewView.webview.html = htmlContent;
 
     // Initialize bridge services with the active webview
     try {
@@ -185,6 +191,12 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
       webviewView.onDidChangeViewState(
         () => {
           if (this.view?.visible) {
+            // Restore webview HTML if it was cleared (e.g., due to an error or tab switch)
+            if (!webviewView.webview.html && this.cachedWebviewHtml) {
+              console.log("Restoring webview HTML after visibility change");
+              webviewView.webview.html = this.cachedWebviewHtml;
+            }
+
             this.controller.postMessageToWebview({
               type: "action",
               action: "didBecomeVisible",
@@ -199,6 +211,12 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
       webviewView.onDidChangeVisibility(
         () => {
           if (this.view?.visible) {
+            // Restore webview HTML if it was cleared (e.g., due to an error or tab switch)
+            if (!webviewView.webview.html && this.cachedWebviewHtml) {
+              console.log("Restoring webview HTML after visibility change");
+              webviewView.webview.html = this.cachedWebviewHtml;
+            }
+
             this.controller.postMessageToWebview({
               type: "action",
               action: "didBecomeVisible",
@@ -238,14 +256,20 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
             try {
               await this.controller.postStateToWebview();
             } catch (err) {
-              console.error("Failed to post state on mcpMarketplace config change:", err);
+              console.error(
+                "Failed to post state on mcpMarketplace config change:",
+                err,
+              );
             }
           }
           if (e && thorapiSettingChanged(e)) {
             try {
               await this.controller.postStateToWebview();
             } catch (err) {
-              console.error("Failed to post state on thorapi config change:", err);
+              console.error(
+                "Failed to post state on thorapi config change:",
+                err,
+              );
             }
           }
         },

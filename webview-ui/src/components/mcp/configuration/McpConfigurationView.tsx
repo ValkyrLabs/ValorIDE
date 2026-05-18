@@ -73,7 +73,6 @@ const McpConfigurationView = ({ onDone, initialTab }: McpViewProps) => {
             MCP Servers
           </h3>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-
             <VSCodeButton onClick={onDone}>Done</VSCodeButton>
           </div>
         </div>

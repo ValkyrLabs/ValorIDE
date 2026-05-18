@@ -30,7 +30,7 @@ export class EnvironmentService {
     private terminalManager: TerminalManager,
     private fileContextTracker: FileContextTracker,
     private urlContentFetcher: UrlContentFetcher,
-  ) { }
+  ) {}
 
   async loadContext(
     userContent: UserContent,
@@ -136,7 +136,7 @@ export class EnvironmentService {
           interval: 100,
           timeout: 15_000,
         },
-      ).catch(() => { });
+      ).catch(() => {});
     }
 
     // waiting for updated diagnostics lets terminal output be the most up-to-date possible

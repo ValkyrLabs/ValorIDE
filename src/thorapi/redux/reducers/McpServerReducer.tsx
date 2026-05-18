@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpServer } from '@thorapi/model/McpServer';
+import { McpServer } from "@thorapi/model/McpServer";
 
 const McpServerSlice = createSlice({
   name: "McpServers",
@@ -28,28 +27,28 @@ const McpServerSlice = createSlice({
     },
 
     McpServerValueToggled(state, action) {
-      console.log("McpServer TOGGLE")
-      console.warn(JSON.stringify(action))
-      const McpServer:McpServer = state.find((McpServer) => McpServer.id === action.payload.McpServerId);
+      console.log("McpServer TOGGLE");
+      console.warn(JSON.stringify(action));
+      const McpServer: McpServer = state.find(
+        (McpServer) => McpServer.id === action.payload.McpServerId,
+      );
       if (McpServer) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     McpServerpropertySet(state, action) {
-      const McpServer = state.find((McpServer) => McpServer.id === action.payload.McpServerId);
+      const McpServer = state.find(
+        (McpServer) => McpServer.id === action.payload.McpServerId,
+      );
       if (McpServer) {
-      //  McpServer[action.property] = action.payload[action.property];
+        //  McpServer[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  McpServerAdded,
-  McpServerValueToggled,
-  McpServerpropertySet
-} = McpServerSlice.actions;
+export const { McpServerAdded, McpServerValueToggled, McpServerpropertySet } =
+  McpServerSlice.actions;
 export default McpServerSlice.reducer;

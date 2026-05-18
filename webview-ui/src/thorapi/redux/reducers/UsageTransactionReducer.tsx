@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { UsageTransaction } from '@thorapi/model/UsageTransaction';
+import { UsageTransaction } from "@thorapi/model/UsageTransaction";
 
 const UsageTransactionSlice = createSlice({
   name: "UsageTransactions",
@@ -28,20 +27,25 @@ const UsageTransactionSlice = createSlice({
     },
 
     UsageTransactionValueToggled(state, action) {
-      console.log("UsageTransaction TOGGLE")
-      console.warn(JSON.stringify(action))
-      const UsageTransaction:UsageTransaction = state.find((UsageTransaction) => UsageTransaction.id === action.payload.UsageTransactionId);
+      console.log("UsageTransaction TOGGLE");
+      console.warn(JSON.stringify(action));
+      const UsageTransaction: UsageTransaction = state.find(
+        (UsageTransaction) =>
+          UsageTransaction.id === action.payload.UsageTransactionId,
+      );
       if (UsageTransaction) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     UsageTransactionpropertySet(state, action) {
-      const UsageTransaction = state.find((UsageTransaction) => UsageTransaction.id === action.payload.UsageTransactionId);
+      const UsageTransaction = state.find(
+        (UsageTransaction) =>
+          UsageTransaction.id === action.payload.UsageTransactionId,
+      );
       if (UsageTransaction) {
-      //  UsageTransaction[action.property] = action.payload[action.property];
+        //  UsageTransaction[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const UsageTransactionSlice = createSlice({
 export const {
   UsageTransactionAdded,
   UsageTransactionValueToggled,
-  UsageTransactionpropertySet
+  UsageTransactionpropertySet,
 } = UsageTransactionSlice.actions;
 export default UsageTransactionSlice.reducer;

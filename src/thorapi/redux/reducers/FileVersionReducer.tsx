@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { FileVersion } from '@thorapi/model/FileVersion';
+import { FileVersion } from "@thorapi/model/FileVersion";
 
 const FileVersionSlice = createSlice({
   name: "FileVersions",
@@ -28,20 +27,23 @@ const FileVersionSlice = createSlice({
     },
 
     FileVersionValueToggled(state, action) {
-      console.log("FileVersion TOGGLE")
-      console.warn(JSON.stringify(action))
-      const FileVersion:FileVersion = state.find((FileVersion) => FileVersion.id === action.payload.FileVersionId);
+      console.log("FileVersion TOGGLE");
+      console.warn(JSON.stringify(action));
+      const FileVersion: FileVersion = state.find(
+        (FileVersion) => FileVersion.id === action.payload.FileVersionId,
+      );
       if (FileVersion) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     FileVersionpropertySet(state, action) {
-      const FileVersion = state.find((FileVersion) => FileVersion.id === action.payload.FileVersionId);
+      const FileVersion = state.find(
+        (FileVersion) => FileVersion.id === action.payload.FileVersionId,
+      );
       if (FileVersion) {
-      //  FileVersion[action.property] = action.payload[action.property];
+        //  FileVersion[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +52,6 @@ const FileVersionSlice = createSlice({
 export const {
   FileVersionAdded,
   FileVersionValueToggled,
-  FileVersionpropertySet
+  FileVersionpropertySet,
 } = FileVersionSlice.actions;
 export default FileVersionSlice.reducer;

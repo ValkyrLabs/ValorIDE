@@ -11,7 +11,6 @@ import { FaCheckCircle } from "react-icons/fa";
 import { FiUserCheck } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import * as Yup from "yup";
 
 // custom redux implementations go here...
 
@@ -23,13 +22,10 @@ import ErrorModal from "../ErrorModal";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import { storeJwtToken, writeStoredPrincipal } from "../../utils/accessControl";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
-
-const validationSchema = Yup.object().shape({
-  username: Yup.string()
-    .min(4, "User Name must be minimum 4 characters")
-    .max(20, "Name must not be more than 100 characters")
-    .required("User Name is required"),
-});
+import {
+  formatLoginFailureMessage,
+  loginValidationSchema,
+} from "./loginFormModel";
 
 interface FormProps {
   onSubmit?: (
@@ -125,7 +121,7 @@ const Form: React.FC<FormProps> = ({
         <Formik
           validateOnBlur={true}
           initialValues={initialValues}
-          validationSchema={validationSchema}
+          validationSchema={loginValidationSchema}
           onSubmit={handleSubmit}
           enableReinitialize={true}
         >
@@ -176,9 +172,10 @@ const Form: React.FC<FormProps> = ({
                     variant="inline"
                     severity="danger"
                     title="Login Failed"
-                    errorMessage={`"${loginUserResult?.originalArgs?.username}" could not sign in.\n${JSON.stringify(
-                      loginUserResult?.error || "Unknown error",
-                    )}`}
+                    errorMessage={formatLoginFailureMessage({
+                      error: loginUserResult?.error,
+                      username: loginUserResult?.originalArgs?.username,
+                    })}
                     callback={() => {
                       /* dismiss by retrying or editing fields */
                     }}
@@ -261,7 +258,10 @@ const Form: React.FC<FormProps> = ({
                           aria-hidden="true"
                         />
                       )}
-                      <FiUserCheck size={20} style={{ verticalAlign: "middle", marginRight: 8 }} />
+                      <FiUserCheck
+                        size={20}
+                        style={{ verticalAlign: "middle", marginRight: 8 }}
+                      />
                       Sign in
                     </button>
                   </Col>

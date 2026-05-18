@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ChatCompletionRequest } from '@thorapi/model/ChatCompletionRequest';
+import { ChatCompletionRequest } from "@thorapi/model/ChatCompletionRequest";
 
 const ChatCompletionRequestSlice = createSlice({
   name: "ChatCompletionRequests",
@@ -28,20 +27,25 @@ const ChatCompletionRequestSlice = createSlice({
     },
 
     ChatCompletionRequestValueToggled(state, action) {
-      console.log("ChatCompletionRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ChatCompletionRequest:ChatCompletionRequest = state.find((ChatCompletionRequest) => ChatCompletionRequest.id === action.payload.ChatCompletionRequestId);
+      console.log("ChatCompletionRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ChatCompletionRequest: ChatCompletionRequest = state.find(
+        (ChatCompletionRequest) =>
+          ChatCompletionRequest.id === action.payload.ChatCompletionRequestId,
+      );
       if (ChatCompletionRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ChatCompletionRequestpropertySet(state, action) {
-      const ChatCompletionRequest = state.find((ChatCompletionRequest) => ChatCompletionRequest.id === action.payload.ChatCompletionRequestId);
+      const ChatCompletionRequest = state.find(
+        (ChatCompletionRequest) =>
+          ChatCompletionRequest.id === action.payload.ChatCompletionRequestId,
+      );
       if (ChatCompletionRequest) {
-      //  ChatCompletionRequest[action.property] = action.payload[action.property];
+        //  ChatCompletionRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const ChatCompletionRequestSlice = createSlice({
 export const {
   ChatCompletionRequestAdded,
   ChatCompletionRequestValueToggled,
-  ChatCompletionRequestpropertySet
+  ChatCompletionRequestpropertySet,
 } = ChatCompletionRequestSlice.actions;
 export default ChatCompletionRequestSlice.reducer;

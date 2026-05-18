@@ -7,11 +7,30 @@ export type McpServer = {
   config: string;
   status: "connected" | "connecting" | "disconnected";
   error?: string;
+  lastConnectedAt?: string;
+  lastDisconnectedAt?: string;
+  lastStartedAt?: string;
+  logs?: McpServerLogEntry[];
   tools?: McpTool[];
   resources?: McpResource[];
   resourceTemplates?: McpResourceTemplate[];
   disabled?: boolean;
   timeout?: number;
+};
+
+export type McpServerLogLevel = "info" | "warn" | "error";
+
+export type McpServerLogSource =
+  | "lifecycle"
+  | "stderr"
+  | "stdout"
+  | "transport";
+
+export type McpServerLogEntry = {
+  level: McpServerLogLevel;
+  message: string;
+  source: McpServerLogSource;
+  timestamp: string;
 };
 
 export type McpTool = {
@@ -49,23 +68,23 @@ export type McpToolCallResponse = {
   _meta?: Record<string, any>;
   content: Array<
     | {
-      type: "text";
-      text: string;
-    }
+        type: "text";
+        text: string;
+      }
     | {
-      type: "image";
-      data: string;
-      mimeType: string;
-    }
+        type: "image";
+        data: string;
+        mimeType: string;
+      }
     | {
-      type: "resource";
-      resource: {
-        uri: string;
-        mimeType?: string;
-        text?: string;
-        blob?: string;
-      };
-    }
+        type: "resource";
+        resource: {
+          uri: string;
+          mimeType?: string;
+          text?: string;
+          blob?: string;
+        };
+      }
   >;
   isError?: boolean;
 };

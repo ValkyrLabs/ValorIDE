@@ -77,10 +77,16 @@ const copyWasmFiles = {
 const extensionConfig = {
   bundle: true,
   minify: production,
+  treeShaking: true,
   sourcemap: !production,
+  sourcesContent: false,
   logLevel: "silent",
+  drop: production ? ["console", "debugger"] : [],
   define: {
     "process.env.IS_DEV": JSON.stringify(!production),
+    "process.env.NODE_ENV": JSON.stringify(
+      production ? "production" : "development",
+    ),
   },
   plugins: [
     copyWasmFiles,
@@ -100,10 +106,21 @@ const extensionConfig = {
         });
       },
     },
+    {
+      name: "build-stats",
+      setup(build) {
+        build.onEnd((result) => {
+          if (result.errors.length === 0 && production) {
+            const stats = fs.statSync("dist/extension.js");
+            const sizeKB = (stats.size / 1024).toFixed(2);
+            console.log(`✓ Built dist/extension.js (${sizeKB} KB)`);
+          }
+        });
+      },
+    },
   ],
   entryPoints: ["src/extension.ts"],
   format: "cjs",
-  sourcesContent: false,
   platform: "node",
   outfile: "dist/extension.js",
   external: ["vscode"],

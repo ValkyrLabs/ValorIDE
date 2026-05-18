@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ConfirmPasswordResetRequest } from '@thorapi/model/ConfirmPasswordResetRequest';
+import { ConfirmPasswordResetRequest } from "@thorapi/model/ConfirmPasswordResetRequest";
 
 const ConfirmPasswordResetRequestSlice = createSlice({
   name: "ConfirmPasswordResetRequests",
@@ -28,20 +27,28 @@ const ConfirmPasswordResetRequestSlice = createSlice({
     },
 
     ConfirmPasswordResetRequestValueToggled(state, action) {
-      console.log("ConfirmPasswordResetRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ConfirmPasswordResetRequest:ConfirmPasswordResetRequest = state.find((ConfirmPasswordResetRequest) => ConfirmPasswordResetRequest.id === action.payload.ConfirmPasswordResetRequestId);
+      console.log("ConfirmPasswordResetRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ConfirmPasswordResetRequest: ConfirmPasswordResetRequest =
+        state.find(
+          (ConfirmPasswordResetRequest) =>
+            ConfirmPasswordResetRequest.id ===
+            action.payload.ConfirmPasswordResetRequestId,
+        );
       if (ConfirmPasswordResetRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ConfirmPasswordResetRequestpropertySet(state, action) {
-      const ConfirmPasswordResetRequest = state.find((ConfirmPasswordResetRequest) => ConfirmPasswordResetRequest.id === action.payload.ConfirmPasswordResetRequestId);
+      const ConfirmPasswordResetRequest = state.find(
+        (ConfirmPasswordResetRequest) =>
+          ConfirmPasswordResetRequest.id ===
+          action.payload.ConfirmPasswordResetRequestId,
+      );
       if (ConfirmPasswordResetRequest) {
-      //  ConfirmPasswordResetRequest[action.property] = action.payload[action.property];
+        //  ConfirmPasswordResetRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +57,6 @@ const ConfirmPasswordResetRequestSlice = createSlice({
 export const {
   ConfirmPasswordResetRequestAdded,
   ConfirmPasswordResetRequestValueToggled,
-  ConfirmPasswordResetRequestpropertySet
+  ConfirmPasswordResetRequestpropertySet,
 } = ConfirmPasswordResetRequestSlice.actions;
 export default ConfirmPasswordResetRequestSlice.reducer;

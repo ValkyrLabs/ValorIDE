@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { TwoFactorSecret } from '@thorapi/model/TwoFactorSecret';
+import { TwoFactorSecret } from "@thorapi/model/TwoFactorSecret";
 
 const TwoFactorSecretSlice = createSlice({
   name: "TwoFactorSecrets",
@@ -28,20 +27,25 @@ const TwoFactorSecretSlice = createSlice({
     },
 
     TwoFactorSecretValueToggled(state, action) {
-      console.log("TwoFactorSecret TOGGLE")
-      console.warn(JSON.stringify(action))
-      const TwoFactorSecret:TwoFactorSecret = state.find((TwoFactorSecret) => TwoFactorSecret.id === action.payload.TwoFactorSecretId);
+      console.log("TwoFactorSecret TOGGLE");
+      console.warn(JSON.stringify(action));
+      const TwoFactorSecret: TwoFactorSecret = state.find(
+        (TwoFactorSecret) =>
+          TwoFactorSecret.id === action.payload.TwoFactorSecretId,
+      );
       if (TwoFactorSecret) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     TwoFactorSecretpropertySet(state, action) {
-      const TwoFactorSecret = state.find((TwoFactorSecret) => TwoFactorSecret.id === action.payload.TwoFactorSecretId);
+      const TwoFactorSecret = state.find(
+        (TwoFactorSecret) =>
+          TwoFactorSecret.id === action.payload.TwoFactorSecretId,
+      );
       if (TwoFactorSecret) {
-      //  TwoFactorSecret[action.property] = action.payload[action.property];
+        //  TwoFactorSecret[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const TwoFactorSecretSlice = createSlice({
 export const {
   TwoFactorSecretAdded,
   TwoFactorSecretValueToggled,
-  TwoFactorSecretpropertySet
+  TwoFactorSecretpropertySet,
 } = TwoFactorSecretSlice.actions;
 export default TwoFactorSecretSlice.reducer;

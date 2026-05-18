@@ -6,7 +6,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_CHARTSERIES_REQUEST,
-    FETCH_CHARTSERIES_REQUEST,
-    LIST_CHARTSERIES_REQUEST,
-    UPDATE_CHARTSERIES_REQUEST,
-    DELETE_CHARTSERIES_REQUEST,
-
-    addChartSeriesFailure,
-    addChartSeriesSuccess,
-
-    fetchChartSeriesFailure,
-    fetchChartSeriesSuccess,
-    
-    listChartSeriesFailure,
-    listChartSeriesSuccess,
-
-    updateChartSeriesFailure,
-    updateChartSeriesSuccess,
-    
-    deleteChartSeriesFailure,
-    deleteChartSeriesSuccess,
-    
-} from '../actions/ChartSeriesApiAction';
+  ADD_CHARTSERIES_REQUEST,
+  FETCH_CHARTSERIES_REQUEST,
+  LIST_CHARTSERIES_REQUEST,
+  UPDATE_CHARTSERIES_REQUEST,
+  DELETE_CHARTSERIES_REQUEST,
+  addChartSeriesFailure,
+  addChartSeriesSuccess,
+  fetchChartSeriesFailure,
+  fetchChartSeriesSuccess,
+  listChartSeriesFailure,
+  listChartSeriesSuccess,
+  updateChartSeriesFailure,
+  updateChartSeriesSuccess,
+  deleteChartSeriesFailure,
+  deleteChartSeriesSuccess,
+} from "../actions/ChartSeriesApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -59,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: ChartSeries
 */
 
-
-
-export const ChartSeriesMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("ChartSeries MIDDLEWARE: " + JSON.stringify(action) )
+export const ChartSeriesMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("ChartSeries MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

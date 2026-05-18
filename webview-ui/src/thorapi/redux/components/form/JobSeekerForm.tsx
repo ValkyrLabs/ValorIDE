@@ -7,38 +7,43 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  JobSeeker,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddJobSeekerMutation } from '../../services/JobSeekerService';
+import { JobSeeker } from "@thorapi/model";
+
+import { useAddJobSeekerMutation } from "../../services/JobSeekerService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -48,7 +53,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -67,30 +71,44 @@ Profile for a job seeker/candidate interested in opportunities at Valkyr Labs
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        email: Yup.string().email("Invalid email").required("email is required."),
-        fullName: Yup.string().required("fullName is required."),
-        linkedinUrl: Yup.string(),
-        currentRole: Yup.string(),
-        currentCompany: Yup.string(),
-        yearsExperience: asNumber(Yup.number().integer().typeError("yearsExperience must be a number")),
-        openToWork: Yup.boolean(),
-        preferredRoles: Yup.string(),
-        skills: Yup.string(),
-        resumeStorageUrl: Yup.string(),
-        resumeParsedText: Yup.string(),
-        updatedDate: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("updatedDate must be a valid date"),
-        aiReadableProfile: Yup.string(),
-        trashed: Yup.boolean(),
+  email: Yup.string().email("Invalid email"),
+  fullName: Yup.string(),
+  linkedinUrl: Yup.string(),
+  currentRole: Yup.string(),
+  currentCompany: Yup.string(),
+  yearsExperience: asNumber(
+    Yup.number().integer().typeError("yearsExperience must be a number"),
+  ),
+  openToWork: Yup.boolean(),
+  preferredRoles: Yup.string(),
+  skills: Yup.string(),
+  resumeStorageUrl: Yup.string(),
+  resumeParsedText: Yup.string(),
+  createdDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("createdDate must be a valid date"),
+  updatedDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("updatedDate must be a valid date"),
+  aiReadableProfile: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -107,12 +125,18 @@ const JobSeekerForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -120,20 +144,21 @@ const JobSeekerForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<JobSeeker> = {
-          email: '',
-          fullName: '',
-          linkedinUrl: '',
-          currentRole: '',
-          currentCompany: '',
-          yearsExperience: 0,
-          openToWork: false,
-          preferredRoles: '',
-          skills: '',
-          resumeStorageUrl: '',
-          resumeParsedText: '',
-          updatedDate: new Date(),
-          aiReadableProfile: '',
-          trashed: false,
+    email: "",
+    fullName: "",
+    linkedinUrl: "",
+    currentRole: "",
+    currentCompany: "",
+    yearsExperience: 0,
+    openToWork: false,
+    preferredRoles: "",
+    skills: "",
+    resumeStorageUrl: "",
+    resumeParsedText: "",
+    createdDate: new Date(),
+    updatedDate: new Date(),
+    aiReadableProfile: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -148,11 +173,14 @@ const JobSeekerForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new JobSeeker:', grants);
+    console.log("Permissions saved for new JobSeeker:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<JobSeeker>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<JobSeeker>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -163,7 +191,7 @@ const JobSeekerForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `JobSeeker created successfully! Would you like to set permissions for this object?`
+          `JobSeeker created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -171,8 +199,8 @@ const JobSeekerForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create JobSeeker:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create JobSeeker:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -193,44 +221,36 @@ const JobSeekerForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addJobSeekerResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New JobSeeker
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New JobSeeker
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="email" className="nice-form-control">
                       <b>
                         Email:
-                        {touched.email &&
-                         !errors.email && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.email && !errors.email && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="email"
-                            value={values?.email}
-                            placeholder="Email"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="email"
+                        value={values?.email}
+                        placeholder="Email"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -242,28 +262,21 @@ const JobSeekerForm: React.FC = () => {
                     <label htmlFor="fullName" className="nice-form-control">
                       <b>
                         Full Name:
-                        {touched.fullName &&
-                         !errors.fullName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.fullName && !errors.fullName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="fullName"
-                            value={values?.fullName}
-                            placeholder="Full Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="fullName"
+                        value={values?.fullName}
+                        placeholder="Full Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -275,28 +288,21 @@ const JobSeekerForm: React.FC = () => {
                     <label htmlFor="linkedinUrl" className="nice-form-control">
                       <b>
                         Linkedin Url:
-                        {touched.linkedinUrl &&
-                         !errors.linkedinUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.linkedinUrl && !errors.linkedinUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="linkedinUrl"
-                            value={values?.linkedinUrl}
-                            placeholder="Linkedin Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="linkedinUrl"
+                        value={values?.linkedinUrl}
+                        placeholder="Linkedin Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -308,28 +314,21 @@ const JobSeekerForm: React.FC = () => {
                     <label htmlFor="currentRole" className="nice-form-control">
                       <b>
                         Current Role:
-                        {touched.currentRole &&
-                         !errors.currentRole && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.currentRole && !errors.currentRole && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="currentRole"
-                            value={values?.currentRole}
-                            placeholder="Current Role"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="currentRole"
+                        value={values?.currentRole}
+                        placeholder="Current Role"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -338,31 +337,27 @@ const JobSeekerForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="currentCompany" className="nice-form-control">
+                    <label
+                      htmlFor="currentCompany"
+                      className="nice-form-control"
+                    >
                       <b>
                         Current Company:
-                        {touched.currentCompany &&
-                         !errors.currentCompany && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.currentCompany && !errors.currentCompany && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="currentCompany"
-                            value={values?.currentCompany}
-                            placeholder="Current Company"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="currentCompany"
+                        value={values?.currentCompany}
+                        placeholder="Current Company"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -371,39 +366,38 @@ const JobSeekerForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="yearsExperience" className="nice-form-control">
+                    <label
+                      htmlFor="yearsExperience"
+                      className="nice-form-control"
+                    >
                       <b>
                         Years Experience:
-                        {touched.yearsExperience &&
-                         !errors.yearsExperience && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.yearsExperience && !errors.yearsExperience && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="yearsExperience"
-                            type="number"
-                            value={values.yearsExperience || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('yearsExperience', true);
-                              const v = e.target.value;
-                              setFieldValue('yearsExperience', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.yearsExperience
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="yearsExperience"
+                        type="number"
+                        value={values.yearsExperience || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("yearsExperience", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "yearsExperience",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.yearsExperience
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -415,32 +409,25 @@ const JobSeekerForm: React.FC = () => {
                     <label htmlFor="openToWork" className="nice-form-control">
                       <b>
                         Open To Work:
-                        {touched.openToWork &&
-                         !errors.openToWork && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.openToWork && !errors.openToWork && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="openToWork"
-                            name="openToWork"
-                            checked={values.openToWork || false}
-                            onChange={(e) => {
-                              setFieldTouched('openToWork', true);
-                              setFieldValue('openToWork', e.target.checked);
-                            }}
-                            isInvalid={!!errors.openToWork}
-                            className={errors.openToWork ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="openToWork"
+                        name="openToWork"
+                        checked={values.openToWork || false}
+                        onChange={(e) => {
+                          setFieldTouched("openToWork", true);
+                          setFieldValue("openToWork", e.target.checked);
+                        }}
+                        isInvalid={!!errors.openToWork}
+                        className={errors.openToWork ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -449,31 +436,27 @@ const JobSeekerForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="preferredRoles" className="nice-form-control">
+                    <label
+                      htmlFor="preferredRoles"
+                      className="nice-form-control"
+                    >
                       <b>
                         Preferred Roles:
-                        {touched.preferredRoles &&
-                         !errors.preferredRoles && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.preferredRoles && !errors.preferredRoles && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="preferredRoles"
-                            value={values?.preferredRoles}
-                            placeholder="Preferred Roles"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="preferredRoles"
+                        value={values?.preferredRoles}
+                        placeholder="Preferred Roles"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -485,28 +468,21 @@ const JobSeekerForm: React.FC = () => {
                     <label htmlFor="skills" className="nice-form-control">
                       <b>
                         Skills:
-                        {touched.skills &&
-                         !errors.skills && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.skills && !errors.skills && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="skills"
-                            value={values?.skills}
-                            placeholder="Skills"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="skills"
+                        value={values?.skills}
+                        placeholder="Skills"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -515,31 +491,28 @@ const JobSeekerForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="resumeStorageUrl" className="nice-form-control">
+                    <label
+                      htmlFor="resumeStorageUrl"
+                      className="nice-form-control"
+                    >
                       <b>
                         Resume Storage Url:
                         {touched.resumeStorageUrl &&
-                         !errors.resumeStorageUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.resumeStorageUrl && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="resumeStorageUrl"
-                            value={values?.resumeStorageUrl}
-                            placeholder="Resume Storage Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="resumeStorageUrl"
+                        value={values?.resumeStorageUrl}
+                        placeholder="Resume Storage Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -548,31 +521,28 @@ const JobSeekerForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="resumeParsedText" className="nice-form-control">
+                    <label
+                      htmlFor="resumeParsedText"
+                      className="nice-form-control"
+                    >
                       <b>
                         Resume Parsed Text:
                         {touched.resumeParsedText &&
-                         !errors.resumeParsedText && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.resumeParsedText && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="resumeParsedText"
-                            value={values?.resumeParsedText}
-                            placeholder="Resume Parsed Text"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="resumeParsedText"
+                        value={values?.resumeParsedText}
+                        placeholder="Resume Parsed Text"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -581,41 +551,84 @@ const JobSeekerForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="updatedDate" className="nice-form-control">
+                    <label htmlFor="createdDate" className="nice-form-control">
                       <b>
-                        Updated Date:
-                        {touched.updatedDate &&
-                         !errors.updatedDate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        Created Date:
+                        {touched.createdDate && !errors.createdDate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="createdDate"
+                        type="datetime-local"
+                        value={
+                          values.createdDate
+                            ? new Date(values.createdDate)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("createdDate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "createdDate",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.createdDate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
+                      <ErrorMessage
+                        className="error"
+                        name="createdDate"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="updatedDate" className="nice-form-control">
+                      <b>
+                        Updated Date:
+                        {touched.updatedDate && !errors.updatedDate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
+                        )}
+                      </b>
 
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="updatedDate"
-                            type="datetime-local"
-                            value={values.updatedDate ? 
-                              new Date(values.updatedDate).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('updatedDate', true);
-                              const v = e.target.value;
-                              setFieldValue('updatedDate', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.updatedDate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="updatedDate"
+                        type="datetime-local"
+                        value={
+                          values.updatedDate
+                            ? new Date(values.updatedDate)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("updatedDate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "updatedDate",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.updatedDate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -624,31 +637,28 @@ const JobSeekerForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="aiReadableProfile" className="nice-form-control">
+                    <label
+                      htmlFor="aiReadableProfile"
+                      className="nice-form-control"
+                    >
                       <b>
                         Ai Readable Profile:
                         {touched.aiReadableProfile &&
-                         !errors.aiReadableProfile && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.aiReadableProfile && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="aiReadableProfile"
-                            value={values?.aiReadableProfile}
-                            placeholder="Ai Readable Profile"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="aiReadableProfile"
+                        value={values?.aiReadableProfile}
+                        placeholder="Ai Readable Profile"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -660,32 +670,25 @@ const JobSeekerForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -695,45 +698,58 @@ const JobSeekerForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New JobSeeker
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New JobSeeker
+                    </CoolButton>
 
-                  {(addJobSeekerResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addJobSeekerResult as any).error ? (addJobSeekerResult as any).error.data : (addJobSeekerResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addJobSeekerResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addJobSeekerResult as any).error
+                              ? (addJobSeekerResult as any).error.data
+                              : (addJobSeekerResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addJobSeekerResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addJobSeekerResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addJobSeekerResult: {JSON.stringify(addJobSeekerResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addJobSeekerResult: {JSON.stringify(addJobSeekerResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -753,8 +769,5 @@ const JobSeekerForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default JobSeekerForm;
-

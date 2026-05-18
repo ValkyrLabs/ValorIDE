@@ -7,39 +7,43 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  McpServer,
-  McpServerStatusEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddMcpServerMutation } from '../../services/McpServerService';
+import { McpServer, McpServerStatusEnum } from "@thorapi/model";
+
+import { useAddMcpServerMutation } from "../../services/McpServerService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -49,7 +53,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -64,28 +67,24 @@ McpServer
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const StatusValidation = () => {
-  return [
-    'connected',
-    'connecting',
-    'disconnected',
-  ];
+  return ["connected", "connecting", "disconnected"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        name: Yup.string().required("name is required."),
-        config: Yup.string().required("config is required."),
-      status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        .required("status is required."),
-        error: Yup.string(),
-        disabled: Yup.boolean(),
-        trashed: Yup.boolean(),
+  name: Yup.string(),
+  config: Yup.string(),
+  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
+  error: Yup.string(),
+  disabled: Yup.boolean(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -102,12 +101,18 @@ const McpServerForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -115,12 +120,12 @@ const McpServerForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<McpServer> = {
-          name: '',
-          config: '',
-        status: undefined,
-          error: '',
-          disabled: false,
-          trashed: false,
+    name: "",
+    config: "",
+    status: undefined,
+    error: "",
+    disabled: false,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -135,11 +140,14 @@ const McpServerForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new McpServer:', grants);
+    console.log("Permissions saved for new McpServer:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<McpServer>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<McpServer>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -150,7 +158,7 @@ const McpServerForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `McpServer created successfully! Would you like to set permissions for this object?`
+          `McpServer created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -158,8 +166,8 @@ const McpServerForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create McpServer:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create McpServer:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -180,44 +188,36 @@ const McpServerForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addMcpServerResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New McpServer
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New McpServer
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.name && !errors.name && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="name"
+                        value={values?.name}
+                        placeholder="Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -229,28 +229,21 @@ const McpServerForm: React.FC = () => {
                     <label htmlFor="config" className="nice-form-control">
                       <b>
                         Config:
-                        {touched.config &&
-                         !errors.config && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.config && !errors.config && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="config"
-                            value={values?.config}
-                            placeholder="Config"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="config"
+                        value={values?.config}
+                        placeholder="Config"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -262,30 +255,30 @@ const McpServerForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="status"
-                          value={values.status || ''}
-                          className={
-                            errors.status
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Status" />
-                          <StatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="status"
+                        value={values.status || ""}
+                        className={
+                          errors.status
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("status", true);
+                          setFieldValue("status", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Status" />
+                        <StatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -297,28 +290,21 @@ const McpServerForm: React.FC = () => {
                     <label htmlFor="error" className="nice-form-control">
                       <b>
                         Error:
-                        {touched.error &&
-                         !errors.error && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.error && !errors.error && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="error"
-                            value={values?.error}
-                            placeholder="Error"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="error"
+                        value={values?.error}
+                        placeholder="Error"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -330,32 +316,25 @@ const McpServerForm: React.FC = () => {
                     <label htmlFor="disabled" className="nice-form-control">
                       <b>
                         Disabled:
-                        {touched.disabled &&
-                         !errors.disabled && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.disabled && !errors.disabled && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="disabled"
-                            name="disabled"
-                            checked={values.disabled || false}
-                            onChange={(e) => {
-                              setFieldTouched('disabled', true);
-                              setFieldValue('disabled', e.target.checked);
-                            }}
-                            isInvalid={!!errors.disabled}
-                            className={errors.disabled ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="disabled"
+                        name="disabled"
+                        checked={values.disabled || false}
+                        onChange={(e) => {
+                          setFieldTouched("disabled", true);
+                          setFieldValue("disabled", e.target.checked);
+                        }}
+                        isInvalid={!!errors.disabled}
+                        className={errors.disabled ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -367,32 +346,25 @@ const McpServerForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -402,45 +374,58 @@ const McpServerForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New McpServer
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New McpServer
+                    </CoolButton>
 
-                  {(addMcpServerResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addMcpServerResult as any).error ? (addMcpServerResult as any).error.data : (addMcpServerResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addMcpServerResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addMcpServerResult as any).error
+                              ? (addMcpServerResult as any).error.data
+                              : (addMcpServerResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addMcpServerResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addMcpServerResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addMcpServerResult: {JSON.stringify(addMcpServerResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addMcpServerResult: {JSON.stringify(addMcpServerResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -472,15 +457,12 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value='connected' label="Connected" />
-      <option value='connecting' label="Connecting" />
-      <option value='disconnected' label="Disconnected" />
+      <option value="connected" label="Connected" />
+      <option value="connecting" label="Connecting" />
+      <option value="disconnected" label="Disconnected" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default McpServerForm;
-

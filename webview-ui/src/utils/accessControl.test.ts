@@ -15,11 +15,11 @@ describe("accessControl role handling", () => {
     const principal = {
       id: "user-123",
       username: "demo",
-      roleList: [
+      roles: [
         { roleName: "ADMIN", id: "uuid-admin" },
         { roleName: "EVERYONE", id: "uuid-everyone" },
       ],
-      authorityList: [],
+      grantedAuthorities: [],
     };
 
     writeStoredPrincipal(principal as any);
@@ -28,10 +28,10 @@ describe("accessControl role handling", () => {
     expect(storedRaw).toBeTruthy();
 
     const stored = storedRaw ? JSON.parse(storedRaw) : null;
-    expect(stored?.roleList).toEqual(["ADMIN", "EVERYONE"]);
+    expect(stored?.roles).toEqual(["ADMIN", "EVERYONE"]);
 
     const loaded = readStoredPrincipal();
-    expect(loaded?.roleList).toEqual(["ADMIN", "EVERYONE"]);
+    expect(loaded?.roles).toEqual(["ADMIN", "EVERYONE"]);
 
     const roles = getPrincipalRoles(loaded);
     expect(roles).toEqual(

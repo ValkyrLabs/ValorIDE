@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Rating } from '@thorapi/model/Rating';
+import { Rating } from "@thorapi/model/Rating";
 
 const RatingSlice = createSlice({
   name: "Ratings",
@@ -28,28 +27,28 @@ const RatingSlice = createSlice({
     },
 
     RatingValueToggled(state, action) {
-      console.log("Rating TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Rating:Rating = state.find((Rating) => Rating.id === action.payload.RatingId);
+      console.log("Rating TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Rating: Rating = state.find(
+        (Rating) => Rating.id === action.payload.RatingId,
+      );
       if (Rating) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     RatingpropertySet(state, action) {
-      const Rating = state.find((Rating) => Rating.id === action.payload.RatingId);
+      const Rating = state.find(
+        (Rating) => Rating.id === action.payload.RatingId,
+      );
       if (Rating) {
-      //  Rating[action.property] = action.payload[action.property];
+        //  Rating[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  RatingAdded,
-  RatingValueToggled,
-  RatingpropertySet
-} = RatingSlice.actions;
+export const { RatingAdded, RatingValueToggled, RatingpropertySet } =
+  RatingSlice.actions;
 export default RatingSlice.reducer;

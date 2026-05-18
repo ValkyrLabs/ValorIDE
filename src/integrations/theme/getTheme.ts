@@ -2,6 +2,14 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs/promises";
 import { convertTheme } from "monaco-vscode-textmate-theme-converter/lib/cjs";
+import darkModernTheme from "./default-themes/dark_modern.json";
+import darkPlusTheme from "./default-themes/dark_plus.json";
+import darkVsTheme from "./default-themes/dark_vs.json";
+import hcBlackTheme from "./default-themes/hc_black.json";
+import hcLightTheme from "./default-themes/hc_light.json";
+import lightModernTheme from "./default-themes/light_modern.json";
+import lightPlusTheme from "./default-themes/light_plus.json";
+import lightVsTheme from "./default-themes/light_vs.json";
 
 const defaultThemes: Record<string, string> = {
   "Default Dark Modern": "dark_modern",
@@ -20,6 +28,26 @@ const defaultThemes: Record<string, string> = {
   "Visual Studio Light": "light_vs",
 };
 
+const defaultThemePathCandidates: string[][] = [
+  ["src", "integrations", "theme", "default-themes"],
+  ["src", "integrations", "theme-defaults", "themes"], // legacy path
+  ["out", "integrations", "theme", "default-themes"],
+  ["out", "integrations", "theme-defaults", "themes"], // legacy path
+  ["dist", "integrations", "theme", "default-themes"],
+  ["dist", "integrations", "theme-defaults", "themes"], // legacy path
+];
+
+const bundledDefaultThemes: Record<string, unknown> = {
+  "dark_modern.json": darkModernTheme,
+  "dark_plus.json": darkPlusTheme,
+  "dark_vs.json": darkVsTheme,
+  "hc_black.json": hcBlackTheme,
+  "hc_light.json": hcLightTheme,
+  "light_modern.json": lightModernTheme,
+  "light_plus.json": lightPlusTheme,
+  "light_vs.json": lightVsTheme,
+};
+
 function parseThemeString(themeString: string | undefined): any {
   themeString = themeString
     ?.split("\n")
@@ -28,6 +56,42 @@ function parseThemeString(themeString: string | undefined): any {
     })
     .join("\n");
   return JSON.parse(themeString ?? "{}");
+}
+
+function normalizeDefaultThemeFilename(filename: string): string {
+  const withoutPrefix = filename.replace(/^\.?[\\/]/, "");
+  return path.basename(withoutPrefix);
+}
+
+async function readDefaultThemeFile(filename: string): Promise<string> {
+  const normalizedFilename = normalizeDefaultThemeFilename(filename);
+  const extensionRoot = getExtensionUri().fsPath;
+
+  for (const pathParts of defaultThemePathCandidates) {
+    const candidatePath = path.join(
+      extensionRoot,
+      ...pathParts,
+      normalizedFilename,
+    );
+    try {
+      return await fs.readFile(candidatePath, "utf-8");
+    } catch (error) {
+      const code = (error as NodeJS.ErrnoException).code;
+      if (code === "ENOENT" || code === "ENOTDIR") {
+        continue;
+      }
+      throw error;
+    }
+  }
+
+  const bundledTheme = bundledDefaultThemes[normalizedFilename];
+  if (bundledTheme) {
+    return JSON.stringify(bundledTheme);
+  }
+
+  throw new Error(
+    `Default theme file not found in packaged extension: ${normalizedFilename}`,
+  );
 }
 
 export async function getTheme() {
@@ -55,34 +119,14 @@ export async function getTheme() {
 
     if (currentTheme === undefined && defaultThemes[colorTheme]) {
       const filename = `${defaultThemes[colorTheme]}.json`;
-      currentTheme = await fs.readFile(
-        path.join(
-          getExtensionUri().fsPath,
-          "src",
-          "integrations",
-          "theme",
-          "default-themes",
-          filename,
-        ),
-        "utf-8",
-      );
+      currentTheme = await readDefaultThemeFile(filename);
     }
 
     // Strip comments from theme
     let parsed = parseThemeString(currentTheme);
 
     if (parsed.include) {
-      const includeThemeString = await fs.readFile(
-        path.join(
-          getExtensionUri().fsPath,
-          "src",
-          "integrations",
-          "theme",
-          "default-themes",
-          parsed.include,
-        ),
-        "utf-8",
-      );
+      const includeThemeString = await readDefaultThemeFile(parsed.include);
       const includeTheme = parseThemeString(includeThemeString);
       parsed = mergeJson(parsed, includeTheme);
     }

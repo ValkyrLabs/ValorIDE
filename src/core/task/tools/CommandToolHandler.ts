@@ -54,7 +54,7 @@ export class CommandToolHandler extends BaseToolHandler {
               this.removeClosingTag("command", command, partial),
               partial,
             )
-            .catch(() => { });
+            .catch(() => {});
         }
         return { shouldContinue: false };
       } else {
@@ -139,10 +139,10 @@ export class CommandToolHandler extends BaseToolHandler {
           const { response, text, images } = await this.context.ask(
             "command",
             command +
-            (this.context.shouldAutoApproveTool(block.name) &&
+              (this.context.shouldAutoApproveTool(block.name) &&
               requiresApprovalPerLLM
-              ? COMMAND_REQ_APP_STRING
-              : ""),
+                ? COMMAND_REQ_APP_STRING
+                : ""),
             false,
           );
           const normalizedText = text?.trim().toLowerCase();
@@ -292,7 +292,8 @@ export class CommandToolHandler extends BaseToolHandler {
       // Format the result similar to terminal output
       return [
         false,
-        `Command executed${wasTerminated ? " (terminated after 30s)" : ""} with exit code ${result.exitCode
+        `Command executed${wasTerminated ? " (terminated after 30s)" : ""} with exit code ${
+          result.exitCode
         }.${filteredOutput.length > 0 ? `\nOutput:\n${filteredOutput}` : ""}`,
       ];
     } catch (error) {
@@ -439,9 +440,10 @@ export class CommandToolHandler extends BaseToolHandler {
       return [
         true,
         formatResponse.toolResult(
-          `Command is still running in the user's terminal.${filteredOutput.length > 0
-            ? `\nHere's the output so far:\n${filteredOutput}`
-            : ""
+          `Command is still running in the user's terminal.${
+            filteredOutput.length > 0
+              ? `\nHere's the output so far:\n${filteredOutput}`
+              : ""
           }\n\nThe user provided the following feedback:\n<feedback>\n${userFeedback.text}\n</feedback>`,
           userFeedback.images,
         ),
@@ -456,9 +458,10 @@ export class CommandToolHandler extends BaseToolHandler {
     } else {
       return [
         false,
-        `Command is still running in the user's terminal.${filteredOutput.length > 0
-          ? `\nHere's the output so far:\n${filteredOutput}`
-          : ""
+        `Command is still running in the user's terminal.${
+          filteredOutput.length > 0
+            ? `\nHere's the output so far:\n${filteredOutput}`
+            : ""
         }\n\nYou will be updated on the terminal status and new output in the future.`,
       ];
     }

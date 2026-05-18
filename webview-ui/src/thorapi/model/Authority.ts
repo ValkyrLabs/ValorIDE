@@ -20,15 +20,15 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { Principal, PrincipalFromJSON, PrincipalToJSON } from "./";
 
 // thorapi
 
@@ -37,110 +37,120 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface Authority
  */
-export type Authority  = DataObject & {
-    /**
-     * 
-     * @type {string}
-     * @memberof Authority
-     */
-    username: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Authority
-     */
-    authority: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Authority
-     */
-    principalId?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof Authority
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof Authority
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof Authority
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof Authority
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof Authority
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof Authority
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof Authority
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof Authority
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof Authority
-     */
-    trashed?: boolean;
-}
+export type Authority = DataObject & {
+  /**
+   *
+   * @type {Principal}
+   * @memberof Authority
+   */
+  principal?: Principal;
+  /**
+   *
+   * @type {string}
+   * @memberof Authority
+   */
+  username?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Authority
+   */
+  authority?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof Authority
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof Authority
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof Authority
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof Authority
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof Authority
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof Authority
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof Authority
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof Authority
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof Authority
+   */
+  trashed?: boolean;
+};
 
 export function AuthorityFromJSON(json: any): Authority {
-    return {
-        ...DataObjectFromJSON(json),
-        'username': json['username'],
-        'authority': json['authority'],
-        'principalId': !exists(json, 'principalId') ? undefined : json['principalId'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    principal: !exists(json, "principal")
+      ? undefined
+      : PrincipalFromJSON(json["principal"]),
+    username: !exists(json, "username") ? undefined : json["username"],
+    authority: !exists(json, "authority") ? undefined : json["authority"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function AuthorityToJSON(value?: Authority): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'username': value.username,
-        'authority': value.authority,
-        'principalId': value.principalId,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    principal: PrincipalToJSON(value.principal),
+    username: value.username,
+    authority: value.authority,
+    trashed: value.trashed,
+  };
 }
-
-

@@ -48,7 +48,7 @@ const ChatView = ({
       const message = e.data;
       if (message?.type === "selectedImages" && Array.isArray(message.images)) {
         setSelectedImages((prev) =>
-          [...prev, ...message.images].slice(0, MAX_IMAGES_PER_MESSAGE)
+          [...prev, ...message.images].slice(0, MAX_IMAGES_PER_MESSAGE),
         );
       }
     };
@@ -68,7 +68,7 @@ const ChatView = ({
     messages,
     containsValorIDEMention: useCallback(
       (text) => text?.toLowerCase?.().includes("@valoride") === true,
-      []
+      [],
     ),
     clearChatInput,
   });
@@ -109,11 +109,11 @@ const ChatView = ({
   const task = useMemo(() => messages.at(0), [messages]);
   const modifiedMessages = useMemo(
     () => combineApiRequests(combineCommandSequences(messages.slice(1))),
-    [messages]
+    [messages],
   );
   const apiMetrics = useMemo(
     () => getApiMetrics(modifiedMessages),
-    [modifiedMessages]
+    [modifiedMessages],
   );
   // Global balance fetch for status strip; skip until JWT is present
   const { data: balanceData } = useGetBalanceResponsesQuery(undefined, {
@@ -128,7 +128,7 @@ const ChatView = ({
     const getTotalTokensFromApiReqMessage = (msg) => {
       if (!msg.text) return 0;
       const { tokensIn, tokensOut, cacheWrites, cacheReads } = JSON.parse(
-        msg.text
+        msg.text,
       );
       return (
         (tokensIn || 0) +

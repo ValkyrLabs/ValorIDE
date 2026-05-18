@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Reaction } from '@thorapi/model/Reaction';
+import { Reaction } from "@thorapi/model/Reaction";
 
 const ReactionSlice = createSlice({
   name: "Reactions",
@@ -28,28 +27,28 @@ const ReactionSlice = createSlice({
     },
 
     ReactionValueToggled(state, action) {
-      console.log("Reaction TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Reaction:Reaction = state.find((Reaction) => Reaction.id === action.payload.ReactionId);
+      console.log("Reaction TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Reaction: Reaction = state.find(
+        (Reaction) => Reaction.id === action.payload.ReactionId,
+      );
       if (Reaction) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ReactionpropertySet(state, action) {
-      const Reaction = state.find((Reaction) => Reaction.id === action.payload.ReactionId);
+      const Reaction = state.find(
+        (Reaction) => Reaction.id === action.payload.ReactionId,
+      );
       if (Reaction) {
-      //  Reaction[action.property] = action.payload[action.property];
+        //  Reaction[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  ReactionAdded,
-  ReactionValueToggled,
-  ReactionpropertySet
-} = ReactionSlice.actions;
+export const { ReactionAdded, ReactionValueToggled, ReactionpropertySet } =
+  ReactionSlice.actions;
 export default ReactionSlice.reducer;

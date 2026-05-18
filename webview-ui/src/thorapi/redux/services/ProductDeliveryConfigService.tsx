@@ -7,43 +7,68 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { ProductDeliveryConfig } from '@thorapi/model/ProductDeliveryConfig'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { ProductDeliveryConfig } from "@thorapi/model/ProductDeliveryConfig";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type ProductDeliveryConfigResponse = ProductDeliveryConfig[]
+type ProductDeliveryConfigResponse = ProductDeliveryConfig[];
+
+const toProductDeliveryConfigList = (
+  result: unknown,
+): ProductDeliveryConfigResponse => {
+  if (Array.isArray(result)) {
+    return result as ProductDeliveryConfigResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as ProductDeliveryConfigResponse)
+    : [];
+};
 
 export const ProductDeliveryConfigService = createApi({
-  reducerPath: 'ProductDeliveryConfig', // This should remain unique
+  reducerPath: "ProductDeliveryConfig", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['ProductDeliveryConfig'],
+  tagTypes: ["ProductDeliveryConfig"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getProductDeliveryConfigsPaged: build.query<ProductDeliveryConfigResponse, { page: number; size?: number; example?: Partial<ProductDeliveryConfig> }>({
+    getProductDeliveryConfigsPaged: build.query<
+      ProductDeliveryConfigResponse,
+      { page: number; size?: number; example?: Partial<ProductDeliveryConfig> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ProductDeliveryConfig?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ProductDeliveryConfig?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'ProductDeliveryConfig' as const, id })),
-              { type: 'ProductDeliveryConfig', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toProductDeliveryConfigList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "ProductDeliveryConfig" as const, id })),
+          { type: "ProductDeliveryConfig", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getProductDeliveryConfigs: build.query<ProductDeliveryConfigResponse, { example?: Partial<ProductDeliveryConfig> } | void>({
+    getProductDeliveryConfigs: build.query<
+      ProductDeliveryConfigResponse,
+      { example?: Partial<ProductDeliveryConfig> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +76,115 @@ export const ProductDeliveryConfigService = createApi({
         }
         return `ProductDeliveryConfig`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'ProductDeliveryConfig' as const, id })),
-              { type: 'ProductDeliveryConfig', id: 'LIST' },
-            ]
-          : [{ type: 'ProductDeliveryConfig', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toProductDeliveryConfigList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "ProductDeliveryConfig" as const, id })),
+          { type: "ProductDeliveryConfig", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
-    addProductDeliveryConfig: build.mutation<ProductDeliveryConfig, Partial<ProductDeliveryConfig>>({
+    addProductDeliveryConfig: build.mutation<
+      ProductDeliveryConfig,
+      Partial<ProductDeliveryConfig>
+    >({
       query: (body) => ({
         url: `ProductDeliveryConfig`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'ProductDeliveryConfig', id: 'LIST' }],
+      invalidatesTags: [{ type: "ProductDeliveryConfig", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getProductDeliveryConfig: build.query<ProductDeliveryConfig, string>({
       query: (id) => `ProductDeliveryConfig/${id}`,
-      providesTags: (result, error, id) => [{ type: 'ProductDeliveryConfig', id }],
+      providesTags: (result, error, id) => [
+        { type: "ProductDeliveryConfig", id },
+      ],
     }),
 
     // 5) Update
-    updateProductDeliveryConfig: build.mutation<void, Pick<ProductDeliveryConfig, 'id'> & Partial<ProductDeliveryConfig>>({
+    updateProductDeliveryConfig: build.mutation<
+      void,
+      Pick<ProductDeliveryConfig, "id"> & Partial<ProductDeliveryConfig>
+    >({
       query: ({ id, ...patch }) => ({
         url: `ProductDeliveryConfig/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            ProductDeliveryConfigService.util.updateQueryData('getProductDeliveryConfig', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            ProductDeliveryConfigService.util.updateQueryData(
+              "getProductDeliveryConfig",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<ProductDeliveryConfig, 'id'>) => [
-        { type: 'ProductDeliveryConfig', id },
-        { type: 'ProductDeliveryConfig', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<ProductDeliveryConfig, "id">,
+      ) => [
+        { type: "ProductDeliveryConfig", id },
+        { type: "ProductDeliveryConfig", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteProductDeliveryConfig: build.mutation<{ success: boolean; id: string }, number>({
+    deleteProductDeliveryConfig: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `ProductDeliveryConfig/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'ProductDeliveryConfig', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "ProductDeliveryConfig", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteProductDeliveryConfigCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteProductDeliveryConfigCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `ProductDeliveryConfig/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ProductDeliveryConfig', id }, { type: 'ProductDeliveryConfig', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "ProductDeliveryConfig", id },
+        { type: "ProductDeliveryConfig", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetProductDeliveryConfigsPagedQuery`
 export const {
-  useGetProductDeliveryConfigsPagedQuery,     // immediate fetch
+  useGetProductDeliveryConfigsPagedQuery, // immediate fetch
   useLazyGetProductDeliveryConfigsPagedQuery, // lazy fetch
   useGetProductDeliveryConfigQuery,
   useGetProductDeliveryConfigsQuery,
@@ -138,4 +192,4 @@ export const {
   useUpdateProductDeliveryConfigMutation,
   useDeleteProductDeliveryConfigMutation,
   useDeleteProductDeliveryConfigCascadeMutation,
-} = ProductDeliveryConfigService
+} = ProductDeliveryConfigService;

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { DownloadAccess } from '@thorapi/model/DownloadAccess';
+import { DownloadAccess } from "@thorapi/model/DownloadAccess";
 
 const DownloadAccessSlice = createSlice({
   name: "DownloadAccesss",
@@ -28,20 +27,25 @@ const DownloadAccessSlice = createSlice({
     },
 
     DownloadAccessValueToggled(state, action) {
-      console.log("DownloadAccess TOGGLE")
-      console.warn(JSON.stringify(action))
-      const DownloadAccess:DownloadAccess = state.find((DownloadAccess) => DownloadAccess.id === action.payload.DownloadAccessId);
+      console.log("DownloadAccess TOGGLE");
+      console.warn(JSON.stringify(action));
+      const DownloadAccess: DownloadAccess = state.find(
+        (DownloadAccess) =>
+          DownloadAccess.id === action.payload.DownloadAccessId,
+      );
       if (DownloadAccess) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     DownloadAccesspropertySet(state, action) {
-      const DownloadAccess = state.find((DownloadAccess) => DownloadAccess.id === action.payload.DownloadAccessId);
+      const DownloadAccess = state.find(
+        (DownloadAccess) =>
+          DownloadAccess.id === action.payload.DownloadAccessId,
+      );
       if (DownloadAccess) {
-      //  DownloadAccess[action.property] = action.payload[action.property];
+        //  DownloadAccess[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const DownloadAccessSlice = createSlice({
 export const {
   DownloadAccessAdded,
   DownloadAccessValueToggled,
-  DownloadAccesspropertySet
+  DownloadAccesspropertySet,
 } = DownloadAccessSlice.actions;
 export default DownloadAccessSlice.reducer;

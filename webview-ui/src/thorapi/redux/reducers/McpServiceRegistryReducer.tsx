@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpServiceRegistry } from '@thorapi/model/McpServiceRegistry';
+import { McpServiceRegistry } from "@thorapi/model/McpServiceRegistry";
 
 const McpServiceRegistrySlice = createSlice({
   name: "McpServiceRegistrys",
@@ -28,20 +27,25 @@ const McpServiceRegistrySlice = createSlice({
     },
 
     McpServiceRegistryValueToggled(state, action) {
-      console.log("McpServiceRegistry TOGGLE")
-      console.warn(JSON.stringify(action))
-      const McpServiceRegistry:McpServiceRegistry = state.find((McpServiceRegistry) => McpServiceRegistry.id === action.payload.McpServiceRegistryId);
+      console.log("McpServiceRegistry TOGGLE");
+      console.warn(JSON.stringify(action));
+      const McpServiceRegistry: McpServiceRegistry = state.find(
+        (McpServiceRegistry) =>
+          McpServiceRegistry.id === action.payload.McpServiceRegistryId,
+      );
       if (McpServiceRegistry) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     McpServiceRegistrypropertySet(state, action) {
-      const McpServiceRegistry = state.find((McpServiceRegistry) => McpServiceRegistry.id === action.payload.McpServiceRegistryId);
+      const McpServiceRegistry = state.find(
+        (McpServiceRegistry) =>
+          McpServiceRegistry.id === action.payload.McpServiceRegistryId,
+      );
       if (McpServiceRegistry) {
-      //  McpServiceRegistry[action.property] = action.payload[action.property];
+        //  McpServiceRegistry[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const McpServiceRegistrySlice = createSlice({
 export const {
   McpServiceRegistryAdded,
   McpServiceRegistryValueToggled,
-  McpServiceRegistrypropertySet
+  McpServiceRegistrypropertySet,
 } = McpServiceRegistrySlice.actions;
 export default McpServiceRegistrySlice.reducer;

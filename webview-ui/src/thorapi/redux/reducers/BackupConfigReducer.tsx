@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { BackupConfig } from '@thorapi/model/BackupConfig';
+import { BackupConfig } from "@thorapi/model/BackupConfig";
 
 const BackupConfigSlice = createSlice({
   name: "BackupConfigs",
@@ -28,20 +27,23 @@ const BackupConfigSlice = createSlice({
     },
 
     BackupConfigValueToggled(state, action) {
-      console.log("BackupConfig TOGGLE")
-      console.warn(JSON.stringify(action))
-      const BackupConfig:BackupConfig = state.find((BackupConfig) => BackupConfig.id === action.payload.BackupConfigId);
+      console.log("BackupConfig TOGGLE");
+      console.warn(JSON.stringify(action));
+      const BackupConfig: BackupConfig = state.find(
+        (BackupConfig) => BackupConfig.id === action.payload.BackupConfigId,
+      );
       if (BackupConfig) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     BackupConfigpropertySet(state, action) {
-      const BackupConfig = state.find((BackupConfig) => BackupConfig.id === action.payload.BackupConfigId);
+      const BackupConfig = state.find(
+        (BackupConfig) => BackupConfig.id === action.payload.BackupConfigId,
+      );
       if (BackupConfig) {
-      //  BackupConfig[action.property] = action.payload[action.property];
+        //  BackupConfig[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +52,6 @@ const BackupConfigSlice = createSlice({
 export const {
   BackupConfigAdded,
   BackupConfigValueToggled,
-  BackupConfigpropertySet
+  BackupConfigpropertySet,
 } = BackupConfigSlice.actions;
 export default BackupConfigSlice.reducer;

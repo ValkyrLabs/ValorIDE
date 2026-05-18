@@ -4,6 +4,7 @@ export type ApiProvider =
   | "anthropic"
   | "openrouter"
   | "moonshot"
+  | "minimax"
   | "bedrock"
   | "vertex"
   | "openai"
@@ -42,6 +43,8 @@ export interface ApiHandlerOptions {
   openRouterProviderSorting?: string;
   moonshotApiKey?: string;
   moonshotApiLine?: string; // "international" | "china"
+  minimaxApiKey?: string;
+  minimaxApiLine?: string; // "international" | "china"
   awsAccessKey?: string;
   awsSecretKey?: string;
   awsSessionToken?: string;
@@ -60,6 +63,14 @@ export interface ApiHandlerOptions {
   ollamaModelId?: string;
   ollamaBaseUrl?: string;
   ollamaApiOptionsCtxNum?: string;
+  ollamaRequestTimeout?: string; // milliseconds, e.g. "60000"
+  ollamaKeepAlive?: string; // e.g. "5m"
+  ollamaTemperature?: string; // e.g. "0.7"
+  ollamaTopP?: string; // e.g. "0.9"
+  ollamaTopK?: string; // e.g. "40"
+  ollamaRepeatPenalty?: string; // e.g. "1.1"
+  ollamaNumPredict?: string; // max tokens to predict
+  ollamaMirostat?: string; // 0 = disabled, 1 or 2 = enabled
   lmStudioModelId?: string;
   lmStudioBaseUrl?: string;
   geminiApiKey?: string;
@@ -132,9 +143,56 @@ export interface OpenAiCompatibleModelInfo extends ModelInfo {
 // Anthropic
 // https://docs.anthropic.com/en/docs/about-valoride/models // prices updated 2025-01-02
 export type AnthropicModelId = keyof typeof anthropicModels;
-export const anthropicDefaultModelId: AnthropicModelId =
-  "claude-sonnet-4-5-20250929";
+export const anthropicDefaultModelId: AnthropicModelId = "claude-sonnet-4-7x";
 export const anthropicModels = {
+  "claude-sonnet-4-7x": {
+    maxTokens: 64_000,
+    contextWindow: 200_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 3.0,
+    outputPrice: 15.0,
+    cacheWritesPrice: 3.75,
+    cacheReadsPrice: 0.3,
+    description:
+      "Claude Sonnet 4.7x - frontier Sonnet preset for agentic coding, long tool loops, and high-context repository work.",
+  },
+  "claude-opus-4-7x": {
+    maxTokens: 128_000,
+    contextWindow: 200_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 5.0,
+    outputPrice: 25.0,
+    cacheWritesPrice: 6.25,
+    cacheReadsPrice: 0.5,
+    description:
+      "Claude Opus 4.7x - highest-capability Claude preset for complex planning, architecture, and agent orchestration.",
+  },
+  "claude-sonnet-4-6": {
+    maxTokens: 64_000,
+    contextWindow: 200_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 3.0,
+    outputPrice: 15.0,
+    cacheWritesPrice: 3.75,
+    cacheReadsPrice: 0.3,
+    description:
+      "Claude Sonnet 4.6 - latest Sonnet generation with strong coding and agent performance.",
+  },
+  "claude-opus-4-6": {
+    maxTokens: 128_000,
+    contextWindow: 200_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 5.0,
+    outputPrice: 25.0,
+    cacheWritesPrice: 6.25,
+    cacheReadsPrice: 0.5,
+    description:
+      "Claude Opus 4.6 - most capable Claude model for complex coding and agent workflows.",
+  },
   "claude-sonnet-4-5-20250929": {
     maxTokens: 8_192,
     contextWindow: 200_000,
@@ -416,6 +474,19 @@ export const kimiOpenRouterModelIds = [
 // Moonshot AI Studio
 // https://platform.moonshot.ai/docs/pricing/chat
 export const moonshotModels = {
+  "kimi-k2.5": {
+    maxTokens: 32_768,
+    contextWindow: 262_144,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 0.6,
+    outputPrice: 3.0,
+    cacheWritesPrice: 0,
+    cacheReadsPrice: 0.1,
+    temperature: 1.0,
+    description:
+      "Kimi K2.5 multimodal model with 262K context, thinking/non-thinking modes, and prompt caching.",
+  },
   "kimi-k2-0711-preview": {
     maxTokens: 32_000,
     contextWindow: 131_072,
@@ -485,6 +556,42 @@ export const moonshotModels = {
 export type MoonshotModelId = keyof typeof moonshotModels;
 export const moonshotDefaultModelId =
   "kimi-k2-0905-preview" satisfies MoonshotModelId;
+
+// MiniMax API (M2.7)
+// https://platform.minimax.io/docs/api-reference/text-openai-api
+// https://platform.minimax.io/docs/api-reference/text-chatcompletion
+// https://platform.minimax.io/docs/guides/pricing-paygo
+export const minimaxModels = {
+  "MiniMax-M2.7": {
+    maxTokens: 8_192,
+    contextWindow: 204_800,
+    supportsImages: false,
+    supportsPromptCache: true,
+    inputPrice: 0.3,
+    outputPrice: 1.2,
+    cacheWritesPrice: 0.375,
+    cacheReadsPrice: 0.06,
+    temperature: 1.0,
+    description:
+      "MiniMax M2.7 text model with 204.8K context and balanced latency/quality.",
+  },
+  "MiniMax-M2.7-highspeed": {
+    maxTokens: 8_192,
+    contextWindow: 204_800,
+    supportsImages: false,
+    supportsPromptCache: true,
+    inputPrice: 0.6,
+    outputPrice: 2.4,
+    cacheWritesPrice: 0.375,
+    cacheReadsPrice: 0.06,
+    temperature: 1.0,
+    description:
+      "MiniMax M2.7 highspeed variant optimized for lower latency and faster throughput.",
+  },
+} as const satisfies Record<string, OpenAiCompatibleModelInfo>;
+export type MinimaxModelId = keyof typeof minimaxModels;
+export const minimaxDefaultModelId = "MiniMax-M2.7" satisfies MinimaxModelId;
+
 // Vertex AI
 // https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-valoride
 // https://cloud.google.com/vertex-ai/generative-ai/pricing#partner-models
@@ -699,6 +806,20 @@ export const openAiModelInfoSaneDefaults: OpenAiCompatibleModelInfo = {
 export type GeminiModelId = keyof typeof geminiModels;
 export const geminiDefaultModelId: GeminiModelId = "gemini-3-pro-preview";
 export const geminiModels = {
+  "gemini-3.1-pro-preview": {
+    maxTokens: 65_536,
+    contextWindow: 1_048_576,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPriceTiers: [
+      { tokenLimit: 200_000, price: 2.0 },
+      { tokenLimit: Infinity, price: 4.0 },
+    ],
+    outputPriceTiers: [
+      { tokenLimit: 200_000, price: 12.0 },
+      { tokenLimit: Infinity, price: 18.0 },
+    ],
+  },
   "gemini-3-pro-preview": {
     maxTokens: 65_536, // 64k output
     contextWindow: 1_048_576, // 1M input
@@ -715,6 +836,15 @@ export const geminiModels = {
     // Optional: if you want to mirror Cline’s thinking-level UI,
     // you'll control that via ApiHandlerOptions (planMode / actMode),
     // not via this ModelInfo.
+  },
+  "gemini-3-flash-preview": {
+    maxTokens: 65_536,
+    contextWindow: 1_048_576,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPrice: 0.5,
+    outputPrice: 3.0,
+    cacheReadsPrice: 0.05,
   },
 
   "gemini-2.5-flash-lite": {
@@ -849,12 +979,171 @@ export const geminiModels = {
   },
 } as const satisfies Record<string, ModelInfo>;
 
+// Ollama local models
+export const ollamaDefaultModelId = "gemma4";
+export const ollamaModelPresets = {
+  gemma4: {
+    maxTokens: 8192,
+    contextWindow: 128_000,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPrice: 0,
+    outputPrice: 0,
+    temperature: 1,
+    description:
+      "Gemma4 local default in Ollama. 128K context, multimodal input, and strong agentic coding performance on local hardware.",
+  },
+  "gemma4:latest": {
+    maxTokens: 8192,
+    contextWindow: 128_000,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPrice: 0,
+    outputPrice: 0,
+    temperature: 1,
+    description:
+      "Gemma4 latest Ollama tag with 128K context and text/image input.",
+  },
+  "gemma4:e2b": {
+    maxTokens: 8192,
+    contextWindow: 128_000,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPrice: 0,
+    outputPrice: 0,
+    temperature: 1,
+    description:
+      "Gemma4 E2B local model: smaller 128K-context multimodal Gemma4 variant for faster local runs.",
+  },
+  "gemma4:e4b": {
+    maxTokens: 8192,
+    contextWindow: 128_000,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPrice: 0,
+    outputPrice: 0,
+    temperature: 1,
+    description:
+      "Gemma4 E4B local model: balanced 128K-context multimodal Gemma4 variant.",
+  },
+  "gemma4:26b": {
+    maxTokens: 8192,
+    contextWindow: 256_000,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPrice: 0,
+    outputPrice: 0,
+    temperature: 1,
+    description:
+      "Gemma4 26B local model: 256K context MoE variant for high-quality local agent work.",
+  },
+  "gemma4:31b": {
+    maxTokens: 8192,
+    contextWindow: 256_000,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPrice: 0,
+    outputPrice: 0,
+    temperature: 1,
+    description:
+      "Gemma4 31B local model: 256K context dense variant for capable local reasoning.",
+  },
+} as const satisfies Record<string, OpenAiCompatibleModelInfo>;
+export type OllamaModelPresetId = keyof typeof ollamaModelPresets;
+
 // OpenAI Native
 // https://openai.com/api/pricing/
 export type OpenAiNativeModelId = keyof typeof openAiNativeModels;
-export const openAiNativeDefaultModelId: OpenAiNativeModelId =
-  "gpt-5.2";
+export const openAiNativeDefaultModelId: OpenAiNativeModelId = "gpt-5.5";
 export const openAiNativeModels = {
+  "gpt-5.5": {
+    maxTokens: 128_000,
+    contextWindow: 1_050_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 5.0,
+    outputPrice: 30.0,
+    cacheReadsPrice: 0.5,
+    description:
+      "GPT-5.5 frontier model preset for high-capability coding and agentic workflows.",
+  },
+  "gpt-5.5-chat-latest": {
+    maxTokens: 128_000,
+    contextWindow: 1_050_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 5.0,
+    outputPrice: 30.0,
+    cacheReadsPrice: 0.5,
+    description:
+      "GPT-5.5 ChatGPT-style latest alias for interactive assistant workflows.",
+  },
+  "gpt-5.5-codex": {
+    maxTokens: 128_000,
+    contextWindow: 1_050_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 5.0,
+    outputPrice: 30.0,
+    cacheReadsPrice: 0.5,
+    description:
+      "GPT-5.5 Codex preset for long-horizon code editing and autonomous engineering tasks.",
+  },
+  "gpt-5.4": {
+    maxTokens: 128_000,
+    contextWindow: 1_050_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 2.5,
+    outputPrice: 15.0,
+    cacheReadsPrice: 0.25,
+    description:
+      "GPT-5.4 frontier model for agentic, coding, and professional workflows.",
+  },
+  "gpt-5.4-mini": {
+    maxTokens: 128_000,
+    contextWindow: 400_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 0.75,
+    outputPrice: 4.5,
+    cacheReadsPrice: 0.075,
+    description:
+      "GPT-5.4 mini for lower-latency coding, computer use, and subagent workflows.",
+  },
+  "gpt-5.4-nano": {
+    maxTokens: 128_000,
+    contextWindow: 400_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 0.2,
+    outputPrice: 1.25,
+    cacheReadsPrice: 0.02,
+    description:
+      "GPT-5.4 nano for fast, low-cost classification, extraction, ranking, and subagent tasks.",
+  },
+  "gpt-5.3-codex": {
+    maxTokens: 128_000,
+    contextWindow: 400_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 0,
+    outputPrice: 0,
+    cacheReadsPrice: 0,
+    description:
+      "GPT-5.3 Codex coding model (ChatGPT subscription/OAuth route in some providers).",
+  },
+  "gpt-5.3-codex-spark": {
+    maxTokens: 8_192,
+    contextWindow: 128_000,
+    supportsImages: false,
+    supportsPromptCache: true,
+    inputPrice: 0,
+    outputPrice: 0,
+    cacheReadsPrice: 0,
+    description:
+      "GPT-5.3 Codex Spark fast text-only coding model (ChatGPT subscription/OAuth route in some providers).",
+  },
   "gpt-5.2": {
     maxTokens: 8_192,
     contextWindow: 272000,
@@ -867,6 +1156,15 @@ export const openAiNativeModels = {
   "gpt-5.2-chat-latest": {
     maxTokens: 16_384,
     contextWindow: 128_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 1.75,
+    outputPrice: 14.0,
+    cacheReadsPrice: 0.175,
+  },
+  "gpt-5.2-codex": {
+    maxTokens: 128_000,
+    contextWindow: 400_000,
     supportsImages: true,
     supportsPromptCache: true,
     inputPrice: 1.75,
@@ -917,6 +1215,15 @@ export const openAiNativeModels = {
     inputPrice: 1.25,
     outputPrice: 10.0,
     cacheReadsPrice: 0.125,
+  },
+  "gpt-5.1-codex-mini": {
+    maxTokens: 128_000,
+    contextWindow: 400_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 0.25,
+    outputPrice: 2.0,
+    cacheReadsPrice: 0.025,
   },
   "gpt-5.1-chat-latest": {
     maxTokens: 8_192,

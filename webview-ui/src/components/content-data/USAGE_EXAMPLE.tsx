@@ -47,10 +47,7 @@ export function ManualControlExample() {
     <div style={{ maxWidth: "900px", margin: "0 auto" }}>
       <h1>Browse Content</h1>
       <p>Use the navigation buttons to explore</p>
-      <ContentDataFlipBoard
-        itemsPerPage={6}
-        autoScroll={false}
-      />
+      <ContentDataFlipBoard itemsPerPage={6} autoScroll={false} />
     </div>
   );
 }
@@ -61,12 +58,14 @@ export function ManualControlExample() {
  */
 export function ResponsiveExample() {
   return (
-    <div style={{
-      width: "100%",
-      height: "600px",
-      maxWidth: "1200px",
-      margin: "0 auto",
-    }}>
+    <div
+      style={{
+        width: "100%",
+        height: "600px",
+        maxWidth: "1200px",
+        margin: "0 auto",
+      }}
+    >
       <ContentDataFlipBoard
         itemsPerPage={5}
         autoScroll={true}
@@ -82,40 +81,50 @@ export function ResponsiveExample() {
  */
 export function LandingPageExample() {
   return (
-    <section style={{
-      padding: "60px 20px",
-      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-      color: "white",
-    }}>
-      <div style={{
-        maxWidth: "1200px",
-        margin: "0 auto",
-      }}>
-        <h1 style={{
-          textAlign: "center",
-          marginBottom: "10px",
-          fontSize: "36px",
-          fontWeight: "bold",
-        }}>
+    <section
+      style={{
+        padding: "60px 20px",
+        background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+        color: "white",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "1200px",
+          margin: "0 auto",
+        }}
+      >
+        <h1
+          style={{
+            textAlign: "center",
+            marginBottom: "10px",
+            fontSize: "36px",
+            fontWeight: "bold",
+          }}
+        >
           Explore Our Content Library
         </h1>
 
-        <p style={{
-          textAlign: "center",
-          marginBottom: "40px",
-          fontSize: "16px",
-          opacity: 0.9,
-        }}>
+        <p
+          style={{
+            textAlign: "center",
+            marginBottom: "40px",
+            fontSize: "16px",
+            opacity: 0.9,
+          }}
+        >
           Browse through our curated collection of premium content
         </p>
 
-        <div style={{
-          height: "500px",
-          background: "rgba(255, 255, 255, 0.1)",
-          borderRadius: "12px",
-          padding: "20px",
-          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
-        }}>
+        <div
+          style={{
+            height: "500px",
+            background: "rgba(255, 255, 255, 0.1)",
+            borderRadius: "12px",
+            padding: "20px",
+            boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+          }}
+        >
           <ContentDataFlipBoard
             itemsPerPage={6}
             autoScroll={true}
@@ -123,20 +132,24 @@ export function LandingPageExample() {
           />
         </div>
 
-        <div style={{
-          marginTop: "40px",
-          textAlign: "center",
-        }}>
-          <button style={{
-            padding: "12px 30px",
-            background: "white",
-            color: "#667eea",
-            border: "none",
-            borderRadius: "6px",
-            fontSize: "16px",
-            fontWeight: "bold",
-            cursor: "pointer",
-          }}>
+        <div
+          style={{
+            marginTop: "40px",
+            textAlign: "center",
+          }}
+        >
+          <button
+            style={{
+              padding: "12px 30px",
+              background: "white",
+              color: "#667eea",
+              border: "none",
+              borderRadius: "6px",
+              fontSize: "16px",
+              fontWeight: "bold",
+              cursor: "pointer",
+            }}
+          >
             View All Content
           </button>
         </div>

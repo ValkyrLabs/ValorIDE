@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasOpenAPISpec } from '@thorapi/model/OasOpenAPISpec';
+import { OasOpenAPISpec } from "@thorapi/model/OasOpenAPISpec";
 
 const OasOpenAPISpecSlice = createSlice({
   name: "OasOpenAPISpecs",
@@ -28,20 +27,25 @@ const OasOpenAPISpecSlice = createSlice({
     },
 
     OasOpenAPISpecValueToggled(state, action) {
-      console.log("OasOpenAPISpec TOGGLE")
-      console.warn(JSON.stringify(action))
-      const OasOpenAPISpec:OasOpenAPISpec = state.find((OasOpenAPISpec) => OasOpenAPISpec.id === action.payload.OasOpenAPISpecId);
+      console.log("OasOpenAPISpec TOGGLE");
+      console.warn(JSON.stringify(action));
+      const OasOpenAPISpec: OasOpenAPISpec = state.find(
+        (OasOpenAPISpec) =>
+          OasOpenAPISpec.id === action.payload.OasOpenAPISpecId,
+      );
       if (OasOpenAPISpec) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     OasOpenAPISpecpropertySet(state, action) {
-      const OasOpenAPISpec = state.find((OasOpenAPISpec) => OasOpenAPISpec.id === action.payload.OasOpenAPISpecId);
+      const OasOpenAPISpec = state.find(
+        (OasOpenAPISpec) =>
+          OasOpenAPISpec.id === action.payload.OasOpenAPISpecId,
+      );
       if (OasOpenAPISpec) {
-      //  OasOpenAPISpec[action.property] = action.payload[action.property];
+        //  OasOpenAPISpec[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const OasOpenAPISpecSlice = createSlice({
 export const {
   OasOpenAPISpecAdded,
   OasOpenAPISpecValueToggled,
-  OasOpenAPISpecpropertySet
+  OasOpenAPISpecpropertySet,
 } = OasOpenAPISpecSlice.actions;
 export default OasOpenAPISpecSlice.reducer;

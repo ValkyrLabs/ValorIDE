@@ -163,16 +163,22 @@ describe("ContentDataFlipBoard", () => {
 
     render(<ContentDataFlipBoard />);
 
-    await waitFor(() => {
-      expect(screen.getByText("Test Content 1")).toBeInTheDocument();
-    }, { timeout: 2000 });
+    await waitFor(
+      () => {
+        expect(screen.getByText("Test Content 1")).toBeInTheDocument();
+      },
+      { timeout: 2000 },
+    );
 
     const nextButton = screen.getByLabelText(/next/i);
     fireEvent.click(nextButton);
 
-    await waitFor(() => {
-      expect(screen.getByText("Test Content 2")).toBeInTheDocument();
-    }, { timeout: 2000 });
+    await waitFor(
+      () => {
+        expect(screen.getByText("Test Content 2")).toBeInTheDocument();
+      },
+      { timeout: 2000 },
+    );
   });
 
   it("handles previous button click", async () => {
@@ -184,25 +190,34 @@ describe("ContentDataFlipBoard", () => {
 
     render(<ContentDataFlipBoard />);
 
-    await waitFor(() => {
-      expect(screen.getByText("Test Content 1")).toBeInTheDocument();
-    }, { timeout: 2000 });
+    await waitFor(
+      () => {
+        expect(screen.getByText("Test Content 1")).toBeInTheDocument();
+      },
+      { timeout: 2000 },
+    );
 
     // Click next to go to second item
     const nextButton = screen.getByLabelText("Next");
     fireEvent.click(nextButton);
 
-    await waitFor(() => {
-      expect(screen.getByText("Test Content 2")).toBeInTheDocument();
-    }, { timeout: 2000 });
+    await waitFor(
+      () => {
+        expect(screen.getByText("Test Content 2")).toBeInTheDocument();
+      },
+      { timeout: 2000 },
+    );
 
     // Click previous to go back
     const prevButton = screen.getByLabelText(/previous/i);
     fireEvent.click(prevButton);
 
-    await waitFor(() => {
-      expect(screen.getByText("Test Content 1")).toBeInTheDocument();
-    }, { timeout: 2000 });
+    await waitFor(
+      () => {
+        expect(screen.getByText("Test Content 1")).toBeInTheDocument();
+      },
+      { timeout: 2000 },
+    );
   });
 
   it("respects itemsPerPage prop", async () => {

@@ -6,7 +6,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_BORDER_REQUEST,
-    FETCH_BORDER_REQUEST,
-    LIST_BORDER_REQUEST,
-    UPDATE_BORDER_REQUEST,
-    DELETE_BORDER_REQUEST,
-
-    addBorderFailure,
-    addBorderSuccess,
-
-    fetchBorderFailure,
-    fetchBorderSuccess,
-    
-    listBorderFailure,
-    listBorderSuccess,
-
-    updateBorderFailure,
-    updateBorderSuccess,
-    
-    deleteBorderFailure,
-    deleteBorderSuccess,
-    
-} from '../actions/BorderApiAction';
+  ADD_BORDER_REQUEST,
+  FETCH_BORDER_REQUEST,
+  LIST_BORDER_REQUEST,
+  UPDATE_BORDER_REQUEST,
+  DELETE_BORDER_REQUEST,
+  addBorderFailure,
+  addBorderSuccess,
+  fetchBorderFailure,
+  fetchBorderSuccess,
+  listBorderFailure,
+  listBorderSuccess,
+  updateBorderFailure,
+  updateBorderSuccess,
+  deleteBorderFailure,
+  deleteBorderSuccess,
+} from "../actions/BorderApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -59,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Border
 */
 
-
-
-export const BorderMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("Border MIDDLEWARE: " + JSON.stringify(action) )
+export const BorderMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Border MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

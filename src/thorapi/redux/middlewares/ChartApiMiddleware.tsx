@@ -6,7 +6,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_CHART_REQUEST,
-    FETCH_CHART_REQUEST,
-    LIST_CHART_REQUEST,
-    UPDATE_CHART_REQUEST,
-    DELETE_CHART_REQUEST,
-
-    addChartFailure,
-    addChartSuccess,
-
-    fetchChartFailure,
-    fetchChartSuccess,
-    
-    listChartFailure,
-    listChartSuccess,
-
-    updateChartFailure,
-    updateChartSuccess,
-    
-    deleteChartFailure,
-    deleteChartSuccess,
-    
-} from '../actions/ChartApiAction';
+  ADD_CHART_REQUEST,
+  FETCH_CHART_REQUEST,
+  LIST_CHART_REQUEST,
+  UPDATE_CHART_REQUEST,
+  DELETE_CHART_REQUEST,
+  addChartFailure,
+  addChartSuccess,
+  fetchChartFailure,
+  fetchChartSuccess,
+  listChartFailure,
+  listChartSuccess,
+  updateChartFailure,
+  updateChartSuccess,
+  deleteChartFailure,
+  deleteChartSuccess,
+} from "../actions/ChartApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -59,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Chart
 */
 
-
-
-export const ChartMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("Chart MIDDLEWARE: " + JSON.stringify(action) )
+export const ChartMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Chart MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

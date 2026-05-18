@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AgentHierarchyNode } from '@thorapi/model/AgentHierarchyNode';
+import { AgentHierarchyNode } from "@thorapi/model/AgentHierarchyNode";
 
 const AgentHierarchyNodeSlice = createSlice({
   name: "AgentHierarchyNodes",
@@ -28,20 +27,25 @@ const AgentHierarchyNodeSlice = createSlice({
     },
 
     AgentHierarchyNodeValueToggled(state, action) {
-      console.log("AgentHierarchyNode TOGGLE")
-      console.warn(JSON.stringify(action))
-      const AgentHierarchyNode:AgentHierarchyNode = state.find((AgentHierarchyNode) => AgentHierarchyNode.id === action.payload.AgentHierarchyNodeId);
+      console.log("AgentHierarchyNode TOGGLE");
+      console.warn(JSON.stringify(action));
+      const AgentHierarchyNode: AgentHierarchyNode = state.find(
+        (AgentHierarchyNode) =>
+          AgentHierarchyNode.id === action.payload.AgentHierarchyNodeId,
+      );
       if (AgentHierarchyNode) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     AgentHierarchyNodepropertySet(state, action) {
-      const AgentHierarchyNode = state.find((AgentHierarchyNode) => AgentHierarchyNode.id === action.payload.AgentHierarchyNodeId);
+      const AgentHierarchyNode = state.find(
+        (AgentHierarchyNode) =>
+          AgentHierarchyNode.id === action.payload.AgentHierarchyNodeId,
+      );
       if (AgentHierarchyNode) {
-      //  AgentHierarchyNode[action.property] = action.payload[action.property];
+        //  AgentHierarchyNode[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const AgentHierarchyNodeSlice = createSlice({
 export const {
   AgentHierarchyNodeAdded,
   AgentHierarchyNodeValueToggled,
-  AgentHierarchyNodepropertySet
+  AgentHierarchyNodepropertySet,
 } = AgentHierarchyNodeSlice.actions;
 export default AgentHierarchyNodeSlice.reducer;

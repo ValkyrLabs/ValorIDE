@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasSecurityScheme } from '@thorapi/model/OasSecurityScheme';
+import { OasSecurityScheme } from "@thorapi/model/OasSecurityScheme";
 
 const OasSecuritySchemeSlice = createSlice({
   name: "OasSecuritySchemes",
@@ -28,20 +27,25 @@ const OasSecuritySchemeSlice = createSlice({
     },
 
     OasSecuritySchemeValueToggled(state, action) {
-      console.log("OasSecurityScheme TOGGLE")
-      console.warn(JSON.stringify(action))
-      const OasSecurityScheme:OasSecurityScheme = state.find((OasSecurityScheme) => OasSecurityScheme.id === action.payload.OasSecuritySchemeId);
+      console.log("OasSecurityScheme TOGGLE");
+      console.warn(JSON.stringify(action));
+      const OasSecurityScheme: OasSecurityScheme = state.find(
+        (OasSecurityScheme) =>
+          OasSecurityScheme.id === action.payload.OasSecuritySchemeId,
+      );
       if (OasSecurityScheme) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     OasSecuritySchemepropertySet(state, action) {
-      const OasSecurityScheme = state.find((OasSecurityScheme) => OasSecurityScheme.id === action.payload.OasSecuritySchemeId);
+      const OasSecurityScheme = state.find(
+        (OasSecurityScheme) =>
+          OasSecurityScheme.id === action.payload.OasSecuritySchemeId,
+      );
       if (OasSecurityScheme) {
-      //  OasSecurityScheme[action.property] = action.payload[action.property];
+        //  OasSecurityScheme[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const OasSecuritySchemeSlice = createSlice({
 export const {
   OasSecuritySchemeAdded,
   OasSecuritySchemeValueToggled,
-  OasSecuritySchemepropertySet
+  OasSecuritySchemepropertySet,
 } = OasSecuritySchemeSlice.actions;
 export default OasSecuritySchemeSlice.reducer;

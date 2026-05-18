@@ -6,7 +6,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_NAMEDRANGE_REQUEST,
-    FETCH_NAMEDRANGE_REQUEST,
-    LIST_NAMEDRANGE_REQUEST,
-    UPDATE_NAMEDRANGE_REQUEST,
-    DELETE_NAMEDRANGE_REQUEST,
-
-    addNamedRangeFailure,
-    addNamedRangeSuccess,
-
-    fetchNamedRangeFailure,
-    fetchNamedRangeSuccess,
-    
-    listNamedRangeFailure,
-    listNamedRangeSuccess,
-
-    updateNamedRangeFailure,
-    updateNamedRangeSuccess,
-    
-    deleteNamedRangeFailure,
-    deleteNamedRangeSuccess,
-    
-} from '../actions/NamedRangeApiAction';
+  ADD_NAMEDRANGE_REQUEST,
+  FETCH_NAMEDRANGE_REQUEST,
+  LIST_NAMEDRANGE_REQUEST,
+  UPDATE_NAMEDRANGE_REQUEST,
+  DELETE_NAMEDRANGE_REQUEST,
+  addNamedRangeFailure,
+  addNamedRangeSuccess,
+  fetchNamedRangeFailure,
+  fetchNamedRangeSuccess,
+  listNamedRangeFailure,
+  listNamedRangeSuccess,
+  updateNamedRangeFailure,
+  updateNamedRangeSuccess,
+  deleteNamedRangeFailure,
+  deleteNamedRangeSuccess,
+} from "../actions/NamedRangeApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -59,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: NamedRange
 */
 
-
-
-export const NamedRangeMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("NamedRange MIDDLEWARE: " + JSON.stringify(action) )
+export const NamedRangeMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("NamedRange MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

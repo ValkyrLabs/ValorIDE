@@ -107,16 +107,17 @@ const UserPreferences = memo(({ className }) => {
   const preferencesByType = useMemo(() => {
     return {
       "ux-layout": userPreferences.filter(
-        (p) => p.preferenceType === UserPreferencePreferenceTypeEnum.UXLAYOUT
+        (p) => p.preferenceType === UserPreferencePreferenceTypeEnum.UXLAYOUT,
       ),
       "ux-mode": userPreferences.filter(
-        (p) => p.preferenceType === UserPreferencePreferenceTypeEnum.UXMODE
+        (p) => p.preferenceType === UserPreferencePreferenceTypeEnum.UXMODE,
       ),
       "ux-theme": userPreferences.filter(
-        (p) => p.preferenceType === UserPreferencePreferenceTypeEnum.UXTHEME
+        (p) => p.preferenceType === UserPreferencePreferenceTypeEnum.UXTHEME,
       ),
       measurement: userPreferences.filter(
-        (p) => p.preferenceType === UserPreferencePreferenceTypeEnum.MEASUREMENT
+        (p) =>
+          p.preferenceType === UserPreferencePreferenceTypeEnum.MEASUREMENT,
       ),
     };
   }, [userPreferences]);
@@ -132,7 +133,7 @@ const UserPreferences = memo(({ className }) => {
   // Filter user preferences for current user
   const currentUserPreferences = useMemo(() => {
     return userPreferences.filter(
-      (pref) => pref.principalId === currentPrincipalId
+      (pref) => pref.principalId === currentPrincipalId,
     );
   }, [userPreferences, currentPrincipalId]);
   // Statistics calculations
@@ -191,14 +192,14 @@ const UserPreferences = memo(({ className }) => {
         setErrorMessage(error?.data?.message || "Failed to delete preference");
       }
     },
-    [deleteUserPreference, refetchPreferences]
+    [deleteUserPreference, refetchPreferences],
   );
   const handleEditPreference = useCallback((preference) => {
     setSelectedPreference(preference);
     setEditingPreference(
       preference || {
         preferenceType: UserPreferencePreferenceTypeEnum.UXLAYOUT,
-      }
+      },
     );
     setShowEditModal(true);
   }, []);
@@ -365,7 +366,7 @@ const UserPreferences = memo(({ className }) => {
                                   pref.createdDate
                                     ? format(
                                         new Date(pref.createdDate),
-                                        "MMM dd, yyyy"
+                                        "MMM dd, yyyy",
                                       )
                                     : "N/A",
                                   _jsx("br", {}),
@@ -374,7 +375,7 @@ const UserPreferences = memo(({ className }) => {
                                   pref.lastModifiedDate
                                     ? format(
                                         new Date(pref.lastModifiedDate),
-                                        "MMM dd, yyyy"
+                                        "MMM dd, yyyy",
                                       )
                                     : "N/A",
                                 ],
@@ -383,8 +384,8 @@ const UserPreferences = memo(({ className }) => {
                           }),
                         }),
                       },
-                      pref.id
-                    )
+                      pref.id,
+                    ),
                   ),
                 }),
         }),
@@ -524,7 +525,7 @@ const UserPreferences = memo(({ className }) => {
                                       children: order.orderDate
                                         ? format(
                                             new Date(order.orderDate),
-                                            "MMM dd"
+                                            "MMM dd",
                                           )
                                         : "N/A",
                                     }),
@@ -550,8 +551,8 @@ const UserPreferences = memo(({ className }) => {
                                     }),
                                   ],
                                 },
-                                order.id
-                              )
+                                order.id,
+                              ),
                             ),
                           }),
                         ],
@@ -618,7 +619,7 @@ const UserPreferences = memo(({ className }) => {
                                       children: invoice.createdDate
                                         ? format(
                                             new Date(invoice.createdDate),
-                                            "MMM dd"
+                                            "MMM dd",
                                           )
                                         : "N/A",
                                     }),
@@ -641,8 +642,8 @@ const UserPreferences = memo(({ className }) => {
                                     }),
                                   ],
                                 },
-                                invoice.id
-                              )
+                                invoice.id,
+                              ),
                             ),
                           }),
                         ],
@@ -894,7 +895,7 @@ const UserPreferences = memo(({ className }) => {
                               children: selectedPreference.createdDate
                                 ? format(
                                     new Date(selectedPreference.createdDate),
-                                    "MMM dd, yyyy HH:mm"
+                                    "MMM dd, yyyy HH:mm",
                                   )
                                 : "N/A",
                             }),
@@ -907,9 +908,9 @@ const UserPreferences = memo(({ className }) => {
                               children: selectedPreference.lastModifiedDate
                                 ? format(
                                     new Date(
-                                      selectedPreference.lastModifiedDate
+                                      selectedPreference.lastModifiedDate,
                                     ),
-                                    "MMM dd, yyyy HH:mm"
+                                    "MMM dd, yyyy HH:mm",
                                   )
                                 : "N/A",
                             }),
@@ -931,9 +932,9 @@ const UserPreferences = memo(({ className }) => {
                               children: selectedPreference.lastAccessedDate
                                 ? format(
                                     new Date(
-                                      selectedPreference.lastAccessedDate
+                                      selectedPreference.lastAccessedDate,
                                     ),
-                                    "MMM dd, yyyy HH:mm"
+                                    "MMM dd, yyyy HH:mm",
                                   )
                                 : "N/A",
                             }),

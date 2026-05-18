@@ -7,39 +7,46 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   McpServiceRegistry,
   McpServiceRegistryCategoryEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddMcpServiceRegistryMutation } from '../../services/McpServiceRegistryService';
+import { useAddMcpServiceRegistryMutation } from "../../services/McpServiceRegistryService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -49,7 +56,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -65,12 +71,12 @@ Registry entry for a published MCP service
 -------------------------------------------------------- */
 const CategoryValidation = () => {
   return [
-    'code_generation',
-    'automation',
-    'optimization',
-    'integration',
-    'analytics',
-    'custom',
+    "code_generation",
+    "automation",
+    "optimization",
+    "integration",
+    "analytics",
+    "custom",
   ];
 };
 
@@ -78,48 +84,59 @@ const CategoryValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        slug: Yup.string().required("slug is required.").matches(/^[a-z0-9\\-_.]+$/, "slug must match pattern Machine-readable unique identifier (lowercase, alphanumeric, dash, underscore)"),
-        displayName: Yup.string().required("displayName is required."),
-        description: Yup.string(),
-      category: Yup.mixed()
-        .oneOf(CategoryValidation(), "Invalid value for category")
-        ,
-        author: Yup.string(),
-        manifestUrl: Yup.string(),
-        apiBaseUrl: Yup.string(),
-        healthCheckUrl: Yup.string(),
-        version: Yup.string(),
-        isPublished: Yup.boolean(),
-        installCount: asNumber(Yup.number().integer().typeError("installCount must be a number")),
-        tags: Yup.string(),
-        publishedDate: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("publishedDate must be a valid date"),
-        updatedDate: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("updatedDate must be a valid date"),
-        mcpServerId: Yup.string(),
-        trashed: Yup.boolean(),
+  slug: Yup.string().matches(
+    /^[a-z0-9\\-_.]+$/,
+    "slug must match pattern Machine-readable unique identifier (lowercase, alphanumeric, dash, underscore)",
+  ),
+  displayName: Yup.string(),
+  description: Yup.string(),
+  category: Yup.mixed().oneOf(
+    CategoryValidation(),
+    "Invalid value for category",
+  ),
+  author: Yup.string(),
+  manifestUrl: Yup.string(),
+  apiBaseUrl: Yup.string(),
+  healthCheckUrl: Yup.string(),
+  version: Yup.string(),
+  isPublished: Yup.boolean(),
+  installCount: asNumber(
+    Yup.number().integer().typeError("installCount must be a number"),
+  ),
+  tags: Yup.string(),
+  publishedDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("publishedDate must be a valid date"),
+  updatedDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("updatedDate must be a valid date"),
+  mcpServerId: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const McpServiceRegistryForm: React.FC = () => {
-  const [addMcpServiceRegistry, addMcpServiceRegistryResult] = useAddMcpServiceRegistryMutation();
+  const [addMcpServiceRegistry, addMcpServiceRegistryResult] =
+    useAddMcpServiceRegistryMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -129,12 +146,18 @@ const McpServiceRegistryForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -142,22 +165,22 @@ const McpServiceRegistryForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<McpServiceRegistry> = {
-          slug: '',
-          displayName: '',
-          description: '',
-        category: undefined,
-          author: '',
-          manifestUrl: '',
-          apiBaseUrl: '',
-          healthCheckUrl: '',
-          version: '',
-          isPublished: false,
-          installCount: 0,
-          tags: '',
-          publishedDate: new Date(),
-          updatedDate: new Date(),
-          mcpServerId: '',
-          trashed: false,
+    slug: "",
+    displayName: "",
+    description: "",
+    category: undefined,
+    author: "",
+    manifestUrl: "",
+    apiBaseUrl: "",
+    healthCheckUrl: "",
+    version: "",
+    isPublished: false,
+    installCount: 0,
+    tags: "",
+    publishedDate: new Date(),
+    updatedDate: new Date(),
+    mcpServerId: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -172,11 +195,14 @@ const McpServiceRegistryForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new McpServiceRegistry:', grants);
+    console.log("Permissions saved for new McpServiceRegistry:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<McpServiceRegistry>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<McpServiceRegistry>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -187,7 +213,7 @@ const McpServiceRegistryForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `McpServiceRegistry created successfully! Would you like to set permissions for this object?`
+          `McpServiceRegistry created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -195,8 +221,8 @@ const McpServiceRegistryForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create McpServiceRegistry:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create McpServiceRegistry:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -217,44 +243,38 @@ const McpServiceRegistryForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addMcpServiceRegistryResult.isLoading;
+          const isSaving =
+            isSubmitting || addMcpServiceRegistryResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New McpServiceRegistry
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    McpServiceRegistry
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="slug" className="nice-form-control">
                       <b>
                         Slug:
-                        {touched.slug &&
-                         !errors.slug && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.slug && !errors.slug && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="slug"
-                            value={values?.slug}
-                            placeholder="Slug"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="slug"
+                        value={values?.slug}
+                        placeholder="Slug"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -266,28 +286,21 @@ const McpServiceRegistryForm: React.FC = () => {
                     <label htmlFor="displayName" className="nice-form-control">
                       <b>
                         Display Name:
-                        {touched.displayName &&
-                         !errors.displayName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.displayName && !errors.displayName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="displayName"
-                            value={values?.displayName}
-                            placeholder="Display Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="displayName"
+                        value={values?.displayName}
+                        placeholder="Display Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -299,28 +312,21 @@ const McpServiceRegistryForm: React.FC = () => {
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
-                        {touched.description &&
-                         !errors.description && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.description && !errors.description && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="description"
-                            value={values?.description}
-                            placeholder="Description"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="description"
+                        value={values?.description}
+                        placeholder="Description"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -332,30 +338,33 @@ const McpServiceRegistryForm: React.FC = () => {
                     <label htmlFor="category" className="nice-form-control">
                       <b>
                         Category:
-                        {touched.category &&
-                         !errors.category && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.category && !errors.category && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="category"
-                          value={values.category || ''}
-                          className={
-                            errors.category
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('category', true);
-                            setFieldValue('category', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Category" />
-                          <CategoryLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="category"
+                        value={values.category || ""}
+                        className={
+                          errors.category
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("category", true);
+                          setFieldValue(
+                            "category",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Category" />
+                        <CategoryLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -367,28 +376,21 @@ const McpServiceRegistryForm: React.FC = () => {
                     <label htmlFor="author" className="nice-form-control">
                       <b>
                         Author:
-                        {touched.author &&
-                         !errors.author && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.author && !errors.author && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="author"
-                            value={values?.author}
-                            placeholder="Author"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="author"
+                        value={values?.author}
+                        placeholder="Author"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -400,28 +402,21 @@ const McpServiceRegistryForm: React.FC = () => {
                     <label htmlFor="manifestUrl" className="nice-form-control">
                       <b>
                         Manifest Url:
-                        {touched.manifestUrl &&
-                         !errors.manifestUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.manifestUrl && !errors.manifestUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="manifestUrl"
-                            value={values?.manifestUrl}
-                            placeholder="Manifest Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="manifestUrl"
+                        value={values?.manifestUrl}
+                        placeholder="Manifest Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -433,28 +428,21 @@ const McpServiceRegistryForm: React.FC = () => {
                     <label htmlFor="apiBaseUrl" className="nice-form-control">
                       <b>
                         Api Base Url:
-                        {touched.apiBaseUrl &&
-                         !errors.apiBaseUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.apiBaseUrl && !errors.apiBaseUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="apiBaseUrl"
-                            value={values?.apiBaseUrl}
-                            placeholder="Api Base Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="apiBaseUrl"
+                        value={values?.apiBaseUrl}
+                        placeholder="Api Base Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -463,31 +451,27 @@ const McpServiceRegistryForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="healthCheckUrl" className="nice-form-control">
+                    <label
+                      htmlFor="healthCheckUrl"
+                      className="nice-form-control"
+                    >
                       <b>
                         Health Check Url:
-                        {touched.healthCheckUrl &&
-                         !errors.healthCheckUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.healthCheckUrl && !errors.healthCheckUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="healthCheckUrl"
-                            value={values?.healthCheckUrl}
-                            placeholder="Health Check Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="healthCheckUrl"
+                        value={values?.healthCheckUrl}
+                        placeholder="Health Check Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -499,28 +483,21 @@ const McpServiceRegistryForm: React.FC = () => {
                     <label htmlFor="version" className="nice-form-control">
                       <b>
                         Version:
-                        {touched.version &&
-                         !errors.version && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.version && !errors.version && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="version"
-                            value={values?.version}
-                            placeholder="Version"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="version"
+                        value={values?.version}
+                        placeholder="Version"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -532,32 +509,25 @@ const McpServiceRegistryForm: React.FC = () => {
                     <label htmlFor="isPublished" className="nice-form-control">
                       <b>
                         Is Published:
-                        {touched.isPublished &&
-                         !errors.isPublished && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.isPublished && !errors.isPublished && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="isPublished"
-                            name="isPublished"
-                            checked={values.isPublished || false}
-                            onChange={(e) => {
-                              setFieldTouched('isPublished', true);
-                              setFieldValue('isPublished', e.target.checked);
-                            }}
-                            isInvalid={!!errors.isPublished}
-                            className={errors.isPublished ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="isPublished"
+                        name="isPublished"
+                        checked={values.isPublished || false}
+                        onChange={(e) => {
+                          setFieldTouched("isPublished", true);
+                          setFieldValue("isPublished", e.target.checked);
+                        }}
+                        isInvalid={!!errors.isPublished}
+                        className={errors.isPublished ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -569,36 +539,32 @@ const McpServiceRegistryForm: React.FC = () => {
                     <label htmlFor="installCount" className="nice-form-control">
                       <b>
                         Install Count:
-                        {touched.installCount &&
-                         !errors.installCount && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.installCount && !errors.installCount && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="installCount"
-                            type="number"
-                            value={values.installCount || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('installCount', true);
-                              const v = e.target.value;
-                              setFieldValue('installCount', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.installCount
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="installCount"
+                        type="number"
+                        value={values.installCount || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("installCount", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "installCount",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.installCount
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -610,28 +576,21 @@ const McpServiceRegistryForm: React.FC = () => {
                     <label htmlFor="tags" className="nice-form-control">
                       <b>
                         Tags:
-                        {touched.tags &&
-                         !errors.tags && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.tags && !errors.tags && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="tags"
-                            value={values?.tags}
-                            placeholder="Tags"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="tags"
+                        value={values?.tags}
+                        placeholder="Tags"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -640,41 +599,44 @@ const McpServiceRegistryForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="publishedDate" className="nice-form-control">
+                    <label
+                      htmlFor="publishedDate"
+                      className="nice-form-control"
+                    >
                       <b>
                         Published Date:
-                        {touched.publishedDate &&
-                         !errors.publishedDate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.publishedDate && !errors.publishedDate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="publishedDate"
-                            type="datetime-local"
-                            value={values.publishedDate ? 
-                              new Date(values.publishedDate).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('publishedDate', true);
-                              const v = e.target.value;
-                              setFieldValue('publishedDate', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.publishedDate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="publishedDate"
+                        type="datetime-local"
+                        value={
+                          values.publishedDate
+                            ? new Date(values.publishedDate)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("publishedDate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "publishedDate",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.publishedDate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -686,38 +648,38 @@ const McpServiceRegistryForm: React.FC = () => {
                     <label htmlFor="updatedDate" className="nice-form-control">
                       <b>
                         Updated Date:
-                        {touched.updatedDate &&
-                         !errors.updatedDate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.updatedDate && !errors.updatedDate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="updatedDate"
-                            type="datetime-local"
-                            value={values.updatedDate ? 
-                              new Date(values.updatedDate).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('updatedDate', true);
-                              const v = e.target.value;
-                              setFieldValue('updatedDate', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.updatedDate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="updatedDate"
+                        type="datetime-local"
+                        value={
+                          values.updatedDate
+                            ? new Date(values.updatedDate)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("updatedDate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "updatedDate",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.updatedDate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -729,28 +691,21 @@ const McpServiceRegistryForm: React.FC = () => {
                     <label htmlFor="mcpServerId" className="nice-form-control">
                       <b>
                         Mcp Server Id:
-                        {touched.mcpServerId &&
-                         !errors.mcpServerId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.mcpServerId && !errors.mcpServerId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="mcpServerId"
-                            value={values?.mcpServerId}
-                            placeholder="Mcp Server Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="mcpServerId"
+                        value={values?.mcpServerId}
+                        placeholder="Mcp Server Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -762,32 +717,25 @@ const McpServiceRegistryForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -797,45 +745,60 @@ const McpServiceRegistryForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New McpServiceRegistry
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New McpServiceRegistry
+                    </CoolButton>
 
-                  {(addMcpServiceRegistryResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addMcpServiceRegistryResult as any).error ? (addMcpServiceRegistryResult as any).error.data : (addMcpServiceRegistryResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addMcpServiceRegistryResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addMcpServiceRegistryResult as any).error
+                              ? (addMcpServiceRegistryResult as any).error.data
+                              : (addMcpServiceRegistryResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addMcpServiceRegistryResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addMcpServiceRegistryResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addMcpServiceRegistryResult: {JSON.stringify(addMcpServiceRegistryResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addMcpServiceRegistryResult:{" "}
+                    {JSON.stringify(addMcpServiceRegistryResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -867,18 +830,15 @@ kebabcase category-lookup
 const CategoryLookup = () => {
   return (
     <>
-      <option value='code_generation' label="Code Generation" />
-      <option value='automation' label="Automation" />
-      <option value='optimization' label="Optimization" />
-      <option value='integration' label="Integration" />
-      <option value='analytics' label="Analytics" />
-      <option value='custom' label="Custom" />
+      <option value="code_generation" label="Code Generation" />
+      <option value="automation" label="Automation" />
+      <option value="optimization" label="Optimization" />
+      <option value="integration" label="Integration" />
+      <option value="analytics" label="Analytics" />
+      <option value="custom" label="Custom" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default McpServiceRegistryForm;
-

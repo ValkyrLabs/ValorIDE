@@ -72,7 +72,7 @@ export const LLMDetailsSelector = ({
       (detail) =>
         detail.tags?.includes(taskIntent) ||
         detail.tags?.includes("all") ||
-        (!detail.tags?.length && !taskIntent)
+        (!detail.tags?.length && !taskIntent),
     );
   }, [llmDetails, taskIntent]);
   const handleSelectionChange = (newId) => {
@@ -137,8 +137,8 @@ export const LLMDetailsSelector = ({
                   "]",
                 ],
               },
-              llm.id
-            )
+              llm.id,
+            ),
           ),
         ],
       }),
@@ -185,7 +185,7 @@ const PromptPreview = ({ llmDetails }) => {
         _jsx("div", {
           className: "tags",
           children: llmDetails.tags.map((tag) =>
-            _jsx("span", { className: "tag", children: tag }, tag)
+            _jsx("span", { className: "tag", children: tag }, tag),
           ),
         }),
       _jsxs("div", {

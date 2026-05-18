@@ -20,15 +20,14 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -37,145 +36,155 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface Space
  */
-export type Space  = DataObject & {
-    /**
-     * Space name.
-     * @type {string}
-     * @memberof Space
-     */
-    name: string;
-    /**
-     * Type of space.
-     * @type {string}
-     * @memberof Space
-     */
-    type: SpaceTypeEnum;
-    /**
-     * Space description.
-     * @type {string}
-     * @memberof Space
-     */
-    description?: string;
-    /**
-     * Space configuration settings.
-     * @type {string}
-     * @memberof Space
-     */
-    settings?: string;
-    /**
-     * Parent space for hierarchical organization.
-     * @type {string}
-     * @memberof Space
-     */
-    parentSpaceId?: string;
-    /**
-     * Whether the space is active.
-     * @type {boolean}
-     * @memberof Space
-     */
-    isActive?: boolean;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof Space
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof Space
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof Space
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof Space
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof Space
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof Space
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof Space
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof Space
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof Space
-     */
-    trashed?: boolean;
-}
+export type Space = DataObject & {
+  /**
+   * Space name.
+   * @type {string}
+   * @memberof Space
+   */
+  name?: string;
+  /**
+   * Space description.
+   * @type {string}
+   * @memberof Space
+   */
+  description?: string;
+  /**
+   * Type of space.
+   * @type {string}
+   * @memberof Space
+   */
+  type?: SpaceTypeEnum;
+  /**
+   * Space configuration settings.
+   * @type {string}
+   * @memberof Space
+   */
+  settings?: string;
+  /**
+   *
+   * @type {Space}
+   * @memberof Space
+   */
+  parentSpace?: Space;
+  /**
+   * Whether the space is active.
+   * @type {boolean}
+   * @memberof Space
+   */
+  isActive?: boolean;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof Space
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof Space
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof Space
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof Space
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof Space
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof Space
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof Space
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof Space
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof Space
+   */
+  trashed?: boolean;
+};
 
 export function SpaceFromJSON(json: any): Space {
-    return {
-        ...DataObjectFromJSON(json),
-        'name': json['name'],
-        'type': json['type'],
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'settings': !exists(json, 'settings') ? undefined : json['settings'],
-        'parentSpaceId': !exists(json, 'parentSpaceId') ? undefined : json['parentSpaceId'],
-        'isActive': !exists(json, 'isActive') ? undefined : json['isActive'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: !exists(json, "name") ? undefined : json["name"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    type: !exists(json, "type") ? undefined : json["type"],
+    settings: !exists(json, "settings") ? undefined : json["settings"],
+    parentSpace: !exists(json, "parentSpace")
+      ? undefined
+      : SpaceFromJSON(json["parentSpace"]),
+    isActive: !exists(json, "isActive") ? undefined : json["isActive"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function SpaceToJSON(value?: Space): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'name': value.name,
-        'type': value.type,
-        'description': value.description,
-        'settings': value.settings,
-        'parentSpaceId': value.parentSpaceId,
-        'isActive': value.isActive,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    description: value.description,
+    type: value.type,
+    settings: value.settings,
+    parentSpace: SpaceToJSON(value.parentSpace),
+    isActive: value.isActive,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum SpaceTypeEnum {
-    PERSONAL = 'personal',
-    SHARED = 'shared',
-    PUBLIC = 'public',
-    DATAROOM = 'data_room'
+  PERSONAL = "personal",
+  SHARED = "shared",
+  PUBLIC = "public",
+  DATAROOM = "data_room",
 }
-
-

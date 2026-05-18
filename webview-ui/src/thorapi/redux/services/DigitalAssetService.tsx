@@ -7,43 +7,64 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { DigitalAsset } from '@thorapi/model/DigitalAsset'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { DigitalAsset } from "@thorapi/model/DigitalAsset";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type DigitalAssetResponse = DigitalAsset[]
+type DigitalAssetResponse = DigitalAsset[];
+
+const toDigitalAssetList = (result: unknown): DigitalAssetResponse => {
+  if (Array.isArray(result)) {
+    return result as DigitalAssetResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as DigitalAssetResponse) : [];
+};
 
 export const DigitalAssetService = createApi({
-  reducerPath: 'DigitalAsset', // This should remain unique
+  reducerPath: "DigitalAsset", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['DigitalAsset'],
+  tagTypes: ["DigitalAsset"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getDigitalAssetsPaged: build.query<DigitalAssetResponse, { page: number; size?: number; example?: Partial<DigitalAsset> }>({
+    getDigitalAssetsPaged: build.query<
+      DigitalAssetResponse,
+      { page: number; size?: number; example?: Partial<DigitalAsset> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `DigitalAsset?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `DigitalAsset?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'DigitalAsset' as const, id })),
-              { type: 'DigitalAsset', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toDigitalAssetList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "DigitalAsset" as const, id })),
+          { type: "DigitalAsset", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getDigitalAssets: build.query<DigitalAssetResponse, { example?: Partial<DigitalAsset> } | void>({
+    getDigitalAssets: build.query<
+      DigitalAssetResponse,
+      { example?: Partial<DigitalAsset> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +72,104 @@ export const DigitalAssetService = createApi({
         }
         return `DigitalAsset`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'DigitalAsset' as const, id })),
-              { type: 'DigitalAsset', id: 'LIST' },
-            ]
-          : [{ type: 'DigitalAsset', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toDigitalAssetList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "DigitalAsset" as const, id })),
+          { type: "DigitalAsset", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
     addDigitalAsset: build.mutation<DigitalAsset, Partial<DigitalAsset>>({
       query: (body) => ({
         url: `DigitalAsset`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'DigitalAsset', id: 'LIST' }],
+      invalidatesTags: [{ type: "DigitalAsset", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getDigitalAsset: build.query<DigitalAsset, string>({
       query: (id) => `DigitalAsset/${id}`,
-      providesTags: (result, error, id) => [{ type: 'DigitalAsset', id }],
+      providesTags: (result, error, id) => [{ type: "DigitalAsset", id }],
     }),
 
     // 5) Update
-    updateDigitalAsset: build.mutation<void, Pick<DigitalAsset, 'id'> & Partial<DigitalAsset>>({
+    updateDigitalAsset: build.mutation<
+      void,
+      Pick<DigitalAsset, "id"> & Partial<DigitalAsset>
+    >({
       query: ({ id, ...patch }) => ({
         url: `DigitalAsset/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            DigitalAssetService.util.updateQueryData('getDigitalAsset', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            DigitalAssetService.util.updateQueryData(
+              "getDigitalAsset",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<DigitalAsset, 'id'>) => [
-        { type: 'DigitalAsset', id },
-        { type: 'DigitalAsset', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<DigitalAsset, "id">) => [
+        { type: "DigitalAsset", id },
+        { type: "DigitalAsset", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteDigitalAsset: build.mutation<{ success: boolean; id: string }, number>({
+    deleteDigitalAsset: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `DigitalAsset/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'DigitalAsset', id }],
+      invalidatesTags: (result, error, id) => [{ type: "DigitalAsset", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteDigitalAssetCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteDigitalAssetCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `DigitalAsset/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'DigitalAsset', id }, { type: 'DigitalAsset', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "DigitalAsset", id },
+        { type: "DigitalAsset", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetDigitalAssetsPagedQuery`
 export const {
-  useGetDigitalAssetsPagedQuery,     // immediate fetch
+  useGetDigitalAssetsPagedQuery, // immediate fetch
   useLazyGetDigitalAssetsPagedQuery, // lazy fetch
   useGetDigitalAssetQuery,
   useGetDigitalAssetsQuery,
@@ -138,4 +177,4 @@ export const {
   useUpdateDigitalAssetMutation,
   useDeleteDigitalAssetMutation,
   useDeleteDigitalAssetCascadeMutation,
-} = DigitalAssetService
+} = DigitalAssetService;

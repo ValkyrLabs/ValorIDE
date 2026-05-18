@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AgentEventTrigger } from '@thorapi/model/AgentEventTrigger';
+import { AgentEventTrigger } from "@thorapi/model/AgentEventTrigger";
 
 const AgentEventTriggerSlice = createSlice({
   name: "AgentEventTriggers",
@@ -28,20 +27,25 @@ const AgentEventTriggerSlice = createSlice({
     },
 
     AgentEventTriggerValueToggled(state, action) {
-      console.log("AgentEventTrigger TOGGLE")
-      console.warn(JSON.stringify(action))
-      const AgentEventTrigger:AgentEventTrigger = state.find((AgentEventTrigger) => AgentEventTrigger.id === action.payload.AgentEventTriggerId);
+      console.log("AgentEventTrigger TOGGLE");
+      console.warn(JSON.stringify(action));
+      const AgentEventTrigger: AgentEventTrigger = state.find(
+        (AgentEventTrigger) =>
+          AgentEventTrigger.id === action.payload.AgentEventTriggerId,
+      );
       if (AgentEventTrigger) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     AgentEventTriggerpropertySet(state, action) {
-      const AgentEventTrigger = state.find((AgentEventTrigger) => AgentEventTrigger.id === action.payload.AgentEventTriggerId);
+      const AgentEventTrigger = state.find(
+        (AgentEventTrigger) =>
+          AgentEventTrigger.id === action.payload.AgentEventTriggerId,
+      );
       if (AgentEventTrigger) {
-      //  AgentEventTrigger[action.property] = action.payload[action.property];
+        //  AgentEventTrigger[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const AgentEventTriggerSlice = createSlice({
 export const {
   AgentEventTriggerAdded,
   AgentEventTriggerValueToggled,
-  AgentEventTriggerpropertySet
+  AgentEventTriggerpropertySet,
 } = AgentEventTriggerSlice.actions;
 export default AgentEventTriggerSlice.reducer;

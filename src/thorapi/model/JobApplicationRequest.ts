@@ -20,15 +20,14 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -37,174 +36,194 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface JobApplicationRequest
  */
-export type JobApplicationRequest  = DataObject & {
-    /**
-     * Applicant email
-     * @type {string}
-     * @memberof JobApplicationRequest
-     */
-    email: string;
-    /**
-     * Applicant full name
-     * @type {string}
-     * @memberof JobApplicationRequest
-     */
-    fullName: string;
-    /**
-     * Pre-signed URL or metadata pointer to the uploaded resume asset (stored as TEXT; max 5MB payload)
-     * @type {string}
-     * @memberof JobApplicationRequest
-     */
-    resume: string;
-    /**
-     * LinkedIn profile URL
-     * @type {string}
-     * @memberof JobApplicationRequest
-     */
-    linkedinUrl?: string;
-    /**
-     * Current job title
-     * @type {string}
-     * @memberof JobApplicationRequest
-     */
-    currentRole?: string;
-    /**
-     * Current company
-     * @type {string}
-     * @memberof JobApplicationRequest
-     */
-    currentCompany?: string;
-    /**
-     * Years of experience
-     * @type {number}
-     * @memberof JobApplicationRequest
-     */
-    yearsExperience?: number;
-    /**
-     * Optional cover letter text
-     * @type {string}
-     * @memberof JobApplicationRequest
-     */
-    coverLetter?: string;
-    /**
-     * Apply to specific opportunity (null = general inquiry)
-     * @type {string}
-     * @memberof JobApplicationRequest
-     */
-    opportunityId?: string;
-    /**
-     * What types of roles interest you
-     * @type {string}
-     * @memberof JobApplicationRequest
-     */
-    preferredRoles?: string;
-    /**
-     * Your technical skills
-     * @type {string}
-     * @memberof JobApplicationRequest
-     */
-    skills?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof JobApplicationRequest
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof JobApplicationRequest
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof JobApplicationRequest
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof JobApplicationRequest
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof JobApplicationRequest
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof JobApplicationRequest
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof JobApplicationRequest
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof JobApplicationRequest
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof JobApplicationRequest
-     */
-    trashed?: boolean;
+export type JobApplicationRequest = DataObject & {
+  /**
+   * Applicant email
+   * @type {string}
+   * @memberof JobApplicationRequest
+   */
+  email?: string;
+  /**
+   * Applicant full name
+   * @type {string}
+   * @memberof JobApplicationRequest
+   */
+  fullName?: string;
+  /**
+   * LinkedIn profile URL
+   * @type {string}
+   * @memberof JobApplicationRequest
+   */
+  linkedinUrl?: string;
+  /**
+   * Current job title
+   * @type {string}
+   * @memberof JobApplicationRequest
+   */
+  currentRole?: string;
+  /**
+   * Current company
+   * @type {string}
+   * @memberof JobApplicationRequest
+   */
+  currentCompany?: string;
+  /**
+   * Years of experience
+   * @type {number}
+   * @memberof JobApplicationRequest
+   */
+  yearsExperience?: number;
+  /**
+   * Pre-signed URL or metadata pointer to the uploaded resume asset (stored as TEXT; max 5MB payload)
+   * @type {string}
+   * @memberof JobApplicationRequest
+   */
+  resume?: string;
+  /**
+   * Optional cover letter text
+   * @type {string}
+   * @memberof JobApplicationRequest
+   */
+  coverLetter?: string;
+  /**
+   * Apply to specific opportunity (null = general inquiry)
+   * @type {string}
+   * @memberof JobApplicationRequest
+   */
+  opportunityId?: string;
+  /**
+   * What types of roles interest you
+   * @type {string}
+   * @memberof JobApplicationRequest
+   */
+  preferredRoles?: string;
+  /**
+   * Your technical skills
+   * @type {string}
+   * @memberof JobApplicationRequest
+   */
+  skills?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof JobApplicationRequest
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof JobApplicationRequest
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof JobApplicationRequest
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof JobApplicationRequest
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof JobApplicationRequest
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof JobApplicationRequest
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof JobApplicationRequest
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof JobApplicationRequest
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof JobApplicationRequest
+   */
+  trashed?: boolean;
+};
+
+export function JobApplicationRequestFromJSON(
+  json: any,
+): JobApplicationRequest {
+  return {
+    ...DataObjectFromJSON(json),
+    email: !exists(json, "email") ? undefined : json["email"],
+    fullName: !exists(json, "fullName") ? undefined : json["fullName"],
+    linkedinUrl: !exists(json, "linkedinUrl") ? undefined : json["linkedinUrl"],
+    currentRole: !exists(json, "currentRole") ? undefined : json["currentRole"],
+    currentCompany: !exists(json, "currentCompany")
+      ? undefined
+      : json["currentCompany"],
+    yearsExperience: !exists(json, "yearsExperience")
+      ? undefined
+      : json["yearsExperience"],
+    resume: !exists(json, "resume") ? undefined : json["resume"],
+    coverLetter: !exists(json, "coverLetter") ? undefined : json["coverLetter"],
+    opportunityId: !exists(json, "opportunityId")
+      ? undefined
+      : json["opportunityId"],
+    preferredRoles: !exists(json, "preferredRoles")
+      ? undefined
+      : json["preferredRoles"],
+    skills: !exists(json, "skills") ? undefined : json["skills"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
-export function JobApplicationRequestFromJSON(json: any): JobApplicationRequest {
-    return {
-        ...DataObjectFromJSON(json),
-        'email': json['email'],
-        'fullName': json['fullName'],
-        'resume': json['resume'],
-        'linkedinUrl': !exists(json, 'linkedinUrl') ? undefined : json['linkedinUrl'],
-        'currentRole': !exists(json, 'currentRole') ? undefined : json['currentRole'],
-        'currentCompany': !exists(json, 'currentCompany') ? undefined : json['currentCompany'],
-        'yearsExperience': !exists(json, 'yearsExperience') ? undefined : json['yearsExperience'],
-        'coverLetter': !exists(json, 'coverLetter') ? undefined : json['coverLetter'],
-        'opportunityId': !exists(json, 'opportunityId') ? undefined : json['opportunityId'],
-        'preferredRoles': !exists(json, 'preferredRoles') ? undefined : json['preferredRoles'],
-        'skills': !exists(json, 'skills') ? undefined : json['skills'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+export function JobApplicationRequestToJSON(
+  value?: JobApplicationRequest,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    email: value.email,
+    fullName: value.fullName,
+    linkedinUrl: value.linkedinUrl,
+    currentRole: value.currentRole,
+    currentCompany: value.currentCompany,
+    yearsExperience: value.yearsExperience,
+    resume: value.resume,
+    coverLetter: value.coverLetter,
+    opportunityId: value.opportunityId,
+    preferredRoles: value.preferredRoles,
+    skills: value.skills,
+    trashed: value.trashed,
+  };
 }
-
-export function JobApplicationRequestToJSON(value?: JobApplicationRequest): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'email': value.email,
-        'fullName': value.fullName,
-        'resume': value.resume,
-        'linkedinUrl': value.linkedinUrl,
-        'currentRole': value.currentRole,
-        'currentCompany': value.currentCompany,
-        'yearsExperience': value.yearsExperience,
-        'coverLetter': value.coverLetter,
-        'opportunityId': value.opportunityId,
-        'preferredRoles': value.preferredRoles,
-        'skills': value.skills,
-        'trashed': value.trashed,
-    };
-}
-
-

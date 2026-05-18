@@ -229,7 +229,7 @@ export const CheckmarkControl = ({ messageTs, isCheckpointCheckedOut }) => {
                       }),
                     ],
                   }),
-                  document.body
+                  document.body,
                 ),
             ],
           }),

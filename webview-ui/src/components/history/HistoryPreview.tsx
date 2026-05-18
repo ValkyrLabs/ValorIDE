@@ -59,7 +59,7 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
       {/* Using global aurora .history-preview-item styles */}
 
       <h4>
-        <FaComments />{" "} Recent Tasks
+        <FaComments /> Recent Tasks
       </h4>
 
       <div style={{ padding: "1em" }}>
@@ -73,14 +73,15 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
               /*className="history-preview-item"*/
               onClick={() => handleHistorySelect(item.id)}
             >
-
-              <Card.Header style={{ cursor: "pointer", maxHeight: ".5em", overflow: "hidden", textOverflow: "ellipsis" }}>
-                <span
-                  className="timestamp"
-                >
-                  {formatDate(item.ts)}
-                </span>
-
+              <Card.Header
+                style={{
+                  cursor: "pointer",
+                  maxHeight: ".5em",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                <span className="timestamp">{formatDate(item.ts)}</span>
               </Card.Header>
 
               <Card.Body
@@ -110,7 +111,6 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
                   </b>
                 )}
               </Card.Body>
-
             </Card>
           ))}
         <div
@@ -127,7 +127,7 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
               width: "100%",
               fontSize: "1em",
               fontWeight: "bold",
-              color: "black"
+              color: "black",
             }}
           >
             <FaHistory /> View all history

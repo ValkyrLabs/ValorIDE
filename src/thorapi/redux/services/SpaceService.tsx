@@ -7,39 +7,57 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { Space } from '@thorapi/model/Space'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { Space } from "@thorapi/model/Space";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type SpaceResponse = Space[]
+type SpaceResponse = Space[];
+
+const toSpaceList = (result: unknown): SpaceResponse => {
+  if (Array.isArray(result)) {
+    return result as SpaceResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as SpaceResponse) : [];
+};
 
 export const SpaceService = createApi({
-  reducerPath: 'Space', // This should remain unique
+  reducerPath: "Space", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['Space'],
+  tagTypes: ["Space"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSpacesPaged: build.query<SpaceResponse, { page: number; size?: number; example?: Partial<Space> }>({
+    getSpacesPaged: build.query<
+      SpaceResponse,
+      { page: number; size?: number; example?: Partial<Space> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Space?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Space?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Space' as const, id })),
-              { type: 'Space', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toSpaceList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "Space" as const, id })),
+          { type: "Space", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
@@ -51,55 +69,57 @@ export const SpaceService = createApi({
         }
         return `Space`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Space' as const, id })),
-              { type: 'Space', id: 'LIST' },
-            ]
-          : [{ type: 'Space', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toSpaceList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "Space" as const, id })),
+          { type: "Space", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
     addSpace: build.mutation<Space, Partial<Space>>({
       query: (body) => ({
         url: `Space`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'Space', id: 'LIST' }],
+      invalidatesTags: [{ type: "Space", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getSpace: build.query<Space, string>({
       query: (id) => `Space/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Space', id }],
+      providesTags: (result, error, id) => [{ type: "Space", id }],
     }),
 
     // 5) Update
-    updateSpace: build.mutation<void, Pick<Space, 'id'> & Partial<Space>>({
+    updateSpace: build.mutation<void, Pick<Space, "id"> & Partial<Space>>({
       query: ({ id, ...patch }) => ({
         url: `Space/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            SpaceService.util.updateQueryData('getSpace', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            SpaceService.util.updateQueryData("getSpace", id, (draft) => {
+              Object.assign(draft, patch);
+            }),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<Space, 'id'>) => [
-        { type: 'Space', id },
-        { type: 'Space', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<Space, "id">) => [
+        { type: "Space", id },
+        { type: "Space", id: "LIST" },
       ],
     }),
 
@@ -108,29 +128,35 @@ export const SpaceService = createApi({
       query(id) {
         return {
           url: `Space/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'Space', id }],
+      invalidatesTags: (result, error, id) => [{ type: "Space", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSpaceCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteSpaceCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `Space/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Space', id }, { type: 'Space', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Space", id },
+        { type: "Space", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetSpacesPagedQuery`
 export const {
-  useGetSpacesPagedQuery,     // immediate fetch
+  useGetSpacesPagedQuery, // immediate fetch
   useLazyGetSpacesPagedQuery, // lazy fetch
   useGetSpaceQuery,
   useGetSpacesQuery,
@@ -138,4 +164,4 @@ export const {
   useUpdateSpaceMutation,
   useDeleteSpaceMutation,
   useDeleteSpaceCascadeMutation,
-} = SpaceService
+} = SpaceService;

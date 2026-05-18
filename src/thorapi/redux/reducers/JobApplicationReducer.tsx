@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { JobApplication } from '@thorapi/model/JobApplication';
+import { JobApplication } from "@thorapi/model/JobApplication";
 
 const JobApplicationSlice = createSlice({
   name: "JobApplications",
@@ -28,20 +27,25 @@ const JobApplicationSlice = createSlice({
     },
 
     JobApplicationValueToggled(state, action) {
-      console.log("JobApplication TOGGLE")
-      console.warn(JSON.stringify(action))
-      const JobApplication:JobApplication = state.find((JobApplication) => JobApplication.id === action.payload.JobApplicationId);
+      console.log("JobApplication TOGGLE");
+      console.warn(JSON.stringify(action));
+      const JobApplication: JobApplication = state.find(
+        (JobApplication) =>
+          JobApplication.id === action.payload.JobApplicationId,
+      );
       if (JobApplication) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     JobApplicationpropertySet(state, action) {
-      const JobApplication = state.find((JobApplication) => JobApplication.id === action.payload.JobApplicationId);
+      const JobApplication = state.find(
+        (JobApplication) =>
+          JobApplication.id === action.payload.JobApplicationId,
+      );
       if (JobApplication) {
-      //  JobApplication[action.property] = action.payload[action.property];
+        //  JobApplication[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const JobApplicationSlice = createSlice({
 export const {
   JobApplicationAdded,
   JobApplicationValueToggled,
-  JobApplicationpropertySet
+  JobApplicationpropertySet,
 } = JobApplicationSlice.actions;
 export default JobApplicationSlice.reducer;

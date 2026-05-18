@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Sheet } from '@thorapi/model/Sheet';
+import { Sheet } from "@thorapi/model/Sheet";
 
 const SheetSlice = createSlice({
   name: "Sheets",
@@ -28,28 +27,26 @@ const SheetSlice = createSlice({
     },
 
     SheetValueToggled(state, action) {
-      console.log("Sheet TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Sheet:Sheet = state.find((Sheet) => Sheet.id === action.payload.SheetId);
+      console.log("Sheet TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Sheet: Sheet = state.find(
+        (Sheet) => Sheet.id === action.payload.SheetId,
+      );
       if (Sheet) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SheetpropertySet(state, action) {
       const Sheet = state.find((Sheet) => Sheet.id === action.payload.SheetId);
       if (Sheet) {
-      //  Sheet[action.property] = action.payload[action.property];
+        //  Sheet[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  SheetAdded,
-  SheetValueToggled,
-  SheetpropertySet
-} = SheetSlice.actions;
+export const { SheetAdded, SheetValueToggled, SheetpropertySet } =
+  SheetSlice.actions;
 export default SheetSlice.reducer;

@@ -7,43 +7,64 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { DownloadAccess } from '@thorapi/model/DownloadAccess'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { DownloadAccess } from "@thorapi/model/DownloadAccess";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type DownloadAccessResponse = DownloadAccess[]
+type DownloadAccessResponse = DownloadAccess[];
+
+const toDownloadAccessList = (result: unknown): DownloadAccessResponse => {
+  if (Array.isArray(result)) {
+    return result as DownloadAccessResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as DownloadAccessResponse) : [];
+};
 
 export const DownloadAccessService = createApi({
-  reducerPath: 'DownloadAccess', // This should remain unique
+  reducerPath: "DownloadAccess", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['DownloadAccess'],
+  tagTypes: ["DownloadAccess"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getDownloadAccesssPaged: build.query<DownloadAccessResponse, { page: number; size?: number; example?: Partial<DownloadAccess> }>({
+    getDownloadAccesssPaged: build.query<
+      DownloadAccessResponse,
+      { page: number; size?: number; example?: Partial<DownloadAccess> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `DownloadAccess?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `DownloadAccess?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'DownloadAccess' as const, id })),
-              { type: 'DownloadAccess', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toDownloadAccessList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "DownloadAccess" as const, id })),
+          { type: "DownloadAccess", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getDownloadAccesss: build.query<DownloadAccessResponse, { example?: Partial<DownloadAccess> } | void>({
+    getDownloadAccesss: build.query<
+      DownloadAccessResponse,
+      { example?: Partial<DownloadAccess> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +72,104 @@ export const DownloadAccessService = createApi({
         }
         return `DownloadAccess`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'DownloadAccess' as const, id })),
-              { type: 'DownloadAccess', id: 'LIST' },
-            ]
-          : [{ type: 'DownloadAccess', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toDownloadAccessList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "DownloadAccess" as const, id })),
+          { type: "DownloadAccess", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
     addDownloadAccess: build.mutation<DownloadAccess, Partial<DownloadAccess>>({
       query: (body) => ({
         url: `DownloadAccess`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'DownloadAccess', id: 'LIST' }],
+      invalidatesTags: [{ type: "DownloadAccess", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getDownloadAccess: build.query<DownloadAccess, string>({
       query: (id) => `DownloadAccess/${id}`,
-      providesTags: (result, error, id) => [{ type: 'DownloadAccess', id }],
+      providesTags: (result, error, id) => [{ type: "DownloadAccess", id }],
     }),
 
     // 5) Update
-    updateDownloadAccess: build.mutation<void, Pick<DownloadAccess, 'id'> & Partial<DownloadAccess>>({
+    updateDownloadAccess: build.mutation<
+      void,
+      Pick<DownloadAccess, "id"> & Partial<DownloadAccess>
+    >({
       query: ({ id, ...patch }) => ({
         url: `DownloadAccess/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            DownloadAccessService.util.updateQueryData('getDownloadAccess', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            DownloadAccessService.util.updateQueryData(
+              "getDownloadAccess",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<DownloadAccess, 'id'>) => [
-        { type: 'DownloadAccess', id },
-        { type: 'DownloadAccess', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<DownloadAccess, "id">) => [
+        { type: "DownloadAccess", id },
+        { type: "DownloadAccess", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteDownloadAccess: build.mutation<{ success: boolean; id: string }, number>({
+    deleteDownloadAccess: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `DownloadAccess/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'DownloadAccess', id }],
+      invalidatesTags: (result, error, id) => [{ type: "DownloadAccess", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteDownloadAccessCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteDownloadAccessCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `DownloadAccess/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'DownloadAccess', id }, { type: 'DownloadAccess', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "DownloadAccess", id },
+        { type: "DownloadAccess", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetDownloadAccesssPagedQuery`
 export const {
-  useGetDownloadAccesssPagedQuery,     // immediate fetch
+  useGetDownloadAccesssPagedQuery, // immediate fetch
   useLazyGetDownloadAccesssPagedQuery, // lazy fetch
   useGetDownloadAccessQuery,
   useGetDownloadAccesssQuery,
@@ -138,4 +177,4 @@ export const {
   useUpdateDownloadAccessMutation,
   useDeleteDownloadAccessMutation,
   useDeleteDownloadAccessCascadeMutation,
-} = DownloadAccessService
+} = DownloadAccessService;

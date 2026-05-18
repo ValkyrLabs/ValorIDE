@@ -1,0 +1,195 @@
+import React, { useState } from "react";
+import {
+  VSCodeButton,
+  VSCodeTextField,
+  VSCodeDivider,
+} from "@vscode/webview-ui-toolkit/react";
+import { FaCreditCard } from "react-icons/fa";
+import "./BuyCredits.css";
+
+interface BuyCreditsProps {
+  authenticatedPrincipal?: any;
+  onPurchaseSuccess?: (amount: number) => void;
+  style?: React.CSSProperties;
+}
+
+const BuyCredits: React.FC<BuyCreditsProps> = ({
+  authenticatedPrincipal,
+  onPurchaseSuccess,
+  style,
+}) => {
+  const [amount, setAmount] = useState<number>(10);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handlePurchase = async () => {
+    if (!amount || amount <= 0) {
+      alert("Please enter a valid amount");
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      // TODO: Integrate with actual payment API
+      // For now, simulate success
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      if (onPurchaseSuccess) {
+        onPurchaseSuccess(amount);
+      }
+    } catch (error) {
+      console.error("Purchase failed:", error);
+      alert("Purchase failed. Please try again.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const presetAmounts = [10, 25, 50, 100];
+
+  return (
+    <div
+      style={{
+        padding: "20px",
+        backgroundColor: "var(--vscode-panel-background)",
+        color: "var(--vscode-foreground)",
+        ...style,
+      }}
+    >
+      <div style={{ marginBottom: "16px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+          <FaCreditCard size={18} />
+          <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 600 }}>
+            Buy Credits
+          </h3>
+        </div>
+        <p
+          style={{
+            margin: "8px 0 0 0",
+            fontSize: "12px",
+            color: "var(--vscode-descriptionForeground)",
+          }}
+        >
+          Add credits to your account to continue using ValorIDE services.
+        </p>
+      </div>
+
+      <VSCodeDivider style={{ margin: "12px 0" }} />
+
+      <div style={{ marginBottom: "16px" }}>
+        <label
+          style={{
+            display: "block",
+            fontSize: "12px",
+            fontWeight: 600,
+            marginBottom: "8px",
+          }}
+        >
+          Amount (USD)
+        </label>
+        <VSCodeTextField
+          type="number"
+          value={amount.toString()}
+          onChange={(e: any) => setAmount(parseFloat(e.target.value) || 0)}
+          min="1"
+          step="1"
+          style={{ width: "100%" }}
+        />
+      </div>
+
+      <div style={{ marginBottom: "16px" }}>
+        <label
+          style={{
+            display: "block",
+            fontSize: "12px",
+            fontWeight: 600,
+            marginBottom: "8px",
+          }}
+        >
+          Quick Select
+        </label>
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+          {presetAmounts.map((preset) => (
+            <button
+              key={preset}
+              onClick={() => setAmount(preset)}
+              style={{
+                padding: "6px 12px",
+                backgroundColor:
+                  amount === preset
+                    ? "#06ffa5"
+                    : "var(--vscode-button-secondaryBackground)",
+                color:
+                  amount === preset
+                    ? "#000"
+                    : "var(--vscode-foreground)",
+                border: "1px solid var(--vscode-button-secondaryBorder)",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "12px",
+                fontWeight: 500,
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                if (amount !== preset) {
+                  e.currentTarget.style.opacity = "0.8";
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = "1";
+              }}
+            >
+              ${preset}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div
+        style={{
+          padding: "12px",
+          backgroundColor: "var(--vscode-editor-background)",
+          borderRadius: "4px",
+          marginBottom: "16px",
+          fontSize: "12px",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "4px",
+          }}
+        >
+          <span>Amount:</span>
+          <span style={{ fontWeight: 600 }}>${amount.toFixed(2)}</span>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <span color="var(--vscode-descriptionForeground)">Estimated Credits:</span>
+          <span style={{ fontWeight: 600 }}>{(amount * 1000).toLocaleString()}</span>
+        </div>
+      </div>
+
+      <VSCodeButton
+        appearance="primary"
+        onClick={handlePurchase}
+        disabled={isProcessing || !amount || amount <= 0}
+        style={{ width: "100%" }}
+      >
+        {isProcessing ? "Processing..." : `Purchase $${amount.toFixed(2)}`}
+      </VSCodeButton>
+
+      <p
+        style={{
+          margin: "12px 0 0 0",
+          fontSize: "11px",
+          color: "var(--vscode-descriptionForeground)",
+          textAlign: "center",
+        }}
+      >
+        Secure payment powered by Stripe
+      </p>
+    </div>
+  );
+};
+
+export default BuyCredits;

@@ -7,57 +7,76 @@ import { handleMcpServiceRequest } from "./mcp";
  * Handles gRPC requests from the webview
  */
 export class GrpcHandler {
-    controller;
-    constructor(controller) {
-        this.controller = controller;
+  controller;
+  constructor(controller) {
+    this.controller = controller;
+  }
+  /**
+   * Handle a gRPC request from the webview
+   * @param service The service name
+   * @param method The method name
+   * @param message The request message
+   * @param requestId The request ID for response correlation
+   * @returns The response message or error
+   */
+  async handleRequest(service, method, message, requestId) {
+    try {
+      switch (service) {
+        case "valoride.BrowserService":
+          return {
+            message: await handleBrowserServiceRequest(
+              this.controller,
+              method,
+              message,
+            ),
+            request_id: requestId,
+          };
+        case "valoride.CheckpointsService":
+          return {
+            message: await handleCheckpointsServiceRequest(
+              this.controller,
+              method,
+              message,
+            ),
+            request_id: requestId,
+          };
+        case "valoride.FileService":
+          return {
+            message: await handleFileServiceRequest(
+              this.controller,
+              method,
+              message,
+            ),
+            request_id: requestId,
+          };
+        case "valoride.TaskService":
+          return {
+            message: await handleTaskServiceRequest(
+              this.controller,
+              method,
+              message,
+            ),
+            request_id: requestId,
+          };
+        case "valoride.McpService":
+          return {
+            message: await handleMcpServiceRequest(
+              this.controller,
+              method,
+              message,
+            ),
+            request_id: requestId,
+          };
+        default:
+          throw new Error(`Unknown service: ${service}`);
+      }
+    } catch (error) {
+      return {
+        error: error instanceof Error ? error.message : String(error),
+        request_id: requestId,
+      };
     }
-    /**
-     * Handle a gRPC request from the webview
-     * @param service The service name
-     * @param method The method name
-     * @param message The request message
-     * @param requestId The request ID for response correlation
-     * @returns The response message or error
-     */
-    async handleRequest(service, method, message, requestId) {
-        try {
-            switch (service) {
-                case "valoride.BrowserService":
-                    return {
-                        message: await handleBrowserServiceRequest(this.controller, method, message),
-                        request_id: requestId,
-                    };
-                case "valoride.CheckpointsService":
-                    return {
-                        message: await handleCheckpointsServiceRequest(this.controller, method, message),
-                        request_id: requestId,
-                    };
-                case "valoride.FileService":
-                    return {
-                        message: await handleFileServiceRequest(this.controller, method, message),
-                        request_id: requestId,
-                    };
-                case "valoride.TaskService":
-                    return {
-                        message: await handleTaskServiceRequest(this.controller, method, message),
-                        request_id: requestId,
-                    };
-                case "valoride.McpService":
-                    return {
-                        message: await handleMcpServiceRequest(this.controller, method, message),
-                        request_id: requestId,
-                    };
-                default:
-                    throw new Error(`Unknown service: ${service}`);
-            }
-        }
-        catch (error) {
-            return {
-                error: error instanceof Error ? error.message : String(error),
-                request_id: requestId,
-            };
-        }
-    }
+  }
 }
 /**
  * Handle a gRPC request from the webview
@@ -65,24 +84,28 @@ export class GrpcHandler {
  * @param request The gRPC request
  */
 export async function handleGrpcRequest(controller, request) {
-    try {
-        const grpcHandler = new GrpcHandler(controller);
-        const response = await grpcHandler.handleRequest(request.service, request.method, request.message, request.request_id);
-        // Send the response back to the webview
-        await controller.postMessageToWebview({
-            type: "grpc_response",
-            grpc_response: response,
-        });
-    }
-    catch (error) {
-        // Send error response
-        await controller.postMessageToWebview({
-            type: "grpc_response",
-            grpc_response: {
-                error: error instanceof Error ? error.message : String(error),
-                request_id: request.request_id,
-            },
-        });
-    }
+  try {
+    const grpcHandler = new GrpcHandler(controller);
+    const response = await grpcHandler.handleRequest(
+      request.service,
+      request.method,
+      request.message,
+      request.request_id,
+    );
+    // Send the response back to the webview
+    await controller.postMessageToWebview({
+      type: "grpc_response",
+      grpc_response: response,
+    });
+  } catch (error) {
+    // Send error response
+    await controller.postMessageToWebview({
+      type: "grpc_response",
+      grpc_response: {
+        error: error instanceof Error ? error.message : String(error),
+        request_id: request.request_id,
+      },
+    });
+  }
 }
 //# sourceMappingURL=grpc-handler.js.map

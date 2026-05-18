@@ -7,40 +7,47 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   AgentBilling,
   AgentBillingChargingModelEnum,
   AgentBillingBillingStatusEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddAgentBillingMutation } from '../../services/AgentBillingService';
+import { useAddAgentBillingMutation } from "../../services/AgentBillingService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -50,7 +57,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -65,48 +71,53 @@ Billing configuration and tracking for an agent.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const ChargingModelValidation = () => {
-  return [
-    'PER_INSTANCE',
-    'USAGE_BASED',
-    'FLAT_RATE',
-  ];
+  return ["PER_INSTANCE", "USAGE_BASED", "FLAT_RATE"];
 };
 const BillingStatusValidation = () => {
-  return [
-    'ACTIVE',
-    'SUSPENDED',
-    'ARCHIVED',
-  ];
+  return ["ACTIVE", "SUSPENDED", "ARCHIVED"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        agentId: Yup.string(),
-        organizationId: Yup.string(),
-        instantiationCost: asNumber(Yup.number().typeError("instantiationCost must be a number")),
-        totalCharges: asNumber(Yup.number().typeError("totalCharges must be a number")),
-      chargingModel: Yup.mixed()
-        .oneOf(ChargingModelValidation(), "Invalid value for chargingModel")
-        ,
-      billingStatus: Yup.mixed()
-        .oneOf(BillingStatusValidation(), "Invalid value for billingStatus")
-        ,
-        lastChargeDate: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("lastChargeDate must be a valid date"),
-        quotaAgents: asNumber(Yup.number().integer().typeError("quotaAgents must be a number")),
-        activeAgentCount: asNumber(Yup.number().integer().typeError("activeAgentCount must be a number")),
-        trashed: Yup.boolean(),
+  agentId: Yup.string(),
+  organizationId: Yup.string(),
+  instantiationCost: asNumber(
+    Yup.number().typeError("instantiationCost must be a number"),
+  ),
+  totalCharges: asNumber(
+    Yup.number().typeError("totalCharges must be a number"),
+  ),
+  chargingModel: Yup.mixed().oneOf(
+    ChargingModelValidation(),
+    "Invalid value for chargingModel",
+  ),
+  billingStatus: Yup.mixed().oneOf(
+    BillingStatusValidation(),
+    "Invalid value for billingStatus",
+  ),
+  lastChargeDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("lastChargeDate must be a valid date"),
+  quotaAgents: asNumber(
+    Yup.number().integer().typeError("quotaAgents must be a number"),
+  ),
+  activeAgentCount: asNumber(
+    Yup.number().integer().typeError("activeAgentCount must be a number"),
+  ),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -123,12 +134,18 @@ const AgentBillingForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -136,16 +153,16 @@ const AgentBillingForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<AgentBilling> = {
-          agentId: '',
-          organizationId: '',
-          instantiationCost: 0,
-          totalCharges: 0,
-        chargingModel: undefined,
-        billingStatus: undefined,
-          lastChargeDate: new Date(),
-          quotaAgents: 0,
-          activeAgentCount: 0,
-          trashed: false,
+    agentId: "",
+    organizationId: "",
+    instantiationCost: 0,
+    totalCharges: 0,
+    chargingModel: undefined,
+    billingStatus: undefined,
+    lastChargeDate: new Date(),
+    quotaAgents: 0,
+    activeAgentCount: 0,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -160,11 +177,14 @@ const AgentBillingForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new AgentBilling:', grants);
+    console.log("Permissions saved for new AgentBilling:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<AgentBilling>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<AgentBilling>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -175,7 +195,7 @@ const AgentBillingForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `AgentBilling created successfully! Would you like to set permissions for this object?`
+          `AgentBilling created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -183,8 +203,8 @@ const AgentBillingForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create AgentBilling:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create AgentBilling:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -205,44 +225,36 @@ const AgentBillingForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addAgentBillingResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New AgentBilling
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New AgentBilling
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="agentId" className="nice-form-control">
                       <b>
                         Agent Id:
-                        {touched.agentId &&
-                         !errors.agentId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.agentId && !errors.agentId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="agentId"
-                            value={values?.agentId}
-                            placeholder="Agent Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="agentId"
+                        value={values?.agentId}
+                        placeholder="Agent Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -251,31 +263,27 @@ const AgentBillingForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="organizationId" className="nice-form-control">
+                    <label
+                      htmlFor="organizationId"
+                      className="nice-form-control"
+                    >
                       <b>
                         Organization Id:
-                        {touched.organizationId &&
-                         !errors.organizationId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.organizationId && !errors.organizationId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="organizationId"
-                            value={values?.organizationId}
-                            placeholder="Organization Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="organizationId"
+                        value={values?.organizationId}
+                        placeholder="Organization Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -284,40 +292,40 @@ const AgentBillingForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="instantiationCost" className="nice-form-control">
+                    <label
+                      htmlFor="instantiationCost"
+                      className="nice-form-control"
+                    >
                       <b>
                         Instantiation Cost:
                         {touched.instantiationCost &&
-                         !errors.instantiationCost && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.instantiationCost && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="instantiationCost"
-                            type="number"
-                            step="any"
-                            value={values.instantiationCost || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('instantiationCost', true);
-                              const v = e.target.value;
-                              setFieldValue('instantiationCost', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.instantiationCost
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="instantiationCost"
+                        type="number"
+                        step="any"
+                        value={values.instantiationCost || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("instantiationCost", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "instantiationCost",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.instantiationCost
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -329,37 +337,33 @@ const AgentBillingForm: React.FC = () => {
                     <label htmlFor="totalCharges" className="nice-form-control">
                       <b>
                         Total Charges:
-                        {touched.totalCharges &&
-                         !errors.totalCharges && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.totalCharges && !errors.totalCharges && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="totalCharges"
-                            type="number"
-                            step="any"
-                            value={values.totalCharges || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('totalCharges', true);
-                              const v = e.target.value;
-                              setFieldValue('totalCharges', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.totalCharges
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="totalCharges"
+                        type="number"
+                        step="any"
+                        value={values.totalCharges || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("totalCharges", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "totalCharges",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.totalCharges
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -368,33 +372,39 @@ const AgentBillingForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="chargingModel" className="nice-form-control">
+                    <label
+                      htmlFor="chargingModel"
+                      className="nice-form-control"
+                    >
                       <b>
                         Charging Model:
-                        {touched.chargingModel &&
-                         !errors.chargingModel && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.chargingModel && !errors.chargingModel && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="chargingModel"
-                          value={values.chargingModel || ''}
-                          className={
-                            errors.chargingModel
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('chargingModel', true);
-                            setFieldValue('chargingModel', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Charging Model" />
-                          <ChargingModelLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="chargingModel"
+                        value={values.chargingModel || ""}
+                        className={
+                          errors.chargingModel
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("chargingModel", true);
+                          setFieldValue(
+                            "chargingModel",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Charging Model" />
+                        <ChargingModelLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -403,33 +413,39 @@ const AgentBillingForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="billingStatus" className="nice-form-control">
+                    <label
+                      htmlFor="billingStatus"
+                      className="nice-form-control"
+                    >
                       <b>
                         Billing Status:
-                        {touched.billingStatus &&
-                         !errors.billingStatus && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.billingStatus && !errors.billingStatus && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="billingStatus"
-                          value={values.billingStatus || ''}
-                          className={
-                            errors.billingStatus
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('billingStatus', true);
-                            setFieldValue('billingStatus', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Billing Status" />
-                          <BillingStatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="billingStatus"
+                        value={values.billingStatus || ""}
+                        className={
+                          errors.billingStatus
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("billingStatus", true);
+                          setFieldValue(
+                            "billingStatus",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Billing Status" />
+                        <BillingStatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -438,41 +454,44 @@ const AgentBillingForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="lastChargeDate" className="nice-form-control">
+                    <label
+                      htmlFor="lastChargeDate"
+                      className="nice-form-control"
+                    >
                       <b>
                         Last Charge Date:
-                        {touched.lastChargeDate &&
-                         !errors.lastChargeDate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.lastChargeDate && !errors.lastChargeDate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="lastChargeDate"
-                            type="datetime-local"
-                            value={values.lastChargeDate ? 
-                              new Date(values.lastChargeDate).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('lastChargeDate', true);
-                              const v = e.target.value;
-                              setFieldValue('lastChargeDate', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.lastChargeDate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="lastChargeDate"
+                        type="datetime-local"
+                        value={
+                          values.lastChargeDate
+                            ? new Date(values.lastChargeDate)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("lastChargeDate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "lastChargeDate",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.lastChargeDate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -484,36 +503,32 @@ const AgentBillingForm: React.FC = () => {
                     <label htmlFor="quotaAgents" className="nice-form-control">
                       <b>
                         Quota Agents:
-                        {touched.quotaAgents &&
-                         !errors.quotaAgents && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.quotaAgents && !errors.quotaAgents && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="quotaAgents"
-                            type="number"
-                            value={values.quotaAgents || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('quotaAgents', true);
-                              const v = e.target.value;
-                              setFieldValue('quotaAgents', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.quotaAgents
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="quotaAgents"
+                        type="number"
+                        value={values.quotaAgents || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("quotaAgents", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "quotaAgents",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.quotaAgents
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -522,39 +537,39 @@ const AgentBillingForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="activeAgentCount" className="nice-form-control">
+                    <label
+                      htmlFor="activeAgentCount"
+                      className="nice-form-control"
+                    >
                       <b>
                         Active Agent Count:
                         {touched.activeAgentCount &&
-                         !errors.activeAgentCount && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.activeAgentCount && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="activeAgentCount"
-                            type="number"
-                            value={values.activeAgentCount || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('activeAgentCount', true);
-                              const v = e.target.value;
-                              setFieldValue('activeAgentCount', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.activeAgentCount
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="activeAgentCount"
+                        type="number"
+                        value={values.activeAgentCount || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("activeAgentCount", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "activeAgentCount",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.activeAgentCount
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -566,32 +581,25 @@ const AgentBillingForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -601,45 +609,59 @@ const AgentBillingForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New AgentBilling
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New AgentBilling
+                    </CoolButton>
 
-                  {(addAgentBillingResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addAgentBillingResult as any).error ? (addAgentBillingResult as any).error.data : (addAgentBillingResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addAgentBillingResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addAgentBillingResult as any).error
+                              ? (addAgentBillingResult as any).error.data
+                              : (addAgentBillingResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addAgentBillingResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addAgentBillingResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addAgentBillingResult: {JSON.stringify(addAgentBillingResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addAgentBillingResult:{" "}
+                    {JSON.stringify(addAgentBillingResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -671,9 +693,9 @@ kebabcase charging-model-lookup
 const ChargingModelLookup = () => {
   return (
     <>
-      <option value='PER_INSTANCE' label="Per Instance" />
-      <option value='USAGE_BASED' label="Usage Based" />
-      <option value='FLAT_RATE' label="Flat Rate" />
+      <option value="PER_INSTANCE" label="Per Instance" />
+      <option value="USAGE_BASED" label="Usage Based" />
+      <option value="FLAT_RATE" label="Flat Rate" />
     </>
   );
 };
@@ -690,15 +712,12 @@ kebabcase billing-status-lookup
 const BillingStatusLookup = () => {
   return (
     <>
-      <option value='ACTIVE' label="Active" />
-      <option value='SUSPENDED' label="Suspended" />
-      <option value='ARCHIVED' label="Archived" />
+      <option value="ACTIVE" label="Active" />
+      <option value="SUSPENDED" label="Suspended" />
+      <option value="ARCHIVED" label="Archived" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default AgentBillingForm;
-

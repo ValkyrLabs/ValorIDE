@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SkillProfile } from '@thorapi/model/SkillProfile';
+import { SkillProfile } from "@thorapi/model/SkillProfile";
 
 const SkillProfileSlice = createSlice({
   name: "SkillProfiles",
@@ -28,20 +27,23 @@ const SkillProfileSlice = createSlice({
     },
 
     SkillProfileValueToggled(state, action) {
-      console.log("SkillProfile TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SkillProfile:SkillProfile = state.find((SkillProfile) => SkillProfile.id === action.payload.SkillProfileId);
+      console.log("SkillProfile TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SkillProfile: SkillProfile = state.find(
+        (SkillProfile) => SkillProfile.id === action.payload.SkillProfileId,
+      );
       if (SkillProfile) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SkillProfilepropertySet(state, action) {
-      const SkillProfile = state.find((SkillProfile) => SkillProfile.id === action.payload.SkillProfileId);
+      const SkillProfile = state.find(
+        (SkillProfile) => SkillProfile.id === action.payload.SkillProfileId,
+      );
       if (SkillProfile) {
-      //  SkillProfile[action.property] = action.payload[action.property];
+        //  SkillProfile[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +52,6 @@ const SkillProfileSlice = createSlice({
 export const {
   SkillProfileAdded,
   SkillProfileValueToggled,
-  SkillProfilepropertySet
+  SkillProfilepropertySet,
 } = SkillProfileSlice.actions;
 export default SkillProfileSlice.reducer;

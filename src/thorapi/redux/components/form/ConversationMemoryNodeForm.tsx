@@ -7,39 +7,46 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   ConversationMemoryNode,
   ConversationMemoryNodeMessageRoleEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddConversationMemoryNodeMutation } from '../../services/ConversationMemoryNodeService';
+import { useAddConversationMemoryNodeMutation } from "../../services/ConversationMemoryNodeService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -49,7 +56,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -64,43 +70,50 @@ Individual contextual memory node capturing compressed content, embeddings, and 
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const MessageRoleValidation = () => {
-  return [
-    'system',
-    'user',
-    'assistant',
-    'summary',
-  ];
+  return ["system", "user", "assistant", "summary"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-      messageRole: Yup.mixed()
-        .oneOf(MessageRoleValidation(), "Invalid value for messageRole")
-        .required("messageRole is required."),
-        sequenceNo: asNumber(Yup.number().integer().typeError("sequenceNo must be a number")).required("sequenceNo is required."),
-        contentHash: Yup.string().required("contentHash is required."),
-        contentChars: asNumber(Yup.number().integer().typeError("contentChars must be a number")).required("contentChars is required."),
-        chatMessageId: Yup.string(),
-        sessionId: Yup.string(),
-        embeddingDimensions: asNumber(Yup.number().integer().typeError("embeddingDimensions must be a number")),
-        embeddingChecksum: Yup.string(),
-        keywordsText: Yup.string(),
-        metadata: Yup.string(),
-        relevanceScore: asNumber(Yup.number().typeError("relevanceScore must be a number")),
-        archived: Yup.boolean(),
-        trashed: Yup.boolean(),
+  chatMessageId: Yup.string(),
+  messageRole: Yup.mixed().oneOf(
+    MessageRoleValidation(),
+    "Invalid value for messageRole",
+  ),
+  sessionId: Yup.string(),
+  sequenceNo: asNumber(
+    Yup.number().integer().typeError("sequenceNo must be a number"),
+  ),
+  contentHash: Yup.string(),
+  contentChars: asNumber(
+    Yup.number().integer().typeError("contentChars must be a number"),
+  ),
+  embeddingDimensions: asNumber(
+    Yup.number().integer().typeError("embeddingDimensions must be a number"),
+  ),
+  embeddingChecksum: Yup.string(),
+  keywordsText: Yup.string(),
+  metadata: Yup.string(),
+  relevanceScore: asNumber(
+    Yup.number().typeError("relevanceScore must be a number"),
+  ),
+  archived: Yup.boolean(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ConversationMemoryNodeForm: React.FC = () => {
-  const [addConversationMemoryNode, addConversationMemoryNodeResult] = useAddConversationMemoryNodeMutation();
+  const [addConversationMemoryNode, addConversationMemoryNodeResult] =
+    useAddConversationMemoryNodeMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -110,12 +123,18 @@ const ConversationMemoryNodeForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -123,19 +142,19 @@ const ConversationMemoryNodeForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ConversationMemoryNode> = {
-        messageRole: undefined,
-          sequenceNo: 0,
-          contentHash: '',
-          contentChars: 0,
-          chatMessageId: '',
-          sessionId: '',
-          embeddingDimensions: 0,
-          embeddingChecksum: '',
-          keywordsText: '',
-          metadata: '',
-          relevanceScore: 0,
-          archived: false,
-          trashed: false,
+    chatMessageId: "",
+    messageRole: undefined,
+    sessionId: "",
+    sequenceNo: 0,
+    contentHash: "",
+    contentChars: 0,
+    embeddingDimensions: 0,
+    embeddingChecksum: "",
+    keywordsText: "",
+    metadata: "",
+    relevanceScore: 0,
+    archived: false,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -150,11 +169,14 @@ const ConversationMemoryNodeForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new ConversationMemoryNode:', grants);
+    console.log("Permissions saved for new ConversationMemoryNode:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ConversationMemoryNode>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<ConversationMemoryNode>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -165,7 +187,7 @@ const ConversationMemoryNodeForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ConversationMemoryNode created successfully! Would you like to set permissions for this object?`
+          `ConversationMemoryNode created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -173,8 +195,8 @@ const ConversationMemoryNodeForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create ConversationMemoryNode:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create ConversationMemoryNode:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -195,46 +217,79 @@ const ConversationMemoryNodeForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addConversationMemoryNodeResult.isLoading;
+          const isSaving =
+            isSubmitting || addConversationMemoryNodeResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New ConversationMemoryNode
-                </Accordion.Header>
-                <Accordion.Body>
-                    <label htmlFor="messageRole" className="nice-form-control">
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    ConversationMemoryNode
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <label
+                      htmlFor="chatMessageId"
+                      className="nice-form-control"
+                    >
                       <b>
-                        Message Role:
-                        {touched.messageRole &&
-                         !errors.messageRole && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        Chat Message Id:
+                        {touched.chatMessageId && !errors.chatMessageId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="messageRole"
-                          value={values.messageRole || ''}
-                          className={
-                            errors.messageRole
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('messageRole', true);
-                            setFieldValue('messageRole', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Message Role" />
-                          <MessageRoleLookup />
-                        </BSForm.Select>
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="chatMessageId"
+                        value={values?.chatMessageId}
+                        placeholder="Chat Message Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
+                      <ErrorMessage
+                        className="error"
+                        name="chatMessageId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="messageRole" className="nice-form-control">
+                      <b>
+                        Message Role:
+                        {touched.messageRole && !errors.messageRole && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
+                        )}
+                      </b>
+
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="messageRole"
+                        value={values.messageRole || ""}
+                        className={
+                          errors.messageRole
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("messageRole", true);
+                          setFieldValue(
+                            "messageRole",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Message Role" />
+                        <MessageRoleLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -243,39 +298,61 @@ const ConversationMemoryNodeForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="sequenceNo" className="nice-form-control">
+                    <label htmlFor="sessionId" className="nice-form-control">
                       <b>
-                        Sequence No:
-                        {touched.sequenceNo &&
-                         !errors.sequenceNo && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        Session Id:
+                        {touched.sessionId && !errors.sessionId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="sessionId"
+                        value={values?.sessionId}
+                        placeholder="Session Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
+                      <ErrorMessage
+                        className="error"
+                        name="sessionId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="sequenceNo" className="nice-form-control">
+                      <b>
+                        Sequence No:
+                        {touched.sequenceNo && !errors.sequenceNo && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
+                        )}
+                      </b>
 
-
-
-
-
-                          {/* LONG FIELD */}
-                          <Field
-                            name="sequenceNo"
-                            type="number"
-                            value={values.sequenceNo || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('sequenceNo', true);
-                              const v = e.target.value;
-                              setFieldValue('sequenceNo', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.sequenceNo
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
+                      {/* LONG FIELD */}
+                      <Field
+                        name="sequenceNo"
+                        type="number"
+                        value={values.sequenceNo || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("sequenceNo", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "sequenceNo",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.sequenceNo
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -287,28 +364,21 @@ const ConversationMemoryNodeForm: React.FC = () => {
                     <label htmlFor="contentHash" className="nice-form-control">
                       <b>
                         Content Hash:
-                        {touched.contentHash &&
-                         !errors.contentHash && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.contentHash && !errors.contentHash && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="contentHash"
-                            value={values?.contentHash}
-                            placeholder="Content Hash"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="contentHash"
+                        value={values?.contentHash}
+                        placeholder="Content Hash"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -320,36 +390,32 @@ const ConversationMemoryNodeForm: React.FC = () => {
                     <label htmlFor="contentChars" className="nice-form-control">
                       <b>
                         Content Chars:
-                        {touched.contentChars &&
-                         !errors.contentChars && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.contentChars && !errors.contentChars && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="contentChars"
-                            type="number"
-                            value={values.contentChars || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('contentChars', true);
-                              const v = e.target.value;
-                              setFieldValue('contentChars', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.contentChars
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="contentChars"
+                        type="number"
+                        value={values.contentChars || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("contentChars", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "contentChars",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.contentChars
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -358,23 +424,19 @@ const ConversationMemoryNodeForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="compressedPayload" className="nice-form-control">
+                    <label
+                      htmlFor="compressedPayload"
+                      className="nice-form-control"
+                    >
                       <b>
                         Compressed Payload:
                         {touched.compressedPayload &&
-                         !errors.compressedPayload && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.compressedPayload && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -383,89 +445,18 @@ const ConversationMemoryNodeForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="chatMessageId" className="nice-form-control">
-                      <b>
-                        Chat Message Id:
-                        {touched.chatMessageId &&
-                         !errors.chatMessageId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="chatMessageId"
-                            value={values?.chatMessageId}
-                            placeholder="Chat Message Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="chatMessageId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="sessionId" className="nice-form-control">
-                      <b>
-                        Session Id:
-                        {touched.sessionId &&
-                         !errors.sessionId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="sessionId"
-                            value={values?.sessionId}
-                            placeholder="Session Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="sessionId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="embeddingVector" className="nice-form-control">
+                    <label
+                      htmlFor="embeddingVector"
+                      className="nice-form-control"
+                    >
                       <b>
                         Embedding Vector:
-                        {touched.embeddingVector &&
-                         !errors.embeddingVector && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.embeddingVector && !errors.embeddingVector && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -474,39 +465,39 @@ const ConversationMemoryNodeForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="embeddingDimensions" className="nice-form-control">
+                    <label
+                      htmlFor="embeddingDimensions"
+                      className="nice-form-control"
+                    >
                       <b>
                         Embedding Dimensions:
                         {touched.embeddingDimensions &&
-                         !errors.embeddingDimensions && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.embeddingDimensions && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="embeddingDimensions"
-                            type="number"
-                            value={values.embeddingDimensions || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('embeddingDimensions', true);
-                              const v = e.target.value;
-                              setFieldValue('embeddingDimensions', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.embeddingDimensions
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="embeddingDimensions"
+                        type="number"
+                        value={values.embeddingDimensions || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("embeddingDimensions", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "embeddingDimensions",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.embeddingDimensions
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -515,31 +506,28 @@ const ConversationMemoryNodeForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="embeddingChecksum" className="nice-form-control">
+                    <label
+                      htmlFor="embeddingChecksum"
+                      className="nice-form-control"
+                    >
                       <b>
                         Embedding Checksum:
                         {touched.embeddingChecksum &&
-                         !errors.embeddingChecksum && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.embeddingChecksum && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="embeddingChecksum"
-                            value={values?.embeddingChecksum}
-                            placeholder="Embedding Checksum"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="embeddingChecksum"
+                        value={values?.embeddingChecksum}
+                        placeholder="Embedding Checksum"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -551,28 +539,21 @@ const ConversationMemoryNodeForm: React.FC = () => {
                     <label htmlFor="keywordsText" className="nice-form-control">
                       <b>
                         Keywords Text:
-                        {touched.keywordsText &&
-                         !errors.keywordsText && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.keywordsText && !errors.keywordsText && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="keywordsText"
-                            value={values?.keywordsText}
-                            placeholder="Keywords Text"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="keywordsText"
+                        value={values?.keywordsText}
+                        placeholder="Keywords Text"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -584,28 +565,21 @@ const ConversationMemoryNodeForm: React.FC = () => {
                     <label htmlFor="metadata" className="nice-form-control">
                       <b>
                         Metadata:
-                        {touched.metadata &&
-                         !errors.metadata && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.metadata && !errors.metadata && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="metadata"
-                            value={values?.metadata}
-                            placeholder="Metadata"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="metadata"
+                        value={values?.metadata}
+                        placeholder="Metadata"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -614,40 +588,39 @@ const ConversationMemoryNodeForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="relevanceScore" className="nice-form-control">
+                    <label
+                      htmlFor="relevanceScore"
+                      className="nice-form-control"
+                    >
                       <b>
                         Relevance Score:
-                        {touched.relevanceScore &&
-                         !errors.relevanceScore && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.relevanceScore && !errors.relevanceScore && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="relevanceScore"
-                            type="number"
-                            step="any"
-                            value={values.relevanceScore || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('relevanceScore', true);
-                              const v = e.target.value;
-                              setFieldValue('relevanceScore', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.relevanceScore
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="relevanceScore"
+                        type="number"
+                        step="any"
+                        value={values.relevanceScore || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("relevanceScore", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "relevanceScore",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.relevanceScore
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -659,32 +632,25 @@ const ConversationMemoryNodeForm: React.FC = () => {
                     <label htmlFor="archived" className="nice-form-control">
                       <b>
                         Archived:
-                        {touched.archived &&
-                         !errors.archived && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.archived && !errors.archived && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="archived"
-                            name="archived"
-                            checked={values.archived || false}
-                            onChange={(e) => {
-                              setFieldTouched('archived', true);
-                              setFieldValue('archived', e.target.checked);
-                            }}
-                            isInvalid={!!errors.archived}
-                            className={errors.archived ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="archived"
+                        name="archived"
+                        checked={values.archived || false}
+                        onChange={(e) => {
+                          setFieldTouched("archived", true);
+                          setFieldValue("archived", e.target.checked);
+                        }}
+                        isInvalid={!!errors.archived}
+                        className={errors.archived ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -696,32 +662,25 @@ const ConversationMemoryNodeForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -731,45 +690,64 @@ const ConversationMemoryNodeForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New ConversationMemoryNode
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      ConversationMemoryNode
+                    </CoolButton>
 
-                  {(addConversationMemoryNodeResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addConversationMemoryNodeResult as any).error ? (addConversationMemoryNodeResult as any).error.data : (addConversationMemoryNodeResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addConversationMemoryNodeResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addConversationMemoryNodeResult as any).error
+                              ? (addConversationMemoryNodeResult as any).error
+                                  .data
+                              : (addConversationMemoryNodeResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addConversationMemoryNodeResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addConversationMemoryNodeResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addConversationMemoryNodeResult: {JSON.stringify(addConversationMemoryNodeResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addConversationMemoryNodeResult:{" "}
+                    {JSON.stringify(addConversationMemoryNodeResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -801,16 +779,13 @@ kebabcase message-role-lookup
 const MessageRoleLookup = () => {
   return (
     <>
-      <option value='system' label="System" />
-      <option value='user' label="User" />
-      <option value='assistant' label="Assistant" />
-      <option value='summary' label="Summary" />
+      <option value="system" label="System" />
+      <option value="user" label="User" />
+      <option value="assistant" label="Assistant" />
+      <option value="summary" label="Summary" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default ConversationMemoryNodeForm;
-

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ConversationBranch } from '@thorapi/model/ConversationBranch';
+import { ConversationBranch } from "@thorapi/model/ConversationBranch";
 
 const ConversationBranchSlice = createSlice({
   name: "ConversationBranchs",
@@ -28,20 +27,25 @@ const ConversationBranchSlice = createSlice({
     },
 
     ConversationBranchValueToggled(state, action) {
-      console.log("ConversationBranch TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ConversationBranch:ConversationBranch = state.find((ConversationBranch) => ConversationBranch.id === action.payload.ConversationBranchId);
+      console.log("ConversationBranch TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ConversationBranch: ConversationBranch = state.find(
+        (ConversationBranch) =>
+          ConversationBranch.id === action.payload.ConversationBranchId,
+      );
       if (ConversationBranch) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ConversationBranchpropertySet(state, action) {
-      const ConversationBranch = state.find((ConversationBranch) => ConversationBranch.id === action.payload.ConversationBranchId);
+      const ConversationBranch = state.find(
+        (ConversationBranch) =>
+          ConversationBranch.id === action.payload.ConversationBranchId,
+      );
       if (ConversationBranch) {
-      //  ConversationBranch[action.property] = action.payload[action.property];
+        //  ConversationBranch[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const ConversationBranchSlice = createSlice({
 export const {
   ConversationBranchAdded,
   ConversationBranchValueToggled,
-  ConversationBranchpropertySet
+  ConversationBranchpropertySet,
 } = ConversationBranchSlice.actions;
 export default ConversationBranchSlice.reducer;

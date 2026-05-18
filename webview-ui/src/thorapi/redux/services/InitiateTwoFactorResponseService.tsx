@@ -7,43 +7,75 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { InitiateTwoFactorResponse } from '@thorapi/model/InitiateTwoFactorResponse'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { InitiateTwoFactorResponse } from "@thorapi/model/InitiateTwoFactorResponse";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type InitiateTwoFactorResponseResponse = InitiateTwoFactorResponse[]
+type InitiateTwoFactorResponseResponse = InitiateTwoFactorResponse[];
+
+const toInitiateTwoFactorResponseList = (
+  result: unknown,
+): InitiateTwoFactorResponseResponse => {
+  if (Array.isArray(result)) {
+    return result as InitiateTwoFactorResponseResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as InitiateTwoFactorResponseResponse)
+    : [];
+};
 
 export const InitiateTwoFactorResponseService = createApi({
-  reducerPath: 'InitiateTwoFactorResponse', // This should remain unique
+  reducerPath: "InitiateTwoFactorResponse", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['InitiateTwoFactorResponse'],
+  tagTypes: ["InitiateTwoFactorResponse"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getInitiateTwoFactorResponsesPaged: build.query<InitiateTwoFactorResponseResponse, { page: number; size?: number; example?: Partial<InitiateTwoFactorResponse> }>({
+    getInitiateTwoFactorResponsesPaged: build.query<
+      InitiateTwoFactorResponseResponse,
+      {
+        page: number;
+        size?: number;
+        example?: Partial<InitiateTwoFactorResponse>;
+      }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `InitiateTwoFactorResponse?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `InitiateTwoFactorResponse?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'InitiateTwoFactorResponse' as const, id })),
-              { type: 'InitiateTwoFactorResponse', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toInitiateTwoFactorResponseList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({
+              type: "InitiateTwoFactorResponse" as const,
+              id,
+            })),
+          { type: "InitiateTwoFactorResponse", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getInitiateTwoFactorResponses: build.query<InitiateTwoFactorResponseResponse, { example?: Partial<InitiateTwoFactorResponse> } | void>({
+    getInitiateTwoFactorResponses: build.query<
+      InitiateTwoFactorResponseResponse,
+      { example?: Partial<InitiateTwoFactorResponse> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +83,121 @@ export const InitiateTwoFactorResponseService = createApi({
         }
         return `InitiateTwoFactorResponse`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'InitiateTwoFactorResponse' as const, id })),
-              { type: 'InitiateTwoFactorResponse', id: 'LIST' },
-            ]
-          : [{ type: 'InitiateTwoFactorResponse', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toInitiateTwoFactorResponseList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({
+              type: "InitiateTwoFactorResponse" as const,
+              id,
+            })),
+          { type: "InitiateTwoFactorResponse", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
-    addInitiateTwoFactorResponse: build.mutation<InitiateTwoFactorResponse, Partial<InitiateTwoFactorResponse>>({
+    addInitiateTwoFactorResponse: build.mutation<
+      InitiateTwoFactorResponse,
+      Partial<InitiateTwoFactorResponse>
+    >({
       query: (body) => ({
         url: `InitiateTwoFactorResponse`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'InitiateTwoFactorResponse', id: 'LIST' }],
+      invalidatesTags: [{ type: "InitiateTwoFactorResponse", id: "LIST" }],
     }),
 
     // 4) Get single by ID
-    getInitiateTwoFactorResponse: build.query<InitiateTwoFactorResponse, string>({
+    getInitiateTwoFactorResponse: build.query<
+      InitiateTwoFactorResponse,
+      string
+    >({
       query: (id) => `InitiateTwoFactorResponse/${id}`,
-      providesTags: (result, error, id) => [{ type: 'InitiateTwoFactorResponse', id }],
+      providesTags: (result, error, id) => [
+        { type: "InitiateTwoFactorResponse", id },
+      ],
     }),
 
     // 5) Update
-    updateInitiateTwoFactorResponse: build.mutation<void, Pick<InitiateTwoFactorResponse, 'id'> & Partial<InitiateTwoFactorResponse>>({
+    updateInitiateTwoFactorResponse: build.mutation<
+      void,
+      Pick<InitiateTwoFactorResponse, "id"> & Partial<InitiateTwoFactorResponse>
+    >({
       query: ({ id, ...patch }) => ({
         url: `InitiateTwoFactorResponse/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            InitiateTwoFactorResponseService.util.updateQueryData('getInitiateTwoFactorResponse', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            InitiateTwoFactorResponseService.util.updateQueryData(
+              "getInitiateTwoFactorResponse",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<InitiateTwoFactorResponse, 'id'>) => [
-        { type: 'InitiateTwoFactorResponse', id },
-        { type: 'InitiateTwoFactorResponse', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<InitiateTwoFactorResponse, "id">,
+      ) => [
+        { type: "InitiateTwoFactorResponse", id },
+        { type: "InitiateTwoFactorResponse", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteInitiateTwoFactorResponse: build.mutation<{ success: boolean; id: string }, number>({
+    deleteInitiateTwoFactorResponse: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `InitiateTwoFactorResponse/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'InitiateTwoFactorResponse', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "InitiateTwoFactorResponse", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteInitiateTwoFactorResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteInitiateTwoFactorResponseCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `InitiateTwoFactorResponse/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'InitiateTwoFactorResponse', id }, { type: 'InitiateTwoFactorResponse', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "InitiateTwoFactorResponse", id },
+        { type: "InitiateTwoFactorResponse", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetInitiateTwoFactorResponsesPagedQuery`
 export const {
-  useGetInitiateTwoFactorResponsesPagedQuery,     // immediate fetch
+  useGetInitiateTwoFactorResponsesPagedQuery, // immediate fetch
   useLazyGetInitiateTwoFactorResponsesPagedQuery, // lazy fetch
   useGetInitiateTwoFactorResponseQuery,
   useGetInitiateTwoFactorResponsesQuery,
@@ -138,4 +205,4 @@ export const {
   useUpdateInitiateTwoFactorResponseMutation,
   useDeleteInitiateTwoFactorResponseMutation,
   useDeleteInitiateTwoFactorResponseCascadeMutation,
-} = InitiateTwoFactorResponseService
+} = InitiateTwoFactorResponseService;

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SpaceFile } from '@thorapi/model/SpaceFile';
+import { SpaceFile } from "@thorapi/model/SpaceFile";
 
 const SpaceFileSlice = createSlice({
   name: "SpaceFiles",
@@ -28,28 +27,28 @@ const SpaceFileSlice = createSlice({
     },
 
     SpaceFileValueToggled(state, action) {
-      console.log("SpaceFile TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SpaceFile:SpaceFile = state.find((SpaceFile) => SpaceFile.id === action.payload.SpaceFileId);
+      console.log("SpaceFile TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SpaceFile: SpaceFile = state.find(
+        (SpaceFile) => SpaceFile.id === action.payload.SpaceFileId,
+      );
       if (SpaceFile) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SpaceFilepropertySet(state, action) {
-      const SpaceFile = state.find((SpaceFile) => SpaceFile.id === action.payload.SpaceFileId);
+      const SpaceFile = state.find(
+        (SpaceFile) => SpaceFile.id === action.payload.SpaceFileId,
+      );
       if (SpaceFile) {
-      //  SpaceFile[action.property] = action.payload[action.property];
+        //  SpaceFile[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  SpaceFileAdded,
-  SpaceFileValueToggled,
-  SpaceFilepropertySet
-} = SpaceFileSlice.actions;
+export const { SpaceFileAdded, SpaceFileValueToggled, SpaceFilepropertySet } =
+  SpaceFileSlice.actions;
 export default SpaceFileSlice.reducer;

@@ -6,6 +6,7 @@ import {
   hydrateStoredCredentials,
   clearStoredPrincipal,
   clearStoredJwtToken,
+  clearStoredAuthSession,
 } from "../accessControl";
 import { Principal } from "@thorapi/model";
 
@@ -68,8 +69,8 @@ describe("Sticky Auth Persistence", () => {
         username: "testuser",
         email: "test@example.com",
         password: "",
-        roleList: [],
-        authorityList: [],
+        roles: [],
+        grantedAuthorities: [],
       };
 
       writeStoredPrincipal(principal);
@@ -88,8 +89,8 @@ describe("Sticky Auth Persistence", () => {
         username: "testuser",
         email: "test@example.com",
         password: "",
-        roleList: [],
-        authorityList: [],
+        roles: [],
+        grantedAuthorities: [],
       };
 
       writeStoredPrincipal(principal);
@@ -117,8 +118,8 @@ describe("Sticky Auth Persistence", () => {
         username: "restoreduser",
         email: "restored@example.com",
         password: "",
-        roleList: [],
-        authorityList: [],
+        roles: [],
+        grantedAuthorities: [],
       };
 
       localStorage.setItem("authenticatedPrincipal", JSON.stringify(principal));
@@ -137,8 +138,8 @@ describe("Sticky Auth Persistence", () => {
         username: "fulluser",
         email: "full@example.com",
         password: "",
-        roleList: [],
-        authorityList: [],
+        roles: [],
+        grantedAuthorities: [],
       };
 
       localStorage.setItem("jwtToken", token);
@@ -171,8 +172,8 @@ describe("Sticky Auth Persistence", () => {
         username: "clearuser",
         email: "clear@example.com",
         password: "",
-        roleList: [],
-        authorityList: [],
+        roles: [],
+        grantedAuthorities: [],
       };
 
       writeStoredPrincipal(principal);
@@ -180,6 +181,31 @@ describe("Sticky Auth Persistence", () => {
 
       expect(sessionStorage.getItem("authenticatedPrincipal")).toBeNull();
       expect(localStorage.getItem("authenticatedPrincipal")).toBeNull();
+    });
+  });
+
+  describe("clearStoredAuthSession", () => {
+    it("clears token, principal, and legacy auth storage keys", () => {
+      storeJwtToken("stale-token", "test");
+      writeStoredPrincipal({
+        id: "user-to-clear",
+        username: "clearuser",
+        email: "clear@example.com",
+        password: "",
+        roles: [],
+        grantedAuthorities: [],
+      });
+      sessionStorage.setItem("jwtSession", "legacy-session");
+      localStorage.setItem("authToken", "legacy-token");
+
+      clearStoredAuthSession("test");
+
+      expect(sessionStorage.getItem("jwtToken")).toBeNull();
+      expect(localStorage.getItem("jwtToken")).toBeNull();
+      expect(sessionStorage.getItem("authenticatedPrincipal")).toBeNull();
+      expect(localStorage.getItem("authenticatedPrincipal")).toBeNull();
+      expect(sessionStorage.getItem("jwtSession")).toBeNull();
+      expect(localStorage.getItem("authToken")).toBeNull();
     });
   });
 
@@ -192,8 +218,8 @@ describe("Sticky Auth Persistence", () => {
         username: "persistentuser",
         email: "persistent@example.com",
         password: "",
-        roleList: [],
-        authorityList: [],
+        roles: [],
+        grantedAuthorities: [],
       };
 
       storeJwtToken(token, "login");
@@ -227,8 +253,8 @@ describe("Sticky Auth Persistence", () => {
         username: "logoutuser",
         email: "logout@example.com",
         password: "",
-        roleList: [],
-        authorityList: [],
+        roles: [],
+        grantedAuthorities: [],
       };
 
       storeJwtToken(token, "login");

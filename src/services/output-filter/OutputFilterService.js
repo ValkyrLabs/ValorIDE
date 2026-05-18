@@ -157,7 +157,6 @@ export class OutputFilterService {
   static filterGenericOutput(output, config = {}) {
     let filtered = output;
     // Remove ANSI escape codes
-    // eslint-disable-next-line no-control-regex
     filtered = filtered.replace(/\x1b\[[0-9;]*m/g, "");
     // Remove excessive whitespace
     filtered = filtered.replace(/^\s*[\r\n]+/gm, "\n");
@@ -269,7 +268,7 @@ export class OutputFilterService {
       (l) =>
         l.includes("[ERROR]") ||
         l.includes("Compilation failure") ||
-        /BUILD (FAILURE)/.test(l)
+        /BUILD (FAILURE)/.test(l),
     );
     // If there are errors, show everything
     if (hasErrors) {
@@ -282,7 +281,7 @@ export class OutputFilterService {
         !/\/thorapi\//i.test(line) &&
         !/Building jar:/.test(line) &&
         !line.includes("valkyrai/generated") &&
-        !line.includes("thorapi/generated")
+        !line.includes("thorapi/generated"),
     );
     return filteredLines.join("\n");
   }

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Agent } from '@thorapi/model/Agent';
+import { Agent } from "@thorapi/model/Agent";
 
 const AgentSlice = createSlice({
   name: "Agents",
@@ -28,28 +27,26 @@ const AgentSlice = createSlice({
     },
 
     AgentValueToggled(state, action) {
-      console.log("Agent TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Agent:Agent = state.find((Agent) => Agent.id === action.payload.AgentId);
+      console.log("Agent TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Agent: Agent = state.find(
+        (Agent) => Agent.id === action.payload.AgentId,
+      );
       if (Agent) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     AgentpropertySet(state, action) {
       const Agent = state.find((Agent) => Agent.id === action.payload.AgentId);
       if (Agent) {
-      //  Agent[action.property] = action.payload[action.property];
+        //  Agent[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  AgentAdded,
-  AgentValueToggled,
-  AgentpropertySet
-} = AgentSlice.actions;
+export const { AgentAdded, AgentValueToggled, AgentpropertySet } =
+  AgentSlice.actions;
 export default AgentSlice.reducer;

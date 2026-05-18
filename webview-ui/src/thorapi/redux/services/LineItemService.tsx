@@ -7,43 +7,64 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { LineItem } from '@thorapi/model/LineItem'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { LineItem } from "@thorapi/model/LineItem";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type LineItemResponse = LineItem[]
+type LineItemResponse = LineItem[];
+
+const toLineItemList = (result: unknown): LineItemResponse => {
+  if (Array.isArray(result)) {
+    return result as LineItemResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as LineItemResponse) : [];
+};
 
 export const LineItemService = createApi({
-  reducerPath: 'LineItem', // This should remain unique
+  reducerPath: "LineItem", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['LineItem'],
+  tagTypes: ["LineItem"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getLineItemsPaged: build.query<LineItemResponse, { page: number; size?: number; example?: Partial<LineItem> }>({
+    getLineItemsPaged: build.query<
+      LineItemResponse,
+      { page: number; size?: number; example?: Partial<LineItem> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `LineItem?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `LineItem?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'LineItem' as const, id })),
-              { type: 'LineItem', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toLineItemList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "LineItem" as const, id })),
+          { type: "LineItem", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getLineItems: build.query<LineItemResponse, { example?: Partial<LineItem> } | void>({
+    getLineItems: build.query<
+      LineItemResponse,
+      { example?: Partial<LineItem> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,55 +72,60 @@ export const LineItemService = createApi({
         }
         return `LineItem`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'LineItem' as const, id })),
-              { type: 'LineItem', id: 'LIST' },
-            ]
-          : [{ type: 'LineItem', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toLineItemList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "LineItem" as const, id })),
+          { type: "LineItem", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
     addLineItem: build.mutation<LineItem, Partial<LineItem>>({
       query: (body) => ({
         url: `LineItem`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'LineItem', id: 'LIST' }],
+      invalidatesTags: [{ type: "LineItem", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getLineItem: build.query<LineItem, string>({
       query: (id) => `LineItem/${id}`,
-      providesTags: (result, error, id) => [{ type: 'LineItem', id }],
+      providesTags: (result, error, id) => [{ type: "LineItem", id }],
     }),
 
     // 5) Update
-    updateLineItem: build.mutation<void, Pick<LineItem, 'id'> & Partial<LineItem>>({
+    updateLineItem: build.mutation<
+      void,
+      Pick<LineItem, "id"> & Partial<LineItem>
+    >({
       query: ({ id, ...patch }) => ({
         url: `LineItem/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            LineItemService.util.updateQueryData('getLineItem', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            LineItemService.util.updateQueryData("getLineItem", id, (draft) => {
+              Object.assign(draft, patch);
+            }),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<LineItem, 'id'>) => [
-        { type: 'LineItem', id },
-        { type: 'LineItem', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<LineItem, "id">) => [
+        { type: "LineItem", id },
+        { type: "LineItem", id: "LIST" },
       ],
     }),
 
@@ -108,29 +134,35 @@ export const LineItemService = createApi({
       query(id) {
         return {
           url: `LineItem/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'LineItem', id }],
+      invalidatesTags: (result, error, id) => [{ type: "LineItem", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteLineItemCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteLineItemCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `LineItem/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'LineItem', id }, { type: 'LineItem', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "LineItem", id },
+        { type: "LineItem", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetLineItemsPagedQuery`
 export const {
-  useGetLineItemsPagedQuery,     // immediate fetch
+  useGetLineItemsPagedQuery, // immediate fetch
   useLazyGetLineItemsPagedQuery, // lazy fetch
   useGetLineItemQuery,
   useGetLineItemsQuery,
@@ -138,4 +170,4 @@ export const {
   useUpdateLineItemMutation,
   useDeleteLineItemMutation,
   useDeleteLineItemCascadeMutation,
-} = LineItemService
+} = LineItemService;

@@ -7,43 +7,64 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { LlmDetails } from '@thorapi/model/LlmDetails'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { LlmDetails } from "@thorapi/model/LlmDetails";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type LlmDetailsResponse = LlmDetails[]
+type LlmDetailsResponse = LlmDetails[];
+
+const toLlmDetailsList = (result: unknown): LlmDetailsResponse => {
+  if (Array.isArray(result)) {
+    return result as LlmDetailsResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as LlmDetailsResponse) : [];
+};
 
 export const LlmDetailsService = createApi({
-  reducerPath: 'LlmDetails', // This should remain unique
+  reducerPath: "LlmDetails", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['LlmDetails'],
+  tagTypes: ["LlmDetails"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getLlmDetailssPaged: build.query<LlmDetailsResponse, { page: number; size?: number; example?: Partial<LlmDetails> }>({
+    getLlmDetailssPaged: build.query<
+      LlmDetailsResponse,
+      { page: number; size?: number; example?: Partial<LlmDetails> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `LlmDetails?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `LlmDetails?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'LlmDetails' as const, id })),
-              { type: 'LlmDetails', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toLlmDetailsList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "LlmDetails" as const, id })),
+          { type: "LlmDetails", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getLlmDetailss: build.query<LlmDetailsResponse, { example?: Partial<LlmDetails> } | void>({
+    getLlmDetailss: build.query<
+      LlmDetailsResponse,
+      { example?: Partial<LlmDetails> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,55 +72,64 @@ export const LlmDetailsService = createApi({
         }
         return `LlmDetails`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'LlmDetails' as const, id })),
-              { type: 'LlmDetails', id: 'LIST' },
-            ]
-          : [{ type: 'LlmDetails', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toLlmDetailsList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "LlmDetails" as const, id })),
+          { type: "LlmDetails", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
     addLlmDetails: build.mutation<LlmDetails, Partial<LlmDetails>>({
       query: (body) => ({
         url: `LlmDetails`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'LlmDetails', id: 'LIST' }],
+      invalidatesTags: [{ type: "LlmDetails", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getLlmDetails: build.query<LlmDetails, string>({
       query: (id) => `LlmDetails/${id}`,
-      providesTags: (result, error, id) => [{ type: 'LlmDetails', id }],
+      providesTags: (result, error, id) => [{ type: "LlmDetails", id }],
     }),
 
     // 5) Update
-    updateLlmDetails: build.mutation<void, Pick<LlmDetails, 'id'> & Partial<LlmDetails>>({
+    updateLlmDetails: build.mutation<
+      void,
+      Pick<LlmDetails, "id"> & Partial<LlmDetails>
+    >({
       query: ({ id, ...patch }) => ({
         url: `LlmDetails/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            LlmDetailsService.util.updateQueryData('getLlmDetails', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            LlmDetailsService.util.updateQueryData(
+              "getLlmDetails",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<LlmDetails, 'id'>) => [
-        { type: 'LlmDetails', id },
-        { type: 'LlmDetails', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<LlmDetails, "id">) => [
+        { type: "LlmDetails", id },
+        { type: "LlmDetails", id: "LIST" },
       ],
     }),
 
@@ -108,29 +138,35 @@ export const LlmDetailsService = createApi({
       query(id) {
         return {
           url: `LlmDetails/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'LlmDetails', id }],
+      invalidatesTags: (result, error, id) => [{ type: "LlmDetails", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteLlmDetailsCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteLlmDetailsCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `LlmDetails/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'LlmDetails', id }, { type: 'LlmDetails', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "LlmDetails", id },
+        { type: "LlmDetails", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetLlmDetailssPagedQuery`
 export const {
-  useGetLlmDetailssPagedQuery,     // immediate fetch
+  useGetLlmDetailssPagedQuery, // immediate fetch
   useLazyGetLlmDetailssPagedQuery, // lazy fetch
   useGetLlmDetailsQuery,
   useGetLlmDetailssQuery,
@@ -138,4 +174,4 @@ export const {
   useUpdateLlmDetailsMutation,
   useDeleteLlmDetailsMutation,
   useDeleteLlmDetailsCascadeMutation,
-} = LlmDetailsService
+} = LlmDetailsService;

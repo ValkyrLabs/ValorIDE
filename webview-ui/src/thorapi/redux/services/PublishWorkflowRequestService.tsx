@@ -7,43 +7,68 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { PublishWorkflowRequest } from '@thorapi/model/PublishWorkflowRequest'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { PublishWorkflowRequest } from "@thorapi/model/PublishWorkflowRequest";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type PublishWorkflowRequestResponse = PublishWorkflowRequest[]
+type PublishWorkflowRequestResponse = PublishWorkflowRequest[];
+
+const toPublishWorkflowRequestList = (
+  result: unknown,
+): PublishWorkflowRequestResponse => {
+  if (Array.isArray(result)) {
+    return result as PublishWorkflowRequestResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as PublishWorkflowRequestResponse)
+    : [];
+};
 
 export const PublishWorkflowRequestService = createApi({
-  reducerPath: 'PublishWorkflowRequest', // This should remain unique
+  reducerPath: "PublishWorkflowRequest", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['PublishWorkflowRequest'],
+  tagTypes: ["PublishWorkflowRequest"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getPublishWorkflowRequestsPaged: build.query<PublishWorkflowRequestResponse, { page: number; size?: number; example?: Partial<PublishWorkflowRequest> }>({
+    getPublishWorkflowRequestsPaged: build.query<
+      PublishWorkflowRequestResponse,
+      { page: number; size?: number; example?: Partial<PublishWorkflowRequest> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `PublishWorkflowRequest?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `PublishWorkflowRequest?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'PublishWorkflowRequest' as const, id })),
-              { type: 'PublishWorkflowRequest', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toPublishWorkflowRequestList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "PublishWorkflowRequest" as const, id })),
+          { type: "PublishWorkflowRequest", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getPublishWorkflowRequests: build.query<PublishWorkflowRequestResponse, { example?: Partial<PublishWorkflowRequest> } | void>({
+    getPublishWorkflowRequests: build.query<
+      PublishWorkflowRequestResponse,
+      { example?: Partial<PublishWorkflowRequest> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +76,115 @@ export const PublishWorkflowRequestService = createApi({
         }
         return `PublishWorkflowRequest`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'PublishWorkflowRequest' as const, id })),
-              { type: 'PublishWorkflowRequest', id: 'LIST' },
-            ]
-          : [{ type: 'PublishWorkflowRequest', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toPublishWorkflowRequestList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "PublishWorkflowRequest" as const, id })),
+          { type: "PublishWorkflowRequest", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
-    addPublishWorkflowRequest: build.mutation<PublishWorkflowRequest, Partial<PublishWorkflowRequest>>({
+    addPublishWorkflowRequest: build.mutation<
+      PublishWorkflowRequest,
+      Partial<PublishWorkflowRequest>
+    >({
       query: (body) => ({
         url: `PublishWorkflowRequest`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'PublishWorkflowRequest', id: 'LIST' }],
+      invalidatesTags: [{ type: "PublishWorkflowRequest", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getPublishWorkflowRequest: build.query<PublishWorkflowRequest, string>({
       query: (id) => `PublishWorkflowRequest/${id}`,
-      providesTags: (result, error, id) => [{ type: 'PublishWorkflowRequest', id }],
+      providesTags: (result, error, id) => [
+        { type: "PublishWorkflowRequest", id },
+      ],
     }),
 
     // 5) Update
-    updatePublishWorkflowRequest: build.mutation<void, Pick<PublishWorkflowRequest, 'id'> & Partial<PublishWorkflowRequest>>({
+    updatePublishWorkflowRequest: build.mutation<
+      void,
+      Pick<PublishWorkflowRequest, "id"> & Partial<PublishWorkflowRequest>
+    >({
       query: ({ id, ...patch }) => ({
         url: `PublishWorkflowRequest/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            PublishWorkflowRequestService.util.updateQueryData('getPublishWorkflowRequest', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            PublishWorkflowRequestService.util.updateQueryData(
+              "getPublishWorkflowRequest",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<PublishWorkflowRequest, 'id'>) => [
-        { type: 'PublishWorkflowRequest', id },
-        { type: 'PublishWorkflowRequest', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<PublishWorkflowRequest, "id">,
+      ) => [
+        { type: "PublishWorkflowRequest", id },
+        { type: "PublishWorkflowRequest", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deletePublishWorkflowRequest: build.mutation<{ success: boolean; id: string }, number>({
+    deletePublishWorkflowRequest: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `PublishWorkflowRequest/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'PublishWorkflowRequest', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "PublishWorkflowRequest", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deletePublishWorkflowRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deletePublishWorkflowRequestCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `PublishWorkflowRequest/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'PublishWorkflowRequest', id }, { type: 'PublishWorkflowRequest', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "PublishWorkflowRequest", id },
+        { type: "PublishWorkflowRequest", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetPublishWorkflowRequestsPagedQuery`
 export const {
-  useGetPublishWorkflowRequestsPagedQuery,     // immediate fetch
+  useGetPublishWorkflowRequestsPagedQuery, // immediate fetch
   useLazyGetPublishWorkflowRequestsPagedQuery, // lazy fetch
   useGetPublishWorkflowRequestQuery,
   useGetPublishWorkflowRequestsQuery,
@@ -138,4 +192,4 @@ export const {
   useUpdatePublishWorkflowRequestMutation,
   useDeletePublishWorkflowRequestMutation,
   useDeletePublishWorkflowRequestCascadeMutation,
-} = PublishWorkflowRequestService
+} = PublishWorkflowRequestService;

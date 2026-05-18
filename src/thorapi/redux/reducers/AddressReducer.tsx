@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Address } from '@thorapi/model/Address';
+import { Address } from "@thorapi/model/Address";
 
 const AddressSlice = createSlice({
   name: "Addresss",
@@ -28,28 +27,28 @@ const AddressSlice = createSlice({
     },
 
     AddressValueToggled(state, action) {
-      console.log("Address TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Address:Address = state.find((Address) => Address.id === action.payload.AddressId);
+      console.log("Address TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Address: Address = state.find(
+        (Address) => Address.id === action.payload.AddressId,
+      );
       if (Address) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     AddresspropertySet(state, action) {
-      const Address = state.find((Address) => Address.id === action.payload.AddressId);
+      const Address = state.find(
+        (Address) => Address.id === action.payload.AddressId,
+      );
       if (Address) {
-      //  Address[action.property] = action.payload[action.property];
+        //  Address[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  AddressAdded,
-  AddressValueToggled,
-  AddresspropertySet
-} = AddressSlice.actions;
+export const { AddressAdded, AddressValueToggled, AddresspropertySet } =
+  AddressSlice.actions;
 export default AddressSlice.reducer;

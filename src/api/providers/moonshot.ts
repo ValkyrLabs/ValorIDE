@@ -74,7 +74,9 @@ export class MoonshotHandler implements ApiHandler {
           prompt_tokens_details?: { cached_tokens?: number };
         };
         const cacheReadTokens =
-          usage.cached_tokens ?? usage.prompt_tokens_details?.cached_tokens ?? 0;
+          usage.cached_tokens ??
+          usage.prompt_tokens_details?.cached_tokens ??
+          0;
         const cacheWriteTokens = 0;
         const totalCost = calculateApiCostOpenAI(
           model.info,

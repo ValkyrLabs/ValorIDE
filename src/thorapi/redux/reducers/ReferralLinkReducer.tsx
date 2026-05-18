@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ReferralLink } from '@thorapi/model/ReferralLink';
+import { ReferralLink } from "@thorapi/model/ReferralLink";
 
 const ReferralLinkSlice = createSlice({
   name: "ReferralLinks",
@@ -28,20 +27,23 @@ const ReferralLinkSlice = createSlice({
     },
 
     ReferralLinkValueToggled(state, action) {
-      console.log("ReferralLink TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ReferralLink:ReferralLink = state.find((ReferralLink) => ReferralLink.id === action.payload.ReferralLinkId);
+      console.log("ReferralLink TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ReferralLink: ReferralLink = state.find(
+        (ReferralLink) => ReferralLink.id === action.payload.ReferralLinkId,
+      );
       if (ReferralLink) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ReferralLinkpropertySet(state, action) {
-      const ReferralLink = state.find((ReferralLink) => ReferralLink.id === action.payload.ReferralLinkId);
+      const ReferralLink = state.find(
+        (ReferralLink) => ReferralLink.id === action.payload.ReferralLinkId,
+      );
       if (ReferralLink) {
-      //  ReferralLink[action.property] = action.payload[action.property];
+        //  ReferralLink[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +52,6 @@ const ReferralLinkSlice = createSlice({
 export const {
   ReferralLinkAdded,
   ReferralLinkValueToggled,
-  ReferralLinkpropertySet
+  ReferralLinkpropertySet,
 } = ReferralLinkSlice.actions;
 export default ReferralLinkSlice.reducer;

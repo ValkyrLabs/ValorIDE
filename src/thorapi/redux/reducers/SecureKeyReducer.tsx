@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SecureKey } from '@thorapi/model/SecureKey';
+import { SecureKey } from "@thorapi/model/SecureKey";
 
 const SecureKeySlice = createSlice({
   name: "SecureKeys",
@@ -28,28 +27,28 @@ const SecureKeySlice = createSlice({
     },
 
     SecureKeyValueToggled(state, action) {
-      console.log("SecureKey TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SecureKey:SecureKey = state.find((SecureKey) => SecureKey.id === action.payload.SecureKeyId);
+      console.log("SecureKey TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SecureKey: SecureKey = state.find(
+        (SecureKey) => SecureKey.id === action.payload.SecureKeyId,
+      );
       if (SecureKey) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SecureKeypropertySet(state, action) {
-      const SecureKey = state.find((SecureKey) => SecureKey.id === action.payload.SecureKeyId);
+      const SecureKey = state.find(
+        (SecureKey) => SecureKey.id === action.payload.SecureKeyId,
+      );
       if (SecureKey) {
-      //  SecureKey[action.property] = action.payload[action.property];
+        //  SecureKey[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  SecureKeyAdded,
-  SecureKeyValueToggled,
-  SecureKeypropertySet
-} = SecureKeySlice.actions;
+export const { SecureKeyAdded, SecureKeyValueToggled, SecureKeypropertySet } =
+  SecureKeySlice.actions;
 export default SecureKeySlice.reducer;

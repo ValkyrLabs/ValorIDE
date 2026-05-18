@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, useLayoutEffect } from "react";
 import { useEvent } from "react-use";
+import { useDispatch, useSelector } from "react-redux";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import ChatView from "./components/chat/ChatView";
 import { ChatErrorBoundary } from "./components/chat/ChatErrorBoundary";
@@ -35,6 +36,7 @@ import {
 import McpView from "./components/mcp/configuration/McpConfigurationView";
 import { McpViewTab } from "@shared/mcp";
 import { CREDIT_INTENT_EVENT, CreditIntent } from "./types/creditIntent";
+import { clearAccountBalancePrompt } from "./redux/slices/apiErrorsSlice";
 
 const AppContent = () => {
   const {
@@ -44,6 +46,10 @@ const AppContent = () => {
     telemetrySetting,
     vscMachineId,
   } = useExtensionState();
+  const dispatch = useDispatch();
+  const showAccountBalance = useSelector(
+    (state: any) => state?.apiErrors?.showAccountBalance,
+  );
   const [hasStoredAuth, setHasStoredAuth] = useState(false);
 
   // Check for stored credentials BEFORE rendering to prevent welcome flicker
@@ -72,9 +78,16 @@ const AppContent = () => {
   // Server Console is now rendered as a tab in the Account view
   const [showAnnouncement, setShowAnnouncement] = useState(false);
   const [mcpTab, setMcpTab] = useState<McpViewTab | undefined>(undefined);
-  const [serverConsoleNeedsAttention, setServerConsoleNeedsAttention] = useState(false);
+  const [serverConsoleNeedsAttention, setServerConsoleNeedsAttention] =
+    useState(false);
   const [accountInitialActiveTab, setAccountInitialActiveTab] = useState<
-    "login" | "account" | "applications" | "generatedFiles" | "userPreferences" | "serverConsole" | undefined
+    | "login"
+    | "account"
+    | "applications"
+    | "generatedFiles"
+    | "userPreferences"
+    | "serverConsole"
+    | undefined
   >(undefined);
   // Always show file explorer by default
   const [showFileExplorer, setShowFileExplorer] = useState(true);
@@ -302,6 +315,22 @@ const AppContent = () => {
     }
   }, [shouldShowAnnouncement]);
 
+  useEffect(() => {
+    if (!showAccountBalance) return;
+
+    setShowSettings(false);
+    setShowHistory(false);
+    setShowMcp(false);
+    setShowAccount(true);
+    setShowGeneratedFiles(false);
+    setShowServerConsole(false);
+    setShowApplicationProgress(false);
+    setShowFileExplorer(true);
+    setAccountInitialActiveTab("account");
+
+    dispatch(clearAccountBalancePrompt());
+  }, [dispatch, showAccountBalance]);
+
   const handleFileSelect = useCallback((filePath: string) => {
     // Use openMention to open the selected file
     vscode.postMessage({
@@ -356,11 +385,16 @@ const AppContent = () => {
             <AccountView
               onDone={() => setShowAccount(false)}
               serverConsoleNeedsAttention={serverConsoleNeedsAttention}
-              onClearServerConsoleNeedsAttention={() => setServerConsoleNeedsAttention(false)}
+              onClearServerConsoleNeedsAttention={() =>
+                setServerConsoleNeedsAttention(false)
+              }
               initialActiveTab={accountInitialActiveTab}
               onConsumeInitialActiveTab={() => setAccountInitialActiveTab(undefined)}
               creditIntent={creditIntent}
               onClearCreditIntent={() => setCreditIntent(undefined)}
+              onConsumeInitialActiveTab={() =>
+                setAccountInitialActiveTab(undefined)
+              }
             />
           )}
           {showGeneratedFiles && <GeneratedFilesView />}

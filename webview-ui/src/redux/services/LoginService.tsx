@@ -14,9 +14,9 @@ export const LoginService = createApi({
       providesTags: (result) =>
         result
           ? [
-            ...result.map(({ id }) => ({ type: "Login" as const, id })),
-            { type: "Login", id: "LIST" },
-          ]
+              ...result.map(({ id }) => ({ type: "Login" as const, id })),
+              { type: "Login", id: "LIST" },
+            ]
           : [{ type: "Login", id: "LIST" }],
     }),
 

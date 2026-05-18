@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasOperation } from '@thorapi/model/OasOperation';
+import { OasOperation } from "@thorapi/model/OasOperation";
 
 const OasOperationSlice = createSlice({
   name: "OasOperations",
@@ -28,20 +27,23 @@ const OasOperationSlice = createSlice({
     },
 
     OasOperationValueToggled(state, action) {
-      console.log("OasOperation TOGGLE")
-      console.warn(JSON.stringify(action))
-      const OasOperation:OasOperation = state.find((OasOperation) => OasOperation.id === action.payload.OasOperationId);
+      console.log("OasOperation TOGGLE");
+      console.warn(JSON.stringify(action));
+      const OasOperation: OasOperation = state.find(
+        (OasOperation) => OasOperation.id === action.payload.OasOperationId,
+      );
       if (OasOperation) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     OasOperationpropertySet(state, action) {
-      const OasOperation = state.find((OasOperation) => OasOperation.id === action.payload.OasOperationId);
+      const OasOperation = state.find(
+        (OasOperation) => OasOperation.id === action.payload.OasOperationId,
+      );
       if (OasOperation) {
-      //  OasOperation[action.property] = action.payload[action.property];
+        //  OasOperation[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +52,6 @@ const OasOperationSlice = createSlice({
 export const {
   OasOperationAdded,
   OasOperationValueToggled,
-  OasOperationpropertySet
+  OasOperationpropertySet,
 } = OasOperationSlice.actions;
 export default OasOperationSlice.reducer;

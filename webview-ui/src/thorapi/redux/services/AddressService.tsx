@@ -7,43 +7,64 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { Address } from '@thorapi/model/Address'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { Address } from "@thorapi/model/Address";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type AddressResponse = Address[]
+type AddressResponse = Address[];
+
+const toAddressList = (result: unknown): AddressResponse => {
+  if (Array.isArray(result)) {
+    return result as AddressResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as AddressResponse) : [];
+};
 
 export const AddressService = createApi({
-  reducerPath: 'Address', // This should remain unique
+  reducerPath: "Address", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['Address'],
+  tagTypes: ["Address"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getAddresssPaged: build.query<AddressResponse, { page: number; size?: number; example?: Partial<Address> }>({
+    getAddresssPaged: build.query<
+      AddressResponse,
+      { page: number; size?: number; example?: Partial<Address> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Address?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Address?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Address' as const, id })),
-              { type: 'Address', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toAddressList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "Address" as const, id })),
+          { type: "Address", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getAddresss: build.query<AddressResponse, { example?: Partial<Address> } | void>({
+    getAddresss: build.query<
+      AddressResponse,
+      { example?: Partial<Address> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +72,96 @@ export const AddressService = createApi({
         }
         return `Address`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Address' as const, id })),
-              { type: 'Address', id: 'LIST' },
-            ]
-          : [{ type: 'Address', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toAddressList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "Address" as const, id })),
+          { type: "Address", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
     addAddress: build.mutation<Address, Partial<Address>>({
       query: (body) => ({
         url: `Address`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'Address', id: 'LIST' }],
+      invalidatesTags: [{ type: "Address", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getAddress: build.query<Address, string>({
       query: (id) => `Address/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Address', id }],
+      providesTags: (result, error, id) => [{ type: "Address", id }],
     }),
 
     // 5) Update
-    updateAddress: build.mutation<void, Pick<Address, 'id'> & Partial<Address>>({
-      query: ({ id, ...patch }) => ({
-        url: `Address/${id}`,
-        method: 'PUT',
-        body: patch,
-      }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            AddressService.util.updateQueryData('getAddress', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
-          try {
-            await queryFulfilled
-          } catch {
-            patchResult.undo()
+    updateAddress: build.mutation<void, Pick<Address, "id"> & Partial<Address>>(
+      {
+        query: ({ id, ...patch }) => ({
+          url: `Address/${id}`,
+          method: "PUT",
+          body: patch,
+        }),
+        async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+          if (id) {
+            const patchResult = dispatch(
+              AddressService.util.updateQueryData("getAddress", id, (draft) => {
+                Object.assign(draft, patch);
+              }),
+            );
+            try {
+              await queryFulfilled;
+            } catch {
+              patchResult.undo();
+            }
           }
-        }
+        },
+        invalidatesTags: (result, error, { id }: Pick<Address, "id">) => [
+          { type: "Address", id },
+          { type: "Address", id: "LIST" },
+        ],
       },
-      invalidatesTags: (result, error, { id }: Pick<Address, 'id'>) => [
-        { type: 'Address', id },
-        { type: 'Address', id: 'LIST' },
-      ],
-    }),
+    ),
 
     // 6) Delete
     deleteAddress: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `Address/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'Address', id }],
+      invalidatesTags: (result, error, id) => [{ type: "Address", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteAddressCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteAddressCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `Address/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Address', id }, { type: 'Address', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Address", id },
+        { type: "Address", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetAddresssPagedQuery`
 export const {
-  useGetAddresssPagedQuery,     // immediate fetch
+  useGetAddresssPagedQuery, // immediate fetch
   useLazyGetAddresssPagedQuery, // lazy fetch
   useGetAddressQuery,
   useGetAddresssQuery,
@@ -138,4 +169,4 @@ export const {
   useUpdateAddressMutation,
   useDeleteAddressMutation,
   useDeleteAddressCascadeMutation,
-} = AddressService
+} = AddressService;

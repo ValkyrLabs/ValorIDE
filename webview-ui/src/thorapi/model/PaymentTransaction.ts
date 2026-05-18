@@ -20,15 +20,14 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -37,126 +36,176 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface PaymentTransaction
  */
-export type PaymentTransaction  = DataObject & {
-    /**
-     * When the payment was processed
-     * @type {Date}
-     * @memberof PaymentTransaction
-     */
-    paidAt: Date;
-    /**
-     * Amount paid, in cents
-     * @type {number}
-     * @memberof PaymentTransaction
-     */
-    amountCents: number;
-    /**
-     * Credits granted by this payment
-     * @type {number}
-     * @memberof PaymentTransaction
-     */
-    credits: number;
-    /**
-     * Owning customer account
-     * @type {string}
-     * @memberof PaymentTransaction
-     */
-    customerId?: string;
-    /**
-     * Ensures no double-charge
-     * @type {string}
-     * @memberof PaymentTransaction
-     */
-    idempotencyKey?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof PaymentTransaction
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof PaymentTransaction
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof PaymentTransaction
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof PaymentTransaction
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof PaymentTransaction
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof PaymentTransaction
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof PaymentTransaction
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof PaymentTransaction
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof PaymentTransaction
-     */
-    trashed?: boolean;
-}
+export type PaymentTransaction = DataObject & {
+  /**
+   * Owning customer account
+   * @type {string}
+   * @memberof PaymentTransaction
+   */
+  customerId?: string;
+  /**
+   * When the payment was processed
+   * @type {Date}
+   * @memberof PaymentTransaction
+   */
+  paidAt?: Date;
+  /**
+   * Amount paid, in cents
+   * @type {number}
+   * @memberof PaymentTransaction
+   */
+  amountCents?: number;
+  /**
+   * Credits granted by this payment
+   * @type {number}
+   * @memberof PaymentTransaction
+   */
+  credits?: number;
+  /**
+   * Stripe customer id used for payment reconciliation
+   * @type {string}
+   * @memberof PaymentTransaction
+   */
+  stripeCustomerId?: string;
+  /**
+   * Stripe payment intent id for checkout/webhook reconciliation
+   * @type {string}
+   * @memberof PaymentTransaction
+   */
+  stripePaymentIntentId?: string;
+  /**
+   * Stripe checkout session id associated with this credit purchase
+   * @type {string}
+   * @memberof PaymentTransaction
+   */
+  stripeCheckoutSessionId?: string;
+  /**
+   * Payment lifecycle status (pending, succeeded, failed, refunded)
+   * @type {string}
+   * @memberof PaymentTransaction
+   */
+  paymentStatus?: string;
+  /**
+   * Ensures no double-charge
+   * @type {string}
+   * @memberof PaymentTransaction
+   */
+  idempotencyKey?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof PaymentTransaction
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof PaymentTransaction
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof PaymentTransaction
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof PaymentTransaction
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof PaymentTransaction
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof PaymentTransaction
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof PaymentTransaction
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof PaymentTransaction
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof PaymentTransaction
+   */
+  trashed?: boolean;
+};
 
 export function PaymentTransactionFromJSON(json: any): PaymentTransaction {
-    return {
-        ...DataObjectFromJSON(json),
-        'paidAt': new Date(json['paidAt']),
-        'amountCents': json['amountCents'],
-        'credits': json['credits'],
-        'customerId': !exists(json, 'customerId') ? undefined : json['customerId'],
-        'idempotencyKey': !exists(json, 'idempotencyKey') ? undefined : json['idempotencyKey'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    customerId: !exists(json, "customerId") ? undefined : json["customerId"],
+    paidAt: !exists(json, "paidAt") ? undefined : new Date(json["paidAt"]),
+    amountCents: !exists(json, "amountCents") ? undefined : json["amountCents"],
+    credits: !exists(json, "credits") ? undefined : json["credits"],
+    stripeCustomerId: !exists(json, "stripeCustomerId")
+      ? undefined
+      : json["stripeCustomerId"],
+    stripePaymentIntentId: !exists(json, "stripePaymentIntentId")
+      ? undefined
+      : json["stripePaymentIntentId"],
+    stripeCheckoutSessionId: !exists(json, "stripeCheckoutSessionId")
+      ? undefined
+      : json["stripeCheckoutSessionId"],
+    paymentStatus: !exists(json, "paymentStatus")
+      ? undefined
+      : json["paymentStatus"],
+    idempotencyKey: !exists(json, "idempotencyKey")
+      ? undefined
+      : json["idempotencyKey"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function PaymentTransactionToJSON(value?: PaymentTransaction): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'paidAt': value.paidAt.toISOString(),
-        'amountCents': value.amountCents,
-        'credits': value.credits,
-        'customerId': value.customerId,
-        'idempotencyKey': value.idempotencyKey,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    customerId: value.customerId,
+    paidAt: value.paidAt === undefined ? undefined : value.paidAt.toISOString(),
+    amountCents: value.amountCents,
+    credits: value.credits,
+    stripeCustomerId: value.stripeCustomerId,
+    stripePaymentIntentId: value.stripePaymentIntentId,
+    stripeCheckoutSessionId: value.stripeCheckoutSessionId,
+    paymentStatus: value.paymentStatus,
+    idempotencyKey: value.idempotencyKey,
+    trashed: value.trashed,
+  };
 }
-
-

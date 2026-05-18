@@ -60,7 +60,7 @@ if (typeof window !== "undefined") {
                     timestamp: Date.now(),
                     source: "thorBridge-localStorage",
                   },
-                })
+                }),
               );
             } catch {}
           }
@@ -164,7 +164,7 @@ if (typeof window !== "undefined") {
       const authenticatedURL = getAuthenticatedBrokerURL();
       if (!authenticatedURL) {
         console.warn(
-          "thorBridge: Cannot connect without JWT token, will retry..."
+          "thorBridge: Cannot connect without JWT token, will retry...",
         );
         postStatus("error");
         // Retry every 2 seconds until token is available
@@ -187,7 +187,7 @@ if (typeof window !== "undefined") {
       }
       console.log(
         "thorBridge: Connecting to authenticated websocket:",
-        authenticatedURL
+        authenticatedURL,
       );
       stompClient = new Client({
         brokerURL: authenticatedURL,
@@ -241,7 +241,7 @@ if (typeof window !== "undefined") {
         console.error(
           "thorBridge STOMP error:",
           frame.headers["message"],
-          frame.body
+          frame.body,
         );
         postStatus("error");
         isConnecting = false;
@@ -286,7 +286,7 @@ if (typeof window !== "undefined") {
           // Remove explicit connect-broker listener if present
           window.removeEventListener(
             "P2P-connect-broker",
-            connectBrokerListener
+            connectBrokerListener,
           );
           window.removeEventListener("jwt-token-updated", jwtUpdatedListener);
           if (hostSubscription) {
@@ -307,7 +307,7 @@ if (typeof window !== "undefined") {
     hostSubscription = subscribeToValkyraiHost(() => {
       try {
         console.log(
-          "thorBridge: ValkyrAI host changed, reconnecting broker..."
+          "thorBridge: ValkyrAI host changed, reconnecting broker...",
         );
         if (connectionRetryInterval) {
           clearInterval(connectionRetryInterval);

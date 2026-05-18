@@ -7,43 +7,64 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { Reaction } from '@thorapi/model/Reaction'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { Reaction } from "@thorapi/model/Reaction";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type ReactionResponse = Reaction[]
+type ReactionResponse = Reaction[];
+
+const toReactionList = (result: unknown): ReactionResponse => {
+  if (Array.isArray(result)) {
+    return result as ReactionResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as ReactionResponse) : [];
+};
 
 export const ReactionService = createApi({
-  reducerPath: 'Reaction', // This should remain unique
+  reducerPath: "Reaction", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['Reaction'],
+  tagTypes: ["Reaction"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getReactionsPaged: build.query<ReactionResponse, { page: number; size?: number; example?: Partial<Reaction> }>({
+    getReactionsPaged: build.query<
+      ReactionResponse,
+      { page: number; size?: number; example?: Partial<Reaction> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Reaction?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Reaction?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Reaction' as const, id })),
-              { type: 'Reaction', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toReactionList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "Reaction" as const, id })),
+          { type: "Reaction", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getReactions: build.query<ReactionResponse, { example?: Partial<Reaction> } | void>({
+    getReactions: build.query<
+      ReactionResponse,
+      { example?: Partial<Reaction> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,55 +72,60 @@ export const ReactionService = createApi({
         }
         return `Reaction`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'Reaction' as const, id })),
-              { type: 'Reaction', id: 'LIST' },
-            ]
-          : [{ type: 'Reaction', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toReactionList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "Reaction" as const, id })),
+          { type: "Reaction", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
     addReaction: build.mutation<Reaction, Partial<Reaction>>({
       query: (body) => ({
         url: `Reaction`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'Reaction', id: 'LIST' }],
+      invalidatesTags: [{ type: "Reaction", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getReaction: build.query<Reaction, string>({
       query: (id) => `Reaction/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Reaction', id }],
+      providesTags: (result, error, id) => [{ type: "Reaction", id }],
     }),
 
     // 5) Update
-    updateReaction: build.mutation<void, Pick<Reaction, 'id'> & Partial<Reaction>>({
+    updateReaction: build.mutation<
+      void,
+      Pick<Reaction, "id"> & Partial<Reaction>
+    >({
       query: ({ id, ...patch }) => ({
         url: `Reaction/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            ReactionService.util.updateQueryData('getReaction', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            ReactionService.util.updateQueryData("getReaction", id, (draft) => {
+              Object.assign(draft, patch);
+            }),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<Reaction, 'id'>) => [
-        { type: 'Reaction', id },
-        { type: 'Reaction', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<Reaction, "id">) => [
+        { type: "Reaction", id },
+        { type: "Reaction", id: "LIST" },
       ],
     }),
 
@@ -108,29 +134,35 @@ export const ReactionService = createApi({
       query(id) {
         return {
           url: `Reaction/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'Reaction', id }],
+      invalidatesTags: (result, error, id) => [{ type: "Reaction", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteReactionCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteReactionCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `Reaction/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Reaction', id }, { type: 'Reaction', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Reaction", id },
+        { type: "Reaction", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetReactionsPagedQuery`
 export const {
-  useGetReactionsPagedQuery,     // immediate fetch
+  useGetReactionsPagedQuery, // immediate fetch
   useLazyGetReactionsPagedQuery, // lazy fetch
   useGetReactionQuery,
   useGetReactionsQuery,
@@ -138,4 +170,4 @@ export const {
   useUpdateReactionMutation,
   useDeleteReactionMutation,
   useDeleteReactionCascadeMutation,
-} = ReactionService
+} = ReactionService;

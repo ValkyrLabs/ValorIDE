@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ChatResponse } from '@thorapi/model/ChatResponse';
+import { ChatResponse } from "@thorapi/model/ChatResponse";
 
 const ChatResponseSlice = createSlice({
   name: "ChatResponses",
@@ -28,20 +27,23 @@ const ChatResponseSlice = createSlice({
     },
 
     ChatResponseValueToggled(state, action) {
-      console.log("ChatResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ChatResponse:ChatResponse = state.find((ChatResponse) => ChatResponse.id === action.payload.ChatResponseId);
+      console.log("ChatResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ChatResponse: ChatResponse = state.find(
+        (ChatResponse) => ChatResponse.id === action.payload.ChatResponseId,
+      );
       if (ChatResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ChatResponsepropertySet(state, action) {
-      const ChatResponse = state.find((ChatResponse) => ChatResponse.id === action.payload.ChatResponseId);
+      const ChatResponse = state.find(
+        (ChatResponse) => ChatResponse.id === action.payload.ChatResponseId,
+      );
       if (ChatResponse) {
-      //  ChatResponse[action.property] = action.payload[action.property];
+        //  ChatResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +52,6 @@ const ChatResponseSlice = createSlice({
 export const {
   ChatResponseAdded,
   ChatResponseValueToggled,
-  ChatResponsepropertySet
+  ChatResponsepropertySet,
 } = ChatResponseSlice.actions;
 export default ChatResponseSlice.reducer;

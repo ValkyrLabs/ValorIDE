@@ -7,17 +7,20 @@
 **Phase 1 Deliverables (CLI Foundation — 70h effort → 2h scaffolding complete)**
 
 ✅ **Discovery & Analysis**
+
 - Generated `docs/cline-parity.md` with Cline→ValorIDE feature matrix
 - Analyzed Cline architecture (cline-core.ts, task management, checkpoints, storage)
 - Documented gaps: CLI agent mode, multi-agent orchestration, persistent ledger, multi-project checkpoints
 - Parity matrix shows 8 major features, prioritized by P0/P1/P2
 
 ✅ **CLI Package Scaffold**
+
 - Created `packages/valor-cli/` with production-ready structure
 - Node 20+, TypeScript 5.3+, commander.js CLI framework
 - Vitest for unit testing, eslint, prettier for code quality
 
 ✅ **Core Components**
+
 - **types.ts** — SessionConfig, TaskRunOptions, InstanceInfo, CheckpointInfo, AgentRole, AgentLedgerEntry, WorkspaceManifest
 - **SessionManager.ts** — Full session persistence (create/load/list/delete/save)
   - Stores in `~/.valoride/sessions/`
@@ -31,11 +34,13 @@
   - CheckpointCommand (create, list, restore, compare) — stub for checkpoints
 
 ✅ **Tests**
+
 - SessionManager.test.ts: 5 unit tests (all passing)
   - create session, load session, list sessions, delete session, update lastActivity
   - Tests cleanup properly, fixtures isolated
 
 ✅ **Build & Verification**
+
 - TypeScript compilation successful (dist/ generated)
 - All type declarations exported (.d.ts)
 - Tests: 5 passed, 0 failed, 1.27s

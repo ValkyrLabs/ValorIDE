@@ -76,8 +76,8 @@ const ApplicationProgress = ({ applicationId, applicationName, onClose }) => {
       setErrorMessage(error);
       setSteps((prev) =>
         prev.map((s) =>
-          s.id === step ? { ...s, status: "error", details: error } : s
-        )
+          s.id === step ? { ...s, status: "error", details: error } : s,
+        ),
       );
       return;
     }
@@ -97,7 +97,7 @@ const ApplicationProgress = ({ applicationId, applicationName, onClose }) => {
           return { ...s, status: "completed" };
         }
         return s;
-      })
+      }),
     );
   };
   const getStepIndex = (stepId) => {
@@ -132,7 +132,7 @@ const ApplicationProgress = ({ applicationId, applicationName, onClose }) => {
           type: "openFolder",
           path: resultDetails.extractedPath,
         },
-        "*"
+        "*",
       );
     }
   };
@@ -144,7 +144,7 @@ const ApplicationProgress = ({ applicationId, applicationName, onClose }) => {
           type: "openFile",
           path: resultDetails.readmePath,
         },
-        "*"
+        "*",
       );
     }
   };
@@ -276,8 +276,8 @@ const ApplicationProgress = ({ applicationId, applicationName, onClose }) => {
                               }),
                           ],
                         },
-                        step.id
-                      )
+                        step.id,
+                      ),
                     ),
                   }),
           }),

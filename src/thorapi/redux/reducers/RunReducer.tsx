@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Run } from '@thorapi/model/Run';
+import { Run } from "@thorapi/model/Run";
 
 const RunSlice = createSlice({
   name: "Runs",
@@ -28,28 +27,23 @@ const RunSlice = createSlice({
     },
 
     RunValueToggled(state, action) {
-      console.log("Run TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Run:Run = state.find((Run) => Run.id === action.payload.RunId);
+      console.log("Run TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Run: Run = state.find((Run) => Run.id === action.payload.RunId);
       if (Run) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     RunpropertySet(state, action) {
       const Run = state.find((Run) => Run.id === action.payload.RunId);
       if (Run) {
-      //  Run[action.property] = action.payload[action.property];
+        //  Run[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  RunAdded,
-  RunValueToggled,
-  RunpropertySet
-} = RunSlice.actions;
+export const { RunAdded, RunValueToggled, RunpropertySet } = RunSlice.actions;
 export default RunSlice.reducer;

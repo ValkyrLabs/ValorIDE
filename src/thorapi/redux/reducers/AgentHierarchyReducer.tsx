@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AgentHierarchy } from '@thorapi/model/AgentHierarchy';
+import { AgentHierarchy } from "@thorapi/model/AgentHierarchy";
 
 const AgentHierarchySlice = createSlice({
   name: "AgentHierarchys",
@@ -28,20 +27,25 @@ const AgentHierarchySlice = createSlice({
     },
 
     AgentHierarchyValueToggled(state, action) {
-      console.log("AgentHierarchy TOGGLE")
-      console.warn(JSON.stringify(action))
-      const AgentHierarchy:AgentHierarchy = state.find((AgentHierarchy) => AgentHierarchy.id === action.payload.AgentHierarchyId);
+      console.log("AgentHierarchy TOGGLE");
+      console.warn(JSON.stringify(action));
+      const AgentHierarchy: AgentHierarchy = state.find(
+        (AgentHierarchy) =>
+          AgentHierarchy.id === action.payload.AgentHierarchyId,
+      );
       if (AgentHierarchy) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     AgentHierarchypropertySet(state, action) {
-      const AgentHierarchy = state.find((AgentHierarchy) => AgentHierarchy.id === action.payload.AgentHierarchyId);
+      const AgentHierarchy = state.find(
+        (AgentHierarchy) =>
+          AgentHierarchy.id === action.payload.AgentHierarchyId,
+      );
       if (AgentHierarchy) {
-      //  AgentHierarchy[action.property] = action.payload[action.property];
+        //  AgentHierarchy[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const AgentHierarchySlice = createSlice({
 export const {
   AgentHierarchyAdded,
   AgentHierarchyValueToggled,
-  AgentHierarchypropertySet
+  AgentHierarchypropertySet,
 } = AgentHierarchySlice.actions;
 export default AgentHierarchySlice.reducer;

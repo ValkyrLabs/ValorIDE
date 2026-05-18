@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpMarketplaceCatalog } from '@thorapi/model/McpMarketplaceCatalog';
+import { McpMarketplaceCatalog } from "@thorapi/model/McpMarketplaceCatalog";
 
 const McpMarketplaceCatalogSlice = createSlice({
   name: "McpMarketplaceCatalogs",
@@ -28,20 +27,25 @@ const McpMarketplaceCatalogSlice = createSlice({
     },
 
     McpMarketplaceCatalogValueToggled(state, action) {
-      console.log("McpMarketplaceCatalog TOGGLE")
-      console.warn(JSON.stringify(action))
-      const McpMarketplaceCatalog:McpMarketplaceCatalog = state.find((McpMarketplaceCatalog) => McpMarketplaceCatalog.id === action.payload.McpMarketplaceCatalogId);
+      console.log("McpMarketplaceCatalog TOGGLE");
+      console.warn(JSON.stringify(action));
+      const McpMarketplaceCatalog: McpMarketplaceCatalog = state.find(
+        (McpMarketplaceCatalog) =>
+          McpMarketplaceCatalog.id === action.payload.McpMarketplaceCatalogId,
+      );
       if (McpMarketplaceCatalog) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     McpMarketplaceCatalogpropertySet(state, action) {
-      const McpMarketplaceCatalog = state.find((McpMarketplaceCatalog) => McpMarketplaceCatalog.id === action.payload.McpMarketplaceCatalogId);
+      const McpMarketplaceCatalog = state.find(
+        (McpMarketplaceCatalog) =>
+          McpMarketplaceCatalog.id === action.payload.McpMarketplaceCatalogId,
+      );
       if (McpMarketplaceCatalog) {
-      //  McpMarketplaceCatalog[action.property] = action.payload[action.property];
+        //  McpMarketplaceCatalog[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const McpMarketplaceCatalogSlice = createSlice({
 export const {
   McpMarketplaceCatalogAdded,
   McpMarketplaceCatalogValueToggled,
-  McpMarketplaceCatalogpropertySet
+  McpMarketplaceCatalogpropertySet,
 } = McpMarketplaceCatalogSlice.actions;
 export default McpMarketplaceCatalogSlice.reducer;

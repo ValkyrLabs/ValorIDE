@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { JobMetadata } from '@thorapi/model/JobMetadata';
+import { JobMetadata } from "@thorapi/model/JobMetadata";
 
 const JobMetadataSlice = createSlice({
   name: "JobMetadatas",
@@ -28,20 +27,23 @@ const JobMetadataSlice = createSlice({
     },
 
     JobMetadataValueToggled(state, action) {
-      console.log("JobMetadata TOGGLE")
-      console.warn(JSON.stringify(action))
-      const JobMetadata:JobMetadata = state.find((JobMetadata) => JobMetadata.id === action.payload.JobMetadataId);
+      console.log("JobMetadata TOGGLE");
+      console.warn(JSON.stringify(action));
+      const JobMetadata: JobMetadata = state.find(
+        (JobMetadata) => JobMetadata.id === action.payload.JobMetadataId,
+      );
       if (JobMetadata) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     JobMetadatapropertySet(state, action) {
-      const JobMetadata = state.find((JobMetadata) => JobMetadata.id === action.payload.JobMetadataId);
+      const JobMetadata = state.find(
+        (JobMetadata) => JobMetadata.id === action.payload.JobMetadataId,
+      );
       if (JobMetadata) {
-      //  JobMetadata[action.property] = action.payload[action.property];
+        //  JobMetadata[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +52,6 @@ const JobMetadataSlice = createSlice({
 export const {
   JobMetadataAdded,
   JobMetadataValueToggled,
-  JobMetadatapropertySet
+  JobMetadatapropertySet,
 } = JobMetadataSlice.actions;
 export default JobMetadataSlice.reducer;

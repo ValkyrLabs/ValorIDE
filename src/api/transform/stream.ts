@@ -21,4 +21,11 @@ export interface ApiStreamUsageChunk {
   cacheWriteTokens?: number;
   cacheReadTokens?: number;
   totalCost?: number; // openrouter
+  provider?: string;
+  modelId?: string;
+  contextWindow?: number;
+  totalDurationMs?: number;
+  loadDurationMs?: number;
+  promptEvalDurationMs?: number;
+  evalDurationMs?: number;
 }

@@ -40,7 +40,7 @@ vi.mock("react-bootstrap", () => ({
         _jsx("div", { "data-testid": "modal-title", children: children }),
       Body: ({ children }) =>
         _jsx("div", { "data-testid": "modal-body", children: children }),
-    }
+    },
   ),
 }));
 const baseExtensionState = {
@@ -87,7 +87,7 @@ describe("SystemAlerts - Buy Credits modal visibility", () => {
     });
     render(_jsx(SystemAlerts, {}));
     await waitFor(() =>
-      expect(screen.getByText(/Insufficient Credits/i)).toBeInTheDocument()
+      expect(screen.getByText(/Insufficient Credits/i)).toBeInTheDocument(),
     );
     expect(screen.queryByTestId("buy-credits-modal")).not.toBeInTheDocument();
   });
@@ -109,10 +109,10 @@ describe("SystemAlerts - Buy Credits modal visibility", () => {
     });
     render(_jsx(SystemAlerts, {}));
     await waitFor(() =>
-      expect(screen.getByText(/Insufficient Credits/i)).toBeInTheDocument()
+      expect(screen.getByText(/Insufficient Credits/i)).toBeInTheDocument(),
     );
     await waitFor(() =>
-      expect(screen.getByTestId("buy-credits-modal")).toBeInTheDocument()
+      expect(screen.getByTestId("buy-credits-modal")).toBeInTheDocument(),
     );
   });
 });

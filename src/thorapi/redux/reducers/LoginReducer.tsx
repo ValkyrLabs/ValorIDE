@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Login } from '@thorapi/model/Login';
+import { Login } from "@thorapi/model/Login";
 
 const LoginSlice = createSlice({
   name: "Logins",
@@ -28,28 +27,26 @@ const LoginSlice = createSlice({
     },
 
     LoginValueToggled(state, action) {
-      console.log("Login TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Login:Login = state.find((Login) => Login.id === action.payload.LoginId);
+      console.log("Login TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Login: Login = state.find(
+        (Login) => Login.id === action.payload.LoginId,
+      );
       if (Login) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     LoginpropertySet(state, action) {
       const Login = state.find((Login) => Login.id === action.payload.LoginId);
       if (Login) {
-      //  Login[action.property] = action.payload[action.property];
+        //  Login[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  LoginAdded,
-  LoginValueToggled,
-  LoginpropertySet
-} = LoginSlice.actions;
+export const { LoginAdded, LoginValueToggled, LoginpropertySet } =
+  LoginSlice.actions;
 export default LoginSlice.reducer;

@@ -1,0 +1,196 @@
+openapi: 3.0.0
+info:
+  title: Blog Platform API
+  version: 1.0.0
+paths:
+  /posts:
+    get:
+      summary: List blog posts
+      operationId: listPosts
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        "200":
+          description: Post list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Post"
+    post:
+      summary: Create post
+      operationId: createPost
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostCreate"
+      responses:
+        "201":
+          description: Post created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+  /posts/{id}:
+    get:
+      summary: Get post
+      operationId: getPost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Post details
+    put:
+      summary: Update post
+      operationId: updatePost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostUpdate"
+      responses:
+        "200":
+          description: Post updated
+    delete:
+      summary: Delete post
+      operationId: deletePost
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Post deleted
+  /posts/{id}/comments:
+    get:
+      summary: List comments
+      operationId: listComments
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Comments list
+    post:
+      summary: Add comment
+      operationId: addComment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommentCreate"
+      responses:
+        "201":
+          description: Comment added
+
+components:
+  schemas:
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+        author:
+          $ref: "#/components/schemas/Author"
+        tags:
+          type: array
+          items:
+            type: string
+        publishedAt:
+          type: string
+          format: date-time
+        viewCount:
+          type: integer
+    PostCreate:
+      type: object
+      required:
+        - title
+        - content
+        - authorId
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        authorId:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+    PostUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+    Author:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+        content:
+          type: string
+        author:
+          $ref: "#/components/schemas/Author"
+        createdAt:
+          type: string
+          format: date-time
+    CommentCreate:
+      type: object
+      required:
+        - content
+        - authorId
+      properties:
+        content:
+          type: string
+        authorId:
+          type: string

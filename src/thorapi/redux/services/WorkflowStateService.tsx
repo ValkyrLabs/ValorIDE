@@ -7,43 +7,64 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { WorkflowState } from '@thorapi/model/WorkflowState'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { WorkflowState } from "@thorapi/model/WorkflowState";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type WorkflowStateResponse = WorkflowState[]
+type WorkflowStateResponse = WorkflowState[];
+
+const toWorkflowStateList = (result: unknown): WorkflowStateResponse => {
+  if (Array.isArray(result)) {
+    return result as WorkflowStateResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as WorkflowStateResponse) : [];
+};
 
 export const WorkflowStateService = createApi({
-  reducerPath: 'WorkflowState', // This should remain unique
+  reducerPath: "WorkflowState", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['WorkflowState'],
+  tagTypes: ["WorkflowState"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getWorkflowStatesPaged: build.query<WorkflowStateResponse, { page: number; size?: number; example?: Partial<WorkflowState> }>({
+    getWorkflowStatesPaged: build.query<
+      WorkflowStateResponse,
+      { page: number; size?: number; example?: Partial<WorkflowState> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `WorkflowState?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `WorkflowState?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'WorkflowState' as const, id })),
-              { type: 'WorkflowState', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toWorkflowStateList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "WorkflowState" as const, id })),
+          { type: "WorkflowState", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getWorkflowStates: build.query<WorkflowStateResponse, { example?: Partial<WorkflowState> } | void>({
+    getWorkflowStates: build.query<
+      WorkflowStateResponse,
+      { example?: Partial<WorkflowState> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +72,104 @@ export const WorkflowStateService = createApi({
         }
         return `WorkflowState`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'WorkflowState' as const, id })),
-              { type: 'WorkflowState', id: 'LIST' },
-            ]
-          : [{ type: 'WorkflowState', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toWorkflowStateList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "WorkflowState" as const, id })),
+          { type: "WorkflowState", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
     addWorkflowState: build.mutation<WorkflowState, Partial<WorkflowState>>({
       query: (body) => ({
         url: `WorkflowState`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'WorkflowState', id: 'LIST' }],
+      invalidatesTags: [{ type: "WorkflowState", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getWorkflowState: build.query<WorkflowState, string>({
       query: (id) => `WorkflowState/${id}`,
-      providesTags: (result, error, id) => [{ type: 'WorkflowState', id }],
+      providesTags: (result, error, id) => [{ type: "WorkflowState", id }],
     }),
 
     // 5) Update
-    updateWorkflowState: build.mutation<void, Pick<WorkflowState, 'id'> & Partial<WorkflowState>>({
+    updateWorkflowState: build.mutation<
+      void,
+      Pick<WorkflowState, "id"> & Partial<WorkflowState>
+    >({
       query: ({ id, ...patch }) => ({
         url: `WorkflowState/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            WorkflowStateService.util.updateQueryData('getWorkflowState', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            WorkflowStateService.util.updateQueryData(
+              "getWorkflowState",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<WorkflowState, 'id'>) => [
-        { type: 'WorkflowState', id },
-        { type: 'WorkflowState', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<WorkflowState, "id">) => [
+        { type: "WorkflowState", id },
+        { type: "WorkflowState", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteWorkflowState: build.mutation<{ success: boolean; id: string }, number>({
+    deleteWorkflowState: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `WorkflowState/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'WorkflowState', id }],
+      invalidatesTags: (result, error, id) => [{ type: "WorkflowState", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteWorkflowStateCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteWorkflowStateCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `WorkflowState/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'WorkflowState', id }, { type: 'WorkflowState', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "WorkflowState", id },
+        { type: "WorkflowState", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetWorkflowStatesPagedQuery`
 export const {
-  useGetWorkflowStatesPagedQuery,     // immediate fetch
+  useGetWorkflowStatesPagedQuery, // immediate fetch
   useLazyGetWorkflowStatesPagedQuery, // lazy fetch
   useGetWorkflowStateQuery,
   useGetWorkflowStatesQuery,
@@ -138,4 +177,4 @@ export const {
   useUpdateWorkflowStateMutation,
   useDeleteWorkflowStateMutation,
   useDeleteWorkflowStateCascadeMutation,
-} = WorkflowStateService
+} = WorkflowStateService;

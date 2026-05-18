@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { NamedRange } from '@thorapi/model/NamedRange';
+import { NamedRange } from "@thorapi/model/NamedRange";
 
 const NamedRangeSlice = createSlice({
   name: "NamedRanges",
@@ -28,20 +27,23 @@ const NamedRangeSlice = createSlice({
     },
 
     NamedRangeValueToggled(state, action) {
-      console.log("NamedRange TOGGLE")
-      console.warn(JSON.stringify(action))
-      const NamedRange:NamedRange = state.find((NamedRange) => NamedRange.id === action.payload.NamedRangeId);
+      console.log("NamedRange TOGGLE");
+      console.warn(JSON.stringify(action));
+      const NamedRange: NamedRange = state.find(
+        (NamedRange) => NamedRange.id === action.payload.NamedRangeId,
+      );
       if (NamedRange) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     NamedRangepropertySet(state, action) {
-      const NamedRange = state.find((NamedRange) => NamedRange.id === action.payload.NamedRangeId);
+      const NamedRange = state.find(
+        (NamedRange) => NamedRange.id === action.payload.NamedRangeId,
+      );
       if (NamedRange) {
-      //  NamedRange[action.property] = action.payload[action.property];
+        //  NamedRange[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +52,6 @@ const NamedRangeSlice = createSlice({
 export const {
   NamedRangeAdded,
   NamedRangeValueToggled,
-  NamedRangepropertySet
+  NamedRangepropertySet,
 } = NamedRangeSlice.actions;
 export default NamedRangeSlice.reducer;

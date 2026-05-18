@@ -7,43 +7,68 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { McpServiceResponse } from '@thorapi/model/McpServiceResponse'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { McpServiceResponse } from "@thorapi/model/McpServiceResponse";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type McpServiceResponseResponse = McpServiceResponse[]
+type McpServiceResponseResponse = McpServiceResponse[];
+
+const toMcpServiceResponseList = (
+  result: unknown,
+): McpServiceResponseResponse => {
+  if (Array.isArray(result)) {
+    return result as McpServiceResponseResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as McpServiceResponseResponse)
+    : [];
+};
 
 export const McpServiceResponseService = createApi({
-  reducerPath: 'McpServiceResponse', // This should remain unique
+  reducerPath: "McpServiceResponse", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['McpServiceResponse'],
+  tagTypes: ["McpServiceResponse"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getMcpServiceResponsesPaged: build.query<McpServiceResponseResponse, { page: number; size?: number; example?: Partial<McpServiceResponse> }>({
+    getMcpServiceResponsesPaged: build.query<
+      McpServiceResponseResponse,
+      { page: number; size?: number; example?: Partial<McpServiceResponse> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `McpServiceResponse?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `McpServiceResponse?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'McpServiceResponse' as const, id })),
-              { type: 'McpServiceResponse', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toMcpServiceResponseList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "McpServiceResponse" as const, id })),
+          { type: "McpServiceResponse", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getMcpServiceResponses: build.query<McpServiceResponseResponse, { example?: Partial<McpServiceResponse> } | void>({
+    getMcpServiceResponses: build.query<
+      McpServiceResponseResponse,
+      { example?: Partial<McpServiceResponse> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +76,113 @@ export const McpServiceResponseService = createApi({
         }
         return `McpServiceResponse`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'McpServiceResponse' as const, id })),
-              { type: 'McpServiceResponse', id: 'LIST' },
-            ]
-          : [{ type: 'McpServiceResponse', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toMcpServiceResponseList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "McpServiceResponse" as const, id })),
+          { type: "McpServiceResponse", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
-    addMcpServiceResponse: build.mutation<McpServiceResponse, Partial<McpServiceResponse>>({
+    addMcpServiceResponse: build.mutation<
+      McpServiceResponse,
+      Partial<McpServiceResponse>
+    >({
       query: (body) => ({
         url: `McpServiceResponse`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'McpServiceResponse', id: 'LIST' }],
+      invalidatesTags: [{ type: "McpServiceResponse", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getMcpServiceResponse: build.query<McpServiceResponse, string>({
       query: (id) => `McpServiceResponse/${id}`,
-      providesTags: (result, error, id) => [{ type: 'McpServiceResponse', id }],
+      providesTags: (result, error, id) => [{ type: "McpServiceResponse", id }],
     }),
 
     // 5) Update
-    updateMcpServiceResponse: build.mutation<void, Pick<McpServiceResponse, 'id'> & Partial<McpServiceResponse>>({
+    updateMcpServiceResponse: build.mutation<
+      void,
+      Pick<McpServiceResponse, "id"> & Partial<McpServiceResponse>
+    >({
       query: ({ id, ...patch }) => ({
         url: `McpServiceResponse/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            McpServiceResponseService.util.updateQueryData('getMcpServiceResponse', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            McpServiceResponseService.util.updateQueryData(
+              "getMcpServiceResponse",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<McpServiceResponse, 'id'>) => [
-        { type: 'McpServiceResponse', id },
-        { type: 'McpServiceResponse', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<McpServiceResponse, "id">,
+      ) => [
+        { type: "McpServiceResponse", id },
+        { type: "McpServiceResponse", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteMcpServiceResponse: build.mutation<{ success: boolean; id: string }, number>({
+    deleteMcpServiceResponse: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `McpServiceResponse/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'McpServiceResponse', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "McpServiceResponse", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteMcpServiceResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteMcpServiceResponseCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `McpServiceResponse/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'McpServiceResponse', id }, { type: 'McpServiceResponse', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "McpServiceResponse", id },
+        { type: "McpServiceResponse", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetMcpServiceResponsesPagedQuery`
 export const {
-  useGetMcpServiceResponsesPagedQuery,     // immediate fetch
+  useGetMcpServiceResponsesPagedQuery, // immediate fetch
   useLazyGetMcpServiceResponsesPagedQuery, // lazy fetch
   useGetMcpServiceResponseQuery,
   useGetMcpServiceResponsesQuery,
@@ -138,4 +190,4 @@ export const {
   useUpdateMcpServiceResponseMutation,
   useDeleteMcpServiceResponseMutation,
   useDeleteMcpServiceResponseCascadeMutation,
-} = McpServiceResponseService
+} = McpServiceResponseService;

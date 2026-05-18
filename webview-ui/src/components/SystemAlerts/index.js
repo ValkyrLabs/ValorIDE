@@ -43,7 +43,7 @@ const SystemAlerts = () => {
   // Calculate current API metrics
   const apiMetrics = useMemo(
     () => getApiMetrics(valorideMessages || []),
-    [valorideMessages]
+    [valorideMessages],
   );
   const budgetAlerts = useMemo(
     () =>
@@ -53,7 +53,7 @@ const SystemAlerts = () => {
         lowThreshold: 5,
         alertThreshold: 10,
       },
-    [advancedSettings?.budgetAlerts]
+    [advancedSettings?.budgetAlerts],
   );
   // Calculate effective balance using the new creditsApi AccountBalance
   const effectiveBalance = useMemo(() => {
@@ -337,8 +337,8 @@ const SystemAlerts = () => {
                 ],
               }),
             },
-            alert.id
-          )
+            alert.id,
+          ),
         ),
       }),
       _jsxs(Modal, {

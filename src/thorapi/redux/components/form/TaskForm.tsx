@@ -7,41 +7,48 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   Task,
   TaskRoleEnum,
-  TaskStatusEnum,
   TaskPriorityLevelEnum,
-} from '@thorapi/model';
+  TaskStatusEnum,
+} from "@thorapi/model";
 
-import { useAddTaskMutation } from '../../services/TaskService';
+import { useAddTaskMutation } from "../../services/TaskService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -51,7 +58,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -59,35 +65,27 @@ Template file: typescript-redux-query/modelForm.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 
 Description:
-ValkyrAI Task object manages execution and state of automation workflows
+Transactional execution unit within a Workflow. ExecModules inside a Task execute sequentially. Branching and fan-out occur ONLY via TaskEdge. 
 */
 
 /* -----------------------------------------------------
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const RoleValidation = () => {
-  return [
-    'user',
-    'assistant',
-  ];
+  return ["user", "assistant"];
+};
+const PriorityLevelValidation = () => {
+  return ["CRITICAL", "HIGH", "NORMAL", "LOW"];
 };
 const StatusValidation = () => {
   return [
-    'running',
-    'stopped',
-    'ready',
-    'good',
-    'warning',
-    'error',
-    'disabled',
-  ];
-};
-const PriorityLevelValidation = () => {
-  return [
-    'CRITICAL',
-    'HIGH',
-    'NORMAL',
-    'LOW',
+    "ready",
+    "running",
+    "stopped",
+    "good",
+    "warning",
+    "error",
+    "disabled",
   ];
 };
 
@@ -95,23 +93,21 @@ const PriorityLevelValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        name: Yup.string(),
-        description: Yup.string(),
-        workflowId: Yup.string(),
-      role: Yup.mixed()
-        .oneOf(RoleValidation(), "Invalid value for role")
-        ,
-        taskOrder: asNumber(Yup.number().typeError("taskOrder must be a number")),
-      status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        ,
-      priorityLevel: Yup.mixed()
-        .oneOf(PriorityLevelValidation(), "Invalid value for priorityLevel")
-        ,
-        trashed: Yup.boolean(),
+  name: Yup.string(),
+  description: Yup.string(),
+  role: Yup.mixed().oneOf(RoleValidation(), "Invalid value for role"),
+  priorityLevel: Yup.mixed().oneOf(
+    PriorityLevelValidation(),
+    "Invalid value for priorityLevel",
+  ),
+  taskOrder: asNumber(Yup.number().typeError("taskOrder must be a number")),
+  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -128,12 +124,18 @@ const TaskForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -141,14 +143,13 @@ const TaskForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Task> = {
-          name: '',
-          description: '',
-          workflowId: '',
-        role: undefined,
-          taskOrder: 0,
-        status: undefined,
-        priorityLevel: undefined,
-          trashed: false,
+    name: "",
+    description: "",
+    role: undefined,
+    priorityLevel: undefined,
+    taskOrder: 0,
+    status: undefined,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -163,11 +164,14 @@ const TaskForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new Task:', grants);
+    console.log("Permissions saved for new Task:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Task>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<Task>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -178,7 +182,7 @@ const TaskForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Task created successfully! Would you like to set permissions for this object?`
+          `Task created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -186,8 +190,8 @@ const TaskForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create Task:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create Task:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -208,44 +212,36 @@ const TaskForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addTaskResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New Task
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New Task
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.name && !errors.name && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="name"
+                        value={values?.name}
+                        placeholder="Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -257,28 +253,21 @@ const TaskForm: React.FC = () => {
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
-                        {touched.description &&
-                         !errors.description && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.description && !errors.description && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="description"
-                            value={values?.description}
-                            placeholder="Description"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="description"
+                        value={values?.description}
+                        placeholder="Description"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -287,66 +276,33 @@ const TaskForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="workflowId" className="nice-form-control">
-                      <b>
-                        Workflow Id:
-                        {touched.workflowId &&
-                         !errors.workflowId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="workflowId"
-                            value={values?.workflowId}
-                            placeholder="Workflow Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="workflowId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="role" className="nice-form-control">
                       <b>
                         Role:
-                        {touched.role &&
-                         !errors.role && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.role && !errors.role && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="role"
-                          value={values.role || ''}
-                          className={
-                            errors.role
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('role', true);
-                            setFieldValue('role', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Role" />
-                          <RoleLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="role"
+                        value={values.role || ""}
+                        className={
+                          errors.role
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("role", true);
+                          setFieldValue("role", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Role" />
+                        <RoleLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -355,40 +311,77 @@ const TaskForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="taskOrder" className="nice-form-control">
+                    <label
+                      htmlFor="priorityLevel"
+                      className="nice-form-control"
+                    >
                       <b>
-                        Task Order:
-                        {touched.taskOrder &&
-                         !errors.taskOrder && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        Priority Level:
+                        {touched.priorityLevel && !errors.priorityLevel && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="priorityLevel"
+                        value={values.priorityLevel || ""}
+                        className={
+                          errors.priorityLevel
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("priorityLevel", true);
+                          setFieldValue(
+                            "priorityLevel",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Priority Level" />
+                        <PriorityLevelLookup />
+                      </BSForm.Select>
 
+                      <ErrorMessage
+                        className="error"
+                        name="priorityLevel"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="taskOrder" className="nice-form-control">
+                      <b>
+                        Task Order:
+                        {touched.taskOrder && !errors.taskOrder && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
+                        )}
+                      </b>
 
-
-
-                          {/* FLOAT FIELD */}
-                          <Field
-                            name="taskOrder"
-                            type="number"
-                            step="any"
-                            value={values.taskOrder || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('taskOrder', true);
-                              const v = e.target.value;
-                              setFieldValue('taskOrder', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.taskOrder
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
+                      {/* FLOAT FIELD */}
+                      <Field
+                        name="taskOrder"
+                        type="number"
+                        step="any"
+                        value={values.taskOrder || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("taskOrder", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "taskOrder",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.taskOrder
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -400,30 +393,30 @@ const TaskForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="status"
-                          value={values.status || ''}
-                          className={
-                            errors.status
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Status" />
-                          <StatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="status"
+                        value={values.status || ""}
+                        className={
+                          errors.status
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("status", true);
+                          setFieldValue("status", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Status" />
+                        <StatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -432,70 +425,28 @@ const TaskForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="priorityLevel" className="nice-form-control">
-                      <b>
-                        Priority Level:
-                        {touched.priorityLevel &&
-                         !errors.priorityLevel && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="priorityLevel"
-                          value={values.priorityLevel || ''}
-                          className={
-                            errors.priorityLevel
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('priorityLevel', true);
-                            setFieldValue('priorityLevel', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Priority Level" />
-                          <PriorityLevelLookup />
-                        </BSForm.Select>
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="priorityLevel"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -505,45 +456,58 @@ const TaskForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New Task
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New Task
+                    </CoolButton>
 
-                  {(addTaskResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addTaskResult as any).error ? (addTaskResult as any).error.data : (addTaskResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addTaskResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addTaskResult as any).error
+                              ? (addTaskResult as any).error.data
+                              : (addTaskResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addTaskResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addTaskResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addTaskResult: {JSON.stringify(addTaskResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addTaskResult: {JSON.stringify(addTaskResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -575,31 +539,8 @@ kebabcase role-lookup
 const RoleLookup = () => {
   return (
     <>
-      <option value='user' label="User" />
-      <option value='assistant' label="Assistant" />
-    </>
-  );
-};
-
-/*
-lowercase statuslookup
-uppercase STATUSLOOKUP
-snakecase status_lookup
-pascalcase StatusLookup
-camelcase statusLookup
-kebabcase status-lookup
-*/
-
-const StatusLookup = () => {
-  return (
-    <>
-      <option value='running' label="Running" />
-      <option value='stopped' label="Stopped" />
-      <option value='ready' label="Ready" />
-      <option value='good' label="Good" />
-      <option value='warning' label="Warning" />
-      <option value='error' label="Error" />
-      <option value='disabled' label="Disabled" />
+      <option value="user" label="User" />
+      <option value="assistant" label="Assistant" />
     </>
   );
 };
@@ -616,16 +557,36 @@ kebabcase priority-level-lookup
 const PriorityLevelLookup = () => {
   return (
     <>
-      <option value='CRITICAL' label="Critical" />
-      <option value='HIGH' label="High" />
-      <option value='NORMAL' label="Normal" />
-      <option value='LOW' label="Low" />
+      <option value="CRITICAL" label="Critical" />
+      <option value="HIGH" label="High" />
+      <option value="NORMAL" label="Normal" />
+      <option value="LOW" label="Low" />
     </>
   );
 };
 
+/*
+lowercase statuslookup
+uppercase STATUSLOOKUP
+snakecase status_lookup
+pascalcase StatusLookup
+camelcase statusLookup
+kebabcase status-lookup
+*/
 
+const StatusLookup = () => {
+  return (
+    <>
+      <option value="ready" label="Ready" />
+      <option value="running" label="Running" />
+      <option value="stopped" label="Stopped" />
+      <option value="good" label="Good" />
+      <option value="warning" label="Warning" />
+      <option value="error" label="Error" />
+      <option value="disabled" label="Disabled" />
+    </>
+  );
+};
 
 /* Export the generated form */
 export default TaskForm;
-

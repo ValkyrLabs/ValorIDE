@@ -7,38 +7,43 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  SpaceFile,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddSpaceFileMutation } from '../../services/SpaceFileService';
+import { SpaceFile } from "@thorapi/model";
+
+import { useAddSpaceFileMutation } from "../../services/SpaceFileService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -48,7 +53,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -67,22 +71,22 @@ Association between a file record and a collaboration space.
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        spaceId: Yup.string().required("spaceId is required."),
-        fileRecordId: Yup.string().required("fileRecordId is required."),
-        addedDate: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("addedDate must be a valid date"),
-        isPinned: Yup.boolean(),
-        pinnedById: Yup.string(),
-        trashed: Yup.boolean(),
+  addedDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("addedDate must be a valid date"),
+  isPinned: Yup.boolean(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -99,12 +103,18 @@ const SpaceFileForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -112,12 +122,9 @@ const SpaceFileForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<SpaceFile> = {
-          spaceId: '',
-          fileRecordId: '',
-          addedDate: new Date(),
-          isPinned: false,
-          pinnedById: '',
-          trashed: false,
+    addedDate: new Date(),
+    isPinned: false,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -132,11 +139,14 @@ const SpaceFileForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new SpaceFile:', grants);
+    console.log("Permissions saved for new SpaceFile:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<SpaceFile>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<SpaceFile>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -147,7 +157,7 @@ const SpaceFileForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `SpaceFile created successfully! Would you like to set permissions for this object?`
+          `SpaceFile created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -155,8 +165,8 @@ const SpaceFileForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create SpaceFile:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create SpaceFile:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -177,120 +187,53 @@ const SpaceFileForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addSpaceFileResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New SpaceFile
-                </Accordion.Header>
-                <Accordion.Body>
-                    <label htmlFor="spaceId" className="nice-form-control">
-                      <b>
-                        Space Id:
-                        {touched.spaceId &&
-                         !errors.spaceId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="spaceId"
-                            value={values?.spaceId}
-                            placeholder="Space Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="spaceId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="fileRecordId" className="nice-form-control">
-                      <b>
-                        File Record Id:
-                        {touched.fileRecordId &&
-                         !errors.fileRecordId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="fileRecordId"
-                            value={values?.fileRecordId}
-                            placeholder="File Record Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="fileRecordId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New SpaceFile
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="addedDate" className="nice-form-control">
                       <b>
                         Added Date:
-                        {touched.addedDate &&
-                         !errors.addedDate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.addedDate && !errors.addedDate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="addedDate"
-                            type="datetime-local"
-                            value={values.addedDate ? 
-                              new Date(values.addedDate).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('addedDate', true);
-                              const v = e.target.value;
-                              setFieldValue('addedDate', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.addedDate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="addedDate"
+                        type="datetime-local"
+                        value={
+                          values.addedDate
+                            ? new Date(values.addedDate)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("addedDate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "addedDate",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.addedDate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -302,32 +245,25 @@ const SpaceFileForm: React.FC = () => {
                     <label htmlFor="isPinned" className="nice-form-control">
                       <b>
                         Is Pinned:
-                        {touched.isPinned &&
-                         !errors.isPinned && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.isPinned && !errors.isPinned && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="isPinned"
-                            name="isPinned"
-                            checked={values.isPinned || false}
-                            onChange={(e) => {
-                              setFieldTouched('isPinned', true);
-                              setFieldValue('isPinned', e.target.checked);
-                            }}
-                            isInvalid={!!errors.isPinned}
-                            className={errors.isPinned ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="isPinned"
+                        name="isPinned"
+                        checked={values.isPinned || false}
+                        onChange={(e) => {
+                          setFieldTouched("isPinned", true);
+                          setFieldValue("isPinned", e.target.checked);
+                        }}
+                        isInvalid={!!errors.isPinned}
+                        className={errors.isPinned ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -336,68 +272,28 @@ const SpaceFileForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="pinnedById" className="nice-form-control">
-                      <b>
-                        Pinned By Id:
-                        {touched.pinnedById &&
-                         !errors.pinnedById && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="pinnedById"
-                            value={values?.pinnedById}
-                            placeholder="Pinned By Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="pinnedById"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -407,45 +303,58 @@ const SpaceFileForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New SpaceFile
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New SpaceFile
+                    </CoolButton>
 
-                  {(addSpaceFileResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addSpaceFileResult as any).error ? (addSpaceFileResult as any).error.data : (addSpaceFileResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addSpaceFileResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addSpaceFileResult as any).error
+                              ? (addSpaceFileResult as any).error.data
+                              : (addSpaceFileResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addSpaceFileResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addSpaceFileResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addSpaceFileResult: {JSON.stringify(addSpaceFileResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addSpaceFileResult: {JSON.stringify(addSpaceFileResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -465,8 +374,5 @@ const SpaceFileForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default SpaceFileForm;
-

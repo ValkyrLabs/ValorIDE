@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasInfo } from '@thorapi/model/OasInfo';
+import { OasInfo } from "@thorapi/model/OasInfo";
 
 const OasInfoSlice = createSlice({
   name: "OasInfos",
@@ -28,28 +27,28 @@ const OasInfoSlice = createSlice({
     },
 
     OasInfoValueToggled(state, action) {
-      console.log("OasInfo TOGGLE")
-      console.warn(JSON.stringify(action))
-      const OasInfo:OasInfo = state.find((OasInfo) => OasInfo.id === action.payload.OasInfoId);
+      console.log("OasInfo TOGGLE");
+      console.warn(JSON.stringify(action));
+      const OasInfo: OasInfo = state.find(
+        (OasInfo) => OasInfo.id === action.payload.OasInfoId,
+      );
       if (OasInfo) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     OasInfopropertySet(state, action) {
-      const OasInfo = state.find((OasInfo) => OasInfo.id === action.payload.OasInfoId);
+      const OasInfo = state.find(
+        (OasInfo) => OasInfo.id === action.payload.OasInfoId,
+      );
       if (OasInfo) {
-      //  OasInfo[action.property] = action.payload[action.property];
+        //  OasInfo[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  OasInfoAdded,
-  OasInfoValueToggled,
-  OasInfopropertySet
-} = OasInfoSlice.actions;
+export const { OasInfoAdded, OasInfoValueToggled, OasInfopropertySet } =
+  OasInfoSlice.actions;
 export default OasInfoSlice.reducer;

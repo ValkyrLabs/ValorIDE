@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { JobApplicationRequest } from '@thorapi/model/JobApplicationRequest';
+import { JobApplicationRequest } from "@thorapi/model/JobApplicationRequest";
 
 const JobApplicationRequestSlice = createSlice({
   name: "JobApplicationRequests",
@@ -28,20 +27,25 @@ const JobApplicationRequestSlice = createSlice({
     },
 
     JobApplicationRequestValueToggled(state, action) {
-      console.log("JobApplicationRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const JobApplicationRequest:JobApplicationRequest = state.find((JobApplicationRequest) => JobApplicationRequest.id === action.payload.JobApplicationRequestId);
+      console.log("JobApplicationRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const JobApplicationRequest: JobApplicationRequest = state.find(
+        (JobApplicationRequest) =>
+          JobApplicationRequest.id === action.payload.JobApplicationRequestId,
+      );
       if (JobApplicationRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     JobApplicationRequestpropertySet(state, action) {
-      const JobApplicationRequest = state.find((JobApplicationRequest) => JobApplicationRequest.id === action.payload.JobApplicationRequestId);
+      const JobApplicationRequest = state.find(
+        (JobApplicationRequest) =>
+          JobApplicationRequest.id === action.payload.JobApplicationRequestId,
+      );
       if (JobApplicationRequest) {
-      //  JobApplicationRequest[action.property] = action.payload[action.property];
+        //  JobApplicationRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const JobApplicationRequestSlice = createSlice({
 export const {
   JobApplicationRequestAdded,
   JobApplicationRequestValueToggled,
-  JobApplicationRequestpropertySet
+  JobApplicationRequestpropertySet,
 } = JobApplicationRequestSlice.actions;
 export default JobApplicationRequestSlice.reducer;

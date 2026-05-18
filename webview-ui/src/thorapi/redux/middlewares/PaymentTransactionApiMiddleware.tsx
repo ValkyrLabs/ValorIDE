@@ -6,7 +6,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_PAYMENTTRANSACTION_REQUEST,
-    FETCH_PAYMENTTRANSACTION_REQUEST,
-    LIST_PAYMENTTRANSACTION_REQUEST,
-    UPDATE_PAYMENTTRANSACTION_REQUEST,
-    DELETE_PAYMENTTRANSACTION_REQUEST,
-
-    addPaymentTransactionFailure,
-    addPaymentTransactionSuccess,
-
-    fetchPaymentTransactionFailure,
-    fetchPaymentTransactionSuccess,
-    
-    listPaymentTransactionFailure,
-    listPaymentTransactionSuccess,
-
-    updatePaymentTransactionFailure,
-    updatePaymentTransactionSuccess,
-    
-    deletePaymentTransactionFailure,
-    deletePaymentTransactionSuccess,
-    
-} from '../actions/PaymentTransactionApiAction';
+  ADD_PAYMENTTRANSACTION_REQUEST,
+  FETCH_PAYMENTTRANSACTION_REQUEST,
+  LIST_PAYMENTTRANSACTION_REQUEST,
+  UPDATE_PAYMENTTRANSACTION_REQUEST,
+  DELETE_PAYMENTTRANSACTION_REQUEST,
+  addPaymentTransactionFailure,
+  addPaymentTransactionSuccess,
+  fetchPaymentTransactionFailure,
+  fetchPaymentTransactionSuccess,
+  listPaymentTransactionFailure,
+  listPaymentTransactionSuccess,
+  updatePaymentTransactionFailure,
+  updatePaymentTransactionSuccess,
+  deletePaymentTransactionFailure,
+  deletePaymentTransactionSuccess,
+} from "../actions/PaymentTransactionApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -59,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: PaymentTransaction
 */
 
-
-
-export const PaymentTransactionMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("PaymentTransaction MIDDLEWARE: " + JSON.stringify(action) )
+export const PaymentTransactionMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("PaymentTransaction MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

@@ -6,7 +6,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_OASREQUIRED_REQUEST,
-    FETCH_OASREQUIRED_REQUEST,
-    LIST_OASREQUIRED_REQUEST,
-    UPDATE_OASREQUIRED_REQUEST,
-    DELETE_OASREQUIRED_REQUEST,
-
-    addOasRequiredFailure,
-    addOasRequiredSuccess,
-
-    fetchOasRequiredFailure,
-    fetchOasRequiredSuccess,
-    
-    listOasRequiredFailure,
-    listOasRequiredSuccess,
-
-    updateOasRequiredFailure,
-    updateOasRequiredSuccess,
-    
-    deleteOasRequiredFailure,
-    deleteOasRequiredSuccess,
-    
-} from '../actions/OasRequiredApiAction';
+  ADD_OASREQUIRED_REQUEST,
+  FETCH_OASREQUIRED_REQUEST,
+  LIST_OASREQUIRED_REQUEST,
+  UPDATE_OASREQUIRED_REQUEST,
+  DELETE_OASREQUIRED_REQUEST,
+  addOasRequiredFailure,
+  addOasRequiredSuccess,
+  fetchOasRequiredFailure,
+  fetchOasRequiredSuccess,
+  listOasRequiredFailure,
+  listOasRequiredSuccess,
+  updateOasRequiredFailure,
+  updateOasRequiredSuccess,
+  deleteOasRequiredFailure,
+  deleteOasRequiredSuccess,
+} from "../actions/OasRequiredApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -59,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: OasRequired
 */
 
-
-
-export const OasRequiredMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("OasRequired MIDDLEWARE: " + JSON.stringify(action) )
+export const OasRequiredMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("OasRequired MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

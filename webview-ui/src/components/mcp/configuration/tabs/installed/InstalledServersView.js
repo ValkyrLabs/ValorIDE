@@ -43,7 +43,7 @@ const InstalledServersView = () => {
       mcpServers,
       convertThorMcpServersToShared,
       [],
-      "InstalledServersView"
+      "InstalledServersView",
     );
   }, [mcpServers]);
   return _jsxs(_Fragment, {

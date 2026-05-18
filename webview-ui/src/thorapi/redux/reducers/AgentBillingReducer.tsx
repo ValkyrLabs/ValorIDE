@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AgentBilling } from '@thorapi/model/AgentBilling';
+import { AgentBilling } from "@thorapi/model/AgentBilling";
 
 const AgentBillingSlice = createSlice({
   name: "AgentBillings",
@@ -28,20 +27,23 @@ const AgentBillingSlice = createSlice({
     },
 
     AgentBillingValueToggled(state, action) {
-      console.log("AgentBilling TOGGLE")
-      console.warn(JSON.stringify(action))
-      const AgentBilling:AgentBilling = state.find((AgentBilling) => AgentBilling.id === action.payload.AgentBillingId);
+      console.log("AgentBilling TOGGLE");
+      console.warn(JSON.stringify(action));
+      const AgentBilling: AgentBilling = state.find(
+        (AgentBilling) => AgentBilling.id === action.payload.AgentBillingId,
+      );
       if (AgentBilling) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     AgentBillingpropertySet(state, action) {
-      const AgentBilling = state.find((AgentBilling) => AgentBilling.id === action.payload.AgentBillingId);
+      const AgentBilling = state.find(
+        (AgentBilling) => AgentBilling.id === action.payload.AgentBillingId,
+      );
       if (AgentBilling) {
-      //  AgentBilling[action.property] = action.payload[action.property];
+        //  AgentBilling[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +52,6 @@ const AgentBillingSlice = createSlice({
 export const {
   AgentBillingAdded,
   AgentBillingValueToggled,
-  AgentBillingpropertySet
+  AgentBillingpropertySet,
 } = AgentBillingSlice.actions;
 export default AgentBillingSlice.reducer;

@@ -20,15 +20,14 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -37,146 +36,157 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface SecureKey
  */
-export type SecureKey  = DataObject & {
-    /**
-     * the algorithm used
-     * @type {string}
-     * @memberof SecureKey
-     */
-    algorithm: string;
-    /**
-     * the version of this key
-     * @type {string}
-     * @memberof SecureKey
-     */
-    version: string;
-    /**
-     * the key itself
-     * @type {string}
-     * @memberof SecureKey
-     */
-    keyValue: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof SecureKey
-     */
-    status: SecureKeyStatusEnum;
-    /**
-     * any notes about the key
-     * @type {string}
-     * @memberof SecureKey
-     */
-    notes?: string;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof SecureKey
-     */
-    readonly keyHash?: string;
-    /**
-     * the exponential strength of the BCrypt hashing used by the Hashing cipher
-     * @type {number}
-     * @memberof SecureKey
-     */
-    cipherWorkCost?: number;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof SecureKey
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof SecureKey
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof SecureKey
-     */
-    readonly createdDate?: Date;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof SecureKey
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof SecureKey
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof SecureKey
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof SecureKey
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof SecureKey
-     */
-    trashed?: boolean;
-}
+export type SecureKey = DataObject & {
+  /**
+   * any notes about the key
+   * @type {string}
+   * @memberof SecureKey
+   */
+  notes?: string;
+  /**
+   * the algorithm used
+   * @type {string}
+   * @memberof SecureKey
+   */
+  algorithm?: string;
+  /**
+   * the version of this key
+   * @type {string}
+   * @memberof SecureKey
+   */
+  version?: string;
+  /**
+   * the searchable hash of the key itself
+   * @type {string}
+   * @memberof SecureKey
+   */
+  keyHash?: string;
+  /**
+   * the exponential strength of the BCrypt hashing used by the Hashing cipher
+   * @type {number}
+   * @memberof SecureKey
+   */
+  cipherWorkCost?: number;
+  /**
+   * the key itself
+   * @type {string}
+   * @memberof SecureKey
+   */
+  keyValue?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof SecureKey
+   */
+  status?: SecureKeyStatusEnum;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof SecureKey
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof SecureKey
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof SecureKey
+   */
+  readonly createdDate?: Date;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof SecureKey
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof SecureKey
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof SecureKey
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof SecureKey
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof SecureKey
+   */
+  trashed?: boolean;
+};
 
 export function SecureKeyFromJSON(json: any): SecureKey {
-    return {
-        ...DataObjectFromJSON(json),
-        'algorithm': json['algorithm'],
-        'version': json['version'],
-        'keyValue': json['keyValue'],
-        'status': json['status'],
-        'notes': !exists(json, 'notes') ? undefined : json['notes'],
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'cipherWorkCost': !exists(json, 'cipherWorkCost') ? undefined : json['cipherWorkCost'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    notes: !exists(json, "notes") ? undefined : json["notes"],
+    algorithm: !exists(json, "algorithm") ? undefined : json["algorithm"],
+    version: !exists(json, "version") ? undefined : json["version"],
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    cipherWorkCost: !exists(json, "cipherWorkCost")
+      ? undefined
+      : json["cipherWorkCost"],
+    keyValue: !exists(json, "keyValue") ? undefined : json["keyValue"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function SecureKeyToJSON(value?: SecureKey): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'algorithm': value.algorithm,
-        'version': value.version,
-        'keyValue': value.keyValue,
-        'status': value.status,
-        'notes': value.notes,
-        'cipherWorkCost': value.cipherWorkCost,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    notes: value.notes,
+    algorithm: value.algorithm,
+    version: value.version,
+    keyHash: value.keyHash,
+    cipherWorkCost: value.cipherWorkCost,
+    keyValue: value.keyValue,
+    status: value.status,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum SecureKeyStatusEnum {
-    KEYACTIVE = 'active',
-    KEYDEFAULT = 'default',
-    KEYARCHIVED = 'archived',
-    KEYREVOKED = 'revoked',
-    KEYINVALID = 'invalid'
+  KEYACTIVE = "active",
+  KEYDEFAULT = "default",
+  KEYARCHIVED = "archived",
+  KEYREVOKED = "revoked",
+  KEYINVALID = "invalid",
 }
-
-

@@ -28,9 +28,9 @@ export const getCurrentPrincipal = (): Principal | null => {
         phone: parsed.phone,
         bio: parsed.bio,
         avatarUrl: parsed.avatarUrl,
-        // STANDARDIZE: Use exact field names from Principal model
-        roleList: parsed.roleList || [],
-        authorityList: parsed.authorityList || [],
+        roles: parsed.roles || parsed.roleList || [],
+        grantedAuthorities:
+          parsed.grantedAuthorities || parsed.authorityList || [],
       };
       Object.keys(safe).forEach((k) => safe[k] === undefined && delete safe[k]);
       return safe as Principal;

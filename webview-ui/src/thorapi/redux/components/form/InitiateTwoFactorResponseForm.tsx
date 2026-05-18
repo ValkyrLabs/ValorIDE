@@ -7,38 +7,43 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  InitiateTwoFactorResponse,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddInitiateTwoFactorResponseMutation } from '../../services/InitiateTwoFactorResponseService';
+import { InitiateTwoFactorResponse } from "@thorapi/model";
+
+import { useAddInitiateTwoFactorResponseMutation } from "../../services/InitiateTwoFactorResponseService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -48,7 +53,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -67,21 +71,24 @@ Response with QR code and setup details
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        secretId: Yup.string().required("secretId is required."),
-        qrCodeUrl: Yup.string().required("qrCodeUrl is required."),
-        manualEntryKey: Yup.string(),
-        message: Yup.string(),
-        trashed: Yup.boolean(),
+  secretId: Yup.string(),
+  qrCodeUrl: Yup.string(),
+  manualEntryKey: Yup.string(),
+  message: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const InitiateTwoFactorResponseForm: React.FC = () => {
-  const [addInitiateTwoFactorResponse, addInitiateTwoFactorResponseResult] = useAddInitiateTwoFactorResponseMutation();
+  const [addInitiateTwoFactorResponse, addInitiateTwoFactorResponseResult] =
+    useAddInitiateTwoFactorResponseMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -91,12 +98,18 @@ const InitiateTwoFactorResponseForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -104,11 +117,11 @@ const InitiateTwoFactorResponseForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<InitiateTwoFactorResponse> = {
-          secretId: '',
-          qrCodeUrl: '',
-          manualEntryKey: '',
-          message: '',
-          trashed: false,
+    secretId: "",
+    qrCodeUrl: "",
+    manualEntryKey: "",
+    message: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -123,11 +136,14 @@ const InitiateTwoFactorResponseForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new InitiateTwoFactorResponse:', grants);
+    console.log("Permissions saved for new InitiateTwoFactorResponse:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<InitiateTwoFactorResponse>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<InitiateTwoFactorResponse>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -138,7 +154,7 @@ const InitiateTwoFactorResponseForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `InitiateTwoFactorResponse created successfully! Would you like to set permissions for this object?`
+          `InitiateTwoFactorResponse created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -146,8 +162,8 @@ const InitiateTwoFactorResponseForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create InitiateTwoFactorResponse:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create InitiateTwoFactorResponse:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -168,44 +184,38 @@ const InitiateTwoFactorResponseForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addInitiateTwoFactorResponseResult.isLoading;
+          const isSaving =
+            isSubmitting || addInitiateTwoFactorResponseResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New InitiateTwoFactorResponse
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    InitiateTwoFactorResponse
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="secretId" className="nice-form-control">
                       <b>
                         Secret Id:
-                        {touched.secretId &&
-                         !errors.secretId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.secretId && !errors.secretId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="secretId"
-                            value={values?.secretId}
-                            placeholder="Secret Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="secretId"
+                        value={values?.secretId}
+                        placeholder="Secret Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -217,28 +227,21 @@ const InitiateTwoFactorResponseForm: React.FC = () => {
                     <label htmlFor="qrCodeUrl" className="nice-form-control">
                       <b>
                         Qr Code Url:
-                        {touched.qrCodeUrl &&
-                         !errors.qrCodeUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.qrCodeUrl && !errors.qrCodeUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="qrCodeUrl"
-                            value={values?.qrCodeUrl}
-                            placeholder="Qr Code Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="qrCodeUrl"
+                        value={values?.qrCodeUrl}
+                        placeholder="Qr Code Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -247,31 +250,27 @@ const InitiateTwoFactorResponseForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="manualEntryKey" className="nice-form-control">
+                    <label
+                      htmlFor="manualEntryKey"
+                      className="nice-form-control"
+                    >
                       <b>
                         Manual Entry Key:
-                        {touched.manualEntryKey &&
-                         !errors.manualEntryKey && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.manualEntryKey && !errors.manualEntryKey && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="manualEntryKey"
-                            value={values?.manualEntryKey}
-                            placeholder="Manual Entry Key"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="manualEntryKey"
+                        value={values?.manualEntryKey}
+                        placeholder="Manual Entry Key"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -283,28 +282,21 @@ const InitiateTwoFactorResponseForm: React.FC = () => {
                     <label htmlFor="message" className="nice-form-control">
                       <b>
                         Message:
-                        {touched.message &&
-                         !errors.message && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.message && !errors.message && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="message"
-                            value={values?.message}
-                            placeholder="Message"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="message"
+                        value={values?.message}
+                        placeholder="Message"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -316,32 +308,25 @@ const InitiateTwoFactorResponseForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -351,45 +336,65 @@ const InitiateTwoFactorResponseForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New InitiateTwoFactorResponse
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      InitiateTwoFactorResponse
+                    </CoolButton>
 
-                  {(addInitiateTwoFactorResponseResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addInitiateTwoFactorResponseResult as any).error ? (addInitiateTwoFactorResponseResult as any).error.data : (addInitiateTwoFactorResponseResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addInitiateTwoFactorResponseResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addInitiateTwoFactorResponseResult as any).error
+                              ? (addInitiateTwoFactorResponseResult as any)
+                                  .error.data
+                              : (addInitiateTwoFactorResponseResult as any)
+                                  .error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addInitiateTwoFactorResponseResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addInitiateTwoFactorResponseResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addInitiateTwoFactorResponseResult: {JSON.stringify(addInitiateTwoFactorResponseResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addInitiateTwoFactorResponseResult:{" "}
+                    {JSON.stringify(addInitiateTwoFactorResponseResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -409,8 +414,5 @@ const InitiateTwoFactorResponseForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default InitiateTwoFactorResponseForm;
-

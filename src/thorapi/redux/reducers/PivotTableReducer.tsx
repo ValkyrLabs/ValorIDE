@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { PivotTable } from '@thorapi/model/PivotTable';
+import { PivotTable } from "@thorapi/model/PivotTable";
 
 const PivotTableSlice = createSlice({
   name: "PivotTables",
@@ -28,20 +27,23 @@ const PivotTableSlice = createSlice({
     },
 
     PivotTableValueToggled(state, action) {
-      console.log("PivotTable TOGGLE")
-      console.warn(JSON.stringify(action))
-      const PivotTable:PivotTable = state.find((PivotTable) => PivotTable.id === action.payload.PivotTableId);
+      console.log("PivotTable TOGGLE");
+      console.warn(JSON.stringify(action));
+      const PivotTable: PivotTable = state.find(
+        (PivotTable) => PivotTable.id === action.payload.PivotTableId,
+      );
       if (PivotTable) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     PivotTablepropertySet(state, action) {
-      const PivotTable = state.find((PivotTable) => PivotTable.id === action.payload.PivotTableId);
+      const PivotTable = state.find(
+        (PivotTable) => PivotTable.id === action.payload.PivotTableId,
+      );
       if (PivotTable) {
-      //  PivotTable[action.property] = action.payload[action.property];
+        //  PivotTable[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +52,6 @@ const PivotTableSlice = createSlice({
 export const {
   PivotTableAdded,
   PivotTableValueToggled,
-  PivotTablepropertySet
+  PivotTablepropertySet,
 } = PivotTableSlice.actions;
 export default PivotTableSlice.reducer;

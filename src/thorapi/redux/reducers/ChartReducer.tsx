@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Chart } from '@thorapi/model/Chart';
+import { Chart } from "@thorapi/model/Chart";
 
 const ChartSlice = createSlice({
   name: "Charts",
@@ -28,28 +27,26 @@ const ChartSlice = createSlice({
     },
 
     ChartValueToggled(state, action) {
-      console.log("Chart TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Chart:Chart = state.find((Chart) => Chart.id === action.payload.ChartId);
+      console.log("Chart TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Chart: Chart = state.find(
+        (Chart) => Chart.id === action.payload.ChartId,
+      );
       if (Chart) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ChartpropertySet(state, action) {
       const Chart = state.find((Chart) => Chart.id === action.payload.ChartId);
       if (Chart) {
-      //  Chart[action.property] = action.payload[action.property];
+        //  Chart[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  ChartAdded,
-  ChartValueToggled,
-  ChartpropertySet
-} = ChartSlice.actions;
+export const { ChartAdded, ChartValueToggled, ChartpropertySet } =
+  ChartSlice.actions;
 export default ChartSlice.reducer;

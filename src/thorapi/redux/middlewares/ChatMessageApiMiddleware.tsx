@@ -6,7 +6,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_CHATMESSAGE_REQUEST,
-    FETCH_CHATMESSAGE_REQUEST,
-    LIST_CHATMESSAGE_REQUEST,
-    UPDATE_CHATMESSAGE_REQUEST,
-    DELETE_CHATMESSAGE_REQUEST,
-
-    addChatMessageFailure,
-    addChatMessageSuccess,
-
-    fetchChatMessageFailure,
-    fetchChatMessageSuccess,
-    
-    listChatMessageFailure,
-    listChatMessageSuccess,
-
-    updateChatMessageFailure,
-    updateChatMessageSuccess,
-    
-    deleteChatMessageFailure,
-    deleteChatMessageSuccess,
-    
-} from '../actions/ChatMessageApiAction';
+  ADD_CHATMESSAGE_REQUEST,
+  FETCH_CHATMESSAGE_REQUEST,
+  LIST_CHATMESSAGE_REQUEST,
+  UPDATE_CHATMESSAGE_REQUEST,
+  DELETE_CHATMESSAGE_REQUEST,
+  addChatMessageFailure,
+  addChatMessageSuccess,
+  fetchChatMessageFailure,
+  fetchChatMessageSuccess,
+  listChatMessageFailure,
+  listChatMessageSuccess,
+  updateChatMessageFailure,
+  updateChatMessageSuccess,
+  deleteChatMessageFailure,
+  deleteChatMessageSuccess,
+} from "../actions/ChatMessageApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -59,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: ChatMessage
 */
 
-
-
-export const ChatMessageMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("ChatMessage MIDDLEWARE: " + JSON.stringify(action) )
+export const ChatMessageMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("ChatMessage MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

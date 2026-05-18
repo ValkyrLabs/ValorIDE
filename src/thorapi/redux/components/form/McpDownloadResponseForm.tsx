@@ -7,38 +7,43 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  McpDownloadResponse,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddMcpDownloadResponseMutation } from '../../services/McpDownloadResponseService';
+import { McpDownloadResponse } from "@thorapi/model";
+
+import { useAddMcpDownloadResponseMutation } from "../../services/McpDownloadResponseService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -48,7 +53,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -67,25 +71,28 @@ McpDownloadResponse
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        githubUrl: Yup.string().required("githubUrl is required."),
-        name: Yup.string().required("name is required."),
-        author: Yup.string().required("author is required."),
-        description: Yup.string().required("description is required."),
-        requiresApiKey: Yup.boolean().required("requiresApiKey is required."),
-        mcpId: Yup.string(),
-        readmeContent: Yup.string(),
-        llmsInstallationContent: Yup.string(),
-        trashed: Yup.boolean(),
+  mcpId: Yup.string(),
+  githubUrl: Yup.string(),
+  name: Yup.string(),
+  author: Yup.string(),
+  description: Yup.string(),
+  readmeContent: Yup.string(),
+  llmsInstallationContent: Yup.string(),
+  requiresApiKey: Yup.boolean(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const McpDownloadResponseForm: React.FC = () => {
-  const [addMcpDownloadResponse, addMcpDownloadResponseResult] = useAddMcpDownloadResponseMutation();
+  const [addMcpDownloadResponse, addMcpDownloadResponseResult] =
+    useAddMcpDownloadResponseMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -95,12 +102,18 @@ const McpDownloadResponseForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -108,15 +121,15 @@ const McpDownloadResponseForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<McpDownloadResponse> = {
-          githubUrl: '',
-          name: '',
-          author: '',
-          description: '',
-          requiresApiKey: false,
-          mcpId: '',
-          readmeContent: '',
-          llmsInstallationContent: '',
-          trashed: false,
+    mcpId: "",
+    githubUrl: "",
+    name: "",
+    author: "",
+    description: "",
+    readmeContent: "",
+    llmsInstallationContent: "",
+    requiresApiKey: false,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -131,11 +144,14 @@ const McpDownloadResponseForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new McpDownloadResponse:', grants);
+    console.log("Permissions saved for new McpDownloadResponse:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<McpDownloadResponse>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<McpDownloadResponse>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -146,7 +162,7 @@ const McpDownloadResponseForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `McpDownloadResponse created successfully! Would you like to set permissions for this object?`
+          `McpDownloadResponse created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -154,8 +170,8 @@ const McpDownloadResponseForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create McpDownloadResponse:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create McpDownloadResponse:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -176,44 +192,64 @@ const McpDownloadResponseForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addMcpDownloadResponseResult.isLoading;
+          const isSaving =
+            isSubmitting || addMcpDownloadResponseResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New McpDownloadResponse
-                </Accordion.Header>
-                <Accordion.Body>
-                    <label htmlFor="githubUrl" className="nice-form-control">
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    McpDownloadResponse
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <label htmlFor="mcpId" className="nice-form-control">
                       <b>
-                        Github Url:
-                        {touched.githubUrl &&
-                         !errors.githubUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        Mcp Id:
+                        {touched.mcpId && !errors.mcpId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="mcpId"
+                        value={values?.mcpId}
+                        placeholder="Mcp Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
+                      <ErrorMessage
+                        className="error"
+                        name="mcpId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="githubUrl" className="nice-form-control">
+                      <b>
+                        Github Url:
+                        {touched.githubUrl && !errors.githubUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
+                        )}
+                      </b>
 
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="githubUrl"
-                            value={values?.githubUrl}
-                            placeholder="Github Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="githubUrl"
+                        value={values?.githubUrl}
+                        placeholder="Github Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -225,28 +261,21 @@ const McpDownloadResponseForm: React.FC = () => {
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.name && !errors.name && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="name"
+                        value={values?.name}
+                        placeholder="Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -258,28 +287,21 @@ const McpDownloadResponseForm: React.FC = () => {
                     <label htmlFor="author" className="nice-form-control">
                       <b>
                         Author:
-                        {touched.author &&
-                         !errors.author && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.author && !errors.author && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="author"
-                            value={values?.author}
-                            placeholder="Author"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="author"
+                        value={values?.author}
+                        placeholder="Author"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -291,28 +313,21 @@ const McpDownloadResponseForm: React.FC = () => {
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
-                        {touched.description &&
-                         !errors.description && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.description && !errors.description && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="description"
-                            value={values?.description}
-                            placeholder="Description"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="description"
+                        value={values?.description}
+                        placeholder="Description"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -321,101 +336,27 @@ const McpDownloadResponseForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="requiresApiKey" className="nice-form-control">
-                      <b>
-                        Requires Api Key:
-                        {touched.requiresApiKey &&
-                         !errors.requiresApiKey && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="requiresApiKey"
-                            name="requiresApiKey"
-                            checked={values.requiresApiKey || false}
-                            onChange={(e) => {
-                              setFieldTouched('requiresApiKey', true);
-                              setFieldValue('requiresApiKey', e.target.checked);
-                            }}
-                            isInvalid={!!errors.requiresApiKey}
-                            className={errors.requiresApiKey ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="requiresApiKey"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="mcpId" className="nice-form-control">
-                      <b>
-                        Mcp Id:
-                        {touched.mcpId &&
-                         !errors.mcpId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="mcpId"
-                            value={values?.mcpId}
-                            placeholder="Mcp Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="mcpId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="readmeContent" className="nice-form-control">
+                    <label
+                      htmlFor="readmeContent"
+                      className="nice-form-control"
+                    >
                       <b>
                         Readme Content:
-                        {touched.readmeContent &&
-                         !errors.readmeContent && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.readmeContent && !errors.readmeContent && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="readmeContent"
-                            value={values?.readmeContent}
-                            placeholder="Readme Content"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="readmeContent"
+                        value={values?.readmeContent}
+                        placeholder="Readme Content"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -424,31 +365,28 @@ const McpDownloadResponseForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="llmsInstallationContent" className="nice-form-control">
+                    <label
+                      htmlFor="llmsInstallationContent"
+                      className="nice-form-control"
+                    >
                       <b>
                         Llms Installation Content:
                         {touched.llmsInstallationContent &&
-                         !errors.llmsInstallationContent && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.llmsInstallationContent && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="llmsInstallationContent"
-                            value={values?.llmsInstallationContent}
-                            placeholder="Llms Installation Content"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="llmsInstallationContent"
+                        value={values?.llmsInstallationContent}
+                        placeholder="Llms Installation Content"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -457,35 +395,61 @@ const McpDownloadResponseForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="trashed" className="nice-form-control">
+                    <label
+                      htmlFor="requiresApiKey"
+                      className="nice-form-control"
+                    >
                       <b>
-                        Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        Requires Api Key:
+                        {touched.requiresApiKey && !errors.requiresApiKey && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="requiresApiKey"
+                        name="requiresApiKey"
+                        checked={values.requiresApiKey || false}
+                        onChange={(e) => {
+                          setFieldTouched("requiresApiKey", true);
+                          setFieldValue("requiresApiKey", e.target.checked);
+                        }}
+                        isInvalid={!!errors.requiresApiKey}
+                        className={errors.requiresApiKey ? "error" : ""}
+                      />
 
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
+                      <ErrorMessage
+                        className="error"
+                        name="requiresApiKey"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="trashed" className="nice-form-control">
+                      <b>
+                        Trashed:
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
+                        )}
+                      </b>
 
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -495,45 +459,61 @@ const McpDownloadResponseForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New McpDownloadResponse
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New McpDownloadResponse
+                    </CoolButton>
 
-                  {(addMcpDownloadResponseResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addMcpDownloadResponseResult as any).error ? (addMcpDownloadResponseResult as any).error.data : (addMcpDownloadResponseResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addMcpDownloadResponseResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addMcpDownloadResponseResult as any).error
+                              ? (addMcpDownloadResponseResult as any).error.data
+                              : (addMcpDownloadResponseResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addMcpDownloadResponseResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addMcpDownloadResponseResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addMcpDownloadResponseResult: {JSON.stringify(addMcpDownloadResponseResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addMcpDownloadResponseResult:{" "}
+                    {JSON.stringify(addMcpDownloadResponseResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -553,8 +533,5 @@ const McpDownloadResponseForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default McpDownloadResponseForm;
-

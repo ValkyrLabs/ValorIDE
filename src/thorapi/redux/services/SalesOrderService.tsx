@@ -7,43 +7,64 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { SalesOrder } from '@thorapi/model/SalesOrder'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { SalesOrder } from "@thorapi/model/SalesOrder";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type SalesOrderResponse = SalesOrder[]
+type SalesOrderResponse = SalesOrder[];
+
+const toSalesOrderList = (result: unknown): SalesOrderResponse => {
+  if (Array.isArray(result)) {
+    return result as SalesOrderResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as SalesOrderResponse) : [];
+};
 
 export const SalesOrderService = createApi({
-  reducerPath: 'SalesOrder', // This should remain unique
+  reducerPath: "SalesOrder", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['SalesOrder'],
+  tagTypes: ["SalesOrder"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSalesOrdersPaged: build.query<SalesOrderResponse, { page: number; size?: number; example?: Partial<SalesOrder> }>({
+    getSalesOrdersPaged: build.query<
+      SalesOrderResponse,
+      { page: number; size?: number; example?: Partial<SalesOrder> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SalesOrder?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SalesOrder?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'SalesOrder' as const, id })),
-              { type: 'SalesOrder', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toSalesOrderList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "SalesOrder" as const, id })),
+          { type: "SalesOrder", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSalesOrders: build.query<SalesOrderResponse, { example?: Partial<SalesOrder> } | void>({
+    getSalesOrders: build.query<
+      SalesOrderResponse,
+      { example?: Partial<SalesOrder> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,55 +72,64 @@ export const SalesOrderService = createApi({
         }
         return `SalesOrder`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'SalesOrder' as const, id })),
-              { type: 'SalesOrder', id: 'LIST' },
-            ]
-          : [{ type: 'SalesOrder', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toSalesOrderList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "SalesOrder" as const, id })),
+          { type: "SalesOrder", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
     addSalesOrder: build.mutation<SalesOrder, Partial<SalesOrder>>({
       query: (body) => ({
         url: `SalesOrder`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'SalesOrder', id: 'LIST' }],
+      invalidatesTags: [{ type: "SalesOrder", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getSalesOrder: build.query<SalesOrder, string>({
       query: (id) => `SalesOrder/${id}`,
-      providesTags: (result, error, id) => [{ type: 'SalesOrder', id }],
+      providesTags: (result, error, id) => [{ type: "SalesOrder", id }],
     }),
 
     // 5) Update
-    updateSalesOrder: build.mutation<void, Pick<SalesOrder, 'id'> & Partial<SalesOrder>>({
+    updateSalesOrder: build.mutation<
+      void,
+      Pick<SalesOrder, "id"> & Partial<SalesOrder>
+    >({
       query: ({ id, ...patch }) => ({
         url: `SalesOrder/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            SalesOrderService.util.updateQueryData('getSalesOrder', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            SalesOrderService.util.updateQueryData(
+              "getSalesOrder",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<SalesOrder, 'id'>) => [
-        { type: 'SalesOrder', id },
-        { type: 'SalesOrder', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<SalesOrder, "id">) => [
+        { type: "SalesOrder", id },
+        { type: "SalesOrder", id: "LIST" },
       ],
     }),
 
@@ -108,29 +138,35 @@ export const SalesOrderService = createApi({
       query(id) {
         return {
           url: `SalesOrder/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'SalesOrder', id }],
+      invalidatesTags: (result, error, id) => [{ type: "SalesOrder", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSalesOrderCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteSalesOrderCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `SalesOrder/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'SalesOrder', id }, { type: 'SalesOrder', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "SalesOrder", id },
+        { type: "SalesOrder", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetSalesOrdersPagedQuery`
 export const {
-  useGetSalesOrdersPagedQuery,     // immediate fetch
+  useGetSalesOrdersPagedQuery, // immediate fetch
   useLazyGetSalesOrdersPagedQuery, // lazy fetch
   useGetSalesOrderQuery,
   useGetSalesOrdersQuery,
@@ -138,4 +174,4 @@ export const {
   useUpdateSalesOrderMutation,
   useDeleteSalesOrderMutation,
   useDeleteSalesOrderCascadeMutation,
-} = SalesOrderService
+} = SalesOrderService;

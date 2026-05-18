@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Cell } from '@thorapi/model/Cell';
+import { Cell } from "@thorapi/model/Cell";
 
 const CellSlice = createSlice({
   name: "Cells",
@@ -28,28 +27,26 @@ const CellSlice = createSlice({
     },
 
     CellValueToggled(state, action) {
-      console.log("Cell TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Cell:Cell = state.find((Cell) => Cell.id === action.payload.CellId);
+      console.log("Cell TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Cell: Cell = state.find(
+        (Cell) => Cell.id === action.payload.CellId,
+      );
       if (Cell) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     CellpropertySet(state, action) {
       const Cell = state.find((Cell) => Cell.id === action.payload.CellId);
       if (Cell) {
-      //  Cell[action.property] = action.payload[action.property];
+        //  Cell[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  CellAdded,
-  CellValueToggled,
-  CellpropertySet
-} = CellSlice.actions;
+export const { CellAdded, CellValueToggled, CellpropertySet } =
+  CellSlice.actions;
 export default CellSlice.reducer;

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SalesActivity } from '@thorapi/model/SalesActivity';
+import { SalesActivity } from "@thorapi/model/SalesActivity";
 
 const SalesActivitySlice = createSlice({
   name: "SalesActivitys",
@@ -28,20 +27,23 @@ const SalesActivitySlice = createSlice({
     },
 
     SalesActivityValueToggled(state, action) {
-      console.log("SalesActivity TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SalesActivity:SalesActivity = state.find((SalesActivity) => SalesActivity.id === action.payload.SalesActivityId);
+      console.log("SalesActivity TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SalesActivity: SalesActivity = state.find(
+        (SalesActivity) => SalesActivity.id === action.payload.SalesActivityId,
+      );
       if (SalesActivity) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SalesActivitypropertySet(state, action) {
-      const SalesActivity = state.find((SalesActivity) => SalesActivity.id === action.payload.SalesActivityId);
+      const SalesActivity = state.find(
+        (SalesActivity) => SalesActivity.id === action.payload.SalesActivityId,
+      );
       if (SalesActivity) {
-      //  SalesActivity[action.property] = action.payload[action.property];
+        //  SalesActivity[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +52,6 @@ const SalesActivitySlice = createSlice({
 export const {
   SalesActivityAdded,
   SalesActivityValueToggled,
-  SalesActivitypropertySet
+  SalesActivitypropertySet,
 } = SalesActivitySlice.actions;
 export default SalesActivitySlice.reducer;

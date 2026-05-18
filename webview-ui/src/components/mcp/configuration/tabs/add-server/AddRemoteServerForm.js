@@ -38,13 +38,13 @@ const AddRemoteServerForm = ({ onServerAdded }) => {
           // Handle error
           setIsSubmitting(false);
           setError(
-            message.addRemoteServerResult.error || "Failed to add server"
+            message.addRemoteServerResult.error || "Failed to add server",
           );
           setShowConnectingMessage(false);
         }
       }
     },
-    [isSubmitting, onServerAdded]
+    [isSubmitting, onServerAdded],
   );
   useEvent("message", handleMessage);
   const handleSubmit = (e) => {

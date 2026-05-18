@@ -7,43 +7,64 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { HostInstance } from '@thorapi/model/HostInstance'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { HostInstance } from "@thorapi/model/HostInstance";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type HostInstanceResponse = HostInstance[]
+type HostInstanceResponse = HostInstance[];
+
+const toHostInstanceList = (result: unknown): HostInstanceResponse => {
+  if (Array.isArray(result)) {
+    return result as HostInstanceResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as HostInstanceResponse) : [];
+};
 
 export const HostInstanceService = createApi({
-  reducerPath: 'HostInstance', // This should remain unique
+  reducerPath: "HostInstance", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['HostInstance'],
+  tagTypes: ["HostInstance"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getHostInstancesPaged: build.query<HostInstanceResponse, { page: number; size?: number; example?: Partial<HostInstance> }>({
+    getHostInstancesPaged: build.query<
+      HostInstanceResponse,
+      { page: number; size?: number; example?: Partial<HostInstance> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `HostInstance?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `HostInstance?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'HostInstance' as const, id })),
-              { type: 'HostInstance', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toHostInstanceList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "HostInstance" as const, id })),
+          { type: "HostInstance", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getHostInstances: build.query<HostInstanceResponse, { example?: Partial<HostInstance> } | void>({
+    getHostInstances: build.query<
+      HostInstanceResponse,
+      { example?: Partial<HostInstance> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +72,104 @@ export const HostInstanceService = createApi({
         }
         return `HostInstance`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'HostInstance' as const, id })),
-              { type: 'HostInstance', id: 'LIST' },
-            ]
-          : [{ type: 'HostInstance', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toHostInstanceList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "HostInstance" as const, id })),
+          { type: "HostInstance", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
     addHostInstance: build.mutation<HostInstance, Partial<HostInstance>>({
       query: (body) => ({
         url: `HostInstance`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'HostInstance', id: 'LIST' }],
+      invalidatesTags: [{ type: "HostInstance", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getHostInstance: build.query<HostInstance, string>({
       query: (id) => `HostInstance/${id}`,
-      providesTags: (result, error, id) => [{ type: 'HostInstance', id }],
+      providesTags: (result, error, id) => [{ type: "HostInstance", id }],
     }),
 
     // 5) Update
-    updateHostInstance: build.mutation<void, Pick<HostInstance, 'id'> & Partial<HostInstance>>({
+    updateHostInstance: build.mutation<
+      void,
+      Pick<HostInstance, "id"> & Partial<HostInstance>
+    >({
       query: ({ id, ...patch }) => ({
         url: `HostInstance/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            HostInstanceService.util.updateQueryData('getHostInstance', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            HostInstanceService.util.updateQueryData(
+              "getHostInstance",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<HostInstance, 'id'>) => [
-        { type: 'HostInstance', id },
-        { type: 'HostInstance', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<HostInstance, "id">) => [
+        { type: "HostInstance", id },
+        { type: "HostInstance", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteHostInstance: build.mutation<{ success: boolean; id: string }, number>({
+    deleteHostInstance: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `HostInstance/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'HostInstance', id }],
+      invalidatesTags: (result, error, id) => [{ type: "HostInstance", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteHostInstanceCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteHostInstanceCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `HostInstance/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'HostInstance', id }, { type: 'HostInstance', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "HostInstance", id },
+        { type: "HostInstance", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetHostInstancesPagedQuery`
 export const {
-  useGetHostInstancesPagedQuery,     // immediate fetch
+  useGetHostInstancesPagedQuery, // immediate fetch
   useLazyGetHostInstancesPagedQuery, // lazy fetch
   useGetHostInstanceQuery,
   useGetHostInstancesQuery,
@@ -138,4 +177,4 @@ export const {
   useUpdateHostInstanceMutation,
   useDeleteHostInstanceMutation,
   useDeleteHostInstanceCascadeMutation,
-} = HostInstanceService
+} = HostInstanceService;

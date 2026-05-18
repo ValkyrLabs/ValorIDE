@@ -7,40 +7,47 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   LoginAudit,
   LoginAuditLoginStatusEnum,
   LoginAuditLoginMethodEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddLoginAuditMutation } from '../../services/LoginAuditService';
+import { useAddLoginAuditMutation } from "../../services/LoginAuditService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -50,7 +57,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -66,22 +72,22 @@ Audit trail for all login attempts (successful and failed)
 -------------------------------------------------------- */
 const LoginStatusValidation = () => {
   return [
-    'SUCCESS',
-    'FAILED_INVALID_CREDENTIALS',
-    'FAILED_2FA_REQUIRED',
-    'FAILED_2FA_INVALID',
-    'FAILED_ACCOUNT_LOCKED',
-    'FAILED_ACCOUNT_DISABLED',
-    'SUCCESS_2FA_VERIFIED',
+    "SUCCESS",
+    "FAILED_INVALID_CREDENTIALS",
+    "FAILED_2FA_REQUIRED",
+    "FAILED_2FA_INVALID",
+    "FAILED_ACCOUNT_LOCKED",
+    "FAILED_ACCOUNT_DISABLED",
+    "SUCCESS_2FA_VERIFIED",
   ];
 };
 const LoginMethodValidation = () => {
   return [
-    'USERNAME_PASSWORD',
-    'GITHUB_OAUTH',
-    'GOOGLE_OAUTH',
-    'SMS_OTP',
-    'TOTP',
+    "USERNAME_PASSWORD",
+    "GITHUB_OAUTH",
+    "GOOGLE_OAUTH",
+    "SMS_OTP",
+    "TOTP",
   ];
 };
 
@@ -89,21 +95,22 @@ const LoginMethodValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        principalId: Yup.string().required("principalId is required."),
-      loginStatus: Yup.mixed()
-        .oneOf(LoginStatusValidation(), "Invalid value for loginStatus")
-        .required("loginStatus is required."),
-      loginMethod: Yup.mixed()
-        .oneOf(LoginMethodValidation(), "Invalid value for loginMethod")
-        .required("loginMethod is required."),
-        ipAddress: Yup.string(),
-        userAgent: Yup.string(),
-        deviceFingerprint: Yup.string(),
-        geoLocation: Yup.string(),
-        trashed: Yup.boolean(),
+  loginStatus: Yup.mixed()
+    .oneOf(LoginStatusValidation(), "Invalid value for loginStatus")
+    .required("loginStatus is required."),
+  loginMethod: Yup.mixed()
+    .oneOf(LoginMethodValidation(), "Invalid value for loginMethod")
+    .required("loginMethod is required."),
+  ipAddress: Yup.string(),
+  userAgent: Yup.string(),
+  deviceFingerprint: Yup.string(),
+  geoLocation: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -120,12 +127,18 @@ const LoginAuditForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -133,14 +146,13 @@ const LoginAuditForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<LoginAudit> = {
-          principalId: '',
-        loginStatus: undefined,
-        loginMethod: undefined,
-          ipAddress: '',
-          userAgent: '',
-          deviceFingerprint: '',
-          geoLocation: '',
-          trashed: false,
+    loginStatus: undefined,
+    loginMethod: undefined,
+    ipAddress: "",
+    userAgent: "",
+    deviceFingerprint: "",
+    geoLocation: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -155,11 +167,14 @@ const LoginAuditForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new LoginAudit:', grants);
+    console.log("Permissions saved for new LoginAudit:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<LoginAudit>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<LoginAudit>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -170,7 +185,7 @@ const LoginAuditForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `LoginAudit created successfully! Would you like to set permissions for this object?`
+          `LoginAudit created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -178,8 +193,8 @@ const LoginAuditForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create LoginAudit:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create LoginAudit:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -200,79 +215,48 @@ const LoginAuditForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addLoginAuditResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New LoginAudit
-                </Accordion.Header>
-                <Accordion.Body>
-                    <label htmlFor="principalId" className="nice-form-control">
-                      <b>
-                        Principal Id:
-                        {touched.principalId &&
-                         !errors.principalId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="principalId"
-                            value={values?.principalId}
-                            placeholder="Principal Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="principalId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New LoginAudit
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="loginStatus" className="nice-form-control">
                       <b>
                         Login Status:
-                        {touched.loginStatus &&
-                         !errors.loginStatus && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.loginStatus && !errors.loginStatus && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="loginStatus"
-                          value={values.loginStatus || ''}
-                          className={
-                            errors.loginStatus
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('loginStatus', true);
-                            setFieldValue('loginStatus', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Login Status" />
-                          <LoginStatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="loginStatus"
+                        value={values.loginStatus || ""}
+                        className={
+                          errors.loginStatus
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("loginStatus", true);
+                          setFieldValue(
+                            "loginStatus",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Login Status" />
+                        <LoginStatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -284,30 +268,33 @@ const LoginAuditForm: React.FC = () => {
                     <label htmlFor="loginMethod" className="nice-form-control">
                       <b>
                         Login Method:
-                        {touched.loginMethod &&
-                         !errors.loginMethod && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.loginMethod && !errors.loginMethod && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="loginMethod"
-                          value={values.loginMethod || ''}
-                          className={
-                            errors.loginMethod
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('loginMethod', true);
-                            setFieldValue('loginMethod', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Login Method" />
-                          <LoginMethodLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="loginMethod"
+                        value={values.loginMethod || ""}
+                        className={
+                          errors.loginMethod
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("loginMethod", true);
+                          setFieldValue(
+                            "loginMethod",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Login Method" />
+                        <LoginMethodLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -319,28 +306,21 @@ const LoginAuditForm: React.FC = () => {
                     <label htmlFor="ipAddress" className="nice-form-control">
                       <b>
                         Ip Address:
-                        {touched.ipAddress &&
-                         !errors.ipAddress && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.ipAddress && !errors.ipAddress && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="ipAddress"
-                            value={values?.ipAddress}
-                            placeholder="Ip Address"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="ipAddress"
+                        value={values?.ipAddress}
+                        placeholder="Ip Address"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -352,28 +332,21 @@ const LoginAuditForm: React.FC = () => {
                     <label htmlFor="userAgent" className="nice-form-control">
                       <b>
                         User Agent:
-                        {touched.userAgent &&
-                         !errors.userAgent && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.userAgent && !errors.userAgent && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="userAgent"
-                            value={values?.userAgent}
-                            placeholder="User Agent"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="userAgent"
+                        value={values?.userAgent}
+                        placeholder="User Agent"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -382,31 +355,28 @@ const LoginAuditForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="deviceFingerprint" className="nice-form-control">
+                    <label
+                      htmlFor="deviceFingerprint"
+                      className="nice-form-control"
+                    >
                       <b>
                         Device Fingerprint:
                         {touched.deviceFingerprint &&
-                         !errors.deviceFingerprint && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.deviceFingerprint && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="deviceFingerprint"
-                            value={values?.deviceFingerprint}
-                            placeholder="Device Fingerprint"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="deviceFingerprint"
+                        value={values?.deviceFingerprint}
+                        placeholder="Device Fingerprint"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -418,28 +388,21 @@ const LoginAuditForm: React.FC = () => {
                     <label htmlFor="geoLocation" className="nice-form-control">
                       <b>
                         Geo Location:
-                        {touched.geoLocation &&
-                         !errors.geoLocation && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.geoLocation && !errors.geoLocation && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="geoLocation"
-                            value={values?.geoLocation}
-                            placeholder="Geo Location"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="geoLocation"
+                        value={values?.geoLocation}
+                        placeholder="Geo Location"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -451,32 +414,25 @@ const LoginAuditForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -486,45 +442,58 @@ const LoginAuditForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New LoginAudit
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New LoginAudit
+                    </CoolButton>
 
-                  {(addLoginAuditResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addLoginAuditResult as any).error ? (addLoginAuditResult as any).error.data : (addLoginAuditResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addLoginAuditResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addLoginAuditResult as any).error
+                              ? (addLoginAuditResult as any).error.data
+                              : (addLoginAuditResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addLoginAuditResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addLoginAuditResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addLoginAuditResult: {JSON.stringify(addLoginAuditResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addLoginAuditResult: {JSON.stringify(addLoginAuditResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -556,13 +525,19 @@ kebabcase login-status-lookup
 const LoginStatusLookup = () => {
   return (
     <>
-      <option value='SUCCESS' label="SUCCESS" />
-      <option value='FAILED_INVALID_CREDENTIALS' label="FAILED _ INVALID _ CREDENTIALS" />
-      <option value='FAILED_2FA_REQUIRED' label="FAILED _ 2 FA _ REQUIRED" />
-      <option value='FAILED_2FA_INVALID' label="FAILED _ 2 FA _ INVALID" />
-      <option value='FAILED_ACCOUNT_LOCKED' label="FAILED _ ACCOUNT _ LOCKED" />
-      <option value='FAILED_ACCOUNT_DISABLED' label="FAILED _ ACCOUNT _ DISABLED" />
-      <option value='SUCCESS_2FA_VERIFIED' label="SUCCESS _ 2 FA _ VERIFIED" />
+      <option value="SUCCESS" label="SUCCESS" />
+      <option
+        value="FAILED_INVALID_CREDENTIALS"
+        label="FAILED _ INVALID _ CREDENTIALS"
+      />
+      <option value="FAILED_2FA_REQUIRED" label="FAILED _ 2 FA _ REQUIRED" />
+      <option value="FAILED_2FA_INVALID" label="FAILED _ 2 FA _ INVALID" />
+      <option value="FAILED_ACCOUNT_LOCKED" label="FAILED _ ACCOUNT _ LOCKED" />
+      <option
+        value="FAILED_ACCOUNT_DISABLED"
+        label="FAILED _ ACCOUNT _ DISABLED"
+      />
+      <option value="SUCCESS_2FA_VERIFIED" label="SUCCESS _ 2 FA _ VERIFIED" />
     </>
   );
 };
@@ -579,17 +554,14 @@ kebabcase login-method-lookup
 const LoginMethodLookup = () => {
   return (
     <>
-      <option value='USERNAME_PASSWORD' label="USERNAME _ PASSWORD" />
-      <option value='GITHUB_OAUTH' label="GITHUB _ OAUTH" />
-      <option value='GOOGLE_OAUTH' label="GOOGLE _ OAUTH" />
-      <option value='SMS_OTP' label="SMS _ OTP" />
-      <option value='TOTP' label="TOTP" />
+      <option value="USERNAME_PASSWORD" label="USERNAME _ PASSWORD" />
+      <option value="GITHUB_OAUTH" label="GITHUB _ OAUTH" />
+      <option value="GOOGLE_OAUTH" label="GOOGLE _ OAUTH" />
+      <option value="SMS_OTP" label="SMS _ OTP" />
+      <option value="TOTP" label="TOTP" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default LoginAuditForm;
-

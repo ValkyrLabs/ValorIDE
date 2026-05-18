@@ -22,6 +22,8 @@ import { McpServerService } from "@thorapi/redux/services/McpServerService";
 import { McpMarketplaceCatalogService } from "@thorapi/redux/services/McpMarketplaceCatalogService";
 import { McpMarketplaceItemService } from "@thorapi/redux/services/McpMarketplaceItemService";
 import { creditsApi } from "../services/creditsApi";
+import apiErrorsReducer from "./slices/apiErrorsSlice";
+import { apiErrorMiddleware } from "./middleware/apiErrorListener";
 
 // cool!
 import { websocketMiddleware } from "./middleware/websocketMiddleware";
@@ -50,9 +52,11 @@ const rootReducer = combineReducers({
   [LlmDetailsService.reducerPath]: LlmDetailsService.reducer,
   [ContentDataService.reducerPath]: ContentDataService.reducer,
   [McpServerService.reducerPath]: McpServerService.reducer,
-  [McpMarketplaceCatalogService.reducerPath]: McpMarketplaceCatalogService.reducer,
+  [McpMarketplaceCatalogService.reducerPath]:
+    McpMarketplaceCatalogService.reducer,
   [McpMarketplaceItemService.reducerPath]: McpMarketplaceItemService.reducer,
   [creditsApi.reducerPath]: creditsApi.reducer,
+  apiErrors: apiErrorsReducer,
 });
 
 const reducer = rootReducer;
@@ -78,6 +82,7 @@ const store = configureStore({
       .concat(McpMarketplaceCatalogService.middleware)
       .concat(McpMarketplaceItemService.middleware)
       .concat(creditsApi.middleware)
+      .concat(apiErrorMiddleware)
       .concat(websocketMiddleware),
 });
 

@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Logout } from '@thorapi/model/Logout';
+import { Logout } from "@thorapi/model/Logout";
 
 const LogoutSlice = createSlice({
   name: "Logouts",
@@ -28,28 +27,28 @@ const LogoutSlice = createSlice({
     },
 
     LogoutValueToggled(state, action) {
-      console.log("Logout TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Logout:Logout = state.find((Logout) => Logout.id === action.payload.LogoutId);
+      console.log("Logout TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Logout: Logout = state.find(
+        (Logout) => Logout.id === action.payload.LogoutId,
+      );
       if (Logout) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     LogoutpropertySet(state, action) {
-      const Logout = state.find((Logout) => Logout.id === action.payload.LogoutId);
+      const Logout = state.find(
+        (Logout) => Logout.id === action.payload.LogoutId,
+      );
       if (Logout) {
-      //  Logout[action.property] = action.payload[action.property];
+        //  Logout[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  LogoutAdded,
-  LogoutValueToggled,
-  LogoutpropertySet
-} = LogoutSlice.actions;
+export const { LogoutAdded, LogoutValueToggled, LogoutpropertySet } =
+  LogoutSlice.actions;
 export default LogoutSlice.reducer;

@@ -14,9 +14,9 @@ export const LogoutService = createApi({
       providesTags: (result) =>
         result
           ? [
-            ...result.map(({ id }) => ({ type: "Logout" as const, id })),
-            { type: "Logout", id: "LIST" },
-          ]
+              ...result.map(({ id }) => ({ type: "Logout" as const, id })),
+              { type: "Logout", id: "LIST" },
+            ]
           : [{ type: "Logout", id: "LIST" }],
     }),
     addLogout: build.mutation<Logout, Partial<Logout>>({

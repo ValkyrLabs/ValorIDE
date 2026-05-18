@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpMarketplaceItemTag } from '@thorapi/model/McpMarketplaceItemTag';
+import { McpMarketplaceItemTag } from "@thorapi/model/McpMarketplaceItemTag";
 
 const McpMarketplaceItemTagSlice = createSlice({
   name: "McpMarketplaceItemTags",
@@ -28,20 +27,25 @@ const McpMarketplaceItemTagSlice = createSlice({
     },
 
     McpMarketplaceItemTagValueToggled(state, action) {
-      console.log("McpMarketplaceItemTag TOGGLE")
-      console.warn(JSON.stringify(action))
-      const McpMarketplaceItemTag:McpMarketplaceItemTag = state.find((McpMarketplaceItemTag) => McpMarketplaceItemTag.id === action.payload.McpMarketplaceItemTagId);
+      console.log("McpMarketplaceItemTag TOGGLE");
+      console.warn(JSON.stringify(action));
+      const McpMarketplaceItemTag: McpMarketplaceItemTag = state.find(
+        (McpMarketplaceItemTag) =>
+          McpMarketplaceItemTag.id === action.payload.McpMarketplaceItemTagId,
+      );
       if (McpMarketplaceItemTag) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     McpMarketplaceItemTagpropertySet(state, action) {
-      const McpMarketplaceItemTag = state.find((McpMarketplaceItemTag) => McpMarketplaceItemTag.id === action.payload.McpMarketplaceItemTagId);
+      const McpMarketplaceItemTag = state.find(
+        (McpMarketplaceItemTag) =>
+          McpMarketplaceItemTag.id === action.payload.McpMarketplaceItemTagId,
+      );
       if (McpMarketplaceItemTag) {
-      //  McpMarketplaceItemTag[action.property] = action.payload[action.property];
+        //  McpMarketplaceItemTag[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const McpMarketplaceItemTagSlice = createSlice({
 export const {
   McpMarketplaceItemTagAdded,
   McpMarketplaceItemTagValueToggled,
-  McpMarketplaceItemTagpropertySet
+  McpMarketplaceItemTagpropertySet,
 } = McpMarketplaceItemTagSlice.actions;
 export default McpMarketplaceItemTagSlice.reducer;

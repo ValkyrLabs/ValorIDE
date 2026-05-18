@@ -53,11 +53,11 @@ const AccountView = ({ onDone }) => {
   // Compute API metrics from messages once using useMemo
   const apiMetrics = useMemo(
     () => getApiMetrics(valorideMessages || []),
-    [valorideMessages]
+    [valorideMessages],
   );
   // Determine authenticated status
   const isAuthenticated = Boolean(
-    isLoggedIn || authenticatedUser || userInfo || jwtToken
+    isLoggedIn || authenticatedUser || userInfo || jwtToken,
   );
   // Also consider presence of a stored JWT to avoid timing gaps
   const hasStoredJwt = useMemo(() => {
@@ -87,7 +87,7 @@ const AccountView = ({ onDone }) => {
     }
   }, [authed]);
   const { principal: resolvedPrincipal } = useAccessControl(
-    authenticatedUser || userInfo
+    authenticatedUser || userInfo,
   );
   const principalId = resolvedPrincipal?.id;
   const accountId =
@@ -163,7 +163,7 @@ const AccountView = ({ onDone }) => {
             timestamp: Date.now(),
           };
           window.dispatchEvent(
-            new CustomEvent("websocket-send", { detail: appMessage })
+            new CustomEvent("websocket-send", { detail: appMessage }),
           );
         };
         send("presence:join", { id: instanceId });
@@ -199,7 +199,7 @@ const AccountView = ({ onDone }) => {
           timestamp: Date.now(),
         };
         window.dispatchEvent(
-          new CustomEvent("websocket-send", { detail: appMessage })
+          new CustomEvent("websocket-send", { detail: appMessage }),
         );
       } catch {
         // ignore transport issues
@@ -288,8 +288,8 @@ const AccountView = ({ onDone }) => {
                     },
                     children: id,
                   },
-                  id
-                )
+                  id,
+                ),
               ),
             }),
           ],
@@ -487,7 +487,7 @@ const AccountView = ({ onDone }) => {
                                         const effectiveBalance = Math.max(
                                           0,
                                           rawBalance -
-                                            (apiMetrics.totalCost || 0)
+                                            (apiMetrics.totalCost || 0),
                                         );
                                         return _jsxs(_Fragment, {
                                           children: [

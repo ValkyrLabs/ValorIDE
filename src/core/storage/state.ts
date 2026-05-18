@@ -10,6 +10,9 @@ import { BrowserSettings } from "@shared/BrowserSettings";
 import { ChatSettings } from "@shared/ChatSettings";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
 import { SelectedLlmDetails } from "@shared/llm";
+import { normalizeValkyraiHost } from "@utils/serverValkyraiHost";
+import type { GrayMatterSessionState } from "@services/graymatter/GrayMatterSessionService";
+import type { AgenticCapabilityCommandCenterState } from "@shared/AgenticState";
 
 import { ValorIDERulesToggles } from "@shared/valoride-rules";
 /*
@@ -99,6 +102,14 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     ollamaModelId,
     ollamaBaseUrl,
     ollamaApiOptionsCtxNum,
+    ollamaRequestTimeout,
+    ollamaKeepAlive,
+    ollamaTemperature,
+    ollamaTopP,
+    ollamaTopK,
+    ollamaRepeatPenalty,
+    ollamaNumPredict,
+    ollamaMirostat,
     lmStudioModelId,
     lmStudioBaseUrl,
     anthropicBaseUrl,
@@ -107,6 +118,7 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     openAiNativeApiKey,
     deepSeekApiKey,
     moonshotApiKey,
+    minimaxApiKey,
     requestyApiKey,
     requestyModelId,
     requestyModelInfo,
@@ -138,6 +150,7 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     previousModeReasoningEffort,
     qwenApiLine,
     moonshotApiLine,
+    minimaxApiLine,
     liteLlmApiKey,
     telemetrySetting,
     asksageApiKey,
@@ -155,6 +168,8 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     globalValorIDERulesToggles,
     authenticatedPrincipal,
     isLoggedIn,
+    grayMatterSession,
+    agenticState,
     selectedLlmDetails,
   ] = await Promise.all([
     getGlobalState(context, "apiProvider") as Promise<ApiProvider | undefined>,
@@ -193,6 +208,18 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     getGlobalState(context, "ollamaApiOptionsCtxNum") as Promise<
       string | undefined
     >,
+    getGlobalState(context, "ollamaRequestTimeout") as Promise<
+      string | undefined
+    >,
+    getGlobalState(context, "ollamaKeepAlive") as Promise<string | undefined>,
+    getGlobalState(context, "ollamaTemperature") as Promise<string | undefined>,
+    getGlobalState(context, "ollamaTopP") as Promise<string | undefined>,
+    getGlobalState(context, "ollamaTopK") as Promise<string | undefined>,
+    getGlobalState(context, "ollamaRepeatPenalty") as Promise<
+      string | undefined
+    >,
+    getGlobalState(context, "ollamaNumPredict") as Promise<string | undefined>,
+    getGlobalState(context, "ollamaMirostat") as Promise<string | undefined>,
     getGlobalState(context, "lmStudioModelId") as Promise<string | undefined>,
     getGlobalState(context, "lmStudioBaseUrl") as Promise<string | undefined>,
     getGlobalState(context, "anthropicBaseUrl") as Promise<string | undefined>,
@@ -201,6 +228,7 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     getSecret(context, "openAiNativeApiKey") as Promise<string | undefined>,
     getSecret(context, "deepSeekApiKey") as Promise<string | undefined>,
     getSecret(context, "moonshotApiKey") as Promise<string | undefined>,
+    getSecret(context, "minimaxApiKey") as Promise<string | undefined>,
     getSecret(context, "requestyApiKey") as Promise<string | undefined>,
     getGlobalState(context, "requestyModelId") as Promise<string | undefined>,
     getGlobalState(context, "requestyModelInfo") as Promise<
@@ -266,6 +294,7 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     >,
     getGlobalState(context, "qwenApiLine") as Promise<string | undefined>,
     getGlobalState(context, "moonshotApiLine") as Promise<string | undefined>,
+    getGlobalState(context, "minimaxApiLine") as Promise<string | undefined>,
     getSecret(context, "liteLlmApiKey") as Promise<string | undefined>,
     getGlobalState(context, "telemetrySetting") as Promise<
       TelemetrySetting | undefined
@@ -295,6 +324,12 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
       any | undefined
     >,
     getGlobalState(context, "isLoggedIn") as Promise<boolean | undefined>,
+    getGlobalState(context, "grayMatterSession") as Promise<
+      GrayMatterSessionState | undefined
+    >,
+    getGlobalState(context, "agenticState") as Promise<
+      AgenticCapabilityCommandCenterState | undefined
+    >,
     getGlobalState(context, "selectedLlmDetails") as Promise<
       SelectedLlmDetails | undefined
     >,
@@ -358,8 +393,9 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     );
   }
 
-  const normalizedValkyraiHost =
-    configuredValkyraiHost?.trim() || valkyraiHost || undefined;
+  const normalizedValkyraiHost = normalizeValkyraiHost(
+    configuredValkyraiHost || valkyraiHost,
+  );
 
   return {
     apiConfiguration: {
@@ -387,6 +423,14 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
       ollamaModelId,
       ollamaBaseUrl,
       ollamaApiOptionsCtxNum,
+      ollamaRequestTimeout,
+      ollamaKeepAlive,
+      ollamaTemperature,
+      ollamaTopP,
+      ollamaTopK,
+      ollamaRepeatPenalty,
+      ollamaNumPredict,
+      ollamaMirostat,
       lmStudioModelId,
       lmStudioBaseUrl,
       anthropicBaseUrl,
@@ -395,6 +439,7 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
       openAiNativeApiKey,
       deepSeekApiKey,
       moonshotApiKey,
+      minimaxApiKey,
       requestyApiKey,
       requestyModelId,
       requestyModelInfo,
@@ -402,6 +447,7 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
       togetherModelId,
       qwenApiKey,
       moonshotApiLine,
+      minimaxApiLine,
       qwenApiLine,
       doubaoApiKey,
       mistralApiKey,
@@ -448,6 +494,8 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     planActSeparateModelsSetting,
     authenticatedPrincipal,
     isLoggedIn: isLoggedIn || false,
+    grayMatterSession,
+    agenticState,
     selectedLlmDetails,
   };
 }
@@ -480,6 +528,14 @@ export async function updateApiConfiguration(
     ollamaModelId,
     ollamaBaseUrl,
     ollamaApiOptionsCtxNum,
+    ollamaRequestTimeout,
+    ollamaKeepAlive,
+    ollamaTemperature,
+    ollamaTopP,
+    ollamaTopK,
+    ollamaRepeatPenalty,
+    ollamaNumPredict,
+    ollamaMirostat,
     lmStudioModelId,
     lmStudioBaseUrl,
     anthropicBaseUrl,
@@ -488,6 +544,7 @@ export async function updateApiConfiguration(
     openAiNativeApiKey,
     deepSeekApiKey,
     moonshotApiKey,
+    minimaxApiKey,
     requestyApiKey,
     requestyModelId,
     requestyModelInfo,
@@ -495,6 +552,7 @@ export async function updateApiConfiguration(
     togetherModelId,
     qwenApiKey,
     moonshotApiLine,
+    minimaxApiLine,
     doubaoApiKey,
     mistralApiKey,
     azureApiVersion,
@@ -555,6 +613,18 @@ export async function updateApiConfiguration(
     "ollamaApiOptionsCtxNum",
     ollamaApiOptionsCtxNum,
   );
+  await updateGlobalState(
+    context,
+    "ollamaRequestTimeout",
+    ollamaRequestTimeout,
+  );
+  await updateGlobalState(context, "ollamaKeepAlive", ollamaKeepAlive);
+  await updateGlobalState(context, "ollamaTemperature", ollamaTemperature);
+  await updateGlobalState(context, "ollamaTopP", ollamaTopP);
+  await updateGlobalState(context, "ollamaTopK", ollamaTopK);
+  await updateGlobalState(context, "ollamaRepeatPenalty", ollamaRepeatPenalty);
+  await updateGlobalState(context, "ollamaNumPredict", ollamaNumPredict);
+  await updateGlobalState(context, "ollamaMirostat", ollamaMirostat);
   await updateGlobalState(context, "lmStudioModelId", lmStudioModelId);
   await updateGlobalState(context, "lmStudioBaseUrl", lmStudioBaseUrl);
   await updateGlobalState(context, "anthropicBaseUrl", anthropicBaseUrl);
@@ -563,6 +633,7 @@ export async function updateApiConfiguration(
   await storeSecret(context, "openAiNativeApiKey", openAiNativeApiKey);
   await storeSecret(context, "deepSeekApiKey", deepSeekApiKey);
   await storeSecret(context, "moonshotApiKey", moonshotApiKey);
+  await storeSecret(context, "minimaxApiKey", minimaxApiKey);
   await storeSecret(context, "requestyApiKey", requestyApiKey);
   await storeSecret(context, "togetherApiKey", togetherApiKey);
   await storeSecret(context, "qwenApiKey", qwenApiKey);
@@ -592,6 +663,7 @@ export async function updateApiConfiguration(
   );
   await updateGlobalState(context, "qwenApiLine", qwenApiLine);
   await updateGlobalState(context, "moonshotApiLine", moonshotApiLine);
+  await updateGlobalState(context, "minimaxApiLine", minimaxApiLine);
   await updateGlobalState(context, "requestyModelId", requestyModelId);
   await updateGlobalState(context, "requestyModelInfo", requestyModelInfo);
   await updateGlobalState(context, "togetherModelId", togetherModelId);
@@ -606,7 +678,11 @@ export async function updateApiConfiguration(
   await storeSecret(context, "valorideApiKey", valorideApiKey);
   await storeSecret(context, "sambanovaApiKey", sambanovaApiKey);
   // Valkyrai pass-through
-  await updateGlobalState(context, "valkyraiHost", valkyraiHost);
+  await updateGlobalState(
+    context,
+    "valkyraiHost",
+    normalizeValkyraiHost(valkyraiHost),
+  );
   await updateGlobalState(context, "valkyraiServiceId", valkyraiServiceId);
   await storeSecret(context, "valkyraiJwt", valkyraiJwt);
   await updateGlobalState(context, "favoritedModelIds", favoritedModelIds);
@@ -627,6 +703,7 @@ export async function resetExtensionState(context: vscode.ExtensionContext) {
     "openAiNativeApiKey",
     "deepSeekApiKey",
     "moonshotApiKey",
+    "minimaxApiKey",
     "requestyApiKey",
     "togetherApiKey",
     "qwenApiKey",

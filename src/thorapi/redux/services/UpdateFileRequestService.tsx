@@ -7,43 +7,68 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { UpdateFileRequest } from '@thorapi/model/UpdateFileRequest'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { UpdateFileRequest } from "@thorapi/model/UpdateFileRequest";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type UpdateFileRequestResponse = UpdateFileRequest[]
+type UpdateFileRequestResponse = UpdateFileRequest[];
+
+const toUpdateFileRequestList = (
+  result: unknown,
+): UpdateFileRequestResponse => {
+  if (Array.isArray(result)) {
+    return result as UpdateFileRequestResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as UpdateFileRequestResponse)
+    : [];
+};
 
 export const UpdateFileRequestService = createApi({
-  reducerPath: 'UpdateFileRequest', // This should remain unique
+  reducerPath: "UpdateFileRequest", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['UpdateFileRequest'],
+  tagTypes: ["UpdateFileRequest"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getUpdateFileRequestsPaged: build.query<UpdateFileRequestResponse, { page: number; size?: number; example?: Partial<UpdateFileRequest> }>({
+    getUpdateFileRequestsPaged: build.query<
+      UpdateFileRequestResponse,
+      { page: number; size?: number; example?: Partial<UpdateFileRequest> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `UpdateFileRequest?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `UpdateFileRequest?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'UpdateFileRequest' as const, id })),
-              { type: 'UpdateFileRequest', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toUpdateFileRequestList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "UpdateFileRequest" as const, id })),
+          { type: "UpdateFileRequest", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getUpdateFileRequests: build.query<UpdateFileRequestResponse, { example?: Partial<UpdateFileRequest> } | void>({
+    getUpdateFileRequests: build.query<
+      UpdateFileRequestResponse,
+      { example?: Partial<UpdateFileRequest> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +76,113 @@ export const UpdateFileRequestService = createApi({
         }
         return `UpdateFileRequest`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'UpdateFileRequest' as const, id })),
-              { type: 'UpdateFileRequest', id: 'LIST' },
-            ]
-          : [{ type: 'UpdateFileRequest', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toUpdateFileRequestList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({ type: "UpdateFileRequest" as const, id })),
+          { type: "UpdateFileRequest", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
-    addUpdateFileRequest: build.mutation<UpdateFileRequest, Partial<UpdateFileRequest>>({
+    addUpdateFileRequest: build.mutation<
+      UpdateFileRequest,
+      Partial<UpdateFileRequest>
+    >({
       query: (body) => ({
         url: `UpdateFileRequest`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'UpdateFileRequest', id: 'LIST' }],
+      invalidatesTags: [{ type: "UpdateFileRequest", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getUpdateFileRequest: build.query<UpdateFileRequest, string>({
       query: (id) => `UpdateFileRequest/${id}`,
-      providesTags: (result, error, id) => [{ type: 'UpdateFileRequest', id }],
+      providesTags: (result, error, id) => [{ type: "UpdateFileRequest", id }],
     }),
 
     // 5) Update
-    updateUpdateFileRequest: build.mutation<void, Pick<UpdateFileRequest, 'id'> & Partial<UpdateFileRequest>>({
+    updateUpdateFileRequest: build.mutation<
+      void,
+      Pick<UpdateFileRequest, "id"> & Partial<UpdateFileRequest>
+    >({
       query: ({ id, ...patch }) => ({
         url: `UpdateFileRequest/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            UpdateFileRequestService.util.updateQueryData('getUpdateFileRequest', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            UpdateFileRequestService.util.updateQueryData(
+              "getUpdateFileRequest",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<UpdateFileRequest, 'id'>) => [
-        { type: 'UpdateFileRequest', id },
-        { type: 'UpdateFileRequest', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<UpdateFileRequest, "id">,
+      ) => [
+        { type: "UpdateFileRequest", id },
+        { type: "UpdateFileRequest", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteUpdateFileRequest: build.mutation<{ success: boolean; id: string }, number>({
+    deleteUpdateFileRequest: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `UpdateFileRequest/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'UpdateFileRequest', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "UpdateFileRequest", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteUpdateFileRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteUpdateFileRequestCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `UpdateFileRequest/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'UpdateFileRequest', id }, { type: 'UpdateFileRequest', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "UpdateFileRequest", id },
+        { type: "UpdateFileRequest", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetUpdateFileRequestsPagedQuery`
 export const {
-  useGetUpdateFileRequestsPagedQuery,     // immediate fetch
+  useGetUpdateFileRequestsPagedQuery, // immediate fetch
   useLazyGetUpdateFileRequestsPagedQuery, // lazy fetch
   useGetUpdateFileRequestQuery,
   useGetUpdateFileRequestsQuery,
@@ -138,4 +190,4 @@ export const {
   useUpdateUpdateFileRequestMutation,
   useDeleteUpdateFileRequestMutation,
   useDeleteUpdateFileRequestCascadeMutation,
-} = UpdateFileRequestService
+} = UpdateFileRequestService;

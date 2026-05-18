@@ -20,268 +20,289 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    IntegrationAccount,
-    IntegrationAccountFromJSON,
-    IntegrationAccountToJSON,
-    OasOpenAPISpec,
-    OasOpenAPISpecFromJSON,
-    OasOpenAPISpecToJSON,
-} from './';
-
+  ExecModuleConfig,
+  ExecModuleConfigFromJSON,
+  ExecModuleConfigToJSON,
+  IntegrationAccount,
+  IntegrationAccountFromJSON,
+  IntegrationAccountToJSON,
+  OasOpenAPISpec,
+  OasOpenAPISpecFromJSON,
+  OasOpenAPISpecToJSON,
+  Task,
+  TaskFromJSON,
+  TaskToJSON,
+} from "./";
 
 // thorapi
 
 /**
- * an ExecModule Instance -- an ExecModule is the execution unit of the ValkyrAI Workflow Engine
+ * ExecModule instance executed inside a Task. Configuration is provided via ExecModuleConfig (normalized).
  * @export
  * @interface ExecModule
  */
-export type ExecModule  = DataObject & {
-    /**
-     * UUID of the system object being mutated/read (if any)
-     * @type {string}
-     * @memberof ExecModule
-     */
-    systemId?: string;
-    /**
-     * The task this module is executing in
-     * @type {string}
-     * @memberof ExecModule
-     */
-    taskId?: string;
-    /**
-     * the RBAC role to use in mutating/reading any system object
-     * @type {string}
-     * @memberof ExecModule
-     */
-    role?: ExecModuleRoleEnum;
-    /**
-     * the name of the module
-     * @type {string}
-     * @memberof ExecModule
-     */
-    name?: string;
-    /**
-     * the order in which the module is executed (low to high)
-     * @type {number}
-     * @memberof ExecModule
-     */
-    moduleOrder?: number;
-    /**
-     * notes about the module
-     * @type {string}
-     * @memberof ExecModule
-     */
-    notes?: string;
-    /**
-     * extended description displayed in module catalogs and UX palettes
-     * @type {string}
-     * @memberof ExecModule
-     */
-    longDescription?: string;
-    /**
-     * 
-     * @type {IntegrationAccount}
-     * @memberof ExecModule
-     */
-    integrationAccount?: IntegrationAccount;
-    /**
-     * the name of the implementation class for this module
-     * @type {string}
-     * @memberof ExecModule
-     */
-    className?: string;
-    /**
-     * the type of module
-     * @type {string}
-     * @memberof ExecModule
-     */
-    moduleType?: ExecModuleModuleTypeEnum;
-    /**
-     * json for configuring the module
-     * @type {string}
-     * @memberof ExecModule
-     */
-    moduleData?: string;
-    /**
-     * Module configuration as object (parsed moduleData)
-     * @type {string}
-     * @memberof ExecModule
-     */
-    config?: string;
-    /**
-     * last known status of the module
-     * @type {string}
-     * @memberof ExecModule
-     */
-    status?: ExecModuleStatusEnum;
-    /**
-     * 
-     * @type {IntegrationAccount}
-     * @memberof ExecModule
-     */
-    execModuleIntegrationAccount?: IntegrationAccount;
-    /**
-     * an array of OpenAPI specs to be referenced by the Tasks/Modules
-     * @type {Array<OasOpenAPISpec>}
-     * @memberof ExecModule
-     */
-    specs?: Array<OasOpenAPISpec>;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof ExecModule
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof ExecModule
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof ExecModule
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof ExecModule
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof ExecModule
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof ExecModule
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof ExecModule
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof ExecModule
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof ExecModule
-     */
-    trashed?: boolean;
-}
+export type ExecModule = DataObject & {
+  /**
+   * UUID of the system object being mutated/read (if any)
+   * @type {string}
+   * @memberof ExecModule
+   */
+  systemId?: string;
+  /**
+   *
+   * @type {Task}
+   * @memberof ExecModule
+   */
+  task?: Task;
+  /**
+   * Module display name
+   * @type {string}
+   * @memberof ExecModule
+   */
+  name?: string;
+  /**
+   * Extended description displayed in module catalogs and UX palettes
+   * @type {string}
+   * @memberof ExecModule
+   */
+  longDescription?: string;
+  /**
+   * Implementation class
+   * @type {string}
+   * @memberof ExecModule
+   */
+  className?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ExecModule
+   */
+  moduleType?: ExecModuleModuleTypeEnum;
+  /**
+   * Execution order within the Task
+   * @type {number}
+   * @memberof ExecModule
+   */
+  moduleOrder?: number;
+  /**
+   *
+   * @type {ExecModuleConfig}
+   * @memberof ExecModule
+   */
+  execModuleConfig?: ExecModuleConfig;
+  /**
+   * Legacy JSON module configuration payload used by existing workflow tooling.
+   * @type {string}
+   * @memberof ExecModule
+   */
+  moduleData?: string;
+  /**
+   *
+   * @type {IntegrationAccount}
+   * @memberof ExecModule
+   */
+  integrationAccount?: IntegrationAccount;
+  /**
+   * Legacy task identifier used by workflow editor payloads.
+   * @type {string}
+   * @memberof ExecModule
+   */
+  taskId?: string;
+  /**
+   * Operator notes for this module.
+   * @type {string}
+   * @memberof ExecModule
+   */
+  notes?: string;
+  /**
+   * OpenAPI specs associated with this module
+   * @type {Array<OasOpenAPISpec>}
+   * @memberof ExecModule
+   */
+  specs?: Array<OasOpenAPISpec>;
+  /**
+   *
+   * @type {string}
+   * @memberof ExecModule
+   */
+  status?: ExecModuleStatusEnum;
+  /**
+   * the RBAC role to use in mutating/reading any system object
+   * @type {string}
+   * @memberof ExecModule
+   */
+  role?: ExecModuleRoleEnum;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof ExecModule
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof ExecModule
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof ExecModule
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof ExecModule
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof ExecModule
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof ExecModule
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof ExecModule
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof ExecModule
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof ExecModule
+   */
+  trashed?: boolean;
+};
 
 export function ExecModuleFromJSON(json: any): ExecModule {
-    return {
-        ...DataObjectFromJSON(json),
-        'systemId': !exists(json, 'systemId') ? undefined : json['systemId'],
-        'taskId': !exists(json, 'taskId') ? undefined : json['taskId'],
-        'role': !exists(json, 'role') ? undefined : json['role'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'moduleOrder': !exists(json, 'moduleOrder') ? undefined : json['moduleOrder'],
-        'notes': !exists(json, 'notes') ? undefined : json['notes'],
-        'longDescription': !exists(json, 'longDescription') ? undefined : json['longDescription'],
-        'integrationAccount': !exists(json, 'integrationAccount') ? undefined : IntegrationAccountFromJSON(json['integrationAccount']),
-        'className': !exists(json, 'className') ? undefined : json['className'],
-        'moduleType': !exists(json, 'moduleType') ? undefined : json['moduleType'],
-        'moduleData': !exists(json, 'moduleData') ? undefined : json['moduleData'],
-        'config': !exists(json, 'config') ? undefined : json['config'],
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'execModuleIntegrationAccount': !exists(json, 'execModuleIntegrationAccount') ? undefined : IntegrationAccountFromJSON(json['execModuleIntegrationAccount']),
-        'specs': !exists(json, 'specs') ? undefined : (json['specs'] as Array<any>).map(OasOpenAPISpecFromJSON),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    systemId: !exists(json, "systemId") ? undefined : json["systemId"],
+    task: !exists(json, "task") ? undefined : TaskFromJSON(json["task"]),
+    name: !exists(json, "name") ? undefined : json["name"],
+    longDescription: !exists(json, "longDescription")
+      ? undefined
+      : json["longDescription"],
+    className: !exists(json, "className") ? undefined : json["className"],
+    moduleType: !exists(json, "moduleType") ? undefined : json["moduleType"],
+    moduleOrder: !exists(json, "moduleOrder") ? undefined : json["moduleOrder"],
+    execModuleConfig: !exists(json, "execModuleConfig")
+      ? undefined
+      : ExecModuleConfigFromJSON(json["execModuleConfig"]),
+    moduleData: !exists(json, "moduleData") ? undefined : json["moduleData"],
+    integrationAccount: !exists(json, "integrationAccount")
+      ? undefined
+      : IntegrationAccountFromJSON(json["integrationAccount"]),
+    taskId: !exists(json, "taskId") ? undefined : json["taskId"],
+    notes: !exists(json, "notes") ? undefined : json["notes"],
+    specs: !exists(json, "specs")
+      ? undefined
+      : (json["specs"] as Array<any>).map(OasOpenAPISpecFromJSON),
+    status: !exists(json, "status") ? undefined : json["status"],
+    role: !exists(json, "role") ? undefined : json["role"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function ExecModuleToJSON(value?: ExecModule): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'systemId': value.systemId,
-        'taskId': value.taskId,
-        'role': value.role,
-        'name': value.name,
-        'moduleOrder': value.moduleOrder,
-        'notes': value.notes,
-        'longDescription': value.longDescription,
-        'integrationAccount': IntegrationAccountToJSON(value.integrationAccount),
-        'className': value.className,
-        'moduleType': value.moduleType,
-        'moduleData': value.moduleData,
-        'config': value.config,
-        'status': value.status,
-        'execModuleIntegrationAccount': IntegrationAccountToJSON(value.execModuleIntegrationAccount),
-        'specs': value.specs === undefined ? undefined : (value.specs as Array<any>).map(OasOpenAPISpecToJSON),
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    systemId: value.systemId,
+    task: TaskToJSON(value.task),
+    name: value.name,
+    longDescription: value.longDescription,
+    className: value.className,
+    moduleType: value.moduleType,
+    moduleOrder: value.moduleOrder,
+    execModuleConfig: ExecModuleConfigToJSON(value.execModuleConfig),
+    moduleData: value.moduleData,
+    integrationAccount: IntegrationAccountToJSON(value.integrationAccount),
+    taskId: value.taskId,
+    notes: value.notes,
+    specs:
+      value.specs === undefined
+        ? undefined
+        : (value.specs as Array<any>).map(OasOpenAPISpecToJSON),
+    status: value.status,
+    role: value.role,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
-export enum ExecModuleRoleEnum {
-    ANONYMOUS = 'anonymous',
-    USER = 'user',
-    ADMIN = 'admin'
-}
-/**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum ExecModuleModuleTypeEnum {
-    BROADCAST = 'broadcast',
-    IO = 'io',
-    READER = 'reader',
-    WRITER = 'writer',
-    TRANSFORMER = 'transformer'
+  BROADCAST = "broadcast",
+  IO = "io",
+  READER = "reader",
+  WRITER = "writer",
+  TRANSFORMER = "transformer",
 }
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum ExecModuleStatusEnum {
-    RUNNING = 'running',
-    STOPPED = 'stopped',
-    READY = 'ready',
-    GOOD = 'good',
-    WARNING = 'warning',
-    ERROR = 'error',
-    DISABLED = 'disabled'
+  READY = "ready",
+  RUNNING = "running",
+  STOPPED = "stopped",
+  GOOD = "good",
+  WARNING = "warning",
+  ERROR = "error",
+  DISABLED = "disabled",
 }
-
-
+/**
+ * @export
+ * @enum {string}
+ */
+export enum ExecModuleRoleEnum {
+  ANONYMOUS = "anonymous",
+  USER = "user",
+  ADMIN = "admin",
+}

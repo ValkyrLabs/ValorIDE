@@ -20,23 +20,22 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    Principal,
-    PrincipalFromJSON,
-    PrincipalToJSON,
-} from './';
-
+  Principal,
+  PrincipalFromJSON,
+  PrincipalToJSON,
+  Space,
+  SpaceFromJSON,
+  SpaceToJSON,
+} from "./";
 
 // thorapi
 
@@ -45,153 +44,165 @@ import {
  * @export
  * @interface SpaceMember
  */
-export type SpaceMember  = DataObject & {
-    /**
-     * Identifier of the space this membership belongs to.
-     * @type {string}
-     * @memberof SpaceMember
-     */
-    spaceId: string;
-    /**
-     * Identifier of the principal granted access.
-     * @type {string}
-     * @memberof SpaceMember
-     */
-    principalId: string;
-    /**
-     * Role granted within the space.
-     * @type {string}
-     * @memberof SpaceMember
-     */
-    role: SpaceMemberRoleEnum;
-    /**
-     * 
-     * @type {Principal}
-     * @memberof SpaceMember
-     */
-    principal?: Principal;
-    /**
-     * Principal who created the membership invitation.
-     * @type {string}
-     * @memberof SpaceMember
-     */
-    invitedById?: string;
-    /**
-     * Timestamp when the membership invitation was issued.
-     * @type {Date}
-     * @memberof SpaceMember
-     */
-    invitedAt?: Date;
-    /**
-     * Timestamp when the member accepted the invitation.
-     * @type {Date}
-     * @memberof SpaceMember
-     */
-    acceptedAt?: Date;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof SpaceMember
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof SpaceMember
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof SpaceMember
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof SpaceMember
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof SpaceMember
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof SpaceMember
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof SpaceMember
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof SpaceMember
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof SpaceMember
-     */
-    trashed?: boolean;
-}
+export type SpaceMember = DataObject & {
+  /**
+   * Role granted within the space.
+   * @type {string}
+   * @memberof SpaceMember
+   */
+  role: SpaceMemberRoleEnum;
+  /**
+   *
+   * @type {Space}
+   * @memberof SpaceMember
+   */
+  space?: Space;
+  /**
+   *
+   * @type {Principal}
+   * @memberof SpaceMember
+   */
+  principal?: Principal;
+  /**
+   *
+   * @type {Principal}
+   * @memberof SpaceMember
+   */
+  invitedBy?: Principal;
+  /**
+   * Timestamp when the membership invitation was issued.
+   * @type {Date}
+   * @memberof SpaceMember
+   */
+  invitedAt?: Date;
+  /**
+   * Timestamp when the member accepted the invitation.
+   * @type {Date}
+   * @memberof SpaceMember
+   */
+  acceptedAt?: Date;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof SpaceMember
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof SpaceMember
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof SpaceMember
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof SpaceMember
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof SpaceMember
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof SpaceMember
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof SpaceMember
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof SpaceMember
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof SpaceMember
+   */
+  trashed?: boolean;
+};
 
 export function SpaceMemberFromJSON(json: any): SpaceMember {
-    return {
-        ...DataObjectFromJSON(json),
-        'spaceId': json['spaceId'],
-        'principalId': json['principalId'],
-        'role': json['role'],
-        'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
-        'invitedById': !exists(json, 'invitedById') ? undefined : json['invitedById'],
-        'invitedAt': !exists(json, 'invitedAt') ? undefined : new Date(json['invitedAt']),
-        'acceptedAt': !exists(json, 'acceptedAt') ? undefined : new Date(json['acceptedAt']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    role: json["role"],
+    space: !exists(json, "space") ? undefined : SpaceFromJSON(json["space"]),
+    principal: !exists(json, "principal")
+      ? undefined
+      : PrincipalFromJSON(json["principal"]),
+    invitedBy: !exists(json, "invitedBy")
+      ? undefined
+      : PrincipalFromJSON(json["invitedBy"]),
+    invitedAt: !exists(json, "invitedAt")
+      ? undefined
+      : new Date(json["invitedAt"]),
+    acceptedAt: !exists(json, "acceptedAt")
+      ? undefined
+      : new Date(json["acceptedAt"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function SpaceMemberToJSON(value?: SpaceMember): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'spaceId': value.spaceId,
-        'principalId': value.principalId,
-        'role': value.role,
-        'principal': PrincipalToJSON(value.principal),
-        'invitedById': value.invitedById,
-        'invitedAt': value.invitedAt === undefined ? undefined : value.invitedAt.toISOString(),
-        'acceptedAt': value.acceptedAt === undefined ? undefined : value.acceptedAt.toISOString(),
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    role: value.role,
+    space: SpaceToJSON(value.space),
+    principal: PrincipalToJSON(value.principal),
+    invitedBy: PrincipalToJSON(value.invitedBy),
+    invitedAt:
+      value.invitedAt === undefined ? undefined : value.invitedAt.toISOString(),
+    acceptedAt:
+      value.acceptedAt === undefined
+        ? undefined
+        : value.acceptedAt.toISOString(),
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum SpaceMemberRoleEnum {
-    VIEWER = 'viewer',
-    CONTRIBUTOR = 'contributor',
-    ADMIN = 'admin',
-    OWNER = 'owner'
+  VIEWER = "viewer",
+  CONTRIBUTOR = "contributor",
+  ADMIN = "admin",
+  OWNER = "owner",
 }
-
-

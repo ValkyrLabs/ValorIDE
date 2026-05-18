@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SheetRow } from '@thorapi/model/SheetRow';
+import { SheetRow } from "@thorapi/model/SheetRow";
 
 const SheetRowSlice = createSlice({
   name: "SheetRows",
@@ -28,28 +27,28 @@ const SheetRowSlice = createSlice({
     },
 
     SheetRowValueToggled(state, action) {
-      console.log("SheetRow TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SheetRow:SheetRow = state.find((SheetRow) => SheetRow.id === action.payload.SheetRowId);
+      console.log("SheetRow TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SheetRow: SheetRow = state.find(
+        (SheetRow) => SheetRow.id === action.payload.SheetRowId,
+      );
       if (SheetRow) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SheetRowpropertySet(state, action) {
-      const SheetRow = state.find((SheetRow) => SheetRow.id === action.payload.SheetRowId);
+      const SheetRow = state.find(
+        (SheetRow) => SheetRow.id === action.payload.SheetRowId,
+      );
       if (SheetRow) {
-      //  SheetRow[action.property] = action.payload[action.property];
+        //  SheetRow[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  SheetRowAdded,
-  SheetRowValueToggled,
-  SheetRowpropertySet
-} = SheetRowSlice.actions;
+export const { SheetRowAdded, SheetRowValueToggled, SheetRowpropertySet } =
+  SheetRowSlice.actions;
 export default SheetRowSlice.reducer;

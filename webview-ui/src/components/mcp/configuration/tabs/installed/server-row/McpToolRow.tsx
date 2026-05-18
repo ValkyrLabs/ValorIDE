@@ -74,7 +74,7 @@ const McpToolRow = ({ tool, serverName }: McpToolRowProps) => {
       {tool.inputSchema &&
         "properties" in tool.inputSchema &&
         Object.keys(tool.inputSchema.properties as Record<string, any>).length >
-        0 && (
+          0 && (
           <div
             style={{
               marginTop: "8px",

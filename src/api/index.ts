@@ -24,6 +24,7 @@ import { XAIHandler } from "./providers/xai";
 import { SambanovaHandler } from "./providers/sambanova";
 import { ValkyraiHandler } from "./providers/valkyrai";
 import { MoonshotHandler } from "./providers/moonshot";
+import { MinimaxHandler } from "./providers/minimax";
 
 export interface ApiHandler {
   createMessage(
@@ -49,6 +50,8 @@ export function buildApiHandler(configuration: ApiConfiguration): ApiHandler {
       return new OpenRouterHandler(options);
     case "moonshot":
       return new MoonshotHandler(options);
+    case "minimax":
+      return new MinimaxHandler(options);
     case "bedrock":
       return new AwsBedrockHandler(options);
     case "vertex":

@@ -7,39 +7,46 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   DiscardDeadLetterEntryRequest,
   DiscardDeadLetterEntryRequestReasonEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddDiscardDeadLetterEntryRequestMutation } from '../../services/DiscardDeadLetterEntryRequestService';
+import { useAddDiscardDeadLetterEntryRequestMutation } from "../../services/DiscardDeadLetterEntryRequestService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -49,7 +56,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -65,11 +71,11 @@ Request object for discarding a DeadLetterQueue entry permanently
 -------------------------------------------------------- */
 const ReasonValidation = () => {
   return [
-    'DUPLICATE',
-    'INVALID_DATA',
-    'NO_LONGER_RELEVANT',
-    'FIXED_MANUALLY',
-    'OTHER',
+    "DUPLICATE",
+    "INVALID_DATA",
+    "NO_LONGER_RELEVANT",
+    "FIXED_MANUALLY",
+    "OTHER",
   ];
 };
 
@@ -77,21 +83,24 @@ const ReasonValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        notes: Yup.string().required("notes is required."),
-      reason: Yup.mixed()
-        .oneOf(ReasonValidation(), "Invalid value for reason")
-        ,
-        trashed: Yup.boolean(),
+  notes: Yup.string(),
+  reason: Yup.mixed().oneOf(ReasonValidation(), "Invalid value for reason"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const DiscardDeadLetterEntryRequestForm: React.FC = () => {
-  const [addDiscardDeadLetterEntryRequest, addDiscardDeadLetterEntryRequestResult] = useAddDiscardDeadLetterEntryRequestMutation();
+  const [
+    addDiscardDeadLetterEntryRequest,
+    addDiscardDeadLetterEntryRequestResult,
+  ] = useAddDiscardDeadLetterEntryRequestMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -101,12 +110,18 @@ const DiscardDeadLetterEntryRequestForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -114,9 +129,9 @@ const DiscardDeadLetterEntryRequestForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<DiscardDeadLetterEntryRequest> = {
-          notes: '',
-        reason: undefined,
-          trashed: false,
+    notes: "",
+    reason: undefined,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -131,22 +146,30 @@ const DiscardDeadLetterEntryRequestForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new DiscardDeadLetterEntryRequest:', grants);
+    console.log(
+      "Permissions saved for new DiscardDeadLetterEntryRequest:",
+      grants,
+    );
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<DiscardDeadLetterEntryRequest>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<DiscardDeadLetterEntryRequest>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
       console.log("DiscardDeadLetterEntryRequest form values:", values);
 
       // NOTE: depending on your generated endpoint, you may need { body: values }
-      const result = await addDiscardDeadLetterEntryRequest(values as any).unwrap();
+      const result = await addDiscardDeadLetterEntryRequest(
+        values as any,
+      ).unwrap();
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `DiscardDeadLetterEntryRequest created successfully! Would you like to set permissions for this object?`
+          `DiscardDeadLetterEntryRequest created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -154,8 +177,8 @@ const DiscardDeadLetterEntryRequestForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create DiscardDeadLetterEntryRequest:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create DiscardDeadLetterEntryRequest:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -176,44 +199,38 @@ const DiscardDeadLetterEntryRequestForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addDiscardDeadLetterEntryRequestResult.isLoading;
+          const isSaving =
+            isSubmitting || addDiscardDeadLetterEntryRequestResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New DiscardDeadLetterEntryRequest
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    DiscardDeadLetterEntryRequest
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="notes" className="nice-form-control">
                       <b>
                         Notes:
-                        {touched.notes &&
-                         !errors.notes && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.notes && !errors.notes && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="notes"
-                            value={values?.notes}
-                            placeholder="Notes"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="notes"
+                        value={values?.notes}
+                        placeholder="Notes"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -225,30 +242,30 @@ const DiscardDeadLetterEntryRequestForm: React.FC = () => {
                     <label htmlFor="reason" className="nice-form-control">
                       <b>
                         Reason:
-                        {touched.reason &&
-                         !errors.reason && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.reason && !errors.reason && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="reason"
-                          value={values.reason || ''}
-                          className={
-                            errors.reason
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('reason', true);
-                            setFieldValue('reason', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Reason" />
-                          <ReasonLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="reason"
+                        value={values.reason || ""}
+                        className={
+                          errors.reason
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("reason", true);
+                          setFieldValue("reason", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Reason" />
+                        <ReasonLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -260,32 +277,25 @@ const DiscardDeadLetterEntryRequestForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -295,45 +305,66 @@ const DiscardDeadLetterEntryRequestForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New DiscardDeadLetterEntryRequest
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      DiscardDeadLetterEntryRequest
+                    </CoolButton>
 
-                  {(addDiscardDeadLetterEntryRequestResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addDiscardDeadLetterEntryRequestResult as any).error ? (addDiscardDeadLetterEntryRequestResult as any).error.data : (addDiscardDeadLetterEntryRequestResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addDiscardDeadLetterEntryRequestResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addDiscardDeadLetterEntryRequestResult as any)
+                                .error
+                              ? (addDiscardDeadLetterEntryRequestResult as any)
+                                  .error.data
+                              : (addDiscardDeadLetterEntryRequestResult as any)
+                                  .error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addDiscardDeadLetterEntryRequestResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addDiscardDeadLetterEntryRequestResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addDiscardDeadLetterEntryRequestResult: {JSON.stringify(addDiscardDeadLetterEntryRequestResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addDiscardDeadLetterEntryRequestResult:{" "}
+                    {JSON.stringify(addDiscardDeadLetterEntryRequestResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -365,17 +396,14 @@ kebabcase reason-lookup
 const ReasonLookup = () => {
   return (
     <>
-      <option value='DUPLICATE' label="Duplicate" />
-      <option value='INVALID_DATA' label="Invalid Data" />
-      <option value='NO_LONGER_RELEVANT' label="No Longer Relevant" />
-      <option value='FIXED_MANUALLY' label="Fixed Manually" />
-      <option value='OTHER' label="Other" />
+      <option value="DUPLICATE" label="Duplicate" />
+      <option value="INVALID_DATA" label="Invalid Data" />
+      <option value="NO_LONGER_RELEVANT" label="No Longer Relevant" />
+      <option value="FIXED_MANUALLY" label="Fixed Manually" />
+      <option value="OTHER" label="Other" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default DiscardDeadLetterEntryRequestForm;
-

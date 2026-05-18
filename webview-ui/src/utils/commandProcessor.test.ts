@@ -4,7 +4,10 @@ describe("FrontendCommandProcessor widget actions", () => {
   it("dispatches versioned widget open events and telemetry hook", async () => {
     const telemetryHook = jest.fn();
     const eventSpy = jest.fn();
-    window.addEventListener("valoride:widget-action", eventSpy as EventListener);
+    window.addEventListener(
+      "valoride:widget-action",
+      eventSpy as EventListener,
+    );
 
     const processor = new FrontendCommandProcessor({ telemetryHook });
 
@@ -23,16 +26,21 @@ describe("FrontendCommandProcessor widget actions", () => {
     });
     expect(eventSpy).toHaveBeenCalledTimes(1);
 
-    window.removeEventListener("valoride:widget-action", eventSpy as EventListener);
+    window.removeEventListener(
+      "valoride:widget-action",
+      eventSpy as EventListener,
+    );
   });
 
   it("keeps backward compatibility by rejecting unsupported version", async () => {
     const processor = new FrontendCommandProcessor({});
 
     const result = await processor.processCommands(
-      '<widget_action><version>2</version><phase>open</phase><widget>form</widget></widget_action>',
+      "<widget_action><version>2</version><phase>open</phase><widget>form</widget></widget_action>",
     );
 
-    expect(result).toContain("[Widget action failed: Unsupported widget action version: 2]");
+    expect(result).toContain(
+      "[Widget action failed: Unsupported widget action version: 2]",
+    );
   });
 });

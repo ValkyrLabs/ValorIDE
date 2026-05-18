@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ConversationMemoryNode } from '@thorapi/model/ConversationMemoryNode';
+import { ConversationMemoryNode } from "@thorapi/model/ConversationMemoryNode";
 
 const ConversationMemoryNodeSlice = createSlice({
   name: "ConversationMemoryNodes",
@@ -28,20 +27,25 @@ const ConversationMemoryNodeSlice = createSlice({
     },
 
     ConversationMemoryNodeValueToggled(state, action) {
-      console.log("ConversationMemoryNode TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ConversationMemoryNode:ConversationMemoryNode = state.find((ConversationMemoryNode) => ConversationMemoryNode.id === action.payload.ConversationMemoryNodeId);
+      console.log("ConversationMemoryNode TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ConversationMemoryNode: ConversationMemoryNode = state.find(
+        (ConversationMemoryNode) =>
+          ConversationMemoryNode.id === action.payload.ConversationMemoryNodeId,
+      );
       if (ConversationMemoryNode) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ConversationMemoryNodepropertySet(state, action) {
-      const ConversationMemoryNode = state.find((ConversationMemoryNode) => ConversationMemoryNode.id === action.payload.ConversationMemoryNodeId);
+      const ConversationMemoryNode = state.find(
+        (ConversationMemoryNode) =>
+          ConversationMemoryNode.id === action.payload.ConversationMemoryNodeId,
+      );
       if (ConversationMemoryNode) {
-      //  ConversationMemoryNode[action.property] = action.payload[action.property];
+        //  ConversationMemoryNode[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const ConversationMemoryNodeSlice = createSlice({
 export const {
   ConversationMemoryNodeAdded,
   ConversationMemoryNodeValueToggled,
-  ConversationMemoryNodepropertySet
+  ConversationMemoryNodepropertySet,
 } = ConversationMemoryNodeSlice.actions;
 export default ConversationMemoryNodeSlice.reducer;

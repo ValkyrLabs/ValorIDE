@@ -105,18 +105,14 @@ const CurrentBalance: React.FC<CurrentBalanceProps> = ({
       </div>
 
       {showBuyCredits && (
-        <Card
-          className="bg-dark border border-info"
-        >
+        <Card className="bg-dark border border-info">
           <Card.Header
-
-
             style={{
               background: "linear-gradient(135deg, #06ffa515, #06ffa505)",
               borderBottom: "1px solid #06ffa530",
             }}
           >
-            <Card.Title >
+            <Card.Title>
               <FaCreditCard />
               Buy Credits
             </Card.Title>

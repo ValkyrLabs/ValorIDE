@@ -42,7 +42,10 @@ describe("Mention Regex", () => {
           "@thorapi/C:\\Users\\name\\path\\to\\文件夹\\file.txt",
           "@thorapi/C:\\Users\\name\\path\\to\\文件夹\\file.txt",
         ],
-        ["@thorapi/path123/file-name_2.0.txt", "@thorapi/path123/file-name_2.0.txt"],
+        [
+          "@thorapi/path123/file-name_2.0.txt",
+          "@thorapi/path123/file-name_2.0.txt",
+        ],
       ];
 
       cases.forEach(([input, expected]) => {
@@ -218,9 +221,15 @@ describe("Mention Regex", () => {
     it("handles international characters in paths", () => {
       const cases: Array<[string, string]> = [
         ["@thorapi/path/to/你好/file.txt", "@thorapi/path/to/你好/file.txt"],
-        ["@thorapi/C:\\用户\\документы\\файл.txt", "@thorapi/C:\\用户\\документы\\файл.txt"],
+        [
+          "@thorapi/C:\\用户\\документы\\файл.txt",
+          "@thorapi/C:\\用户\\документы\\файл.txt",
+        ],
         ["@thorapi/путь/к/файлу.txt", "@thorapi/путь/к/файлу.txt"],
-        ["@thorapi/C:\\folder\\file_äöü.txt", "@thorapi/C:\\folder\\file_äöü.txt"],
+        [
+          "@thorapi/C:\\folder\\file_äöü.txt",
+          "@thorapi/C:\\folder\\file_äöü.txt",
+        ],
       ];
 
       cases.forEach(([input, expected]) => {

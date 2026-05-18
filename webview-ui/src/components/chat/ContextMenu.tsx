@@ -298,14 +298,14 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
                 option.type === ContextMenuOptionType.Folder ||
                 option.type === ContextMenuOptionType.Git) &&
                 option.value)) && (
-                <FaPlus
-                  style={{
-                    fontSize: "14px",
-                    flexShrink: 0,
-                    marginLeft: 8,
-                  }}
-                />
-              )}
+              <FaPlus
+                style={{
+                  fontSize: "14px",
+                  flexShrink: 0,
+                  marginLeft: 8,
+                }}
+              />
+            )}
           </div>
         ))}
       </div>

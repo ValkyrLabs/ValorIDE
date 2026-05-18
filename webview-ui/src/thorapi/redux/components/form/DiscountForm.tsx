@@ -7,39 +7,43 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  Discount,
-  DiscountTypeEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddDiscountMutation } from '../../services/DiscountService';
+import { Discount, DiscountTypeEnum } from "@thorapi/model";
+
+import { useAddDiscountMutation } from "../../services/DiscountService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -49,7 +53,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -64,28 +67,23 @@ Represents an a discount to apply to a lineitem
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const TypeValidation = () => {
-  return [
-    'percentage',
-    'fixed',
-    'other',
-  ];
+  return ["percentage", "fixed", "other"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        code: Yup.string(),
-        lineItemId: Yup.string(),
-        orderDiscount: Yup.boolean(),
-      type: Yup.mixed()
-        .oneOf(TypeValidation(), "Invalid value for type")
-        ,
-        amount: asNumber(Yup.number().typeError("amount must be a number")),
-        trashed: Yup.boolean(),
+  code: Yup.string(),
+  orderDiscount: Yup.boolean(),
+  type: Yup.mixed().oneOf(TypeValidation(), "Invalid value for type"),
+  amount: asNumber(Yup.number().typeError("amount must be a number")),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -102,12 +100,18 @@ const DiscountForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -115,12 +119,11 @@ const DiscountForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Discount> = {
-          code: '',
-          lineItemId: '',
-          orderDiscount: false,
-        type: undefined,
-          amount: 0,
-          trashed: false,
+    code: "",
+    orderDiscount: false,
+    type: undefined,
+    amount: 0,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -135,11 +138,14 @@ const DiscountForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new Discount:', grants);
+    console.log("Permissions saved for new Discount:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Discount>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<Discount>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -150,7 +156,7 @@ const DiscountForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Discount created successfully! Would you like to set permissions for this object?`
+          `Discount created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -158,8 +164,8 @@ const DiscountForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create Discount:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create Discount:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -180,44 +186,36 @@ const DiscountForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addDiscountResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New Discount
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New Discount
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="code" className="nice-form-control">
                       <b>
                         Code:
-                        {touched.code &&
-                         !errors.code && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.code && !errors.code && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="code"
-                            value={values?.code}
-                            placeholder="Code"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="code"
+                        value={values?.code}
+                        placeholder="Code"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -226,68 +224,31 @@ const DiscountForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="lineItemId" className="nice-form-control">
-                      <b>
-                        Line Item Id:
-                        {touched.lineItemId &&
-                         !errors.lineItemId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="lineItemId"
-                            value={values?.lineItemId}
-                            placeholder="Line Item Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="lineItemId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="orderDiscount" className="nice-form-control">
+                    <label
+                      htmlFor="orderDiscount"
+                      className="nice-form-control"
+                    >
                       <b>
                         Order Discount:
-                        {touched.orderDiscount &&
-                         !errors.orderDiscount && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.orderDiscount && !errors.orderDiscount && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="orderDiscount"
-                            name="orderDiscount"
-                            checked={values.orderDiscount || false}
-                            onChange={(e) => {
-                              setFieldTouched('orderDiscount', true);
-                              setFieldValue('orderDiscount', e.target.checked);
-                            }}
-                            isInvalid={!!errors.orderDiscount}
-                            className={errors.orderDiscount ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="orderDiscount"
+                        name="orderDiscount"
+                        checked={values.orderDiscount || false}
+                        onChange={(e) => {
+                          setFieldTouched("orderDiscount", true);
+                          setFieldValue("orderDiscount", e.target.checked);
+                        }}
+                        isInvalid={!!errors.orderDiscount}
+                        className={errors.orderDiscount ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -299,30 +260,30 @@ const DiscountForm: React.FC = () => {
                     <label htmlFor="type" className="nice-form-control">
                       <b>
                         Type:
-                        {touched.type &&
-                         !errors.type && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.type && !errors.type && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="type"
-                          value={values.type || ''}
-                          className={
-                            errors.type
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('type', true);
-                            setFieldValue('type', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Type" />
-                          <TypeLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="type"
+                        value={values.type || ""}
+                        className={
+                          errors.type
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("type", true);
+                          setFieldValue("type", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Type" />
+                        <TypeLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -334,37 +295,33 @@ const DiscountForm: React.FC = () => {
                     <label htmlFor="amount" className="nice-form-control">
                       <b>
                         Amount:
-                        {touched.amount &&
-                         !errors.amount && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.amount && !errors.amount && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="amount"
-                            type="number"
-                            step="any"
-                            value={values.amount || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('amount', true);
-                              const v = e.target.value;
-                              setFieldValue('amount', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.amount
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="amount"
+                        type="number"
+                        step="any"
+                        value={values.amount || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("amount", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "amount",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.amount
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -376,32 +333,25 @@ const DiscountForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -411,45 +361,58 @@ const DiscountForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New Discount
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New Discount
+                    </CoolButton>
 
-                  {(addDiscountResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addDiscountResult as any).error ? (addDiscountResult as any).error.data : (addDiscountResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addDiscountResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addDiscountResult as any).error
+                              ? (addDiscountResult as any).error.data
+                              : (addDiscountResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addDiscountResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addDiscountResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addDiscountResult: {JSON.stringify(addDiscountResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addDiscountResult: {JSON.stringify(addDiscountResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -481,15 +444,12 @@ kebabcase type-lookup
 const TypeLookup = () => {
   return (
     <>
-      <option value='percentage' label="Percentage" />
-      <option value='fixed' label="Fixed" />
-      <option value='other' label="Other" />
+      <option value="percentage" label="Percentage" />
+      <option value="fixed" label="Fixed" />
+      <option value="other" label="Other" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default DiscountForm;
-

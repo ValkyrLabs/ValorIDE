@@ -7,43 +7,75 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { InitiateTwoFactorRequest } from '@thorapi/model/InitiateTwoFactorRequest'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { InitiateTwoFactorRequest } from "@thorapi/model/InitiateTwoFactorRequest";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type InitiateTwoFactorRequestResponse = InitiateTwoFactorRequest[]
+type InitiateTwoFactorRequestResponse = InitiateTwoFactorRequest[];
+
+const toInitiateTwoFactorRequestList = (
+  result: unknown,
+): InitiateTwoFactorRequestResponse => {
+  if (Array.isArray(result)) {
+    return result as InitiateTwoFactorRequestResponse;
+  }
+
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as InitiateTwoFactorRequestResponse)
+    : [];
+};
 
 export const InitiateTwoFactorRequestService = createApi({
-  reducerPath: 'InitiateTwoFactorRequest', // This should remain unique
+  reducerPath: "InitiateTwoFactorRequest", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['InitiateTwoFactorRequest'],
+  tagTypes: ["InitiateTwoFactorRequest"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getInitiateTwoFactorRequestsPaged: build.query<InitiateTwoFactorRequestResponse, { page: number; size?: number; example?: Partial<InitiateTwoFactorRequest> }>({
+    getInitiateTwoFactorRequestsPaged: build.query<
+      InitiateTwoFactorRequestResponse,
+      {
+        page: number;
+        size?: number;
+        example?: Partial<InitiateTwoFactorRequest>;
+      }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `InitiateTwoFactorRequest?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `InitiateTwoFactorRequest?${q.join("&")}`;
       },
-      providesTags: (result, error, { page }) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'InitiateTwoFactorRequest' as const, id })),
-              { type: 'InitiateTwoFactorRequest', id: `PAGE_${page}` },
-            ]
-          : [],
+      providesTags: (result, error, { page }) => {
+        const rows = toInitiateTwoFactorRequestList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({
+              type: "InitiateTwoFactorRequest" as const,
+              id,
+            })),
+          { type: "InitiateTwoFactorRequest", id: `PAGE_${page}` },
+        ];
+      },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getInitiateTwoFactorRequests: build.query<InitiateTwoFactorRequestResponse, { example?: Partial<InitiateTwoFactorRequest> } | void>({
+    getInitiateTwoFactorRequests: build.query<
+      InitiateTwoFactorRequestResponse,
+      { example?: Partial<InitiateTwoFactorRequest> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -51,86 +83,118 @@ export const InitiateTwoFactorRequestService = createApi({
         }
         return `InitiateTwoFactorRequest`;
       },
-      providesTags: (result) =>
-        result
-          ? [
-              ...result.map(({ id }) => ({ type: 'InitiateTwoFactorRequest' as const, id })),
-              { type: 'InitiateTwoFactorRequest', id: 'LIST' },
-            ]
-          : [{ type: 'InitiateTwoFactorRequest', id: 'LIST' }],
+      providesTags: (result) => {
+        const rows = toInitiateTwoFactorRequestList(result);
+        return [
+          ...rows
+            .filter((row) => row?.id != null)
+            .map(({ id }) => ({
+              type: "InitiateTwoFactorRequest" as const,
+              id,
+            })),
+          { type: "InitiateTwoFactorRequest", id: "LIST" },
+        ];
+      },
     }),
 
     // 3) Create
-    addInitiateTwoFactorRequest: build.mutation<InitiateTwoFactorRequest, Partial<InitiateTwoFactorRequest>>({
+    addInitiateTwoFactorRequest: build.mutation<
+      InitiateTwoFactorRequest,
+      Partial<InitiateTwoFactorRequest>
+    >({
       query: (body) => ({
         url: `InitiateTwoFactorRequest`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'InitiateTwoFactorRequest', id: 'LIST' }],
+      invalidatesTags: [{ type: "InitiateTwoFactorRequest", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getInitiateTwoFactorRequest: build.query<InitiateTwoFactorRequest, string>({
       query: (id) => `InitiateTwoFactorRequest/${id}`,
-      providesTags: (result, error, id) => [{ type: 'InitiateTwoFactorRequest', id }],
+      providesTags: (result, error, id) => [
+        { type: "InitiateTwoFactorRequest", id },
+      ],
     }),
 
     // 5) Update
-    updateInitiateTwoFactorRequest: build.mutation<void, Pick<InitiateTwoFactorRequest, 'id'> & Partial<InitiateTwoFactorRequest>>({
+    updateInitiateTwoFactorRequest: build.mutation<
+      void,
+      Pick<InitiateTwoFactorRequest, "id"> & Partial<InitiateTwoFactorRequest>
+    >({
       query: ({ id, ...patch }) => ({
         url: `InitiateTwoFactorRequest/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            InitiateTwoFactorRequestService.util.updateQueryData('getInitiateTwoFactorRequest', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            InitiateTwoFactorRequestService.util.updateQueryData(
+              "getInitiateTwoFactorRequest",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<InitiateTwoFactorRequest, 'id'>) => [
-        { type: 'InitiateTwoFactorRequest', id },
-        { type: 'InitiateTwoFactorRequest', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<InitiateTwoFactorRequest, "id">,
+      ) => [
+        { type: "InitiateTwoFactorRequest", id },
+        { type: "InitiateTwoFactorRequest", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteInitiateTwoFactorRequest: build.mutation<{ success: boolean; id: string }, number>({
+    deleteInitiateTwoFactorRequest: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `InitiateTwoFactorRequest/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'InitiateTwoFactorRequest', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "InitiateTwoFactorRequest", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteInitiateTwoFactorRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteInitiateTwoFactorRequestCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `InitiateTwoFactorRequest/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'InitiateTwoFactorRequest', id }, { type: 'InitiateTwoFactorRequest', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "InitiateTwoFactorRequest", id },
+        { type: "InitiateTwoFactorRequest", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetInitiateTwoFactorRequestsPagedQuery`
 export const {
-  useGetInitiateTwoFactorRequestsPagedQuery,     // immediate fetch
+  useGetInitiateTwoFactorRequestsPagedQuery, // immediate fetch
   useLazyGetInitiateTwoFactorRequestsPagedQuery, // lazy fetch
   useGetInitiateTwoFactorRequestQuery,
   useGetInitiateTwoFactorRequestsQuery,
@@ -138,4 +202,4 @@ export const {
   useUpdateInitiateTwoFactorRequestMutation,
   useDeleteInitiateTwoFactorRequestMutation,
   useDeleteInitiateTwoFactorRequestCascadeMutation,
-} = InitiateTwoFactorRequestService
+} = InitiateTwoFactorRequestService;

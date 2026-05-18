@@ -6,7 +6,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_NOTE_REQUEST,
-    FETCH_NOTE_REQUEST,
-    LIST_NOTE_REQUEST,
-    UPDATE_NOTE_REQUEST,
-    DELETE_NOTE_REQUEST,
-
-    addNoteFailure,
-    addNoteSuccess,
-
-    fetchNoteFailure,
-    fetchNoteSuccess,
-    
-    listNoteFailure,
-    listNoteSuccess,
-
-    updateNoteFailure,
-    updateNoteSuccess,
-    
-    deleteNoteFailure,
-    deleteNoteSuccess,
-    
-} from '../actions/NoteApiAction';
+  ADD_NOTE_REQUEST,
+  FETCH_NOTE_REQUEST,
+  LIST_NOTE_REQUEST,
+  UPDATE_NOTE_REQUEST,
+  DELETE_NOTE_REQUEST,
+  addNoteFailure,
+  addNoteSuccess,
+  fetchNoteFailure,
+  fetchNoteSuccess,
+  listNoteFailure,
+  listNoteSuccess,
+  updateNoteFailure,
+  updateNoteSuccess,
+  deleteNoteFailure,
+  deleteNoteSuccess,
+} from "../actions/NoteApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -59,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Note
 */
 
-
-
-export const NoteMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("Note MIDDLEWARE: " + JSON.stringify(action) )
+export const NoteMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Note MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

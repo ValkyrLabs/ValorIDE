@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { IdempotencyKey } from '@thorapi/model/IdempotencyKey';
+import { IdempotencyKey } from "@thorapi/model/IdempotencyKey";
 
 const IdempotencyKeySlice = createSlice({
   name: "IdempotencyKeys",
@@ -28,20 +27,25 @@ const IdempotencyKeySlice = createSlice({
     },
 
     IdempotencyKeyValueToggled(state, action) {
-      console.log("IdempotencyKey TOGGLE")
-      console.warn(JSON.stringify(action))
-      const IdempotencyKey:IdempotencyKey = state.find((IdempotencyKey) => IdempotencyKey.id === action.payload.IdempotencyKeyId);
+      console.log("IdempotencyKey TOGGLE");
+      console.warn(JSON.stringify(action));
+      const IdempotencyKey: IdempotencyKey = state.find(
+        (IdempotencyKey) =>
+          IdempotencyKey.id === action.payload.IdempotencyKeyId,
+      );
       if (IdempotencyKey) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     IdempotencyKeypropertySet(state, action) {
-      const IdempotencyKey = state.find((IdempotencyKey) => IdempotencyKey.id === action.payload.IdempotencyKeyId);
+      const IdempotencyKey = state.find(
+        (IdempotencyKey) =>
+          IdempotencyKey.id === action.payload.IdempotencyKeyId,
+      );
       if (IdempotencyKey) {
-      //  IdempotencyKey[action.property] = action.payload[action.property];
+        //  IdempotencyKey[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const IdempotencyKeySlice = createSlice({
 export const {
   IdempotencyKeyAdded,
   IdempotencyKeyValueToggled,
-  IdempotencyKeypropertySet
+  IdempotencyKeypropertySet,
 } = IdempotencyKeySlice.actions;
 export default IdempotencyKeySlice.reducer;

@@ -7,15 +7,14 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/defaultService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react';
-import customBaseQuery from '../customBaseQuery';
+import { createApi } from "@reduxjs/toolkit/query/react";
+import customBaseQuery from "../customBaseQuery";
 
 /**
  * Placeholder RTK Query service that keeps generated middleware/store wiring
@@ -23,7 +22,7 @@ import customBaseQuery from '../customBaseQuery';
  * was emitted. Provides a valid reducer/middleware surface without endpoints.
  */
 export const DefaultService = createApi({
-  reducerPath: 'Default',
+  reducerPath: "Default",
   baseQuery: customBaseQuery,
   tagTypes: [],
   endpoints: () => ({}),

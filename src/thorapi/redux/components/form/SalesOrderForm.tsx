@@ -7,39 +7,43 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  SalesOrder,
-  SalesOrderStatusEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddSalesOrderMutation } from '../../services/SalesOrderService';
+import { SalesOrder, SalesOrderStatusEnum } from "@thorapi/model";
+
+import { useAddSalesOrderMutation } from "../../services/SalesOrderService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -49,7 +53,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -64,47 +67,51 @@ Represents a cart, an estimate, or an order placed in the system
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const StatusValidation = () => {
-  return [
-    'shopping',
-    'pending',
-    'shipped',
-    'delivered',
-    'canceled',
-  ];
+  return ["shopping", "pending", "shipped", "delivered", "canceled"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        totalAmount: asNumber(Yup.number().typeError("totalAmount must be a number")).required("totalAmount is required."),
-        orderDate: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).required("orderDate is required.").typeError("orderDate must be a valid date"),
-      status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        .required("status is required."),
-        customerId: Yup.string(),
-        taxAmount: asNumber(Yup.number().typeError("taxAmount must be a number")),
-        tariffAmount: asNumber(Yup.number().typeError("tariffAmount must be a number")),
-        subtotalAmount: asNumber(Yup.number().typeError("subtotalAmount must be a number")),
-        expirationDate: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("expirationDate must be a valid date"),
-        trashed: Yup.boolean(),
+  totalAmount: asNumber(
+    Yup.number().typeError("totalAmount must be a number"),
+  ).required("totalAmount is required."),
+  orderDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .required("orderDate is required.")
+    .typeError("orderDate must be a valid date"),
+  status: Yup.mixed()
+    .oneOf(StatusValidation(), "Invalid value for status")
+    .required("status is required."),
+  taxAmount: asNumber(Yup.number().typeError("taxAmount must be a number")),
+  tariffAmount: asNumber(
+    Yup.number().typeError("tariffAmount must be a number"),
+  ),
+  subtotalAmount: asNumber(
+    Yup.number().typeError("subtotalAmount must be a number"),
+  ),
+  expirationDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("expirationDate must be a valid date"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -121,12 +128,18 @@ const SalesOrderForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -134,15 +147,14 @@ const SalesOrderForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<SalesOrder> = {
-          totalAmount: 0,
-          orderDate: new Date(),
-        status: undefined,
-          customerId: '',
-          taxAmount: 0,
-          tariffAmount: 0,
-          subtotalAmount: 0,
-          expirationDate: new Date(),
-          trashed: false,
+    totalAmount: 0,
+    orderDate: new Date(),
+    status: undefined,
+    taxAmount: 0,
+    tariffAmount: 0,
+    subtotalAmount: 0,
+    expirationDate: new Date(),
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -157,11 +169,14 @@ const SalesOrderForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new SalesOrder:', grants);
+    console.log("Permissions saved for new SalesOrder:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<SalesOrder>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<SalesOrder>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -172,7 +187,7 @@ const SalesOrderForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `SalesOrder created successfully! Would you like to set permissions for this object?`
+          `SalesOrder created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -180,8 +195,8 @@ const SalesOrderForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create SalesOrder:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create SalesOrder:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -202,53 +217,48 @@ const SalesOrderForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addSalesOrderResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New SalesOrder
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New SalesOrder
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="totalAmount" className="nice-form-control">
                       <b>
                         Total Amount:
-                        {touched.totalAmount &&
-                         !errors.totalAmount && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.totalAmount && !errors.totalAmount && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="totalAmount"
-                            type="number"
-                            step="any"
-                            value={values.totalAmount || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('totalAmount', true);
-                              const v = e.target.value;
-                              setFieldValue('totalAmount', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.totalAmount
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="totalAmount"
+                        type="number"
+                        step="any"
+                        value={values.totalAmount || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("totalAmount", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "totalAmount",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.totalAmount
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -260,38 +270,38 @@ const SalesOrderForm: React.FC = () => {
                     <label htmlFor="orderDate" className="nice-form-control">
                       <b>
                         Order Date:
-                        {touched.orderDate &&
-                         !errors.orderDate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.orderDate && !errors.orderDate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="orderDate"
-                            type="datetime-local"
-                            value={values.orderDate ? 
-                              new Date(values.orderDate).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('orderDate', true);
-                              const v = e.target.value;
-                              setFieldValue('orderDate', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.orderDate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="orderDate"
+                        type="datetime-local"
+                        value={
+                          values.orderDate
+                            ? new Date(values.orderDate)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("orderDate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "orderDate",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.orderDate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -303,30 +313,30 @@ const SalesOrderForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="status"
-                          value={values.status || ''}
-                          className={
-                            errors.status
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Status" />
-                          <StatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="status"
+                        value={values.status || ""}
+                        className={
+                          errors.status
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("status", true);
+                          setFieldValue("status", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Status" />
+                        <StatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -335,73 +345,36 @@ const SalesOrderForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="customerId" className="nice-form-control">
-                      <b>
-                        Customer Id:
-                        {touched.customerId &&
-                         !errors.customerId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="customerId"
-                            value={values?.customerId}
-                            placeholder="Customer Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="customerId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
                     <label htmlFor="taxAmount" className="nice-form-control">
                       <b>
                         Tax Amount:
-                        {touched.taxAmount &&
-                         !errors.taxAmount && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.taxAmount && !errors.taxAmount && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="taxAmount"
-                            type="number"
-                            step="any"
-                            value={values.taxAmount || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('taxAmount', true);
-                              const v = e.target.value;
-                              setFieldValue('taxAmount', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.taxAmount
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="taxAmount"
+                        type="number"
+                        step="any"
+                        value={values.taxAmount || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("taxAmount", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "taxAmount",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.taxAmount
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -413,37 +386,33 @@ const SalesOrderForm: React.FC = () => {
                     <label htmlFor="tariffAmount" className="nice-form-control">
                       <b>
                         Tariff Amount:
-                        {touched.tariffAmount &&
-                         !errors.tariffAmount && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.tariffAmount && !errors.tariffAmount && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="tariffAmount"
-                            type="number"
-                            step="any"
-                            value={values.tariffAmount || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('tariffAmount', true);
-                              const v = e.target.value;
-                              setFieldValue('tariffAmount', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.tariffAmount
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="tariffAmount"
+                        type="number"
+                        step="any"
+                        value={values.tariffAmount || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("tariffAmount", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "tariffAmount",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.tariffAmount
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -452,40 +421,39 @@ const SalesOrderForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="subtotalAmount" className="nice-form-control">
+                    <label
+                      htmlFor="subtotalAmount"
+                      className="nice-form-control"
+                    >
                       <b>
                         Subtotal Amount:
-                        {touched.subtotalAmount &&
-                         !errors.subtotalAmount && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.subtotalAmount && !errors.subtotalAmount && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="subtotalAmount"
-                            type="number"
-                            step="any"
-                            value={values.subtotalAmount || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('subtotalAmount', true);
-                              const v = e.target.value;
-                              setFieldValue('subtotalAmount', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.subtotalAmount
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="subtotalAmount"
+                        type="number"
+                        step="any"
+                        value={values.subtotalAmount || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("subtotalAmount", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "subtotalAmount",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.subtotalAmount
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -494,41 +462,44 @@ const SalesOrderForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="expirationDate" className="nice-form-control">
+                    <label
+                      htmlFor="expirationDate"
+                      className="nice-form-control"
+                    >
                       <b>
                         Expiration Date:
-                        {touched.expirationDate &&
-                         !errors.expirationDate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.expirationDate && !errors.expirationDate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="expirationDate"
-                            type="datetime-local"
-                            value={values.expirationDate ? 
-                              new Date(values.expirationDate).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('expirationDate', true);
-                              const v = e.target.value;
-                              setFieldValue('expirationDate', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.expirationDate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="expirationDate"
+                        type="datetime-local"
+                        value={
+                          values.expirationDate
+                            ? new Date(values.expirationDate)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("expirationDate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "expirationDate",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.expirationDate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -540,32 +511,25 @@ const SalesOrderForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -575,45 +539,58 @@ const SalesOrderForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New SalesOrder
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New SalesOrder
+                    </CoolButton>
 
-                  {(addSalesOrderResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addSalesOrderResult as any).error ? (addSalesOrderResult as any).error.data : (addSalesOrderResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addSalesOrderResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addSalesOrderResult as any).error
+                              ? (addSalesOrderResult as any).error.data
+                              : (addSalesOrderResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addSalesOrderResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addSalesOrderResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addSalesOrderResult: {JSON.stringify(addSalesOrderResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addSalesOrderResult: {JSON.stringify(addSalesOrderResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -645,17 +622,14 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value='shopping' label="Shopping" />
-      <option value='pending' label="Pending" />
-      <option value='shipped' label="Shipped" />
-      <option value='delivered' label="Delivered" />
-      <option value='canceled' label="Canceled" />
+      <option value="shopping" label="Shopping" />
+      <option value="pending" label="Pending" />
+      <option value="shipped" label="Shipped" />
+      <option value="delivered" label="Delivered" />
+      <option value="canceled" label="Canceled" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default SalesOrderForm;
-

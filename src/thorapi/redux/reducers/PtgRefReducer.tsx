@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { PtgRef } from '@thorapi/model/PtgRef';
+import { PtgRef } from "@thorapi/model/PtgRef";
 
 const PtgRefSlice = createSlice({
   name: "PtgRefs",
@@ -28,28 +27,28 @@ const PtgRefSlice = createSlice({
     },
 
     PtgRefValueToggled(state, action) {
-      console.log("PtgRef TOGGLE")
-      console.warn(JSON.stringify(action))
-      const PtgRef:PtgRef = state.find((PtgRef) => PtgRef.id === action.payload.PtgRefId);
+      console.log("PtgRef TOGGLE");
+      console.warn(JSON.stringify(action));
+      const PtgRef: PtgRef = state.find(
+        (PtgRef) => PtgRef.id === action.payload.PtgRefId,
+      );
       if (PtgRef) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     PtgRefpropertySet(state, action) {
-      const PtgRef = state.find((PtgRef) => PtgRef.id === action.payload.PtgRefId);
+      const PtgRef = state.find(
+        (PtgRef) => PtgRef.id === action.payload.PtgRefId,
+      );
       if (PtgRef) {
-      //  PtgRef[action.property] = action.payload[action.property];
+        //  PtgRef[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  PtgRefAdded,
-  PtgRefValueToggled,
-  PtgRefpropertySet
-} = PtgRefSlice.actions;
+export const { PtgRefAdded, PtgRefValueToggled, PtgRefpropertySet } =
+  PtgRefSlice.actions;
 export default PtgRefSlice.reducer;

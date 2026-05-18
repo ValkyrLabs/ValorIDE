@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { PersistentLogin } from '@thorapi/model/PersistentLogin';
+import { PersistentLogin } from "@thorapi/model/PersistentLogin";
 
 const PersistentLoginSlice = createSlice({
   name: "PersistentLogins",
@@ -28,20 +27,25 @@ const PersistentLoginSlice = createSlice({
     },
 
     PersistentLoginValueToggled(state, action) {
-      console.log("PersistentLogin TOGGLE")
-      console.warn(JSON.stringify(action))
-      const PersistentLogin:PersistentLogin = state.find((PersistentLogin) => PersistentLogin.id === action.payload.PersistentLoginId);
+      console.log("PersistentLogin TOGGLE");
+      console.warn(JSON.stringify(action));
+      const PersistentLogin: PersistentLogin = state.find(
+        (PersistentLogin) =>
+          PersistentLogin.id === action.payload.PersistentLoginId,
+      );
       if (PersistentLogin) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     PersistentLoginpropertySet(state, action) {
-      const PersistentLogin = state.find((PersistentLogin) => PersistentLogin.id === action.payload.PersistentLoginId);
+      const PersistentLogin = state.find(
+        (PersistentLogin) =>
+          PersistentLogin.id === action.payload.PersistentLoginId,
+      );
       if (PersistentLogin) {
-      //  PersistentLogin[action.property] = action.payload[action.property];
+        //  PersistentLogin[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const PersistentLoginSlice = createSlice({
 export const {
   PersistentLoginAdded,
   PersistentLoginValueToggled,
-  PersistentLoginpropertySet
+  PersistentLoginpropertySet,
 } = PersistentLoginSlice.actions;
 export default PersistentLoginSlice.reducer;

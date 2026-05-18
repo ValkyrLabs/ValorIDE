@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AclObjectIdentity } from '@thorapi/model/AclObjectIdentity';
+import { AclObjectIdentity } from "@thorapi/model/AclObjectIdentity";
 
 const AclObjectIdentitySlice = createSlice({
   name: "AclObjectIdentitys",
@@ -28,20 +27,25 @@ const AclObjectIdentitySlice = createSlice({
     },
 
     AclObjectIdentityValueToggled(state, action) {
-      console.log("AclObjectIdentity TOGGLE")
-      console.warn(JSON.stringify(action))
-      const AclObjectIdentity:AclObjectIdentity = state.find((AclObjectIdentity) => AclObjectIdentity.id === action.payload.AclObjectIdentityId);
+      console.log("AclObjectIdentity TOGGLE");
+      console.warn(JSON.stringify(action));
+      const AclObjectIdentity: AclObjectIdentity = state.find(
+        (AclObjectIdentity) =>
+          AclObjectIdentity.id === action.payload.AclObjectIdentityId,
+      );
       if (AclObjectIdentity) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     AclObjectIdentitypropertySet(state, action) {
-      const AclObjectIdentity = state.find((AclObjectIdentity) => AclObjectIdentity.id === action.payload.AclObjectIdentityId);
+      const AclObjectIdentity = state.find(
+        (AclObjectIdentity) =>
+          AclObjectIdentity.id === action.payload.AclObjectIdentityId,
+      );
       if (AclObjectIdentity) {
-      //  AclObjectIdentity[action.property] = action.payload[action.property];
+        //  AclObjectIdentity[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +54,6 @@ const AclObjectIdentitySlice = createSlice({
 export const {
   AclObjectIdentityAdded,
   AclObjectIdentityValueToggled,
-  AclObjectIdentitypropertySet
+  AclObjectIdentitypropertySet,
 } = AclObjectIdentitySlice.actions;
 export default AclObjectIdentitySlice.reducer;

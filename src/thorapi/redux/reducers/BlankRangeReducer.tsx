@@ -7,7 +7,6 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-12-09T22:07:20.612811-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelReducer.mustache
@@ -16,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { BlankRange } from '@thorapi/model/BlankRange';
+import { BlankRange } from "@thorapi/model/BlankRange";
 
 const BlankRangeSlice = createSlice({
   name: "BlankRanges",
@@ -28,20 +27,23 @@ const BlankRangeSlice = createSlice({
     },
 
     BlankRangeValueToggled(state, action) {
-      console.log("BlankRange TOGGLE")
-      console.warn(JSON.stringify(action))
-      const BlankRange:BlankRange = state.find((BlankRange) => BlankRange.id === action.payload.BlankRangeId);
+      console.log("BlankRange TOGGLE");
+      console.warn(JSON.stringify(action));
+      const BlankRange: BlankRange = state.find(
+        (BlankRange) => BlankRange.id === action.payload.BlankRangeId,
+      );
       if (BlankRange) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     BlankRangepropertySet(state, action) {
-      const BlankRange = state.find((BlankRange) => BlankRange.id === action.payload.BlankRangeId);
+      const BlankRange = state.find(
+        (BlankRange) => BlankRange.id === action.payload.BlankRangeId,
+      );
       if (BlankRange) {
-      //  BlankRange[action.property] = action.payload[action.property];
+        //  BlankRange[action.property] = action.payload[action.property];
       }
     },
   },
@@ -50,6 +52,6 @@ const BlankRangeSlice = createSlice({
 export const {
   BlankRangeAdded,
   BlankRangeValueToggled,
-  BlankRangepropertySet
+  BlankRangepropertySet,
 } = BlankRangeSlice.actions;
 export default BlankRangeSlice.reducer;

@@ -53,7 +53,7 @@ export class CommunicationService extends EventEmitter {
     this.senderId = options.senderId ?? this.generateSenderId();
     // Prevent uncaught 'error' crashes
     if (this.listenerCount("error") === 0) {
-      this.on("error", () => { });
+      this.on("error", () => {});
     }
   }
 
@@ -248,8 +248,8 @@ export class CommunicationService extends EventEmitter {
   public disconnect() {
     if (!this.connected || !CommunicationService.isSupported()) return;
     try {
-      window.removeEventListener("websocket-message", () => { });
-      window.removeEventListener("message", () => { });
+      window.removeEventListener("websocket-message", () => {});
+      window.removeEventListener("message", () => {});
       this.connected = false;
       this.ready = false;
     } catch (err: any) {
