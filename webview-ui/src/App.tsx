@@ -34,6 +34,7 @@ import {
 } from "./utils/accessControl";
 import McpView from "./components/mcp/configuration/McpConfigurationView";
 import { McpViewTab } from "@shared/mcp";
+import { CREDIT_INTENT_EVENT, CreditIntent } from "./types/creditIntent";
 
 const AppContent = () => {
   const {
@@ -78,6 +79,9 @@ const AppContent = () => {
   // Always show file explorer by default
   const [showFileExplorer, setShowFileExplorer] = useState(true);
   const [showApplicationProgress, setShowApplicationProgress] = useState(false);
+  const [creditIntent, setCreditIntent] = useState<CreditIntent | undefined>(
+    undefined,
+  );
   const [currentApplicationId, setCurrentApplicationId] = useState<
     string | undefined
   >(undefined);
@@ -267,6 +271,31 @@ const AppContent = () => {
   useEvent("message", handleMessage);
 
   useEffect(() => {
+    const handleCreditIntent = (event: Event) => {
+      const customEvent = event as CustomEvent<CreditIntent>;
+      if (!customEvent.detail) {
+        return;
+      }
+      setCreditIntent(customEvent.detail);
+      setShowSettings(false);
+      setShowHistory(false);
+      setShowMcp(false);
+      setShowGeneratedFiles(false);
+      setShowServerConsole(false);
+      setShowApplicationProgress(false);
+      setShowAccount(true);
+      setAccountInitialActiveTab("account");
+    };
+
+    window.addEventListener(CREDIT_INTENT_EVENT, handleCreditIntent as EventListener);
+    return () =>
+      window.removeEventListener(
+        CREDIT_INTENT_EVENT,
+        handleCreditIntent as EventListener,
+      );
+  }, []);
+
+  useEffect(() => {
     if (shouldShowAnnouncement) {
       setShowAnnouncement(true);
       vscode.postMessage({ type: "didShowAnnouncement" });
@@ -330,6 +359,8 @@ const AppContent = () => {
               onClearServerConsoleNeedsAttention={() => setServerConsoleNeedsAttention(false)}
               initialActiveTab={accountInitialActiveTab}
               onConsumeInitialActiveTab={() => setAccountInitialActiveTab(undefined)}
+              creditIntent={creditIntent}
+              onClearCreditIntent={() => setCreditIntent(undefined)}
             />
           )}
           {showGeneratedFiles && <GeneratedFilesView />}

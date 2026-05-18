@@ -51,6 +51,7 @@ import {
   writeStoredPrincipal,
   readStoredPrincipal,
 } from "@thorapi/utils/accessControl";
+import { CreditIntent } from "@thorapi/types/creditIntent";
 
 type AccountViewProps = {
   onDone: () => void;
@@ -64,9 +65,11 @@ type AccountViewProps = {
   | "serverConsole";
   onConsumeInitialActiveTab?: () => void;
   onClearServerConsoleNeedsAttention: () => void;
+  creditIntent?: CreditIntent;
+  onClearCreditIntent?: () => void;
 };
 
-const AccountView = ({ onDone, serverConsoleNeedsAttention, onClearServerConsoleNeedsAttention, initialActiveTab, onConsumeInitialActiveTab }: AccountViewProps) => {
+const AccountView = ({ onDone, serverConsoleNeedsAttention, onClearServerConsoleNeedsAttention, initialActiveTab, onConsumeInitialActiveTab, creditIntent, onClearCreditIntent }: AccountViewProps) => {
   const { userInfo, authenticatedUser, isLoggedIn, jwtToken } =
     useExtensionState();
   // Read live messages once at top-level to respect Hooks rules
@@ -532,6 +535,41 @@ const AccountView = ({ onDone, serverConsoleNeedsAttention, onClearServerConsole
               </div>
 
               <div className="w-full">
+                {creditIntent && (
+                  <div
+                    data-testid="credit-intent-panel"
+                    style={{
+                      border: "1px solid var(--vscode-panel-border)",
+                      borderRadius: 8,
+                      padding: "12px",
+                      marginBottom: "12px",
+                    }}
+                  >
+                    <div style={{ fontWeight: 700, marginBottom: "6px" }}>
+                      Finish this action: {creditIntent.actionName}
+                    </div>
+                    <div style={{ fontSize: "12px", marginBottom: "8px" }}>
+                      Balance ${creditIntent.currentBalance.toFixed(2)} · Need ${creditIntent.requiredCredits.toFixed(2)} · Suggested top-up ${Math.max(5, Math.ceil(creditIntent.requiredCredits)).toFixed(0)}
+                    </div>
+                    {(creditIntent.resumeUrl || creditIntent.originView) && (
+                      <VSCodeButton
+                        appearance="secondary"
+                        onClick={() => {
+                          if (creditIntent.resumeUrl) {
+                            vscode.postMessage({
+                              type: "openInBrowser",
+                              url: creditIntent.resumeUrl,
+                            });
+                          }
+                          onClearCreditIntent?.();
+                          onDone();
+                        }}
+                      >
+                        {creditIntent.resumeLabel || "Resume"}
+                      </VSCodeButton>
+                    )}
+                  </div>
+                )}
                 <BuyCredits
                   authenticatedPrincipal={
                     resolvedPrincipal || authenticatedUser || userInfo
@@ -540,6 +578,7 @@ const AccountView = ({ onDone, serverConsoleNeedsAttention, onClearServerConsole
                     await refetchBalance();
                     refetchUsage();
                     refetchPayments();
+                    onClearCreditIntent?.();
                   }}
                   className="w-full"
                 />
