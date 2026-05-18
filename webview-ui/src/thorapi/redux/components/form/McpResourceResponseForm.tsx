@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  McpResourceResponse,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddMcpResourceResponseMutation } from '../../services/McpResourceResponseService';
+import { McpResourceResponse } from "@thorapi/model";
+
+import { useAddMcpResourceResponseMutation } from "../../services/McpResourceResponseService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,22 +71,25 @@ McpResourceResponse
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        mcpResourceResponseId: Yup.string(),
-        uri: Yup.string(),
-        mimeType: Yup.string(),
-        text: Yup.string(),
-        binaryContent: Yup.string(),
-        trashed: Yup.boolean(),
+  mcpResourceResponseId: Yup.string(),
+  uri: Yup.string(),
+  mimeType: Yup.string(),
+  text: Yup.string(),
+  binaryContent: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const McpResourceResponseForm: React.FC = () => {
-  const [addMcpResourceResponse, addMcpResourceResponseResult] = useAddMcpResourceResponseMutation();
+  const [addMcpResourceResponse, addMcpResourceResponseResult] =
+    useAddMcpResourceResponseMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -90,12 +99,18 @@ const McpResourceResponseForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -103,12 +118,12 @@ const McpResourceResponseForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<McpResourceResponse> = {
-          mcpResourceResponseId: '',
-          uri: '',
-          mimeType: '',
-          text: '',
-          binaryContent: '',
-          trashed: false,
+    mcpResourceResponseId: "",
+    uri: "",
+    mimeType: "",
+    text: "",
+    binaryContent: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -123,11 +138,14 @@ const McpResourceResponseForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new McpResourceResponse:', grants);
+    console.log("Permissions saved for new McpResourceResponse:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<McpResourceResponse>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<McpResourceResponse>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -138,7 +156,7 @@ const McpResourceResponseForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `McpResourceResponse created successfully! Would you like to set permissions for this object?`
+          `McpResourceResponse created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -146,8 +164,8 @@ const McpResourceResponseForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create McpResourceResponse:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create McpResourceResponse:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -168,44 +186,42 @@ const McpResourceResponseForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addMcpResourceResponseResult.isLoading;
+          const isSaving =
+            isSubmitting || addMcpResourceResponseResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New McpResourceResponse
-                </Accordion.Header>
-                <Accordion.Body>
-                    <label htmlFor="mcpResourceResponseId" className="nice-form-control">
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    McpResourceResponse
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <label
+                      htmlFor="mcpResourceResponseId"
+                      className="nice-form-control"
+                    >
                       <b>
                         Mcp Resource Response Id:
                         {touched.mcpResourceResponseId &&
-                         !errors.mcpResourceResponseId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.mcpResourceResponseId && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="mcpResourceResponseId"
-                            value={values?.mcpResourceResponseId}
-                            placeholder="Mcp Resource Response Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="mcpResourceResponseId"
+                        value={values?.mcpResourceResponseId}
+                        placeholder="Mcp Resource Response Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -217,28 +233,21 @@ const McpResourceResponseForm: React.FC = () => {
                     <label htmlFor="uri" className="nice-form-control">
                       <b>
                         Uri:
-                        {touched.uri &&
-                         !errors.uri && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.uri && !errors.uri && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="uri"
-                            value={values?.uri}
-                            placeholder="Uri"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="uri"
+                        value={values?.uri}
+                        placeholder="Uri"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -250,28 +259,21 @@ const McpResourceResponseForm: React.FC = () => {
                     <label htmlFor="mimeType" className="nice-form-control">
                       <b>
                         Mime Type:
-                        {touched.mimeType &&
-                         !errors.mimeType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.mimeType && !errors.mimeType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="mimeType"
-                            value={values?.mimeType}
-                            placeholder="Mime Type"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="mimeType"
+                        value={values?.mimeType}
+                        placeholder="Mime Type"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -283,28 +285,21 @@ const McpResourceResponseForm: React.FC = () => {
                     <label htmlFor="text" className="nice-form-control">
                       <b>
                         Text:
-                        {touched.text &&
-                         !errors.text && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.text && !errors.text && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="text"
-                            value={values?.text}
-                            placeholder="Text"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="text"
+                        value={values?.text}
+                        placeholder="Text"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -313,31 +308,27 @@ const McpResourceResponseForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="binaryContent" className="nice-form-control">
+                    <label
+                      htmlFor="binaryContent"
+                      className="nice-form-control"
+                    >
                       <b>
                         Binary Content:
-                        {touched.binaryContent &&
-                         !errors.binaryContent && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.binaryContent && !errors.binaryContent && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="binaryContent"
-                            value={values?.binaryContent}
-                            placeholder="Binary Content"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="binaryContent"
+                        value={values?.binaryContent}
+                        placeholder="Binary Content"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -349,32 +340,25 @@ const McpResourceResponseForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -384,45 +368,61 @@ const McpResourceResponseForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New McpResourceResponse
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New McpResourceResponse
+                    </CoolButton>
 
-                  {(addMcpResourceResponseResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addMcpResourceResponseResult as any).error ? (addMcpResourceResponseResult as any).error.data : (addMcpResourceResponseResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addMcpResourceResponseResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addMcpResourceResponseResult as any).error
+                              ? (addMcpResourceResponseResult as any).error.data
+                              : (addMcpResourceResponseResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addMcpResourceResponseResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addMcpResourceResponseResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addMcpResourceResponseResult: {JSON.stringify(addMcpResourceResponseResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addMcpResourceResponseResult:{" "}
+                    {JSON.stringify(addMcpResourceResponseResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -442,8 +442,5 @@ const McpResourceResponseForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default McpResourceResponseForm;
-

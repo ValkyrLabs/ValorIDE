@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ManagedMcpService } from '@thorapi/model/ManagedMcpService';
+import { ManagedMcpService } from "@thorapi/model/ManagedMcpService";
 
 const ManagedMcpServiceSlice = createSlice({
   name: "ManagedMcpServices",
@@ -27,20 +27,25 @@ const ManagedMcpServiceSlice = createSlice({
     },
 
     ManagedMcpServiceValueToggled(state, action) {
-      console.log("ManagedMcpService TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ManagedMcpService:ManagedMcpService = state.find((ManagedMcpService) => ManagedMcpService.id === action.payload.ManagedMcpServiceId);
+      console.log("ManagedMcpService TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ManagedMcpService: ManagedMcpService = state.find(
+        (ManagedMcpService) =>
+          ManagedMcpService.id === action.payload.ManagedMcpServiceId,
+      );
       if (ManagedMcpService) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ManagedMcpServicepropertySet(state, action) {
-      const ManagedMcpService = state.find((ManagedMcpService) => ManagedMcpService.id === action.payload.ManagedMcpServiceId);
+      const ManagedMcpService = state.find(
+        (ManagedMcpService) =>
+          ManagedMcpService.id === action.payload.ManagedMcpServiceId,
+      );
       if (ManagedMcpService) {
-      //  ManagedMcpService[action.property] = action.payload[action.property];
+        //  ManagedMcpService[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const ManagedMcpServiceSlice = createSlice({
 export const {
   ManagedMcpServiceAdded,
   ManagedMcpServiceValueToggled,
-  ManagedMcpServicepropertySet
+  ManagedMcpServicepropertySet,
 } = ManagedMcpServiceSlice.actions;
 export default ManagedMcpServiceSlice.reducer;

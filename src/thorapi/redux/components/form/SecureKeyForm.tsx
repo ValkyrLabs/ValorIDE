@@ -13,32 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  SecureKey,
-  SecureKeyStatusEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddSecureKeyMutation } from '../../services/SecureKeyService';
+import { SecureKey, SecureKeyStatusEnum } from "@thorapi/model";
+
+import { useAddSecureKeyMutation } from "../../services/SecureKeyService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -62,32 +67,28 @@ SecureKey is the KMS for the SecureField keys with rotation support
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const StatusValidation = () => {
-  return [
-    'ACTIVE',
-    'DEFAULT',
-    'ARCHIVED',
-    'REVOKED',
-    'INVALID',
-  ];
+  return ["ACTIVE", "DEFAULT", "ARCHIVED", "REVOKED", "INVALID"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        notes: Yup.string(),
-        algorithm: Yup.string(),
-        version: Yup.string(),
-        keyHash: Yup.string(),
-        cipherWorkCost: asNumber(Yup.number().integer().typeError("cipherWorkCost must be a number")),
-        keyValue: Yup.string(),
-      status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        ,
-        trashed: Yup.boolean(),
+  notes: Yup.string(),
+  algorithm: Yup.string(),
+  version: Yup.string(),
+  keyHash: Yup.string(),
+  cipherWorkCost: asNumber(
+    Yup.number().integer().typeError("cipherWorkCost must be a number"),
+  ),
+  keyValue: Yup.string(),
+  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -104,12 +105,18 @@ const SecureKeyForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -117,14 +124,14 @@ const SecureKeyForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<SecureKey> = {
-          notes: '',
-          algorithm: '',
-          version: '',
-          keyHash: '',
-          cipherWorkCost: 0,
-          keyValue: '',
-        status: undefined,
-          trashed: false,
+    notes: "",
+    algorithm: "",
+    version: "",
+    keyHash: "",
+    cipherWorkCost: 0,
+    keyValue: "",
+    status: undefined,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -139,11 +146,14 @@ const SecureKeyForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new SecureKey:', grants);
+    console.log("Permissions saved for new SecureKey:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<SecureKey>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<SecureKey>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -154,7 +164,7 @@ const SecureKeyForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `SecureKey created successfully! Would you like to set permissions for this object?`
+          `SecureKey created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -162,8 +172,8 @@ const SecureKeyForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create SecureKey:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create SecureKey:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -184,44 +194,36 @@ const SecureKeyForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addSecureKeyResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New SecureKey
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New SecureKey
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="notes" className="nice-form-control">
                       <b>
                         Notes:
-                        {touched.notes &&
-                         !errors.notes && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.notes && !errors.notes && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="notes"
-                            value={values?.notes}
-                            placeholder="Notes"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="notes"
+                        value={values?.notes}
+                        placeholder="Notes"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -233,28 +235,21 @@ const SecureKeyForm: React.FC = () => {
                     <label htmlFor="algorithm" className="nice-form-control">
                       <b>
                         Algorithm:
-                        {touched.algorithm &&
-                         !errors.algorithm && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.algorithm && !errors.algorithm && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="algorithm"
-                            value={values?.algorithm}
-                            placeholder="Algorithm"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="algorithm"
+                        value={values?.algorithm}
+                        placeholder="Algorithm"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -266,28 +261,21 @@ const SecureKeyForm: React.FC = () => {
                     <label htmlFor="version" className="nice-form-control">
                       <b>
                         Version:
-                        {touched.version &&
-                         !errors.version && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.version && !errors.version && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="version"
-                            value={values?.version}
-                            placeholder="Version"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="version"
+                        value={values?.version}
+                        placeholder="Version"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -299,28 +287,21 @@ const SecureKeyForm: React.FC = () => {
                     <label htmlFor="keyHash" className="nice-form-control">
                       <b>
                         Key Hash:
-                        {touched.keyHash &&
-                         !errors.keyHash && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.keyHash && !errors.keyHash && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="keyHash"
-                            value={values?.keyHash}
-                            placeholder="Key Hash"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="keyHash"
+                        value={values?.keyHash}
+                        placeholder="Key Hash"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -329,39 +310,38 @@ const SecureKeyForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="cipherWorkCost" className="nice-form-control">
+                    <label
+                      htmlFor="cipherWorkCost"
+                      className="nice-form-control"
+                    >
                       <b>
                         Cipher Work Cost:
-                        {touched.cipherWorkCost &&
-                         !errors.cipherWorkCost && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.cipherWorkCost && !errors.cipherWorkCost && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="cipherWorkCost"
-                            type="number"
-                            value={values.cipherWorkCost || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('cipherWorkCost', true);
-                              const v = e.target.value;
-                              setFieldValue('cipherWorkCost', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.cipherWorkCost
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="cipherWorkCost"
+                        type="number"
+                        value={values.cipherWorkCost || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("cipherWorkCost", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "cipherWorkCost",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.cipherWorkCost
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -373,28 +353,21 @@ const SecureKeyForm: React.FC = () => {
                     <label htmlFor="keyValue" className="nice-form-control">
                       <b>
                         Key Value:
-                        {touched.keyValue &&
-                         !errors.keyValue && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.keyValue && !errors.keyValue && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="keyValue"
-                            value={values?.keyValue}
-                            placeholder="Key Value"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="keyValue"
+                        value={values?.keyValue}
+                        placeholder="Key Value"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -406,30 +379,30 @@ const SecureKeyForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="status"
-                          value={values.status || ''}
-                          className={
-                            errors.status
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Status" />
-                          <StatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="status"
+                        value={values.status || ""}
+                        className={
+                          errors.status
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("status", true);
+                          setFieldValue("status", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Status" />
+                        <StatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -441,32 +414,25 @@ const SecureKeyForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -476,45 +442,58 @@ const SecureKeyForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New SecureKey
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New SecureKey
+                    </CoolButton>
 
-                  {(addSecureKeyResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addSecureKeyResult as any).error ? (addSecureKeyResult as any).error.data : (addSecureKeyResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addSecureKeyResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addSecureKeyResult as any).error
+                              ? (addSecureKeyResult as any).error.data
+                              : (addSecureKeyResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addSecureKeyResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addSecureKeyResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addSecureKeyResult: {JSON.stringify(addSecureKeyResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addSecureKeyResult: {JSON.stringify(addSecureKeyResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -546,17 +525,14 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value='ACTIVE' label="Key Active" />
-      <option value='DEFAULT' label="Key Default" />
-      <option value='ARCHIVED' label="Key Archived" />
-      <option value='REVOKED' label="Key Revoked" />
-      <option value='INVALID' label="Key Invalid" />
+      <option value="ACTIVE" label="Key Active" />
+      <option value="DEFAULT" label="Key Default" />
+      <option value="ARCHIVED" label="Key Archived" />
+      <option value="REVOKED" label="Key Revoked" />
+      <option value="INVALID" label="Key Invalid" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default SecureKeyForm;
-

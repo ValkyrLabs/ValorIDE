@@ -17,28 +17,26 @@ Template file: typescript-redux-query/customBaseQuery.mustache
   Auth handling for generated ThorAPI services.
   Cookie transport is default; bearer header fallback is opt-in.
 */
-import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { applyCsrfHeader } from '../../utils/csrfToken';
-import { getStoredJwtToken } from '../../utils/authTokenStorage';
-import { BASE_PATH } from '../src';
+import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { applyCsrfHeader } from "../../utils/csrfToken";
+import { getStoredJwtToken } from "../../utils/authTokenStorage";
+import { BASE_PATH } from "../src";
 
 const readBearerFallbackFlag = (): string => {
   const procValue =
-    typeof process !== 'undefined'
+    typeof process !== "undefined"
       ? (process as any)?.env?.VITE_AUTH_BEARER_HEADER_FALLBACK_ENABLED
       : undefined;
   const globalValue =
-    typeof globalThis !== 'undefined'
+    typeof globalThis !== "undefined"
       ? (globalThis as any)?.VITE_AUTH_BEARER_HEADER_FALLBACK_ENABLED
       : undefined;
-  return String(procValue ?? globalValue ?? '');
+  return String(procValue ?? globalValue ?? "");
 };
 
 const isBearerFallbackEnabled = (): boolean => {
   try {
-    return readBearerFallbackFlag()
-      .trim()
-      .toLowerCase() === 'true';
+    return readBearerFallbackFlag().trim().toLowerCase() === "true";
   } catch {
     return false;
   }
@@ -46,25 +44,25 @@ const isBearerFallbackEnabled = (): boolean => {
 
 const customBaseQuery = fetchBaseQuery({
   baseUrl: BASE_PATH, // Replace with your base URL
-  credentials: 'include',
+  credentials: "include",
   prepareHeaders: (headers, { arg }) => {
     const storedToken = getStoredJwtToken();
     if (storedToken) {
-      headers.set('Authorization', `Bearer ${storedToken}`);
-      headers.set('jwtSession', storedToken);
+      headers.set("Authorization", `Bearer ${storedToken}`);
+      headers.set("jwtSession", storedToken);
     }
 
     // Temporary global migration path only when explicitly enabled.
     if (isBearerFallbackEnabled()) {
       const token =
-        typeof globalThis !== 'undefined'
+        typeof globalThis !== "undefined"
           ? (globalThis as any).__VALKYR_AUTH_TOKEN__
           : undefined;
       if (token && !storedToken) {
-        headers.set('Authorization', `Bearer ${token}`);
+        headers.set("Authorization", `Bearer ${token}`);
       }
     }
-    const method = typeof arg === 'string' ? undefined : arg?.method;
+    const method = typeof arg === "string" ? undefined : arg?.method;
     return applyCsrfHeader(headers, method);
   },
 });

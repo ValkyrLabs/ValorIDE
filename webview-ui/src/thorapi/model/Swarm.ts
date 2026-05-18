@@ -26,16 +26,9 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
-import {
-
-
-    Principal,
-    PrincipalFromJSON,
-    PrincipalToJSON,
-} from './';
-
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { Principal, PrincipalFromJSON, PrincipalToJSON } from "./";
 
 // thorapi
 
@@ -44,130 +37,140 @@ import {
  * @export
  * @interface Swarm
  */
-export type Swarm  = DataObject & {
-    /**
-     * Unique identifier for the agent instance.
-     * @type {string}
-     * @memberof Swarm
-     */
-    instanceId?: string;
-    /**
-     * Entity classification.
-     * @type {string}
-     * @memberof Swarm
-     */
-    swarmType?: SwarmSwarmTypeEnum;
-    /**
-     * 
-     * @type {Principal}
-     * @memberof Swarm
-     */
-    principal?: Principal;
-    /**
-     * Display name associated with the entity.
-     * @type {string}
-     * @memberof Swarm
-     */
-    username?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof Swarm
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof Swarm
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof Swarm
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof Swarm
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof Swarm
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof Swarm
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof Swarm
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof Swarm
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof Swarm
-     */
-    trashed?: boolean;
-}
+export type Swarm = DataObject & {
+  /**
+   * Unique identifier for the agent instance.
+   * @type {string}
+   * @memberof Swarm
+   */
+  instanceId?: string;
+  /**
+   * Entity classification.
+   * @type {string}
+   * @memberof Swarm
+   */
+  swarmType?: SwarmSwarmTypeEnum;
+  /**
+   *
+   * @type {Principal}
+   * @memberof Swarm
+   */
+  principal?: Principal;
+  /**
+   * Display name associated with the entity.
+   * @type {string}
+   * @memberof Swarm
+   */
+  username?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof Swarm
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof Swarm
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof Swarm
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof Swarm
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof Swarm
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof Swarm
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof Swarm
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof Swarm
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof Swarm
+   */
+  trashed?: boolean;
+};
 
 export function SwarmFromJSON(json: any): Swarm {
-    return {
-        ...DataObjectFromJSON(json),
-        'instanceId': !exists(json, 'instanceId') ? undefined : json['instanceId'],
-        'swarmType': !exists(json, 'swarmType') ? undefined : json['swarmType'],
-        'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
-        'username': !exists(json, 'username') ? undefined : json['username'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    instanceId: !exists(json, "instanceId") ? undefined : json["instanceId"],
+    swarmType: !exists(json, "swarmType") ? undefined : json["swarmType"],
+    principal: !exists(json, "principal")
+      ? undefined
+      : PrincipalFromJSON(json["principal"]),
+    username: !exists(json, "username") ? undefined : json["username"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function SwarmToJSON(value?: Swarm): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'instanceId': value.instanceId,
-        'swarmType': value.swarmType,
-        'principal': PrincipalToJSON(value.principal),
-        'username': value.username,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    instanceId: value.instanceId,
+    swarmType: value.swarmType,
+    principal: PrincipalToJSON(value.principal),
+    username: value.username,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum SwarmSwarmTypeEnum {
-    AGENT = 'agent',
-    SERVER = 'server',
-    WORKFLOW = 'workflow',
-    USER = 'user',
-    BROADCAST = 'broadcast'
+  AGENT = "agent",
+  SERVER = "server",
+  WORKFLOW = "workflow",
+  USER = "user",
+  BROADCAST = "broadcast",
 }
-
-

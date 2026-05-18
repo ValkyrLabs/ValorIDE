@@ -13,47 +13,69 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { RequestPasswordResetRequest } from '@thorapi/model/RequestPasswordResetRequest'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { RequestPasswordResetRequest } from "@thorapi/model/RequestPasswordResetRequest";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type RequestPasswordResetRequestResponse = RequestPasswordResetRequest[]
+type RequestPasswordResetRequestResponse = RequestPasswordResetRequest[];
 
-const toRequestPasswordResetRequestList = (result: unknown): RequestPasswordResetRequestResponse => {
+const toRequestPasswordResetRequestList = (
+  result: unknown,
+): RequestPasswordResetRequestResponse => {
   if (Array.isArray(result)) {
-    return result as RequestPasswordResetRequestResponse
+    return result as RequestPasswordResetRequestResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as RequestPasswordResetRequestResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as RequestPasswordResetRequestResponse)
+    : [];
+};
 
 export const RequestPasswordResetRequestService = createApi({
-  reducerPath: 'RequestPasswordResetRequest', // This should remain unique
+  reducerPath: "RequestPasswordResetRequest", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['RequestPasswordResetRequest'],
+  tagTypes: ["RequestPasswordResetRequest"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getRequestPasswordResetRequestsPaged: build.query<RequestPasswordResetRequestResponse, { page: number; size?: number; example?: Partial<RequestPasswordResetRequest> }>({
+    getRequestPasswordResetRequestsPaged: build.query<
+      RequestPasswordResetRequestResponse,
+      {
+        page: number;
+        size?: number;
+        example?: Partial<RequestPasswordResetRequest>;
+      }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `RequestPasswordResetRequest?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `RequestPasswordResetRequest?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toRequestPasswordResetRequestList(result)
+        const rows = toRequestPasswordResetRequestList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'RequestPasswordResetRequest' as const, id })),
-          { type: 'RequestPasswordResetRequest', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({
+              type: "RequestPasswordResetRequest" as const,
+              id,
+            })),
+          { type: "RequestPasswordResetRequest", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getRequestPasswordResetRequests: build.query<RequestPasswordResetRequestResponse, { example?: Partial<RequestPasswordResetRequest> } | void>({
+    getRequestPasswordResetRequests: build.query<
+      RequestPasswordResetRequestResponse,
+      { example?: Partial<RequestPasswordResetRequest> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +84,121 @@ export const RequestPasswordResetRequestService = createApi({
         return `RequestPasswordResetRequest`;
       },
       providesTags: (result) => {
-        const rows = toRequestPasswordResetRequestList(result)
+        const rows = toRequestPasswordResetRequestList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'RequestPasswordResetRequest' as const, id })),
-          { type: 'RequestPasswordResetRequest', id: 'LIST' },
-        ]
+            .map(({ id }) => ({
+              type: "RequestPasswordResetRequest" as const,
+              id,
+            })),
+          { type: "RequestPasswordResetRequest", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addRequestPasswordResetRequest: build.mutation<RequestPasswordResetRequest, Partial<RequestPasswordResetRequest>>({
+    addRequestPasswordResetRequest: build.mutation<
+      RequestPasswordResetRequest,
+      Partial<RequestPasswordResetRequest>
+    >({
       query: (body) => ({
         url: `RequestPasswordResetRequest`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'RequestPasswordResetRequest', id: 'LIST' }],
+      invalidatesTags: [{ type: "RequestPasswordResetRequest", id: "LIST" }],
     }),
 
     // 4) Get single by ID
-    getRequestPasswordResetRequest: build.query<RequestPasswordResetRequest, string>({
+    getRequestPasswordResetRequest: build.query<
+      RequestPasswordResetRequest,
+      string
+    >({
       query: (id) => `RequestPasswordResetRequest/${id}`,
-      providesTags: (result, error, id) => [{ type: 'RequestPasswordResetRequest', id }],
+      providesTags: (result, error, id) => [
+        { type: "RequestPasswordResetRequest", id },
+      ],
     }),
 
     // 5) Update
-    updateRequestPasswordResetRequest: build.mutation<void, Pick<RequestPasswordResetRequest, 'id'> & Partial<RequestPasswordResetRequest>>({
+    updateRequestPasswordResetRequest: build.mutation<
+      void,
+      Pick<RequestPasswordResetRequest, "id"> &
+        Partial<RequestPasswordResetRequest>
+    >({
       query: ({ id, ...patch }) => ({
         url: `RequestPasswordResetRequest/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            RequestPasswordResetRequestService.util.updateQueryData('getRequestPasswordResetRequest', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            RequestPasswordResetRequestService.util.updateQueryData(
+              "getRequestPasswordResetRequest",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<RequestPasswordResetRequest, 'id'>) => [
-        { type: 'RequestPasswordResetRequest', id },
-        { type: 'RequestPasswordResetRequest', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<RequestPasswordResetRequest, "id">,
+      ) => [
+        { type: "RequestPasswordResetRequest", id },
+        { type: "RequestPasswordResetRequest", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteRequestPasswordResetRequest: build.mutation<{ success: boolean; id: string }, number>({
+    deleteRequestPasswordResetRequest: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `RequestPasswordResetRequest/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'RequestPasswordResetRequest', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "RequestPasswordResetRequest", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteRequestPasswordResetRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteRequestPasswordResetRequestCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `RequestPasswordResetRequest/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'RequestPasswordResetRequest', id }, { type: 'RequestPasswordResetRequest', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "RequestPasswordResetRequest", id },
+        { type: "RequestPasswordResetRequest", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetRequestPasswordResetRequestsPagedQuery`
 export const {
-  useGetRequestPasswordResetRequestsPagedQuery,     // immediate fetch
+  useGetRequestPasswordResetRequestsPagedQuery, // immediate fetch
   useLazyGetRequestPasswordResetRequestsPagedQuery, // lazy fetch
   useGetRequestPasswordResetRequestQuery,
   useGetRequestPasswordResetRequestsQuery,
@@ -150,4 +206,4 @@ export const {
   useUpdateRequestPasswordResetRequestMutation,
   useDeleteRequestPasswordResetRequestMutation,
   useDeleteRequestPasswordResetRequestCascadeMutation,
-} = RequestPasswordResetRequestService
+} = RequestPasswordResetRequestService;

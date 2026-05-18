@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { GenerateTrustProofRequest } from '@thorapi/model/GenerateTrustProofRequest';
+import { GenerateTrustProofRequest } from "@thorapi/model/GenerateTrustProofRequest";
 
 const GenerateTrustProofRequestSlice = createSlice({
   name: "GenerateTrustProofRequests",
@@ -27,20 +27,27 @@ const GenerateTrustProofRequestSlice = createSlice({
     },
 
     GenerateTrustProofRequestValueToggled(state, action) {
-      console.log("GenerateTrustProofRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const GenerateTrustProofRequest:GenerateTrustProofRequest = state.find((GenerateTrustProofRequest) => GenerateTrustProofRequest.id === action.payload.GenerateTrustProofRequestId);
+      console.log("GenerateTrustProofRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const GenerateTrustProofRequest: GenerateTrustProofRequest = state.find(
+        (GenerateTrustProofRequest) =>
+          GenerateTrustProofRequest.id ===
+          action.payload.GenerateTrustProofRequestId,
+      );
       if (GenerateTrustProofRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     GenerateTrustProofRequestpropertySet(state, action) {
-      const GenerateTrustProofRequest = state.find((GenerateTrustProofRequest) => GenerateTrustProofRequest.id === action.payload.GenerateTrustProofRequestId);
+      const GenerateTrustProofRequest = state.find(
+        (GenerateTrustProofRequest) =>
+          GenerateTrustProofRequest.id ===
+          action.payload.GenerateTrustProofRequestId,
+      );
       if (GenerateTrustProofRequest) {
-      //  GenerateTrustProofRequest[action.property] = action.payload[action.property];
+        //  GenerateTrustProofRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const GenerateTrustProofRequestSlice = createSlice({
 export const {
   GenerateTrustProofRequestAdded,
   GenerateTrustProofRequestValueToggled,
-  GenerateTrustProofRequestpropertySet
+  GenerateTrustProofRequestpropertySet,
 } = GenerateTrustProofRequestSlice.actions;
 export default GenerateTrustProofRequestSlice.reducer;

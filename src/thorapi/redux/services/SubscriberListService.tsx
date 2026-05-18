@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { SubscriberList } from '@thorapi/model/SubscriberList'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { SubscriberList } from "@thorapi/model/SubscriberList";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type SubscriberListResponse = SubscriberList[]
+type SubscriberListResponse = SubscriberList[];
 
 const toSubscriberListList = (result: unknown): SubscriberListResponse => {
   if (Array.isArray(result)) {
-    return result as SubscriberListResponse
+    return result as SubscriberListResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as SubscriberListResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as SubscriberListResponse) : [];
+};
 
 export const SubscriberListService = createApi({
-  reducerPath: 'SubscriberList', // This should remain unique
+  reducerPath: "SubscriberList", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['SubscriberList'],
+  tagTypes: ["SubscriberList"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSubscriberListsPaged: build.query<SubscriberListResponse, { page: number; size?: number; example?: Partial<SubscriberList> }>({
+    getSubscriberListsPaged: build.query<
+      SubscriberListResponse,
+      { page: number; size?: number; example?: Partial<SubscriberList> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SubscriberList?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SubscriberList?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toSubscriberListList(result)
+        const rows = toSubscriberListList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'SubscriberList' as const, id })),
-          { type: 'SubscriberList', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "SubscriberList" as const, id })),
+          { type: "SubscriberList", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSubscriberLists: build.query<SubscriberListResponse, { example?: Partial<SubscriberList> } | void>({
+    getSubscriberLists: build.query<
+      SubscriberListResponse,
+      { example?: Partial<SubscriberList> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const SubscriberListService = createApi({
         return `SubscriberList`;
       },
       providesTags: (result) => {
-        const rows = toSubscriberListList(result)
+        const rows = toSubscriberListList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'SubscriberList' as const, id })),
-          { type: 'SubscriberList', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "SubscriberList" as const, id })),
+          { type: "SubscriberList", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,73 +87,89 @@ export const SubscriberListService = createApi({
     addSubscriberList: build.mutation<SubscriberList, Partial<SubscriberList>>({
       query: (body) => ({
         url: `SubscriberList`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'SubscriberList', id: 'LIST' }],
+      invalidatesTags: [{ type: "SubscriberList", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getSubscriberList: build.query<SubscriberList, string>({
       query: (id) => `SubscriberList/${id}`,
-      providesTags: (result, error, id) => [{ type: 'SubscriberList', id }],
+      providesTags: (result, error, id) => [{ type: "SubscriberList", id }],
     }),
 
     // 5) Update
-    updateSubscriberList: build.mutation<void, Pick<SubscriberList, 'id'> & Partial<SubscriberList>>({
+    updateSubscriberList: build.mutation<
+      void,
+      Pick<SubscriberList, "id"> & Partial<SubscriberList>
+    >({
       query: ({ id, ...patch }) => ({
         url: `SubscriberList/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            SubscriberListService.util.updateQueryData('getSubscriberList', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            SubscriberListService.util.updateQueryData(
+              "getSubscriberList",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<SubscriberList, 'id'>) => [
-        { type: 'SubscriberList', id },
-        { type: 'SubscriberList', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<SubscriberList, "id">) => [
+        { type: "SubscriberList", id },
+        { type: "SubscriberList", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteSubscriberList: build.mutation<{ success: boolean; id: string }, number>({
+    deleteSubscriberList: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `SubscriberList/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'SubscriberList', id }],
+      invalidatesTags: (result, error, id) => [{ type: "SubscriberList", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSubscriberListCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteSubscriberListCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `SubscriberList/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'SubscriberList', id }, { type: 'SubscriberList', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "SubscriberList", id },
+        { type: "SubscriberList", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetSubscriberListsPagedQuery`
 export const {
-  useGetSubscriberListsPagedQuery,     // immediate fetch
+  useGetSubscriberListsPagedQuery, // immediate fetch
   useLazyGetSubscriberListsPagedQuery, // lazy fetch
   useGetSubscriberListQuery,
   useGetSubscriberListsQuery,
@@ -150,4 +177,4 @@ export const {
   useUpdateSubscriberListMutation,
   useDeleteSubscriberListMutation,
   useDeleteSubscriberListCascadeMutation,
-} = SubscriberListService
+} = SubscriberListService;

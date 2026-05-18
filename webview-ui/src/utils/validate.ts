@@ -19,11 +19,6 @@ export function validateApiConfiguration(
           return "You must choose a region to use with AWS Bedrock.";
         }
         break;
-      case "openrouter":
-        if (!apiConfiguration.openRouterApiKey) {
-          return "You must provide a valid API key or choose a different provider.";
-        }
-        break;
       case "vertex":
         if (
           !apiConfiguration.vertexProjectId ||

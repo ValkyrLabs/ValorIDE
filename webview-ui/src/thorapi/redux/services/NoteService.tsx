@@ -13,42 +13,50 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { Note } from '@thorapi/model/Note'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { Note } from "@thorapi/model/Note";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type NoteResponse = Note[]
+type NoteResponse = Note[];
 
 const toNoteList = (result: unknown): NoteResponse => {
   if (Array.isArray(result)) {
-    return result as NoteResponse
+    return result as NoteResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as NoteResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as NoteResponse) : [];
+};
 
 export const NoteService = createApi({
-  reducerPath: 'Note', // This should remain unique
+  reducerPath: "Note", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['Note'],
+  tagTypes: ["Note"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getNotesPaged: build.query<NoteResponse, { page: number; size?: number; example?: Partial<Note> }>({
+    getNotesPaged: build.query<
+      NoteResponse,
+      { page: number; size?: number; example?: Partial<Note> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Note?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Note?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toNoteList(result)
+        const rows = toNoteList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'Note' as const, id })),
-          { type: 'Note', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "Note" as const, id })),
+          { type: "Note", id: `PAGE_${page}` },
+        ];
       },
     }),
 
@@ -62,13 +70,13 @@ export const NoteService = createApi({
         return `Note`;
       },
       providesTags: (result) => {
-        const rows = toNoteList(result)
+        const rows = toNoteList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'Note' as const, id })),
-          { type: 'Note', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "Note" as const, id })),
+          { type: "Note", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,42 +84,42 @@ export const NoteService = createApi({
     addNote: build.mutation<Note, Partial<Note>>({
       query: (body) => ({
         url: `Note`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'Note', id: 'LIST' }],
+      invalidatesTags: [{ type: "Note", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getNote: build.query<Note, string>({
       query: (id) => `Note/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Note', id }],
+      providesTags: (result, error, id) => [{ type: "Note", id }],
     }),
 
     // 5) Update
-    updateNote: build.mutation<void, Pick<Note, 'id'> & Partial<Note>>({
+    updateNote: build.mutation<void, Pick<Note, "id"> & Partial<Note>>({
       query: ({ id, ...patch }) => ({
         url: `Note/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            NoteService.util.updateQueryData('getNote', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            NoteService.util.updateQueryData("getNote", id, (draft) => {
+              Object.assign(draft, patch);
+            }),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<Note, 'id'>) => [
-        { type: 'Note', id },
-        { type: 'Note', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<Note, "id">) => [
+        { type: "Note", id },
+        { type: "Note", id: "LIST" },
       ],
     }),
 
@@ -120,29 +128,35 @@ export const NoteService = createApi({
       query(id) {
         return {
           url: `Note/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'Note', id }],
+      invalidatesTags: (result, error, id) => [{ type: "Note", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteNoteCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteNoteCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `Note/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Note', id }, { type: 'Note', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Note", id },
+        { type: "Note", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetNotesPagedQuery`
 export const {
-  useGetNotesPagedQuery,     // immediate fetch
+  useGetNotesPagedQuery, // immediate fetch
   useLazyGetNotesPagedQuery, // lazy fetch
   useGetNoteQuery,
   useGetNotesQuery,
@@ -150,4 +164,4 @@ export const {
   useUpdateNoteMutation,
   useDeleteNoteMutation,
   useDeleteNoteCascadeMutation,
-} = NoteService
+} = NoteService;

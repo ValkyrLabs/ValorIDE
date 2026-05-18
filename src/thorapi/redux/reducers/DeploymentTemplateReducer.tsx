@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { DeploymentTemplate } from '@thorapi/model/DeploymentTemplate';
+import { DeploymentTemplate } from "@thorapi/model/DeploymentTemplate";
 
 const DeploymentTemplateSlice = createSlice({
   name: "DeploymentTemplates",
@@ -27,20 +27,25 @@ const DeploymentTemplateSlice = createSlice({
     },
 
     DeploymentTemplateValueToggled(state, action) {
-      console.log("DeploymentTemplate TOGGLE")
-      console.warn(JSON.stringify(action))
-      const DeploymentTemplate:DeploymentTemplate = state.find((DeploymentTemplate) => DeploymentTemplate.id === action.payload.DeploymentTemplateId);
+      console.log("DeploymentTemplate TOGGLE");
+      console.warn(JSON.stringify(action));
+      const DeploymentTemplate: DeploymentTemplate = state.find(
+        (DeploymentTemplate) =>
+          DeploymentTemplate.id === action.payload.DeploymentTemplateId,
+      );
       if (DeploymentTemplate) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     DeploymentTemplatepropertySet(state, action) {
-      const DeploymentTemplate = state.find((DeploymentTemplate) => DeploymentTemplate.id === action.payload.DeploymentTemplateId);
+      const DeploymentTemplate = state.find(
+        (DeploymentTemplate) =>
+          DeploymentTemplate.id === action.payload.DeploymentTemplateId,
+      );
       if (DeploymentTemplate) {
-      //  DeploymentTemplate[action.property] = action.payload[action.property];
+        //  DeploymentTemplate[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const DeploymentTemplateSlice = createSlice({
 export const {
   DeploymentTemplateAdded,
   DeploymentTemplateValueToggled,
-  DeploymentTemplatepropertySet
+  DeploymentTemplatepropertySet,
 } = DeploymentTemplateSlice.actions;
 export default DeploymentTemplateSlice.reducer;

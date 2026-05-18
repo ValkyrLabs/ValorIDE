@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_SWARM_REQUEST,
-    FETCH_SWARM_REQUEST,
-    LIST_SWARM_REQUEST,
-    UPDATE_SWARM_REQUEST,
-    DELETE_SWARM_REQUEST,
-
-    addSwarmFailure,
-    addSwarmSuccess,
-
-    fetchSwarmFailure,
-    fetchSwarmSuccess,
-    
-    listSwarmFailure,
-    listSwarmSuccess,
-
-    updateSwarmFailure,
-    updateSwarmSuccess,
-    
-    deleteSwarmFailure,
-    deleteSwarmSuccess,
-    
-} from '../actions/SwarmApiAction';
+  ADD_SWARM_REQUEST,
+  FETCH_SWARM_REQUEST,
+  LIST_SWARM_REQUEST,
+  UPDATE_SWARM_REQUEST,
+  DELETE_SWARM_REQUEST,
+  addSwarmFailure,
+  addSwarmSuccess,
+  fetchSwarmFailure,
+  fetchSwarmSuccess,
+  listSwarmFailure,
+  listSwarmSuccess,
+  updateSwarmFailure,
+  updateSwarmSuccess,
+  deleteSwarmFailure,
+  deleteSwarmSuccess,
+} from "../actions/SwarmApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Swarm
 */
 
-
-
-export const SwarmMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("Swarm MIDDLEWARE: " + JSON.stringify(action) )
+export const SwarmMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Swarm MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

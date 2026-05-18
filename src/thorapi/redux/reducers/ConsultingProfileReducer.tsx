@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ConsultingProfile } from '@thorapi/model/ConsultingProfile';
+import { ConsultingProfile } from "@thorapi/model/ConsultingProfile";
 
 const ConsultingProfileSlice = createSlice({
   name: "ConsultingProfiles",
@@ -27,20 +27,25 @@ const ConsultingProfileSlice = createSlice({
     },
 
     ConsultingProfileValueToggled(state, action) {
-      console.log("ConsultingProfile TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ConsultingProfile:ConsultingProfile = state.find((ConsultingProfile) => ConsultingProfile.id === action.payload.ConsultingProfileId);
+      console.log("ConsultingProfile TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ConsultingProfile: ConsultingProfile = state.find(
+        (ConsultingProfile) =>
+          ConsultingProfile.id === action.payload.ConsultingProfileId,
+      );
       if (ConsultingProfile) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ConsultingProfilepropertySet(state, action) {
-      const ConsultingProfile = state.find((ConsultingProfile) => ConsultingProfile.id === action.payload.ConsultingProfileId);
+      const ConsultingProfile = state.find(
+        (ConsultingProfile) =>
+          ConsultingProfile.id === action.payload.ConsultingProfileId,
+      );
       if (ConsultingProfile) {
-      //  ConsultingProfile[action.property] = action.payload[action.property];
+        //  ConsultingProfile[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const ConsultingProfileSlice = createSlice({
 export const {
   ConsultingProfileAdded,
   ConsultingProfileValueToggled,
-  ConsultingProfilepropertySet
+  ConsultingProfilepropertySet,
 } = ConsultingProfileSlice.actions;
 export default ConsultingProfileSlice.reducer;

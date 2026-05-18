@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { TrustObjectKeyEnvelope } from '@thorapi/model/TrustObjectKeyEnvelope';
+import { TrustObjectKeyEnvelope } from "@thorapi/model/TrustObjectKeyEnvelope";
 
 const TrustObjectKeyEnvelopeSlice = createSlice({
   name: "TrustObjectKeyEnvelopes",
@@ -27,20 +27,25 @@ const TrustObjectKeyEnvelopeSlice = createSlice({
     },
 
     TrustObjectKeyEnvelopeValueToggled(state, action) {
-      console.log("TrustObjectKeyEnvelope TOGGLE")
-      console.warn(JSON.stringify(action))
-      const TrustObjectKeyEnvelope:TrustObjectKeyEnvelope = state.find((TrustObjectKeyEnvelope) => TrustObjectKeyEnvelope.id === action.payload.TrustObjectKeyEnvelopeId);
+      console.log("TrustObjectKeyEnvelope TOGGLE");
+      console.warn(JSON.stringify(action));
+      const TrustObjectKeyEnvelope: TrustObjectKeyEnvelope = state.find(
+        (TrustObjectKeyEnvelope) =>
+          TrustObjectKeyEnvelope.id === action.payload.TrustObjectKeyEnvelopeId,
+      );
       if (TrustObjectKeyEnvelope) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     TrustObjectKeyEnvelopepropertySet(state, action) {
-      const TrustObjectKeyEnvelope = state.find((TrustObjectKeyEnvelope) => TrustObjectKeyEnvelope.id === action.payload.TrustObjectKeyEnvelopeId);
+      const TrustObjectKeyEnvelope = state.find(
+        (TrustObjectKeyEnvelope) =>
+          TrustObjectKeyEnvelope.id === action.payload.TrustObjectKeyEnvelopeId,
+      );
       if (TrustObjectKeyEnvelope) {
-      //  TrustObjectKeyEnvelope[action.property] = action.payload[action.property];
+        //  TrustObjectKeyEnvelope[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const TrustObjectKeyEnvelopeSlice = createSlice({
 export const {
   TrustObjectKeyEnvelopeAdded,
   TrustObjectKeyEnvelopeValueToggled,
-  TrustObjectKeyEnvelopepropertySet
+  TrustObjectKeyEnvelopepropertySet,
 } = TrustObjectKeyEnvelopeSlice.actions;
 export default TrustObjectKeyEnvelopeSlice.reducer;

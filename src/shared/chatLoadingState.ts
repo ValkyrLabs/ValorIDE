@@ -90,7 +90,8 @@ export function deriveChatLoadingState({
 
   // Check if the response is complete (completion_result or successful final message)
   const isResponseComplete =
-    (lastMessage?.say === "completion_result" && lastMessage?.partial !== true) ||
+    (lastMessage?.say === "completion_result" &&
+      lastMessage?.partial !== true) ||
     (lastMessage?.ask === "completion_result" && lastMessage?.partial !== true);
 
   const isWaitingForResponse =

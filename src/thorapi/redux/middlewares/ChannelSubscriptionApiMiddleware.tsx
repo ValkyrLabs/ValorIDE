@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_CHANNELSUBSCRIPTION_REQUEST,
-    FETCH_CHANNELSUBSCRIPTION_REQUEST,
-    LIST_CHANNELSUBSCRIPTION_REQUEST,
-    UPDATE_CHANNELSUBSCRIPTION_REQUEST,
-    DELETE_CHANNELSUBSCRIPTION_REQUEST,
-
-    addChannelSubscriptionFailure,
-    addChannelSubscriptionSuccess,
-
-    fetchChannelSubscriptionFailure,
-    fetchChannelSubscriptionSuccess,
-    
-    listChannelSubscriptionFailure,
-    listChannelSubscriptionSuccess,
-
-    updateChannelSubscriptionFailure,
-    updateChannelSubscriptionSuccess,
-    
-    deleteChannelSubscriptionFailure,
-    deleteChannelSubscriptionSuccess,
-    
-} from '../actions/ChannelSubscriptionApiAction';
+  ADD_CHANNELSUBSCRIPTION_REQUEST,
+  FETCH_CHANNELSUBSCRIPTION_REQUEST,
+  LIST_CHANNELSUBSCRIPTION_REQUEST,
+  UPDATE_CHANNELSUBSCRIPTION_REQUEST,
+  DELETE_CHANNELSUBSCRIPTION_REQUEST,
+  addChannelSubscriptionFailure,
+  addChannelSubscriptionSuccess,
+  fetchChannelSubscriptionFailure,
+  fetchChannelSubscriptionSuccess,
+  listChannelSubscriptionFailure,
+  listChannelSubscriptionSuccess,
+  updateChannelSubscriptionFailure,
+  updateChannelSubscriptionSuccess,
+  deleteChannelSubscriptionFailure,
+  deleteChannelSubscriptionSuccess,
+} from "../actions/ChannelSubscriptionApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: ChannelSubscription
 */
 
-
-
-export const ChannelSubscriptionMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("ChannelSubscription MIDDLEWARE: " + JSON.stringify(action) )
+export const ChannelSubscriptionMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("ChannelSubscription MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

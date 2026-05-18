@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_OASCOMPONENT_REQUEST,
-    FETCH_OASCOMPONENT_REQUEST,
-    LIST_OASCOMPONENT_REQUEST,
-    UPDATE_OASCOMPONENT_REQUEST,
-    DELETE_OASCOMPONENT_REQUEST,
-
-    addOasComponentFailure,
-    addOasComponentSuccess,
-
-    fetchOasComponentFailure,
-    fetchOasComponentSuccess,
-    
-    listOasComponentFailure,
-    listOasComponentSuccess,
-
-    updateOasComponentFailure,
-    updateOasComponentSuccess,
-    
-    deleteOasComponentFailure,
-    deleteOasComponentSuccess,
-    
-} from '../actions/OasComponentApiAction';
+  ADD_OASCOMPONENT_REQUEST,
+  FETCH_OASCOMPONENT_REQUEST,
+  LIST_OASCOMPONENT_REQUEST,
+  UPDATE_OASCOMPONENT_REQUEST,
+  DELETE_OASCOMPONENT_REQUEST,
+  addOasComponentFailure,
+  addOasComponentSuccess,
+  fetchOasComponentFailure,
+  fetchOasComponentSuccess,
+  listOasComponentFailure,
+  listOasComponentSuccess,
+  updateOasComponentFailure,
+  updateOasComponentSuccess,
+  deleteOasComponentFailure,
+  deleteOasComponentSuccess,
+} from "../actions/OasComponentApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: OasComponent
 */
 
-
-
-export const OasComponentMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("OasComponent MIDDLEWARE: " + JSON.stringify(action) )
+export const OasComponentMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("OasComponent MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

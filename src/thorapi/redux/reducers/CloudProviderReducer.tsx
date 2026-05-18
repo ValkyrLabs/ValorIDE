@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { CloudProvider } from '@thorapi/model/CloudProvider';
+import { CloudProvider } from "@thorapi/model/CloudProvider";
 
 const CloudProviderSlice = createSlice({
   name: "CloudProviders",
@@ -27,20 +27,23 @@ const CloudProviderSlice = createSlice({
     },
 
     CloudProviderValueToggled(state, action) {
-      console.log("CloudProvider TOGGLE")
-      console.warn(JSON.stringify(action))
-      const CloudProvider:CloudProvider = state.find((CloudProvider) => CloudProvider.id === action.payload.CloudProviderId);
+      console.log("CloudProvider TOGGLE");
+      console.warn(JSON.stringify(action));
+      const CloudProvider: CloudProvider = state.find(
+        (CloudProvider) => CloudProvider.id === action.payload.CloudProviderId,
+      );
       if (CloudProvider) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     CloudProviderpropertySet(state, action) {
-      const CloudProvider = state.find((CloudProvider) => CloudProvider.id === action.payload.CloudProviderId);
+      const CloudProvider = state.find(
+        (CloudProvider) => CloudProvider.id === action.payload.CloudProviderId,
+      );
       if (CloudProvider) {
-      //  CloudProvider[action.property] = action.payload[action.property];
+        //  CloudProvider[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const CloudProviderSlice = createSlice({
 export const {
   CloudProviderAdded,
   CloudProviderValueToggled,
-  CloudProviderpropertySet
+  CloudProviderpropertySet,
 } = CloudProviderSlice.actions;
 export default CloudProviderSlice.reducer;

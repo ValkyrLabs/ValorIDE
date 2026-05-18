@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { MemoryActionResponse } from '@thorapi/model/MemoryActionResponse';
+import { MemoryActionResponse } from "@thorapi/model/MemoryActionResponse";
 
 const MemoryActionResponseSlice = createSlice({
   name: "MemoryActionResponses",
@@ -27,20 +27,25 @@ const MemoryActionResponseSlice = createSlice({
     },
 
     MemoryActionResponseValueToggled(state, action) {
-      console.log("MemoryActionResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const MemoryActionResponse:MemoryActionResponse = state.find((MemoryActionResponse) => MemoryActionResponse.id === action.payload.MemoryActionResponseId);
+      console.log("MemoryActionResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const MemoryActionResponse: MemoryActionResponse = state.find(
+        (MemoryActionResponse) =>
+          MemoryActionResponse.id === action.payload.MemoryActionResponseId,
+      );
       if (MemoryActionResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     MemoryActionResponsepropertySet(state, action) {
-      const MemoryActionResponse = state.find((MemoryActionResponse) => MemoryActionResponse.id === action.payload.MemoryActionResponseId);
+      const MemoryActionResponse = state.find(
+        (MemoryActionResponse) =>
+          MemoryActionResponse.id === action.payload.MemoryActionResponseId,
+      );
       if (MemoryActionResponse) {
-      //  MemoryActionResponse[action.property] = action.payload[action.property];
+        //  MemoryActionResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const MemoryActionResponseSlice = createSlice({
 export const {
   MemoryActionResponseAdded,
   MemoryActionResponseValueToggled,
-  MemoryActionResponsepropertySet
+  MemoryActionResponsepropertySet,
 } = MemoryActionResponseSlice.actions;
 export default MemoryActionResponseSlice.reducer;

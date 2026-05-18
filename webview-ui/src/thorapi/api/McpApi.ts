@@ -18,524 +18,638 @@ Template file: typescript-redux-query/apis.mustache
 Description: McpApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    Application,
-    ApplicationFromJSON,
-    ApplicationToJSON,
-    InvokeMcpToolRequest,
-    InvokeMcpToolRequestFromJSON,
-    InvokeMcpToolRequestToJSON,
-    McpServiceRegistry,
-    McpServiceRegistryFromJSON,
-    McpServiceRegistryToJSON,
-    McpServiceResponse,
-    McpServiceResponseFromJSON,
-    McpServiceResponseToJSON,
-    PublishRestEndpointRequest,
-    PublishRestEndpointRequestFromJSON,
-    PublishRestEndpointRequestToJSON,
-    PublishWorkflowRequest,
-    PublishWorkflowRequestFromJSON,
-    PublishWorkflowRequestToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  Application,
+  ApplicationFromJSON,
+  ApplicationToJSON,
+  InvokeMcpToolRequest,
+  InvokeMcpToolRequestFromJSON,
+  InvokeMcpToolRequestToJSON,
+  McpServiceRegistry,
+  McpServiceRegistryFromJSON,
+  McpServiceRegistryToJSON,
+  McpServiceResponse,
+  McpServiceResponseFromJSON,
+  McpServiceResponseToJSON,
+  PublishRestEndpointRequest,
+  PublishRestEndpointRequestFromJSON,
+  PublishRestEndpointRequestToJSON,
+  PublishWorkflowRequest,
+  PublishWorkflowRequestFromJSON,
+  PublishWorkflowRequestToJSON,
+} from "../model";
 
 export interface GetMcpServiceApiRequest {
-    slug: string;
+  slug: string;
 }
 
 export interface GetMcpServiceManifestApiRequest {
-    slug: string;
+  slug: string;
 }
 
 export interface InvokeMcpToolApiRequest {
-    slug: string;
-    invokeMcpToolRequest: InvokeMcpToolRequest;
+  slug: string;
+  invokeMcpToolRequest: InvokeMcpToolRequest;
 }
 
 export interface ListMcpServicesApiRequest {
-    published?: boolean;
-    category?: string;
+  published?: boolean;
+  category?: string;
 }
 
 export interface PublishRestEndpointAsMcpApiRequest {
-    publishRestEndpointRequest: PublishRestEndpointRequest;
+  publishRestEndpointRequest: PublishRestEndpointRequest;
 }
 
 export interface PublishWorkflowAsMcpApiRequest {
-    publishWorkflowRequest: PublishWorkflowRequest;
+  publishWorkflowRequest: PublishWorkflowRequest;
 }
 
 export interface UnpublishMcpServiceApiRequest {
-    slug: string;
+  slug: string;
 }
 
 export interface UpdateMcpServiceApiRequest {
-    slug: string;
-    mcpServiceRegistry: McpServiceRegistry;
+  slug: string;
+  mcpServiceRegistry: McpServiceRegistry;
 }
 
 export interface UploadOpenAPIAndCreateApplicationApiRequest {
-    specification: Blob;
+  specification: Blob;
 }
-
 
 /**
  * Retrieves detailed information about a published MCP service
  * Get MCP service details
  */
-function getMcpServiceRaw<T>(requestParameters: GetMcpServiceApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpServiceRegistry> = {}): QueryConfig<T> {
-    if (requestParameters.slug === null || requestParameters.slug === undefined) {
-        throw new runtime.RequiredError('slug','Required parameter requestParameters.slug was null or undefined when calling getMcpService.');
-    }
+function getMcpServiceRaw<T>(
+  requestParameters: GetMcpServiceApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpServiceRegistry> = {},
+): QueryConfig<T> {
+  if (requestParameters.slug === null || requestParameters.slug === undefined) {
+    throw new runtime.RequiredError(
+      "slug",
+      "Required parameter requestParameters.slug was null or undefined when calling getMcpService.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/mcp/services/{slug}`.replace(
+      `{${"slug"}}`,
+      encodeURIComponent(String(requestParameters.slug)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpServiceRegistryFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/mcp/services/{slug}`.replace(`{${"slug"}}`, encodeURIComponent(String(requestParameters.slug))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpServiceRegistryFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves detailed information about a published MCP service
-* Get MCP service details
-*/
-export function getMcpService<T>(requestParameters: GetMcpServiceApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpServiceRegistry>): QueryConfig<T> {
-    return getMcpServiceRaw(requestParameters, requestConfig);
+ * Retrieves detailed information about a published MCP service
+ * Get MCP service details
+ */
+export function getMcpService<T>(
+  requestParameters: GetMcpServiceApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpServiceRegistry>,
+): QueryConfig<T> {
+  return getMcpServiceRaw(requestParameters, requestConfig);
 }
 
 /**
  * Returns the manifest.yaml file for a published MCP service (machine-readable format)
  * Download MCP service manifest
  */
-function getMcpServiceManifestRaw<T>(requestParameters: GetMcpServiceManifestApiRequest, requestConfig: runtime.TypedQueryConfig<T, string> = {}): QueryConfig<T> {
-    if (requestParameters.slug === null || requestParameters.slug === undefined) {
-        throw new runtime.RequiredError('slug','Required parameter requestParameters.slug was null or undefined when calling getMcpServiceManifest.');
-    }
+function getMcpServiceManifestRaw<T>(
+  requestParameters: GetMcpServiceManifestApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, string> = {},
+): QueryConfig<T> {
+  if (requestParameters.slug === null || requestParameters.slug === undefined) {
+    throw new runtime.RequiredError(
+      "slug",
+      "Required parameter requestParameters.slug was null or undefined when calling getMcpServiceManifest.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/mcp/services/{slug}/manifest.yaml`.replace(
+      `{${"slug"}}`,
+      encodeURIComponent(String(requestParameters.slug)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    throw "OH NO";
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/mcp/services/{slug}/manifest.yaml`.replace(`{${"slug"}}`, encodeURIComponent(String(requestParameters.slug))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        throw "OH NO";
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Returns the manifest.yaml file for a published MCP service (machine-readable format)
-* Download MCP service manifest
-*/
-export function getMcpServiceManifest<T>(requestParameters: GetMcpServiceManifestApiRequest, requestConfig?: runtime.TypedQueryConfig<T, string>): QueryConfig<T> {
-    return getMcpServiceManifestRaw(requestParameters, requestConfig);
+ * Returns the manifest.yaml file for a published MCP service (machine-readable format)
+ * Download MCP service manifest
+ */
+export function getMcpServiceManifest<T>(
+  requestParameters: GetMcpServiceManifestApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, string>,
+): QueryConfig<T> {
+  return getMcpServiceManifestRaw(requestParameters, requestConfig);
 }
 
 /**
  * Calls a specific tool within a published MCP service
  * Invoke an MCP tool within a service
  */
-function invokeMcpToolRaw<T>(requestParameters: InvokeMcpToolApiRequest, requestConfig: runtime.TypedQueryConfig<T, object> = {}): QueryConfig<T> {
-    if (requestParameters.slug === null || requestParameters.slug === undefined) {
-        throw new runtime.RequiredError('slug','Required parameter requestParameters.slug was null or undefined when calling invokeMcpTool.');
-    }
+function invokeMcpToolRaw<T>(
+  requestParameters: InvokeMcpToolApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, object> = {},
+): QueryConfig<T> {
+  if (requestParameters.slug === null || requestParameters.slug === undefined) {
+    throw new runtime.RequiredError(
+      "slug",
+      "Required parameter requestParameters.slug was null or undefined when calling invokeMcpTool.",
+    );
+  }
 
-    if (requestParameters.invokeMcpToolRequest === null || requestParameters.invokeMcpToolRequest === undefined) {
-        throw new runtime.RequiredError('invokeMcpToolRequest','Required parameter requestParameters.invokeMcpToolRequest was null or undefined when calling invokeMcpTool.');
-    }
+  if (
+    requestParameters.invokeMcpToolRequest === null ||
+    requestParameters.invokeMcpToolRequest === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "invokeMcpToolRequest",
+      "Required parameter requestParameters.invokeMcpToolRequest was null or undefined when calling invokeMcpTool.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/mcp/services/{slug}/invoke`.replace(
+      `{${"slug"}}`,
+      encodeURIComponent(String(requestParameters.slug)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      InvokeMcpToolRequestToJSON(requestParameters.invokeMcpToolRequest),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/mcp/services/{slug}/invoke`.replace(`{${"slug"}}`, encodeURIComponent(String(requestParameters.slug))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || InvokeMcpToolRequestToJSON(requestParameters.invokeMcpToolRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Calls a specific tool within a published MCP service
-* Invoke an MCP tool within a service
-*/
-export function invokeMcpTool<T>(requestParameters: InvokeMcpToolApiRequest, requestConfig?: runtime.TypedQueryConfig<T, object>): QueryConfig<T> {
-    return invokeMcpToolRaw(requestParameters, requestConfig);
+ * Calls a specific tool within a published MCP service
+ * Invoke an MCP tool within a service
+ */
+export function invokeMcpTool<T>(
+  requestParameters: InvokeMcpToolApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, object>,
+): QueryConfig<T> {
+  return invokeMcpToolRaw(requestParameters, requestConfig);
 }
 
 /**
  * Returns registry of all published MCP services available in marketplace
  * List all published MCP services
  */
-function listMcpServicesRaw<T>(requestParameters: ListMcpServicesApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<McpServiceRegistry>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function listMcpServicesRaw<T>(
+  requestParameters: ListMcpServicesApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<McpServiceRegistry>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.published !== undefined) {
+    queryParameters["published"] = requestParameters.published;
+  }
 
-    if (requestParameters.published !== undefined) {
-        queryParameters['published'] = requestParameters.published;
-    }
+  if (requestParameters.category !== undefined) {
+    queryParameters["category"] = requestParameters.category;
+  }
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    if (requestParameters.category !== undefined) {
-        queryParameters['category'] = requestParameters.category;
-    }
+  const { meta = {} } = requestConfig;
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/mcp/services`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(McpServiceRegistryFromJSON), text);
+  }
 
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/mcp/services`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(McpServiceRegistryFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Returns registry of all published MCP services available in marketplace
-* List all published MCP services
-*/
-export function listMcpServices<T>(requestParameters: ListMcpServicesApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<McpServiceRegistry>>): QueryConfig<T> {
-    return listMcpServicesRaw(requestParameters, requestConfig);
+ * Returns registry of all published MCP services available in marketplace
+ * List all published MCP services
+ */
+export function listMcpServices<T>(
+  requestParameters: ListMcpServicesApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<McpServiceRegistry>>,
+): QueryConfig<T> {
+  return listMcpServicesRaw(requestParameters, requestConfig);
 }
 
 /**
  * Scans a Spring controller and publishes its endpoints as MCP tools in the marketplace
  * Publish a Spring REST endpoint as an MCP tool
  */
-function publishRestEndpointAsMcpRaw<T>(requestParameters: PublishRestEndpointAsMcpApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpServiceResponse> = {}): QueryConfig<T> {
-    if (requestParameters.publishRestEndpointRequest === null || requestParameters.publishRestEndpointRequest === undefined) {
-        throw new runtime.RequiredError('publishRestEndpointRequest','Required parameter requestParameters.publishRestEndpointRequest was null or undefined when calling publishRestEndpointAsMcp.');
-    }
+function publishRestEndpointAsMcpRaw<T>(
+  requestParameters: PublishRestEndpointAsMcpApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpServiceResponse> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.publishRestEndpointRequest === null ||
+    requestParameters.publishRestEndpointRequest === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "publishRestEndpointRequest",
+      "Required parameter requestParameters.publishRestEndpointRequest was null or undefined when calling publishRestEndpointAsMcp.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/mcp/publish-rest-endpoint`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      PublishRestEndpointRequestToJSON(
+        requestParameters.publishRestEndpointRequest,
+      ),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpServiceResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/mcp/publish-rest-endpoint`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || PublishRestEndpointRequestToJSON(requestParameters.publishRestEndpointRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpServiceResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Scans a Spring controller and publishes its endpoints as MCP tools in the marketplace
-* Publish a Spring REST endpoint as an MCP tool
-*/
-export function publishRestEndpointAsMcp<T>(requestParameters: PublishRestEndpointAsMcpApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpServiceResponse>): QueryConfig<T> {
-    return publishRestEndpointAsMcpRaw(requestParameters, requestConfig);
+ * Scans a Spring controller and publishes its endpoints as MCP tools in the marketplace
+ * Publish a Spring REST endpoint as an MCP tool
+ */
+export function publishRestEndpointAsMcp<T>(
+  requestParameters: PublishRestEndpointAsMcpApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpServiceResponse>,
+): QueryConfig<T> {
+  return publishRestEndpointAsMcpRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates an MCP tool that invokes a workflow when called
  * Publish a ValkyrAI workflow as an MCP tool
  */
-function publishWorkflowAsMcpRaw<T>(requestParameters: PublishWorkflowAsMcpApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpServiceResponse> = {}): QueryConfig<T> {
-    if (requestParameters.publishWorkflowRequest === null || requestParameters.publishWorkflowRequest === undefined) {
-        throw new runtime.RequiredError('publishWorkflowRequest','Required parameter requestParameters.publishWorkflowRequest was null or undefined when calling publishWorkflowAsMcp.');
-    }
+function publishWorkflowAsMcpRaw<T>(
+  requestParameters: PublishWorkflowAsMcpApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpServiceResponse> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.publishWorkflowRequest === null ||
+    requestParameters.publishWorkflowRequest === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "publishWorkflowRequest",
+      "Required parameter requestParameters.publishWorkflowRequest was null or undefined when calling publishWorkflowAsMcp.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/mcp/publish-workflow`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      PublishWorkflowRequestToJSON(requestParameters.publishWorkflowRequest),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpServiceResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/mcp/publish-workflow`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || PublishWorkflowRequestToJSON(requestParameters.publishWorkflowRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpServiceResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates an MCP tool that invokes a workflow when called
-* Publish a ValkyrAI workflow as an MCP tool
-*/
-export function publishWorkflowAsMcp<T>(requestParameters: PublishWorkflowAsMcpApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpServiceResponse>): QueryConfig<T> {
-    return publishWorkflowAsMcpRaw(requestParameters, requestConfig);
+ * Creates an MCP tool that invokes a workflow when called
+ * Publish a ValkyrAI workflow as an MCP tool
+ */
+export function publishWorkflowAsMcp<T>(
+  requestParameters: PublishWorkflowAsMcpApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpServiceResponse>,
+): QueryConfig<T> {
+  return publishWorkflowAsMcpRaw(requestParameters, requestConfig);
 }
 
 /**
  * Removes a service from the marketplace and stops it from being discoverable
  * Unpublish MCP service
  */
-function unpublishMcpServiceRaw<T>(requestParameters: UnpublishMcpServiceApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.slug === null || requestParameters.slug === undefined) {
-        throw new runtime.RequiredError('slug','Required parameter requestParameters.slug was null or undefined when calling unpublishMcpService.');
-    }
+function unpublishMcpServiceRaw<T>(
+  requestParameters: UnpublishMcpServiceApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.slug === null || requestParameters.slug === undefined) {
+    throw new runtime.RequiredError(
+      "slug",
+      "Required parameter requestParameters.slug was null or undefined when calling unpublishMcpService.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/mcp/services/{slug}`.replace(
+      `{${"slug"}}`,
+      encodeURIComponent(String(requestParameters.slug)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/mcp/services/{slug}`.replace(`{${"slug"}}`, encodeURIComponent(String(requestParameters.slug))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Removes a service from the marketplace and stops it from being discoverable
-* Unpublish MCP service
-*/
-export function unpublishMcpService<T>(requestParameters: UnpublishMcpServiceApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return unpublishMcpServiceRaw(requestParameters, requestConfig);
+ * Removes a service from the marketplace and stops it from being discoverable
+ * Unpublish MCP service
+ */
+export function unpublishMcpService<T>(
+  requestParameters: UnpublishMcpServiceApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return unpublishMcpServiceRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates metadata and configuration for a published MCP service
  * Update MCP service
  */
-function updateMcpServiceRaw<T>(requestParameters: UpdateMcpServiceApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpServiceRegistry> = {}): QueryConfig<T> {
-    if (requestParameters.slug === null || requestParameters.slug === undefined) {
-        throw new runtime.RequiredError('slug','Required parameter requestParameters.slug was null or undefined when calling updateMcpService.');
-    }
+function updateMcpServiceRaw<T>(
+  requestParameters: UpdateMcpServiceApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpServiceRegistry> = {},
+): QueryConfig<T> {
+  if (requestParameters.slug === null || requestParameters.slug === undefined) {
+    throw new runtime.RequiredError(
+      "slug",
+      "Required parameter requestParameters.slug was null or undefined when calling updateMcpService.",
+    );
+  }
 
-    if (requestParameters.mcpServiceRegistry === null || requestParameters.mcpServiceRegistry === undefined) {
-        throw new runtime.RequiredError('mcpServiceRegistry','Required parameter requestParameters.mcpServiceRegistry was null or undefined when calling updateMcpService.');
-    }
+  if (
+    requestParameters.mcpServiceRegistry === null ||
+    requestParameters.mcpServiceRegistry === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "mcpServiceRegistry",
+      "Required parameter requestParameters.mcpServiceRegistry was null or undefined when calling updateMcpService.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/mcp/services/{slug}`.replace(
+      `{${"slug"}}`,
+      encodeURIComponent(String(requestParameters.slug)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      McpServiceRegistryToJSON(requestParameters.mcpServiceRegistry),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpServiceRegistryFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/mcp/services/{slug}`.replace(`{${"slug"}}`, encodeURIComponent(String(requestParameters.slug))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || McpServiceRegistryToJSON(requestParameters.mcpServiceRegistry),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpServiceRegistryFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates metadata and configuration for a published MCP service
-* Update MCP service
-*/
-export function updateMcpService<T>(requestParameters: UpdateMcpServiceApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpServiceRegistry>): QueryConfig<T> {
-    return updateMcpServiceRaw(requestParameters, requestConfig);
+ * Updates metadata and configuration for a published MCP service
+ * Update MCP service
+ */
+export function updateMcpService<T>(
+  requestParameters: UpdateMcpServiceApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpServiceRegistry>,
+): QueryConfig<T> {
+  return updateMcpServiceRaw(requestParameters, requestConfig);
 }
 
 /**
  * Uploads an OpenAPI specification file (YAML or JSON), validates it, and creates a new Application record with all metadata fields populated from the spec. Returns the created Application object.
  * Upload OpenAPI spec and create Application
  */
-function uploadOpenAPIAndCreateApplicationRaw<T>(requestParameters: UploadOpenAPIAndCreateApplicationApiRequest, requestConfig: runtime.TypedQueryConfig<T, Application> = {}): QueryConfig<T> {
-    if (requestParameters.specification === null || requestParameters.specification === undefined) {
-        throw new runtime.RequiredError('specification','Required parameter requestParameters.specification was null or undefined when calling uploadOpenAPIAndCreateApplication.');
-    }
+function uploadOpenAPIAndCreateApplicationRaw<T>(
+  requestParameters: UploadOpenAPIAndCreateApplicationApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Application> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.specification === null ||
+    requestParameters.specification === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "specification",
+      "Required parameter requestParameters.specification was null or undefined when calling uploadOpenAPIAndCreateApplication.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const formData = new FormData();
+  if (requestParameters.specification !== undefined) {
+    formData.append("specification", requestParameters.specification as any);
+  }
 
-    const { meta = {} } = requestConfig;
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/mcp/openapi/upload`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: formData,
+  };
 
-    const formData = new FormData();
-    if (requestParameters.specification !== undefined) {
-        formData.append('specification', requestParameters.specification as any);
-    }
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ApplicationFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/mcp/openapi/upload`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: formData,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ApplicationFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Uploads an OpenAPI specification file (YAML or JSON), validates it, and creates a new Application record with all metadata fields populated from the spec. Returns the created Application object.
-* Upload OpenAPI spec and create Application
-*/
-export function uploadOpenAPIAndCreateApplication<T>(requestParameters: UploadOpenAPIAndCreateApplicationApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Application>): QueryConfig<T> {
-    return uploadOpenAPIAndCreateApplicationRaw(requestParameters, requestConfig);
+ * Uploads an OpenAPI specification file (YAML or JSON), validates it, and creates a new Application record with all metadata fields populated from the spec. Returns the created Application object.
+ * Upload OpenAPI spec and create Application
+ */
+export function uploadOpenAPIAndCreateApplication<T>(
+  requestParameters: UploadOpenAPIAndCreateApplicationApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Application>,
+): QueryConfig<T> {
+  return uploadOpenAPIAndCreateApplicationRaw(requestParameters, requestConfig);
 }
-

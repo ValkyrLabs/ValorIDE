@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AgentDiscoveryItem } from '@thorapi/model/AgentDiscoveryItem';
+import { AgentDiscoveryItem } from "@thorapi/model/AgentDiscoveryItem";
 
 const AgentDiscoveryItemSlice = createSlice({
   name: "AgentDiscoveryItems",
@@ -27,20 +27,25 @@ const AgentDiscoveryItemSlice = createSlice({
     },
 
     AgentDiscoveryItemValueToggled(state, action) {
-      console.log("AgentDiscoveryItem TOGGLE")
-      console.warn(JSON.stringify(action))
-      const AgentDiscoveryItem:AgentDiscoveryItem = state.find((AgentDiscoveryItem) => AgentDiscoveryItem.id === action.payload.AgentDiscoveryItemId);
+      console.log("AgentDiscoveryItem TOGGLE");
+      console.warn(JSON.stringify(action));
+      const AgentDiscoveryItem: AgentDiscoveryItem = state.find(
+        (AgentDiscoveryItem) =>
+          AgentDiscoveryItem.id === action.payload.AgentDiscoveryItemId,
+      );
       if (AgentDiscoveryItem) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     AgentDiscoveryItempropertySet(state, action) {
-      const AgentDiscoveryItem = state.find((AgentDiscoveryItem) => AgentDiscoveryItem.id === action.payload.AgentDiscoveryItemId);
+      const AgentDiscoveryItem = state.find(
+        (AgentDiscoveryItem) =>
+          AgentDiscoveryItem.id === action.payload.AgentDiscoveryItemId,
+      );
       if (AgentDiscoveryItem) {
-      //  AgentDiscoveryItem[action.property] = action.payload[action.property];
+        //  AgentDiscoveryItem[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const AgentDiscoveryItemSlice = createSlice({
 export const {
   AgentDiscoveryItemAdded,
   AgentDiscoveryItemValueToggled,
-  AgentDiscoveryItempropertySet
+  AgentDiscoveryItempropertySet,
 } = AgentDiscoveryItemSlice.actions;
 export default AgentDiscoveryItemSlice.reducer;

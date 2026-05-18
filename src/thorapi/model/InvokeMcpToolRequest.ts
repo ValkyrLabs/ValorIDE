@@ -26,48 +26,46 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
 /**
- * 
+ *
  * @export
  * @interface InvokeMcpToolRequest
  */
-export type InvokeMcpToolRequest  = DataObject & {
-    /**
-     * Name of the tool to invoke
-     * @type {string}
-     * @memberof InvokeMcpToolRequest
-     */
-    toolName: string;
-    /**
-     * Tool input parameters
-     * @type {string}
-     * @memberof InvokeMcpToolRequest
-     */
-    input?: string;
-}
+export type InvokeMcpToolRequest = DataObject & {
+  /**
+   * Name of the tool to invoke
+   * @type {string}
+   * @memberof InvokeMcpToolRequest
+   */
+  toolName: string;
+  /**
+   * Tool input parameters
+   * @type {string}
+   * @memberof InvokeMcpToolRequest
+   */
+  input?: string;
+};
 
 export function InvokeMcpToolRequestFromJSON(json: any): InvokeMcpToolRequest {
-    return {
-        ...DataObjectFromJSON(json),
-        'toolName': json['toolName'],
-        'input': !exists(json, 'input') ? undefined : json['input'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    toolName: json["toolName"],
+    input: !exists(json, "input") ? undefined : json["input"],
+  };
 }
 
 export function InvokeMcpToolRequestToJSON(value?: InvokeMcpToolRequest): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'toolName': value.toolName,
-        'input': value.input,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    toolName: value.toolName,
+    input: value.input,
+  };
 }
-
-

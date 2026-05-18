@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  MemoryCostStats,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddMemoryCostStatsMutation } from '../../services/MemoryCostStatsService';
+import { MemoryCostStats } from "@thorapi/model";
+
+import { useAddMemoryCostStatsMutation } from "../../services/MemoryCostStatsService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,23 +71,30 @@ Credit and cost telemetry for recent memory operations.
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        lastRun: asNumber(Yup.number().typeError("lastRun must be a number")),
-        waste: asNumber(Yup.number().typeError("waste must be a number")),
-        burnRate: asNumber(Yup.number().typeError("burnRate must be a number")),
-        retrievalCost: asNumber(Yup.number().typeError("retrievalCost must be a number")),
-        writesCost: asNumber(Yup.number().typeError("writesCost must be a number")),
-        assemblyCost: asNumber(Yup.number().typeError("assemblyCost must be a number")),
-        trashed: Yup.boolean(),
+  lastRun: asNumber(Yup.number().typeError("lastRun must be a number")),
+  waste: asNumber(Yup.number().typeError("waste must be a number")),
+  burnRate: asNumber(Yup.number().typeError("burnRate must be a number")),
+  retrievalCost: asNumber(
+    Yup.number().typeError("retrievalCost must be a number"),
+  ),
+  writesCost: asNumber(Yup.number().typeError("writesCost must be a number")),
+  assemblyCost: asNumber(
+    Yup.number().typeError("assemblyCost must be a number"),
+  ),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const MemoryCostStatsForm: React.FC = () => {
-  const [addMemoryCostStats, addMemoryCostStatsResult] = useAddMemoryCostStatsMutation();
+  const [addMemoryCostStats, addMemoryCostStatsResult] =
+    useAddMemoryCostStatsMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -91,12 +104,18 @@ const MemoryCostStatsForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -104,13 +123,13 @@ const MemoryCostStatsForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<MemoryCostStats> = {
-          lastRun: 0,
-          waste: 0,
-          burnRate: 0,
-          retrievalCost: 0,
-          writesCost: 0,
-          assemblyCost: 0,
-          trashed: false,
+    lastRun: 0,
+    waste: 0,
+    burnRate: 0,
+    retrievalCost: 0,
+    writesCost: 0,
+    assemblyCost: 0,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -125,11 +144,14 @@ const MemoryCostStatsForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new MemoryCostStats:', grants);
+    console.log("Permissions saved for new MemoryCostStats:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<MemoryCostStats>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<MemoryCostStats>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -140,7 +162,7 @@ const MemoryCostStatsForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `MemoryCostStats created successfully! Would you like to set permissions for this object?`
+          `MemoryCostStats created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -148,8 +170,8 @@ const MemoryCostStatsForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create MemoryCostStats:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create MemoryCostStats:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -170,53 +192,48 @@ const MemoryCostStatsForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addMemoryCostStatsResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New MemoryCostStats
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New MemoryCostStats
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="lastRun" className="nice-form-control">
                       <b>
                         Last Run:
-                        {touched.lastRun &&
-                         !errors.lastRun && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.lastRun && !errors.lastRun && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="lastRun"
-                            type="number"
-                            step="any"
-                            value={values.lastRun || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('lastRun', true);
-                              const v = e.target.value;
-                              setFieldValue('lastRun', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.lastRun
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="lastRun"
+                        type="number"
+                        step="any"
+                        value={values.lastRun || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("lastRun", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "lastRun",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.lastRun
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -228,37 +245,33 @@ const MemoryCostStatsForm: React.FC = () => {
                     <label htmlFor="waste" className="nice-form-control">
                       <b>
                         Waste:
-                        {touched.waste &&
-                         !errors.waste && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.waste && !errors.waste && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="waste"
-                            type="number"
-                            step="any"
-                            value={values.waste || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('waste', true);
-                              const v = e.target.value;
-                              setFieldValue('waste', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.waste
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="waste"
+                        type="number"
+                        step="any"
+                        value={values.waste || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("waste", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "waste",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.waste
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -270,37 +283,33 @@ const MemoryCostStatsForm: React.FC = () => {
                     <label htmlFor="burnRate" className="nice-form-control">
                       <b>
                         Burn Rate:
-                        {touched.burnRate &&
-                         !errors.burnRate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.burnRate && !errors.burnRate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="burnRate"
-                            type="number"
-                            step="any"
-                            value={values.burnRate || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('burnRate', true);
-                              const v = e.target.value;
-                              setFieldValue('burnRate', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.burnRate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="burnRate"
+                        type="number"
+                        step="any"
+                        value={values.burnRate || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("burnRate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "burnRate",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.burnRate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -309,40 +318,39 @@ const MemoryCostStatsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="retrievalCost" className="nice-form-control">
+                    <label
+                      htmlFor="retrievalCost"
+                      className="nice-form-control"
+                    >
                       <b>
                         Retrieval Cost:
-                        {touched.retrievalCost &&
-                         !errors.retrievalCost && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.retrievalCost && !errors.retrievalCost && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="retrievalCost"
-                            type="number"
-                            step="any"
-                            value={values.retrievalCost || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('retrievalCost', true);
-                              const v = e.target.value;
-                              setFieldValue('retrievalCost', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.retrievalCost
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="retrievalCost"
+                        type="number"
+                        step="any"
+                        value={values.retrievalCost || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("retrievalCost", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "retrievalCost",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.retrievalCost
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -354,37 +362,33 @@ const MemoryCostStatsForm: React.FC = () => {
                     <label htmlFor="writesCost" className="nice-form-control">
                       <b>
                         Writes Cost:
-                        {touched.writesCost &&
-                         !errors.writesCost && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.writesCost && !errors.writesCost && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="writesCost"
-                            type="number"
-                            step="any"
-                            value={values.writesCost || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('writesCost', true);
-                              const v = e.target.value;
-                              setFieldValue('writesCost', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.writesCost
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="writesCost"
+                        type="number"
+                        step="any"
+                        value={values.writesCost || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("writesCost", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "writesCost",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.writesCost
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -396,37 +400,33 @@ const MemoryCostStatsForm: React.FC = () => {
                     <label htmlFor="assemblyCost" className="nice-form-control">
                       <b>
                         Assembly Cost:
-                        {touched.assemblyCost &&
-                         !errors.assemblyCost && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.assemblyCost && !errors.assemblyCost && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="assemblyCost"
-                            type="number"
-                            step="any"
-                            value={values.assemblyCost || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('assemblyCost', true);
-                              const v = e.target.value;
-                              setFieldValue('assemblyCost', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.assemblyCost
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="assemblyCost"
+                        type="number"
+                        step="any"
+                        value={values.assemblyCost || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("assemblyCost", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "assemblyCost",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.assemblyCost
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -438,32 +438,25 @@ const MemoryCostStatsForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -473,45 +466,59 @@ const MemoryCostStatsForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New MemoryCostStats
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New MemoryCostStats
+                    </CoolButton>
 
-                  {(addMemoryCostStatsResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addMemoryCostStatsResult as any).error ? (addMemoryCostStatsResult as any).error.data : (addMemoryCostStatsResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addMemoryCostStatsResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addMemoryCostStatsResult as any).error
+                              ? (addMemoryCostStatsResult as any).error.data
+                              : (addMemoryCostStatsResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addMemoryCostStatsResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addMemoryCostStatsResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addMemoryCostStatsResult: {JSON.stringify(addMemoryCostStatsResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addMemoryCostStatsResult:{" "}
+                    {JSON.stringify(addMemoryCostStatsResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -531,8 +538,5 @@ const MemoryCostStatsForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default MemoryCostStatsForm;
-

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { DownloadAccess } from '@thorapi/model/DownloadAccess';
+import { DownloadAccess } from "@thorapi/model/DownloadAccess";
 
 const DownloadAccessSlice = createSlice({
   name: "DownloadAccesss",
@@ -27,20 +27,25 @@ const DownloadAccessSlice = createSlice({
     },
 
     DownloadAccessValueToggled(state, action) {
-      console.log("DownloadAccess TOGGLE")
-      console.warn(JSON.stringify(action))
-      const DownloadAccess:DownloadAccess = state.find((DownloadAccess) => DownloadAccess.id === action.payload.DownloadAccessId);
+      console.log("DownloadAccess TOGGLE");
+      console.warn(JSON.stringify(action));
+      const DownloadAccess: DownloadAccess = state.find(
+        (DownloadAccess) =>
+          DownloadAccess.id === action.payload.DownloadAccessId,
+      );
       if (DownloadAccess) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     DownloadAccesspropertySet(state, action) {
-      const DownloadAccess = state.find((DownloadAccess) => DownloadAccess.id === action.payload.DownloadAccessId);
+      const DownloadAccess = state.find(
+        (DownloadAccess) =>
+          DownloadAccess.id === action.payload.DownloadAccessId,
+      );
       if (DownloadAccess) {
-      //  DownloadAccess[action.property] = action.payload[action.property];
+        //  DownloadAccess[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const DownloadAccessSlice = createSlice({
 export const {
   DownloadAccessAdded,
   DownloadAccessValueToggled,
-  DownloadAccesspropertySet
+  DownloadAccesspropertySet,
 } = DownloadAccessSlice.actions;
 export default DownloadAccessSlice.reducer;

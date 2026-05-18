@@ -19,20 +19,35 @@ Description: ExecModuleResourceConfig
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, ExecModuleResourceConfig } from '@thorapi/model';
-import { useGetExecModuleResourceConfigsQuery, useAddExecModuleResourceConfigMutation, useUpdateExecModuleResourceConfigMutation } from '../../services/ExecModuleResourceConfigService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, ExecModuleResourceConfig } from "@thorapi/model";
+import {
+  useGetExecModuleResourceConfigsQuery,
+  useAddExecModuleResourceConfigMutation,
+  useUpdateExecModuleResourceConfigMutation,
+} from "../../services/ExecModuleResourceConfigService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const ExecModuleResourceConfigChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetExecModuleResourceConfigsQuery();
+  const { data: initialData = [], isLoading } =
+    useGetExecModuleResourceConfigsQuery();
 
   const [data, setData] = useState<ExecModuleResourceConfig[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<ExecModuleResourceConfig>>({});
-  
+  const [chartData, setChartData] = useState<Partial<ExecModuleResourceConfig>>(
+    {},
+  );
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +65,9 @@ const ExecModuleResourceConfigChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +75,15 @@ const ExecModuleResourceConfigChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((execmoduleresourceconfig: DataObject) => [execmoduleresourceconfig])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((execmoduleresourceconfig: DataObject) => [
+            execmoduleresourceconfig,
+          ])}
+        />
+      )}
     </>
   );
 };

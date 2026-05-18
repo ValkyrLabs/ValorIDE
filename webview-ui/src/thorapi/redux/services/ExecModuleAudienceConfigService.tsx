@@ -13,47 +13,69 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { ExecModuleAudienceConfig } from '@thorapi/model/ExecModuleAudienceConfig'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { ExecModuleAudienceConfig } from "@thorapi/model/ExecModuleAudienceConfig";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type ExecModuleAudienceConfigResponse = ExecModuleAudienceConfig[]
+type ExecModuleAudienceConfigResponse = ExecModuleAudienceConfig[];
 
-const toExecModuleAudienceConfigList = (result: unknown): ExecModuleAudienceConfigResponse => {
+const toExecModuleAudienceConfigList = (
+  result: unknown,
+): ExecModuleAudienceConfigResponse => {
   if (Array.isArray(result)) {
-    return result as ExecModuleAudienceConfigResponse
+    return result as ExecModuleAudienceConfigResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as ExecModuleAudienceConfigResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as ExecModuleAudienceConfigResponse)
+    : [];
+};
 
 export const ExecModuleAudienceConfigService = createApi({
-  reducerPath: 'ExecModuleAudienceConfig', // This should remain unique
+  reducerPath: "ExecModuleAudienceConfig", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['ExecModuleAudienceConfig'],
+  tagTypes: ["ExecModuleAudienceConfig"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getExecModuleAudienceConfigsPaged: build.query<ExecModuleAudienceConfigResponse, { page: number; size?: number; example?: Partial<ExecModuleAudienceConfig> }>({
+    getExecModuleAudienceConfigsPaged: build.query<
+      ExecModuleAudienceConfigResponse,
+      {
+        page: number;
+        size?: number;
+        example?: Partial<ExecModuleAudienceConfig>;
+      }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ExecModuleAudienceConfig?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ExecModuleAudienceConfig?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toExecModuleAudienceConfigList(result)
+        const rows = toExecModuleAudienceConfigList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ExecModuleAudienceConfig' as const, id })),
-          { type: 'ExecModuleAudienceConfig', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({
+              type: "ExecModuleAudienceConfig" as const,
+              id,
+            })),
+          { type: "ExecModuleAudienceConfig", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getExecModuleAudienceConfigs: build.query<ExecModuleAudienceConfigResponse, { example?: Partial<ExecModuleAudienceConfig> } | void>({
+    getExecModuleAudienceConfigs: build.query<
+      ExecModuleAudienceConfigResponse,
+      { example?: Partial<ExecModuleAudienceConfig> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +84,117 @@ export const ExecModuleAudienceConfigService = createApi({
         return `ExecModuleAudienceConfig`;
       },
       providesTags: (result) => {
-        const rows = toExecModuleAudienceConfigList(result)
+        const rows = toExecModuleAudienceConfigList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ExecModuleAudienceConfig' as const, id })),
-          { type: 'ExecModuleAudienceConfig', id: 'LIST' },
-        ]
+            .map(({ id }) => ({
+              type: "ExecModuleAudienceConfig" as const,
+              id,
+            })),
+          { type: "ExecModuleAudienceConfig", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addExecModuleAudienceConfig: build.mutation<ExecModuleAudienceConfig, Partial<ExecModuleAudienceConfig>>({
+    addExecModuleAudienceConfig: build.mutation<
+      ExecModuleAudienceConfig,
+      Partial<ExecModuleAudienceConfig>
+    >({
       query: (body) => ({
         url: `ExecModuleAudienceConfig`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'ExecModuleAudienceConfig', id: 'LIST' }],
+      invalidatesTags: [{ type: "ExecModuleAudienceConfig", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getExecModuleAudienceConfig: build.query<ExecModuleAudienceConfig, string>({
       query: (id) => `ExecModuleAudienceConfig/${id}`,
-      providesTags: (result, error, id) => [{ type: 'ExecModuleAudienceConfig', id }],
+      providesTags: (result, error, id) => [
+        { type: "ExecModuleAudienceConfig", id },
+      ],
     }),
 
     // 5) Update
-    updateExecModuleAudienceConfig: build.mutation<void, Pick<ExecModuleAudienceConfig, 'id'> & Partial<ExecModuleAudienceConfig>>({
+    updateExecModuleAudienceConfig: build.mutation<
+      void,
+      Pick<ExecModuleAudienceConfig, "id"> & Partial<ExecModuleAudienceConfig>
+    >({
       query: ({ id, ...patch }) => ({
         url: `ExecModuleAudienceConfig/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            ExecModuleAudienceConfigService.util.updateQueryData('getExecModuleAudienceConfig', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            ExecModuleAudienceConfigService.util.updateQueryData(
+              "getExecModuleAudienceConfig",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<ExecModuleAudienceConfig, 'id'>) => [
-        { type: 'ExecModuleAudienceConfig', id },
-        { type: 'ExecModuleAudienceConfig', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<ExecModuleAudienceConfig, "id">,
+      ) => [
+        { type: "ExecModuleAudienceConfig", id },
+        { type: "ExecModuleAudienceConfig", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteExecModuleAudienceConfig: build.mutation<{ success: boolean; id: string }, number>({
+    deleteExecModuleAudienceConfig: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `ExecModuleAudienceConfig/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'ExecModuleAudienceConfig', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "ExecModuleAudienceConfig", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteExecModuleAudienceConfigCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteExecModuleAudienceConfigCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `ExecModuleAudienceConfig/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ExecModuleAudienceConfig', id }, { type: 'ExecModuleAudienceConfig', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "ExecModuleAudienceConfig", id },
+        { type: "ExecModuleAudienceConfig", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetExecModuleAudienceConfigsPagedQuery`
 export const {
-  useGetExecModuleAudienceConfigsPagedQuery,     // immediate fetch
+  useGetExecModuleAudienceConfigsPagedQuery, // immediate fetch
   useLazyGetExecModuleAudienceConfigsPagedQuery, // lazy fetch
   useGetExecModuleAudienceConfigQuery,
   useGetExecModuleAudienceConfigsQuery,
@@ -150,4 +202,4 @@ export const {
   useUpdateExecModuleAudienceConfigMutation,
   useDeleteExecModuleAudienceConfigMutation,
   useDeleteExecModuleAudienceConfigCascadeMutation,
-} = ExecModuleAudienceConfigService
+} = ExecModuleAudienceConfigService;

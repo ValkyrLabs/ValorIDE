@@ -194,16 +194,15 @@ describe.skip("AccountView - BuyCredits integration", () => {
       isFetching: false,
       refetch: vi.fn(),
     });
-
   });
 
   it("renders the embedded BuyCredits component instead of an external link when authenticated", () => {
     render(
       <AccountView
         {...({
-          onDone: () => { },
+          onDone: () => {},
           serverConsoleNeedsAttention: false,
-          onClearServerConsoleNeedsAttention: () => { },
+          onClearServerConsoleNeedsAttention: () => {},
         } as any)}
       />,
     );
@@ -220,7 +219,7 @@ describe.skip("AccountView - BuyCredits integration", () => {
     render(
       <AccountView
         {...({
-          onDone: () => { },
+          onDone: () => {},
           serverConsoleNeedsAttention: true,
           onClearServerConsoleNeedsAttention: onClear,
         } as any)}
@@ -238,9 +237,9 @@ describe.skip("AccountView - BuyCredits integration", () => {
     render(
       <AccountView
         {...({
-          onDone: () => { },
+          onDone: () => {},
           serverConsoleNeedsAttention: false,
-          onClearServerConsoleNeedsAttention: () => { },
+          onClearServerConsoleNeedsAttention: () => {},
           initialActiveTab: "serverConsole",
         } as any)}
       />,
@@ -259,9 +258,9 @@ describe.skip("AccountView - BuyCredits integration", () => {
 
     render(
       <AccountView
-        onDone={() => { }}
+        onDone={() => {}}
         serverConsoleNeedsAttention={false}
-        onClearServerConsoleNeedsAttention={() => { }}
+        onClearServerConsoleNeedsAttention={() => {}}
       />,
     );
 
@@ -301,7 +300,6 @@ describe("AccountView - BuyCredits visibility", () => {
       isFetching: false,
       refetch: vi.fn(),
     });
-
   });
 
   it("hides BuyCredits when balance is above the critical threshold", () => {
@@ -314,9 +312,9 @@ describe("AccountView - BuyCredits visibility", () => {
 
     render(
       <AccountView
-        onDone={() => { }}
+        onDone={() => {}}
         serverConsoleNeedsAttention={false}
-        onClearServerConsoleNeedsAttention={() => { }}
+        onClearServerConsoleNeedsAttention={() => {}}
       />,
     );
 
@@ -333,9 +331,9 @@ describe("AccountView - BuyCredits visibility", () => {
 
     render(
       <AccountView
-        onDone={() => { }}
+        onDone={() => {}}
         serverConsoleNeedsAttention={false}
-        onClearServerConsoleNeedsAttention={() => { }}
+        onClearServerConsoleNeedsAttention={() => {}}
       />,
     );
 

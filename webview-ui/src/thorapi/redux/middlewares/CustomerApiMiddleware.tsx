@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_CUSTOMER_REQUEST,
-    FETCH_CUSTOMER_REQUEST,
-    LIST_CUSTOMER_REQUEST,
-    UPDATE_CUSTOMER_REQUEST,
-    DELETE_CUSTOMER_REQUEST,
-
-    addCustomerFailure,
-    addCustomerSuccess,
-
-    fetchCustomerFailure,
-    fetchCustomerSuccess,
-    
-    listCustomerFailure,
-    listCustomerSuccess,
-
-    updateCustomerFailure,
-    updateCustomerSuccess,
-    
-    deleteCustomerFailure,
-    deleteCustomerSuccess,
-    
-} from '../actions/CustomerApiAction';
+  ADD_CUSTOMER_REQUEST,
+  FETCH_CUSTOMER_REQUEST,
+  LIST_CUSTOMER_REQUEST,
+  UPDATE_CUSTOMER_REQUEST,
+  DELETE_CUSTOMER_REQUEST,
+  addCustomerFailure,
+  addCustomerSuccess,
+  fetchCustomerFailure,
+  fetchCustomerSuccess,
+  listCustomerFailure,
+  listCustomerSuccess,
+  updateCustomerFailure,
+  updateCustomerSuccess,
+  deleteCustomerFailure,
+  deleteCustomerSuccess,
+} from "../actions/CustomerApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Customer
 */
 
-
-
-export const CustomerMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("Customer MIDDLEWARE: " + JSON.stringify(action) )
+export const CustomerMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Customer MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

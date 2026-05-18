@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { WorkflowGraphResponse } from '@thorapi/model/WorkflowGraphResponse';
+import { WorkflowGraphResponse } from "@thorapi/model/WorkflowGraphResponse";
 
 const WorkflowGraphResponseSlice = createSlice({
   name: "WorkflowGraphResponses",
@@ -27,20 +27,25 @@ const WorkflowGraphResponseSlice = createSlice({
     },
 
     WorkflowGraphResponseValueToggled(state, action) {
-      console.log("WorkflowGraphResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const WorkflowGraphResponse:WorkflowGraphResponse = state.find((WorkflowGraphResponse) => WorkflowGraphResponse.id === action.payload.WorkflowGraphResponseId);
+      console.log("WorkflowGraphResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const WorkflowGraphResponse: WorkflowGraphResponse = state.find(
+        (WorkflowGraphResponse) =>
+          WorkflowGraphResponse.id === action.payload.WorkflowGraphResponseId,
+      );
       if (WorkflowGraphResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     WorkflowGraphResponsepropertySet(state, action) {
-      const WorkflowGraphResponse = state.find((WorkflowGraphResponse) => WorkflowGraphResponse.id === action.payload.WorkflowGraphResponseId);
+      const WorkflowGraphResponse = state.find(
+        (WorkflowGraphResponse) =>
+          WorkflowGraphResponse.id === action.payload.WorkflowGraphResponseId,
+      );
       if (WorkflowGraphResponse) {
-      //  WorkflowGraphResponse[action.property] = action.payload[action.property];
+        //  WorkflowGraphResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const WorkflowGraphResponseSlice = createSlice({
 export const {
   WorkflowGraphResponseAdded,
   WorkflowGraphResponseValueToggled,
-  WorkflowGraphResponsepropertySet
+  WorkflowGraphResponsepropertySet,
 } = WorkflowGraphResponseSlice.actions;
 export default WorkflowGraphResponseSlice.reducer;

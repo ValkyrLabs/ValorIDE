@@ -19,20 +19,32 @@ Description: ThorapiRule
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, ThorapiRule } from '@thorapi/model';
-import { useGetThorapiRulesQuery, useAddThorapiRuleMutation, useUpdateThorapiRuleMutation } from '../../services/ThorapiRuleService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, ThorapiRule } from "@thorapi/model";
+import {
+  useGetThorapiRulesQuery,
+  useAddThorapiRuleMutation,
+  useUpdateThorapiRuleMutation,
+} from "../../services/ThorapiRuleService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const ThorapiRuleChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetThorapiRulesQuery();
 
   const [data, setData] = useState<ThorapiRule[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<ThorapiRule>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const ThorapiRuleChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const ThorapiRuleChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((thorapirule: DataObject) => [thorapirule])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((thorapirule: DataObject) => [thorapirule])}
+        />
+      )}
     </>
   );
 };

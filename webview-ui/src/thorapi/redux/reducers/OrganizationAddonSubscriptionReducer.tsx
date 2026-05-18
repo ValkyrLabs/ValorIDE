@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OrganizationAddonSubscription } from '@thorapi/model/OrganizationAddonSubscription';
+import { OrganizationAddonSubscription } from "@thorapi/model/OrganizationAddonSubscription";
 
 const OrganizationAddonSubscriptionSlice = createSlice({
   name: "OrganizationAddonSubscriptions",
@@ -27,20 +27,28 @@ const OrganizationAddonSubscriptionSlice = createSlice({
     },
 
     OrganizationAddonSubscriptionValueToggled(state, action) {
-      console.log("OrganizationAddonSubscription TOGGLE")
-      console.warn(JSON.stringify(action))
-      const OrganizationAddonSubscription:OrganizationAddonSubscription = state.find((OrganizationAddonSubscription) => OrganizationAddonSubscription.id === action.payload.OrganizationAddonSubscriptionId);
+      console.log("OrganizationAddonSubscription TOGGLE");
+      console.warn(JSON.stringify(action));
+      const OrganizationAddonSubscription: OrganizationAddonSubscription =
+        state.find(
+          (OrganizationAddonSubscription) =>
+            OrganizationAddonSubscription.id ===
+            action.payload.OrganizationAddonSubscriptionId,
+        );
       if (OrganizationAddonSubscription) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     OrganizationAddonSubscriptionpropertySet(state, action) {
-      const OrganizationAddonSubscription = state.find((OrganizationAddonSubscription) => OrganizationAddonSubscription.id === action.payload.OrganizationAddonSubscriptionId);
+      const OrganizationAddonSubscription = state.find(
+        (OrganizationAddonSubscription) =>
+          OrganizationAddonSubscription.id ===
+          action.payload.OrganizationAddonSubscriptionId,
+      );
       if (OrganizationAddonSubscription) {
-      //  OrganizationAddonSubscription[action.property] = action.payload[action.property];
+        //  OrganizationAddonSubscription[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +57,6 @@ const OrganizationAddonSubscriptionSlice = createSlice({
 export const {
   OrganizationAddonSubscriptionAdded,
   OrganizationAddonSubscriptionValueToggled,
-  OrganizationAddonSubscriptionpropertySet
+  OrganizationAddonSubscriptionpropertySet,
 } = OrganizationAddonSubscriptionSlice.actions;
 export default OrganizationAddonSubscriptionSlice.reducer;

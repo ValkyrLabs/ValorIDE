@@ -17,7 +17,7 @@ app.post("/webview-error", (req, res) => {
 // fallback GET endpoint to support Image src / querystring fallback when fetch/sendBeacon
 app.get("/webview-error", (req, res) => {
   console.log("\n--- Webview Error Payload Received (GET) ---");
-  console.log(req.query.payload || '<no payload>');
+  console.log(req.query.payload || "<no payload>");
   console.log("--------------------------------------------\n");
   res.status(200).send({ ok: true });
 });

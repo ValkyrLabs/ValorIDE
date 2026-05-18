@@ -19,20 +19,35 @@ Description: ExecModuleObservabilityConfig
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, ExecModuleObservabilityConfig } from '@thorapi/model';
-import { useGetExecModuleObservabilityConfigsQuery, useAddExecModuleObservabilityConfigMutation, useUpdateExecModuleObservabilityConfigMutation } from '../../services/ExecModuleObservabilityConfigService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, ExecModuleObservabilityConfig } from "@thorapi/model";
+import {
+  useGetExecModuleObservabilityConfigsQuery,
+  useAddExecModuleObservabilityConfigMutation,
+  useUpdateExecModuleObservabilityConfigMutation,
+} from "../../services/ExecModuleObservabilityConfigService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const ExecModuleObservabilityConfigChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetExecModuleObservabilityConfigsQuery();
+  const { data: initialData = [], isLoading } =
+    useGetExecModuleObservabilityConfigsQuery();
 
   const [data, setData] = useState<ExecModuleObservabilityConfig[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<ExecModuleObservabilityConfig>>({});
-  
+  const [chartData, setChartData] = useState<
+    Partial<ExecModuleObservabilityConfig>
+  >({});
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +65,9 @@ const ExecModuleObservabilityConfigChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +75,15 @@ const ExecModuleObservabilityConfigChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((execmoduleobservabilityconfig: DataObject) => [execmoduleobservabilityconfig])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((execmoduleobservabilityconfig: DataObject) => [
+            execmoduleobservabilityconfig,
+          ])}
+        />
+      )}
     </>
   );
 };

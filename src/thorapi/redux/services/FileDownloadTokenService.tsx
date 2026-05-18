@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { FileDownloadToken } from '@thorapi/model/FileDownloadToken'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { FileDownloadToken } from "@thorapi/model/FileDownloadToken";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type FileDownloadTokenResponse = FileDownloadToken[]
+type FileDownloadTokenResponse = FileDownloadToken[];
 
-const toFileDownloadTokenList = (result: unknown): FileDownloadTokenResponse => {
+const toFileDownloadTokenList = (
+  result: unknown,
+): FileDownloadTokenResponse => {
   if (Array.isArray(result)) {
-    return result as FileDownloadTokenResponse
+    return result as FileDownloadTokenResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as FileDownloadTokenResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as FileDownloadTokenResponse)
+    : [];
+};
 
 export const FileDownloadTokenService = createApi({
-  reducerPath: 'FileDownloadToken', // This should remain unique
+  reducerPath: "FileDownloadToken", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['FileDownloadToken'],
+  tagTypes: ["FileDownloadToken"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getFileDownloadTokensPaged: build.query<FileDownloadTokenResponse, { page: number; size?: number; example?: Partial<FileDownloadToken> }>({
+    getFileDownloadTokensPaged: build.query<
+      FileDownloadTokenResponse,
+      { page: number; size?: number; example?: Partial<FileDownloadToken> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `FileDownloadToken?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `FileDownloadToken?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toFileDownloadTokenList(result)
+        const rows = toFileDownloadTokenList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'FileDownloadToken' as const, id })),
-          { type: 'FileDownloadToken', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "FileDownloadToken" as const, id })),
+          { type: "FileDownloadToken", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getFileDownloadTokens: build.query<FileDownloadTokenResponse, { example?: Partial<FileDownloadToken> } | void>({
+    getFileDownloadTokens: build.query<
+      FileDownloadTokenResponse,
+      { example?: Partial<FileDownloadToken> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,112 @@ export const FileDownloadTokenService = createApi({
         return `FileDownloadToken`;
       },
       providesTags: (result) => {
-        const rows = toFileDownloadTokenList(result)
+        const rows = toFileDownloadTokenList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'FileDownloadToken' as const, id })),
-          { type: 'FileDownloadToken', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "FileDownloadToken" as const, id })),
+          { type: "FileDownloadToken", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addFileDownloadToken: build.mutation<FileDownloadToken, Partial<FileDownloadToken>>({
+    addFileDownloadToken: build.mutation<
+      FileDownloadToken,
+      Partial<FileDownloadToken>
+    >({
       query: (body) => ({
         url: `FileDownloadToken`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'FileDownloadToken', id: 'LIST' }],
+      invalidatesTags: [{ type: "FileDownloadToken", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getFileDownloadToken: build.query<FileDownloadToken, string>({
       query: (id) => `FileDownloadToken/${id}`,
-      providesTags: (result, error, id) => [{ type: 'FileDownloadToken', id }],
+      providesTags: (result, error, id) => [{ type: "FileDownloadToken", id }],
     }),
 
     // 5) Update
-    updateFileDownloadToken: build.mutation<void, Pick<FileDownloadToken, 'id'> & Partial<FileDownloadToken>>({
+    updateFileDownloadToken: build.mutation<
+      void,
+      Pick<FileDownloadToken, "id"> & Partial<FileDownloadToken>
+    >({
       query: ({ id, ...patch }) => ({
         url: `FileDownloadToken/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            FileDownloadTokenService.util.updateQueryData('getFileDownloadToken', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            FileDownloadTokenService.util.updateQueryData(
+              "getFileDownloadToken",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<FileDownloadToken, 'id'>) => [
-        { type: 'FileDownloadToken', id },
-        { type: 'FileDownloadToken', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<FileDownloadToken, "id">,
+      ) => [
+        { type: "FileDownloadToken", id },
+        { type: "FileDownloadToken", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteFileDownloadToken: build.mutation<{ success: boolean; id: string }, number>({
+    deleteFileDownloadToken: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `FileDownloadToken/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'FileDownloadToken', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "FileDownloadToken", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteFileDownloadTokenCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteFileDownloadTokenCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `FileDownloadToken/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'FileDownloadToken', id }, { type: 'FileDownloadToken', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "FileDownloadToken", id },
+        { type: "FileDownloadToken", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetFileDownloadTokensPagedQuery`
 export const {
-  useGetFileDownloadTokensPagedQuery,     // immediate fetch
+  useGetFileDownloadTokensPagedQuery, // immediate fetch
   useLazyGetFileDownloadTokensPagedQuery, // lazy fetch
   useGetFileDownloadTokenQuery,
   useGetFileDownloadTokensQuery,
@@ -150,4 +190,4 @@ export const {
   useUpdateFileDownloadTokenMutation,
   useDeleteFileDownloadTokenMutation,
   useDeleteFileDownloadTokenCascadeMutation,
-} = FileDownloadTokenService
+} = FileDownloadTokenService;

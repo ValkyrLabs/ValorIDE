@@ -18,353 +18,431 @@ Template file: typescript-redux-query/apis.mustache
 Description: MemoryRetentionPolicyApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    MemoryRetentionPolicy,
-    MemoryRetentionPolicyFromJSON,
-    MemoryRetentionPolicyToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  MemoryRetentionPolicy,
+  MemoryRetentionPolicyFromJSON,
+  MemoryRetentionPolicyToJSON,
+} from "../model";
 
 export interface DeleteMemoryRetentionPolicyApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetMemoryRetentionPolicyApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetMemoryRetentionPolicyListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface PatchMemoryRetentionPolicyByIdApiRequest {
-    id: string;
-    memoryRetentionPolicy: MemoryRetentionPolicy;
+  id: string;
+  memoryRetentionPolicy: MemoryRetentionPolicy;
 }
 
 export interface PostMemoryRetentionPolicyApiRequest {
-    memoryRetentionPolicy: MemoryRetentionPolicy;
+  memoryRetentionPolicy: MemoryRetentionPolicy;
 }
 
 export interface UpdateMemoryRetentionPolicyApiRequest {
-    id: string;
-    memoryRetentionPolicy: MemoryRetentionPolicy;
+  id: string;
+  memoryRetentionPolicy: MemoryRetentionPolicy;
 }
-
 
 /**
  * Deletes a specific MemoryRetentionPolicy.
  * Delete a MemoryRetentionPolicy.
  */
-function deleteMemoryRetentionPolicyRaw<T>(requestParameters: DeleteMemoryRetentionPolicyApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteMemoryRetentionPolicy.');
-    }
+function deleteMemoryRetentionPolicyRaw<T>(
+  requestParameters: DeleteMemoryRetentionPolicyApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteMemoryRetentionPolicy.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MemoryRetentionPolicy/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/MemoryRetentionPolicy/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific MemoryRetentionPolicy.
-* Delete a MemoryRetentionPolicy.
-*/
-export function deleteMemoryRetentionPolicy<T>(requestParameters: DeleteMemoryRetentionPolicyApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteMemoryRetentionPolicyRaw(requestParameters, requestConfig);
+ * Deletes a specific MemoryRetentionPolicy.
+ * Delete a MemoryRetentionPolicy.
+ */
+export function deleteMemoryRetentionPolicy<T>(
+  requestParameters: DeleteMemoryRetentionPolicyApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteMemoryRetentionPolicyRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single MemoryRetentionPolicy for a specific uid.
  * Retrieve a single MemoryRetentionPolicy
  */
-function getMemoryRetentionPolicyRaw<T>(requestParameters: GetMemoryRetentionPolicyApiRequest, requestConfig: runtime.TypedQueryConfig<T, MemoryRetentionPolicy> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getMemoryRetentionPolicy.');
-    }
+function getMemoryRetentionPolicyRaw<T>(
+  requestParameters: GetMemoryRetentionPolicyApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, MemoryRetentionPolicy> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getMemoryRetentionPolicy.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MemoryRetentionPolicy/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(MemoryRetentionPolicyFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/MemoryRetentionPolicy/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(MemoryRetentionPolicyFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single MemoryRetentionPolicy for a specific uid.
-* Retrieve a single MemoryRetentionPolicy
-*/
-export function getMemoryRetentionPolicy<T>(requestParameters: GetMemoryRetentionPolicyApiRequest, requestConfig?: runtime.TypedQueryConfig<T, MemoryRetentionPolicy>): QueryConfig<T> {
-    return getMemoryRetentionPolicyRaw(requestParameters, requestConfig);
+ * Retrieves a single MemoryRetentionPolicy for a specific uid.
+ * Retrieve a single MemoryRetentionPolicy
+ */
+export function getMemoryRetentionPolicy<T>(
+  requestParameters: GetMemoryRetentionPolicyApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, MemoryRetentionPolicy>,
+): QueryConfig<T> {
+  return getMemoryRetentionPolicyRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of MemoryRetentionPolicys.
  * Retrieve a list of MemoryRetentionPolicys
  */
-function getMemoryRetentionPolicyListRaw<T>(requestParameters: GetMemoryRetentionPolicyListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<MemoryRetentionPolicy>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getMemoryRetentionPolicyListRaw<T>(
+  requestParameters: GetMemoryRetentionPolicyListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<MemoryRetentionPolicy>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MemoryRetentionPolicy`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(MemoryRetentionPolicyFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/MemoryRetentionPolicy`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(MemoryRetentionPolicyFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of MemoryRetentionPolicys.
-* Retrieve a list of MemoryRetentionPolicys
-*/
-export function getMemoryRetentionPolicyList<T>(requestParameters: GetMemoryRetentionPolicyListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<MemoryRetentionPolicy>>): QueryConfig<T> {
-    return getMemoryRetentionPolicyListRaw(requestParameters, requestConfig);
+ * Retrieves a list of MemoryRetentionPolicys.
+ * Retrieve a list of MemoryRetentionPolicys
+ */
+export function getMemoryRetentionPolicyList<T>(
+  requestParameters: GetMemoryRetentionPolicyListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<MemoryRetentionPolicy>>,
+): QueryConfig<T> {
+  return getMemoryRetentionPolicyListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing MemoryRetentionPolicy.
  * Partially update an existing MemoryRetentionPolicy
  */
-function patchMemoryRetentionPolicyByIdRaw<T>(requestParameters: PatchMemoryRetentionPolicyByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, MemoryRetentionPolicy> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchMemoryRetentionPolicyById.');
-    }
+function patchMemoryRetentionPolicyByIdRaw<T>(
+  requestParameters: PatchMemoryRetentionPolicyByIdApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, MemoryRetentionPolicy> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling patchMemoryRetentionPolicyById.",
+    );
+  }
 
-    if (requestParameters.memoryRetentionPolicy === null || requestParameters.memoryRetentionPolicy === undefined) {
-        throw new runtime.RequiredError('memoryRetentionPolicy','Required parameter requestParameters.memoryRetentionPolicy was null or undefined when calling patchMemoryRetentionPolicyById.');
-    }
+  if (
+    requestParameters.memoryRetentionPolicy === null ||
+    requestParameters.memoryRetentionPolicy === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "memoryRetentionPolicy",
+      "Required parameter requestParameters.memoryRetentionPolicy was null or undefined when calling patchMemoryRetentionPolicyById.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/merge-patch+json";
 
-    headerParameters['Content-Type'] = 'application/merge-patch+json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MemoryRetentionPolicy/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PATCH",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      MemoryRetentionPolicyToJSON(requestParameters.memoryRetentionPolicy),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(MemoryRetentionPolicyFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/MemoryRetentionPolicy/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PATCH',
-            headers: headerParameters,
-        },
-        body: queryParameters || MemoryRetentionPolicyToJSON(requestParameters.memoryRetentionPolicy),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(MemoryRetentionPolicyFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing MemoryRetentionPolicy.
-* Partially update an existing MemoryRetentionPolicy
-*/
-export function patchMemoryRetentionPolicyById<T>(requestParameters: PatchMemoryRetentionPolicyByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, MemoryRetentionPolicy>): QueryConfig<T> {
-    return patchMemoryRetentionPolicyByIdRaw(requestParameters, requestConfig);
+ * Updates an existing MemoryRetentionPolicy.
+ * Partially update an existing MemoryRetentionPolicy
+ */
+export function patchMemoryRetentionPolicyById<T>(
+  requestParameters: PatchMemoryRetentionPolicyByIdApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, MemoryRetentionPolicy>,
+): QueryConfig<T> {
+  return patchMemoryRetentionPolicyByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new MemoryRetentionPolicy.
  * Create a new MemoryRetentionPolicy
  */
-function postMemoryRetentionPolicyRaw<T>(requestParameters: PostMemoryRetentionPolicyApiRequest, requestConfig: runtime.TypedQueryConfig<T, MemoryRetentionPolicy> = {}): QueryConfig<T> {
-    if (requestParameters.memoryRetentionPolicy === null || requestParameters.memoryRetentionPolicy === undefined) {
-        throw new runtime.RequiredError('memoryRetentionPolicy','Required parameter requestParameters.memoryRetentionPolicy was null or undefined when calling postMemoryRetentionPolicy.');
-    }
+function postMemoryRetentionPolicyRaw<T>(
+  requestParameters: PostMemoryRetentionPolicyApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, MemoryRetentionPolicy> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.memoryRetentionPolicy === null ||
+    requestParameters.memoryRetentionPolicy === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "memoryRetentionPolicy",
+      "Required parameter requestParameters.memoryRetentionPolicy was null or undefined when calling postMemoryRetentionPolicy.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MemoryRetentionPolicy`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      MemoryRetentionPolicyToJSON(requestParameters.memoryRetentionPolicy),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(MemoryRetentionPolicyFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/MemoryRetentionPolicy`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || MemoryRetentionPolicyToJSON(requestParameters.memoryRetentionPolicy),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(MemoryRetentionPolicyFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new MemoryRetentionPolicy.
-* Create a new MemoryRetentionPolicy
-*/
-export function postMemoryRetentionPolicy<T>(requestParameters: PostMemoryRetentionPolicyApiRequest, requestConfig?: runtime.TypedQueryConfig<T, MemoryRetentionPolicy>): QueryConfig<T> {
-    return postMemoryRetentionPolicyRaw(requestParameters, requestConfig);
+ * Creates a new MemoryRetentionPolicy.
+ * Create a new MemoryRetentionPolicy
+ */
+export function postMemoryRetentionPolicy<T>(
+  requestParameters: PostMemoryRetentionPolicyApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, MemoryRetentionPolicy>,
+): QueryConfig<T> {
+  return postMemoryRetentionPolicyRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing MemoryRetentionPolicy.
  * Update an existing MemoryRetentionPolicy
  */
-function updateMemoryRetentionPolicyRaw<T>(requestParameters: UpdateMemoryRetentionPolicyApiRequest, requestConfig: runtime.TypedQueryConfig<T, MemoryRetentionPolicy> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateMemoryRetentionPolicy.');
-    }
+function updateMemoryRetentionPolicyRaw<T>(
+  requestParameters: UpdateMemoryRetentionPolicyApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, MemoryRetentionPolicy> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateMemoryRetentionPolicy.",
+    );
+  }
 
-    if (requestParameters.memoryRetentionPolicy === null || requestParameters.memoryRetentionPolicy === undefined) {
-        throw new runtime.RequiredError('memoryRetentionPolicy','Required parameter requestParameters.memoryRetentionPolicy was null or undefined when calling updateMemoryRetentionPolicy.');
-    }
+  if (
+    requestParameters.memoryRetentionPolicy === null ||
+    requestParameters.memoryRetentionPolicy === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "memoryRetentionPolicy",
+      "Required parameter requestParameters.memoryRetentionPolicy was null or undefined when calling updateMemoryRetentionPolicy.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MemoryRetentionPolicy/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      MemoryRetentionPolicyToJSON(requestParameters.memoryRetentionPolicy),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(MemoryRetentionPolicyFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/MemoryRetentionPolicy/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || MemoryRetentionPolicyToJSON(requestParameters.memoryRetentionPolicy),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(MemoryRetentionPolicyFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing MemoryRetentionPolicy.
-* Update an existing MemoryRetentionPolicy
-*/
-export function updateMemoryRetentionPolicy<T>(requestParameters: UpdateMemoryRetentionPolicyApiRequest, requestConfig?: runtime.TypedQueryConfig<T, MemoryRetentionPolicy>): QueryConfig<T> {
-    return updateMemoryRetentionPolicyRaw(requestParameters, requestConfig);
+ * Updates an existing MemoryRetentionPolicy.
+ * Update an existing MemoryRetentionPolicy
+ */
+export function updateMemoryRetentionPolicy<T>(
+  requestParameters: UpdateMemoryRetentionPolicyApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, MemoryRetentionPolicy>,
+): QueryConfig<T> {
+  return updateMemoryRetentionPolicyRaw(requestParameters, requestConfig);
 }
-

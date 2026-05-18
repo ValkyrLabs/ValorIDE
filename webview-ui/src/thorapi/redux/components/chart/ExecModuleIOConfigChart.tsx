@@ -19,20 +19,33 @@ Description: ExecModuleIOConfig
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, ExecModuleIOConfig } from '@thorapi/model';
-import { useGetExecModuleIOConfigsQuery, useAddExecModuleIOConfigMutation, useUpdateExecModuleIOConfigMutation } from '../../services/ExecModuleIOConfigService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, ExecModuleIOConfig } from "@thorapi/model";
+import {
+  useGetExecModuleIOConfigsQuery,
+  useAddExecModuleIOConfigMutation,
+  useUpdateExecModuleIOConfigMutation,
+} from "../../services/ExecModuleIOConfigService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const ExecModuleIOConfigChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetExecModuleIOConfigsQuery();
+  const { data: initialData = [], isLoading } =
+    useGetExecModuleIOConfigsQuery();
 
   const [data, setData] = useState<ExecModuleIOConfig[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<ExecModuleIOConfig>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +63,9 @@ const ExecModuleIOConfigChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +73,15 @@ const ExecModuleIOConfigChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((execmoduleioconfig: DataObject) => [execmoduleioconfig])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((execmoduleioconfig: DataObject) => [
+            execmoduleioconfig,
+          ])}
+        />
+      )}
     </>
   );
 };

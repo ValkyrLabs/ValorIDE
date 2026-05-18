@@ -13,32 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  SalesActivity,
-  SalesActivityTypeEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddSalesActivityMutation } from '../../services/SalesActivityService';
+import { SalesActivity, SalesActivityTypeEnum } from "@thorapi/model";
+
+import { useAddSalesActivityMutation } from "../../services/SalesActivityService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -62,43 +67,40 @@ Represents a sales activity or engagement related to an opportunity.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const TypeValidation = () => {
-  return [
-    'call',
-    'meeting',
-    'email',
-    'follow-up',
-  ];
+  return ["call", "meeting", "email", "follow-up"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        opportunityId: Yup.string(),
-      type: Yup.mixed()
-        .oneOf(TypeValidation(), "Invalid value for type")
-        ,
-        details: Yup.string(),
-        activityDate: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("activityDate must be a valid date"),
-        performedBy: Yup.string(),
-        trashed: Yup.boolean(),
+  opportunityId: Yup.string(),
+  type: Yup.mixed().oneOf(TypeValidation(), "Invalid value for type"),
+  details: Yup.string(),
+  activityDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("activityDate must be a valid date"),
+  performedBy: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const SalesActivityForm: React.FC = () => {
-  const [addSalesActivity, addSalesActivityResult] = useAddSalesActivityMutation();
+  const [addSalesActivity, addSalesActivityResult] =
+    useAddSalesActivityMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -108,12 +110,18 @@ const SalesActivityForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -121,12 +129,12 @@ const SalesActivityForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<SalesActivity> = {
-          opportunityId: '',
-        type: undefined,
-          details: '',
-          activityDate: new Date(),
-          performedBy: '',
-          trashed: false,
+    opportunityId: "",
+    type: undefined,
+    details: "",
+    activityDate: new Date(),
+    performedBy: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -141,11 +149,14 @@ const SalesActivityForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new SalesActivity:', grants);
+    console.log("Permissions saved for new SalesActivity:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<SalesActivity>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<SalesActivity>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -156,7 +167,7 @@ const SalesActivityForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `SalesActivity created successfully! Would you like to set permissions for this object?`
+          `SalesActivity created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -164,8 +175,8 @@ const SalesActivityForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create SalesActivity:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create SalesActivity:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -186,44 +197,39 @@ const SalesActivityForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addSalesActivityResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New SalesActivity
-                </Accordion.Header>
-                <Accordion.Body>
-                    <label htmlFor="opportunityId" className="nice-form-control">
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New SalesActivity
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <label
+                      htmlFor="opportunityId"
+                      className="nice-form-control"
+                    >
                       <b>
                         Opportunity Id:
-                        {touched.opportunityId &&
-                         !errors.opportunityId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.opportunityId && !errors.opportunityId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="opportunityId"
-                            value={values?.opportunityId}
-                            placeholder="Opportunity Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="opportunityId"
+                        value={values?.opportunityId}
+                        placeholder="Opportunity Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -235,30 +241,30 @@ const SalesActivityForm: React.FC = () => {
                     <label htmlFor="type" className="nice-form-control">
                       <b>
                         Type:
-                        {touched.type &&
-                         !errors.type && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.type && !errors.type && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="type"
-                          value={values.type || ''}
-                          className={
-                            errors.type
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('type', true);
-                            setFieldValue('type', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Type" />
-                          <TypeLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="type"
+                        value={values.type || ""}
+                        className={
+                          errors.type
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("type", true);
+                          setFieldValue("type", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Type" />
+                        <TypeLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -270,28 +276,21 @@ const SalesActivityForm: React.FC = () => {
                     <label htmlFor="details" className="nice-form-control">
                       <b>
                         Details:
-                        {touched.details &&
-                         !errors.details && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.details && !errors.details && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="details"
-                            value={values?.details}
-                            placeholder="Details"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="details"
+                        value={values?.details}
+                        placeholder="Details"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -303,38 +302,38 @@ const SalesActivityForm: React.FC = () => {
                     <label htmlFor="activityDate" className="nice-form-control">
                       <b>
                         Activity Date:
-                        {touched.activityDate &&
-                         !errors.activityDate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.activityDate && !errors.activityDate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="activityDate"
-                            type="datetime-local"
-                            value={values.activityDate ? 
-                              new Date(values.activityDate).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('activityDate', true);
-                              const v = e.target.value;
-                              setFieldValue('activityDate', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.activityDate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="activityDate"
+                        type="datetime-local"
+                        value={
+                          values.activityDate
+                            ? new Date(values.activityDate)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("activityDate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "activityDate",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.activityDate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -346,28 +345,21 @@ const SalesActivityForm: React.FC = () => {
                     <label htmlFor="performedBy" className="nice-form-control">
                       <b>
                         Performed By:
-                        {touched.performedBy &&
-                         !errors.performedBy && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.performedBy && !errors.performedBy && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="performedBy"
-                            value={values?.performedBy}
-                            placeholder="Performed By"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="performedBy"
+                        value={values?.performedBy}
+                        placeholder="Performed By"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -379,32 +371,25 @@ const SalesActivityForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -414,45 +399,59 @@ const SalesActivityForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New SalesActivity
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New SalesActivity
+                    </CoolButton>
 
-                  {(addSalesActivityResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addSalesActivityResult as any).error ? (addSalesActivityResult as any).error.data : (addSalesActivityResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addSalesActivityResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addSalesActivityResult as any).error
+                              ? (addSalesActivityResult as any).error.data
+                              : (addSalesActivityResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addSalesActivityResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addSalesActivityResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addSalesActivityResult: {JSON.stringify(addSalesActivityResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addSalesActivityResult:{" "}
+                    {JSON.stringify(addSalesActivityResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -484,16 +483,13 @@ kebabcase type-lookup
 const TypeLookup = () => {
   return (
     <>
-      <option value='call' label="Call" />
-      <option value='meeting' label="Meeting" />
-      <option value='email' label="Email" />
-      <option value='follow-up' label="Follow Up" />
+      <option value="call" label="Call" />
+      <option value="meeting" label="Meeting" />
+      <option value="email" label="Email" />
+      <option value="follow-up" label="Follow Up" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default SalesActivityForm;
-

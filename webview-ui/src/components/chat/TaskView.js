@@ -91,15 +91,15 @@ const TaskView = ({
   const disableAutoScrollRef = useRef(false);
   const modifiedMessages = useMemo(
     () => combineApiRequests(combineCommandSequences(messages.slice(1))),
-    [messages]
+    [messages],
   );
   const apiMetrics = useMemo(
     () => getApiMetrics(modifiedMessages),
-    [modifiedMessages]
+    [modifiedMessages],
   );
   const selectedModelInfo = useMemo(
     () => normalizeApiConfiguration(apiConfiguration).selectedModelInfo,
-    [apiConfiguration]
+    [apiConfiguration],
   );
   const visibleMessages = useMemo(() => {
     return modifiedMessages.filter((message) => {
@@ -230,7 +230,7 @@ const TaskView = ({
         });
       }
     },
-    [groupedMessages, taskPhaseAnchors]
+    [groupedMessages, taskPhaseAnchors],
   );
   useEffect(() => {
     const last = modifiedMessages.at(-1);
@@ -247,7 +247,7 @@ const TaskView = ({
         last.say === "command_output");
     if (isCommandLike && hasRenderableOutput) {
       setExpandedRows((prev) =>
-        prev[last.ts] ? prev : { ...prev, [last.ts]: true }
+        prev[last.ts] ? prev : { ...prev, [last.ts]: true },
       );
     }
   }, [modifiedMessages]);
@@ -286,7 +286,7 @@ const TaskView = ({
           setInputValue: setInputValue,
           sendMessageFromChatRow: sendMessageFromChatRow,
         },
-        messageOrGroup.ts
+        messageOrGroup.ts,
       );
     },
     [
@@ -296,7 +296,7 @@ const TaskView = ({
       inputValue,
       setInputValue,
       sendMessageFromChatRow,
-    ]
+    ],
   );
   const scrollToBottomSmooth = useMemo(
     () =>
@@ -308,9 +308,9 @@ const TaskView = ({
           });
         },
         10,
-        { immediate: true }
+        { immediate: true },
       ),
-    []
+    [],
   );
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -333,7 +333,7 @@ const TaskView = ({
         textAreaDisabled,
         enableButtons,
       }),
-    [messages, textAreaDisabled, enableButtons]
+    [messages, textAreaDisabled, enableButtons],
   );
   return _jsxs(_Fragment, {
     children: [
@@ -381,12 +381,12 @@ const TaskView = ({
                   disableAutoScrollRef.current = false;
                 }
                 setShowScrollToBottom(
-                  disableAutoScrollRef.current && !isAtBottom
+                  disableAutoScrollRef.current && !isAtBottom,
                 );
               },
               atBottomThreshold: 10,
             },
-            task.ts
+            task.ts,
           ),
           isChatLoading &&
             inlineSpinnerCount === 0 &&

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SwarmGraphEdge } from '@thorapi/model/SwarmGraphEdge';
+import { SwarmGraphEdge } from "@thorapi/model/SwarmGraphEdge";
 
 const SwarmGraphEdgeSlice = createSlice({
   name: "SwarmGraphEdges",
@@ -27,20 +27,25 @@ const SwarmGraphEdgeSlice = createSlice({
     },
 
     SwarmGraphEdgeValueToggled(state, action) {
-      console.log("SwarmGraphEdge TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SwarmGraphEdge:SwarmGraphEdge = state.find((SwarmGraphEdge) => SwarmGraphEdge.id === action.payload.SwarmGraphEdgeId);
+      console.log("SwarmGraphEdge TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SwarmGraphEdge: SwarmGraphEdge = state.find(
+        (SwarmGraphEdge) =>
+          SwarmGraphEdge.id === action.payload.SwarmGraphEdgeId,
+      );
       if (SwarmGraphEdge) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SwarmGraphEdgepropertySet(state, action) {
-      const SwarmGraphEdge = state.find((SwarmGraphEdge) => SwarmGraphEdge.id === action.payload.SwarmGraphEdgeId);
+      const SwarmGraphEdge = state.find(
+        (SwarmGraphEdge) =>
+          SwarmGraphEdge.id === action.payload.SwarmGraphEdgeId,
+      );
       if (SwarmGraphEdge) {
-      //  SwarmGraphEdge[action.property] = action.payload[action.property];
+        //  SwarmGraphEdge[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const SwarmGraphEdgeSlice = createSlice({
 export const {
   SwarmGraphEdgeAdded,
   SwarmGraphEdgeValueToggled,
-  SwarmGraphEdgepropertySet
+  SwarmGraphEdgepropertySet,
 } = SwarmGraphEdgeSlice.actions;
 export default SwarmGraphEdgeSlice.reducer;

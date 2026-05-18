@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,191 +36,219 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface JobSeeker
  */
-export type JobSeeker  = DataObject & {
-    /**
-     * Unique email address
-     * @type {string}
-     * @memberof JobSeeker
-     */
-    email?: string;
-    /**
-     * Full name
-     * @type {string}
-     * @memberof JobSeeker
-     */
-    fullName?: string;
-    /**
-     * LinkedIn profile URL
-     * @type {string}
-     * @memberof JobSeeker
-     */
-    linkedinUrl?: string;
-    /**
-     * Current job title
-     * @type {string}
-     * @memberof JobSeeker
-     */
-    currentRole?: string;
-    /**
-     * Current employer
-     * @type {string}
-     * @memberof JobSeeker
-     */
-    currentCompany?: string;
-    /**
-     * Total years of professional experience
-     * @type {number}
-     * @memberof JobSeeker
-     */
-    yearsExperience?: number;
-    /**
-     * Whether actively looking for opportunities
-     * @type {boolean}
-     * @memberof JobSeeker
-     */
-    openToWork?: boolean;
-    /**
-     * JSON array (stored as string) of preferred role types
-     * @type {string}
-     * @memberof JobSeeker
-     */
-    preferredRoles?: string;
-    /**
-     * JSON array (stored as string) of key technical skills
-     * @type {string}
-     * @memberof JobSeeker
-     */
-    skills?: string;
-    /**
-     * S3/GCS URL to uploaded resume PDF
-     * @type {string}
-     * @memberof JobSeeker
-     */
-    resumeStorageUrl?: string;
-    /**
-     * Cached extracted text from resume for AI analysis
-     * @type {string}
-     * @memberof JobSeeker
-     */
-    resumeParsedText?: string;
-    /**
-     * When profile was created
-     * @type {Date}
-     * @memberof JobSeeker
-     */
-    createdDate?: Date;
-    /**
-     * When profile was last updated
-     * @type {Date}
-     * @memberof JobSeeker
-     */
-    updatedDate?: Date;
-    /**
-     * LLM-generated summary of candidate for skill matching
-     * @type {string}
-     * @memberof JobSeeker
-     */
-    aiReadableProfile?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof JobSeeker
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof JobSeeker
-     */
-    readonly ownerId?: string;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof JobSeeker
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof JobSeeker
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof JobSeeker
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof JobSeeker
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof JobSeeker
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof JobSeeker
-     */
-    trashed?: boolean;
-}
+export type JobSeeker = DataObject & {
+  /**
+   * Unique email address
+   * @type {string}
+   * @memberof JobSeeker
+   */
+  email?: string;
+  /**
+   * Full name
+   * @type {string}
+   * @memberof JobSeeker
+   */
+  fullName?: string;
+  /**
+   * LinkedIn profile URL
+   * @type {string}
+   * @memberof JobSeeker
+   */
+  linkedinUrl?: string;
+  /**
+   * Current job title
+   * @type {string}
+   * @memberof JobSeeker
+   */
+  currentRole?: string;
+  /**
+   * Current employer
+   * @type {string}
+   * @memberof JobSeeker
+   */
+  currentCompany?: string;
+  /**
+   * Total years of professional experience
+   * @type {number}
+   * @memberof JobSeeker
+   */
+  yearsExperience?: number;
+  /**
+   * Whether actively looking for opportunities
+   * @type {boolean}
+   * @memberof JobSeeker
+   */
+  openToWork?: boolean;
+  /**
+   * JSON array (stored as string) of preferred role types
+   * @type {string}
+   * @memberof JobSeeker
+   */
+  preferredRoles?: string;
+  /**
+   * JSON array (stored as string) of key technical skills
+   * @type {string}
+   * @memberof JobSeeker
+   */
+  skills?: string;
+  /**
+   * S3/GCS URL to uploaded resume PDF
+   * @type {string}
+   * @memberof JobSeeker
+   */
+  resumeStorageUrl?: string;
+  /**
+   * Cached extracted text from resume for AI analysis
+   * @type {string}
+   * @memberof JobSeeker
+   */
+  resumeParsedText?: string;
+  /**
+   * When profile was created
+   * @type {Date}
+   * @memberof JobSeeker
+   */
+  createdDate?: Date;
+  /**
+   * When profile was last updated
+   * @type {Date}
+   * @memberof JobSeeker
+   */
+  updatedDate?: Date;
+  /**
+   * LLM-generated summary of candidate for skill matching
+   * @type {string}
+   * @memberof JobSeeker
+   */
+  aiReadableProfile?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof JobSeeker
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof JobSeeker
+   */
+  readonly ownerId?: string;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof JobSeeker
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof JobSeeker
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof JobSeeker
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof JobSeeker
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof JobSeeker
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof JobSeeker
+   */
+  trashed?: boolean;
+};
 
 export function JobSeekerFromJSON(json: any): JobSeeker {
-    return {
-        ...DataObjectFromJSON(json),
-        'email': !exists(json, 'email') ? undefined : json['email'],
-        'fullName': !exists(json, 'fullName') ? undefined : json['fullName'],
-        'linkedinUrl': !exists(json, 'linkedinUrl') ? undefined : json['linkedinUrl'],
-        'currentRole': !exists(json, 'currentRole') ? undefined : json['currentRole'],
-        'currentCompany': !exists(json, 'currentCompany') ? undefined : json['currentCompany'],
-        'yearsExperience': !exists(json, 'yearsExperience') ? undefined : json['yearsExperience'],
-        'openToWork': !exists(json, 'openToWork') ? undefined : json['openToWork'],
-        'preferredRoles': !exists(json, 'preferredRoles') ? undefined : json['preferredRoles'],
-        'skills': !exists(json, 'skills') ? undefined : json['skills'],
-        'resumeStorageUrl': !exists(json, 'resumeStorageUrl') ? undefined : json['resumeStorageUrl'],
-        'resumeParsedText': !exists(json, 'resumeParsedText') ? undefined : json['resumeParsedText'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'updatedDate': !exists(json, 'updatedDate') ? undefined : new Date(json['updatedDate']),
-        'aiReadableProfile': !exists(json, 'aiReadableProfile') ? undefined : json['aiReadableProfile'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    email: !exists(json, "email") ? undefined : json["email"],
+    fullName: !exists(json, "fullName") ? undefined : json["fullName"],
+    linkedinUrl: !exists(json, "linkedinUrl") ? undefined : json["linkedinUrl"],
+    currentRole: !exists(json, "currentRole") ? undefined : json["currentRole"],
+    currentCompany: !exists(json, "currentCompany")
+      ? undefined
+      : json["currentCompany"],
+    yearsExperience: !exists(json, "yearsExperience")
+      ? undefined
+      : json["yearsExperience"],
+    openToWork: !exists(json, "openToWork") ? undefined : json["openToWork"],
+    preferredRoles: !exists(json, "preferredRoles")
+      ? undefined
+      : json["preferredRoles"],
+    skills: !exists(json, "skills") ? undefined : json["skills"],
+    resumeStorageUrl: !exists(json, "resumeStorageUrl")
+      ? undefined
+      : json["resumeStorageUrl"],
+    resumeParsedText: !exists(json, "resumeParsedText")
+      ? undefined
+      : json["resumeParsedText"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    updatedDate: !exists(json, "updatedDate")
+      ? undefined
+      : new Date(json["updatedDate"]),
+    aiReadableProfile: !exists(json, "aiReadableProfile")
+      ? undefined
+      : json["aiReadableProfile"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function JobSeekerToJSON(value?: JobSeeker): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'email': value.email,
-        'fullName': value.fullName,
-        'linkedinUrl': value.linkedinUrl,
-        'currentRole': value.currentRole,
-        'currentCompany': value.currentCompany,
-        'yearsExperience': value.yearsExperience,
-        'openToWork': value.openToWork,
-        'preferredRoles': value.preferredRoles,
-        'skills': value.skills,
-        'resumeStorageUrl': value.resumeStorageUrl,
-        'resumeParsedText': value.resumeParsedText,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'updatedDate': value.updatedDate === undefined ? undefined : value.updatedDate.toISOString(),
-        'aiReadableProfile': value.aiReadableProfile,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    email: value.email,
+    fullName: value.fullName,
+    linkedinUrl: value.linkedinUrl,
+    currentRole: value.currentRole,
+    currentCompany: value.currentCompany,
+    yearsExperience: value.yearsExperience,
+    openToWork: value.openToWork,
+    preferredRoles: value.preferredRoles,
+    skills: value.skills,
+    resumeStorageUrl: value.resumeStorageUrl,
+    resumeParsedText: value.resumeParsedText,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    updatedDate:
+      value.updatedDate === undefined
+        ? undefined
+        : value.updatedDate.toISOString(),
+    aiReadableProfile: value.aiReadableProfile,
+    trashed: value.trashed,
+  };
 }
-
-

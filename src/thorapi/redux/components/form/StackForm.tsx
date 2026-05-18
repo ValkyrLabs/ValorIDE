@@ -13,25 +13,33 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   Stack,
@@ -39,9 +47,9 @@ import {
   StackLanguageEnum,
   StackTemplateRepoEnum,
   StackStatusEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddStackMutation } from '../../services/StackService';
+import { useAddStackMutation } from "../../services/StackService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -66,34 +74,28 @@ A Stack is a runnable configuration for an Application
 -------------------------------------------------------- */
 const CategoryValidation = () => {
   return [
-    'Full Stack',
-    'Front End',
-    'API',
-    'Data Library',
-    'Infrastructure',
-    'Documentation',
+    "Full Stack",
+    "Front End",
+    "API",
+    "Data Library",
+    "Infrastructure",
+    "Documentation",
   ];
 };
 const LanguageValidation = () => {
-  return [
-    'valkyrai_java_spring',
-    'valkyrai_kotlin_spring',
-  ];
+  return ["valkyrai_java_spring", "valkyrai_kotlin_spring"];
 };
 const TemplateRepoValidation = () => {
-  return [
-    'java_spring',
-    'typescript_rtk_bootstrap',
-  ];
+  return ["java_spring", "typescript_rtk_bootstrap"];
 };
 const StatusValidation = () => {
   return [
-    'available',
-    'syntax_error',
-    'compilation_error',
-    'runtime_error',
-    'database_error',
-    'locked',
+    "available",
+    "syntax_error",
+    "compilation_error",
+    "runtime_error",
+    "database_error",
+    "locked",
   ];
 };
 
@@ -101,46 +103,49 @@ const StatusValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        execModuleId: Yup.string(),
-      category: Yup.mixed()
-        .oneOf(CategoryValidation(), "Invalid value for category")
-        ,
-        name: Yup.string(),
-        artifactId: Yup.string(),
-        applicationId: Yup.string(),
-        adminServerHost: Yup.string(),
-        adminServerPort: Yup.string(),
-        hostName: Yup.string(),
-        hostPort: Yup.string(),
-        orgName: Yup.string(),
-        gitUser: Yup.string(),
-        gitRepo: Yup.string(),
-        skipSwaggerGen: Yup.boolean(),
-        skipJavaGen: Yup.boolean(),
-        skipDbGen: Yup.boolean(),
-        skipReactGen: Yup.boolean(),
-        dbGenDropTable: Yup.boolean(),
-        thorApiSecureKey: Yup.string(),
-        dbUrl: Yup.string(),
-        dbName: Yup.string(),
-        dbUser: Yup.string(),
-        dbPassword: Yup.string(),
-        schemaName: Yup.string(),
-      language: Yup.mixed()
-        .oneOf(LanguageValidation(), "Invalid value for language")
-        ,
-      templateRepo: Yup.mixed()
-        .oneOf(TemplateRepoValidation(), "Invalid value for templateRepo")
-        ,
-        schemaData: Yup.string(),
-        schemaFileName: Yup.string(),
-      status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        ,
-        trashed: Yup.boolean(),
+  execModuleId: Yup.string(),
+  category: Yup.mixed().oneOf(
+    CategoryValidation(),
+    "Invalid value for category",
+  ),
+  name: Yup.string(),
+  artifactId: Yup.string(),
+  applicationId: Yup.string(),
+  adminServerHost: Yup.string(),
+  adminServerPort: Yup.string(),
+  hostName: Yup.string(),
+  hostPort: Yup.string(),
+  orgName: Yup.string(),
+  gitUser: Yup.string(),
+  gitRepo: Yup.string(),
+  skipSwaggerGen: Yup.boolean(),
+  skipJavaGen: Yup.boolean(),
+  skipDbGen: Yup.boolean(),
+  skipReactGen: Yup.boolean(),
+  dbGenDropTable: Yup.boolean(),
+  thorApiSecureKey: Yup.string(),
+  dbUrl: Yup.string(),
+  dbName: Yup.string(),
+  dbUser: Yup.string(),
+  dbPassword: Yup.string(),
+  schemaName: Yup.string(),
+  language: Yup.mixed().oneOf(
+    LanguageValidation(),
+    "Invalid value for language",
+  ),
+  templateRepo: Yup.mixed().oneOf(
+    TemplateRepoValidation(),
+    "Invalid value for templateRepo",
+  ),
+  schemaData: Yup.string(),
+  schemaFileName: Yup.string(),
+  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -157,12 +162,18 @@ const StackForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -170,35 +181,35 @@ const StackForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Stack> = {
-          execModuleId: '',
-        category: undefined,
-          name: '',
-          artifactId: '',
-          applicationId: '',
-          adminServerHost: '',
-          adminServerPort: '',
-          hostName: '',
-          hostPort: '',
-          orgName: '',
-          gitUser: '',
-          gitRepo: '',
-          skipSwaggerGen: false,
-          skipJavaGen: false,
-          skipDbGen: false,
-          skipReactGen: false,
-          dbGenDropTable: false,
-          thorApiSecureKey: '',
-          dbUrl: '',
-          dbName: '',
-          dbUser: '',
-          dbPassword: '',
-          schemaName: '',
-        language: undefined,
-        templateRepo: undefined,
-          schemaData: '',
-          schemaFileName: '',
-        status: undefined,
-          trashed: false,
+    execModuleId: "",
+    category: undefined,
+    name: "",
+    artifactId: "",
+    applicationId: "",
+    adminServerHost: "",
+    adminServerPort: "",
+    hostName: "",
+    hostPort: "",
+    orgName: "",
+    gitUser: "",
+    gitRepo: "",
+    skipSwaggerGen: false,
+    skipJavaGen: false,
+    skipDbGen: false,
+    skipReactGen: false,
+    dbGenDropTable: false,
+    thorApiSecureKey: "",
+    dbUrl: "",
+    dbName: "",
+    dbUser: "",
+    dbPassword: "",
+    schemaName: "",
+    language: undefined,
+    templateRepo: undefined,
+    schemaData: "",
+    schemaFileName: "",
+    status: undefined,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -213,11 +224,14 @@ const StackForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new Stack:', grants);
+    console.log("Permissions saved for new Stack:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Stack>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<Stack>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -228,7 +242,7 @@ const StackForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Stack created successfully! Would you like to set permissions for this object?`
+          `Stack created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -236,8 +250,8 @@ const StackForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create Stack:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create Stack:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -258,44 +272,36 @@ const StackForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addStackResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New Stack
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New Stack
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="execModuleId" className="nice-form-control">
                       <b>
                         Exec Module Id:
-                        {touched.execModuleId &&
-                         !errors.execModuleId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.execModuleId && !errors.execModuleId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="execModuleId"
-                            value={values?.execModuleId}
-                            placeholder="Exec Module Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="execModuleId"
+                        value={values?.execModuleId}
+                        placeholder="Exec Module Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -307,30 +313,33 @@ const StackForm: React.FC = () => {
                     <label htmlFor="category" className="nice-form-control">
                       <b>
                         Category:
-                        {touched.category &&
-                         !errors.category && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.category && !errors.category && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="category"
-                          value={values.category || ''}
-                          className={
-                            errors.category
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('category', true);
-                            setFieldValue('category', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Category" />
-                          <CategoryLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="category"
+                        value={values.category || ""}
+                        className={
+                          errors.category
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("category", true);
+                          setFieldValue(
+                            "category",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Category" />
+                        <CategoryLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -342,28 +351,21 @@ const StackForm: React.FC = () => {
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.name && !errors.name && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="name"
+                        value={values?.name}
+                        placeholder="Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -375,28 +377,21 @@ const StackForm: React.FC = () => {
                     <label htmlFor="artifactId" className="nice-form-control">
                       <b>
                         Artifact Id:
-                        {touched.artifactId &&
-                         !errors.artifactId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.artifactId && !errors.artifactId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="artifactId"
-                            value={values?.artifactId}
-                            placeholder="Artifact Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="artifactId"
+                        value={values?.artifactId}
+                        placeholder="Artifact Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -405,31 +400,27 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="applicationId" className="nice-form-control">
+                    <label
+                      htmlFor="applicationId"
+                      className="nice-form-control"
+                    >
                       <b>
                         Application Id:
-                        {touched.applicationId &&
-                         !errors.applicationId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.applicationId && !errors.applicationId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="applicationId"
-                            value={values?.applicationId}
-                            placeholder="Application Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="applicationId"
+                        value={values?.applicationId}
+                        placeholder="Application Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -438,31 +429,27 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="adminServerHost" className="nice-form-control">
+                    <label
+                      htmlFor="adminServerHost"
+                      className="nice-form-control"
+                    >
                       <b>
                         Admin Server Host:
-                        {touched.adminServerHost &&
-                         !errors.adminServerHost && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.adminServerHost && !errors.adminServerHost && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="adminServerHost"
-                            value={values?.adminServerHost}
-                            placeholder="Admin Server Host"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="adminServerHost"
+                        value={values?.adminServerHost}
+                        placeholder="Admin Server Host"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -471,31 +458,27 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="adminServerPort" className="nice-form-control">
+                    <label
+                      htmlFor="adminServerPort"
+                      className="nice-form-control"
+                    >
                       <b>
                         Admin Server Port:
-                        {touched.adminServerPort &&
-                         !errors.adminServerPort && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.adminServerPort && !errors.adminServerPort && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="adminServerPort"
-                            value={values?.adminServerPort}
-                            placeholder="Admin Server Port"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="adminServerPort"
+                        value={values?.adminServerPort}
+                        placeholder="Admin Server Port"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -507,28 +490,21 @@ const StackForm: React.FC = () => {
                     <label htmlFor="hostName" className="nice-form-control">
                       <b>
                         Host Name:
-                        {touched.hostName &&
-                         !errors.hostName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.hostName && !errors.hostName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="hostName"
-                            value={values?.hostName}
-                            placeholder="Host Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="hostName"
+                        value={values?.hostName}
+                        placeholder="Host Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -540,28 +516,21 @@ const StackForm: React.FC = () => {
                     <label htmlFor="hostPort" className="nice-form-control">
                       <b>
                         Host Port:
-                        {touched.hostPort &&
-                         !errors.hostPort && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.hostPort && !errors.hostPort && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="hostPort"
-                            value={values?.hostPort}
-                            placeholder="Host Port"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="hostPort"
+                        value={values?.hostPort}
+                        placeholder="Host Port"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -573,28 +542,21 @@ const StackForm: React.FC = () => {
                     <label htmlFor="orgName" className="nice-form-control">
                       <b>
                         Org Name:
-                        {touched.orgName &&
-                         !errors.orgName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.orgName && !errors.orgName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="orgName"
-                            value={values?.orgName}
-                            placeholder="Org Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="orgName"
+                        value={values?.orgName}
+                        placeholder="Org Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -606,28 +568,21 @@ const StackForm: React.FC = () => {
                     <label htmlFor="gitUser" className="nice-form-control">
                       <b>
                         Git User:
-                        {touched.gitUser &&
-                         !errors.gitUser && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.gitUser && !errors.gitUser && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="gitUser"
-                            value={values?.gitUser}
-                            placeholder="Git User"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="gitUser"
+                        value={values?.gitUser}
+                        placeholder="Git User"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -639,28 +594,21 @@ const StackForm: React.FC = () => {
                     <label htmlFor="gitRepo" className="nice-form-control">
                       <b>
                         Git Repo:
-                        {touched.gitRepo &&
-                         !errors.gitRepo && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.gitRepo && !errors.gitRepo && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="gitRepo"
-                            value={values?.gitRepo}
-                            placeholder="Git Repo"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="gitRepo"
+                        value={values?.gitRepo}
+                        placeholder="Git Repo"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -669,35 +617,31 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="skipSwaggerGen" className="nice-form-control">
+                    <label
+                      htmlFor="skipSwaggerGen"
+                      className="nice-form-control"
+                    >
                       <b>
                         Skip Swagger Gen:
-                        {touched.skipSwaggerGen &&
-                         !errors.skipSwaggerGen && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.skipSwaggerGen && !errors.skipSwaggerGen && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="skipSwaggerGen"
-                            name="skipSwaggerGen"
-                            checked={values.skipSwaggerGen || false}
-                            onChange={(e) => {
-                              setFieldTouched('skipSwaggerGen', true);
-                              setFieldValue('skipSwaggerGen', e.target.checked);
-                            }}
-                            isInvalid={!!errors.skipSwaggerGen}
-                            className={errors.skipSwaggerGen ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="skipSwaggerGen"
+                        name="skipSwaggerGen"
+                        checked={values.skipSwaggerGen || false}
+                        onChange={(e) => {
+                          setFieldTouched("skipSwaggerGen", true);
+                          setFieldValue("skipSwaggerGen", e.target.checked);
+                        }}
+                        isInvalid={!!errors.skipSwaggerGen}
+                        className={errors.skipSwaggerGen ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -709,32 +653,25 @@ const StackForm: React.FC = () => {
                     <label htmlFor="skipJavaGen" className="nice-form-control">
                       <b>
                         Skip Java Gen:
-                        {touched.skipJavaGen &&
-                         !errors.skipJavaGen && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.skipJavaGen && !errors.skipJavaGen && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="skipJavaGen"
-                            name="skipJavaGen"
-                            checked={values.skipJavaGen || false}
-                            onChange={(e) => {
-                              setFieldTouched('skipJavaGen', true);
-                              setFieldValue('skipJavaGen', e.target.checked);
-                            }}
-                            isInvalid={!!errors.skipJavaGen}
-                            className={errors.skipJavaGen ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="skipJavaGen"
+                        name="skipJavaGen"
+                        checked={values.skipJavaGen || false}
+                        onChange={(e) => {
+                          setFieldTouched("skipJavaGen", true);
+                          setFieldValue("skipJavaGen", e.target.checked);
+                        }}
+                        isInvalid={!!errors.skipJavaGen}
+                        className={errors.skipJavaGen ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -746,32 +683,25 @@ const StackForm: React.FC = () => {
                     <label htmlFor="skipDbGen" className="nice-form-control">
                       <b>
                         Skip Db Gen:
-                        {touched.skipDbGen &&
-                         !errors.skipDbGen && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.skipDbGen && !errors.skipDbGen && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="skipDbGen"
-                            name="skipDbGen"
-                            checked={values.skipDbGen || false}
-                            onChange={(e) => {
-                              setFieldTouched('skipDbGen', true);
-                              setFieldValue('skipDbGen', e.target.checked);
-                            }}
-                            isInvalid={!!errors.skipDbGen}
-                            className={errors.skipDbGen ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="skipDbGen"
+                        name="skipDbGen"
+                        checked={values.skipDbGen || false}
+                        onChange={(e) => {
+                          setFieldTouched("skipDbGen", true);
+                          setFieldValue("skipDbGen", e.target.checked);
+                        }}
+                        isInvalid={!!errors.skipDbGen}
+                        className={errors.skipDbGen ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -783,32 +713,25 @@ const StackForm: React.FC = () => {
                     <label htmlFor="skipReactGen" className="nice-form-control">
                       <b>
                         Skip React Gen:
-                        {touched.skipReactGen &&
-                         !errors.skipReactGen && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.skipReactGen && !errors.skipReactGen && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="skipReactGen"
-                            name="skipReactGen"
-                            checked={values.skipReactGen || false}
-                            onChange={(e) => {
-                              setFieldTouched('skipReactGen', true);
-                              setFieldValue('skipReactGen', e.target.checked);
-                            }}
-                            isInvalid={!!errors.skipReactGen}
-                            className={errors.skipReactGen ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="skipReactGen"
+                        name="skipReactGen"
+                        checked={values.skipReactGen || false}
+                        onChange={(e) => {
+                          setFieldTouched("skipReactGen", true);
+                          setFieldValue("skipReactGen", e.target.checked);
+                        }}
+                        isInvalid={!!errors.skipReactGen}
+                        className={errors.skipReactGen ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -817,35 +740,31 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="dbGenDropTable" className="nice-form-control">
+                    <label
+                      htmlFor="dbGenDropTable"
+                      className="nice-form-control"
+                    >
                       <b>
                         Db Gen Drop Table:
-                        {touched.dbGenDropTable &&
-                         !errors.dbGenDropTable && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.dbGenDropTable && !errors.dbGenDropTable && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="dbGenDropTable"
-                            name="dbGenDropTable"
-                            checked={values.dbGenDropTable || false}
-                            onChange={(e) => {
-                              setFieldTouched('dbGenDropTable', true);
-                              setFieldValue('dbGenDropTable', e.target.checked);
-                            }}
-                            isInvalid={!!errors.dbGenDropTable}
-                            className={errors.dbGenDropTable ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="dbGenDropTable"
+                        name="dbGenDropTable"
+                        checked={values.dbGenDropTable || false}
+                        onChange={(e) => {
+                          setFieldTouched("dbGenDropTable", true);
+                          setFieldValue("dbGenDropTable", e.target.checked);
+                        }}
+                        isInvalid={!!errors.dbGenDropTable}
+                        className={errors.dbGenDropTable ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -854,31 +773,28 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="thorApiSecureKey" className="nice-form-control">
+                    <label
+                      htmlFor="thorApiSecureKey"
+                      className="nice-form-control"
+                    >
                       <b>
                         Thor Api Secure Key:
                         {touched.thorApiSecureKey &&
-                         !errors.thorApiSecureKey && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.thorApiSecureKey && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="thorApiSecureKey"
-                            value={values?.thorApiSecureKey}
-                            placeholder="Thor Api Secure Key"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="thorApiSecureKey"
+                        value={values?.thorApiSecureKey}
+                        placeholder="Thor Api Secure Key"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -890,28 +806,21 @@ const StackForm: React.FC = () => {
                     <label htmlFor="dbUrl" className="nice-form-control">
                       <b>
                         Db Url:
-                        {touched.dbUrl &&
-                         !errors.dbUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.dbUrl && !errors.dbUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="dbUrl"
-                            value={values?.dbUrl}
-                            placeholder="Db Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="dbUrl"
+                        value={values?.dbUrl}
+                        placeholder="Db Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -923,28 +832,21 @@ const StackForm: React.FC = () => {
                     <label htmlFor="dbName" className="nice-form-control">
                       <b>
                         Db Name:
-                        {touched.dbName &&
-                         !errors.dbName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.dbName && !errors.dbName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="dbName"
-                            value={values?.dbName}
-                            placeholder="Db Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="dbName"
+                        value={values?.dbName}
+                        placeholder="Db Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -956,28 +858,21 @@ const StackForm: React.FC = () => {
                     <label htmlFor="dbUser" className="nice-form-control">
                       <b>
                         Db User:
-                        {touched.dbUser &&
-                         !errors.dbUser && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.dbUser && !errors.dbUser && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="dbUser"
-                            value={values?.dbUser}
-                            placeholder="Db User"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="dbUser"
+                        value={values?.dbUser}
+                        placeholder="Db User"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -989,28 +884,21 @@ const StackForm: React.FC = () => {
                     <label htmlFor="dbPassword" className="nice-form-control">
                       <b>
                         Db Password:
-                        {touched.dbPassword &&
-                         !errors.dbPassword && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.dbPassword && !errors.dbPassword && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="dbPassword"
-                            value={values?.dbPassword}
-                            placeholder="Db Password"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="dbPassword"
+                        value={values?.dbPassword}
+                        placeholder="Db Password"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1022,28 +910,21 @@ const StackForm: React.FC = () => {
                     <label htmlFor="schemaName" className="nice-form-control">
                       <b>
                         Schema Name:
-                        {touched.schemaName &&
-                         !errors.schemaName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.schemaName && !errors.schemaName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="schemaName"
-                            value={values?.schemaName}
-                            placeholder="Schema Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="schemaName"
+                        value={values?.schemaName}
+                        placeholder="Schema Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1055,30 +936,33 @@ const StackForm: React.FC = () => {
                     <label htmlFor="language" className="nice-form-control">
                       <b>
                         Language:
-                        {touched.language &&
-                         !errors.language && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.language && !errors.language && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="language"
-                          value={values.language || ''}
-                          className={
-                            errors.language
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('language', true);
-                            setFieldValue('language', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Language" />
-                          <LanguageLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="language"
+                        value={values.language || ""}
+                        className={
+                          errors.language
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("language", true);
+                          setFieldValue(
+                            "language",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Language" />
+                        <LanguageLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -1090,30 +974,33 @@ const StackForm: React.FC = () => {
                     <label htmlFor="templateRepo" className="nice-form-control">
                       <b>
                         Template Repo:
-                        {touched.templateRepo &&
-                         !errors.templateRepo && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.templateRepo && !errors.templateRepo && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="templateRepo"
-                          value={values.templateRepo || ''}
-                          className={
-                            errors.templateRepo
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('templateRepo', true);
-                            setFieldValue('templateRepo', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Template Repo" />
-                          <TemplateRepoLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="templateRepo"
+                        value={values.templateRepo || ""}
+                        className={
+                          errors.templateRepo
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("templateRepo", true);
+                          setFieldValue(
+                            "templateRepo",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Template Repo" />
+                        <TemplateRepoLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -1125,28 +1012,21 @@ const StackForm: React.FC = () => {
                     <label htmlFor="schemaData" className="nice-form-control">
                       <b>
                         Schema Data:
-                        {touched.schemaData &&
-                         !errors.schemaData && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.schemaData && !errors.schemaData && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="schemaData"
-                            value={values?.schemaData}
-                            placeholder="Schema Data"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="schemaData"
+                        value={values?.schemaData}
+                        placeholder="Schema Data"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1155,31 +1035,27 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="schemaFileName" className="nice-form-control">
+                    <label
+                      htmlFor="schemaFileName"
+                      className="nice-form-control"
+                    >
                       <b>
                         Schema File Name:
-                        {touched.schemaFileName &&
-                         !errors.schemaFileName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.schemaFileName && !errors.schemaFileName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="schemaFileName"
-                            value={values?.schemaFileName}
-                            placeholder="Schema File Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="schemaFileName"
+                        value={values?.schemaFileName}
+                        placeholder="Schema File Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1191,30 +1067,30 @@ const StackForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="status"
-                          value={values.status || ''}
-                          className={
-                            errors.status
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Status" />
-                          <StatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="status"
+                        value={values.status || ""}
+                        className={
+                          errors.status
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("status", true);
+                          setFieldValue("status", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Status" />
+                        <StatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -1226,32 +1102,25 @@ const StackForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1261,45 +1130,58 @@ const StackForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New Stack
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New Stack
+                    </CoolButton>
 
-                  {(addStackResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addStackResult as any).error ? (addStackResult as any).error.data : (addStackResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addStackResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addStackResult as any).error
+                              ? (addStackResult as any).error.data
+                              : (addStackResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addStackResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addStackResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addStackResult: {JSON.stringify(addStackResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addStackResult: {JSON.stringify(addStackResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -1331,12 +1213,12 @@ kebabcase category-lookup
 const CategoryLookup = () => {
   return (
     <>
-      <option value='Full Stack' label="Full Stack" />
-      <option value='Front End' label="Front End" />
-      <option value='API' label="Api" />
-      <option value='Data Library' label="Data Library" />
-      <option value='Infrastructure' label="Infrastructure" />
-      <option value='Documentation' label="Documentation" />
+      <option value="Full Stack" label="Full Stack" />
+      <option value="Front End" label="Front End" />
+      <option value="API" label="Api" />
+      <option value="Data Library" label="Data Library" />
+      <option value="Infrastructure" label="Infrastructure" />
+      <option value="Documentation" label="Documentation" />
     </>
   );
 };
@@ -1353,8 +1235,8 @@ kebabcase language-lookup
 const LanguageLookup = () => {
   return (
     <>
-      <option value='valkyrai_java_spring' label="Java Spring" />
-      <option value='valkyrai_kotlin_spring' label="Kotlin Spring" />
+      <option value="valkyrai_java_spring" label="Java Spring" />
+      <option value="valkyrai_kotlin_spring" label="Kotlin Spring" />
     </>
   );
 };
@@ -1371,8 +1253,11 @@ kebabcase template-repo-lookup
 const TemplateRepoLookup = () => {
   return (
     <>
-      <option value='java_spring' label="Java Spring" />
-      <option value='typescript_rtk_bootstrap' label="Typescript Rtk Bootstrap" />
+      <option value="java_spring" label="Java Spring" />
+      <option
+        value="typescript_rtk_bootstrap"
+        label="Typescript Rtk Bootstrap"
+      />
     </>
   );
 };
@@ -1389,18 +1274,15 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value='available' label="Available" />
-      <option value='syntax_error' label="Syntax Error" />
-      <option value='compilation_error' label="Compilation Error" />
-      <option value='runtime_error' label="Runtime Error" />
-      <option value='database_error' label="Database Error" />
-      <option value='locked' label="Locked" />
+      <option value="available" label="Available" />
+      <option value="syntax_error" label="Syntax Error" />
+      <option value="compilation_error" label="Compilation Error" />
+      <option value="runtime_error" label="Runtime Error" />
+      <option value="database_error" label="Database Error" />
+      <option value="locked" label="Locked" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default StackForm;
-

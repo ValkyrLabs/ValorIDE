@@ -26,16 +26,9 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
-import {
-
-
-    Principal,
-    PrincipalFromJSON,
-    PrincipalToJSON,
-} from './';
-
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { Principal, PrincipalFromJSON, PrincipalToJSON } from "./";
 
 // thorapi
 
@@ -44,122 +37,134 @@ import {
  * @export
  * @interface UserPreference
  */
-export type UserPreference  = DataObject & {
-    /**
-     * 
-     * @type {Principal}
-     * @memberof UserPreference
-     */
-    principal?: Principal;
-    /**
-     * The value of the User Preferences
-     * @type {string}
-     * @memberof UserPreference
-     */
-    preference?: string;
-    /**
-     * The type of the preference
-     * @type {string}
-     * @memberof UserPreference
-     */
-    preferenceType?: UserPreferencePreferenceTypeEnum;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof UserPreference
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof UserPreference
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof UserPreference
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof UserPreference
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof UserPreference
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof UserPreference
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof UserPreference
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof UserPreference
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof UserPreference
-     */
-    trashed?: boolean;
-}
+export type UserPreference = DataObject & {
+  /**
+   *
+   * @type {Principal}
+   * @memberof UserPreference
+   */
+  principal?: Principal;
+  /**
+   * The value of the User Preferences
+   * @type {string}
+   * @memberof UserPreference
+   */
+  preference?: string;
+  /**
+   * The type of the preference
+   * @type {string}
+   * @memberof UserPreference
+   */
+  preferenceType?: UserPreferencePreferenceTypeEnum;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof UserPreference
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof UserPreference
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof UserPreference
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof UserPreference
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof UserPreference
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof UserPreference
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof UserPreference
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof UserPreference
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof UserPreference
+   */
+  trashed?: boolean;
+};
 
 export function UserPreferenceFromJSON(json: any): UserPreference {
-    return {
-        ...DataObjectFromJSON(json),
-        'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
-        'preference': !exists(json, 'preference') ? undefined : json['preference'],
-        'preferenceType': !exists(json, 'preferenceType') ? undefined : json['preferenceType'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    principal: !exists(json, "principal")
+      ? undefined
+      : PrincipalFromJSON(json["principal"]),
+    preference: !exists(json, "preference") ? undefined : json["preference"],
+    preferenceType: !exists(json, "preferenceType")
+      ? undefined
+      : json["preferenceType"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function UserPreferenceToJSON(value?: UserPreference): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'principal': PrincipalToJSON(value.principal),
-        'preference': value.preference,
-        'preferenceType': value.preferenceType,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    principal: PrincipalToJSON(value.principal),
+    preference: value.preference,
+    preferenceType: value.preferenceType,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum UserPreferencePreferenceTypeEnum {
-    UXLAYOUT = 'ux-layout',
-    UXMODE = 'ux-mode',
-    UXTHEME = 'ux-theme',
-    MEASUREMENT = 'measurement',
-    CHATMEMORY = 'chatmemory'
+  UXLAYOUT = "ux-layout",
+  UXMODE = "ux-mode",
+  UXTHEME = "ux-theme",
+  MEASUREMENT = "measurement",
+  CHATMEMORY = "chatmemory",
 }
-
-

@@ -802,45 +802,6 @@ const ApiOptions = ({
         </div>
       )}
 
-      {selectedProvider === "openrouter" && (
-        <div>
-          <VSCodeTextField
-            value={apiConfiguration?.openRouterApiKey || ""}
-            style={{ width: "100%" }}
-            type="password"
-            onInput={handleInputChange("openRouterApiKey")}
-            placeholder="Enter API Key..."
-          >
-            <span style={{ fontWeight: 500 }}>OpenRouter API Key</span>
-          </VSCodeTextField>
-          {!apiConfiguration?.openRouterApiKey && (
-            <VSCodeButtonLink
-              href={getOpenRouterAuthUrl(uriScheme)}
-              style={{ margin: "5px 0 0 0" }}
-              appearance="secondary"
-            >
-              Get OpenRouter API Key
-            </VSCodeButtonLink>
-          )}
-          <p
-            style={{
-              fontSize: "12px",
-              marginTop: "5px",
-              color: "var(--vscode-descriptionForeground)",
-            }}
-          >
-            This key is stored locally and only used to make API requests from
-            this extension.{" "}
-            {/* {!apiConfiguration?.openRouterApiKey && (
-							<span style={{ color: "var(--vscode-charts-green)" }}>
-								(<span style={{ fontWeight: 500 }}>Note:</span> OpenRouter is recommended for high rate
-								limits, prompt caching, and wider selection of models.)
-							</span>
-						)} */}
-          </p>
-        </div>
-      )}
-
       {selectedProvider === "bedrock" && (
         <div
           style={{
@@ -2387,14 +2348,14 @@ const ApiOptions = ({
               selectedModelId === "claude-3-7-sonnet-20250219") ||
               (selectedProvider === "bedrock" &&
                 selectedModelId ===
-                  "anthropic.claude-3-7-sonnet-20250219-v1:0") ||
+                "anthropic.claude-3-7-sonnet-20250219-v1:0") ||
               (selectedProvider === "vertex" &&
                 selectedModelId === "claude-3-7-sonnet@20250219")) && (
-              <ThinkingBudgetSlider
-                apiConfiguration={apiConfiguration}
-                setApiConfiguration={setApiConfiguration}
-              />
-            )}
+                <ThinkingBudgetSlider
+                  apiConfiguration={apiConfiguration}
+                  setApiConfiguration={setApiConfiguration}
+                />
+              )}
 
             {selectedProvider === "xai" &&
               selectedModelId.includes("3-mini") && (
@@ -2842,10 +2803,10 @@ export function normalizeApiConfiguration(
           supportsPromptCache: false,
           contextWindow:
             Number.isFinite(ollamaConfiguredContext) &&
-            ollamaConfiguredContext > 0
+              ollamaConfiguredContext > 0
               ? ollamaConfiguredContext
               : ollamaPreset?.contextWindow ||
-                openAiModelInfoSaneDefaults.contextWindow,
+              openAiModelInfoSaneDefaults.contextWindow,
         },
       };
     case "lmstudio":

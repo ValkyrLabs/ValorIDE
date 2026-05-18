@@ -49,9 +49,9 @@ if (typeof window !== "undefined") {
     };
 
     // Get JWT token from storage for authentication
-    const getAuthenticatedBrokerURL = (
-      options?: { suppressWarn?: boolean },
-    ): string | null => {
+    const getAuthenticatedBrokerURL = (options?: {
+      suppressWarn?: boolean;
+    }): string | null => {
       const resolvedUrl = getWebsocketUrl();
       const baseURL = isValidWsUrl(resolvedUrl)
         ? resolvedUrl
@@ -77,7 +77,7 @@ if (typeof window !== "undefined") {
                   },
                 }),
               );
-            } catch { }
+            } catch {}
           }
         }
       } catch {
@@ -180,7 +180,7 @@ if (typeof window !== "undefined") {
           detail: { thorConnected: phase === "connected", phase },
         });
         window.dispatchEvent(evt);
-      } catch { }
+      } catch {}
     };
 
     let stompClient: Client | null = null;
@@ -273,7 +273,7 @@ if (typeof window !== "undefined") {
             };
             announce("presence:join", { id: instanceId });
             announce("auth:ack", { id: instanceId });
-          } catch { }
+          } catch {}
         } catch (e) {
           console.error("thorBridge subscribe error", e);
         }

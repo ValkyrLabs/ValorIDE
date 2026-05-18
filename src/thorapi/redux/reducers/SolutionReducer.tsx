@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Solution } from '@thorapi/model/Solution';
+import { Solution } from "@thorapi/model/Solution";
 
 const SolutionSlice = createSlice({
   name: "Solutions",
@@ -27,28 +27,28 @@ const SolutionSlice = createSlice({
     },
 
     SolutionValueToggled(state, action) {
-      console.log("Solution TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Solution:Solution = state.find((Solution) => Solution.id === action.payload.SolutionId);
+      console.log("Solution TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Solution: Solution = state.find(
+        (Solution) => Solution.id === action.payload.SolutionId,
+      );
       if (Solution) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SolutionpropertySet(state, action) {
-      const Solution = state.find((Solution) => Solution.id === action.payload.SolutionId);
+      const Solution = state.find(
+        (Solution) => Solution.id === action.payload.SolutionId,
+      );
       if (Solution) {
-      //  Solution[action.property] = action.payload[action.property];
+        //  Solution[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  SolutionAdded,
-  SolutionValueToggled,
-  SolutionpropertySet
-} = SolutionSlice.actions;
+export const { SolutionAdded, SolutionValueToggled, SolutionpropertySet } =
+  SolutionSlice.actions;
 export default SolutionSlice.reducer;

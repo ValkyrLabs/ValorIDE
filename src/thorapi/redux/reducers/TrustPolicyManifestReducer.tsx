@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { TrustPolicyManifest } from '@thorapi/model/TrustPolicyManifest';
+import { TrustPolicyManifest } from "@thorapi/model/TrustPolicyManifest";
 
 const TrustPolicyManifestSlice = createSlice({
   name: "TrustPolicyManifests",
@@ -27,20 +27,25 @@ const TrustPolicyManifestSlice = createSlice({
     },
 
     TrustPolicyManifestValueToggled(state, action) {
-      console.log("TrustPolicyManifest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const TrustPolicyManifest:TrustPolicyManifest = state.find((TrustPolicyManifest) => TrustPolicyManifest.id === action.payload.TrustPolicyManifestId);
+      console.log("TrustPolicyManifest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const TrustPolicyManifest: TrustPolicyManifest = state.find(
+        (TrustPolicyManifest) =>
+          TrustPolicyManifest.id === action.payload.TrustPolicyManifestId,
+      );
       if (TrustPolicyManifest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     TrustPolicyManifestpropertySet(state, action) {
-      const TrustPolicyManifest = state.find((TrustPolicyManifest) => TrustPolicyManifest.id === action.payload.TrustPolicyManifestId);
+      const TrustPolicyManifest = state.find(
+        (TrustPolicyManifest) =>
+          TrustPolicyManifest.id === action.payload.TrustPolicyManifestId,
+      );
       if (TrustPolicyManifest) {
-      //  TrustPolicyManifest[action.property] = action.payload[action.property];
+        //  TrustPolicyManifest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const TrustPolicyManifestSlice = createSlice({
 export const {
   TrustPolicyManifestAdded,
   TrustPolicyManifestValueToggled,
-  TrustPolicyManifestpropertySet
+  TrustPolicyManifestpropertySet,
 } = TrustPolicyManifestSlice.actions;
 export default TrustPolicyManifestSlice.reducer;

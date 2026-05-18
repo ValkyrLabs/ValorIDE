@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { LeaseTrustSecretRequest } from '@thorapi/model/LeaseTrustSecretRequest';
+import { LeaseTrustSecretRequest } from "@thorapi/model/LeaseTrustSecretRequest";
 
 const LeaseTrustSecretRequestSlice = createSlice({
   name: "LeaseTrustSecretRequests",
@@ -27,20 +27,27 @@ const LeaseTrustSecretRequestSlice = createSlice({
     },
 
     LeaseTrustSecretRequestValueToggled(state, action) {
-      console.log("LeaseTrustSecretRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const LeaseTrustSecretRequest:LeaseTrustSecretRequest = state.find((LeaseTrustSecretRequest) => LeaseTrustSecretRequest.id === action.payload.LeaseTrustSecretRequestId);
+      console.log("LeaseTrustSecretRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const LeaseTrustSecretRequest: LeaseTrustSecretRequest = state.find(
+        (LeaseTrustSecretRequest) =>
+          LeaseTrustSecretRequest.id ===
+          action.payload.LeaseTrustSecretRequestId,
+      );
       if (LeaseTrustSecretRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     LeaseTrustSecretRequestpropertySet(state, action) {
-      const LeaseTrustSecretRequest = state.find((LeaseTrustSecretRequest) => LeaseTrustSecretRequest.id === action.payload.LeaseTrustSecretRequestId);
+      const LeaseTrustSecretRequest = state.find(
+        (LeaseTrustSecretRequest) =>
+          LeaseTrustSecretRequest.id ===
+          action.payload.LeaseTrustSecretRequestId,
+      );
       if (LeaseTrustSecretRequest) {
-      //  LeaseTrustSecretRequest[action.property] = action.payload[action.property];
+        //  LeaseTrustSecretRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const LeaseTrustSecretRequestSlice = createSlice({
 export const {
   LeaseTrustSecretRequestAdded,
   LeaseTrustSecretRequestValueToggled,
-  LeaseTrustSecretRequestpropertySet
+  LeaseTrustSecretRequestpropertySet,
 } = LeaseTrustSecretRequestSlice.actions;
 export default LeaseTrustSecretRequestSlice.reducer;

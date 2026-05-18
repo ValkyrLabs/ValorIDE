@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { MemoryRunRecord } from '@thorapi/model/MemoryRunRecord';
+import { MemoryRunRecord } from "@thorapi/model/MemoryRunRecord";
 
 const MemoryRunRecordSlice = createSlice({
   name: "MemoryRunRecords",
@@ -27,20 +27,25 @@ const MemoryRunRecordSlice = createSlice({
     },
 
     MemoryRunRecordValueToggled(state, action) {
-      console.log("MemoryRunRecord TOGGLE")
-      console.warn(JSON.stringify(action))
-      const MemoryRunRecord:MemoryRunRecord = state.find((MemoryRunRecord) => MemoryRunRecord.id === action.payload.MemoryRunRecordId);
+      console.log("MemoryRunRecord TOGGLE");
+      console.warn(JSON.stringify(action));
+      const MemoryRunRecord: MemoryRunRecord = state.find(
+        (MemoryRunRecord) =>
+          MemoryRunRecord.id === action.payload.MemoryRunRecordId,
+      );
       if (MemoryRunRecord) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     MemoryRunRecordpropertySet(state, action) {
-      const MemoryRunRecord = state.find((MemoryRunRecord) => MemoryRunRecord.id === action.payload.MemoryRunRecordId);
+      const MemoryRunRecord = state.find(
+        (MemoryRunRecord) =>
+          MemoryRunRecord.id === action.payload.MemoryRunRecordId,
+      );
       if (MemoryRunRecord) {
-      //  MemoryRunRecord[action.property] = action.payload[action.property];
+        //  MemoryRunRecord[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const MemoryRunRecordSlice = createSlice({
 export const {
   MemoryRunRecordAdded,
   MemoryRunRecordValueToggled,
-  MemoryRunRecordpropertySet
+  MemoryRunRecordpropertySet,
 } = MemoryRunRecordSlice.actions;
 export default MemoryRunRecordSlice.reducer;

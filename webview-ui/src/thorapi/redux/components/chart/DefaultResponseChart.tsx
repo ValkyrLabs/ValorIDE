@@ -19,20 +19,32 @@ Description: DefaultResponse
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, DefaultResponse } from '@thorapi/model';
-import { useGetDefaultResponsesQuery, useAddDefaultResponseMutation, useUpdateDefaultResponseMutation } from '../../services/DefaultResponseService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, DefaultResponse } from "@thorapi/model";
+import {
+  useGetDefaultResponsesQuery,
+  useAddDefaultResponseMutation,
+  useUpdateDefaultResponseMutation,
+} from "../../services/DefaultResponseService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const DefaultResponseChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetDefaultResponsesQuery();
 
   const [data, setData] = useState<DefaultResponse[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<DefaultResponse>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const DefaultResponseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,15 @@ const DefaultResponseChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((defaultresponse: DataObject) => [defaultresponse])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((defaultresponse: DataObject) => [
+            defaultresponse,
+          ])}
+        />
+      )}
     </>
   );
 };

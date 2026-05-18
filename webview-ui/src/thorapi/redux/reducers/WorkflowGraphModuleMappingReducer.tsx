@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { WorkflowGraphModuleMapping } from '@thorapi/model/WorkflowGraphModuleMapping';
+import { WorkflowGraphModuleMapping } from "@thorapi/model/WorkflowGraphModuleMapping";
 
 const WorkflowGraphModuleMappingSlice = createSlice({
   name: "WorkflowGraphModuleMappings",
@@ -27,20 +27,27 @@ const WorkflowGraphModuleMappingSlice = createSlice({
     },
 
     WorkflowGraphModuleMappingValueToggled(state, action) {
-      console.log("WorkflowGraphModuleMapping TOGGLE")
-      console.warn(JSON.stringify(action))
-      const WorkflowGraphModuleMapping:WorkflowGraphModuleMapping = state.find((WorkflowGraphModuleMapping) => WorkflowGraphModuleMapping.id === action.payload.WorkflowGraphModuleMappingId);
+      console.log("WorkflowGraphModuleMapping TOGGLE");
+      console.warn(JSON.stringify(action));
+      const WorkflowGraphModuleMapping: WorkflowGraphModuleMapping = state.find(
+        (WorkflowGraphModuleMapping) =>
+          WorkflowGraphModuleMapping.id ===
+          action.payload.WorkflowGraphModuleMappingId,
+      );
       if (WorkflowGraphModuleMapping) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     WorkflowGraphModuleMappingpropertySet(state, action) {
-      const WorkflowGraphModuleMapping = state.find((WorkflowGraphModuleMapping) => WorkflowGraphModuleMapping.id === action.payload.WorkflowGraphModuleMappingId);
+      const WorkflowGraphModuleMapping = state.find(
+        (WorkflowGraphModuleMapping) =>
+          WorkflowGraphModuleMapping.id ===
+          action.payload.WorkflowGraphModuleMappingId,
+      );
       if (WorkflowGraphModuleMapping) {
-      //  WorkflowGraphModuleMapping[action.property] = action.payload[action.property];
+        //  WorkflowGraphModuleMapping[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const WorkflowGraphModuleMappingSlice = createSlice({
 export const {
   WorkflowGraphModuleMappingAdded,
   WorkflowGraphModuleMappingValueToggled,
-  WorkflowGraphModuleMappingpropertySet
+  WorkflowGraphModuleMappingpropertySet,
 } = WorkflowGraphModuleMappingSlice.actions;
 export default WorkflowGraphModuleMappingSlice.reducer;

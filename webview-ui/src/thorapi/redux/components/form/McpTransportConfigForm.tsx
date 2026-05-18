@@ -13,32 +13,40 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   McpTransportConfig,
   McpTransportConfigTransportTypeEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddMcpTransportConfigMutation } from '../../services/McpTransportConfigService';
+import { useAddMcpTransportConfigMutation } from "../../services/McpTransportConfigService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -62,43 +70,40 @@ Configuration for MCP tool transport layer (how clients invoke tools)
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const TransportTypeValidation = () => {
-  return [
-    'STDIO',
-    'HTTP',
-    'WEBSOCKET',
-    'SSE',
-    'LAMBDA',
-    'CUSTOM',
-  ];
+  return ["STDIO", "HTTP", "WEBSOCKET", "SSE", "LAMBDA", "CUSTOM"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        mcpServerId: Yup.string(),
-      transportType: Yup.mixed()
-        .oneOf(TransportTypeValidation(), "Invalid value for transportType")
-        ,
-        executablePath: Yup.string(),
-        baseUrl: Yup.string(),
-        authHeaderName: Yup.string(),
-        authToken: Yup.string(),
-        functionArn: Yup.string(),
-        roleArn: Yup.string(),
-        customConfig: Yup.string(),
-        isActive: Yup.boolean(),
-        trashed: Yup.boolean(),
+  mcpServerId: Yup.string(),
+  transportType: Yup.mixed().oneOf(
+    TransportTypeValidation(),
+    "Invalid value for transportType",
+  ),
+  executablePath: Yup.string(),
+  baseUrl: Yup.string(),
+  authHeaderName: Yup.string(),
+  authToken: Yup.string(),
+  functionArn: Yup.string(),
+  roleArn: Yup.string(),
+  customConfig: Yup.string(),
+  isActive: Yup.boolean(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const McpTransportConfigForm: React.FC = () => {
-  const [addMcpTransportConfig, addMcpTransportConfigResult] = useAddMcpTransportConfigMutation();
+  const [addMcpTransportConfig, addMcpTransportConfigResult] =
+    useAddMcpTransportConfigMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -108,12 +113,18 @@ const McpTransportConfigForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -121,17 +132,17 @@ const McpTransportConfigForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<McpTransportConfig> = {
-          mcpServerId: '',
-        transportType: undefined,
-          executablePath: '',
-          baseUrl: '',
-          authHeaderName: '',
-          authToken: '',
-          functionArn: '',
-          roleArn: '',
-          customConfig: '',
-          isActive: false,
-          trashed: false,
+    mcpServerId: "",
+    transportType: undefined,
+    executablePath: "",
+    baseUrl: "",
+    authHeaderName: "",
+    authToken: "",
+    functionArn: "",
+    roleArn: "",
+    customConfig: "",
+    isActive: false,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -146,11 +157,14 @@ const McpTransportConfigForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new McpTransportConfig:', grants);
+    console.log("Permissions saved for new McpTransportConfig:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<McpTransportConfig>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<McpTransportConfig>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -161,7 +175,7 @@ const McpTransportConfigForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `McpTransportConfig created successfully! Would you like to set permissions for this object?`
+          `McpTransportConfig created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -169,8 +183,8 @@ const McpTransportConfigForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create McpTransportConfig:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create McpTransportConfig:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -191,44 +205,38 @@ const McpTransportConfigForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addMcpTransportConfigResult.isLoading;
+          const isSaving =
+            isSubmitting || addMcpTransportConfigResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New McpTransportConfig
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    McpTransportConfig
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="mcpServerId" className="nice-form-control">
                       <b>
                         Mcp Server Id:
-                        {touched.mcpServerId &&
-                         !errors.mcpServerId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.mcpServerId && !errors.mcpServerId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="mcpServerId"
-                            value={values?.mcpServerId}
-                            placeholder="Mcp Server Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="mcpServerId"
+                        value={values?.mcpServerId}
+                        placeholder="Mcp Server Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -237,33 +245,39 @@ const McpTransportConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="transportType" className="nice-form-control">
+                    <label
+                      htmlFor="transportType"
+                      className="nice-form-control"
+                    >
                       <b>
                         Transport Type:
-                        {touched.transportType &&
-                         !errors.transportType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.transportType && !errors.transportType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="transportType"
-                          value={values.transportType || ''}
-                          className={
-                            errors.transportType
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('transportType', true);
-                            setFieldValue('transportType', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Transport Type" />
-                          <TransportTypeLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="transportType"
+                        value={values.transportType || ""}
+                        className={
+                          errors.transportType
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("transportType", true);
+                          setFieldValue(
+                            "transportType",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Transport Type" />
+                        <TransportTypeLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -272,31 +286,27 @@ const McpTransportConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="executablePath" className="nice-form-control">
+                    <label
+                      htmlFor="executablePath"
+                      className="nice-form-control"
+                    >
                       <b>
                         Executable Path:
-                        {touched.executablePath &&
-                         !errors.executablePath && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.executablePath && !errors.executablePath && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="executablePath"
-                            value={values?.executablePath}
-                            placeholder="Executable Path"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="executablePath"
+                        value={values?.executablePath}
+                        placeholder="Executable Path"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -308,28 +318,21 @@ const McpTransportConfigForm: React.FC = () => {
                     <label htmlFor="baseUrl" className="nice-form-control">
                       <b>
                         Base Url:
-                        {touched.baseUrl &&
-                         !errors.baseUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.baseUrl && !errors.baseUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="baseUrl"
-                            value={values?.baseUrl}
-                            placeholder="Base Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="baseUrl"
+                        value={values?.baseUrl}
+                        placeholder="Base Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -338,31 +341,27 @@ const McpTransportConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="authHeaderName" className="nice-form-control">
+                    <label
+                      htmlFor="authHeaderName"
+                      className="nice-form-control"
+                    >
                       <b>
                         Auth Header Name:
-                        {touched.authHeaderName &&
-                         !errors.authHeaderName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.authHeaderName && !errors.authHeaderName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="authHeaderName"
-                            value={values?.authHeaderName}
-                            placeholder="Auth Header Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="authHeaderName"
+                        value={values?.authHeaderName}
+                        placeholder="Auth Header Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -374,28 +373,21 @@ const McpTransportConfigForm: React.FC = () => {
                     <label htmlFor="authToken" className="nice-form-control">
                       <b>
                         Auth Token:
-                        {touched.authToken &&
-                         !errors.authToken && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.authToken && !errors.authToken && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="authToken"
-                            value={values?.authToken}
-                            placeholder="Auth Token"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="authToken"
+                        value={values?.authToken}
+                        placeholder="Auth Token"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -407,28 +399,21 @@ const McpTransportConfigForm: React.FC = () => {
                     <label htmlFor="functionArn" className="nice-form-control">
                       <b>
                         Function Arn:
-                        {touched.functionArn &&
-                         !errors.functionArn && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.functionArn && !errors.functionArn && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="functionArn"
-                            value={values?.functionArn}
-                            placeholder="Function Arn"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="functionArn"
+                        value={values?.functionArn}
+                        placeholder="Function Arn"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -440,28 +425,21 @@ const McpTransportConfigForm: React.FC = () => {
                     <label htmlFor="roleArn" className="nice-form-control">
                       <b>
                         Role Arn:
-                        {touched.roleArn &&
-                         !errors.roleArn && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.roleArn && !errors.roleArn && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="roleArn"
-                            value={values?.roleArn}
-                            placeholder="Role Arn"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="roleArn"
+                        value={values?.roleArn}
+                        placeholder="Role Arn"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -473,28 +451,21 @@ const McpTransportConfigForm: React.FC = () => {
                     <label htmlFor="customConfig" className="nice-form-control">
                       <b>
                         Custom Config:
-                        {touched.customConfig &&
-                         !errors.customConfig && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.customConfig && !errors.customConfig && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="customConfig"
-                            value={values?.customConfig}
-                            placeholder="Custom Config"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="customConfig"
+                        value={values?.customConfig}
+                        placeholder="Custom Config"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -506,32 +477,25 @@ const McpTransportConfigForm: React.FC = () => {
                     <label htmlFor="isActive" className="nice-form-control">
                       <b>
                         Is Active:
-                        {touched.isActive &&
-                         !errors.isActive && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.isActive && !errors.isActive && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="isActive"
-                            name="isActive"
-                            checked={values.isActive || false}
-                            onChange={(e) => {
-                              setFieldTouched('isActive', true);
-                              setFieldValue('isActive', e.target.checked);
-                            }}
-                            isInvalid={!!errors.isActive}
-                            className={errors.isActive ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="isActive"
+                        name="isActive"
+                        checked={values.isActive || false}
+                        onChange={(e) => {
+                          setFieldTouched("isActive", true);
+                          setFieldValue("isActive", e.target.checked);
+                        }}
+                        isInvalid={!!errors.isActive}
+                        className={errors.isActive ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -543,32 +507,25 @@ const McpTransportConfigForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -578,45 +535,60 @@ const McpTransportConfigForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New McpTransportConfig
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New McpTransportConfig
+                    </CoolButton>
 
-                  {(addMcpTransportConfigResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addMcpTransportConfigResult as any).error ? (addMcpTransportConfigResult as any).error.data : (addMcpTransportConfigResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addMcpTransportConfigResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addMcpTransportConfigResult as any).error
+                              ? (addMcpTransportConfigResult as any).error.data
+                              : (addMcpTransportConfigResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addMcpTransportConfigResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addMcpTransportConfigResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addMcpTransportConfigResult: {JSON.stringify(addMcpTransportConfigResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addMcpTransportConfigResult:{" "}
+                    {JSON.stringify(addMcpTransportConfigResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -648,18 +620,15 @@ kebabcase transport-type-lookup
 const TransportTypeLookup = () => {
   return (
     <>
-      <option value='STDIO' label="Stdio" />
-      <option value='HTTP' label="Http" />
-      <option value='WEBSOCKET' label="Websocket" />
-      <option value='SSE' label="Sse" />
-      <option value='LAMBDA' label="Lambda" />
-      <option value='CUSTOM' label="Custom" />
+      <option value="STDIO" label="Stdio" />
+      <option value="HTTP" label="Http" />
+      <option value="WEBSOCKET" label="Websocket" />
+      <option value="SSE" label="Sse" />
+      <option value="LAMBDA" label="Lambda" />
+      <option value="CUSTOM" label="Custom" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default McpTransportConfigForm;
-

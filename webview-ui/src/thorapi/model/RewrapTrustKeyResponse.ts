@@ -26,120 +26,131 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    TrustKeyRotation,
-    TrustKeyRotationFromJSON,
-    TrustKeyRotationToJSON,
-} from './';
-
+  TrustKeyRotation,
+  TrustKeyRotationFromJSON,
+  TrustKeyRotationToJSON,
+} from "./";
 
 // thorapi
 
 /**
- * 
+ *
  * @export
  * @interface RewrapTrustKeyResponse
  */
-export type RewrapTrustKeyResponse  = DataObject & {
-    /**
-     * 
-     * @type {TrustKeyRotation}
-     * @memberof RewrapTrustKeyResponse
-     */
-    rotation?: TrustKeyRotation;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof RewrapTrustKeyResponse
-     */
-    accepted?: boolean;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof RewrapTrustKeyResponse
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof RewrapTrustKeyResponse
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof RewrapTrustKeyResponse
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof RewrapTrustKeyResponse
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof RewrapTrustKeyResponse
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof RewrapTrustKeyResponse
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof RewrapTrustKeyResponse
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof RewrapTrustKeyResponse
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof RewrapTrustKeyResponse
-     */
-    trashed?: boolean;
+export type RewrapTrustKeyResponse = DataObject & {
+  /**
+   *
+   * @type {TrustKeyRotation}
+   * @memberof RewrapTrustKeyResponse
+   */
+  rotation?: TrustKeyRotation;
+  /**
+   *
+   * @type {boolean}
+   * @memberof RewrapTrustKeyResponse
+   */
+  accepted?: boolean;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof RewrapTrustKeyResponse
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof RewrapTrustKeyResponse
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof RewrapTrustKeyResponse
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof RewrapTrustKeyResponse
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof RewrapTrustKeyResponse
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof RewrapTrustKeyResponse
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof RewrapTrustKeyResponse
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof RewrapTrustKeyResponse
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof RewrapTrustKeyResponse
+   */
+  trashed?: boolean;
+};
+
+export function RewrapTrustKeyResponseFromJSON(
+  json: any,
+): RewrapTrustKeyResponse {
+  return {
+    ...DataObjectFromJSON(json),
+    rotation: !exists(json, "rotation")
+      ? undefined
+      : TrustKeyRotationFromJSON(json["rotation"]),
+    accepted: !exists(json, "accepted") ? undefined : json["accepted"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
-export function RewrapTrustKeyResponseFromJSON(json: any): RewrapTrustKeyResponse {
-    return {
-        ...DataObjectFromJSON(json),
-        'rotation': !exists(json, 'rotation') ? undefined : TrustKeyRotationFromJSON(json['rotation']),
-        'accepted': !exists(json, 'accepted') ? undefined : json['accepted'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+export function RewrapTrustKeyResponseToJSON(
+  value?: RewrapTrustKeyResponse,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    rotation: TrustKeyRotationToJSON(value.rotation),
+    accepted: value.accepted,
+    trashed: value.trashed,
+  };
 }
-
-export function RewrapTrustKeyResponseToJSON(value?: RewrapTrustKeyResponse): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'rotation': TrustKeyRotationToJSON(value.rotation),
-        'accepted': value.accepted,
-        'trashed': value.trashed,
-    };
-}
-
-

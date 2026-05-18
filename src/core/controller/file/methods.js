@@ -5,7 +5,7 @@ import { registerMethod } from "./index";
 import { openFile } from "./openFile";
 // Register all file service methods
 export function registerAllMethods() {
-    // Register each method with the registry
-    registerMethod("openFile", openFile);
+  // Register each method with the registry
+  registerMethod("openFile", openFile);
 }
 //# sourceMappingURL=methods.js.map

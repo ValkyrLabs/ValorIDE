@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_MCPMARKETPLACECATALOG_REQUEST,
-    FETCH_MCPMARKETPLACECATALOG_REQUEST,
-    LIST_MCPMARKETPLACECATALOG_REQUEST,
-    UPDATE_MCPMARKETPLACECATALOG_REQUEST,
-    DELETE_MCPMARKETPLACECATALOG_REQUEST,
-
-    addMcpMarketplaceCatalogFailure,
-    addMcpMarketplaceCatalogSuccess,
-
-    fetchMcpMarketplaceCatalogFailure,
-    fetchMcpMarketplaceCatalogSuccess,
-    
-    listMcpMarketplaceCatalogFailure,
-    listMcpMarketplaceCatalogSuccess,
-
-    updateMcpMarketplaceCatalogFailure,
-    updateMcpMarketplaceCatalogSuccess,
-    
-    deleteMcpMarketplaceCatalogFailure,
-    deleteMcpMarketplaceCatalogSuccess,
-    
-} from '../actions/McpMarketplaceCatalogApiAction';
+  ADD_MCPMARKETPLACECATALOG_REQUEST,
+  FETCH_MCPMARKETPLACECATALOG_REQUEST,
+  LIST_MCPMARKETPLACECATALOG_REQUEST,
+  UPDATE_MCPMARKETPLACECATALOG_REQUEST,
+  DELETE_MCPMARKETPLACECATALOG_REQUEST,
+  addMcpMarketplaceCatalogFailure,
+  addMcpMarketplaceCatalogSuccess,
+  fetchMcpMarketplaceCatalogFailure,
+  fetchMcpMarketplaceCatalogSuccess,
+  listMcpMarketplaceCatalogFailure,
+  listMcpMarketplaceCatalogSuccess,
+  updateMcpMarketplaceCatalogFailure,
+  updateMcpMarketplaceCatalogSuccess,
+  deleteMcpMarketplaceCatalogFailure,
+  deleteMcpMarketplaceCatalogSuccess,
+} from "../actions/McpMarketplaceCatalogApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: McpMarketplaceCatalog
 */
 
-
-
-export const McpMarketplaceCatalogMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("McpMarketplaceCatalog MIDDLEWARE: " + JSON.stringify(action) )
+export const McpMarketplaceCatalogMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("McpMarketplaceCatalog MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

@@ -22,7 +22,7 @@ async function run() {
   dom.window.addEventListener("error", (e) => {
     console.error(
       "PAGE ERROR",
-      e.error && e.error.stack ? e.error.stack : e.message
+      e.error && e.error.stack ? e.error.stack : e.message,
     );
     // try to POST to capture server
     try {
@@ -42,7 +42,7 @@ async function run() {
   dom.window.addEventListener("unhandledrejection", (e) => {
     console.error(
       "UNHANDLED REJECTION",
-      e.reason && (e.reason.stack || e.reason)
+      e.reason && (e.reason.stack || e.reason),
     );
     try {
       globalThis.fetch &&

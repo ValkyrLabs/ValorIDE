@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { GraphLink } from '@thorapi/model/GraphLink';
+import { GraphLink } from "@thorapi/model/GraphLink";
 
 const GraphLinkSlice = createSlice({
   name: "GraphLinks",
@@ -27,28 +27,28 @@ const GraphLinkSlice = createSlice({
     },
 
     GraphLinkValueToggled(state, action) {
-      console.log("GraphLink TOGGLE")
-      console.warn(JSON.stringify(action))
-      const GraphLink:GraphLink = state.find((GraphLink) => GraphLink.id === action.payload.GraphLinkId);
+      console.log("GraphLink TOGGLE");
+      console.warn(JSON.stringify(action));
+      const GraphLink: GraphLink = state.find(
+        (GraphLink) => GraphLink.id === action.payload.GraphLinkId,
+      );
       if (GraphLink) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     GraphLinkpropertySet(state, action) {
-      const GraphLink = state.find((GraphLink) => GraphLink.id === action.payload.GraphLinkId);
+      const GraphLink = state.find(
+        (GraphLink) => GraphLink.id === action.payload.GraphLinkId,
+      );
       if (GraphLink) {
-      //  GraphLink[action.property] = action.payload[action.property];
+        //  GraphLink[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  GraphLinkAdded,
-  GraphLinkValueToggled,
-  GraphLinkpropertySet
-} = GraphLinkSlice.actions;
+export const { GraphLinkAdded, GraphLinkValueToggled, GraphLinkpropertySet } =
+  GraphLinkSlice.actions;
 export default GraphLinkSlice.reducer;

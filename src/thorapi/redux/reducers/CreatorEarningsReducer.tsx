@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { CreatorEarnings } from '@thorapi/model/CreatorEarnings';
+import { CreatorEarnings } from "@thorapi/model/CreatorEarnings";
 
 const CreatorEarningsSlice = createSlice({
   name: "CreatorEarningss",
@@ -27,20 +27,25 @@ const CreatorEarningsSlice = createSlice({
     },
 
     CreatorEarningsValueToggled(state, action) {
-      console.log("CreatorEarnings TOGGLE")
-      console.warn(JSON.stringify(action))
-      const CreatorEarnings:CreatorEarnings = state.find((CreatorEarnings) => CreatorEarnings.id === action.payload.CreatorEarningsId);
+      console.log("CreatorEarnings TOGGLE");
+      console.warn(JSON.stringify(action));
+      const CreatorEarnings: CreatorEarnings = state.find(
+        (CreatorEarnings) =>
+          CreatorEarnings.id === action.payload.CreatorEarningsId,
+      );
       if (CreatorEarnings) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     CreatorEarningspropertySet(state, action) {
-      const CreatorEarnings = state.find((CreatorEarnings) => CreatorEarnings.id === action.payload.CreatorEarningsId);
+      const CreatorEarnings = state.find(
+        (CreatorEarnings) =>
+          CreatorEarnings.id === action.payload.CreatorEarningsId,
+      );
       if (CreatorEarnings) {
-      //  CreatorEarnings[action.property] = action.payload[action.property];
+        //  CreatorEarnings[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const CreatorEarningsSlice = createSlice({
 export const {
   CreatorEarningsAdded,
   CreatorEarningsValueToggled,
-  CreatorEarningspropertySet
+  CreatorEarningspropertySet,
 } = CreatorEarningsSlice.actions;
 export default CreatorEarningsSlice.reducer;

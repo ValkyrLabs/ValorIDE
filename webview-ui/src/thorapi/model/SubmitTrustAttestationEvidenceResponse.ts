@@ -26,120 +26,131 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    TrustAttestationEvidence,
-    TrustAttestationEvidenceFromJSON,
-    TrustAttestationEvidenceToJSON,
-} from './';
-
+  TrustAttestationEvidence,
+  TrustAttestationEvidenceFromJSON,
+  TrustAttestationEvidenceToJSON,
+} from "./";
 
 // thorapi
 
 /**
- * 
+ *
  * @export
  * @interface SubmitTrustAttestationEvidenceResponse
  */
-export type SubmitTrustAttestationEvidenceResponse  = DataObject & {
-    /**
-     * 
-     * @type {TrustAttestationEvidence}
-     * @memberof SubmitTrustAttestationEvidenceResponse
-     */
-    evidence?: TrustAttestationEvidence;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof SubmitTrustAttestationEvidenceResponse
-     */
-    accepted?: boolean;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof SubmitTrustAttestationEvidenceResponse
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof SubmitTrustAttestationEvidenceResponse
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof SubmitTrustAttestationEvidenceResponse
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof SubmitTrustAttestationEvidenceResponse
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof SubmitTrustAttestationEvidenceResponse
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof SubmitTrustAttestationEvidenceResponse
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof SubmitTrustAttestationEvidenceResponse
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof SubmitTrustAttestationEvidenceResponse
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof SubmitTrustAttestationEvidenceResponse
-     */
-    trashed?: boolean;
+export type SubmitTrustAttestationEvidenceResponse = DataObject & {
+  /**
+   *
+   * @type {TrustAttestationEvidence}
+   * @memberof SubmitTrustAttestationEvidenceResponse
+   */
+  evidence?: TrustAttestationEvidence;
+  /**
+   *
+   * @type {boolean}
+   * @memberof SubmitTrustAttestationEvidenceResponse
+   */
+  accepted?: boolean;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof SubmitTrustAttestationEvidenceResponse
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof SubmitTrustAttestationEvidenceResponse
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof SubmitTrustAttestationEvidenceResponse
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof SubmitTrustAttestationEvidenceResponse
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof SubmitTrustAttestationEvidenceResponse
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof SubmitTrustAttestationEvidenceResponse
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof SubmitTrustAttestationEvidenceResponse
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof SubmitTrustAttestationEvidenceResponse
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof SubmitTrustAttestationEvidenceResponse
+   */
+  trashed?: boolean;
+};
+
+export function SubmitTrustAttestationEvidenceResponseFromJSON(
+  json: any,
+): SubmitTrustAttestationEvidenceResponse {
+  return {
+    ...DataObjectFromJSON(json),
+    evidence: !exists(json, "evidence")
+      ? undefined
+      : TrustAttestationEvidenceFromJSON(json["evidence"]),
+    accepted: !exists(json, "accepted") ? undefined : json["accepted"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
-export function SubmitTrustAttestationEvidenceResponseFromJSON(json: any): SubmitTrustAttestationEvidenceResponse {
-    return {
-        ...DataObjectFromJSON(json),
-        'evidence': !exists(json, 'evidence') ? undefined : TrustAttestationEvidenceFromJSON(json['evidence']),
-        'accepted': !exists(json, 'accepted') ? undefined : json['accepted'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+export function SubmitTrustAttestationEvidenceResponseToJSON(
+  value?: SubmitTrustAttestationEvidenceResponse,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    evidence: TrustAttestationEvidenceToJSON(value.evidence),
+    accepted: value.accepted,
+    trashed: value.trashed,
+  };
 }
-
-export function SubmitTrustAttestationEvidenceResponseToJSON(value?: SubmitTrustAttestationEvidenceResponse): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'evidence': TrustAttestationEvidenceToJSON(value.evidence),
-        'accepted': value.accepted,
-        'trashed': value.trashed,
-    };
-}
-
-

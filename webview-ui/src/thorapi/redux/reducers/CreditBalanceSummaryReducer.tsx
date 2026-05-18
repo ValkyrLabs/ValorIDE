@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { CreditBalanceSummary } from '@thorapi/model/CreditBalanceSummary';
+import { CreditBalanceSummary } from "@thorapi/model/CreditBalanceSummary";
 
 const CreditBalanceSummarySlice = createSlice({
   name: "CreditBalanceSummarys",
@@ -27,20 +27,25 @@ const CreditBalanceSummarySlice = createSlice({
     },
 
     CreditBalanceSummaryValueToggled(state, action) {
-      console.log("CreditBalanceSummary TOGGLE")
-      console.warn(JSON.stringify(action))
-      const CreditBalanceSummary:CreditBalanceSummary = state.find((CreditBalanceSummary) => CreditBalanceSummary.id === action.payload.CreditBalanceSummaryId);
+      console.log("CreditBalanceSummary TOGGLE");
+      console.warn(JSON.stringify(action));
+      const CreditBalanceSummary: CreditBalanceSummary = state.find(
+        (CreditBalanceSummary) =>
+          CreditBalanceSummary.id === action.payload.CreditBalanceSummaryId,
+      );
       if (CreditBalanceSummary) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     CreditBalanceSummarypropertySet(state, action) {
-      const CreditBalanceSummary = state.find((CreditBalanceSummary) => CreditBalanceSummary.id === action.payload.CreditBalanceSummaryId);
+      const CreditBalanceSummary = state.find(
+        (CreditBalanceSummary) =>
+          CreditBalanceSummary.id === action.payload.CreditBalanceSummaryId,
+      );
       if (CreditBalanceSummary) {
-      //  CreditBalanceSummary[action.property] = action.payload[action.property];
+        //  CreditBalanceSummary[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const CreditBalanceSummarySlice = createSlice({
 export const {
   CreditBalanceSummaryAdded,
   CreditBalanceSummaryValueToggled,
-  CreditBalanceSummarypropertySet
+  CreditBalanceSummarypropertySet,
 } = CreditBalanceSummarySlice.actions;
 export default CreditBalanceSummarySlice.reducer;

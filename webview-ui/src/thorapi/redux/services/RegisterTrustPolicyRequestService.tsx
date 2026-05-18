@@ -13,47 +13,69 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { RegisterTrustPolicyRequest } from '@thorapi/model/RegisterTrustPolicyRequest'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { RegisterTrustPolicyRequest } from "@thorapi/model/RegisterTrustPolicyRequest";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type RegisterTrustPolicyRequestResponse = RegisterTrustPolicyRequest[]
+type RegisterTrustPolicyRequestResponse = RegisterTrustPolicyRequest[];
 
-const toRegisterTrustPolicyRequestList = (result: unknown): RegisterTrustPolicyRequestResponse => {
+const toRegisterTrustPolicyRequestList = (
+  result: unknown,
+): RegisterTrustPolicyRequestResponse => {
   if (Array.isArray(result)) {
-    return result as RegisterTrustPolicyRequestResponse
+    return result as RegisterTrustPolicyRequestResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as RegisterTrustPolicyRequestResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as RegisterTrustPolicyRequestResponse)
+    : [];
+};
 
 export const RegisterTrustPolicyRequestService = createApi({
-  reducerPath: 'RegisterTrustPolicyRequest', // This should remain unique
+  reducerPath: "RegisterTrustPolicyRequest", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['RegisterTrustPolicyRequest'],
+  tagTypes: ["RegisterTrustPolicyRequest"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getRegisterTrustPolicyRequestsPaged: build.query<RegisterTrustPolicyRequestResponse, { page: number; size?: number; example?: Partial<RegisterTrustPolicyRequest> }>({
+    getRegisterTrustPolicyRequestsPaged: build.query<
+      RegisterTrustPolicyRequestResponse,
+      {
+        page: number;
+        size?: number;
+        example?: Partial<RegisterTrustPolicyRequest>;
+      }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `RegisterTrustPolicyRequest?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `RegisterTrustPolicyRequest?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toRegisterTrustPolicyRequestList(result)
+        const rows = toRegisterTrustPolicyRequestList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'RegisterTrustPolicyRequest' as const, id })),
-          { type: 'RegisterTrustPolicyRequest', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({
+              type: "RegisterTrustPolicyRequest" as const,
+              id,
+            })),
+          { type: "RegisterTrustPolicyRequest", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getRegisterTrustPolicyRequests: build.query<RegisterTrustPolicyRequestResponse, { example?: Partial<RegisterTrustPolicyRequest> } | void>({
+    getRegisterTrustPolicyRequests: build.query<
+      RegisterTrustPolicyRequestResponse,
+      { example?: Partial<RegisterTrustPolicyRequest> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +84,121 @@ export const RegisterTrustPolicyRequestService = createApi({
         return `RegisterTrustPolicyRequest`;
       },
       providesTags: (result) => {
-        const rows = toRegisterTrustPolicyRequestList(result)
+        const rows = toRegisterTrustPolicyRequestList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'RegisterTrustPolicyRequest' as const, id })),
-          { type: 'RegisterTrustPolicyRequest', id: 'LIST' },
-        ]
+            .map(({ id }) => ({
+              type: "RegisterTrustPolicyRequest" as const,
+              id,
+            })),
+          { type: "RegisterTrustPolicyRequest", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addRegisterTrustPolicyRequest: build.mutation<RegisterTrustPolicyRequest, Partial<RegisterTrustPolicyRequest>>({
+    addRegisterTrustPolicyRequest: build.mutation<
+      RegisterTrustPolicyRequest,
+      Partial<RegisterTrustPolicyRequest>
+    >({
       query: (body) => ({
         url: `RegisterTrustPolicyRequest`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'RegisterTrustPolicyRequest', id: 'LIST' }],
+      invalidatesTags: [{ type: "RegisterTrustPolicyRequest", id: "LIST" }],
     }),
 
     // 4) Get single by ID
-    getRegisterTrustPolicyRequest: build.query<RegisterTrustPolicyRequest, string>({
+    getRegisterTrustPolicyRequest: build.query<
+      RegisterTrustPolicyRequest,
+      string
+    >({
       query: (id) => `RegisterTrustPolicyRequest/${id}`,
-      providesTags: (result, error, id) => [{ type: 'RegisterTrustPolicyRequest', id }],
+      providesTags: (result, error, id) => [
+        { type: "RegisterTrustPolicyRequest", id },
+      ],
     }),
 
     // 5) Update
-    updateRegisterTrustPolicyRequest: build.mutation<void, Pick<RegisterTrustPolicyRequest, 'id'> & Partial<RegisterTrustPolicyRequest>>({
+    updateRegisterTrustPolicyRequest: build.mutation<
+      void,
+      Pick<RegisterTrustPolicyRequest, "id"> &
+        Partial<RegisterTrustPolicyRequest>
+    >({
       query: ({ id, ...patch }) => ({
         url: `RegisterTrustPolicyRequest/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            RegisterTrustPolicyRequestService.util.updateQueryData('getRegisterTrustPolicyRequest', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            RegisterTrustPolicyRequestService.util.updateQueryData(
+              "getRegisterTrustPolicyRequest",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<RegisterTrustPolicyRequest, 'id'>) => [
-        { type: 'RegisterTrustPolicyRequest', id },
-        { type: 'RegisterTrustPolicyRequest', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<RegisterTrustPolicyRequest, "id">,
+      ) => [
+        { type: "RegisterTrustPolicyRequest", id },
+        { type: "RegisterTrustPolicyRequest", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteRegisterTrustPolicyRequest: build.mutation<{ success: boolean; id: string }, number>({
+    deleteRegisterTrustPolicyRequest: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `RegisterTrustPolicyRequest/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'RegisterTrustPolicyRequest', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "RegisterTrustPolicyRequest", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteRegisterTrustPolicyRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteRegisterTrustPolicyRequestCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `RegisterTrustPolicyRequest/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'RegisterTrustPolicyRequest', id }, { type: 'RegisterTrustPolicyRequest', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "RegisterTrustPolicyRequest", id },
+        { type: "RegisterTrustPolicyRequest", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetRegisterTrustPolicyRequestsPagedQuery`
 export const {
-  useGetRegisterTrustPolicyRequestsPagedQuery,     // immediate fetch
+  useGetRegisterTrustPolicyRequestsPagedQuery, // immediate fetch
   useLazyGetRegisterTrustPolicyRequestsPagedQuery, // lazy fetch
   useGetRegisterTrustPolicyRequestQuery,
   useGetRegisterTrustPolicyRequestsQuery,
@@ -150,4 +206,4 @@ export const {
   useUpdateRegisterTrustPolicyRequestMutation,
   useDeleteRegisterTrustPolicyRequestMutation,
   useDeleteRegisterTrustPolicyRequestCascadeMutation,
-} = RegisterTrustPolicyRequestService
+} = RegisterTrustPolicyRequestService;

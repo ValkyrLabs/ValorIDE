@@ -36,7 +36,7 @@ export class BrowserToolHandler extends BaseToolHandler {
         };
         await this.context
           .ask("tool", JSON.stringify(browserActionParams), partial)
-          .catch(() => { });
+          .catch(() => {});
       }
       return { shouldContinue: false };
     }
@@ -108,12 +108,9 @@ export class BrowserToolHandler extends BaseToolHandler {
       );
       const didApprove = await this.askApproval("tool", message);
       if (!didApprove) {
-
         return { shouldContinue: true, userRejected: true };
       }
     }
-
-
 
     try {
       let result: any;

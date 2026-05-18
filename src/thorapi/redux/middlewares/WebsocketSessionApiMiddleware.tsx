@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_WEBSOCKETSESSION_REQUEST,
-    FETCH_WEBSOCKETSESSION_REQUEST,
-    LIST_WEBSOCKETSESSION_REQUEST,
-    UPDATE_WEBSOCKETSESSION_REQUEST,
-    DELETE_WEBSOCKETSESSION_REQUEST,
-
-    addWebsocketSessionFailure,
-    addWebsocketSessionSuccess,
-
-    fetchWebsocketSessionFailure,
-    fetchWebsocketSessionSuccess,
-    
-    listWebsocketSessionFailure,
-    listWebsocketSessionSuccess,
-
-    updateWebsocketSessionFailure,
-    updateWebsocketSessionSuccess,
-    
-    deleteWebsocketSessionFailure,
-    deleteWebsocketSessionSuccess,
-    
-} from '../actions/WebsocketSessionApiAction';
+  ADD_WEBSOCKETSESSION_REQUEST,
+  FETCH_WEBSOCKETSESSION_REQUEST,
+  LIST_WEBSOCKETSESSION_REQUEST,
+  UPDATE_WEBSOCKETSESSION_REQUEST,
+  DELETE_WEBSOCKETSESSION_REQUEST,
+  addWebsocketSessionFailure,
+  addWebsocketSessionSuccess,
+  fetchWebsocketSessionFailure,
+  fetchWebsocketSessionSuccess,
+  listWebsocketSessionFailure,
+  listWebsocketSessionSuccess,
+  updateWebsocketSessionFailure,
+  updateWebsocketSessionSuccess,
+  deleteWebsocketSessionFailure,
+  deleteWebsocketSessionSuccess,
+} from "../actions/WebsocketSessionApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: WebsocketSession
 */
 
-
-
-export const WebsocketSessionMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("WebsocketSession MIDDLEWARE: " + JSON.stringify(action) )
+export const WebsocketSessionMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("WebsocketSession MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

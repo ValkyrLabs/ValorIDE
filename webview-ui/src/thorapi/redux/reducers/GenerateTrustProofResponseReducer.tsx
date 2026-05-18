@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { GenerateTrustProofResponse } from '@thorapi/model/GenerateTrustProofResponse';
+import { GenerateTrustProofResponse } from "@thorapi/model/GenerateTrustProofResponse";
 
 const GenerateTrustProofResponseSlice = createSlice({
   name: "GenerateTrustProofResponses",
@@ -27,20 +27,27 @@ const GenerateTrustProofResponseSlice = createSlice({
     },
 
     GenerateTrustProofResponseValueToggled(state, action) {
-      console.log("GenerateTrustProofResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const GenerateTrustProofResponse:GenerateTrustProofResponse = state.find((GenerateTrustProofResponse) => GenerateTrustProofResponse.id === action.payload.GenerateTrustProofResponseId);
+      console.log("GenerateTrustProofResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const GenerateTrustProofResponse: GenerateTrustProofResponse = state.find(
+        (GenerateTrustProofResponse) =>
+          GenerateTrustProofResponse.id ===
+          action.payload.GenerateTrustProofResponseId,
+      );
       if (GenerateTrustProofResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     GenerateTrustProofResponsepropertySet(state, action) {
-      const GenerateTrustProofResponse = state.find((GenerateTrustProofResponse) => GenerateTrustProofResponse.id === action.payload.GenerateTrustProofResponseId);
+      const GenerateTrustProofResponse = state.find(
+        (GenerateTrustProofResponse) =>
+          GenerateTrustProofResponse.id ===
+          action.payload.GenerateTrustProofResponseId,
+      );
       if (GenerateTrustProofResponse) {
-      //  GenerateTrustProofResponse[action.property] = action.payload[action.property];
+        //  GenerateTrustProofResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const GenerateTrustProofResponseSlice = createSlice({
 export const {
   GenerateTrustProofResponseAdded,
   GenerateTrustProofResponseValueToggled,
-  GenerateTrustProofResponsepropertySet
+  GenerateTrustProofResponsepropertySet,
 } = GenerateTrustProofResponseSlice.actions;
 export default GenerateTrustProofResponseSlice.reducer;

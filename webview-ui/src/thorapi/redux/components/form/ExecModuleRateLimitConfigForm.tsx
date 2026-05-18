@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  ExecModuleRateLimitConfig,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddExecModuleRateLimitConfigMutation } from '../../services/ExecModuleRateLimitConfigService';
+import { ExecModuleRateLimitConfig } from "@thorapi/model";
+
+import { useAddExecModuleRateLimitConfigMutation } from "../../services/ExecModuleRateLimitConfigService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,20 +71,29 @@ ExecModuleRateLimitConfig
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        maxConcurrent: asNumber(Yup.number().integer().typeError("maxConcurrent must be a number")),
-        maxPerSecond: asNumber(Yup.number().integer().typeError("maxPerSecond must be a number")),
-        maxPerMinute: asNumber(Yup.number().integer().typeError("maxPerMinute must be a number")),
-        trashed: Yup.boolean(),
+  maxConcurrent: asNumber(
+    Yup.number().integer().typeError("maxConcurrent must be a number"),
+  ),
+  maxPerSecond: asNumber(
+    Yup.number().integer().typeError("maxPerSecond must be a number"),
+  ),
+  maxPerMinute: asNumber(
+    Yup.number().integer().typeError("maxPerMinute must be a number"),
+  ),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ExecModuleRateLimitConfigForm: React.FC = () => {
-  const [addExecModuleRateLimitConfig, addExecModuleRateLimitConfigResult] = useAddExecModuleRateLimitConfigMutation();
+  const [addExecModuleRateLimitConfig, addExecModuleRateLimitConfigResult] =
+    useAddExecModuleRateLimitConfigMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -88,12 +103,18 @@ const ExecModuleRateLimitConfigForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -101,10 +122,10 @@ const ExecModuleRateLimitConfigForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ExecModuleRateLimitConfig> = {
-          maxConcurrent: 0,
-          maxPerSecond: 0,
-          maxPerMinute: 0,
-          trashed: false,
+    maxConcurrent: 0,
+    maxPerSecond: 0,
+    maxPerMinute: 0,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -119,11 +140,14 @@ const ExecModuleRateLimitConfigForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new ExecModuleRateLimitConfig:', grants);
+    console.log("Permissions saved for new ExecModuleRateLimitConfig:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ExecModuleRateLimitConfig>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<ExecModuleRateLimitConfig>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -134,7 +158,7 @@ const ExecModuleRateLimitConfigForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ExecModuleRateLimitConfig created successfully! Would you like to set permissions for this object?`
+          `ExecModuleRateLimitConfig created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -142,8 +166,8 @@ const ExecModuleRateLimitConfigForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create ExecModuleRateLimitConfig:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create ExecModuleRateLimitConfig:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -164,52 +188,52 @@ const ExecModuleRateLimitConfigForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addExecModuleRateLimitConfigResult.isLoading;
+          const isSaving =
+            isSubmitting || addExecModuleRateLimitConfigResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New ExecModuleRateLimitConfig
-                </Accordion.Header>
-                <Accordion.Body>
-                    <label htmlFor="maxConcurrent" className="nice-form-control">
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    ExecModuleRateLimitConfig
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <label
+                      htmlFor="maxConcurrent"
+                      className="nice-form-control"
+                    >
                       <b>
                         Max Concurrent:
-                        {touched.maxConcurrent &&
-                         !errors.maxConcurrent && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.maxConcurrent && !errors.maxConcurrent && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="maxConcurrent"
-                            type="number"
-                            value={values.maxConcurrent || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('maxConcurrent', true);
-                              const v = e.target.value;
-                              setFieldValue('maxConcurrent', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.maxConcurrent
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="maxConcurrent"
+                        type="number"
+                        value={values.maxConcurrent || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("maxConcurrent", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "maxConcurrent",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.maxConcurrent
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -221,36 +245,32 @@ const ExecModuleRateLimitConfigForm: React.FC = () => {
                     <label htmlFor="maxPerSecond" className="nice-form-control">
                       <b>
                         Max Per Second:
-                        {touched.maxPerSecond &&
-                         !errors.maxPerSecond && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.maxPerSecond && !errors.maxPerSecond && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="maxPerSecond"
-                            type="number"
-                            value={values.maxPerSecond || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('maxPerSecond', true);
-                              const v = e.target.value;
-                              setFieldValue('maxPerSecond', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.maxPerSecond
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="maxPerSecond"
+                        type="number"
+                        value={values.maxPerSecond || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("maxPerSecond", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "maxPerSecond",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.maxPerSecond
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -262,36 +282,32 @@ const ExecModuleRateLimitConfigForm: React.FC = () => {
                     <label htmlFor="maxPerMinute" className="nice-form-control">
                       <b>
                         Max Per Minute:
-                        {touched.maxPerMinute &&
-                         !errors.maxPerMinute && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.maxPerMinute && !errors.maxPerMinute && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="maxPerMinute"
-                            type="number"
-                            value={values.maxPerMinute || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('maxPerMinute', true);
-                              const v = e.target.value;
-                              setFieldValue('maxPerMinute', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.maxPerMinute
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="maxPerMinute"
+                        type="number"
+                        value={values.maxPerMinute || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("maxPerMinute", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "maxPerMinute",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.maxPerMinute
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -303,32 +319,25 @@ const ExecModuleRateLimitConfigForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -338,45 +347,65 @@ const ExecModuleRateLimitConfigForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New ExecModuleRateLimitConfig
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      ExecModuleRateLimitConfig
+                    </CoolButton>
 
-                  {(addExecModuleRateLimitConfigResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addExecModuleRateLimitConfigResult as any).error ? (addExecModuleRateLimitConfigResult as any).error.data : (addExecModuleRateLimitConfigResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addExecModuleRateLimitConfigResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addExecModuleRateLimitConfigResult as any).error
+                              ? (addExecModuleRateLimitConfigResult as any)
+                                  .error.data
+                              : (addExecModuleRateLimitConfigResult as any)
+                                  .error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addExecModuleRateLimitConfigResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addExecModuleRateLimitConfigResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addExecModuleRateLimitConfigResult: {JSON.stringify(addExecModuleRateLimitConfigResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addExecModuleRateLimitConfigResult:{" "}
+                    {JSON.stringify(addExecModuleRateLimitConfigResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -396,8 +425,5 @@ const ExecModuleRateLimitConfigForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default ExecModuleRateLimitConfigForm;
-

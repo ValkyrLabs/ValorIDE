@@ -19,20 +19,32 @@ Description: FileVersion
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, FileVersion } from '@thorapi/model';
-import { useGetFileVersionsQuery, useAddFileVersionMutation, useUpdateFileVersionMutation } from '../../services/FileVersionService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, FileVersion } from "@thorapi/model";
+import {
+  useGetFileVersionsQuery,
+  useAddFileVersionMutation,
+  useUpdateFileVersionMutation,
+} from "../../services/FileVersionService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const FileVersionChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetFileVersionsQuery();
 
   const [data, setData] = useState<FileVersion[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<FileVersion>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const FileVersionChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const FileVersionChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((fileversion: DataObject) => [fileversion])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((fileversion: DataObject) => [fileversion])}
+        />
+      )}
     </>
   );
 };

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { LlmRoutingPolicy } from '@thorapi/model/LlmRoutingPolicy';
+import { LlmRoutingPolicy } from "@thorapi/model/LlmRoutingPolicy";
 
 const LlmRoutingPolicySlice = createSlice({
   name: "LlmRoutingPolicys",
@@ -27,20 +27,25 @@ const LlmRoutingPolicySlice = createSlice({
     },
 
     LlmRoutingPolicyValueToggled(state, action) {
-      console.log("LlmRoutingPolicy TOGGLE")
-      console.warn(JSON.stringify(action))
-      const LlmRoutingPolicy:LlmRoutingPolicy = state.find((LlmRoutingPolicy) => LlmRoutingPolicy.id === action.payload.LlmRoutingPolicyId);
+      console.log("LlmRoutingPolicy TOGGLE");
+      console.warn(JSON.stringify(action));
+      const LlmRoutingPolicy: LlmRoutingPolicy = state.find(
+        (LlmRoutingPolicy) =>
+          LlmRoutingPolicy.id === action.payload.LlmRoutingPolicyId,
+      );
       if (LlmRoutingPolicy) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     LlmRoutingPolicypropertySet(state, action) {
-      const LlmRoutingPolicy = state.find((LlmRoutingPolicy) => LlmRoutingPolicy.id === action.payload.LlmRoutingPolicyId);
+      const LlmRoutingPolicy = state.find(
+        (LlmRoutingPolicy) =>
+          LlmRoutingPolicy.id === action.payload.LlmRoutingPolicyId,
+      );
       if (LlmRoutingPolicy) {
-      //  LlmRoutingPolicy[action.property] = action.payload[action.property];
+        //  LlmRoutingPolicy[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const LlmRoutingPolicySlice = createSlice({
 export const {
   LlmRoutingPolicyAdded,
   LlmRoutingPolicyValueToggled,
-  LlmRoutingPolicypropertySet
+  LlmRoutingPolicypropertySet,
 } = LlmRoutingPolicySlice.actions;
 export default LlmRoutingPolicySlice.reducer;

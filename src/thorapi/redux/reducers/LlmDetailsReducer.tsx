@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { LlmDetails } from '@thorapi/model/LlmDetails';
+import { LlmDetails } from "@thorapi/model/LlmDetails";
 
 const LlmDetailsSlice = createSlice({
   name: "LlmDetailss",
@@ -27,20 +27,23 @@ const LlmDetailsSlice = createSlice({
     },
 
     LlmDetailsValueToggled(state, action) {
-      console.log("LlmDetails TOGGLE")
-      console.warn(JSON.stringify(action))
-      const LlmDetails:LlmDetails = state.find((LlmDetails) => LlmDetails.id === action.payload.LlmDetailsId);
+      console.log("LlmDetails TOGGLE");
+      console.warn(JSON.stringify(action));
+      const LlmDetails: LlmDetails = state.find(
+        (LlmDetails) => LlmDetails.id === action.payload.LlmDetailsId,
+      );
       if (LlmDetails) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     LlmDetailspropertySet(state, action) {
-      const LlmDetails = state.find((LlmDetails) => LlmDetails.id === action.payload.LlmDetailsId);
+      const LlmDetails = state.find(
+        (LlmDetails) => LlmDetails.id === action.payload.LlmDetailsId,
+      );
       if (LlmDetails) {
-      //  LlmDetails[action.property] = action.payload[action.property];
+        //  LlmDetails[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const LlmDetailsSlice = createSlice({
 export const {
   LlmDetailsAdded,
   LlmDetailsValueToggled,
-  LlmDetailspropertySet
+  LlmDetailspropertySet,
 } = LlmDetailsSlice.actions;
 export default LlmDetailsSlice.reducer;

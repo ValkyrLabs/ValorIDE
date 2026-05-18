@@ -24,8 +24,12 @@ describe("RemoteTaskPresetRegistry", () => {
       now: 1200,
     });
 
-    expect(registry.list({ scope: "org", scopeId: "valkyrlabs" })).toHaveLength(1);
-    expect(registry.list({ scope: "team", scopeId: "platform" })).toHaveLength(1);
+    expect(registry.list({ scope: "org", scopeId: "valkyrlabs" })).toHaveLength(
+      1,
+    );
+    expect(registry.list({ scope: "team", scopeId: "platform" })).toHaveLength(
+      1,
+    );
   });
 
   it("updates an existing preset deterministically", () => {

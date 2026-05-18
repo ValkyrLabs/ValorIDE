@@ -19,20 +19,32 @@ Description: Goal
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, Goal } from '@thorapi/model';
-import { useGetGoalsQuery, useAddGoalMutation, useUpdateGoalMutation } from '../../services/GoalService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, Goal } from "@thorapi/model";
+import {
+  useGetGoalsQuery,
+  useAddGoalMutation,
+  useUpdateGoalMutation,
+} from "../../services/GoalService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const GoalChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetGoalsQuery();
 
   const [data, setData] = useState<Goal[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<Goal>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const GoalChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,11 @@ const GoalChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((goal: DataObject) => [goal])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart data={data.flatMap((goal: DataObject) => [goal])} />
+      )}
     </>
   );
 };

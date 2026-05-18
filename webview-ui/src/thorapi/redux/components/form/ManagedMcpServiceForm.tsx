@@ -13,34 +13,42 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   ManagedMcpService,
   ManagedMcpServiceStatusEnum,
   ManagedMcpServicePricingModelEnum,
   ManagedMcpServiceTierNameEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddManagedMcpServiceMutation } from '../../services/ManagedMcpServiceService';
+import { useAddManagedMcpServiceMutation } from "../../services/ManagedMcpServiceService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -64,60 +72,51 @@ MCP service with monetization metadata.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const StatusValidation = () => {
-  return [
-    'DRAFT',
-    'PUBLISHED',
-    'MONETIZED',
-    'SUSPENDED',
-  ];
+  return ["DRAFT", "PUBLISHED", "MONETIZED", "SUSPENDED"];
 };
 const PricingModelValidation = () => {
-  return [
-    'PER_CALL',
-    'PER_MONTH',
-    'TIERED',
-    'USAGE_BASED',
-  ];
+  return ["PER_CALL", "PER_MONTH", "TIERED", "USAGE_BASED"];
 };
 const TierNameValidation = () => {
-  return [
-    'STARTER',
-    'PRO',
-    'ENTERPRISE',
-  ];
+  return ["STARTER", "PRO", "ENTERPRISE"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        name: Yup.string(),
-        description: Yup.string(),
-      status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        ,
-      pricingModel: Yup.mixed()
-        .oneOf(PricingModelValidation(), "Invalid value for pricingModel")
-        ,
-        costPerCall: asNumber(Yup.number().typeError("costPerCall must be a number")),
-        costPerMonth: asNumber(Yup.number().typeError("costPerMonth must be a number")),
-      tierName: Yup.mixed()
-        .oneOf(TierNameValidation(), "Invalid value for tierName")
-        ,
-        hideFromMarketplace: Yup.boolean(),
-        isMonetized: Yup.boolean(),
-        pricingMetadata: Yup.string(),
-        trashed: Yup.boolean(),
+  name: Yup.string(),
+  description: Yup.string(),
+  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
+  pricingModel: Yup.mixed().oneOf(
+    PricingModelValidation(),
+    "Invalid value for pricingModel",
+  ),
+  costPerCall: asNumber(Yup.number().typeError("costPerCall must be a number")),
+  costPerMonth: asNumber(
+    Yup.number().typeError("costPerMonth must be a number"),
+  ),
+  tierName: Yup.mixed().oneOf(
+    TierNameValidation(),
+    "Invalid value for tierName",
+  ),
+  hideFromMarketplace: Yup.boolean(),
+  isMonetized: Yup.boolean(),
+  pricingMetadata: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ManagedMcpServiceForm: React.FC = () => {
-  const [addManagedMcpService, addManagedMcpServiceResult] = useAddManagedMcpServiceMutation();
+  const [addManagedMcpService, addManagedMcpServiceResult] =
+    useAddManagedMcpServiceMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -127,12 +126,18 @@ const ManagedMcpServiceForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -140,17 +145,17 @@ const ManagedMcpServiceForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ManagedMcpService> = {
-          name: '',
-          description: '',
-        status: undefined,
-        pricingModel: undefined,
-          costPerCall: 0,
-          costPerMonth: 0,
-        tierName: undefined,
-          hideFromMarketplace: false,
-          isMonetized: false,
-          pricingMetadata: '',
-          trashed: false,
+    name: "",
+    description: "",
+    status: undefined,
+    pricingModel: undefined,
+    costPerCall: 0,
+    costPerMonth: 0,
+    tierName: undefined,
+    hideFromMarketplace: false,
+    isMonetized: false,
+    pricingMetadata: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -165,11 +170,14 @@ const ManagedMcpServiceForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new ManagedMcpService:', grants);
+    console.log("Permissions saved for new ManagedMcpService:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ManagedMcpService>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<ManagedMcpService>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -180,7 +188,7 @@ const ManagedMcpServiceForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ManagedMcpService created successfully! Would you like to set permissions for this object?`
+          `ManagedMcpService created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -188,8 +196,8 @@ const ManagedMcpServiceForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create ManagedMcpService:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create ManagedMcpService:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -210,44 +218,37 @@ const ManagedMcpServiceForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addManagedMcpServiceResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New ManagedMcpService
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    ManagedMcpService
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.name && !errors.name && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="name"
+                        value={values?.name}
+                        placeholder="Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -259,28 +260,21 @@ const ManagedMcpServiceForm: React.FC = () => {
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
-                        {touched.description &&
-                         !errors.description && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.description && !errors.description && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="description"
-                            value={values?.description}
-                            placeholder="Description"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="description"
+                        value={values?.description}
+                        placeholder="Description"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -292,30 +286,30 @@ const ManagedMcpServiceForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="status"
-                          value={values.status || ''}
-                          className={
-                            errors.status
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Status" />
-                          <StatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="status"
+                        value={values.status || ""}
+                        className={
+                          errors.status
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("status", true);
+                          setFieldValue("status", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Status" />
+                        <StatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -327,30 +321,33 @@ const ManagedMcpServiceForm: React.FC = () => {
                     <label htmlFor="pricingModel" className="nice-form-control">
                       <b>
                         Pricing Model:
-                        {touched.pricingModel &&
-                         !errors.pricingModel && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.pricingModel && !errors.pricingModel && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="pricingModel"
-                          value={values.pricingModel || ''}
-                          className={
-                            errors.pricingModel
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('pricingModel', true);
-                            setFieldValue('pricingModel', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Pricing Model" />
-                          <PricingModelLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="pricingModel"
+                        value={values.pricingModel || ""}
+                        className={
+                          errors.pricingModel
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("pricingModel", true);
+                          setFieldValue(
+                            "pricingModel",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Pricing Model" />
+                        <PricingModelLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -362,37 +359,33 @@ const ManagedMcpServiceForm: React.FC = () => {
                     <label htmlFor="costPerCall" className="nice-form-control">
                       <b>
                         Cost Per Call:
-                        {touched.costPerCall &&
-                         !errors.costPerCall && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.costPerCall && !errors.costPerCall && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="costPerCall"
-                            type="number"
-                            step="any"
-                            value={values.costPerCall || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('costPerCall', true);
-                              const v = e.target.value;
-                              setFieldValue('costPerCall', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.costPerCall
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="costPerCall"
+                        type="number"
+                        step="any"
+                        value={values.costPerCall || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("costPerCall", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "costPerCall",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.costPerCall
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -404,37 +397,33 @@ const ManagedMcpServiceForm: React.FC = () => {
                     <label htmlFor="costPerMonth" className="nice-form-control">
                       <b>
                         Cost Per Month:
-                        {touched.costPerMonth &&
-                         !errors.costPerMonth && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.costPerMonth && !errors.costPerMonth && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="costPerMonth"
-                            type="number"
-                            step="any"
-                            value={values.costPerMonth || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('costPerMonth', true);
-                              const v = e.target.value;
-                              setFieldValue('costPerMonth', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.costPerMonth
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="costPerMonth"
+                        type="number"
+                        step="any"
+                        value={values.costPerMonth || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("costPerMonth", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "costPerMonth",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.costPerMonth
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -446,30 +435,33 @@ const ManagedMcpServiceForm: React.FC = () => {
                     <label htmlFor="tierName" className="nice-form-control">
                       <b>
                         Tier Name:
-                        {touched.tierName &&
-                         !errors.tierName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.tierName && !errors.tierName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="tierName"
-                          value={values.tierName || ''}
-                          className={
-                            errors.tierName
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('tierName', true);
-                            setFieldValue('tierName', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Tier Name" />
-                          <TierNameLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="tierName"
+                        value={values.tierName || ""}
+                        className={
+                          errors.tierName
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("tierName", true);
+                          setFieldValue(
+                            "tierName",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Tier Name" />
+                        <TierNameLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -478,35 +470,35 @@ const ManagedMcpServiceForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="hideFromMarketplace" className="nice-form-control">
+                    <label
+                      htmlFor="hideFromMarketplace"
+                      className="nice-form-control"
+                    >
                       <b>
                         Hide From Marketplace:
                         {touched.hideFromMarketplace &&
-                         !errors.hideFromMarketplace && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.hideFromMarketplace && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="hideFromMarketplace"
-                            name="hideFromMarketplace"
-                            checked={values.hideFromMarketplace || false}
-                            onChange={(e) => {
-                              setFieldTouched('hideFromMarketplace', true);
-                              setFieldValue('hideFromMarketplace', e.target.checked);
-                            }}
-                            isInvalid={!!errors.hideFromMarketplace}
-                            className={errors.hideFromMarketplace ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="hideFromMarketplace"
+                        name="hideFromMarketplace"
+                        checked={values.hideFromMarketplace || false}
+                        onChange={(e) => {
+                          setFieldTouched("hideFromMarketplace", true);
+                          setFieldValue(
+                            "hideFromMarketplace",
+                            e.target.checked,
+                          );
+                        }}
+                        isInvalid={!!errors.hideFromMarketplace}
+                        className={errors.hideFromMarketplace ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -518,32 +510,25 @@ const ManagedMcpServiceForm: React.FC = () => {
                     <label htmlFor="isMonetized" className="nice-form-control">
                       <b>
                         Is Monetized:
-                        {touched.isMonetized &&
-                         !errors.isMonetized && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.isMonetized && !errors.isMonetized && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="isMonetized"
-                            name="isMonetized"
-                            checked={values.isMonetized || false}
-                            onChange={(e) => {
-                              setFieldTouched('isMonetized', true);
-                              setFieldValue('isMonetized', e.target.checked);
-                            }}
-                            isInvalid={!!errors.isMonetized}
-                            className={errors.isMonetized ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="isMonetized"
+                        name="isMonetized"
+                        checked={values.isMonetized || false}
+                        onChange={(e) => {
+                          setFieldTouched("isMonetized", true);
+                          setFieldValue("isMonetized", e.target.checked);
+                        }}
+                        isInvalid={!!errors.isMonetized}
+                        className={errors.isMonetized ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -552,31 +537,27 @@ const ManagedMcpServiceForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="pricingMetadata" className="nice-form-control">
+                    <label
+                      htmlFor="pricingMetadata"
+                      className="nice-form-control"
+                    >
                       <b>
                         Pricing Metadata:
-                        {touched.pricingMetadata &&
-                         !errors.pricingMetadata && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.pricingMetadata && !errors.pricingMetadata && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="pricingMetadata"
-                            value={values?.pricingMetadata}
-                            placeholder="Pricing Metadata"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="pricingMetadata"
+                        value={values?.pricingMetadata}
+                        placeholder="Pricing Metadata"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -588,32 +569,25 @@ const ManagedMcpServiceForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -623,45 +597,60 @@ const ManagedMcpServiceForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New ManagedMcpService
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New ManagedMcpService
+                    </CoolButton>
 
-                  {(addManagedMcpServiceResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addManagedMcpServiceResult as any).error ? (addManagedMcpServiceResult as any).error.data : (addManagedMcpServiceResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addManagedMcpServiceResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addManagedMcpServiceResult as any).error
+                              ? (addManagedMcpServiceResult as any).error.data
+                              : (addManagedMcpServiceResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addManagedMcpServiceResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addManagedMcpServiceResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addManagedMcpServiceResult: {JSON.stringify(addManagedMcpServiceResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addManagedMcpServiceResult:{" "}
+                    {JSON.stringify(addManagedMcpServiceResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -693,10 +682,10 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value='DRAFT' label="DRAFT" />
-      <option value='PUBLISHED' label="PUBLISHED" />
-      <option value='MONETIZED' label="MONETIZED" />
-      <option value='SUSPENDED' label="SUSPENDED" />
+      <option value="DRAFT" label="DRAFT" />
+      <option value="PUBLISHED" label="PUBLISHED" />
+      <option value="MONETIZED" label="MONETIZED" />
+      <option value="SUSPENDED" label="SUSPENDED" />
     </>
   );
 };
@@ -713,10 +702,10 @@ kebabcase pricing-model-lookup
 const PricingModelLookup = () => {
   return (
     <>
-      <option value='PER_CALL' label="PER _ CALL" />
-      <option value='PER_MONTH' label="PER _ MONTH" />
-      <option value='TIERED' label="TIERED" />
-      <option value='USAGE_BASED' label="USAGE _ BASED" />
+      <option value="PER_CALL" label="PER _ CALL" />
+      <option value="PER_MONTH" label="PER _ MONTH" />
+      <option value="TIERED" label="TIERED" />
+      <option value="USAGE_BASED" label="USAGE _ BASED" />
     </>
   );
 };
@@ -733,15 +722,12 @@ kebabcase tier-name-lookup
 const TierNameLookup = () => {
   return (
     <>
-      <option value='STARTER' label="Starter" />
-      <option value='PRO' label="Pro" />
-      <option value='ENTERPRISE' label="Enterprise" />
+      <option value="STARTER" label="Starter" />
+      <option value="PRO" label="Pro" />
+      <option value="ENTERPRISE" label="Enterprise" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default ManagedMcpServiceForm;
-

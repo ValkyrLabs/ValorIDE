@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ExecModuleRateLimitConfig } from '@thorapi/model/ExecModuleRateLimitConfig';
+import { ExecModuleRateLimitConfig } from "@thorapi/model/ExecModuleRateLimitConfig";
 
 const ExecModuleRateLimitConfigSlice = createSlice({
   name: "ExecModuleRateLimitConfigs",
@@ -27,20 +27,27 @@ const ExecModuleRateLimitConfigSlice = createSlice({
     },
 
     ExecModuleRateLimitConfigValueToggled(state, action) {
-      console.log("ExecModuleRateLimitConfig TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ExecModuleRateLimitConfig:ExecModuleRateLimitConfig = state.find((ExecModuleRateLimitConfig) => ExecModuleRateLimitConfig.id === action.payload.ExecModuleRateLimitConfigId);
+      console.log("ExecModuleRateLimitConfig TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ExecModuleRateLimitConfig: ExecModuleRateLimitConfig = state.find(
+        (ExecModuleRateLimitConfig) =>
+          ExecModuleRateLimitConfig.id ===
+          action.payload.ExecModuleRateLimitConfigId,
+      );
       if (ExecModuleRateLimitConfig) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ExecModuleRateLimitConfigpropertySet(state, action) {
-      const ExecModuleRateLimitConfig = state.find((ExecModuleRateLimitConfig) => ExecModuleRateLimitConfig.id === action.payload.ExecModuleRateLimitConfigId);
+      const ExecModuleRateLimitConfig = state.find(
+        (ExecModuleRateLimitConfig) =>
+          ExecModuleRateLimitConfig.id ===
+          action.payload.ExecModuleRateLimitConfigId,
+      );
       if (ExecModuleRateLimitConfig) {
-      //  ExecModuleRateLimitConfig[action.property] = action.payload[action.property];
+        //  ExecModuleRateLimitConfig[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const ExecModuleRateLimitConfigSlice = createSlice({
 export const {
   ExecModuleRateLimitConfigAdded,
   ExecModuleRateLimitConfigValueToggled,
-  ExecModuleRateLimitConfigpropertySet
+  ExecModuleRateLimitConfigpropertySet,
 } = ExecModuleRateLimitConfigSlice.actions;
 export default ExecModuleRateLimitConfigSlice.reducer;

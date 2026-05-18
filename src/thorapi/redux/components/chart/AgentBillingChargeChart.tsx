@@ -19,20 +19,33 @@ Description: AgentBillingCharge
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, AgentBillingCharge } from '@thorapi/model';
-import { useGetAgentBillingChargesQuery, useAddAgentBillingChargeMutation, useUpdateAgentBillingChargeMutation } from '../../services/AgentBillingChargeService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, AgentBillingCharge } from "@thorapi/model";
+import {
+  useGetAgentBillingChargesQuery,
+  useAddAgentBillingChargeMutation,
+  useUpdateAgentBillingChargeMutation,
+} from "../../services/AgentBillingChargeService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const AgentBillingChargeChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetAgentBillingChargesQuery();
+  const { data: initialData = [], isLoading } =
+    useGetAgentBillingChargesQuery();
 
   const [data, setData] = useState<AgentBillingCharge[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<AgentBillingCharge>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +63,9 @@ const AgentBillingChargeChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +73,15 @@ const AgentBillingChargeChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((agentbillingcharge: DataObject) => [agentbillingcharge])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((agentbillingcharge: DataObject) => [
+            agentbillingcharge,
+          ])}
+        />
+      )}
     </>
   );
 };

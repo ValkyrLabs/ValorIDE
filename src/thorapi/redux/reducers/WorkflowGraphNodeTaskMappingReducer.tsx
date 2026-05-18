@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { WorkflowGraphNodeTaskMapping } from '@thorapi/model/WorkflowGraphNodeTaskMapping';
+import { WorkflowGraphNodeTaskMapping } from "@thorapi/model/WorkflowGraphNodeTaskMapping";
 
 const WorkflowGraphNodeTaskMappingSlice = createSlice({
   name: "WorkflowGraphNodeTaskMappings",
@@ -27,20 +27,28 @@ const WorkflowGraphNodeTaskMappingSlice = createSlice({
     },
 
     WorkflowGraphNodeTaskMappingValueToggled(state, action) {
-      console.log("WorkflowGraphNodeTaskMapping TOGGLE")
-      console.warn(JSON.stringify(action))
-      const WorkflowGraphNodeTaskMapping:WorkflowGraphNodeTaskMapping = state.find((WorkflowGraphNodeTaskMapping) => WorkflowGraphNodeTaskMapping.id === action.payload.WorkflowGraphNodeTaskMappingId);
+      console.log("WorkflowGraphNodeTaskMapping TOGGLE");
+      console.warn(JSON.stringify(action));
+      const WorkflowGraphNodeTaskMapping: WorkflowGraphNodeTaskMapping =
+        state.find(
+          (WorkflowGraphNodeTaskMapping) =>
+            WorkflowGraphNodeTaskMapping.id ===
+            action.payload.WorkflowGraphNodeTaskMappingId,
+        );
       if (WorkflowGraphNodeTaskMapping) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     WorkflowGraphNodeTaskMappingpropertySet(state, action) {
-      const WorkflowGraphNodeTaskMapping = state.find((WorkflowGraphNodeTaskMapping) => WorkflowGraphNodeTaskMapping.id === action.payload.WorkflowGraphNodeTaskMappingId);
+      const WorkflowGraphNodeTaskMapping = state.find(
+        (WorkflowGraphNodeTaskMapping) =>
+          WorkflowGraphNodeTaskMapping.id ===
+          action.payload.WorkflowGraphNodeTaskMappingId,
+      );
       if (WorkflowGraphNodeTaskMapping) {
-      //  WorkflowGraphNodeTaskMapping[action.property] = action.payload[action.property];
+        //  WorkflowGraphNodeTaskMapping[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +57,6 @@ const WorkflowGraphNodeTaskMappingSlice = createSlice({
 export const {
   WorkflowGraphNodeTaskMappingAdded,
   WorkflowGraphNodeTaskMappingValueToggled,
-  WorkflowGraphNodeTaskMappingpropertySet
+  WorkflowGraphNodeTaskMappingpropertySet,
 } = WorkflowGraphNodeTaskMappingSlice.actions;
 export default WorkflowGraphNodeTaskMappingSlice.reducer;

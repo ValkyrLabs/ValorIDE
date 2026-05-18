@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { GenerateTrustKeyResponse } from '@thorapi/model/GenerateTrustKeyResponse';
+import { GenerateTrustKeyResponse } from "@thorapi/model/GenerateTrustKeyResponse";
 
 const GenerateTrustKeyResponseSlice = createSlice({
   name: "GenerateTrustKeyResponses",
@@ -27,20 +27,27 @@ const GenerateTrustKeyResponseSlice = createSlice({
     },
 
     GenerateTrustKeyResponseValueToggled(state, action) {
-      console.log("GenerateTrustKeyResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const GenerateTrustKeyResponse:GenerateTrustKeyResponse = state.find((GenerateTrustKeyResponse) => GenerateTrustKeyResponse.id === action.payload.GenerateTrustKeyResponseId);
+      console.log("GenerateTrustKeyResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const GenerateTrustKeyResponse: GenerateTrustKeyResponse = state.find(
+        (GenerateTrustKeyResponse) =>
+          GenerateTrustKeyResponse.id ===
+          action.payload.GenerateTrustKeyResponseId,
+      );
       if (GenerateTrustKeyResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     GenerateTrustKeyResponsepropertySet(state, action) {
-      const GenerateTrustKeyResponse = state.find((GenerateTrustKeyResponse) => GenerateTrustKeyResponse.id === action.payload.GenerateTrustKeyResponseId);
+      const GenerateTrustKeyResponse = state.find(
+        (GenerateTrustKeyResponse) =>
+          GenerateTrustKeyResponse.id ===
+          action.payload.GenerateTrustKeyResponseId,
+      );
       if (GenerateTrustKeyResponse) {
-      //  GenerateTrustKeyResponse[action.property] = action.payload[action.property];
+        //  GenerateTrustKeyResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const GenerateTrustKeyResponseSlice = createSlice({
 export const {
   GenerateTrustKeyResponseAdded,
   GenerateTrustKeyResponseValueToggled,
-  GenerateTrustKeyResponsepropertySet
+  GenerateTrustKeyResponsepropertySet,
 } = GenerateTrustKeyResponseSlice.actions;
 export default GenerateTrustKeyResponseSlice.reducer;

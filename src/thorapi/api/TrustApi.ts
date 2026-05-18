@@ -18,682 +18,915 @@ Template file: typescript-redux-query/apis.mustache
 Description: TrustApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    AppendTrustEventRequest,
-    AppendTrustEventRequestFromJSON,
-    AppendTrustEventRequestToJSON,
-    AppendTrustEventResponse,
-    AppendTrustEventResponseFromJSON,
-    AppendTrustEventResponseToJSON,
-    CompleteTrustExecutionRequest,
-    CompleteTrustExecutionRequestFromJSON,
-    CompleteTrustExecutionRequestToJSON,
-    CompleteTrustExecutionResponse,
-    CompleteTrustExecutionResponseFromJSON,
-    CompleteTrustExecutionResponseToJSON,
-    GenerateTrustKeyRequest,
-    GenerateTrustKeyRequestFromJSON,
-    GenerateTrustKeyRequestToJSON,
-    GenerateTrustKeyResponse,
-    GenerateTrustKeyResponseFromJSON,
-    GenerateTrustKeyResponseToJSON,
-    GenerateTrustProofRequest,
-    GenerateTrustProofRequestFromJSON,
-    GenerateTrustProofRequestToJSON,
-    GenerateTrustProofResponse,
-    GenerateTrustProofResponseFromJSON,
-    GenerateTrustProofResponseToJSON,
-    LeaseTrustSecretRequest,
-    LeaseTrustSecretRequestFromJSON,
-    LeaseTrustSecretRequestToJSON,
-    LeaseTrustSecretResponse,
-    LeaseTrustSecretResponseFromJSON,
-    LeaseTrustSecretResponseToJSON,
-    RegisterTrustPolicyRequest,
-    RegisterTrustPolicyRequestFromJSON,
-    RegisterTrustPolicyRequestToJSON,
-    RegisterTrustPolicyResponse,
-    RegisterTrustPolicyResponseFromJSON,
-    RegisterTrustPolicyResponseToJSON,
-    RewrapTrustKeyRequest,
-    RewrapTrustKeyRequestFromJSON,
-    RewrapTrustKeyRequestToJSON,
-    RewrapTrustKeyResponse,
-    RewrapTrustKeyResponseFromJSON,
-    RewrapTrustKeyResponseToJSON,
-    RotateTrustKeyRequest,
-    RotateTrustKeyRequestFromJSON,
-    RotateTrustKeyRequestToJSON,
-    RotateTrustKeyResponse,
-    RotateTrustKeyResponseFromJSON,
-    RotateTrustKeyResponseToJSON,
-    StartTrustExecutionRequest,
-    StartTrustExecutionRequestFromJSON,
-    StartTrustExecutionRequestToJSON,
-    StartTrustExecutionResponse,
-    StartTrustExecutionResponseFromJSON,
-    StartTrustExecutionResponseToJSON,
-    SubmitTrustAttestationEvidenceRequest,
-    SubmitTrustAttestationEvidenceRequestFromJSON,
-    SubmitTrustAttestationEvidenceRequestToJSON,
-    SubmitTrustAttestationEvidenceResponse,
-    SubmitTrustAttestationEvidenceResponseFromJSON,
-    SubmitTrustAttestationEvidenceResponseToJSON,
-    VerifyTrustProofRequest,
-    VerifyTrustProofRequestFromJSON,
-    VerifyTrustProofRequestToJSON,
-    VerifyTrustProofResponse,
-    VerifyTrustProofResponseFromJSON,
-    VerifyTrustProofResponseToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  AppendTrustEventRequest,
+  AppendTrustEventRequestFromJSON,
+  AppendTrustEventRequestToJSON,
+  AppendTrustEventResponse,
+  AppendTrustEventResponseFromJSON,
+  AppendTrustEventResponseToJSON,
+  CompleteTrustExecutionRequest,
+  CompleteTrustExecutionRequestFromJSON,
+  CompleteTrustExecutionRequestToJSON,
+  CompleteTrustExecutionResponse,
+  CompleteTrustExecutionResponseFromJSON,
+  CompleteTrustExecutionResponseToJSON,
+  GenerateTrustKeyRequest,
+  GenerateTrustKeyRequestFromJSON,
+  GenerateTrustKeyRequestToJSON,
+  GenerateTrustKeyResponse,
+  GenerateTrustKeyResponseFromJSON,
+  GenerateTrustKeyResponseToJSON,
+  GenerateTrustProofRequest,
+  GenerateTrustProofRequestFromJSON,
+  GenerateTrustProofRequestToJSON,
+  GenerateTrustProofResponse,
+  GenerateTrustProofResponseFromJSON,
+  GenerateTrustProofResponseToJSON,
+  LeaseTrustSecretRequest,
+  LeaseTrustSecretRequestFromJSON,
+  LeaseTrustSecretRequestToJSON,
+  LeaseTrustSecretResponse,
+  LeaseTrustSecretResponseFromJSON,
+  LeaseTrustSecretResponseToJSON,
+  RegisterTrustPolicyRequest,
+  RegisterTrustPolicyRequestFromJSON,
+  RegisterTrustPolicyRequestToJSON,
+  RegisterTrustPolicyResponse,
+  RegisterTrustPolicyResponseFromJSON,
+  RegisterTrustPolicyResponseToJSON,
+  RewrapTrustKeyRequest,
+  RewrapTrustKeyRequestFromJSON,
+  RewrapTrustKeyRequestToJSON,
+  RewrapTrustKeyResponse,
+  RewrapTrustKeyResponseFromJSON,
+  RewrapTrustKeyResponseToJSON,
+  RotateTrustKeyRequest,
+  RotateTrustKeyRequestFromJSON,
+  RotateTrustKeyRequestToJSON,
+  RotateTrustKeyResponse,
+  RotateTrustKeyResponseFromJSON,
+  RotateTrustKeyResponseToJSON,
+  StartTrustExecutionRequest,
+  StartTrustExecutionRequestFromJSON,
+  StartTrustExecutionRequestToJSON,
+  StartTrustExecutionResponse,
+  StartTrustExecutionResponseFromJSON,
+  StartTrustExecutionResponseToJSON,
+  SubmitTrustAttestationEvidenceRequest,
+  SubmitTrustAttestationEvidenceRequestFromJSON,
+  SubmitTrustAttestationEvidenceRequestToJSON,
+  SubmitTrustAttestationEvidenceResponse,
+  SubmitTrustAttestationEvidenceResponseFromJSON,
+  SubmitTrustAttestationEvidenceResponseToJSON,
+  VerifyTrustProofRequest,
+  VerifyTrustProofRequestFromJSON,
+  VerifyTrustProofRequestToJSON,
+  VerifyTrustProofResponse,
+  VerifyTrustProofResponseFromJSON,
+  VerifyTrustProofResponseToJSON,
+} from "../model";
 
 export interface AppendTrustRuntimeEventApiRequest {
-    executionId: string;
-    appendTrustEventRequest: AppendTrustEventRequest;
+  executionId: string;
+  appendTrustEventRequest: AppendTrustEventRequest;
 }
 
 export interface CompleteTrustExecutionApiRequest {
-    executionId: string;
-    completeTrustExecutionRequest: CompleteTrustExecutionRequest;
+  executionId: string;
+  completeTrustExecutionRequest: CompleteTrustExecutionRequest;
 }
 
 export interface GenerateTrustKeyApiRequest {
-    generateTrustKeyRequest: GenerateTrustKeyRequest;
+  generateTrustKeyRequest: GenerateTrustKeyRequest;
 }
 
 export interface GenerateTrustProofApiRequest {
-    generateTrustProofRequest: GenerateTrustProofRequest;
+  generateTrustProofRequest: GenerateTrustProofRequest;
 }
 
 export interface LeaseTrustSecretApiRequest {
-    keyId: string;
-    versionId: string;
-    leaseTrustSecretRequest: LeaseTrustSecretRequest;
+  keyId: string;
+  versionId: string;
+  leaseTrustSecretRequest: LeaseTrustSecretRequest;
 }
 
 export interface RegisterTrustPolicyApiRequest {
-    registerTrustPolicyRequest: RegisterTrustPolicyRequest;
+  registerTrustPolicyRequest: RegisterTrustPolicyRequest;
 }
 
 export interface RewrapTrustKeyApiRequest {
-    keyId: string;
-    rewrapTrustKeyRequest: RewrapTrustKeyRequest;
+  keyId: string;
+  rewrapTrustKeyRequest: RewrapTrustKeyRequest;
 }
 
 export interface RotateTrustKeyApiRequest {
-    keyId: string;
-    rotateTrustKeyRequest: RotateTrustKeyRequest;
+  keyId: string;
+  rotateTrustKeyRequest: RotateTrustKeyRequest;
 }
 
 export interface StartTrustExecutionApiRequest {
-    startTrustExecutionRequest: StartTrustExecutionRequest;
+  startTrustExecutionRequest: StartTrustExecutionRequest;
 }
 
 export interface SubmitTrustAttestationEvidenceApiRequest {
-    submitTrustAttestationEvidenceRequest: SubmitTrustAttestationEvidenceRequest;
+  submitTrustAttestationEvidenceRequest: SubmitTrustAttestationEvidenceRequest;
 }
 
 export interface VerifyTrustProofApiRequest {
-    proofId: string;
-    verifyTrustProofRequest: VerifyTrustProofRequest;
+  proofId: string;
+  verifyTrustProofRequest: VerifyTrustProofRequest;
 }
-
 
 /**
  * Append a signed, hash-chained runtime event
  */
-function appendTrustRuntimeEventRaw<T>(requestParameters: AppendTrustRuntimeEventApiRequest, requestConfig: runtime.TypedQueryConfig<T, AppendTrustEventResponse> = {}): QueryConfig<T> {
-    if (requestParameters.executionId === null || requestParameters.executionId === undefined) {
-        throw new runtime.RequiredError('executionId','Required parameter requestParameters.executionId was null or undefined when calling appendTrustRuntimeEvent.');
-    }
+function appendTrustRuntimeEventRaw<T>(
+  requestParameters: AppendTrustRuntimeEventApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, AppendTrustEventResponse> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.executionId === null ||
+    requestParameters.executionId === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "executionId",
+      "Required parameter requestParameters.executionId was null or undefined when calling appendTrustRuntimeEvent.",
+    );
+  }
 
-    if (requestParameters.appendTrustEventRequest === null || requestParameters.appendTrustEventRequest === undefined) {
-        throw new runtime.RequiredError('appendTrustEventRequest','Required parameter requestParameters.appendTrustEventRequest was null or undefined when calling appendTrustRuntimeEvent.');
-    }
+  if (
+    requestParameters.appendTrustEventRequest === null ||
+    requestParameters.appendTrustEventRequest === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "appendTrustEventRequest",
+      "Required parameter requestParameters.appendTrustEventRequest was null or undefined when calling appendTrustRuntimeEvent.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/trust/executions/{executionId}/events`.replace(
+      `{${"executionId"}}`,
+      encodeURIComponent(String(requestParameters.executionId)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      AppendTrustEventRequestToJSON(requestParameters.appendTrustEventRequest),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(AppendTrustEventResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/trust/executions/{executionId}/events`.replace(`{${"executionId"}}`, encodeURIComponent(String(requestParameters.executionId))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || AppendTrustEventRequestToJSON(requestParameters.appendTrustEventRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(AppendTrustEventResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Append a signed, hash-chained runtime event
-*/
-export function appendTrustRuntimeEvent<T>(requestParameters: AppendTrustRuntimeEventApiRequest, requestConfig?: runtime.TypedQueryConfig<T, AppendTrustEventResponse>): QueryConfig<T> {
-    return appendTrustRuntimeEventRaw(requestParameters, requestConfig);
+ * Append a signed, hash-chained runtime event
+ */
+export function appendTrustRuntimeEvent<T>(
+  requestParameters: AppendTrustRuntimeEventApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, AppendTrustEventResponse>,
+): QueryConfig<T> {
+  return appendTrustRuntimeEventRaw(requestParameters, requestConfig);
 }
 
 /**
  * Complete and seal a runtime execution
  */
-function completeTrustExecutionRaw<T>(requestParameters: CompleteTrustExecutionApiRequest, requestConfig: runtime.TypedQueryConfig<T, CompleteTrustExecutionResponse> = {}): QueryConfig<T> {
-    if (requestParameters.executionId === null || requestParameters.executionId === undefined) {
-        throw new runtime.RequiredError('executionId','Required parameter requestParameters.executionId was null or undefined when calling completeTrustExecution.');
-    }
+function completeTrustExecutionRaw<T>(
+  requestParameters: CompleteTrustExecutionApiRequest,
+  requestConfig: runtime.TypedQueryConfig<
+    T,
+    CompleteTrustExecutionResponse
+  > = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.executionId === null ||
+    requestParameters.executionId === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "executionId",
+      "Required parameter requestParameters.executionId was null or undefined when calling completeTrustExecution.",
+    );
+  }
 
-    if (requestParameters.completeTrustExecutionRequest === null || requestParameters.completeTrustExecutionRequest === undefined) {
-        throw new runtime.RequiredError('completeTrustExecutionRequest','Required parameter requestParameters.completeTrustExecutionRequest was null or undefined when calling completeTrustExecution.');
-    }
+  if (
+    requestParameters.completeTrustExecutionRequest === null ||
+    requestParameters.completeTrustExecutionRequest === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "completeTrustExecutionRequest",
+      "Required parameter requestParameters.completeTrustExecutionRequest was null or undefined when calling completeTrustExecution.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/trust/executions/{executionId}/complete`.replace(
+      `{${"executionId"}}`,
+      encodeURIComponent(String(requestParameters.executionId)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      CompleteTrustExecutionRequestToJSON(
+        requestParameters.completeTrustExecutionRequest,
+      ),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(CompleteTrustExecutionResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/trust/executions/{executionId}/complete`.replace(`{${"executionId"}}`, encodeURIComponent(String(requestParameters.executionId))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || CompleteTrustExecutionRequestToJSON(requestParameters.completeTrustExecutionRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(CompleteTrustExecutionResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Complete and seal a runtime execution
-*/
-export function completeTrustExecution<T>(requestParameters: CompleteTrustExecutionApiRequest, requestConfig?: runtime.TypedQueryConfig<T, CompleteTrustExecutionResponse>): QueryConfig<T> {
-    return completeTrustExecutionRaw(requestParameters, requestConfig);
+ * Complete and seal a runtime execution
+ */
+export function completeTrustExecution<T>(
+  requestParameters: CompleteTrustExecutionApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, CompleteTrustExecutionResponse>,
+): QueryConfig<T> {
+  return completeTrustExecutionRaw(requestParameters, requestConfig);
 }
 
 /**
  * Generate a Trust Fabric key and initial active version
  */
-function generateTrustKeyRaw<T>(requestParameters: GenerateTrustKeyApiRequest, requestConfig: runtime.TypedQueryConfig<T, GenerateTrustKeyResponse> = {}): QueryConfig<T> {
-    if (requestParameters.generateTrustKeyRequest === null || requestParameters.generateTrustKeyRequest === undefined) {
-        throw new runtime.RequiredError('generateTrustKeyRequest','Required parameter requestParameters.generateTrustKeyRequest was null or undefined when calling generateTrustKey.');
-    }
+function generateTrustKeyRaw<T>(
+  requestParameters: GenerateTrustKeyApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, GenerateTrustKeyResponse> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.generateTrustKeyRequest === null ||
+    requestParameters.generateTrustKeyRequest === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "generateTrustKeyRequest",
+      "Required parameter requestParameters.generateTrustKeyRequest was null or undefined when calling generateTrustKey.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/trust/keys/generate`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      GenerateTrustKeyRequestToJSON(requestParameters.generateTrustKeyRequest),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(GenerateTrustKeyResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/trust/keys/generate`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || GenerateTrustKeyRequestToJSON(requestParameters.generateTrustKeyRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(GenerateTrustKeyResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Generate a Trust Fabric key and initial active version
-*/
-export function generateTrustKey<T>(requestParameters: GenerateTrustKeyApiRequest, requestConfig?: runtime.TypedQueryConfig<T, GenerateTrustKeyResponse>): QueryConfig<T> {
-    return generateTrustKeyRaw(requestParameters, requestConfig);
+ * Generate a Trust Fabric key and initial active version
+ */
+export function generateTrustKey<T>(
+  requestParameters: GenerateTrustKeyApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, GenerateTrustKeyResponse>,
+): QueryConfig<T> {
+  return generateTrustKeyRaw(requestParameters, requestConfig);
 }
 
 /**
  * Generate a proof bundle from an authorized execution
  */
-function generateTrustProofRaw<T>(requestParameters: GenerateTrustProofApiRequest, requestConfig: runtime.TypedQueryConfig<T, GenerateTrustProofResponse> = {}): QueryConfig<T> {
-    if (requestParameters.generateTrustProofRequest === null || requestParameters.generateTrustProofRequest === undefined) {
-        throw new runtime.RequiredError('generateTrustProofRequest','Required parameter requestParameters.generateTrustProofRequest was null or undefined when calling generateTrustProof.');
-    }
+function generateTrustProofRaw<T>(
+  requestParameters: GenerateTrustProofApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, GenerateTrustProofResponse> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.generateTrustProofRequest === null ||
+    requestParameters.generateTrustProofRequest === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "generateTrustProofRequest",
+      "Required parameter requestParameters.generateTrustProofRequest was null or undefined when calling generateTrustProof.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/trust/proofs/generate`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      GenerateTrustProofRequestToJSON(
+        requestParameters.generateTrustProofRequest,
+      ),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(GenerateTrustProofResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/trust/proofs/generate`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || GenerateTrustProofRequestToJSON(requestParameters.generateTrustProofRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(GenerateTrustProofResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Generate a proof bundle from an authorized execution
-*/
-export function generateTrustProof<T>(requestParameters: GenerateTrustProofApiRequest, requestConfig?: runtime.TypedQueryConfig<T, GenerateTrustProofResponse>): QueryConfig<T> {
-    return generateTrustProofRaw(requestParameters, requestConfig);
+ * Generate a proof bundle from an authorized execution
+ */
+export function generateTrustProof<T>(
+  requestParameters: GenerateTrustProofApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, GenerateTrustProofResponse>,
+): QueryConfig<T> {
+  return generateTrustProofRaw(requestParameters, requestConfig);
 }
 
 /**
  * Request a short-lived cryptographic operation lease
  */
-function leaseTrustSecretRaw<T>(requestParameters: LeaseTrustSecretApiRequest, requestConfig: runtime.TypedQueryConfig<T, LeaseTrustSecretResponse> = {}): QueryConfig<T> {
-    if (requestParameters.keyId === null || requestParameters.keyId === undefined) {
-        throw new runtime.RequiredError('keyId','Required parameter requestParameters.keyId was null or undefined when calling leaseTrustSecret.');
-    }
+function leaseTrustSecretRaw<T>(
+  requestParameters: LeaseTrustSecretApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, LeaseTrustSecretResponse> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.keyId === null ||
+    requestParameters.keyId === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "keyId",
+      "Required parameter requestParameters.keyId was null or undefined when calling leaseTrustSecret.",
+    );
+  }
 
-    if (requestParameters.versionId === null || requestParameters.versionId === undefined) {
-        throw new runtime.RequiredError('versionId','Required parameter requestParameters.versionId was null or undefined when calling leaseTrustSecret.');
-    }
+  if (
+    requestParameters.versionId === null ||
+    requestParameters.versionId === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "versionId",
+      "Required parameter requestParameters.versionId was null or undefined when calling leaseTrustSecret.",
+    );
+  }
 
-    if (requestParameters.leaseTrustSecretRequest === null || requestParameters.leaseTrustSecretRequest === undefined) {
-        throw new runtime.RequiredError('leaseTrustSecretRequest','Required parameter requestParameters.leaseTrustSecretRequest was null or undefined when calling leaseTrustSecret.');
-    }
+  if (
+    requestParameters.leaseTrustSecretRequest === null ||
+    requestParameters.leaseTrustSecretRequest === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "leaseTrustSecretRequest",
+      "Required parameter requestParameters.leaseTrustSecretRequest was null or undefined when calling leaseTrustSecret.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/trust/keys/{keyId}/versions/{versionId}/lease`
+      .replace(
+        `{${"keyId"}}`,
+        encodeURIComponent(String(requestParameters.keyId)),
+      )
+      .replace(
+        `{${"versionId"}}`,
+        encodeURIComponent(String(requestParameters.versionId)),
+      ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      LeaseTrustSecretRequestToJSON(requestParameters.leaseTrustSecretRequest),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(LeaseTrustSecretResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/trust/keys/{keyId}/versions/{versionId}/lease`.replace(`{${"keyId"}}`, encodeURIComponent(String(requestParameters.keyId))).replace(`{${"versionId"}}`, encodeURIComponent(String(requestParameters.versionId))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || LeaseTrustSecretRequestToJSON(requestParameters.leaseTrustSecretRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(LeaseTrustSecretResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Request a short-lived cryptographic operation lease
-*/
-export function leaseTrustSecret<T>(requestParameters: LeaseTrustSecretApiRequest, requestConfig?: runtime.TypedQueryConfig<T, LeaseTrustSecretResponse>): QueryConfig<T> {
-    return leaseTrustSecretRaw(requestParameters, requestConfig);
+ * Request a short-lived cryptographic operation lease
+ */
+export function leaseTrustSecret<T>(
+  requestParameters: LeaseTrustSecretApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, LeaseTrustSecretResponse>,
+): QueryConfig<T> {
+  return leaseTrustSecretRaw(requestParameters, requestConfig);
 }
 
 /**
  * Register or update a canonical trust policy manifest
  */
-function registerTrustPolicyRaw<T>(requestParameters: RegisterTrustPolicyApiRequest, requestConfig: runtime.TypedQueryConfig<T, RegisterTrustPolicyResponse> = {}): QueryConfig<T> {
-    if (requestParameters.registerTrustPolicyRequest === null || requestParameters.registerTrustPolicyRequest === undefined) {
-        throw new runtime.RequiredError('registerTrustPolicyRequest','Required parameter requestParameters.registerTrustPolicyRequest was null or undefined when calling registerTrustPolicy.');
-    }
+function registerTrustPolicyRaw<T>(
+  requestParameters: RegisterTrustPolicyApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, RegisterTrustPolicyResponse> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.registerTrustPolicyRequest === null ||
+    requestParameters.registerTrustPolicyRequest === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "registerTrustPolicyRequest",
+      "Required parameter requestParameters.registerTrustPolicyRequest was null or undefined when calling registerTrustPolicy.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/trust/policies/register`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      RegisterTrustPolicyRequestToJSON(
+        requestParameters.registerTrustPolicyRequest,
+      ),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(RegisterTrustPolicyResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/trust/policies/register`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || RegisterTrustPolicyRequestToJSON(requestParameters.registerTrustPolicyRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(RegisterTrustPolicyResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Register or update a canonical trust policy manifest
-*/
-export function registerTrustPolicy<T>(requestParameters: RegisterTrustPolicyApiRequest, requestConfig?: runtime.TypedQueryConfig<T, RegisterTrustPolicyResponse>): QueryConfig<T> {
-    return registerTrustPolicyRaw(requestParameters, requestConfig);
+ * Register or update a canonical trust policy manifest
+ */
+export function registerTrustPolicy<T>(
+  requestParameters: RegisterTrustPolicyApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, RegisterTrustPolicyResponse>,
+): QueryConfig<T> {
+  return registerTrustPolicyRaw(requestParameters, requestConfig);
 }
 
 /**
  * Rewrap existing encrypted field references to a new key version
  */
-function rewrapTrustKeyRaw<T>(requestParameters: RewrapTrustKeyApiRequest, requestConfig: runtime.TypedQueryConfig<T, RewrapTrustKeyResponse> = {}): QueryConfig<T> {
-    if (requestParameters.keyId === null || requestParameters.keyId === undefined) {
-        throw new runtime.RequiredError('keyId','Required parameter requestParameters.keyId was null or undefined when calling rewrapTrustKey.');
-    }
+function rewrapTrustKeyRaw<T>(
+  requestParameters: RewrapTrustKeyApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, RewrapTrustKeyResponse> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.keyId === null ||
+    requestParameters.keyId === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "keyId",
+      "Required parameter requestParameters.keyId was null or undefined when calling rewrapTrustKey.",
+    );
+  }
 
-    if (requestParameters.rewrapTrustKeyRequest === null || requestParameters.rewrapTrustKeyRequest === undefined) {
-        throw new runtime.RequiredError('rewrapTrustKeyRequest','Required parameter requestParameters.rewrapTrustKeyRequest was null or undefined when calling rewrapTrustKey.');
-    }
+  if (
+    requestParameters.rewrapTrustKeyRequest === null ||
+    requestParameters.rewrapTrustKeyRequest === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "rewrapTrustKeyRequest",
+      "Required parameter requestParameters.rewrapTrustKeyRequest was null or undefined when calling rewrapTrustKey.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/trust/keys/{keyId}/rewrap`.replace(
+      `{${"keyId"}}`,
+      encodeURIComponent(String(requestParameters.keyId)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      RewrapTrustKeyRequestToJSON(requestParameters.rewrapTrustKeyRequest),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(RewrapTrustKeyResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/trust/keys/{keyId}/rewrap`.replace(`{${"keyId"}}`, encodeURIComponent(String(requestParameters.keyId))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || RewrapTrustKeyRequestToJSON(requestParameters.rewrapTrustKeyRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(RewrapTrustKeyResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Rewrap existing encrypted field references to a new key version
-*/
-export function rewrapTrustKey<T>(requestParameters: RewrapTrustKeyApiRequest, requestConfig?: runtime.TypedQueryConfig<T, RewrapTrustKeyResponse>): QueryConfig<T> {
-    return rewrapTrustKeyRaw(requestParameters, requestConfig);
+ * Rewrap existing encrypted field references to a new key version
+ */
+export function rewrapTrustKey<T>(
+  requestParameters: RewrapTrustKeyApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, RewrapTrustKeyResponse>,
+): QueryConfig<T> {
+  return rewrapTrustKeyRaw(requestParameters, requestConfig);
 }
 
 /**
  * Create a new key version and begin rotation
  */
-function rotateTrustKeyRaw<T>(requestParameters: RotateTrustKeyApiRequest, requestConfig: runtime.TypedQueryConfig<T, RotateTrustKeyResponse> = {}): QueryConfig<T> {
-    if (requestParameters.keyId === null || requestParameters.keyId === undefined) {
-        throw new runtime.RequiredError('keyId','Required parameter requestParameters.keyId was null or undefined when calling rotateTrustKey.');
-    }
+function rotateTrustKeyRaw<T>(
+  requestParameters: RotateTrustKeyApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, RotateTrustKeyResponse> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.keyId === null ||
+    requestParameters.keyId === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "keyId",
+      "Required parameter requestParameters.keyId was null or undefined when calling rotateTrustKey.",
+    );
+  }
 
-    if (requestParameters.rotateTrustKeyRequest === null || requestParameters.rotateTrustKeyRequest === undefined) {
-        throw new runtime.RequiredError('rotateTrustKeyRequest','Required parameter requestParameters.rotateTrustKeyRequest was null or undefined when calling rotateTrustKey.');
-    }
+  if (
+    requestParameters.rotateTrustKeyRequest === null ||
+    requestParameters.rotateTrustKeyRequest === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "rotateTrustKeyRequest",
+      "Required parameter requestParameters.rotateTrustKeyRequest was null or undefined when calling rotateTrustKey.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/trust/keys/{keyId}/rotate`.replace(
+      `{${"keyId"}}`,
+      encodeURIComponent(String(requestParameters.keyId)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      RotateTrustKeyRequestToJSON(requestParameters.rotateTrustKeyRequest),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(RotateTrustKeyResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/trust/keys/{keyId}/rotate`.replace(`{${"keyId"}}`, encodeURIComponent(String(requestParameters.keyId))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || RotateTrustKeyRequestToJSON(requestParameters.rotateTrustKeyRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(RotateTrustKeyResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Create a new key version and begin rotation
-*/
-export function rotateTrustKey<T>(requestParameters: RotateTrustKeyApiRequest, requestConfig?: runtime.TypedQueryConfig<T, RotateTrustKeyResponse>): QueryConfig<T> {
-    return rotateTrustKeyRaw(requestParameters, requestConfig);
+ * Create a new key version and begin rotation
+ */
+export function rotateTrustKey<T>(
+  requestParameters: RotateTrustKeyApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, RotateTrustKeyResponse>,
+): QueryConfig<T> {
+  return rotateTrustKeyRaw(requestParameters, requestConfig);
 }
 
 /**
  * Start a policy-bound runtime execution
  */
-function startTrustExecutionRaw<T>(requestParameters: StartTrustExecutionApiRequest, requestConfig: runtime.TypedQueryConfig<T, StartTrustExecutionResponse> = {}): QueryConfig<T> {
-    if (requestParameters.startTrustExecutionRequest === null || requestParameters.startTrustExecutionRequest === undefined) {
-        throw new runtime.RequiredError('startTrustExecutionRequest','Required parameter requestParameters.startTrustExecutionRequest was null or undefined when calling startTrustExecution.');
-    }
+function startTrustExecutionRaw<T>(
+  requestParameters: StartTrustExecutionApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, StartTrustExecutionResponse> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.startTrustExecutionRequest === null ||
+    requestParameters.startTrustExecutionRequest === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "startTrustExecutionRequest",
+      "Required parameter requestParameters.startTrustExecutionRequest was null or undefined when calling startTrustExecution.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/trust/executions/start`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      StartTrustExecutionRequestToJSON(
+        requestParameters.startTrustExecutionRequest,
+      ),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(StartTrustExecutionResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/trust/executions/start`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || StartTrustExecutionRequestToJSON(requestParameters.startTrustExecutionRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(StartTrustExecutionResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Start a policy-bound runtime execution
-*/
-export function startTrustExecution<T>(requestParameters: StartTrustExecutionApiRequest, requestConfig?: runtime.TypedQueryConfig<T, StartTrustExecutionResponse>): QueryConfig<T> {
-    return startTrustExecutionRaw(requestParameters, requestConfig);
+ * Start a policy-bound runtime execution
+ */
+export function startTrustExecution<T>(
+  requestParameters: StartTrustExecutionApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, StartTrustExecutionResponse>,
+): QueryConfig<T> {
+  return startTrustExecutionRaw(requestParameters, requestConfig);
 }
 
 /**
  * Attach software, build, container, or hardware attestation evidence
  */
-function submitTrustAttestationEvidenceRaw<T>(requestParameters: SubmitTrustAttestationEvidenceApiRequest, requestConfig: runtime.TypedQueryConfig<T, SubmitTrustAttestationEvidenceResponse> = {}): QueryConfig<T> {
-    if (requestParameters.submitTrustAttestationEvidenceRequest === null || requestParameters.submitTrustAttestationEvidenceRequest === undefined) {
-        throw new runtime.RequiredError('submitTrustAttestationEvidenceRequest','Required parameter requestParameters.submitTrustAttestationEvidenceRequest was null or undefined when calling submitTrustAttestationEvidence.');
-    }
+function submitTrustAttestationEvidenceRaw<T>(
+  requestParameters: SubmitTrustAttestationEvidenceApiRequest,
+  requestConfig: runtime.TypedQueryConfig<
+    T,
+    SubmitTrustAttestationEvidenceResponse
+  > = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.submitTrustAttestationEvidenceRequest === null ||
+    requestParameters.submitTrustAttestationEvidenceRequest === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "submitTrustAttestationEvidenceRequest",
+      "Required parameter requestParameters.submitTrustAttestationEvidenceRequest was null or undefined when calling submitTrustAttestationEvidence.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/trust/attestation/evidence`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      SubmitTrustAttestationEvidenceRequestToJSON(
+        requestParameters.submitTrustAttestationEvidenceRequest,
+      ),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(
+        SubmitTrustAttestationEvidenceResponseFromJSON(body),
+        text,
+      );
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/trust/attestation/evidence`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || SubmitTrustAttestationEvidenceRequestToJSON(requestParameters.submitTrustAttestationEvidenceRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SubmitTrustAttestationEvidenceResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Attach software, build, container, or hardware attestation evidence
-*/
-export function submitTrustAttestationEvidence<T>(requestParameters: SubmitTrustAttestationEvidenceApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SubmitTrustAttestationEvidenceResponse>): QueryConfig<T> {
-    return submitTrustAttestationEvidenceRaw(requestParameters, requestConfig);
+ * Attach software, build, container, or hardware attestation evidence
+ */
+export function submitTrustAttestationEvidence<T>(
+  requestParameters: SubmitTrustAttestationEvidenceApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<
+    T,
+    SubmitTrustAttestationEvidenceResponse
+  >,
+): QueryConfig<T> {
+  return submitTrustAttestationEvidenceRaw(requestParameters, requestConfig);
 }
 
 /**
  * Verify a proof using public keys and RBAC-visible metadata
  */
-function verifyTrustProofRaw<T>(requestParameters: VerifyTrustProofApiRequest, requestConfig: runtime.TypedQueryConfig<T, VerifyTrustProofResponse> = {}): QueryConfig<T> {
-    if (requestParameters.proofId === null || requestParameters.proofId === undefined) {
-        throw new runtime.RequiredError('proofId','Required parameter requestParameters.proofId was null or undefined when calling verifyTrustProof.');
-    }
+function verifyTrustProofRaw<T>(
+  requestParameters: VerifyTrustProofApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, VerifyTrustProofResponse> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.proofId === null ||
+    requestParameters.proofId === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "proofId",
+      "Required parameter requestParameters.proofId was null or undefined when calling verifyTrustProof.",
+    );
+  }
 
-    if (requestParameters.verifyTrustProofRequest === null || requestParameters.verifyTrustProofRequest === undefined) {
-        throw new runtime.RequiredError('verifyTrustProofRequest','Required parameter requestParameters.verifyTrustProofRequest was null or undefined when calling verifyTrustProof.');
-    }
+  if (
+    requestParameters.verifyTrustProofRequest === null ||
+    requestParameters.verifyTrustProofRequest === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "verifyTrustProofRequest",
+      "Required parameter requestParameters.verifyTrustProofRequest was null or undefined when calling verifyTrustProof.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/trust/proofs/{proofId}/verify`.replace(
+      `{${"proofId"}}`,
+      encodeURIComponent(String(requestParameters.proofId)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      VerifyTrustProofRequestToJSON(requestParameters.verifyTrustProofRequest),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(VerifyTrustProofResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/trust/proofs/{proofId}/verify`.replace(`{${"proofId"}}`, encodeURIComponent(String(requestParameters.proofId))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || VerifyTrustProofRequestToJSON(requestParameters.verifyTrustProofRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(VerifyTrustProofResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Verify a proof using public keys and RBAC-visible metadata
-*/
-export function verifyTrustProof<T>(requestParameters: VerifyTrustProofApiRequest, requestConfig?: runtime.TypedQueryConfig<T, VerifyTrustProofResponse>): QueryConfig<T> {
-    return verifyTrustProofRaw(requestParameters, requestConfig);
+ * Verify a proof using public keys and RBAC-visible metadata
+ */
+export function verifyTrustProof<T>(
+  requestParameters: VerifyTrustProofApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, VerifyTrustProofResponse>,
+): QueryConfig<T> {
+  return verifyTrustProofRaw(requestParameters, requestConfig);
 }
-

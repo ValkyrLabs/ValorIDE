@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { WebsocketSession } from '@thorapi/model/WebsocketSession';
+import { WebsocketSession } from "@thorapi/model/WebsocketSession";
 
 const WebsocketSessionSlice = createSlice({
   name: "WebsocketSessions",
@@ -27,20 +27,25 @@ const WebsocketSessionSlice = createSlice({
     },
 
     WebsocketSessionValueToggled(state, action) {
-      console.log("WebsocketSession TOGGLE")
-      console.warn(JSON.stringify(action))
-      const WebsocketSession:WebsocketSession = state.find((WebsocketSession) => WebsocketSession.id === action.payload.WebsocketSessionId);
+      console.log("WebsocketSession TOGGLE");
+      console.warn(JSON.stringify(action));
+      const WebsocketSession: WebsocketSession = state.find(
+        (WebsocketSession) =>
+          WebsocketSession.id === action.payload.WebsocketSessionId,
+      );
       if (WebsocketSession) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     WebsocketSessionpropertySet(state, action) {
-      const WebsocketSession = state.find((WebsocketSession) => WebsocketSession.id === action.payload.WebsocketSessionId);
+      const WebsocketSession = state.find(
+        (WebsocketSession) =>
+          WebsocketSession.id === action.payload.WebsocketSessionId,
+      );
       if (WebsocketSession) {
-      //  WebsocketSession[action.property] = action.payload[action.property];
+        //  WebsocketSession[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const WebsocketSessionSlice = createSlice({
 export const {
   WebsocketSessionAdded,
   WebsocketSessionValueToggled,
-  WebsocketSessionpropertySet
+  WebsocketSessionpropertySet,
 } = WebsocketSessionSlice.actions;
 export default WebsocketSessionSlice.reducer;

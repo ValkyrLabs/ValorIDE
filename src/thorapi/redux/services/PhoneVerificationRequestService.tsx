@@ -13,47 +13,69 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { PhoneVerificationRequest } from '@thorapi/model/PhoneVerificationRequest'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { PhoneVerificationRequest } from "@thorapi/model/PhoneVerificationRequest";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type PhoneVerificationRequestResponse = PhoneVerificationRequest[]
+type PhoneVerificationRequestResponse = PhoneVerificationRequest[];
 
-const toPhoneVerificationRequestList = (result: unknown): PhoneVerificationRequestResponse => {
+const toPhoneVerificationRequestList = (
+  result: unknown,
+): PhoneVerificationRequestResponse => {
   if (Array.isArray(result)) {
-    return result as PhoneVerificationRequestResponse
+    return result as PhoneVerificationRequestResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as PhoneVerificationRequestResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as PhoneVerificationRequestResponse)
+    : [];
+};
 
 export const PhoneVerificationRequestService = createApi({
-  reducerPath: 'PhoneVerificationRequest', // This should remain unique
+  reducerPath: "PhoneVerificationRequest", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['PhoneVerificationRequest'],
+  tagTypes: ["PhoneVerificationRequest"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getPhoneVerificationRequestsPaged: build.query<PhoneVerificationRequestResponse, { page: number; size?: number; example?: Partial<PhoneVerificationRequest> }>({
+    getPhoneVerificationRequestsPaged: build.query<
+      PhoneVerificationRequestResponse,
+      {
+        page: number;
+        size?: number;
+        example?: Partial<PhoneVerificationRequest>;
+      }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `PhoneVerificationRequest?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `PhoneVerificationRequest?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toPhoneVerificationRequestList(result)
+        const rows = toPhoneVerificationRequestList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'PhoneVerificationRequest' as const, id })),
-          { type: 'PhoneVerificationRequest', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({
+              type: "PhoneVerificationRequest" as const,
+              id,
+            })),
+          { type: "PhoneVerificationRequest", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getPhoneVerificationRequests: build.query<PhoneVerificationRequestResponse, { example?: Partial<PhoneVerificationRequest> } | void>({
+    getPhoneVerificationRequests: build.query<
+      PhoneVerificationRequestResponse,
+      { example?: Partial<PhoneVerificationRequest> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +84,117 @@ export const PhoneVerificationRequestService = createApi({
         return `PhoneVerificationRequest`;
       },
       providesTags: (result) => {
-        const rows = toPhoneVerificationRequestList(result)
+        const rows = toPhoneVerificationRequestList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'PhoneVerificationRequest' as const, id })),
-          { type: 'PhoneVerificationRequest', id: 'LIST' },
-        ]
+            .map(({ id }) => ({
+              type: "PhoneVerificationRequest" as const,
+              id,
+            })),
+          { type: "PhoneVerificationRequest", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addPhoneVerificationRequest: build.mutation<PhoneVerificationRequest, Partial<PhoneVerificationRequest>>({
+    addPhoneVerificationRequest: build.mutation<
+      PhoneVerificationRequest,
+      Partial<PhoneVerificationRequest>
+    >({
       query: (body) => ({
         url: `PhoneVerificationRequest`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'PhoneVerificationRequest', id: 'LIST' }],
+      invalidatesTags: [{ type: "PhoneVerificationRequest", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getPhoneVerificationRequest: build.query<PhoneVerificationRequest, string>({
       query: (id) => `PhoneVerificationRequest/${id}`,
-      providesTags: (result, error, id) => [{ type: 'PhoneVerificationRequest', id }],
+      providesTags: (result, error, id) => [
+        { type: "PhoneVerificationRequest", id },
+      ],
     }),
 
     // 5) Update
-    updatePhoneVerificationRequest: build.mutation<void, Pick<PhoneVerificationRequest, 'id'> & Partial<PhoneVerificationRequest>>({
+    updatePhoneVerificationRequest: build.mutation<
+      void,
+      Pick<PhoneVerificationRequest, "id"> & Partial<PhoneVerificationRequest>
+    >({
       query: ({ id, ...patch }) => ({
         url: `PhoneVerificationRequest/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            PhoneVerificationRequestService.util.updateQueryData('getPhoneVerificationRequest', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            PhoneVerificationRequestService.util.updateQueryData(
+              "getPhoneVerificationRequest",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<PhoneVerificationRequest, 'id'>) => [
-        { type: 'PhoneVerificationRequest', id },
-        { type: 'PhoneVerificationRequest', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<PhoneVerificationRequest, "id">,
+      ) => [
+        { type: "PhoneVerificationRequest", id },
+        { type: "PhoneVerificationRequest", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deletePhoneVerificationRequest: build.mutation<{ success: boolean; id: string }, number>({
+    deletePhoneVerificationRequest: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `PhoneVerificationRequest/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'PhoneVerificationRequest', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "PhoneVerificationRequest", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deletePhoneVerificationRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deletePhoneVerificationRequestCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `PhoneVerificationRequest/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'PhoneVerificationRequest', id }, { type: 'PhoneVerificationRequest', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "PhoneVerificationRequest", id },
+        { type: "PhoneVerificationRequest", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetPhoneVerificationRequestsPagedQuery`
 export const {
-  useGetPhoneVerificationRequestsPagedQuery,     // immediate fetch
+  useGetPhoneVerificationRequestsPagedQuery, // immediate fetch
   useLazyGetPhoneVerificationRequestsPagedQuery, // lazy fetch
   useGetPhoneVerificationRequestQuery,
   useGetPhoneVerificationRequestsQuery,
@@ -150,4 +202,4 @@ export const {
   useUpdatePhoneVerificationRequestMutation,
   useDeletePhoneVerificationRequestMutation,
   useDeletePhoneVerificationRequestCascadeMutation,
-} = PhoneVerificationRequestService
+} = PhoneVerificationRequestService;

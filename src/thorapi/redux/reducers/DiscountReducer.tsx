@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Discount } from '@thorapi/model/Discount';
+import { Discount } from "@thorapi/model/Discount";
 
 const DiscountSlice = createSlice({
   name: "Discounts",
@@ -27,28 +27,28 @@ const DiscountSlice = createSlice({
     },
 
     DiscountValueToggled(state, action) {
-      console.log("Discount TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Discount:Discount = state.find((Discount) => Discount.id === action.payload.DiscountId);
+      console.log("Discount TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Discount: Discount = state.find(
+        (Discount) => Discount.id === action.payload.DiscountId,
+      );
       if (Discount) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     DiscountpropertySet(state, action) {
-      const Discount = state.find((Discount) => Discount.id === action.payload.DiscountId);
+      const Discount = state.find(
+        (Discount) => Discount.id === action.payload.DiscountId,
+      );
       if (Discount) {
-      //  Discount[action.property] = action.payload[action.property];
+        //  Discount[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  DiscountAdded,
-  DiscountValueToggled,
-  DiscountpropertySet
-} = DiscountSlice.actions;
+export const { DiscountAdded, DiscountValueToggled, DiscountpropertySet } =
+  DiscountSlice.actions;
 export default DiscountSlice.reducer;

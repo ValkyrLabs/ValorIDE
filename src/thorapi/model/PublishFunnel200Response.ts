@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,134 +36,153 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface PublishFunnel200Response
  */
-export type PublishFunnel200Response  = DataObject & {
-    /**
-     * Whether publish was successful
-     * @type {boolean}
-     * @memberof PublishFunnel200Response
-     */
-    success?: boolean;
-    /**
-     * Publication status flag
-     * @type {boolean}
-     * @memberof PublishFunnel200Response
-     */
-    published?: boolean;
-    /**
-     * URL where the funnel is published
-     * @type {string}
-     * @memberof PublishFunnel200Response
-     */
-    funnelUrl?: string;
-    /**
-     * URL path to the landing page
-     * @type {string}
-     * @memberof PublishFunnel200Response
-     */
-    landingPageUrl?: string;
-    /**
-     * Success message
-     * @type {string}
-     * @memberof PublishFunnel200Response
-     */
-    message?: string;
-    /**
-     * Timestamp of publication
-     * @type {Date}
-     * @memberof PublishFunnel200Response
-     */
-    publishedAt?: Date;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof PublishFunnel200Response
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof PublishFunnel200Response
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof PublishFunnel200Response
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof PublishFunnel200Response
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof PublishFunnel200Response
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof PublishFunnel200Response
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof PublishFunnel200Response
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof PublishFunnel200Response
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof PublishFunnel200Response
-     */
-    trashed?: boolean;
+export type PublishFunnel200Response = DataObject & {
+  /**
+   * Whether publish was successful
+   * @type {boolean}
+   * @memberof PublishFunnel200Response
+   */
+  success?: boolean;
+  /**
+   * Publication status flag
+   * @type {boolean}
+   * @memberof PublishFunnel200Response
+   */
+  published?: boolean;
+  /**
+   * URL where the funnel is published
+   * @type {string}
+   * @memberof PublishFunnel200Response
+   */
+  funnelUrl?: string;
+  /**
+   * URL path to the landing page
+   * @type {string}
+   * @memberof PublishFunnel200Response
+   */
+  landingPageUrl?: string;
+  /**
+   * Success message
+   * @type {string}
+   * @memberof PublishFunnel200Response
+   */
+  message?: string;
+  /**
+   * Timestamp of publication
+   * @type {Date}
+   * @memberof PublishFunnel200Response
+   */
+  publishedAt?: Date;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof PublishFunnel200Response
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof PublishFunnel200Response
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof PublishFunnel200Response
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof PublishFunnel200Response
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof PublishFunnel200Response
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof PublishFunnel200Response
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof PublishFunnel200Response
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof PublishFunnel200Response
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof PublishFunnel200Response
+   */
+  trashed?: boolean;
+};
+
+export function PublishFunnel200ResponseFromJSON(
+  json: any,
+): PublishFunnel200Response {
+  return {
+    ...DataObjectFromJSON(json),
+    success: !exists(json, "success") ? undefined : json["success"],
+    published: !exists(json, "published") ? undefined : json["published"],
+    funnelUrl: !exists(json, "funnelUrl") ? undefined : json["funnelUrl"],
+    landingPageUrl: !exists(json, "landingPageUrl")
+      ? undefined
+      : json["landingPageUrl"],
+    message: !exists(json, "message") ? undefined : json["message"],
+    publishedAt: !exists(json, "publishedAt")
+      ? undefined
+      : new Date(json["publishedAt"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
-export function PublishFunnel200ResponseFromJSON(json: any): PublishFunnel200Response {
-    return {
-        ...DataObjectFromJSON(json),
-        'success': !exists(json, 'success') ? undefined : json['success'],
-        'published': !exists(json, 'published') ? undefined : json['published'],
-        'funnelUrl': !exists(json, 'funnelUrl') ? undefined : json['funnelUrl'],
-        'landingPageUrl': !exists(json, 'landingPageUrl') ? undefined : json['landingPageUrl'],
-        'message': !exists(json, 'message') ? undefined : json['message'],
-        'publishedAt': !exists(json, 'publishedAt') ? undefined : new Date(json['publishedAt']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+export function PublishFunnel200ResponseToJSON(
+  value?: PublishFunnel200Response,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    success: value.success,
+    published: value.published,
+    funnelUrl: value.funnelUrl,
+    landingPageUrl: value.landingPageUrl,
+    message: value.message,
+    publishedAt:
+      value.publishedAt === undefined
+        ? undefined
+        : value.publishedAt.toISOString(),
+    trashed: value.trashed,
+  };
 }
-
-export function PublishFunnel200ResponseToJSON(value?: PublishFunnel200Response): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'success': value.success,
-        'published': value.published,
-        'funnelUrl': value.funnelUrl,
-        'landingPageUrl': value.landingPageUrl,
-        'message': value.message,
-        'publishedAt': value.publishedAt === undefined ? undefined : value.publishedAt.toISOString(),
-        'trashed': value.trashed,
-    };
-}
-
-

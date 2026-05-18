@@ -26,16 +26,9 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
-import {
-
-
-    Address,
-    AddressFromJSON,
-    AddressToJSON,
-} from './';
-
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { Address, AddressFromJSON, AddressToJSON } from "./";
 
 // thorapi
 
@@ -44,141 +37,155 @@ import {
  * @export
  * @interface Organization
  */
-export type Organization  = DataObject & {
-    /**
-     * Organization name (unique, case-insensitive matching for deduplication)
-     * @type {string}
-     * @memberof Organization
-     */
-    name?: string;
-    /**
-     * Lowercase, trimmed name used for deduplication matching
-     * @type {string}
-     * @memberof Organization
-     */
-    readonly normalizedName?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Organization
-     */
-    homePage?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Organization
-     */
-    phone?: string;
-    /**
-     * Whether this organization has been verified/claimed
-     * @type {boolean}
-     * @memberof Organization
-     */
-    verified?: boolean;
-    /**
-     * Parent organization ID for hierarchical org structures
-     * @type {string}
-     * @memberof Organization
-     */
-    parentOrganizationId?: string;
-    /**
-     * 
-     * @type {Address}
-     * @memberof Organization
-     */
-    address?: Address;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof Organization
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof Organization
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof Organization
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof Organization
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof Organization
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof Organization
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof Organization
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof Organization
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof Organization
-     */
-    trashed?: boolean;
-}
+export type Organization = DataObject & {
+  /**
+   * Organization name (unique, case-insensitive matching for deduplication)
+   * @type {string}
+   * @memberof Organization
+   */
+  name?: string;
+  /**
+   * Lowercase, trimmed name used for deduplication matching
+   * @type {string}
+   * @memberof Organization
+   */
+  readonly normalizedName?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Organization
+   */
+  homePage?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Organization
+   */
+  phone?: string;
+  /**
+   * Whether this organization has been verified/claimed
+   * @type {boolean}
+   * @memberof Organization
+   */
+  verified?: boolean;
+  /**
+   * Parent organization ID for hierarchical org structures
+   * @type {string}
+   * @memberof Organization
+   */
+  parentOrganizationId?: string;
+  /**
+   *
+   * @type {Address}
+   * @memberof Organization
+   */
+  address?: Address;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof Organization
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof Organization
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof Organization
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof Organization
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof Organization
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof Organization
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof Organization
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof Organization
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof Organization
+   */
+  trashed?: boolean;
+};
 
 export function OrganizationFromJSON(json: any): Organization {
-    return {
-        ...DataObjectFromJSON(json),
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'normalizedName': !exists(json, 'normalizedName') ? undefined : json['normalizedName'],
-        'homePage': !exists(json, 'homePage') ? undefined : json['homePage'],
-        'phone': !exists(json, 'phone') ? undefined : json['phone'],
-        'verified': !exists(json, 'verified') ? undefined : json['verified'],
-        'parentOrganizationId': !exists(json, 'parentOrganizationId') ? undefined : json['parentOrganizationId'],
-        'address': !exists(json, 'address') ? undefined : AddressFromJSON(json['address']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: !exists(json, "name") ? undefined : json["name"],
+    normalizedName: !exists(json, "normalizedName")
+      ? undefined
+      : json["normalizedName"],
+    homePage: !exists(json, "homePage") ? undefined : json["homePage"],
+    phone: !exists(json, "phone") ? undefined : json["phone"],
+    verified: !exists(json, "verified") ? undefined : json["verified"],
+    parentOrganizationId: !exists(json, "parentOrganizationId")
+      ? undefined
+      : json["parentOrganizationId"],
+    address: !exists(json, "address")
+      ? undefined
+      : AddressFromJSON(json["address"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function OrganizationToJSON(value?: Organization): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'name': value.name,
-        'homePage': value.homePage,
-        'phone': value.phone,
-        'verified': value.verified,
-        'parentOrganizationId': value.parentOrganizationId,
-        'address': AddressToJSON(value.address),
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    homePage: value.homePage,
+    phone: value.phone,
+    verified: value.verified,
+    parentOrganizationId: value.parentOrganizationId,
+    address: AddressToJSON(value.address),
+    trashed: value.trashed,
+  };
 }
-
-

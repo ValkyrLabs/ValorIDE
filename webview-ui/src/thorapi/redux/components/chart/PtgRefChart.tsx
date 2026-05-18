@@ -19,20 +19,32 @@ Description: PtgRef
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, PtgRef } from '@thorapi/model';
-import { useGetPtgRefsQuery, useAddPtgRefMutation, useUpdatePtgRefMutation } from '../../services/PtgRefService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, PtgRef } from "@thorapi/model";
+import {
+  useGetPtgRefsQuery,
+  useAddPtgRefMutation,
+  useUpdatePtgRefMutation,
+} from "../../services/PtgRefService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const PtgRefChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetPtgRefsQuery();
 
   const [data, setData] = useState<PtgRef[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<PtgRef>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const PtgRefChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const PtgRefChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((ptgref: DataObject) => [ptgref])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((ptgref: DataObject) => [ptgref])}
+        />
+      )}
     </>
   );
 };

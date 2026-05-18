@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ValidateDeploymentSpec200Response } from '@thorapi/model/ValidateDeploymentSpec200Response';
+import { ValidateDeploymentSpec200Response } from "@thorapi/model/ValidateDeploymentSpec200Response";
 
 const ValidateDeploymentSpec200ResponseSlice = createSlice({
   name: "ValidateDeploymentSpec200Responses",
@@ -27,20 +27,28 @@ const ValidateDeploymentSpec200ResponseSlice = createSlice({
     },
 
     ValidateDeploymentSpec200ResponseValueToggled(state, action) {
-      console.log("ValidateDeploymentSpec200Response TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ValidateDeploymentSpec200Response:ValidateDeploymentSpec200Response = state.find((ValidateDeploymentSpec200Response) => ValidateDeploymentSpec200Response.id === action.payload.ValidateDeploymentSpec200ResponseId);
+      console.log("ValidateDeploymentSpec200Response TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ValidateDeploymentSpec200Response: ValidateDeploymentSpec200Response =
+        state.find(
+          (ValidateDeploymentSpec200Response) =>
+            ValidateDeploymentSpec200Response.id ===
+            action.payload.ValidateDeploymentSpec200ResponseId,
+        );
       if (ValidateDeploymentSpec200Response) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ValidateDeploymentSpec200ResponsepropertySet(state, action) {
-      const ValidateDeploymentSpec200Response = state.find((ValidateDeploymentSpec200Response) => ValidateDeploymentSpec200Response.id === action.payload.ValidateDeploymentSpec200ResponseId);
+      const ValidateDeploymentSpec200Response = state.find(
+        (ValidateDeploymentSpec200Response) =>
+          ValidateDeploymentSpec200Response.id ===
+          action.payload.ValidateDeploymentSpec200ResponseId,
+      );
       if (ValidateDeploymentSpec200Response) {
-      //  ValidateDeploymentSpec200Response[action.property] = action.payload[action.property];
+        //  ValidateDeploymentSpec200Response[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +57,6 @@ const ValidateDeploymentSpec200ResponseSlice = createSlice({
 export const {
   ValidateDeploymentSpec200ResponseAdded,
   ValidateDeploymentSpec200ResponseValueToggled,
-  ValidateDeploymentSpec200ResponsepropertySet
+  ValidateDeploymentSpec200ResponsepropertySet,
 } = ValidateDeploymentSpec200ResponseSlice.actions;
 export default ValidateDeploymentSpec200ResponseSlice.reducer;

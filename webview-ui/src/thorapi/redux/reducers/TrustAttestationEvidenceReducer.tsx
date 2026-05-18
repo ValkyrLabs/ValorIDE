@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { TrustAttestationEvidence } from '@thorapi/model/TrustAttestationEvidence';
+import { TrustAttestationEvidence } from "@thorapi/model/TrustAttestationEvidence";
 
 const TrustAttestationEvidenceSlice = createSlice({
   name: "TrustAttestationEvidences",
@@ -27,20 +27,27 @@ const TrustAttestationEvidenceSlice = createSlice({
     },
 
     TrustAttestationEvidenceValueToggled(state, action) {
-      console.log("TrustAttestationEvidence TOGGLE")
-      console.warn(JSON.stringify(action))
-      const TrustAttestationEvidence:TrustAttestationEvidence = state.find((TrustAttestationEvidence) => TrustAttestationEvidence.id === action.payload.TrustAttestationEvidenceId);
+      console.log("TrustAttestationEvidence TOGGLE");
+      console.warn(JSON.stringify(action));
+      const TrustAttestationEvidence: TrustAttestationEvidence = state.find(
+        (TrustAttestationEvidence) =>
+          TrustAttestationEvidence.id ===
+          action.payload.TrustAttestationEvidenceId,
+      );
       if (TrustAttestationEvidence) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     TrustAttestationEvidencepropertySet(state, action) {
-      const TrustAttestationEvidence = state.find((TrustAttestationEvidence) => TrustAttestationEvidence.id === action.payload.TrustAttestationEvidenceId);
+      const TrustAttestationEvidence = state.find(
+        (TrustAttestationEvidence) =>
+          TrustAttestationEvidence.id ===
+          action.payload.TrustAttestationEvidenceId,
+      );
       if (TrustAttestationEvidence) {
-      //  TrustAttestationEvidence[action.property] = action.payload[action.property];
+        //  TrustAttestationEvidence[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const TrustAttestationEvidenceSlice = createSlice({
 export const {
   TrustAttestationEvidenceAdded,
   TrustAttestationEvidenceValueToggled,
-  TrustAttestationEvidencepropertySet
+  TrustAttestationEvidencepropertySet,
 } = TrustAttestationEvidenceSlice.actions;
 export default TrustAttestationEvidenceSlice.reducer;

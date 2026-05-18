@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ExecModuleExecutionConfig } from '@thorapi/model/ExecModuleExecutionConfig';
+import { ExecModuleExecutionConfig } from "@thorapi/model/ExecModuleExecutionConfig";
 
 const ExecModuleExecutionConfigSlice = createSlice({
   name: "ExecModuleExecutionConfigs",
@@ -27,20 +27,27 @@ const ExecModuleExecutionConfigSlice = createSlice({
     },
 
     ExecModuleExecutionConfigValueToggled(state, action) {
-      console.log("ExecModuleExecutionConfig TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ExecModuleExecutionConfig:ExecModuleExecutionConfig = state.find((ExecModuleExecutionConfig) => ExecModuleExecutionConfig.id === action.payload.ExecModuleExecutionConfigId);
+      console.log("ExecModuleExecutionConfig TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ExecModuleExecutionConfig: ExecModuleExecutionConfig = state.find(
+        (ExecModuleExecutionConfig) =>
+          ExecModuleExecutionConfig.id ===
+          action.payload.ExecModuleExecutionConfigId,
+      );
       if (ExecModuleExecutionConfig) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ExecModuleExecutionConfigpropertySet(state, action) {
-      const ExecModuleExecutionConfig = state.find((ExecModuleExecutionConfig) => ExecModuleExecutionConfig.id === action.payload.ExecModuleExecutionConfigId);
+      const ExecModuleExecutionConfig = state.find(
+        (ExecModuleExecutionConfig) =>
+          ExecModuleExecutionConfig.id ===
+          action.payload.ExecModuleExecutionConfigId,
+      );
       if (ExecModuleExecutionConfig) {
-      //  ExecModuleExecutionConfig[action.property] = action.payload[action.property];
+        //  ExecModuleExecutionConfig[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const ExecModuleExecutionConfigSlice = createSlice({
 export const {
   ExecModuleExecutionConfigAdded,
   ExecModuleExecutionConfigValueToggled,
-  ExecModuleExecutionConfigpropertySet
+  ExecModuleExecutionConfigpropertySet,
 } = ExecModuleExecutionConfigSlice.actions;
 export default ExecModuleExecutionConfigSlice.reducer;

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { RotateTrustKeyRequest } from '@thorapi/model/RotateTrustKeyRequest';
+import { RotateTrustKeyRequest } from "@thorapi/model/RotateTrustKeyRequest";
 
 const RotateTrustKeyRequestSlice = createSlice({
   name: "RotateTrustKeyRequests",
@@ -27,20 +27,25 @@ const RotateTrustKeyRequestSlice = createSlice({
     },
 
     RotateTrustKeyRequestValueToggled(state, action) {
-      console.log("RotateTrustKeyRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const RotateTrustKeyRequest:RotateTrustKeyRequest = state.find((RotateTrustKeyRequest) => RotateTrustKeyRequest.id === action.payload.RotateTrustKeyRequestId);
+      console.log("RotateTrustKeyRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const RotateTrustKeyRequest: RotateTrustKeyRequest = state.find(
+        (RotateTrustKeyRequest) =>
+          RotateTrustKeyRequest.id === action.payload.RotateTrustKeyRequestId,
+      );
       if (RotateTrustKeyRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     RotateTrustKeyRequestpropertySet(state, action) {
-      const RotateTrustKeyRequest = state.find((RotateTrustKeyRequest) => RotateTrustKeyRequest.id === action.payload.RotateTrustKeyRequestId);
+      const RotateTrustKeyRequest = state.find(
+        (RotateTrustKeyRequest) =>
+          RotateTrustKeyRequest.id === action.payload.RotateTrustKeyRequestId,
+      );
       if (RotateTrustKeyRequest) {
-      //  RotateTrustKeyRequest[action.property] = action.payload[action.property];
+        //  RotateTrustKeyRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const RotateTrustKeyRequestSlice = createSlice({
 export const {
   RotateTrustKeyRequestAdded,
   RotateTrustKeyRequestValueToggled,
-  RotateTrustKeyRequestpropertySet
+  RotateTrustKeyRequestpropertySet,
 } = RotateTrustKeyRequestSlice.actions;
 export default RotateTrustKeyRequestSlice.reducer;

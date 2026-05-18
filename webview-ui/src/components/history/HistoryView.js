@@ -64,7 +64,7 @@ const HistoryView = ({ onDone }) => {
       vscode.postMessage({ type: "showTaskWithId", text: id });
       onDone();
     },
-    [onDone]
+    [onDone],
   );
   const handleDeleteHistoryItem = useCallback((id) => {
     vscode.postMessage({ type: "deleteTaskWithId", text: id });
@@ -520,7 +520,7 @@ const HistoryView = ({ onDone }) => {
                       ],
                     }),
                   },
-                  item.id
+                  item.id,
                 ),
             }),
           }),
@@ -566,7 +566,7 @@ const ExportButton = ({ itemId }) =>
 // https://gist.github.com/evenfrost/1ba123656ded32fb7a0cd4651efd4db0
 export const highlight = (
   fuseSearchResult,
-  highlightClassName = "history-item-highlight"
+  highlightClassName = "history-item-highlight",
 ) => {
   const set = (obj, path, value) => {
     const pathValue = path.split(".");
@@ -628,7 +628,7 @@ export const highlight = (
           set(
             highlightedItem,
             match.key,
-            generateHighlightedText(match.value, mergedIndices)
+            generateHighlightedText(match.value, mergedIndices),
           );
         }
       });

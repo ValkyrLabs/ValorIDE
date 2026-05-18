@@ -19,20 +19,35 @@ Description: OrganizationAddonSubscription
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, OrganizationAddonSubscription } from '@thorapi/model';
-import { useGetOrganizationAddonSubscriptionsQuery, useAddOrganizationAddonSubscriptionMutation, useUpdateOrganizationAddonSubscriptionMutation } from '../../services/OrganizationAddonSubscriptionService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, OrganizationAddonSubscription } from "@thorapi/model";
+import {
+  useGetOrganizationAddonSubscriptionsQuery,
+  useAddOrganizationAddonSubscriptionMutation,
+  useUpdateOrganizationAddonSubscriptionMutation,
+} from "../../services/OrganizationAddonSubscriptionService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const OrganizationAddonSubscriptionChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetOrganizationAddonSubscriptionsQuery();
+  const { data: initialData = [], isLoading } =
+    useGetOrganizationAddonSubscriptionsQuery();
 
   const [data, setData] = useState<OrganizationAddonSubscription[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<OrganizationAddonSubscription>>({});
-  
+  const [chartData, setChartData] = useState<
+    Partial<OrganizationAddonSubscription>
+  >({});
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +65,9 @@ const OrganizationAddonSubscriptionChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +75,15 @@ const OrganizationAddonSubscriptionChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((organizationaddonsubscription: DataObject) => [organizationaddonsubscription])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((organizationaddonsubscription: DataObject) => [
+            organizationaddonsubscription,
+          ])}
+        />
+      )}
     </>
   );
 };

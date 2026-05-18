@@ -50,7 +50,7 @@ const SettingsView = ({ onDone }) => {
   const [modelIdErrorMessage, setModelIdErrorMessage] = useState(undefined);
   const [pendingTabChange, setPendingTabChange] = useState(null);
   const [valkyraiHostInput, setValkyraiHostInput] = useState(
-    apiConfiguration?.valkyraiHost || DEFAULT_VALKYRAI_HOST
+    apiConfiguration?.valkyraiHost || DEFAULT_VALKYRAI_HOST,
   );
   const [valkyraiHostStatus, setValkyraiHostStatus] = useState();
   const [valkyraiHostStatusKind, setValkyraiHostStatusKind] = useState("idle");
@@ -75,14 +75,14 @@ const SettingsView = ({ onDone }) => {
   }, [persistJwt]);
   useEffect(() => {
     setValkyraiHostInput(
-      apiConfiguration?.valkyraiHost || DEFAULT_VALKYRAI_HOST
+      apiConfiguration?.valkyraiHost || DEFAULT_VALKYRAI_HOST,
     );
   }, [apiConfiguration?.valkyraiHost]);
   const handleSubmit = (withoutDone = false) => {
     const apiValidationResult = validateApiConfiguration(apiConfiguration);
     const modelIdValidationResult = validateModelId(
       apiConfiguration,
-      openRouterModels
+      openRouterModels,
     );
     // setApiErrorMessage(apiValidationResult)
     // setModelIdErrorMessage(modelIdValidationResult)
@@ -171,7 +171,7 @@ const SettingsView = ({ onDone }) => {
             setValkyraiHostStatus("Unavailable");
             setValkyraiHostStatusKind("error");
             setValkyraiHostError(
-              message.error || "Unable to reach ValkyrAI host."
+              message.error || "Unable to reach ValkyrAI host.",
             );
           }
           pendingHostRef.current = undefined;
@@ -195,7 +195,7 @@ const SettingsView = ({ onDone }) => {
           break;
       }
     },
-    [pendingTabChange]
+    [pendingTabChange],
   );
   useEvent("message", handleMessage);
   const handleResetState = () => {
@@ -293,7 +293,7 @@ const SettingsView = ({ onDone }) => {
   const handleShare = async () => {
     try {
       await navigator.clipboard.writeText(
-        "https://marketplace.visualstudio.com/items?itemName=ValkyrLabsInc.valoride-dev"
+        "https://marketplace.visualstudio.com/items?itemName=ValkyrLabsInc.valoride-dev",
       );
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
@@ -397,8 +397,8 @@ const SettingsView = ({ onDone }) => {
                             },
                             children: id,
                           },
-                          id
-                        )
+                          id,
+                        ),
                       ),
                     }),
                   ],
@@ -433,7 +433,7 @@ const SettingsView = ({ onDone }) => {
                             apiErrorMessage: apiErrorMessage,
                             modelIdErrorMessage: modelIdErrorMessage,
                           },
-                          chatSettings.mode
+                          chatSettings.mode,
                         ),
                       }),
                     ],
@@ -445,7 +445,7 @@ const SettingsView = ({ onDone }) => {
                       apiErrorMessage: apiErrorMessage,
                       modelIdErrorMessage: modelIdErrorMessage,
                     },
-                    "single"
+                    "single",
                   ),
               _jsxs("div", {
                 className: "mb-[5px]",

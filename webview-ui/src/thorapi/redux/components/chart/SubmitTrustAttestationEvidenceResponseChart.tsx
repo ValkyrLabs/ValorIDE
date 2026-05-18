@@ -19,20 +19,40 @@ Description: SubmitTrustAttestationEvidenceResponse
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, SubmitTrustAttestationEvidenceResponse } from '@thorapi/model';
-import { useGetSubmitTrustAttestationEvidenceResponsesQuery, useAddSubmitTrustAttestationEvidenceResponseMutation, useUpdateSubmitTrustAttestationEvidenceResponseMutation } from '../../services/SubmitTrustAttestationEvidenceResponseService';
+import React, { useState, useEffect, useRef } from "react";
+import {
+  DataObject,
+  SubmitTrustAttestationEvidenceResponse,
+} from "@thorapi/model";
+import {
+  useGetSubmitTrustAttestationEvidenceResponsesQuery,
+  useAddSubmitTrustAttestationEvidenceResponseMutation,
+  useUpdateSubmitTrustAttestationEvidenceResponseMutation,
+} from "../../services/SubmitTrustAttestationEvidenceResponseService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const SubmitTrustAttestationEvidenceResponseChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetSubmitTrustAttestationEvidenceResponsesQuery();
+  const { data: initialData = [], isLoading } =
+    useGetSubmitTrustAttestationEvidenceResponsesQuery();
 
-  const [data, setData] = useState<SubmitTrustAttestationEvidenceResponse[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<SubmitTrustAttestationEvidenceResponse>>({});
-  
+  const [data, setData] = useState<SubmitTrustAttestationEvidenceResponse[]>(
+    [],
+  ); // Array to hold table data
+  const [chartData, setChartData] = useState<
+    Partial<SubmitTrustAttestationEvidenceResponse>
+  >({});
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +70,9 @@ const SubmitTrustAttestationEvidenceResponseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +80,17 @@ const SubmitTrustAttestationEvidenceResponseChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((submittrustattestationevidenceresponse: DataObject) => [submittrustattestationevidenceresponse])} />
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap(
+            (submittrustattestationevidenceresponse: DataObject) => [
+              submittrustattestationevidenceresponse,
+            ],
           )}
+        />
+      )}
     </>
   );
 };

@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { OrderFulfillmentTask } from '@thorapi/model/OrderFulfillmentTask'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { OrderFulfillmentTask } from "@thorapi/model/OrderFulfillmentTask";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type OrderFulfillmentTaskResponse = OrderFulfillmentTask[]
+type OrderFulfillmentTaskResponse = OrderFulfillmentTask[];
 
-const toOrderFulfillmentTaskList = (result: unknown): OrderFulfillmentTaskResponse => {
+const toOrderFulfillmentTaskList = (
+  result: unknown,
+): OrderFulfillmentTaskResponse => {
   if (Array.isArray(result)) {
-    return result as OrderFulfillmentTaskResponse
+    return result as OrderFulfillmentTaskResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as OrderFulfillmentTaskResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as OrderFulfillmentTaskResponse)
+    : [];
+};
 
 export const OrderFulfillmentTaskService = createApi({
-  reducerPath: 'OrderFulfillmentTask', // This should remain unique
+  reducerPath: "OrderFulfillmentTask", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['OrderFulfillmentTask'],
+  tagTypes: ["OrderFulfillmentTask"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getOrderFulfillmentTasksPaged: build.query<OrderFulfillmentTaskResponse, { page: number; size?: number; example?: Partial<OrderFulfillmentTask> }>({
+    getOrderFulfillmentTasksPaged: build.query<
+      OrderFulfillmentTaskResponse,
+      { page: number; size?: number; example?: Partial<OrderFulfillmentTask> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `OrderFulfillmentTask?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `OrderFulfillmentTask?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toOrderFulfillmentTaskList(result)
+        const rows = toOrderFulfillmentTaskList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'OrderFulfillmentTask' as const, id })),
-          { type: 'OrderFulfillmentTask', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "OrderFulfillmentTask" as const, id })),
+          { type: "OrderFulfillmentTask", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOrderFulfillmentTasks: build.query<OrderFulfillmentTaskResponse, { example?: Partial<OrderFulfillmentTask> } | void>({
+    getOrderFulfillmentTasks: build.query<
+      OrderFulfillmentTaskResponse,
+      { example?: Partial<OrderFulfillmentTask> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,114 @@ export const OrderFulfillmentTaskService = createApi({
         return `OrderFulfillmentTask`;
       },
       providesTags: (result) => {
-        const rows = toOrderFulfillmentTaskList(result)
+        const rows = toOrderFulfillmentTaskList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'OrderFulfillmentTask' as const, id })),
-          { type: 'OrderFulfillmentTask', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "OrderFulfillmentTask" as const, id })),
+          { type: "OrderFulfillmentTask", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addOrderFulfillmentTask: build.mutation<OrderFulfillmentTask, Partial<OrderFulfillmentTask>>({
+    addOrderFulfillmentTask: build.mutation<
+      OrderFulfillmentTask,
+      Partial<OrderFulfillmentTask>
+    >({
       query: (body) => ({
         url: `OrderFulfillmentTask`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'OrderFulfillmentTask', id: 'LIST' }],
+      invalidatesTags: [{ type: "OrderFulfillmentTask", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getOrderFulfillmentTask: build.query<OrderFulfillmentTask, string>({
       query: (id) => `OrderFulfillmentTask/${id}`,
-      providesTags: (result, error, id) => [{ type: 'OrderFulfillmentTask', id }],
+      providesTags: (result, error, id) => [
+        { type: "OrderFulfillmentTask", id },
+      ],
     }),
 
     // 5) Update
-    updateOrderFulfillmentTask: build.mutation<void, Pick<OrderFulfillmentTask, 'id'> & Partial<OrderFulfillmentTask>>({
+    updateOrderFulfillmentTask: build.mutation<
+      void,
+      Pick<OrderFulfillmentTask, "id"> & Partial<OrderFulfillmentTask>
+    >({
       query: ({ id, ...patch }) => ({
         url: `OrderFulfillmentTask/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            OrderFulfillmentTaskService.util.updateQueryData('getOrderFulfillmentTask', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            OrderFulfillmentTaskService.util.updateQueryData(
+              "getOrderFulfillmentTask",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<OrderFulfillmentTask, 'id'>) => [
-        { type: 'OrderFulfillmentTask', id },
-        { type: 'OrderFulfillmentTask', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<OrderFulfillmentTask, "id">,
+      ) => [
+        { type: "OrderFulfillmentTask", id },
+        { type: "OrderFulfillmentTask", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteOrderFulfillmentTask: build.mutation<{ success: boolean; id: string }, number>({
+    deleteOrderFulfillmentTask: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `OrderFulfillmentTask/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'OrderFulfillmentTask', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "OrderFulfillmentTask", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteOrderFulfillmentTaskCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteOrderFulfillmentTaskCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `OrderFulfillmentTask/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'OrderFulfillmentTask', id }, { type: 'OrderFulfillmentTask', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "OrderFulfillmentTask", id },
+        { type: "OrderFulfillmentTask", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetOrderFulfillmentTasksPagedQuery`
 export const {
-  useGetOrderFulfillmentTasksPagedQuery,     // immediate fetch
+  useGetOrderFulfillmentTasksPagedQuery, // immediate fetch
   useLazyGetOrderFulfillmentTasksPagedQuery, // lazy fetch
   useGetOrderFulfillmentTaskQuery,
   useGetOrderFulfillmentTasksQuery,
@@ -150,4 +192,4 @@ export const {
   useUpdateOrderFulfillmentTaskMutation,
   useDeleteOrderFulfillmentTaskMutation,
   useDeleteOrderFulfillmentTaskCascadeMutation,
-} = OrderFulfillmentTaskService
+} = OrderFulfillmentTaskService;

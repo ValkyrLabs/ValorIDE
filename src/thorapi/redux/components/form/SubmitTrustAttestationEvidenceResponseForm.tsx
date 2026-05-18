@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  SubmitTrustAttestationEvidenceResponse,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddSubmitTrustAttestationEvidenceResponseMutation } from '../../services/SubmitTrustAttestationEvidenceResponseService';
+import { SubmitTrustAttestationEvidenceResponse } from "@thorapi/model";
+
+import { useAddSubmitTrustAttestationEvidenceResponseMutation } from "../../services/SubmitTrustAttestationEvidenceResponseService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,18 +71,23 @@ SubmitTrustAttestationEvidenceResponse
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        accepted: Yup.boolean(),
-        trashed: Yup.boolean(),
+  accepted: Yup.boolean(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const SubmitTrustAttestationEvidenceResponseForm: React.FC = () => {
-  const [addSubmitTrustAttestationEvidenceResponse, addSubmitTrustAttestationEvidenceResponseResult] = useAddSubmitTrustAttestationEvidenceResponseMutation();
+  const [
+    addSubmitTrustAttestationEvidenceResponse,
+    addSubmitTrustAttestationEvidenceResponseResult,
+  ] = useAddSubmitTrustAttestationEvidenceResponseMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -86,12 +97,18 @@ const SubmitTrustAttestationEvidenceResponseForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -99,8 +116,8 @@ const SubmitTrustAttestationEvidenceResponseForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<SubmitTrustAttestationEvidenceResponse> = {
-          accepted: false,
-          trashed: false,
+    accepted: false,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -115,22 +132,33 @@ const SubmitTrustAttestationEvidenceResponseForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new SubmitTrustAttestationEvidenceResponse:', grants);
+    console.log(
+      "Permissions saved for new SubmitTrustAttestationEvidenceResponse:",
+      grants,
+    );
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<SubmitTrustAttestationEvidenceResponse>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<SubmitTrustAttestationEvidenceResponse>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
-      console.log("SubmitTrustAttestationEvidenceResponse form values:", values);
+      console.log(
+        "SubmitTrustAttestationEvidenceResponse form values:",
+        values,
+      );
 
       // NOTE: depending on your generated endpoint, you may need { body: values }
-      const result = await addSubmitTrustAttestationEvidenceResponse(values as any).unwrap();
+      const result = await addSubmitTrustAttestationEvidenceResponse(
+        values as any,
+      ).unwrap();
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `SubmitTrustAttestationEvidenceResponse created successfully! Would you like to set permissions for this object?`
+          `SubmitTrustAttestationEvidenceResponse created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -138,8 +166,11 @@ const SubmitTrustAttestationEvidenceResponseForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create SubmitTrustAttestationEvidenceResponse:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error(
+        "Failed to create SubmitTrustAttestationEvidenceResponse:",
+        error,
+      );
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -160,48 +191,43 @@ const SubmitTrustAttestationEvidenceResponseForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addSubmitTrustAttestationEvidenceResponseResult.isLoading;
+          const isSaving =
+            isSubmitting ||
+            addSubmitTrustAttestationEvidenceResponseResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New SubmitTrustAttestationEvidenceResponse
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    SubmitTrustAttestationEvidenceResponse
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="accepted" className="nice-form-control">
                       <b>
                         Accepted:
-                        {touched.accepted &&
-                         !errors.accepted && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.accepted && !errors.accepted && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="accepted"
-                            name="accepted"
-                            checked={values.accepted || false}
-                            onChange={(e) => {
-                              setFieldTouched('accepted', true);
-                              setFieldValue('accepted', e.target.checked);
-                            }}
-                            isInvalid={!!errors.accepted}
-                            className={errors.accepted ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="accepted"
+                        name="accepted"
+                        checked={values.accepted || false}
+                        onChange={(e) => {
+                          setFieldTouched("accepted", true);
+                          setFieldValue("accepted", e.target.checked);
+                        }}
+                        isInvalid={!!errors.accepted}
+                        className={errors.accepted ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -213,32 +239,25 @@ const SubmitTrustAttestationEvidenceResponseForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -248,45 +267,71 @@ const SubmitTrustAttestationEvidenceResponseForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New SubmitTrustAttestationEvidenceResponse
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      SubmitTrustAttestationEvidenceResponse
+                    </CoolButton>
 
-                  {(addSubmitTrustAttestationEvidenceResponseResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addSubmitTrustAttestationEvidenceResponseResult as any).error ? (addSubmitTrustAttestationEvidenceResponseResult as any).error.data : (addSubmitTrustAttestationEvidenceResponseResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addSubmitTrustAttestationEvidenceResponseResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (
+                                addSubmitTrustAttestationEvidenceResponseResult as any
+                              ).error
+                              ? (
+                                  addSubmitTrustAttestationEvidenceResponseResult as any
+                                ).error.data
+                              : (
+                                  addSubmitTrustAttestationEvidenceResponseResult as any
+                                ).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addSubmitTrustAttestationEvidenceResponseResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addSubmitTrustAttestationEvidenceResponseResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addSubmitTrustAttestationEvidenceResponseResult: {JSON.stringify(addSubmitTrustAttestationEvidenceResponseResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addSubmitTrustAttestationEvidenceResponseResult:{" "}
+                    {JSON.stringify(
+                      addSubmitTrustAttestationEvidenceResponseResult,
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -306,8 +351,5 @@ const SubmitTrustAttestationEvidenceResponseForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default SubmitTrustAttestationEvidenceResponseForm;
-

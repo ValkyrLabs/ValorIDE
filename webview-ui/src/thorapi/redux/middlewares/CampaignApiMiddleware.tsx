@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_CAMPAIGN_REQUEST,
-    FETCH_CAMPAIGN_REQUEST,
-    LIST_CAMPAIGN_REQUEST,
-    UPDATE_CAMPAIGN_REQUEST,
-    DELETE_CAMPAIGN_REQUEST,
-
-    addCampaignFailure,
-    addCampaignSuccess,
-
-    fetchCampaignFailure,
-    fetchCampaignSuccess,
-    
-    listCampaignFailure,
-    listCampaignSuccess,
-
-    updateCampaignFailure,
-    updateCampaignSuccess,
-    
-    deleteCampaignFailure,
-    deleteCampaignSuccess,
-    
-} from '../actions/CampaignApiAction';
+  ADD_CAMPAIGN_REQUEST,
+  FETCH_CAMPAIGN_REQUEST,
+  LIST_CAMPAIGN_REQUEST,
+  UPDATE_CAMPAIGN_REQUEST,
+  DELETE_CAMPAIGN_REQUEST,
+  addCampaignFailure,
+  addCampaignSuccess,
+  fetchCampaignFailure,
+  fetchCampaignSuccess,
+  listCampaignFailure,
+  listCampaignSuccess,
+  updateCampaignFailure,
+  updateCampaignSuccess,
+  deleteCampaignFailure,
+  deleteCampaignSuccess,
+} from "../actions/CampaignApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Campaign
 */
 
-
-
-export const CampaignMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("Campaign MIDDLEWARE: " + JSON.stringify(action) )
+export const CampaignMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Campaign MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

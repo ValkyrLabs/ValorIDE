@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,110 +36,120 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface UpdateFileRequest
  */
-export type UpdateFileRequest  = DataObject & {
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateFileRequest
-     */
-    filename?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateFileRequest
-     */
-    directoryPath?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateFileRequest
-     */
-    metadata?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof UpdateFileRequest
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof UpdateFileRequest
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof UpdateFileRequest
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof UpdateFileRequest
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof UpdateFileRequest
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof UpdateFileRequest
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof UpdateFileRequest
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof UpdateFileRequest
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof UpdateFileRequest
-     */
-    trashed?: boolean;
-}
+export type UpdateFileRequest = DataObject & {
+  /**
+   *
+   * @type {string}
+   * @memberof UpdateFileRequest
+   */
+  filename?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof UpdateFileRequest
+   */
+  directoryPath?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof UpdateFileRequest
+   */
+  metadata?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof UpdateFileRequest
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof UpdateFileRequest
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof UpdateFileRequest
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof UpdateFileRequest
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof UpdateFileRequest
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof UpdateFileRequest
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof UpdateFileRequest
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof UpdateFileRequest
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof UpdateFileRequest
+   */
+  trashed?: boolean;
+};
 
 export function UpdateFileRequestFromJSON(json: any): UpdateFileRequest {
-    return {
-        ...DataObjectFromJSON(json),
-        'filename': !exists(json, 'filename') ? undefined : json['filename'],
-        'directoryPath': !exists(json, 'directoryPath') ? undefined : json['directoryPath'],
-        'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    filename: !exists(json, "filename") ? undefined : json["filename"],
+    directoryPath: !exists(json, "directoryPath")
+      ? undefined
+      : json["directoryPath"],
+    metadata: !exists(json, "metadata") ? undefined : json["metadata"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function UpdateFileRequestToJSON(value?: UpdateFileRequest): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'filename': value.filename,
-        'directoryPath': value.directoryPath,
-        'metadata': value.metadata,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    filename: value.filename,
+    directoryPath: value.directoryPath,
+    metadata: value.metadata,
+    trashed: value.trashed,
+  };
 }
-
-

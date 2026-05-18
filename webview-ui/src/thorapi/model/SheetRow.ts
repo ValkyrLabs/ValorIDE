@@ -26,16 +26,9 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
-import {
-
-
-    Cell,
-    CellFromJSON,
-    CellToJSON,
-} from './';
-
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { Cell, CellFromJSON, CellToJSON } from "./";
 
 // thorapi
 
@@ -44,134 +37,149 @@ import {
  * @export
  * @interface SheetRow
  */
-export type SheetRow  = DataObject & {
-    /**
-     * the sheet containing this row
-     * @type {string}
-     * @memberof SheetRow
-     */
-    sheetId?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof SheetRow
-     */
-    rowIndex?: number;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof SheetRow
-     */
-    hidden?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof SheetRow
-     */
-    collapsed?: boolean;
-    /**
-     * For nested grouping
-     * @type {number}
-     * @memberof SheetRow
-     */
-    outlineLevel?: number;
-    /**
-     * 
-     * @type {Array<Cell>}
-     * @memberof SheetRow
-     */
-    cells?: Array<Cell>;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof SheetRow
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof SheetRow
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof SheetRow
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof SheetRow
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof SheetRow
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof SheetRow
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof SheetRow
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof SheetRow
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof SheetRow
-     */
-    trashed?: boolean;
-}
+export type SheetRow = DataObject & {
+  /**
+   * the sheet containing this row
+   * @type {string}
+   * @memberof SheetRow
+   */
+  sheetId?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof SheetRow
+   */
+  rowIndex?: number;
+  /**
+   *
+   * @type {boolean}
+   * @memberof SheetRow
+   */
+  hidden?: boolean;
+  /**
+   *
+   * @type {boolean}
+   * @memberof SheetRow
+   */
+  collapsed?: boolean;
+  /**
+   * For nested grouping
+   * @type {number}
+   * @memberof SheetRow
+   */
+  outlineLevel?: number;
+  /**
+   *
+   * @type {Array<Cell>}
+   * @memberof SheetRow
+   */
+  cells?: Array<Cell>;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof SheetRow
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof SheetRow
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof SheetRow
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof SheetRow
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof SheetRow
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof SheetRow
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof SheetRow
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof SheetRow
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof SheetRow
+   */
+  trashed?: boolean;
+};
 
 export function SheetRowFromJSON(json: any): SheetRow {
-    return {
-        ...DataObjectFromJSON(json),
-        'sheetId': !exists(json, 'sheetId') ? undefined : json['sheetId'],
-        'rowIndex': !exists(json, 'rowIndex') ? undefined : json['rowIndex'],
-        'hidden': !exists(json, 'hidden') ? undefined : json['hidden'],
-        'collapsed': !exists(json, 'collapsed') ? undefined : json['collapsed'],
-        'outlineLevel': !exists(json, 'outlineLevel') ? undefined : json['outlineLevel'],
-        'cells': !exists(json, 'cells') ? undefined : (json['cells'] as Array<any>).map(CellFromJSON),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
+    rowIndex: !exists(json, "rowIndex") ? undefined : json["rowIndex"],
+    hidden: !exists(json, "hidden") ? undefined : json["hidden"],
+    collapsed: !exists(json, "collapsed") ? undefined : json["collapsed"],
+    outlineLevel: !exists(json, "outlineLevel")
+      ? undefined
+      : json["outlineLevel"],
+    cells: !exists(json, "cells")
+      ? undefined
+      : (json["cells"] as Array<any>).map(CellFromJSON),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function SheetRowToJSON(value?: SheetRow): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'sheetId': value.sheetId,
-        'rowIndex': value.rowIndex,
-        'hidden': value.hidden,
-        'collapsed': value.collapsed,
-        'outlineLevel': value.outlineLevel,
-        'cells': value.cells === undefined ? undefined : (value.cells as Array<any>).map(CellToJSON),
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    sheetId: value.sheetId,
+    rowIndex: value.rowIndex,
+    hidden: value.hidden,
+    collapsed: value.collapsed,
+    outlineLevel: value.outlineLevel,
+    cells:
+      value.cells === undefined
+        ? undefined
+        : (value.cells as Array<any>).map(CellToJSON),
+    trashed: value.trashed,
+  };
 }
-
-

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { MemoryActionRequest } from '@thorapi/model/MemoryActionRequest';
+import { MemoryActionRequest } from "@thorapi/model/MemoryActionRequest";
 
 const MemoryActionRequestSlice = createSlice({
   name: "MemoryActionRequests",
@@ -27,20 +27,25 @@ const MemoryActionRequestSlice = createSlice({
     },
 
     MemoryActionRequestValueToggled(state, action) {
-      console.log("MemoryActionRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const MemoryActionRequest:MemoryActionRequest = state.find((MemoryActionRequest) => MemoryActionRequest.id === action.payload.MemoryActionRequestId);
+      console.log("MemoryActionRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const MemoryActionRequest: MemoryActionRequest = state.find(
+        (MemoryActionRequest) =>
+          MemoryActionRequest.id === action.payload.MemoryActionRequestId,
+      );
       if (MemoryActionRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     MemoryActionRequestpropertySet(state, action) {
-      const MemoryActionRequest = state.find((MemoryActionRequest) => MemoryActionRequest.id === action.payload.MemoryActionRequestId);
+      const MemoryActionRequest = state.find(
+        (MemoryActionRequest) =>
+          MemoryActionRequest.id === action.payload.MemoryActionRequestId,
+      );
       if (MemoryActionRequest) {
-      //  MemoryActionRequest[action.property] = action.payload[action.property];
+        //  MemoryActionRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const MemoryActionRequestSlice = createSlice({
 export const {
   MemoryActionRequestAdded,
   MemoryActionRequestValueToggled,
-  MemoryActionRequestpropertySet
+  MemoryActionRequestpropertySet,
 } = MemoryActionRequestSlice.actions;
 export default MemoryActionRequestSlice.reducer;

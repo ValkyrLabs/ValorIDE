@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  CreditAccount,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddCreditAccountMutation } from '../../services/CreditAccountService';
+import { CreditAccount } from "@thorapi/model";
+
+import { useAddCreditAccountMutation } from "../../services/CreditAccountService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,30 +71,40 @@ Materialized credit ledger summary row for fast reads and Stripe linkage.
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        customerId: Yup.string(),
-        availableCredits: asNumber(Yup.number().integer().typeError("availableCredits must be a number")),
-        totalCredited: asNumber(Yup.number().integer().typeError("totalCredited must be a number")),
-        totalDebited: asNumber(Yup.number().integer().typeError("totalDebited must be a number")),
-        stripeCustomerId: Yup.string(),
-        updatedAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("updatedAt must be a valid date"),
-        trashed: Yup.boolean(),
+  customerId: Yup.string(),
+  availableCredits: asNumber(
+    Yup.number().integer().typeError("availableCredits must be a number"),
+  ),
+  totalCredited: asNumber(
+    Yup.number().integer().typeError("totalCredited must be a number"),
+  ),
+  totalDebited: asNumber(
+    Yup.number().integer().typeError("totalDebited must be a number"),
+  ),
+  stripeCustomerId: Yup.string(),
+  updatedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("updatedAt must be a valid date"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const CreditAccountForm: React.FC = () => {
-  const [addCreditAccount, addCreditAccountResult] = useAddCreditAccountMutation();
+  const [addCreditAccount, addCreditAccountResult] =
+    useAddCreditAccountMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -98,12 +114,18 @@ const CreditAccountForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -111,13 +133,13 @@ const CreditAccountForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<CreditAccount> = {
-          customerId: '',
-          availableCredits: 0,
-          totalCredited: 0,
-          totalDebited: 0,
-          stripeCustomerId: '',
-          updatedAt: new Date(),
-          trashed: false,
+    customerId: "",
+    availableCredits: 0,
+    totalCredited: 0,
+    totalDebited: 0,
+    stripeCustomerId: "",
+    updatedAt: new Date(),
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -132,11 +154,14 @@ const CreditAccountForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new CreditAccount:', grants);
+    console.log("Permissions saved for new CreditAccount:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<CreditAccount>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<CreditAccount>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -147,7 +172,7 @@ const CreditAccountForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `CreditAccount created successfully! Would you like to set permissions for this object?`
+          `CreditAccount created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -155,8 +180,8 @@ const CreditAccountForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create CreditAccount:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create CreditAccount:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -177,44 +202,36 @@ const CreditAccountForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addCreditAccountResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New CreditAccount
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New CreditAccount
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="customerId" className="nice-form-control">
                       <b>
                         Customer Id:
-                        {touched.customerId &&
-                         !errors.customerId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.customerId && !errors.customerId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="customerId"
-                            value={values?.customerId}
-                            placeholder="Customer Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="customerId"
+                        value={values?.customerId}
+                        placeholder="Customer Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -223,39 +240,39 @@ const CreditAccountForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="availableCredits" className="nice-form-control">
+                    <label
+                      htmlFor="availableCredits"
+                      className="nice-form-control"
+                    >
                       <b>
                         Available Credits:
                         {touched.availableCredits &&
-                         !errors.availableCredits && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.availableCredits && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-
-
-
-
-                          {/* LONG FIELD */}
-                          <Field
-                            name="availableCredits"
-                            type="number"
-                            value={values.availableCredits || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('availableCredits', true);
-                              const v = e.target.value;
-                              setFieldValue('availableCredits', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.availableCredits
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
+                      {/* LONG FIELD */}
+                      <Field
+                        name="availableCredits"
+                        type="number"
+                        value={values.availableCredits || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("availableCredits", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "availableCredits",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.availableCredits
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -264,39 +281,38 @@ const CreditAccountForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="totalCredited" className="nice-form-control">
+                    <label
+                      htmlFor="totalCredited"
+                      className="nice-form-control"
+                    >
                       <b>
                         Total Credited:
-                        {touched.totalCredited &&
-                         !errors.totalCredited && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.totalCredited && !errors.totalCredited && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-                          {/* LONG FIELD */}
-                          <Field
-                            name="totalCredited"
-                            type="number"
-                            value={values.totalCredited || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('totalCredited', true);
-                              const v = e.target.value;
-                              setFieldValue('totalCredited', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.totalCredited
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
+                      {/* LONG FIELD */}
+                      <Field
+                        name="totalCredited"
+                        type="number"
+                        value={values.totalCredited || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("totalCredited", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "totalCredited",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.totalCredited
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -308,36 +324,32 @@ const CreditAccountForm: React.FC = () => {
                     <label htmlFor="totalDebited" className="nice-form-control">
                       <b>
                         Total Debited:
-                        {touched.totalDebited &&
-                         !errors.totalDebited && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.totalDebited && !errors.totalDebited && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-                          {/* LONG FIELD */}
-                          <Field
-                            name="totalDebited"
-                            type="number"
-                            value={values.totalDebited || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('totalDebited', true);
-                              const v = e.target.value;
-                              setFieldValue('totalDebited', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.totalDebited
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
+                      {/* LONG FIELD */}
+                      <Field
+                        name="totalDebited"
+                        type="number"
+                        value={values.totalDebited || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("totalDebited", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "totalDebited",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.totalDebited
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -346,31 +358,28 @@ const CreditAccountForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="stripeCustomerId" className="nice-form-control">
+                    <label
+                      htmlFor="stripeCustomerId"
+                      className="nice-form-control"
+                    >
                       <b>
                         Stripe Customer Id:
                         {touched.stripeCustomerId &&
-                         !errors.stripeCustomerId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.stripeCustomerId && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="stripeCustomerId"
-                            value={values?.stripeCustomerId}
-                            placeholder="Stripe Customer Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="stripeCustomerId"
+                        value={values?.stripeCustomerId}
+                        placeholder="Stripe Customer Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -382,38 +391,38 @@ const CreditAccountForm: React.FC = () => {
                     <label htmlFor="updatedAt" className="nice-form-control">
                       <b>
                         Updated At:
-                        {touched.updatedAt &&
-                         !errors.updatedAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.updatedAt && !errors.updatedAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="updatedAt"
-                            type="datetime-local"
-                            value={values.updatedAt ? 
-                              new Date(values.updatedAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('updatedAt', true);
-                              const v = e.target.value;
-                              setFieldValue('updatedAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.updatedAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="updatedAt"
+                        type="datetime-local"
+                        value={
+                          values.updatedAt
+                            ? new Date(values.updatedAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("updatedAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "updatedAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.updatedAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -425,32 +434,25 @@ const CreditAccountForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -460,45 +462,59 @@ const CreditAccountForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New CreditAccount
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New CreditAccount
+                    </CoolButton>
 
-                  {(addCreditAccountResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addCreditAccountResult as any).error ? (addCreditAccountResult as any).error.data : (addCreditAccountResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addCreditAccountResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addCreditAccountResult as any).error
+                              ? (addCreditAccountResult as any).error.data
+                              : (addCreditAccountResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addCreditAccountResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addCreditAccountResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addCreditAccountResult: {JSON.stringify(addCreditAccountResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addCreditAccountResult:{" "}
+                    {JSON.stringify(addCreditAccountResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -518,8 +534,5 @@ const CreditAccountForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default CreditAccountForm;
-

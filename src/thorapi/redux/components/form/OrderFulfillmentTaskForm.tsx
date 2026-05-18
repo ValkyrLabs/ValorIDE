@@ -13,33 +13,41 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   OrderFulfillmentTask,
   OrderFulfillmentTaskFulfillmentTypeEnum,
   OrderFulfillmentTaskStatusEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddOrderFulfillmentTaskMutation } from '../../services/OrderFulfillmentTaskService';
+import { useAddOrderFulfillmentTaskMutation } from "../../services/OrderFulfillmentTaskService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -64,58 +72,56 @@ Represents a fulfillment action on a SalesOrder or LineItem. Used by ValkyrAI wo
 -------------------------------------------------------- */
 const FulfillmentTypeValidation = () => {
   return [
-    'digital_delivery',
-    'physical_shipment',
-    'service_activation',
-    'invoice_generation',
-    'subscription_provision',
-    'entitlement_grant',
-    'other',
+    "digital_delivery",
+    "physical_shipment",
+    "service_activation",
+    "invoice_generation",
+    "subscription_provision",
+    "entitlement_grant",
+    "other",
   ];
 };
 const StatusValidation = () => {
-  return [
-    'pending',
-    'in_progress',
-    'completed',
-    'failed',
-    'canceled',
-  ];
+  return ["pending", "in_progress", "completed", "failed", "canceled"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-      fulfillmentType: Yup.mixed()
-        .oneOf(FulfillmentTypeValidation(), "Invalid value for fulfillmentType")
-        .required("fulfillmentType is required."),
-      status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        ,
-        assignedTo: Yup.string(),
-        attempts: asNumber(Yup.number().integer().typeError("attempts must be a number")),
-        lastError: Yup.string(),
-        completedAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("completedAt must be a valid date"),
-        metadata: Yup.string(),
-        trashed: Yup.boolean(),
+  fulfillmentType: Yup.mixed()
+    .oneOf(FulfillmentTypeValidation(), "Invalid value for fulfillmentType")
+    .required("fulfillmentType is required."),
+  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
+  assignedTo: Yup.string(),
+  attempts: asNumber(
+    Yup.number().integer().typeError("attempts must be a number"),
+  ),
+  lastError: Yup.string(),
+  completedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("completedAt must be a valid date"),
+  metadata: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const OrderFulfillmentTaskForm: React.FC = () => {
-  const [addOrderFulfillmentTask, addOrderFulfillmentTaskResult] = useAddOrderFulfillmentTaskMutation();
+  const [addOrderFulfillmentTask, addOrderFulfillmentTaskResult] =
+    useAddOrderFulfillmentTaskMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -125,12 +131,18 @@ const OrderFulfillmentTaskForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -138,14 +150,14 @@ const OrderFulfillmentTaskForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<OrderFulfillmentTask> = {
-        fulfillmentType: undefined,
-        status: undefined,
-          assignedTo: '',
-          attempts: 0,
-          lastError: '',
-          completedAt: new Date(),
-          metadata: '',
-          trashed: false,
+    fulfillmentType: undefined,
+    status: undefined,
+    assignedTo: "",
+    attempts: 0,
+    lastError: "",
+    completedAt: new Date(),
+    metadata: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -160,11 +172,14 @@ const OrderFulfillmentTaskForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new OrderFulfillmentTask:', grants);
+    console.log("Permissions saved for new OrderFulfillmentTask:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<OrderFulfillmentTask>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<OrderFulfillmentTask>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -175,7 +190,7 @@ const OrderFulfillmentTaskForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `OrderFulfillmentTask created successfully! Would you like to set permissions for this object?`
+          `OrderFulfillmentTask created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -183,8 +198,8 @@ const OrderFulfillmentTaskForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create OrderFulfillmentTask:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create OrderFulfillmentTask:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -205,46 +220,53 @@ const OrderFulfillmentTaskForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addOrderFulfillmentTaskResult.isLoading;
+          const isSaving =
+            isSubmitting || addOrderFulfillmentTaskResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New OrderFulfillmentTask
-                </Accordion.Header>
-                <Accordion.Body>
-                    <label htmlFor="fulfillmentType" className="nice-form-control">
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    OrderFulfillmentTask
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <label
+                      htmlFor="fulfillmentType"
+                      className="nice-form-control"
+                    >
                       <b>
                         Fulfillment Type:
-                        {touched.fulfillmentType &&
-                         !errors.fulfillmentType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.fulfillmentType && !errors.fulfillmentType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="fulfillmentType"
-                          value={values.fulfillmentType || ''}
-                          className={
-                            errors.fulfillmentType
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('fulfillmentType', true);
-                            setFieldValue('fulfillmentType', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Fulfillment Type" />
-                          <FulfillmentTypeLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="fulfillmentType"
+                        value={values.fulfillmentType || ""}
+                        className={
+                          errors.fulfillmentType
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("fulfillmentType", true);
+                          setFieldValue(
+                            "fulfillmentType",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Fulfillment Type" />
+                        <FulfillmentTypeLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -256,30 +278,30 @@ const OrderFulfillmentTaskForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="status"
-                          value={values.status || ''}
-                          className={
-                            errors.status
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Status" />
-                          <StatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="status"
+                        value={values.status || ""}
+                        className={
+                          errors.status
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("status", true);
+                          setFieldValue("status", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Status" />
+                        <StatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -291,28 +313,21 @@ const OrderFulfillmentTaskForm: React.FC = () => {
                     <label htmlFor="assignedTo" className="nice-form-control">
                       <b>
                         Assigned To:
-                        {touched.assignedTo &&
-                         !errors.assignedTo && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.assignedTo && !errors.assignedTo && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="assignedTo"
-                            value={values?.assignedTo}
-                            placeholder="Assigned To"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="assignedTo"
+                        value={values?.assignedTo}
+                        placeholder="Assigned To"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -324,36 +339,32 @@ const OrderFulfillmentTaskForm: React.FC = () => {
                     <label htmlFor="attempts" className="nice-form-control">
                       <b>
                         Attempts:
-                        {touched.attempts &&
-                         !errors.attempts && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.attempts && !errors.attempts && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="attempts"
-                            type="number"
-                            value={values.attempts || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('attempts', true);
-                              const v = e.target.value;
-                              setFieldValue('attempts', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.attempts
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="attempts"
+                        type="number"
+                        value={values.attempts || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("attempts", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "attempts",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.attempts
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -365,28 +376,21 @@ const OrderFulfillmentTaskForm: React.FC = () => {
                     <label htmlFor="lastError" className="nice-form-control">
                       <b>
                         Last Error:
-                        {touched.lastError &&
-                         !errors.lastError && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.lastError && !errors.lastError && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="lastError"
-                            value={values?.lastError}
-                            placeholder="Last Error"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="lastError"
+                        value={values?.lastError}
+                        placeholder="Last Error"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -398,38 +402,38 @@ const OrderFulfillmentTaskForm: React.FC = () => {
                     <label htmlFor="completedAt" className="nice-form-control">
                       <b>
                         Completed At:
-                        {touched.completedAt &&
-                         !errors.completedAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.completedAt && !errors.completedAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="completedAt"
-                            type="datetime-local"
-                            value={values.completedAt ? 
-                              new Date(values.completedAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('completedAt', true);
-                              const v = e.target.value;
-                              setFieldValue('completedAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.completedAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="completedAt"
+                        type="datetime-local"
+                        value={
+                          values.completedAt
+                            ? new Date(values.completedAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("completedAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "completedAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.completedAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -441,28 +445,21 @@ const OrderFulfillmentTaskForm: React.FC = () => {
                     <label htmlFor="metadata" className="nice-form-control">
                       <b>
                         Metadata:
-                        {touched.metadata &&
-                         !errors.metadata && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.metadata && !errors.metadata && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="metadata"
-                            value={values?.metadata}
-                            placeholder="Metadata"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="metadata"
+                        value={values?.metadata}
+                        placeholder="Metadata"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -474,32 +471,25 @@ const OrderFulfillmentTaskForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -509,45 +499,64 @@ const OrderFulfillmentTaskForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New OrderFulfillmentTask
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      OrderFulfillmentTask
+                    </CoolButton>
 
-                  {(addOrderFulfillmentTaskResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addOrderFulfillmentTaskResult as any).error ? (addOrderFulfillmentTaskResult as any).error.data : (addOrderFulfillmentTaskResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addOrderFulfillmentTaskResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addOrderFulfillmentTaskResult as any).error
+                              ? (addOrderFulfillmentTaskResult as any).error
+                                  .data
+                              : (addOrderFulfillmentTaskResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addOrderFulfillmentTaskResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addOrderFulfillmentTaskResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addOrderFulfillmentTaskResult: {JSON.stringify(addOrderFulfillmentTaskResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addOrderFulfillmentTaskResult:{" "}
+                    {JSON.stringify(addOrderFulfillmentTaskResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -579,13 +588,13 @@ kebabcase fulfillment-type-lookup
 const FulfillmentTypeLookup = () => {
   return (
     <>
-      <option value='digital_delivery' label="Digital Delivery" />
-      <option value='physical_shipment' label="Physical Shipment" />
-      <option value='service_activation' label="Service Activation" />
-      <option value='invoice_generation' label="Invoice Generation" />
-      <option value='subscription_provision' label="Subscription Provision" />
-      <option value='entitlement_grant' label="Entitlement Grant" />
-      <option value='other' label="Other" />
+      <option value="digital_delivery" label="Digital Delivery" />
+      <option value="physical_shipment" label="Physical Shipment" />
+      <option value="service_activation" label="Service Activation" />
+      <option value="invoice_generation" label="Invoice Generation" />
+      <option value="subscription_provision" label="Subscription Provision" />
+      <option value="entitlement_grant" label="Entitlement Grant" />
+      <option value="other" label="Other" />
     </>
   );
 };
@@ -602,17 +611,14 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value='pending' label="Pending" />
-      <option value='in_progress' label="In Progress" />
-      <option value='completed' label="Completed" />
-      <option value='failed' label="Failed" />
-      <option value='canceled' label="Canceled" />
+      <option value="pending" label="Pending" />
+      <option value="in_progress" label="In Progress" />
+      <option value="completed" label="Completed" />
+      <option value="failed" label="Failed" />
+      <option value="canceled" label="Canceled" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default OrderFulfillmentTaskForm;
-

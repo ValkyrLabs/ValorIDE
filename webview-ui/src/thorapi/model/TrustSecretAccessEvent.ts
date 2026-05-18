@@ -26,19 +26,16 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    TrustKeyVersion,
-    TrustKeyVersionFromJSON,
-    TrustKeyVersionToJSON,
-    TrustSecretLease,
-    TrustSecretLeaseFromJSON,
-    TrustSecretLeaseToJSON,
-} from './';
-
+  TrustKeyVersion,
+  TrustKeyVersionFromJSON,
+  TrustKeyVersionToJSON,
+  TrustSecretLease,
+  TrustSecretLeaseFromJSON,
+  TrustSecretLeaseToJSON,
+} from "./";
 
 // thorapi
 
@@ -47,169 +44,185 @@ import {
  * @export
  * @interface TrustSecretAccessEvent
  */
-export type TrustSecretAccessEvent  = DataObject & {
-    /**
-     * 
-     * @type {TrustKeyVersion}
-     * @memberof TrustSecretAccessEvent
-     */
-    keyVersion?: TrustKeyVersion;
-    /**
-     * 
-     * @type {TrustSecretLease}
-     * @memberof TrustSecretAccessEvent
-     */
-    lease?: TrustSecretLease;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustSecretAccessEvent
-     */
-    operation?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustSecretAccessEvent
-     */
-    actorId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustSecretAccessEvent
-     */
-    objectType?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustSecretAccessEvent
-     */
-    objectId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustSecretAccessEvent
-     */
-    outcome?: TrustSecretAccessEventOutcomeEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustSecretAccessEvent
-     */
-    reasonCode?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustSecretAccessEvent
-     */
-    eventHash?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustSecretAccessEvent
-     */
-    ownerId?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof TrustSecretAccessEvent
-     */
-    readonly id?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof TrustSecretAccessEvent
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof TrustSecretAccessEvent
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof TrustSecretAccessEvent
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof TrustSecretAccessEvent
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof TrustSecretAccessEvent
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof TrustSecretAccessEvent
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof TrustSecretAccessEvent
-     */
-    trashed?: boolean;
+export type TrustSecretAccessEvent = DataObject & {
+  /**
+   *
+   * @type {TrustKeyVersion}
+   * @memberof TrustSecretAccessEvent
+   */
+  keyVersion?: TrustKeyVersion;
+  /**
+   *
+   * @type {TrustSecretLease}
+   * @memberof TrustSecretAccessEvent
+   */
+  lease?: TrustSecretLease;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustSecretAccessEvent
+   */
+  operation?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustSecretAccessEvent
+   */
+  actorId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustSecretAccessEvent
+   */
+  objectType?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustSecretAccessEvent
+   */
+  objectId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustSecretAccessEvent
+   */
+  outcome?: TrustSecretAccessEventOutcomeEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustSecretAccessEvent
+   */
+  reasonCode?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustSecretAccessEvent
+   */
+  eventHash?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustSecretAccessEvent
+   */
+  ownerId?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof TrustSecretAccessEvent
+   */
+  readonly id?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof TrustSecretAccessEvent
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof TrustSecretAccessEvent
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof TrustSecretAccessEvent
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof TrustSecretAccessEvent
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof TrustSecretAccessEvent
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof TrustSecretAccessEvent
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof TrustSecretAccessEvent
+   */
+  trashed?: boolean;
+};
+
+export function TrustSecretAccessEventFromJSON(
+  json: any,
+): TrustSecretAccessEvent {
+  return {
+    ...DataObjectFromJSON(json),
+    keyVersion: !exists(json, "keyVersion")
+      ? undefined
+      : TrustKeyVersionFromJSON(json["keyVersion"]),
+    lease: !exists(json, "lease")
+      ? undefined
+      : TrustSecretLeaseFromJSON(json["lease"]),
+    operation: !exists(json, "operation") ? undefined : json["operation"],
+    actorId: !exists(json, "actorId") ? undefined : json["actorId"],
+    objectType: !exists(json, "objectType") ? undefined : json["objectType"],
+    objectId: !exists(json, "objectId") ? undefined : json["objectId"],
+    outcome: !exists(json, "outcome") ? undefined : json["outcome"],
+    reasonCode: !exists(json, "reasonCode") ? undefined : json["reasonCode"],
+    eventHash: !exists(json, "eventHash") ? undefined : json["eventHash"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
-export function TrustSecretAccessEventFromJSON(json: any): TrustSecretAccessEvent {
-    return {
-        ...DataObjectFromJSON(json),
-        'keyVersion': !exists(json, 'keyVersion') ? undefined : TrustKeyVersionFromJSON(json['keyVersion']),
-        'lease': !exists(json, 'lease') ? undefined : TrustSecretLeaseFromJSON(json['lease']),
-        'operation': !exists(json, 'operation') ? undefined : json['operation'],
-        'actorId': !exists(json, 'actorId') ? undefined : json['actorId'],
-        'objectType': !exists(json, 'objectType') ? undefined : json['objectType'],
-        'objectId': !exists(json, 'objectId') ? undefined : json['objectId'],
-        'outcome': !exists(json, 'outcome') ? undefined : json['outcome'],
-        'reasonCode': !exists(json, 'reasonCode') ? undefined : json['reasonCode'],
-        'eventHash': !exists(json, 'eventHash') ? undefined : json['eventHash'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
-}
-
-export function TrustSecretAccessEventToJSON(value?: TrustSecretAccessEvent): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'keyVersion': TrustKeyVersionToJSON(value.keyVersion),
-        'lease': TrustSecretLeaseToJSON(value.lease),
-        'operation': value.operation,
-        'actorId': value.actorId,
-        'objectType': value.objectType,
-        'objectId': value.objectId,
-        'outcome': value.outcome,
-        'reasonCode': value.reasonCode,
-        'eventHash': value.eventHash,
-        'ownerId': value.ownerId,
-        'trashed': value.trashed,
-    };
+export function TrustSecretAccessEventToJSON(
+  value?: TrustSecretAccessEvent,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    keyVersion: TrustKeyVersionToJSON(value.keyVersion),
+    lease: TrustSecretLeaseToJSON(value.lease),
+    operation: value.operation,
+    actorId: value.actorId,
+    objectType: value.objectType,
+    objectId: value.objectId,
+    outcome: value.outcome,
+    reasonCode: value.reasonCode,
+    eventHash: value.eventHash,
+    ownerId: value.ownerId,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum TrustSecretAccessEventOutcomeEnum {
-    ALLOWED = 'allowed',
-    DENIED = 'denied',
-    FAILED = 'failed'
+  ALLOWED = "allowed",
+  DENIED = "denied",
+  FAILED = "failed",
 }
-
-

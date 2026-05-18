@@ -60,7 +60,7 @@ describe("thorBridge JWT bootstrap", () => {
   });
 
   it("logs missing JWT only once while retrying connection", async () => {
-    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => { });
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
     await import("../thorBridge");
 

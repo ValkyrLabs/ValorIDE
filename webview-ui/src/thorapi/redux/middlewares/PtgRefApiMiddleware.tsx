@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_PTGREF_REQUEST,
-    FETCH_PTGREF_REQUEST,
-    LIST_PTGREF_REQUEST,
-    UPDATE_PTGREF_REQUEST,
-    DELETE_PTGREF_REQUEST,
-
-    addPtgRefFailure,
-    addPtgRefSuccess,
-
-    fetchPtgRefFailure,
-    fetchPtgRefSuccess,
-    
-    listPtgRefFailure,
-    listPtgRefSuccess,
-
-    updatePtgRefFailure,
-    updatePtgRefSuccess,
-    
-    deletePtgRefFailure,
-    deletePtgRefSuccess,
-    
-} from '../actions/PtgRefApiAction';
+  ADD_PTGREF_REQUEST,
+  FETCH_PTGREF_REQUEST,
+  LIST_PTGREF_REQUEST,
+  UPDATE_PTGREF_REQUEST,
+  DELETE_PTGREF_REQUEST,
+  addPtgRefFailure,
+  addPtgRefSuccess,
+  fetchPtgRefFailure,
+  fetchPtgRefSuccess,
+  listPtgRefFailure,
+  listPtgRefSuccess,
+  updatePtgRefFailure,
+  updatePtgRefSuccess,
+  deletePtgRefFailure,
+  deletePtgRefSuccess,
+} from "../actions/PtgRefApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: PtgRef
 */
 
-
-
-export const PtgRefMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("PtgRef MIDDLEWARE: " + JSON.stringify(action) )
+export const PtgRefMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("PtgRef MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

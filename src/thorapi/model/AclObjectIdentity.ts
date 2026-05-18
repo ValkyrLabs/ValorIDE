@@ -26,19 +26,16 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    AclClass,
-    AclClassFromJSON,
-    AclClassToJSON,
-    AclSid,
-    AclSidFromJSON,
-    AclSidToJSON,
-} from './';
-
+  AclClass,
+  AclClassFromJSON,
+  AclClassToJSON,
+  AclSid,
+  AclSidFromJSON,
+  AclSidToJSON,
+} from "./";
 
 // thorapi
 
@@ -47,126 +44,144 @@ import {
  * @export
  * @interface AclObjectIdentity
  */
-export type AclObjectIdentity  = DataObject & {
-    /**
-     * 
-     * @type {AclClass}
-     * @memberof AclObjectIdentity
-     */
-    aclClass?: AclClass;
-    /**
-     * UUID of the specific secured object instance
-     * @type {string}
-     * @memberof AclObjectIdentity
-     */
-    objectIdIdentity?: string;
-    /**
-     * 
-     * @type {AclObjectIdentity}
-     * @memberof AclObjectIdentity
-     */
-    parentObject?: AclObjectIdentity;
-    /**
-     * 
-     * @type {AclSid}
-     * @memberof AclObjectIdentity
-     */
-    ownerSid?: AclSid;
-    /**
-     * If true, entries inherit from parent ACL
-     * @type {boolean}
-     * @memberof AclObjectIdentity
-     */
-    entriesInheriting?: boolean;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof AclObjectIdentity
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof AclObjectIdentity
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof AclObjectIdentity
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof AclObjectIdentity
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof AclObjectIdentity
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof AclObjectIdentity
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof AclObjectIdentity
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof AclObjectIdentity
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof AclObjectIdentity
-     */
-    trashed?: boolean;
-}
+export type AclObjectIdentity = DataObject & {
+  /**
+   *
+   * @type {AclClass}
+   * @memberof AclObjectIdentity
+   */
+  aclClass?: AclClass;
+  /**
+   * UUID of the specific secured object instance
+   * @type {string}
+   * @memberof AclObjectIdentity
+   */
+  objectIdIdentity?: string;
+  /**
+   *
+   * @type {AclObjectIdentity}
+   * @memberof AclObjectIdentity
+   */
+  parentObject?: AclObjectIdentity;
+  /**
+   *
+   * @type {AclSid}
+   * @memberof AclObjectIdentity
+   */
+  ownerSid?: AclSid;
+  /**
+   * If true, entries inherit from parent ACL
+   * @type {boolean}
+   * @memberof AclObjectIdentity
+   */
+  entriesInheriting?: boolean;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof AclObjectIdentity
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof AclObjectIdentity
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof AclObjectIdentity
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof AclObjectIdentity
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof AclObjectIdentity
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof AclObjectIdentity
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof AclObjectIdentity
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof AclObjectIdentity
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof AclObjectIdentity
+   */
+  trashed?: boolean;
+};
 
 export function AclObjectIdentityFromJSON(json: any): AclObjectIdentity {
-    return {
-        ...DataObjectFromJSON(json),
-        'aclClass': !exists(json, 'aclClass') ? undefined : AclClassFromJSON(json['aclClass']),
-        'objectIdIdentity': !exists(json, 'objectIdIdentity') ? undefined : json['objectIdIdentity'],
-        'parentObject': !exists(json, 'parentObject') ? undefined : AclObjectIdentityFromJSON(json['parentObject']),
-        'ownerSid': !exists(json, 'ownerSid') ? undefined : AclSidFromJSON(json['ownerSid']),
-        'entriesInheriting': !exists(json, 'entriesInheriting') ? undefined : json['entriesInheriting'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    aclClass: !exists(json, "aclClass")
+      ? undefined
+      : AclClassFromJSON(json["aclClass"]),
+    objectIdIdentity: !exists(json, "objectIdIdentity")
+      ? undefined
+      : json["objectIdIdentity"],
+    parentObject: !exists(json, "parentObject")
+      ? undefined
+      : AclObjectIdentityFromJSON(json["parentObject"]),
+    ownerSid: !exists(json, "ownerSid")
+      ? undefined
+      : AclSidFromJSON(json["ownerSid"]),
+    entriesInheriting: !exists(json, "entriesInheriting")
+      ? undefined
+      : json["entriesInheriting"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function AclObjectIdentityToJSON(value?: AclObjectIdentity): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'aclClass': AclClassToJSON(value.aclClass),
-        'objectIdIdentity': value.objectIdIdentity,
-        'parentObject': AclObjectIdentityToJSON(value.parentObject),
-        'ownerSid': AclSidToJSON(value.ownerSid),
-        'entriesInheriting': value.entriesInheriting,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    aclClass: AclClassToJSON(value.aclClass),
+    objectIdIdentity: value.objectIdIdentity,
+    parentObject: AclObjectIdentityToJSON(value.parentObject),
+    ownerSid: AclSidToJSON(value.ownerSid),
+    entriesInheriting: value.entriesInheriting,
+    trashed: value.trashed,
+  };
 }
-
-

@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  ChannelSubscription,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddChannelSubscriptionMutation } from '../../services/ChannelSubscriptionService';
+import { ChannelSubscription } from "@thorapi/model";
+
+import { useAddChannelSubscriptionMutation } from "../../services/ChannelSubscriptionService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,30 +71,34 @@ Subscription to a message/event channel for pub/sub and streaming.
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        name: Yup.string(),
-        channel: Yup.string(),
-        channelId: Yup.string(),
-        subscriberId: Yup.string(),
-        subscribedAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("subscribedAt must be a valid date"),
-        active: Yup.boolean(),
-        trashed: Yup.boolean(),
+  name: Yup.string(),
+  channel: Yup.string(),
+  channelId: Yup.string(),
+  subscriberId: Yup.string(),
+  subscribedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("subscribedAt must be a valid date"),
+  active: Yup.boolean(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ChannelSubscriptionForm: React.FC = () => {
-  const [addChannelSubscription, addChannelSubscriptionResult] = useAddChannelSubscriptionMutation();
+  const [addChannelSubscription, addChannelSubscriptionResult] =
+    useAddChannelSubscriptionMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -98,12 +108,18 @@ const ChannelSubscriptionForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -111,13 +127,13 @@ const ChannelSubscriptionForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ChannelSubscription> = {
-          name: '',
-          channel: '',
-          channelId: '',
-          subscriberId: '',
-          subscribedAt: new Date(),
-          active: false,
-          trashed: false,
+    name: "",
+    channel: "",
+    channelId: "",
+    subscriberId: "",
+    subscribedAt: new Date(),
+    active: false,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -132,11 +148,14 @@ const ChannelSubscriptionForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new ChannelSubscription:', grants);
+    console.log("Permissions saved for new ChannelSubscription:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ChannelSubscription>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<ChannelSubscription>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -147,7 +166,7 @@ const ChannelSubscriptionForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ChannelSubscription created successfully! Would you like to set permissions for this object?`
+          `ChannelSubscription created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -155,8 +174,8 @@ const ChannelSubscriptionForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create ChannelSubscription:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create ChannelSubscription:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -177,44 +196,38 @@ const ChannelSubscriptionForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addChannelSubscriptionResult.isLoading;
+          const isSaving =
+            isSubmitting || addChannelSubscriptionResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New ChannelSubscription
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    ChannelSubscription
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.name && !errors.name && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="name"
+                        value={values?.name}
+                        placeholder="Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -226,28 +239,21 @@ const ChannelSubscriptionForm: React.FC = () => {
                     <label htmlFor="channel" className="nice-form-control">
                       <b>
                         Channel:
-                        {touched.channel &&
-                         !errors.channel && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.channel && !errors.channel && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="channel"
-                            value={values?.channel}
-                            placeholder="Channel"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="channel"
+                        value={values?.channel}
+                        placeholder="Channel"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -259,28 +265,21 @@ const ChannelSubscriptionForm: React.FC = () => {
                     <label htmlFor="channelId" className="nice-form-control">
                       <b>
                         Channel Id:
-                        {touched.channelId &&
-                         !errors.channelId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.channelId && !errors.channelId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="channelId"
-                            value={values?.channelId}
-                            placeholder="Channel Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="channelId"
+                        value={values?.channelId}
+                        placeholder="Channel Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -292,28 +291,21 @@ const ChannelSubscriptionForm: React.FC = () => {
                     <label htmlFor="subscriberId" className="nice-form-control">
                       <b>
                         Subscriber Id:
-                        {touched.subscriberId &&
-                         !errors.subscriberId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.subscriberId && !errors.subscriberId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="subscriberId"
-                            value={values?.subscriberId}
-                            placeholder="Subscriber Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="subscriberId"
+                        value={values?.subscriberId}
+                        placeholder="Subscriber Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -325,38 +317,38 @@ const ChannelSubscriptionForm: React.FC = () => {
                     <label htmlFor="subscribedAt" className="nice-form-control">
                       <b>
                         Subscribed At:
-                        {touched.subscribedAt &&
-                         !errors.subscribedAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.subscribedAt && !errors.subscribedAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="subscribedAt"
-                            type="datetime-local"
-                            value={values.subscribedAt ? 
-                              new Date(values.subscribedAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('subscribedAt', true);
-                              const v = e.target.value;
-                              setFieldValue('subscribedAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.subscribedAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="subscribedAt"
+                        type="datetime-local"
+                        value={
+                          values.subscribedAt
+                            ? new Date(values.subscribedAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("subscribedAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "subscribedAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.subscribedAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -368,32 +360,25 @@ const ChannelSubscriptionForm: React.FC = () => {
                     <label htmlFor="active" className="nice-form-control">
                       <b>
                         Active:
-                        {touched.active &&
-                         !errors.active && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.active && !errors.active && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="active"
-                            name="active"
-                            checked={values.active || false}
-                            onChange={(e) => {
-                              setFieldTouched('active', true);
-                              setFieldValue('active', e.target.checked);
-                            }}
-                            isInvalid={!!errors.active}
-                            className={errors.active ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="active"
+                        name="active"
+                        checked={values.active || false}
+                        onChange={(e) => {
+                          setFieldTouched("active", true);
+                          setFieldValue("active", e.target.checked);
+                        }}
+                        isInvalid={!!errors.active}
+                        className={errors.active ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -405,32 +390,25 @@ const ChannelSubscriptionForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -440,45 +418,61 @@ const ChannelSubscriptionForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New ChannelSubscription
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New ChannelSubscription
+                    </CoolButton>
 
-                  {(addChannelSubscriptionResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addChannelSubscriptionResult as any).error ? (addChannelSubscriptionResult as any).error.data : (addChannelSubscriptionResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addChannelSubscriptionResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addChannelSubscriptionResult as any).error
+                              ? (addChannelSubscriptionResult as any).error.data
+                              : (addChannelSubscriptionResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addChannelSubscriptionResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addChannelSubscriptionResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addChannelSubscriptionResult: {JSON.stringify(addChannelSubscriptionResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addChannelSubscriptionResult:{" "}
+                    {JSON.stringify(addChannelSubscriptionResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -498,8 +492,5 @@ const ChannelSubscriptionForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default ChannelSubscriptionForm;
-

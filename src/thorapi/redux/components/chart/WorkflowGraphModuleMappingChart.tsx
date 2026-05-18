@@ -19,20 +19,35 @@ Description: WorkflowGraphModuleMapping
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, WorkflowGraphModuleMapping } from '@thorapi/model';
-import { useGetWorkflowGraphModuleMappingsQuery, useAddWorkflowGraphModuleMappingMutation, useUpdateWorkflowGraphModuleMappingMutation } from '../../services/WorkflowGraphModuleMappingService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, WorkflowGraphModuleMapping } from "@thorapi/model";
+import {
+  useGetWorkflowGraphModuleMappingsQuery,
+  useAddWorkflowGraphModuleMappingMutation,
+  useUpdateWorkflowGraphModuleMappingMutation,
+} from "../../services/WorkflowGraphModuleMappingService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const WorkflowGraphModuleMappingChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetWorkflowGraphModuleMappingsQuery();
+  const { data: initialData = [], isLoading } =
+    useGetWorkflowGraphModuleMappingsQuery();
 
   const [data, setData] = useState<WorkflowGraphModuleMapping[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<WorkflowGraphModuleMapping>>({});
-  
+  const [chartData, setChartData] = useState<
+    Partial<WorkflowGraphModuleMapping>
+  >({});
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +65,9 @@ const WorkflowGraphModuleMappingChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +75,15 @@ const WorkflowGraphModuleMappingChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((workflowgraphmodulemapping: DataObject) => [workflowgraphmodulemapping])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((workflowgraphmodulemapping: DataObject) => [
+            workflowgraphmodulemapping,
+          ])}
+        />
+      )}
     </>
   );
 };

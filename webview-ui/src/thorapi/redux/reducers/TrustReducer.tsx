@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Trust } from '@thorapi/model/Trust';
+import { Trust } from "@thorapi/model/Trust";
 
 const TrustSlice = createSlice({
   name: "Trusts",
@@ -27,28 +27,26 @@ const TrustSlice = createSlice({
     },
 
     TrustValueToggled(state, action) {
-      console.log("Trust TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Trust:Trust = state.find((Trust) => Trust.id === action.payload.TrustId);
+      console.log("Trust TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Trust: Trust = state.find(
+        (Trust) => Trust.id === action.payload.TrustId,
+      );
       if (Trust) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     TrustpropertySet(state, action) {
       const Trust = state.find((Trust) => Trust.id === action.payload.TrustId);
       if (Trust) {
-      //  Trust[action.property] = action.payload[action.property];
+        //  Trust[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  TrustAdded,
-  TrustValueToggled,
-  TrustpropertySet
-} = TrustSlice.actions;
+export const { TrustAdded, TrustValueToggled, TrustpropertySet } =
+  TrustSlice.actions;
 export default TrustSlice.reducer;

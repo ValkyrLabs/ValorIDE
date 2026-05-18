@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ArrayIntegerItem } from '@thorapi/model/ArrayIntegerItem';
+import { ArrayIntegerItem } from "@thorapi/model/ArrayIntegerItem";
 
 const ArrayIntegerItemSlice = createSlice({
   name: "ArrayIntegerItems",
@@ -27,20 +27,25 @@ const ArrayIntegerItemSlice = createSlice({
     },
 
     ArrayIntegerItemValueToggled(state, action) {
-      console.log("ArrayIntegerItem TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ArrayIntegerItem:ArrayIntegerItem = state.find((ArrayIntegerItem) => ArrayIntegerItem.id === action.payload.ArrayIntegerItemId);
+      console.log("ArrayIntegerItem TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ArrayIntegerItem: ArrayIntegerItem = state.find(
+        (ArrayIntegerItem) =>
+          ArrayIntegerItem.id === action.payload.ArrayIntegerItemId,
+      );
       if (ArrayIntegerItem) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ArrayIntegerItempropertySet(state, action) {
-      const ArrayIntegerItem = state.find((ArrayIntegerItem) => ArrayIntegerItem.id === action.payload.ArrayIntegerItemId);
+      const ArrayIntegerItem = state.find(
+        (ArrayIntegerItem) =>
+          ArrayIntegerItem.id === action.payload.ArrayIntegerItemId,
+      );
       if (ArrayIntegerItem) {
-      //  ArrayIntegerItem[action.property] = action.payload[action.property];
+        //  ArrayIntegerItem[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const ArrayIntegerItemSlice = createSlice({
 export const {
   ArrayIntegerItemAdded,
   ArrayIntegerItemValueToggled,
-  ArrayIntegerItempropertySet
+  ArrayIntegerItempropertySet,
 } = ArrayIntegerItemSlice.actions;
 export default ArrayIntegerItemSlice.reducer;

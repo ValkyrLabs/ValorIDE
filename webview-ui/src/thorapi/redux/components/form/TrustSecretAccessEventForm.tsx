@@ -13,32 +13,40 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   TrustSecretAccessEvent,
   TrustSecretAccessEventOutcomeEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddTrustSecretAccessEventMutation } from '../../services/TrustSecretAccessEventService';
+import { useAddTrustSecretAccessEventMutation } from "../../services/TrustSecretAccessEventService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -62,38 +70,35 @@ Redacted audit event for key, lease, encrypt, decrypt, sign, verify, wrap, unwra
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const OutcomeValidation = () => {
-  return [
-    'ALLOWED',
-    'DENIED',
-    'FAILED',
-  ];
+  return ["ALLOWED", "DENIED", "FAILED"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        operation: Yup.string(),
-        actorId: Yup.string(),
-        objectType: Yup.string(),
-        objectId: Yup.string(),
-      outcome: Yup.mixed()
-        .oneOf(OutcomeValidation(), "Invalid value for outcome")
-        ,
-        reasonCode: Yup.string(),
-        eventHash: Yup.string(),
-        ownerId: Yup.string(),
-        trashed: Yup.boolean(),
+  operation: Yup.string(),
+  actorId: Yup.string(),
+  objectType: Yup.string(),
+  objectId: Yup.string(),
+  outcome: Yup.mixed().oneOf(OutcomeValidation(), "Invalid value for outcome"),
+  reasonCode: Yup.string(),
+  eventHash: Yup.string(),
+  ownerId: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const TrustSecretAccessEventForm: React.FC = () => {
-  const [addTrustSecretAccessEvent, addTrustSecretAccessEventResult] = useAddTrustSecretAccessEventMutation();
+  const [addTrustSecretAccessEvent, addTrustSecretAccessEventResult] =
+    useAddTrustSecretAccessEventMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -103,12 +108,18 @@ const TrustSecretAccessEventForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -116,15 +127,15 @@ const TrustSecretAccessEventForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<TrustSecretAccessEvent> = {
-          operation: '',
-          actorId: '',
-          objectType: '',
-          objectId: '',
-        outcome: undefined,
-          reasonCode: '',
-          eventHash: '',
-          ownerId: '',
-          trashed: false,
+    operation: "",
+    actorId: "",
+    objectType: "",
+    objectId: "",
+    outcome: undefined,
+    reasonCode: "",
+    eventHash: "",
+    ownerId: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -139,11 +150,14 @@ const TrustSecretAccessEventForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new TrustSecretAccessEvent:', grants);
+    console.log("Permissions saved for new TrustSecretAccessEvent:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<TrustSecretAccessEvent>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<TrustSecretAccessEvent>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -154,7 +168,7 @@ const TrustSecretAccessEventForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `TrustSecretAccessEvent created successfully! Would you like to set permissions for this object?`
+          `TrustSecretAccessEvent created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -162,8 +176,8 @@ const TrustSecretAccessEventForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create TrustSecretAccessEvent:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create TrustSecretAccessEvent:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -184,44 +198,38 @@ const TrustSecretAccessEventForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addTrustSecretAccessEventResult.isLoading;
+          const isSaving =
+            isSubmitting || addTrustSecretAccessEventResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New TrustSecretAccessEvent
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    TrustSecretAccessEvent
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="operation" className="nice-form-control">
                       <b>
                         Operation:
-                        {touched.operation &&
-                         !errors.operation && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.operation && !errors.operation && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="operation"
-                            value={values?.operation}
-                            placeholder="Operation"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="operation"
+                        value={values?.operation}
+                        placeholder="Operation"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -233,28 +241,21 @@ const TrustSecretAccessEventForm: React.FC = () => {
                     <label htmlFor="actorId" className="nice-form-control">
                       <b>
                         Actor Id:
-                        {touched.actorId &&
-                         !errors.actorId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.actorId && !errors.actorId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="actorId"
-                            value={values?.actorId}
-                            placeholder="Actor Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="actorId"
+                        value={values?.actorId}
+                        placeholder="Actor Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -266,28 +267,21 @@ const TrustSecretAccessEventForm: React.FC = () => {
                     <label htmlFor="objectType" className="nice-form-control">
                       <b>
                         Object Type:
-                        {touched.objectType &&
-                         !errors.objectType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.objectType && !errors.objectType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="objectType"
-                            value={values?.objectType}
-                            placeholder="Object Type"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="objectType"
+                        value={values?.objectType}
+                        placeholder="Object Type"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -299,28 +293,21 @@ const TrustSecretAccessEventForm: React.FC = () => {
                     <label htmlFor="objectId" className="nice-form-control">
                       <b>
                         Object Id:
-                        {touched.objectId &&
-                         !errors.objectId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.objectId && !errors.objectId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="objectId"
-                            value={values?.objectId}
-                            placeholder="Object Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="objectId"
+                        value={values?.objectId}
+                        placeholder="Object Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -332,30 +319,30 @@ const TrustSecretAccessEventForm: React.FC = () => {
                     <label htmlFor="outcome" className="nice-form-control">
                       <b>
                         Outcome:
-                        {touched.outcome &&
-                         !errors.outcome && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.outcome && !errors.outcome && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="outcome"
-                          value={values.outcome || ''}
-                          className={
-                            errors.outcome
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('outcome', true);
-                            setFieldValue('outcome', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Outcome" />
-                          <OutcomeLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="outcome"
+                        value={values.outcome || ""}
+                        className={
+                          errors.outcome
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("outcome", true);
+                          setFieldValue("outcome", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Outcome" />
+                        <OutcomeLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -367,28 +354,21 @@ const TrustSecretAccessEventForm: React.FC = () => {
                     <label htmlFor="reasonCode" className="nice-form-control">
                       <b>
                         Reason Code:
-                        {touched.reasonCode &&
-                         !errors.reasonCode && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.reasonCode && !errors.reasonCode && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="reasonCode"
-                            value={values?.reasonCode}
-                            placeholder="Reason Code"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="reasonCode"
+                        value={values?.reasonCode}
+                        placeholder="Reason Code"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -400,28 +380,21 @@ const TrustSecretAccessEventForm: React.FC = () => {
                     <label htmlFor="eventHash" className="nice-form-control">
                       <b>
                         Event Hash:
-                        {touched.eventHash &&
-                         !errors.eventHash && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.eventHash && !errors.eventHash && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="eventHash"
-                            value={values?.eventHash}
-                            placeholder="Event Hash"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="eventHash"
+                        value={values?.eventHash}
+                        placeholder="Event Hash"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -433,28 +406,21 @@ const TrustSecretAccessEventForm: React.FC = () => {
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
-                        {touched.ownerId &&
-                         !errors.ownerId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.ownerId && !errors.ownerId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="ownerId"
-                            value={values?.ownerId}
-                            placeholder="Owner Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="ownerId"
+                        value={values?.ownerId}
+                        placeholder="Owner Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -466,32 +432,25 @@ const TrustSecretAccessEventForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -501,45 +460,64 @@ const TrustSecretAccessEventForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New TrustSecretAccessEvent
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      TrustSecretAccessEvent
+                    </CoolButton>
 
-                  {(addTrustSecretAccessEventResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addTrustSecretAccessEventResult as any).error ? (addTrustSecretAccessEventResult as any).error.data : (addTrustSecretAccessEventResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addTrustSecretAccessEventResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addTrustSecretAccessEventResult as any).error
+                              ? (addTrustSecretAccessEventResult as any).error
+                                  .data
+                              : (addTrustSecretAccessEventResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addTrustSecretAccessEventResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addTrustSecretAccessEventResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addTrustSecretAccessEventResult: {JSON.stringify(addTrustSecretAccessEventResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addTrustSecretAccessEventResult:{" "}
+                    {JSON.stringify(addTrustSecretAccessEventResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -571,15 +549,12 @@ kebabcase outcome-lookup
 const OutcomeLookup = () => {
   return (
     <>
-      <option value='ALLOWED' label="Allowed" />
-      <option value='DENIED' label="Denied" />
-      <option value='FAILED' label="Failed" />
+      <option value="ALLOWED" label="Allowed" />
+      <option value="DENIED" label="Denied" />
+      <option value="FAILED" label="Failed" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default TrustSecretAccessEventForm;
-

@@ -129,9 +129,10 @@ const refreshCodexToken = async (
 
 export const getDefaultCodexAuthPath = (): string => {
   const codexHome = process.env.CODEX_HOME?.trim();
-  const baseDir = codexHome && codexHome.length > 0
-    ? codexHome
-    : path.join(os.homedir(), ".codex");
+  const baseDir =
+    codexHome && codexHome.length > 0
+      ? codexHome
+      : path.join(os.homedir(), ".codex");
   return path.join(baseDir, "auth.json");
 };
 
@@ -198,10 +199,14 @@ export const resolveOpenAiNativeAuthToken = async (
       };
 
       await fs.mkdir(path.dirname(authPath), { recursive: true });
-      await fs.writeFile(authPath, `${JSON.stringify(updatedAuth, null, 2)}\n`, {
-        encoding: "utf8",
-        mode: 0o600,
-      });
+      await fs.writeFile(
+        authPath,
+        `${JSON.stringify(updatedAuth, null, 2)}\n`,
+        {
+          encoding: "utf8",
+          mode: 0o600,
+        },
+      );
       await fs.chmod(authPath, 0o600).catch(() => undefined);
     } catch {
       if ((accessTokenExpiryMs ?? 0) <= nowMs) {

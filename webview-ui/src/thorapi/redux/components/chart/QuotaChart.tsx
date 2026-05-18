@@ -19,20 +19,32 @@ Description: Quota
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, Quota } from '@thorapi/model';
-import { useGetQuotasQuery, useAddQuotaMutation, useUpdateQuotaMutation } from '../../services/QuotaService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, Quota } from "@thorapi/model";
+import {
+  useGetQuotasQuery,
+  useAddQuotaMutation,
+  useUpdateQuotaMutation,
+} from "../../services/QuotaService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const QuotaChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetQuotasQuery();
 
   const [data, setData] = useState<Quota[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<Quota>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const QuotaChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,11 @@ const QuotaChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((quota: DataObject) => [quota])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart data={data.flatMap((quota: DataObject) => [quota])} />
+      )}
     </>
   );
 };

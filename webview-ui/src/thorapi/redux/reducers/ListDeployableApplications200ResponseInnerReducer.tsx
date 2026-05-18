@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ListDeployableApplications200ResponseInner } from '@thorapi/model/ListDeployableApplications200ResponseInner';
+import { ListDeployableApplications200ResponseInner } from "@thorapi/model/ListDeployableApplications200ResponseInner";
 
 const ListDeployableApplications200ResponseInnerSlice = createSlice({
   name: "ListDeployableApplications200ResponseInners",
@@ -27,20 +27,28 @@ const ListDeployableApplications200ResponseInnerSlice = createSlice({
     },
 
     ListDeployableApplications200ResponseInnerValueToggled(state, action) {
-      console.log("ListDeployableApplications200ResponseInner TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ListDeployableApplications200ResponseInner:ListDeployableApplications200ResponseInner = state.find((ListDeployableApplications200ResponseInner) => ListDeployableApplications200ResponseInner.id === action.payload.ListDeployableApplications200ResponseInnerId);
+      console.log("ListDeployableApplications200ResponseInner TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ListDeployableApplications200ResponseInner: ListDeployableApplications200ResponseInner =
+        state.find(
+          (ListDeployableApplications200ResponseInner) =>
+            ListDeployableApplications200ResponseInner.id ===
+            action.payload.ListDeployableApplications200ResponseInnerId,
+        );
       if (ListDeployableApplications200ResponseInner) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ListDeployableApplications200ResponseInnerpropertySet(state, action) {
-      const ListDeployableApplications200ResponseInner = state.find((ListDeployableApplications200ResponseInner) => ListDeployableApplications200ResponseInner.id === action.payload.ListDeployableApplications200ResponseInnerId);
+      const ListDeployableApplications200ResponseInner = state.find(
+        (ListDeployableApplications200ResponseInner) =>
+          ListDeployableApplications200ResponseInner.id ===
+          action.payload.ListDeployableApplications200ResponseInnerId,
+      );
       if (ListDeployableApplications200ResponseInner) {
-      //  ListDeployableApplications200ResponseInner[action.property] = action.payload[action.property];
+        //  ListDeployableApplications200ResponseInner[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +57,6 @@ const ListDeployableApplications200ResponseInnerSlice = createSlice({
 export const {
   ListDeployableApplications200ResponseInnerAdded,
   ListDeployableApplications200ResponseInnerValueToggled,
-  ListDeployableApplications200ResponseInnerpropertySet
+  ListDeployableApplications200ResponseInnerpropertySet,
 } = ListDeployableApplications200ResponseInnerSlice.actions;
 export default ListDeployableApplications200ResponseInnerSlice.reducer;

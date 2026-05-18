@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { SwarmRegisterResponse } from '@thorapi/model/SwarmRegisterResponse'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { SwarmRegisterResponse } from "@thorapi/model/SwarmRegisterResponse";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type SwarmRegisterResponseResponse = SwarmRegisterResponse[]
+type SwarmRegisterResponseResponse = SwarmRegisterResponse[];
 
-const toSwarmRegisterResponseList = (result: unknown): SwarmRegisterResponseResponse => {
+const toSwarmRegisterResponseList = (
+  result: unknown,
+): SwarmRegisterResponseResponse => {
   if (Array.isArray(result)) {
-    return result as SwarmRegisterResponseResponse
+    return result as SwarmRegisterResponseResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as SwarmRegisterResponseResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as SwarmRegisterResponseResponse)
+    : [];
+};
 
 export const SwarmRegisterResponseService = createApi({
-  reducerPath: 'SwarmRegisterResponse', // This should remain unique
+  reducerPath: "SwarmRegisterResponse", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['SwarmRegisterResponse'],
+  tagTypes: ["SwarmRegisterResponse"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSwarmRegisterResponsesPaged: build.query<SwarmRegisterResponseResponse, { page: number; size?: number; example?: Partial<SwarmRegisterResponse> }>({
+    getSwarmRegisterResponsesPaged: build.query<
+      SwarmRegisterResponseResponse,
+      { page: number; size?: number; example?: Partial<SwarmRegisterResponse> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SwarmRegisterResponse?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SwarmRegisterResponse?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toSwarmRegisterResponseList(result)
+        const rows = toSwarmRegisterResponseList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'SwarmRegisterResponse' as const, id })),
-          { type: 'SwarmRegisterResponse', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "SwarmRegisterResponse" as const, id })),
+          { type: "SwarmRegisterResponse", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSwarmRegisterResponses: build.query<SwarmRegisterResponseResponse, { example?: Partial<SwarmRegisterResponse> } | void>({
+    getSwarmRegisterResponses: build.query<
+      SwarmRegisterResponseResponse,
+      { example?: Partial<SwarmRegisterResponse> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,114 @@ export const SwarmRegisterResponseService = createApi({
         return `SwarmRegisterResponse`;
       },
       providesTags: (result) => {
-        const rows = toSwarmRegisterResponseList(result)
+        const rows = toSwarmRegisterResponseList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'SwarmRegisterResponse' as const, id })),
-          { type: 'SwarmRegisterResponse', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "SwarmRegisterResponse" as const, id })),
+          { type: "SwarmRegisterResponse", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addSwarmRegisterResponse: build.mutation<SwarmRegisterResponse, Partial<SwarmRegisterResponse>>({
+    addSwarmRegisterResponse: build.mutation<
+      SwarmRegisterResponse,
+      Partial<SwarmRegisterResponse>
+    >({
       query: (body) => ({
         url: `SwarmRegisterResponse`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'SwarmRegisterResponse', id: 'LIST' }],
+      invalidatesTags: [{ type: "SwarmRegisterResponse", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getSwarmRegisterResponse: build.query<SwarmRegisterResponse, string>({
       query: (id) => `SwarmRegisterResponse/${id}`,
-      providesTags: (result, error, id) => [{ type: 'SwarmRegisterResponse', id }],
+      providesTags: (result, error, id) => [
+        { type: "SwarmRegisterResponse", id },
+      ],
     }),
 
     // 5) Update
-    updateSwarmRegisterResponse: build.mutation<void, Pick<SwarmRegisterResponse, 'id'> & Partial<SwarmRegisterResponse>>({
+    updateSwarmRegisterResponse: build.mutation<
+      void,
+      Pick<SwarmRegisterResponse, "id"> & Partial<SwarmRegisterResponse>
+    >({
       query: ({ id, ...patch }) => ({
         url: `SwarmRegisterResponse/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            SwarmRegisterResponseService.util.updateQueryData('getSwarmRegisterResponse', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            SwarmRegisterResponseService.util.updateQueryData(
+              "getSwarmRegisterResponse",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<SwarmRegisterResponse, 'id'>) => [
-        { type: 'SwarmRegisterResponse', id },
-        { type: 'SwarmRegisterResponse', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<SwarmRegisterResponse, "id">,
+      ) => [
+        { type: "SwarmRegisterResponse", id },
+        { type: "SwarmRegisterResponse", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteSwarmRegisterResponse: build.mutation<{ success: boolean; id: string }, number>({
+    deleteSwarmRegisterResponse: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `SwarmRegisterResponse/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'SwarmRegisterResponse', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "SwarmRegisterResponse", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSwarmRegisterResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteSwarmRegisterResponseCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `SwarmRegisterResponse/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'SwarmRegisterResponse', id }, { type: 'SwarmRegisterResponse', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "SwarmRegisterResponse", id },
+        { type: "SwarmRegisterResponse", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetSwarmRegisterResponsesPagedQuery`
 export const {
-  useGetSwarmRegisterResponsesPagedQuery,     // immediate fetch
+  useGetSwarmRegisterResponsesPagedQuery, // immediate fetch
   useLazyGetSwarmRegisterResponsesPagedQuery, // lazy fetch
   useGetSwarmRegisterResponseQuery,
   useGetSwarmRegisterResponsesQuery,
@@ -150,4 +192,4 @@ export const {
   useUpdateSwarmRegisterResponseMutation,
   useDeleteSwarmRegisterResponseMutation,
   useDeleteSwarmRegisterResponseCascadeMutation,
-} = SwarmRegisterResponseService
+} = SwarmRegisterResponseService;

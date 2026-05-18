@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,153 +36,165 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface Campaign
  */
-export type Campaign  = DataObject & {
-    /**
-     * 
-     * @type {string}
-     * @memberof Campaign
-     */
-    campaignId?: string;
-    /**
-     * Name of the campaign.
-     * @type {string}
-     * @memberof Campaign
-     */
-    name?: string;
-    /**
-     * Details about the campaign.
-     * @type {string}
-     * @memberof Campaign
-     */
-    notes?: string;
-    /**
-     * 
-     * @type {Date}
-     * @memberof Campaign
-     */
-    startDate?: Date;
-    /**
-     * 
-     * @type {Date}
-     * @memberof Campaign
-     */
-    endDate?: Date;
-    /**
-     * 
-     * @type {string}
-     * @memberof Campaign
-     */
-    status?: CampaignStatusEnum;
-    /**
-     * Budget for the campaign.
-     * @type {number}
-     * @memberof Campaign
-     */
-    budget?: number;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof Campaign
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof Campaign
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof Campaign
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof Campaign
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof Campaign
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof Campaign
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof Campaign
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof Campaign
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof Campaign
-     */
-    trashed?: boolean;
-}
+export type Campaign = DataObject & {
+  /**
+   *
+   * @type {string}
+   * @memberof Campaign
+   */
+  campaignId?: string;
+  /**
+   * Name of the campaign.
+   * @type {string}
+   * @memberof Campaign
+   */
+  name?: string;
+  /**
+   * Details about the campaign.
+   * @type {string}
+   * @memberof Campaign
+   */
+  notes?: string;
+  /**
+   *
+   * @type {Date}
+   * @memberof Campaign
+   */
+  startDate?: Date;
+  /**
+   *
+   * @type {Date}
+   * @memberof Campaign
+   */
+  endDate?: Date;
+  /**
+   *
+   * @type {string}
+   * @memberof Campaign
+   */
+  status?: CampaignStatusEnum;
+  /**
+   * Budget for the campaign.
+   * @type {number}
+   * @memberof Campaign
+   */
+  budget?: number;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof Campaign
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof Campaign
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof Campaign
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof Campaign
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof Campaign
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof Campaign
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof Campaign
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof Campaign
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof Campaign
+   */
+  trashed?: boolean;
+};
 
 export function CampaignFromJSON(json: any): Campaign {
-    return {
-        ...DataObjectFromJSON(json),
-        'campaignId': !exists(json, 'campaignId') ? undefined : json['campaignId'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'notes': !exists(json, 'notes') ? undefined : json['notes'],
-        'startDate': !exists(json, 'startDate') ? undefined : new Date(json['startDate']),
-        'endDate': !exists(json, 'endDate') ? undefined : new Date(json['endDate']),
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'budget': !exists(json, 'budget') ? undefined : json['budget'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    campaignId: !exists(json, "campaignId") ? undefined : json["campaignId"],
+    name: !exists(json, "name") ? undefined : json["name"],
+    notes: !exists(json, "notes") ? undefined : json["notes"],
+    startDate: !exists(json, "startDate")
+      ? undefined
+      : new Date(json["startDate"]),
+    endDate: !exists(json, "endDate") ? undefined : new Date(json["endDate"]),
+    status: !exists(json, "status") ? undefined : json["status"],
+    budget: !exists(json, "budget") ? undefined : json["budget"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function CampaignToJSON(value?: Campaign): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'campaignId': value.campaignId,
-        'name': value.name,
-        'notes': value.notes,
-        'startDate': value.startDate === undefined ? undefined : value.startDate.toISOString(),
-        'endDate': value.endDate === undefined ? undefined : value.endDate.toISOString(),
-        'status': value.status,
-        'budget': value.budget,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    campaignId: value.campaignId,
+    name: value.name,
+    notes: value.notes,
+    startDate:
+      value.startDate === undefined ? undefined : value.startDate.toISOString(),
+    endDate:
+      value.endDate === undefined ? undefined : value.endDate.toISOString(),
+    status: value.status,
+    budget: value.budget,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum CampaignStatusEnum {
-    PLANNED = 'planned',
-    ACTIVE = 'active',
-    COMPLETED = 'completed',
-    CANCELED = 'canceled'
+  PLANNED = "planned",
+  ACTIVE = "active",
+  COMPLETED = "completed",
+  CANCELED = "canceled",
 }
-
-

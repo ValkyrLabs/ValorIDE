@@ -15,7 +15,10 @@ import { useAddPrincipalMutation } from "@thorapi/redux/services/PrincipalServic
 import { Login, Principal } from "@thorapi/model";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import "./index.css";
-import { storeJwtToken, writeStoredPrincipal } from "@thorapi/utils/accessControl";
+import {
+  storeJwtToken,
+  writeStoredPrincipal,
+} from "@thorapi/utils/accessControl";
 
 const validationSchema = Yup.object().shape({
   firstName: Yup.string()
@@ -372,7 +375,7 @@ const BetaSignup: React.FC = () => {
                           : "warning"
                       }
                       type="submit"
-                      onClick={() => { }}
+                      onClick={() => {}}
                     >
                       {isSubmitting && (
                         <Spinner

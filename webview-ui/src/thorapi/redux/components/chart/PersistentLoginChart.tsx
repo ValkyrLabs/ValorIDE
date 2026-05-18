@@ -19,20 +19,32 @@ Description: PersistentLogin
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, PersistentLogin } from '@thorapi/model';
-import { useGetPersistentLoginsQuery, useAddPersistentLoginMutation, useUpdatePersistentLoginMutation } from '../../services/PersistentLoginService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, PersistentLogin } from "@thorapi/model";
+import {
+  useGetPersistentLoginsQuery,
+  useAddPersistentLoginMutation,
+  useUpdatePersistentLoginMutation,
+} from "../../services/PersistentLoginService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const PersistentLoginChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetPersistentLoginsQuery();
 
   const [data, setData] = useState<PersistentLogin[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<PersistentLogin>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const PersistentLoginChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,15 @@ const PersistentLoginChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((persistentlogin: DataObject) => [persistentlogin])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((persistentlogin: DataObject) => [
+            persistentlogin,
+          ])}
+        />
+      )}
     </>
   );
 };

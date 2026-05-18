@@ -13,33 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  Customer,
-  CustomerStatusEnum,
-  CustomerRoleEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddCustomerMutation } from '../../services/CustomerService';
+import { Customer, CustomerStatusEnum, CustomerRoleEnum } from "@thorapi/model";
+
+import { useAddCustomerMutation } from "../../services/CustomerService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -63,37 +67,33 @@ Represents a customer entity for CRM.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const StatusValidation = () => {
-  return [
-    'active',
-    'inactive',
-    'prospect',
-  ];
+  return ["active", "inactive", "prospect"];
 };
 const RoleValidation = () => {
   return [
-    'cxo',
-    'engineering',
-    'project management',
-    'management',
-    'support',
-    'qa',
-    'self-employed',
-    'consulting',
-    'contract',
-    'partner',
-    'associate',
-    'reseller',
-    'hobbyist',
-    'student',
-    'legal',
-    'assessment',
-    'regulatory',
-    'financial',
-    'management',
-    'marketing',
-    'sales',
-    'procurement',
-    'technical',
+    "cxo",
+    "engineering",
+    "project management",
+    "management",
+    "support",
+    "qa",
+    "self-employed",
+    "consulting",
+    "contract",
+    "partner",
+    "associate",
+    "reseller",
+    "hobbyist",
+    "student",
+    "legal",
+    "assessment",
+    "regulatory",
+    "financial",
+    "management",
+    "marketing",
+    "sales",
+    "procurement",
+    "technical",
   ];
 };
 
@@ -101,16 +101,14 @@ const RoleValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-      status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        ,
-      role: Yup.mixed()
-        .oneOf(RoleValidation(), "Invalid value for role")
-        ,
-        trashed: Yup.boolean(),
+  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
+  role: Yup.mixed().oneOf(RoleValidation(), "Invalid value for role"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -127,12 +125,18 @@ const CustomerForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -140,9 +144,9 @@ const CustomerForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Customer> = {
-        status: undefined,
-        role: undefined,
-          trashed: false,
+    status: undefined,
+    role: undefined,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -157,11 +161,14 @@ const CustomerForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new Customer:', grants);
+    console.log("Permissions saved for new Customer:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Customer>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<Customer>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -172,7 +179,7 @@ const CustomerForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Customer created successfully! Would you like to set permissions for this object?`
+          `Customer created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -180,8 +187,8 @@ const CustomerForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create Customer:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create Customer:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -202,46 +209,45 @@ const CustomerForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addCustomerResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New Customer
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New Customer
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="status"
-                          value={values.status || ''}
-                          className={
-                            errors.status
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Status" />
-                          <StatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="status"
+                        value={values.status || ""}
+                        className={
+                          errors.status
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("status", true);
+                          setFieldValue("status", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Status" />
+                        <StatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -253,30 +259,30 @@ const CustomerForm: React.FC = () => {
                     <label htmlFor="role" className="nice-form-control">
                       <b>
                         Role:
-                        {touched.role &&
-                         !errors.role && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.role && !errors.role && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="role"
-                          value={values.role || ''}
-                          className={
-                            errors.role
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('role', true);
-                            setFieldValue('role', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Role" />
-                          <RoleLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="role"
+                        value={values.role || ""}
+                        className={
+                          errors.role
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("role", true);
+                          setFieldValue("role", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Role" />
+                        <RoleLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -288,32 +294,25 @@ const CustomerForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -323,45 +322,58 @@ const CustomerForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New Customer
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New Customer
+                    </CoolButton>
 
-                  {(addCustomerResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addCustomerResult as any).error ? (addCustomerResult as any).error.data : (addCustomerResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addCustomerResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addCustomerResult as any).error
+                              ? (addCustomerResult as any).error.data
+                              : (addCustomerResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addCustomerResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addCustomerResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addCustomerResult: {JSON.stringify(addCustomerResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addCustomerResult: {JSON.stringify(addCustomerResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -393,9 +405,9 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value='active' label="Active" />
-      <option value='inactive' label="Inactive" />
-      <option value='prospect' label="Prospect" />
+      <option value="active" label="Active" />
+      <option value="inactive" label="Inactive" />
+      <option value="prospect" label="Prospect" />
     </>
   );
 };
@@ -412,35 +424,32 @@ kebabcase role-lookup
 const RoleLookup = () => {
   return (
     <>
-      <option value='cxo' label="Cxo" />
-      <option value='engineering' label="Engineering" />
-      <option value='project management' label="Project Management" />
-      <option value='management' label="Management" />
-      <option value='support' label="Support" />
-      <option value='qa' label="Qa" />
-      <option value='self-employed' label="Self Employed" />
-      <option value='consulting' label="Consulting" />
-      <option value='contract' label="Contract" />
-      <option value='partner' label="Partner" />
-      <option value='associate' label="Associate" />
-      <option value='reseller' label="Reseller" />
-      <option value='hobbyist' label="Hobbyist" />
-      <option value='student' label="Student" />
-      <option value='legal' label="Legal" />
-      <option value='assessment' label="Assessment" />
-      <option value='regulatory' label="Regulatory" />
-      <option value='financial' label="Financial" />
-      <option value='management' label="Management 2" />
-      <option value='marketing' label="Marketing" />
-      <option value='sales' label="Sales" />
-      <option value='procurement' label="Procurement" />
-      <option value='technical' label="Technical" />
+      <option value="cxo" label="Cxo" />
+      <option value="engineering" label="Engineering" />
+      <option value="project management" label="Project Management" />
+      <option value="management" label="Management" />
+      <option value="support" label="Support" />
+      <option value="qa" label="Qa" />
+      <option value="self-employed" label="Self Employed" />
+      <option value="consulting" label="Consulting" />
+      <option value="contract" label="Contract" />
+      <option value="partner" label="Partner" />
+      <option value="associate" label="Associate" />
+      <option value="reseller" label="Reseller" />
+      <option value="hobbyist" label="Hobbyist" />
+      <option value="student" label="Student" />
+      <option value="legal" label="Legal" />
+      <option value="assessment" label="Assessment" />
+      <option value="regulatory" label="Regulatory" />
+      <option value="financial" label="Financial" />
+      <option value="management" label="Management 2" />
+      <option value="marketing" label="Marketing" />
+      <option value="sales" label="Sales" />
+      <option value="procurement" label="Procurement" />
+      <option value="technical" label="Technical" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default CustomerForm;
-

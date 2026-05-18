@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { AclEntry } from '@thorapi/model/AclEntry'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { AclEntry } from "@thorapi/model/AclEntry";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type AclEntryResponse = AclEntry[]
+type AclEntryResponse = AclEntry[];
 
 const toAclEntryList = (result: unknown): AclEntryResponse => {
   if (Array.isArray(result)) {
-    return result as AclEntryResponse
+    return result as AclEntryResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as AclEntryResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as AclEntryResponse) : [];
+};
 
 export const AclEntryService = createApi({
-  reducerPath: 'AclEntry', // This should remain unique
+  reducerPath: "AclEntry", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['AclEntry'],
+  tagTypes: ["AclEntry"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getAclEntrysPaged: build.query<AclEntryResponse, { page: number; size?: number; example?: Partial<AclEntry> }>({
+    getAclEntrysPaged: build.query<
+      AclEntryResponse,
+      { page: number; size?: number; example?: Partial<AclEntry> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `AclEntry?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `AclEntry?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toAclEntryList(result)
+        const rows = toAclEntryList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'AclEntry' as const, id })),
-          { type: 'AclEntry', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "AclEntry" as const, id })),
+          { type: "AclEntry", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getAclEntrys: build.query<AclEntryResponse, { example?: Partial<AclEntry> } | void>({
+    getAclEntrys: build.query<
+      AclEntryResponse,
+      { example?: Partial<AclEntry> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const AclEntryService = createApi({
         return `AclEntry`;
       },
       providesTags: (result) => {
-        const rows = toAclEntryList(result)
+        const rows = toAclEntryList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'AclEntry' as const, id })),
-          { type: 'AclEntry', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "AclEntry" as const, id })),
+          { type: "AclEntry", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,42 +87,45 @@ export const AclEntryService = createApi({
     addAclEntry: build.mutation<AclEntry, Partial<AclEntry>>({
       query: (body) => ({
         url: `AclEntry`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'AclEntry', id: 'LIST' }],
+      invalidatesTags: [{ type: "AclEntry", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getAclEntry: build.query<AclEntry, string>({
       query: (id) => `AclEntry/${id}`,
-      providesTags: (result, error, id) => [{ type: 'AclEntry', id }],
+      providesTags: (result, error, id) => [{ type: "AclEntry", id }],
     }),
 
     // 5) Update
-    updateAclEntry: build.mutation<void, Pick<AclEntry, 'id'> & Partial<AclEntry>>({
+    updateAclEntry: build.mutation<
+      void,
+      Pick<AclEntry, "id"> & Partial<AclEntry>
+    >({
       query: ({ id, ...patch }) => ({
         url: `AclEntry/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            AclEntryService.util.updateQueryData('getAclEntry', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            AclEntryService.util.updateQueryData("getAclEntry", id, (draft) => {
+              Object.assign(draft, patch);
+            }),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<AclEntry, 'id'>) => [
-        { type: 'AclEntry', id },
-        { type: 'AclEntry', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<AclEntry, "id">) => [
+        { type: "AclEntry", id },
+        { type: "AclEntry", id: "LIST" },
       ],
     }),
 
@@ -120,29 +134,35 @@ export const AclEntryService = createApi({
       query(id) {
         return {
           url: `AclEntry/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'AclEntry', id }],
+      invalidatesTags: (result, error, id) => [{ type: "AclEntry", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteAclEntryCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteAclEntryCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `AclEntry/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'AclEntry', id }, { type: 'AclEntry', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "AclEntry", id },
+        { type: "AclEntry", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetAclEntrysPagedQuery`
 export const {
-  useGetAclEntrysPagedQuery,     // immediate fetch
+  useGetAclEntrysPagedQuery, // immediate fetch
   useLazyGetAclEntrysPagedQuery, // lazy fetch
   useGetAclEntryQuery,
   useGetAclEntrysQuery,
@@ -150,4 +170,4 @@ export const {
   useUpdateAclEntryMutation,
   useDeleteAclEntryMutation,
   useDeleteAclEntryCascadeMutation,
-} = AclEntryService
+} = AclEntryService;

@@ -19,20 +19,32 @@ Description: OasServer
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, OasServer } from '@thorapi/model';
-import { useGetOasServersQuery, useAddOasServerMutation, useUpdateOasServerMutation } from '../../services/OasServerService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, OasServer } from "@thorapi/model";
+import {
+  useGetOasServersQuery,
+  useAddOasServerMutation,
+  useUpdateOasServerMutation,
+} from "../../services/OasServerService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const OasServerChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetOasServersQuery();
 
   const [data, setData] = useState<OasServer[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<OasServer>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const OasServerChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const OasServerChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((oasserver: DataObject) => [oasserver])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((oasserver: DataObject) => [oasserver])}
+        />
+      )}
     </>
   );
 };

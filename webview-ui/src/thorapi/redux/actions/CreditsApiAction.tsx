@@ -17,95 +17,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // Credits
 
-export const FETCH_CREDITS_REQUEST = 'FETCH_CREDITS_REQUEST';
-export const FETCH_CREDITS_SUCCESS = 'FETCH_CREDITS_SUCCESS';
-export const FETCH_CREDITS_FAILURE = 'FETCH_CREDITS_FAILURE';
+export const FETCH_CREDITS_REQUEST = "FETCH_CREDITS_REQUEST";
+export const FETCH_CREDITS_SUCCESS = "FETCH_CREDITS_SUCCESS";
+export const FETCH_CREDITS_FAILURE = "FETCH_CREDITS_FAILURE";
 
-export const ADD_CREDITS_REQUEST = 'ADD_CREDITS_REQUEST';
-export const ADD_CREDITS_SUCCESS = 'ADD_CREDITS_SUCCESS';
-export const ADD_CREDITS_FAILURE = 'ADD_CREDITS_FAILURE';
+export const ADD_CREDITS_REQUEST = "ADD_CREDITS_REQUEST";
+export const ADD_CREDITS_SUCCESS = "ADD_CREDITS_SUCCESS";
+export const ADD_CREDITS_FAILURE = "ADD_CREDITS_FAILURE";
 
-export const UPDATE_CREDITS_REQUEST = 'UPDATE_CREDITS_REQUEST';
-export const UPDATE_CREDITS_SUCCESS = 'UPDATE_CREDITS_SUCCESS';
-export const UPDATE_CREDITS_FAILURE = 'UPDATE_CREDITS_FAILURE';
+export const UPDATE_CREDITS_REQUEST = "UPDATE_CREDITS_REQUEST";
+export const UPDATE_CREDITS_SUCCESS = "UPDATE_CREDITS_SUCCESS";
+export const UPDATE_CREDITS_FAILURE = "UPDATE_CREDITS_FAILURE";
 
-export const DELETE_CREDITS_REQUEST = 'DELETE_CREDITS_REQUEST';
-export const DELETE_CREDITS_SUCCESS = 'DELETE_CREDITS_SUCCESS';
-export const DELETE_CREDITS_FAILURE = 'DELETE_CREDITS_FAILURE';
+export const DELETE_CREDITS_REQUEST = "DELETE_CREDITS_REQUEST";
+export const DELETE_CREDITS_SUCCESS = "DELETE_CREDITS_SUCCESS";
+export const DELETE_CREDITS_FAILURE = "DELETE_CREDITS_FAILURE";
 
-export const LIST_CREDITS_REQUEST = 'LIST_CREDITS_REQUEST';
-export const LIST_CREDITS_SUCCESS = 'LIST_CREDITS_SUCCESS';
-export const LIST_CREDITS_FAILURE = 'LIST_CREDITS_FAILURE';
+export const LIST_CREDITS_REQUEST = "LIST_CREDITS_REQUEST";
+export const LIST_CREDITS_SUCCESS = "LIST_CREDITS_SUCCESS";
+export const LIST_CREDITS_FAILURE = "LIST_CREDITS_FAILURE";
 
 export const addCreditsRequest = () => ({
-    type: ADD_CREDITS_REQUEST,
+  type: ADD_CREDITS_REQUEST,
 });
 
 export const addCreditsSuccess = (Creditss: any) => ({
-    type: ADD_CREDITS_SUCCESS,
-    payload: Creditss,
+  type: ADD_CREDITS_SUCCESS,
+  payload: Creditss,
 });
 
 export const addCreditsFailure = (error: Error) => ({
-    type: ADD_CREDITS_FAILURE,
-    payload: error,
+  type: ADD_CREDITS_FAILURE,
+  payload: error,
 });
 
-
 export const fetchCreditsRequest = () => ({
-    type: FETCH_CREDITS_REQUEST,
+  type: FETCH_CREDITS_REQUEST,
 });
 
 export const fetchCreditsSuccess = (Creditss: any) => ({
-    type: FETCH_CREDITS_SUCCESS,
-    payload: Creditss,
+  type: FETCH_CREDITS_SUCCESS,
+  payload: Creditss,
 });
 
 export const fetchCreditsFailure = (error: Error) => ({
-    type: FETCH_CREDITS_FAILURE,
-    payload: error,
+  type: FETCH_CREDITS_FAILURE,
+  payload: error,
 });
 
 export const listCreditsRequest = () => ({
-    type: LIST_CREDITS_REQUEST,
+  type: LIST_CREDITS_REQUEST,
 });
 
 export const listCreditsSuccess = (Creditss: any) => ({
-    type: LIST_CREDITS_SUCCESS,
-    payload: Creditss,
+  type: LIST_CREDITS_SUCCESS,
+  payload: Creditss,
 });
 
 export const listCreditsFailure = (error: Error) => ({
-    type: LIST_CREDITS_FAILURE,
-    payload: error,
+  type: LIST_CREDITS_FAILURE,
+  payload: error,
 });
 
 export const updateCreditsRequest = (Credits: any) => ({
-    type: UPDATE_CREDITS_REQUEST,
-    payload: Credits,
+  type: UPDATE_CREDITS_REQUEST,
+  payload: Credits,
 });
 
 export const updateCreditsSuccess = (Credits: any) => ({
-    type: UPDATE_CREDITS_SUCCESS,
-    payload: Credits,
+  type: UPDATE_CREDITS_SUCCESS,
+  payload: Credits,
 });
 
 export const updateCreditsFailure = (error: Error) => ({
-    type: UPDATE_CREDITS_FAILURE,
-    payload: error,
+  type: UPDATE_CREDITS_FAILURE,
+  payload: error,
 });
 
 export const deleteCreditsRequest = (Credits: any) => ({
-    type: DELETE_CREDITS_REQUEST,
-    payload: Credits,
+  type: DELETE_CREDITS_REQUEST,
+  payload: Credits,
 });
 
 export const deleteCreditsSuccess = (Credits: any) => ({
-    type: DELETE_CREDITS_SUCCESS,
-    payload: Credits,
+  type: DELETE_CREDITS_SUCCESS,
+  payload: Credits,
 });
 
 export const deleteCreditsFailure = (error: Error) => ({
-    type: DELETE_CREDITS_FAILURE,
-    payload: error,
+  type: DELETE_CREDITS_FAILURE,
+  payload: error,
 });

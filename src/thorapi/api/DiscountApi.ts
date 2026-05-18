@@ -18,353 +18,421 @@ Template file: typescript-redux-query/apis.mustache
 Description: DiscountApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    Discount,
-    DiscountFromJSON,
-    DiscountToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { Discount, DiscountFromJSON, DiscountToJSON } from "../model";
 
 export interface DeleteDiscountApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetDiscountApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetDiscountListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface PatchDiscountByIdApiRequest {
-    id: string;
-    discount: Discount;
+  id: string;
+  discount: Discount;
 }
 
 export interface PostDiscountApiRequest {
-    discount: Discount;
+  discount: Discount;
 }
 
 export interface UpdateDiscountApiRequest {
-    id: string;
-    discount: Discount;
+  id: string;
+  discount: Discount;
 }
-
 
 /**
  * Deletes a specific Discount.
  * Delete a Discount.
  */
-function deleteDiscountRaw<T>(requestParameters: DeleteDiscountApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteDiscount.');
-    }
+function deleteDiscountRaw<T>(
+  requestParameters: DeleteDiscountApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteDiscount.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Discount/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Discount/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific Discount.
-* Delete a Discount.
-*/
-export function deleteDiscount<T>(requestParameters: DeleteDiscountApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteDiscountRaw(requestParameters, requestConfig);
+ * Deletes a specific Discount.
+ * Delete a Discount.
+ */
+export function deleteDiscount<T>(
+  requestParameters: DeleteDiscountApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteDiscountRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single Discount for a specific uid.
  * Retrieve a single Discount
  */
-function getDiscountRaw<T>(requestParameters: GetDiscountApiRequest, requestConfig: runtime.TypedQueryConfig<T, Discount> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getDiscount.');
-    }
+function getDiscountRaw<T>(
+  requestParameters: GetDiscountApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Discount> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getDiscount.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Discount/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(DiscountFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Discount/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(DiscountFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single Discount for a specific uid.
-* Retrieve a single Discount
-*/
-export function getDiscount<T>(requestParameters: GetDiscountApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Discount>): QueryConfig<T> {
-    return getDiscountRaw(requestParameters, requestConfig);
+ * Retrieves a single Discount for a specific uid.
+ * Retrieve a single Discount
+ */
+export function getDiscount<T>(
+  requestParameters: GetDiscountApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Discount>,
+): QueryConfig<T> {
+  return getDiscountRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Discounts.
  * Retrieve a list of Discounts
  */
-function getDiscountListRaw<T>(requestParameters: GetDiscountListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<Discount>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getDiscountListRaw<T>(
+  requestParameters: GetDiscountListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<Discount>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Discount`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(DiscountFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Discount`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(DiscountFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of Discounts.
-* Retrieve a list of Discounts
-*/
-export function getDiscountList<T>(requestParameters: GetDiscountListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Discount>>): QueryConfig<T> {
-    return getDiscountListRaw(requestParameters, requestConfig);
+ * Retrieves a list of Discounts.
+ * Retrieve a list of Discounts
+ */
+export function getDiscountList<T>(
+  requestParameters: GetDiscountListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<Discount>>,
+): QueryConfig<T> {
+  return getDiscountListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing Discount.
  * Partially update an existing Discount
  */
-function patchDiscountByIdRaw<T>(requestParameters: PatchDiscountByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Discount> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchDiscountById.');
-    }
+function patchDiscountByIdRaw<T>(
+  requestParameters: PatchDiscountByIdApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Discount> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling patchDiscountById.",
+    );
+  }
 
-    if (requestParameters.discount === null || requestParameters.discount === undefined) {
-        throw new runtime.RequiredError('discount','Required parameter requestParameters.discount was null or undefined when calling patchDiscountById.');
-    }
+  if (
+    requestParameters.discount === null ||
+    requestParameters.discount === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "discount",
+      "Required parameter requestParameters.discount was null or undefined when calling patchDiscountById.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/merge-patch+json";
 
-    headerParameters['Content-Type'] = 'application/merge-patch+json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Discount/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PATCH",
+      headers: headerParameters,
+    },
+    body: queryParameters || DiscountToJSON(requestParameters.discount),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(DiscountFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Discount/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PATCH',
-            headers: headerParameters,
-        },
-        body: queryParameters || DiscountToJSON(requestParameters.discount),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(DiscountFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing Discount.
-* Partially update an existing Discount
-*/
-export function patchDiscountById<T>(requestParameters: PatchDiscountByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Discount>): QueryConfig<T> {
-    return patchDiscountByIdRaw(requestParameters, requestConfig);
+ * Updates an existing Discount.
+ * Partially update an existing Discount
+ */
+export function patchDiscountById<T>(
+  requestParameters: PatchDiscountByIdApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Discount>,
+): QueryConfig<T> {
+  return patchDiscountByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new Discount.
  * Create a new Discount
  */
-function postDiscountRaw<T>(requestParameters: PostDiscountApiRequest, requestConfig: runtime.TypedQueryConfig<T, Discount> = {}): QueryConfig<T> {
-    if (requestParameters.discount === null || requestParameters.discount === undefined) {
-        throw new runtime.RequiredError('discount','Required parameter requestParameters.discount was null or undefined when calling postDiscount.');
-    }
+function postDiscountRaw<T>(
+  requestParameters: PostDiscountApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Discount> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.discount === null ||
+    requestParameters.discount === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "discount",
+      "Required parameter requestParameters.discount was null or undefined when calling postDiscount.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Discount`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || DiscountToJSON(requestParameters.discount),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(DiscountFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Discount`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || DiscountToJSON(requestParameters.discount),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(DiscountFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new Discount.
-* Create a new Discount
-*/
-export function postDiscount<T>(requestParameters: PostDiscountApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Discount>): QueryConfig<T> {
-    return postDiscountRaw(requestParameters, requestConfig);
+ * Creates a new Discount.
+ * Create a new Discount
+ */
+export function postDiscount<T>(
+  requestParameters: PostDiscountApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Discount>,
+): QueryConfig<T> {
+  return postDiscountRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing Discount.
  * Update an existing Discount
  */
-function updateDiscountRaw<T>(requestParameters: UpdateDiscountApiRequest, requestConfig: runtime.TypedQueryConfig<T, Discount> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateDiscount.');
-    }
+function updateDiscountRaw<T>(
+  requestParameters: UpdateDiscountApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Discount> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateDiscount.",
+    );
+  }
 
-    if (requestParameters.discount === null || requestParameters.discount === undefined) {
-        throw new runtime.RequiredError('discount','Required parameter requestParameters.discount was null or undefined when calling updateDiscount.');
-    }
+  if (
+    requestParameters.discount === null ||
+    requestParameters.discount === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "discount",
+      "Required parameter requestParameters.discount was null or undefined when calling updateDiscount.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Discount/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || DiscountToJSON(requestParameters.discount),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(DiscountFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Discount/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || DiscountToJSON(requestParameters.discount),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(DiscountFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing Discount.
-* Update an existing Discount
-*/
-export function updateDiscount<T>(requestParameters: UpdateDiscountApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Discount>): QueryConfig<T> {
-    return updateDiscountRaw(requestParameters, requestConfig);
+ * Updates an existing Discount.
+ * Update an existing Discount
+ */
+export function updateDiscount<T>(
+  requestParameters: UpdateDiscountApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Discount>,
+): QueryConfig<T> {
+  return updateDiscountRaw(requestParameters, requestConfig);
 }
-

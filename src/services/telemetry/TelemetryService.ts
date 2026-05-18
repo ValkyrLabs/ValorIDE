@@ -5,7 +5,10 @@ import { version as extensionVersion } from "../../../package.json";
 import type { TaskFeedbackType } from "@shared/WebviewMessage";
 import type { BrowserSettings } from "@shared/BrowserSettings";
 
-type PostHogClientApi = Pick<PostHog, "capture" | "optIn" | "optOut" | "shutdown">;
+type PostHogClientApi = Pick<
+  PostHog,
+  "capture" | "optIn" | "optOut" | "shutdown"
+>;
 
 const NOOP_POSTHOG_CLIENT: PostHogClientApi = {
   capture: () => {},
@@ -106,9 +109,9 @@ class PostHogClient {
   private constructor() {
     this.client = PostHogClient.POSTHOG_ENABLED
       ? new PostHog("phc_qfOAGxZw2TL5O8p9KYd9ak3bPBFzfjC8fy5L6jNWY7K", {
-        host: "https://us.i.posthog.com",
-        enableExceptionAutocapture: false,
-      })
+          host: "https://us.i.posthog.com",
+          enableExceptionAutocapture: false,
+        })
       : NOOP_POSTHOG_CLIENT;
   }
 
@@ -221,7 +224,6 @@ class PostHogClient {
   ) {
     // Ensure required parameters are provided
     if (!taskId || !provider || !model || !source) {
-
       return;
     }
 

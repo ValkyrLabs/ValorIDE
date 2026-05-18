@@ -9,6 +9,7 @@ Premium content data presentation components powered by ThorAPI and Three.js.
 A stunning 3D FlipBoard-style carousel component for displaying ContentData items with smooth animations and interactive controls.
 
 **Features:**
+
 - 🎨 **Three.js 3D Animations** — Curved card carousel with metallic materials and dynamic lighting
 - ⚡ **Auto-Scroll** — Automatic carousel rotation with configurable intervals
 - 🎯 **Interactive Navigation** — Previous/Next buttons and clickable dot indicators
@@ -34,11 +35,11 @@ export function MyComponent() {
 
 **Props:**
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `itemsPerPage` | `number` | `5` | Maximum number of ContentData items to display |
-| `autoScroll` | `boolean` | `true` | Enable automatic carousel rotation |
-| `autoScrollInterval` | `number` | `5000` | Time between auto-scroll in milliseconds |
+| Prop                 | Type      | Default | Description                                    |
+| -------------------- | --------- | ------- | ---------------------------------------------- |
+| `itemsPerPage`       | `number`  | `5`     | Maximum number of ContentData items to display |
+| `autoScroll`         | `boolean` | `true`  | Enable automatic carousel rotation             |
+| `autoScrollInterval` | `number`  | `5000`  | Time between auto-scroll in milliseconds       |
 
 **Styling:**
 
@@ -54,6 +55,7 @@ All styles are defined in `ContentDataFlipBoard.css` with full responsive suppor
 **Data Requirements:**
 
 The component expects ContentData items with these fields:
+
 - `id` (required)
 - `title` (optional, defaults to "Untitled")
 - `contentData` (optional, used as description)
@@ -75,7 +77,7 @@ Internal component that handles ContentData message passing between extension an
 - **Camera**: Perspective camera positioned for optimal card visibility
 - **Cards**: Box-geometry meshes with canvas textures
 - **Materials**: Standard materials with metalness/roughness for metallic card edges
-- **Lights**: 
+- **Lights**:
   - Ambient light (0.6 intensity) for base illumination
   - Directional light (0.8 intensity) for shadows
   - Point light (0.5 intensity) for accent glow
@@ -101,6 +103,7 @@ npm run test -- src/components/content-data/ContentDataFlipBoard.test.tsx --run
 ```
 
 **Test Coverage:**
+
 - Loading and empty states
 - Canvas and DOM rendering
 - Navigation (next/prev buttons, indicators)

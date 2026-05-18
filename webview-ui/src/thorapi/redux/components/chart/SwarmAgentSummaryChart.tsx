@@ -19,20 +19,32 @@ Description: SwarmAgentSummary
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, SwarmAgentSummary } from '@thorapi/model';
-import { useGetSwarmAgentSummarysQuery, useAddSwarmAgentSummaryMutation, useUpdateSwarmAgentSummaryMutation } from '../../services/SwarmAgentSummaryService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, SwarmAgentSummary } from "@thorapi/model";
+import {
+  useGetSwarmAgentSummarysQuery,
+  useAddSwarmAgentSummaryMutation,
+  useUpdateSwarmAgentSummaryMutation,
+} from "../../services/SwarmAgentSummaryService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const SwarmAgentSummaryChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetSwarmAgentSummarysQuery();
 
   const [data, setData] = useState<SwarmAgentSummary[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<SwarmAgentSummary>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const SwarmAgentSummaryChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,15 @@ const SwarmAgentSummaryChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((swarmagentsummary: DataObject) => [swarmagentsummary])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((swarmagentsummary: DataObject) => [
+            swarmagentsummary,
+          ])}
+        />
+      )}
     </>
   );
 };

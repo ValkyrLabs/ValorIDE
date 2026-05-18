@@ -9,7 +9,9 @@ jest.mock("@core/controller/index", () => ({
 }));
 
 jest.mock("@services/usage-tracking/UsageTrackingService", () => ({
-  UsageTrackingService: { getInstance: () => ({ setWebview: jest.fn(), dispose: jest.fn() }) },
+  UsageTrackingService: {
+    getInstance: () => ({ setWebview: jest.fn(), dispose: jest.fn() }),
+  },
 }));
 
 jest.mock("@services/P2P/TelecomHub", () => ({

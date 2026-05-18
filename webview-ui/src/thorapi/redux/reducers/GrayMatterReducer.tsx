@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { GrayMatter } from '@thorapi/model/GrayMatter';
+import { GrayMatter } from "@thorapi/model/GrayMatter";
 
 const GrayMatterSlice = createSlice({
   name: "GrayMatters",
@@ -27,20 +27,23 @@ const GrayMatterSlice = createSlice({
     },
 
     GrayMatterValueToggled(state, action) {
-      console.log("GrayMatter TOGGLE")
-      console.warn(JSON.stringify(action))
-      const GrayMatter:GrayMatter = state.find((GrayMatter) => GrayMatter.id === action.payload.GrayMatterId);
+      console.log("GrayMatter TOGGLE");
+      console.warn(JSON.stringify(action));
+      const GrayMatter: GrayMatter = state.find(
+        (GrayMatter) => GrayMatter.id === action.payload.GrayMatterId,
+      );
       if (GrayMatter) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     GrayMatterpropertySet(state, action) {
-      const GrayMatter = state.find((GrayMatter) => GrayMatter.id === action.payload.GrayMatterId);
+      const GrayMatter = state.find(
+        (GrayMatter) => GrayMatter.id === action.payload.GrayMatterId,
+      );
       if (GrayMatter) {
-      //  GrayMatter[action.property] = action.payload[action.property];
+        //  GrayMatter[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const GrayMatterSlice = createSlice({
 export const {
   GrayMatterAdded,
   GrayMatterValueToggled,
-  GrayMatterpropertySet
+  GrayMatterpropertySet,
 } = GrayMatterSlice.actions;
 export default GrayMatterSlice.reducer;

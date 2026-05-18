@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AccountPlan } from '@thorapi/model/AccountPlan';
+import { AccountPlan } from "@thorapi/model/AccountPlan";
 
 const AccountPlanSlice = createSlice({
   name: "AccountPlans",
@@ -27,20 +27,23 @@ const AccountPlanSlice = createSlice({
     },
 
     AccountPlanValueToggled(state, action) {
-      console.log("AccountPlan TOGGLE")
-      console.warn(JSON.stringify(action))
-      const AccountPlan:AccountPlan = state.find((AccountPlan) => AccountPlan.id === action.payload.AccountPlanId);
+      console.log("AccountPlan TOGGLE");
+      console.warn(JSON.stringify(action));
+      const AccountPlan: AccountPlan = state.find(
+        (AccountPlan) => AccountPlan.id === action.payload.AccountPlanId,
+      );
       if (AccountPlan) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     AccountPlanpropertySet(state, action) {
-      const AccountPlan = state.find((AccountPlan) => AccountPlan.id === action.payload.AccountPlanId);
+      const AccountPlan = state.find(
+        (AccountPlan) => AccountPlan.id === action.payload.AccountPlanId,
+      );
       if (AccountPlan) {
-      //  AccountPlan[action.property] = action.payload[action.property];
+        //  AccountPlan[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const AccountPlanSlice = createSlice({
 export const {
   AccountPlanAdded,
   AccountPlanValueToggled,
-  AccountPlanpropertySet
+  AccountPlanpropertySet,
 } = AccountPlanSlice.actions;
 export default AccountPlanSlice.reducer;

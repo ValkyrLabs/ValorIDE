@@ -19,20 +19,32 @@ Description: Authority
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, Authority } from '@thorapi/model';
-import { useGetAuthoritysQuery, useAddAuthorityMutation, useUpdateAuthorityMutation } from '../../services/AuthorityService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, Authority } from "@thorapi/model";
+import {
+  useGetAuthoritysQuery,
+  useAddAuthorityMutation,
+  useUpdateAuthorityMutation,
+} from "../../services/AuthorityService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const AuthorityChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetAuthoritysQuery();
 
   const [data, setData] = useState<Authority[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<Authority>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const AuthorityChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const AuthorityChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((authority: DataObject) => [authority])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((authority: DataObject) => [authority])}
+        />
+      )}
     </>
   );
 };

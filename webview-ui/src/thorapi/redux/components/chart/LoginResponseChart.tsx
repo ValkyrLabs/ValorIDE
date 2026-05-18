@@ -19,20 +19,32 @@ Description: LoginResponse
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, LoginResponse } from '@thorapi/model';
-import { useGetLoginResponsesQuery, useAddLoginResponseMutation, useUpdateLoginResponseMutation } from '../../services/LoginResponseService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, LoginResponse } from "@thorapi/model";
+import {
+  useGetLoginResponsesQuery,
+  useAddLoginResponseMutation,
+  useUpdateLoginResponseMutation,
+} from "../../services/LoginResponseService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const LoginResponseChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetLoginResponsesQuery();
 
   const [data, setData] = useState<LoginResponse[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<LoginResponse>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const LoginResponseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const LoginResponseChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((loginresponse: DataObject) => [loginresponse])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((loginresponse: DataObject) => [loginresponse])}
+        />
+      )}
     </>
   );
 };

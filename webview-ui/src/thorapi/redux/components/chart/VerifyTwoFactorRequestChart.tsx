@@ -19,20 +19,35 @@ Description: VerifyTwoFactorRequest
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, VerifyTwoFactorRequest } from '@thorapi/model';
-import { useGetVerifyTwoFactorRequestsQuery, useAddVerifyTwoFactorRequestMutation, useUpdateVerifyTwoFactorRequestMutation } from '../../services/VerifyTwoFactorRequestService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, VerifyTwoFactorRequest } from "@thorapi/model";
+import {
+  useGetVerifyTwoFactorRequestsQuery,
+  useAddVerifyTwoFactorRequestMutation,
+  useUpdateVerifyTwoFactorRequestMutation,
+} from "../../services/VerifyTwoFactorRequestService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const VerifyTwoFactorRequestChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetVerifyTwoFactorRequestsQuery();
+  const { data: initialData = [], isLoading } =
+    useGetVerifyTwoFactorRequestsQuery();
 
   const [data, setData] = useState<VerifyTwoFactorRequest[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<VerifyTwoFactorRequest>>({});
-  
+  const [chartData, setChartData] = useState<Partial<VerifyTwoFactorRequest>>(
+    {},
+  );
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +65,9 @@ const VerifyTwoFactorRequestChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +75,15 @@ const VerifyTwoFactorRequestChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((verifytwofactorrequest: DataObject) => [verifytwofactorrequest])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((verifytwofactorrequest: DataObject) => [
+            verifytwofactorrequest,
+          ])}
+        />
+      )}
     </>
   );
 };

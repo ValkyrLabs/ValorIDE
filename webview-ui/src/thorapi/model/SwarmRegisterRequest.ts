@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,102 +36,110 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface SwarmRegisterRequest
  */
-export type SwarmRegisterRequest  = DataObject & {
-    /**
-     * Unique identifier for the agent instance.
-     * @type {string}
-     * @memberof SwarmRegisterRequest
-     */
-    instanceId?: string;
-    /**
-     * Arbitrary metadata describing the agent.
-     * @type {string}
-     * @memberof SwarmRegisterRequest
-     */
-    metadata?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof SwarmRegisterRequest
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof SwarmRegisterRequest
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof SwarmRegisterRequest
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof SwarmRegisterRequest
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof SwarmRegisterRequest
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof SwarmRegisterRequest
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof SwarmRegisterRequest
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof SwarmRegisterRequest
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof SwarmRegisterRequest
-     */
-    trashed?: boolean;
-}
+export type SwarmRegisterRequest = DataObject & {
+  /**
+   * Unique identifier for the agent instance.
+   * @type {string}
+   * @memberof SwarmRegisterRequest
+   */
+  instanceId?: string;
+  /**
+   * Arbitrary metadata describing the agent.
+   * @type {string}
+   * @memberof SwarmRegisterRequest
+   */
+  metadata?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof SwarmRegisterRequest
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof SwarmRegisterRequest
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof SwarmRegisterRequest
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof SwarmRegisterRequest
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof SwarmRegisterRequest
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof SwarmRegisterRequest
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof SwarmRegisterRequest
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof SwarmRegisterRequest
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof SwarmRegisterRequest
+   */
+  trashed?: boolean;
+};
 
 export function SwarmRegisterRequestFromJSON(json: any): SwarmRegisterRequest {
-    return {
-        ...DataObjectFromJSON(json),
-        'instanceId': !exists(json, 'instanceId') ? undefined : json['instanceId'],
-        'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    instanceId: !exists(json, "instanceId") ? undefined : json["instanceId"],
+    metadata: !exists(json, "metadata") ? undefined : json["metadata"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function SwarmRegisterRequestToJSON(value?: SwarmRegisterRequest): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'instanceId': value.instanceId,
-        'metadata': value.metadata,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    instanceId: value.instanceId,
+    metadata: value.metadata,
+    trashed: value.trashed,
+  };
 }
-
-

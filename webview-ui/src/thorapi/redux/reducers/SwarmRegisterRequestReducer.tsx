@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SwarmRegisterRequest } from '@thorapi/model/SwarmRegisterRequest';
+import { SwarmRegisterRequest } from "@thorapi/model/SwarmRegisterRequest";
 
 const SwarmRegisterRequestSlice = createSlice({
   name: "SwarmRegisterRequests",
@@ -27,20 +27,25 @@ const SwarmRegisterRequestSlice = createSlice({
     },
 
     SwarmRegisterRequestValueToggled(state, action) {
-      console.log("SwarmRegisterRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SwarmRegisterRequest:SwarmRegisterRequest = state.find((SwarmRegisterRequest) => SwarmRegisterRequest.id === action.payload.SwarmRegisterRequestId);
+      console.log("SwarmRegisterRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SwarmRegisterRequest: SwarmRegisterRequest = state.find(
+        (SwarmRegisterRequest) =>
+          SwarmRegisterRequest.id === action.payload.SwarmRegisterRequestId,
+      );
       if (SwarmRegisterRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SwarmRegisterRequestpropertySet(state, action) {
-      const SwarmRegisterRequest = state.find((SwarmRegisterRequest) => SwarmRegisterRequest.id === action.payload.SwarmRegisterRequestId);
+      const SwarmRegisterRequest = state.find(
+        (SwarmRegisterRequest) =>
+          SwarmRegisterRequest.id === action.payload.SwarmRegisterRequestId,
+      );
       if (SwarmRegisterRequest) {
-      //  SwarmRegisterRequest[action.property] = action.payload[action.property];
+        //  SwarmRegisterRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const SwarmRegisterRequestSlice = createSlice({
 export const {
   SwarmRegisterRequestAdded,
   SwarmRegisterRequestValueToggled,
-  SwarmRegisterRequestpropertySet
+  SwarmRegisterRequestpropertySet,
 } = SwarmRegisterRequestSlice.actions;
 export default SwarmRegisterRequestSlice.reducer;

@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,102 +36,114 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface WorkflowGraphEdgeConfig
  */
-export type WorkflowGraphEdgeConfig  = DataObject & {
-    /**
-     * 
-     * @type {string}
-     * @memberof WorkflowGraphEdgeConfig
-     */
-    style?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof WorkflowGraphEdgeConfig
-     */
-    onEvent?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof WorkflowGraphEdgeConfig
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof WorkflowGraphEdgeConfig
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof WorkflowGraphEdgeConfig
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof WorkflowGraphEdgeConfig
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof WorkflowGraphEdgeConfig
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof WorkflowGraphEdgeConfig
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof WorkflowGraphEdgeConfig
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof WorkflowGraphEdgeConfig
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof WorkflowGraphEdgeConfig
-     */
-    trashed?: boolean;
+export type WorkflowGraphEdgeConfig = DataObject & {
+  /**
+   *
+   * @type {string}
+   * @memberof WorkflowGraphEdgeConfig
+   */
+  style?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof WorkflowGraphEdgeConfig
+   */
+  onEvent?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof WorkflowGraphEdgeConfig
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof WorkflowGraphEdgeConfig
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof WorkflowGraphEdgeConfig
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof WorkflowGraphEdgeConfig
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof WorkflowGraphEdgeConfig
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof WorkflowGraphEdgeConfig
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof WorkflowGraphEdgeConfig
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof WorkflowGraphEdgeConfig
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof WorkflowGraphEdgeConfig
+   */
+  trashed?: boolean;
+};
+
+export function WorkflowGraphEdgeConfigFromJSON(
+  json: any,
+): WorkflowGraphEdgeConfig {
+  return {
+    ...DataObjectFromJSON(json),
+    style: !exists(json, "style") ? undefined : json["style"],
+    onEvent: !exists(json, "onEvent") ? undefined : json["onEvent"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
-export function WorkflowGraphEdgeConfigFromJSON(json: any): WorkflowGraphEdgeConfig {
-    return {
-        ...DataObjectFromJSON(json),
-        'style': !exists(json, 'style') ? undefined : json['style'],
-        'onEvent': !exists(json, 'onEvent') ? undefined : json['onEvent'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+export function WorkflowGraphEdgeConfigToJSON(
+  value?: WorkflowGraphEdgeConfig,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    style: value.style,
+    onEvent: value.onEvent,
+    trashed: value.trashed,
+  };
 }
-
-export function WorkflowGraphEdgeConfigToJSON(value?: WorkflowGraphEdgeConfig): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'style': value.style,
-        'onEvent': value.onEvent,
-        'trashed': value.trashed,
-    };
-}
-
-

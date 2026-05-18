@@ -78,7 +78,7 @@ const ServerConsole = () => {
       : fallbackWsBase(valkyraiHost);
     if (!isValidWsUrl(socketUrl)) {
       console.warn(
-        "ServerConsole: WebSocket disabled (missing or invalid VITE_wssBasePath/base path)."
+        "ServerConsole: WebSocket disabled (missing or invalid VITE_wssBasePath/base path).",
       );
       dispatch(setConnected(false));
       dispatch(
@@ -87,7 +87,7 @@ const ServerConsole = () => {
           payload:
             "WebSocket disabled: configure VITE_wssBasePath or ensure VITE_basePath is an http(s) URL.",
           createdDate: new Date(),
-        })
+        }),
       );
       return undefined;
     }
@@ -100,13 +100,13 @@ const ServerConsole = () => {
         dispatch(setConnected(true));
         stompClient.subscribe("/topic/statuses", (message) => {
           const parsedMessage = WebsocketMessageFromJSON(
-            JSON.parse(message.body)
+            JSON.parse(message.body),
           );
           dispatch(addMessage(parsedMessage));
         });
         stompClient.subscribe("/topic/messages", (message) => {
           const parsedMessage = WebsocketMessageFromJSON(
-            JSON.parse(message.body)
+            JSON.parse(message.body),
           );
           dispatch(addMessage(parsedMessage));
         });
@@ -279,7 +279,7 @@ const ServerConsole = () => {
                           }),
                         ],
                       },
-                      index
+                      index,
                     );
                   })
                 : _jsxs("div", {

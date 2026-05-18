@@ -163,9 +163,9 @@ export const EarningsDashboard: React.FC = () => {
                   $
                   {monthlyEarnings.totalInvocations > 0
                     ? (
-                      monthlyEarnings.totalEarned /
-                      monthlyEarnings.totalInvocations
-                    ).toFixed(3)
+                        monthlyEarnings.totalEarned /
+                        monthlyEarnings.totalInvocations
+                      ).toFixed(3)
                     : "0.00"}
                 </div>
               </div>

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { TrustKeyVersion } from '@thorapi/model/TrustKeyVersion';
+import { TrustKeyVersion } from "@thorapi/model/TrustKeyVersion";
 
 const TrustKeyVersionSlice = createSlice({
   name: "TrustKeyVersions",
@@ -27,20 +27,25 @@ const TrustKeyVersionSlice = createSlice({
     },
 
     TrustKeyVersionValueToggled(state, action) {
-      console.log("TrustKeyVersion TOGGLE")
-      console.warn(JSON.stringify(action))
-      const TrustKeyVersion:TrustKeyVersion = state.find((TrustKeyVersion) => TrustKeyVersion.id === action.payload.TrustKeyVersionId);
+      console.log("TrustKeyVersion TOGGLE");
+      console.warn(JSON.stringify(action));
+      const TrustKeyVersion: TrustKeyVersion = state.find(
+        (TrustKeyVersion) =>
+          TrustKeyVersion.id === action.payload.TrustKeyVersionId,
+      );
       if (TrustKeyVersion) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     TrustKeyVersionpropertySet(state, action) {
-      const TrustKeyVersion = state.find((TrustKeyVersion) => TrustKeyVersion.id === action.payload.TrustKeyVersionId);
+      const TrustKeyVersion = state.find(
+        (TrustKeyVersion) =>
+          TrustKeyVersion.id === action.payload.TrustKeyVersionId,
+      );
       if (TrustKeyVersion) {
-      //  TrustKeyVersion[action.property] = action.payload[action.property];
+        //  TrustKeyVersion[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const TrustKeyVersionSlice = createSlice({
 export const {
   TrustKeyVersionAdded,
   TrustKeyVersionValueToggled,
-  TrustKeyVersionpropertySet
+  TrustKeyVersionpropertySet,
 } = TrustKeyVersionSlice.actions;
 export default TrustKeyVersionSlice.reducer;

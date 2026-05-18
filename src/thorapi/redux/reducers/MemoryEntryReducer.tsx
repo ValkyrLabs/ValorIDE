@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { MemoryEntry } from '@thorapi/model/MemoryEntry';
+import { MemoryEntry } from "@thorapi/model/MemoryEntry";
 
 const MemoryEntrySlice = createSlice({
   name: "MemoryEntrys",
@@ -27,20 +27,23 @@ const MemoryEntrySlice = createSlice({
     },
 
     MemoryEntryValueToggled(state, action) {
-      console.log("MemoryEntry TOGGLE")
-      console.warn(JSON.stringify(action))
-      const MemoryEntry:MemoryEntry = state.find((MemoryEntry) => MemoryEntry.id === action.payload.MemoryEntryId);
+      console.log("MemoryEntry TOGGLE");
+      console.warn(JSON.stringify(action));
+      const MemoryEntry: MemoryEntry = state.find(
+        (MemoryEntry) => MemoryEntry.id === action.payload.MemoryEntryId,
+      );
       if (MemoryEntry) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     MemoryEntrypropertySet(state, action) {
-      const MemoryEntry = state.find((MemoryEntry) => MemoryEntry.id === action.payload.MemoryEntryId);
+      const MemoryEntry = state.find(
+        (MemoryEntry) => MemoryEntry.id === action.payload.MemoryEntryId,
+      );
       if (MemoryEntry) {
-      //  MemoryEntry[action.property] = action.payload[action.property];
+        //  MemoryEntry[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const MemoryEntrySlice = createSlice({
 export const {
   MemoryEntryAdded,
   MemoryEntryValueToggled,
-  MemoryEntrypropertySet
+  MemoryEntrypropertySet,
 } = MemoryEntrySlice.actions;
 export default MemoryEntrySlice.reducer;

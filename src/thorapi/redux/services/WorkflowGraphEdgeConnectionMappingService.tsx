@@ -13,47 +13,70 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { WorkflowGraphEdgeConnectionMapping } from '@thorapi/model/WorkflowGraphEdgeConnectionMapping'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { WorkflowGraphEdgeConnectionMapping } from "@thorapi/model/WorkflowGraphEdgeConnectionMapping";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type WorkflowGraphEdgeConnectionMappingResponse = WorkflowGraphEdgeConnectionMapping[]
+type WorkflowGraphEdgeConnectionMappingResponse =
+  WorkflowGraphEdgeConnectionMapping[];
 
-const toWorkflowGraphEdgeConnectionMappingList = (result: unknown): WorkflowGraphEdgeConnectionMappingResponse => {
+const toWorkflowGraphEdgeConnectionMappingList = (
+  result: unknown,
+): WorkflowGraphEdgeConnectionMappingResponse => {
   if (Array.isArray(result)) {
-    return result as WorkflowGraphEdgeConnectionMappingResponse
+    return result as WorkflowGraphEdgeConnectionMappingResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as WorkflowGraphEdgeConnectionMappingResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as WorkflowGraphEdgeConnectionMappingResponse)
+    : [];
+};
 
 export const WorkflowGraphEdgeConnectionMappingService = createApi({
-  reducerPath: 'WorkflowGraphEdgeConnectionMapping', // This should remain unique
+  reducerPath: "WorkflowGraphEdgeConnectionMapping", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['WorkflowGraphEdgeConnectionMapping'],
+  tagTypes: ["WorkflowGraphEdgeConnectionMapping"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getWorkflowGraphEdgeConnectionMappingsPaged: build.query<WorkflowGraphEdgeConnectionMappingResponse, { page: number; size?: number; example?: Partial<WorkflowGraphEdgeConnectionMapping> }>({
+    getWorkflowGraphEdgeConnectionMappingsPaged: build.query<
+      WorkflowGraphEdgeConnectionMappingResponse,
+      {
+        page: number;
+        size?: number;
+        example?: Partial<WorkflowGraphEdgeConnectionMapping>;
+      }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `WorkflowGraphEdgeConnectionMapping?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `WorkflowGraphEdgeConnectionMapping?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toWorkflowGraphEdgeConnectionMappingList(result)
+        const rows = toWorkflowGraphEdgeConnectionMappingList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'WorkflowGraphEdgeConnectionMapping' as const, id })),
-          { type: 'WorkflowGraphEdgeConnectionMapping', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({
+              type: "WorkflowGraphEdgeConnectionMapping" as const,
+              id,
+            })),
+          { type: "WorkflowGraphEdgeConnectionMapping", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getWorkflowGraphEdgeConnectionMappings: build.query<WorkflowGraphEdgeConnectionMappingResponse, { example?: Partial<WorkflowGraphEdgeConnectionMapping> } | void>({
+    getWorkflowGraphEdgeConnectionMappings: build.query<
+      WorkflowGraphEdgeConnectionMappingResponse,
+      { example?: Partial<WorkflowGraphEdgeConnectionMapping> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +85,123 @@ export const WorkflowGraphEdgeConnectionMappingService = createApi({
         return `WorkflowGraphEdgeConnectionMapping`;
       },
       providesTags: (result) => {
-        const rows = toWorkflowGraphEdgeConnectionMappingList(result)
+        const rows = toWorkflowGraphEdgeConnectionMappingList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'WorkflowGraphEdgeConnectionMapping' as const, id })),
-          { type: 'WorkflowGraphEdgeConnectionMapping', id: 'LIST' },
-        ]
+            .map(({ id }) => ({
+              type: "WorkflowGraphEdgeConnectionMapping" as const,
+              id,
+            })),
+          { type: "WorkflowGraphEdgeConnectionMapping", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addWorkflowGraphEdgeConnectionMapping: build.mutation<WorkflowGraphEdgeConnectionMapping, Partial<WorkflowGraphEdgeConnectionMapping>>({
+    addWorkflowGraphEdgeConnectionMapping: build.mutation<
+      WorkflowGraphEdgeConnectionMapping,
+      Partial<WorkflowGraphEdgeConnectionMapping>
+    >({
       query: (body) => ({
         url: `WorkflowGraphEdgeConnectionMapping`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'WorkflowGraphEdgeConnectionMapping', id: 'LIST' }],
+      invalidatesTags: [
+        { type: "WorkflowGraphEdgeConnectionMapping", id: "LIST" },
+      ],
     }),
 
     // 4) Get single by ID
-    getWorkflowGraphEdgeConnectionMapping: build.query<WorkflowGraphEdgeConnectionMapping, string>({
+    getWorkflowGraphEdgeConnectionMapping: build.query<
+      WorkflowGraphEdgeConnectionMapping,
+      string
+    >({
       query: (id) => `WorkflowGraphEdgeConnectionMapping/${id}`,
-      providesTags: (result, error, id) => [{ type: 'WorkflowGraphEdgeConnectionMapping', id }],
+      providesTags: (result, error, id) => [
+        { type: "WorkflowGraphEdgeConnectionMapping", id },
+      ],
     }),
 
     // 5) Update
-    updateWorkflowGraphEdgeConnectionMapping: build.mutation<void, Pick<WorkflowGraphEdgeConnectionMapping, 'id'> & Partial<WorkflowGraphEdgeConnectionMapping>>({
+    updateWorkflowGraphEdgeConnectionMapping: build.mutation<
+      void,
+      Pick<WorkflowGraphEdgeConnectionMapping, "id"> &
+        Partial<WorkflowGraphEdgeConnectionMapping>
+    >({
       query: ({ id, ...patch }) => ({
         url: `WorkflowGraphEdgeConnectionMapping/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            WorkflowGraphEdgeConnectionMappingService.util.updateQueryData('getWorkflowGraphEdgeConnectionMapping', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            WorkflowGraphEdgeConnectionMappingService.util.updateQueryData(
+              "getWorkflowGraphEdgeConnectionMapping",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<WorkflowGraphEdgeConnectionMapping, 'id'>) => [
-        { type: 'WorkflowGraphEdgeConnectionMapping', id },
-        { type: 'WorkflowGraphEdgeConnectionMapping', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<WorkflowGraphEdgeConnectionMapping, "id">,
+      ) => [
+        { type: "WorkflowGraphEdgeConnectionMapping", id },
+        { type: "WorkflowGraphEdgeConnectionMapping", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteWorkflowGraphEdgeConnectionMapping: build.mutation<{ success: boolean; id: string }, number>({
+    deleteWorkflowGraphEdgeConnectionMapping: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `WorkflowGraphEdgeConnectionMapping/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'WorkflowGraphEdgeConnectionMapping', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "WorkflowGraphEdgeConnectionMapping", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteWorkflowGraphEdgeConnectionMappingCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteWorkflowGraphEdgeConnectionMappingCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `WorkflowGraphEdgeConnectionMapping/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'WorkflowGraphEdgeConnectionMapping', id }, { type: 'WorkflowGraphEdgeConnectionMapping', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "WorkflowGraphEdgeConnectionMapping", id },
+        { type: "WorkflowGraphEdgeConnectionMapping", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetWorkflowGraphEdgeConnectionMappingsPagedQuery`
 export const {
-  useGetWorkflowGraphEdgeConnectionMappingsPagedQuery,     // immediate fetch
+  useGetWorkflowGraphEdgeConnectionMappingsPagedQuery, // immediate fetch
   useLazyGetWorkflowGraphEdgeConnectionMappingsPagedQuery, // lazy fetch
   useGetWorkflowGraphEdgeConnectionMappingQuery,
   useGetWorkflowGraphEdgeConnectionMappingsQuery,
@@ -150,4 +209,4 @@ export const {
   useUpdateWorkflowGraphEdgeConnectionMappingMutation,
   useDeleteWorkflowGraphEdgeConnectionMappingMutation,
   useDeleteWorkflowGraphEdgeConnectionMappingCascadeMutation,
-} = WorkflowGraphEdgeConnectionMappingService
+} = WorkflowGraphEdgeConnectionMappingService;

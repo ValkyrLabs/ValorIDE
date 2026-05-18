@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_CHATCOMPLETIONREQUEST_REQUEST,
-    FETCH_CHATCOMPLETIONREQUEST_REQUEST,
-    LIST_CHATCOMPLETIONREQUEST_REQUEST,
-    UPDATE_CHATCOMPLETIONREQUEST_REQUEST,
-    DELETE_CHATCOMPLETIONREQUEST_REQUEST,
-
-    addChatCompletionRequestFailure,
-    addChatCompletionRequestSuccess,
-
-    fetchChatCompletionRequestFailure,
-    fetchChatCompletionRequestSuccess,
-    
-    listChatCompletionRequestFailure,
-    listChatCompletionRequestSuccess,
-
-    updateChatCompletionRequestFailure,
-    updateChatCompletionRequestSuccess,
-    
-    deleteChatCompletionRequestFailure,
-    deleteChatCompletionRequestSuccess,
-    
-} from '../actions/ChatCompletionRequestApiAction';
+  ADD_CHATCOMPLETIONREQUEST_REQUEST,
+  FETCH_CHATCOMPLETIONREQUEST_REQUEST,
+  LIST_CHATCOMPLETIONREQUEST_REQUEST,
+  UPDATE_CHATCOMPLETIONREQUEST_REQUEST,
+  DELETE_CHATCOMPLETIONREQUEST_REQUEST,
+  addChatCompletionRequestFailure,
+  addChatCompletionRequestSuccess,
+  fetchChatCompletionRequestFailure,
+  fetchChatCompletionRequestSuccess,
+  listChatCompletionRequestFailure,
+  listChatCompletionRequestSuccess,
+  updateChatCompletionRequestFailure,
+  updateChatCompletionRequestSuccess,
+  deleteChatCompletionRequestFailure,
+  deleteChatCompletionRequestSuccess,
+} from "../actions/ChatCompletionRequestApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: ChatCompletionRequest
 */
 
-
-
-export const ChatCompletionRequestMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("ChatCompletionRequest MIDDLEWARE: " + JSON.stringify(action) )
+export const ChatCompletionRequestMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("ChatCompletionRequest MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

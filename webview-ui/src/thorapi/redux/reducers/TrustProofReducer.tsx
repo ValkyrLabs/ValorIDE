@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { TrustProof } from '@thorapi/model/TrustProof';
+import { TrustProof } from "@thorapi/model/TrustProof";
 
 const TrustProofSlice = createSlice({
   name: "TrustProofs",
@@ -27,20 +27,23 @@ const TrustProofSlice = createSlice({
     },
 
     TrustProofValueToggled(state, action) {
-      console.log("TrustProof TOGGLE")
-      console.warn(JSON.stringify(action))
-      const TrustProof:TrustProof = state.find((TrustProof) => TrustProof.id === action.payload.TrustProofId);
+      console.log("TrustProof TOGGLE");
+      console.warn(JSON.stringify(action));
+      const TrustProof: TrustProof = state.find(
+        (TrustProof) => TrustProof.id === action.payload.TrustProofId,
+      );
       if (TrustProof) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     TrustProofpropertySet(state, action) {
-      const TrustProof = state.find((TrustProof) => TrustProof.id === action.payload.TrustProofId);
+      const TrustProof = state.find(
+        (TrustProof) => TrustProof.id === action.payload.TrustProofId,
+      );
       if (TrustProof) {
-      //  TrustProof[action.property] = action.payload[action.property];
+        //  TrustProof[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const TrustProofSlice = createSlice({
 export const {
   TrustProofAdded,
   TrustProofValueToggled,
-  TrustProofpropertySet
+  TrustProofpropertySet,
 } = TrustProofSlice.actions;
 export default TrustProofSlice.reducer;

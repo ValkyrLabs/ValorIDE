@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { TrustRuntimeEvent } from '@thorapi/model/TrustRuntimeEvent';
+import { TrustRuntimeEvent } from "@thorapi/model/TrustRuntimeEvent";
 
 const TrustRuntimeEventSlice = createSlice({
   name: "TrustRuntimeEvents",
@@ -27,20 +27,25 @@ const TrustRuntimeEventSlice = createSlice({
     },
 
     TrustRuntimeEventValueToggled(state, action) {
-      console.log("TrustRuntimeEvent TOGGLE")
-      console.warn(JSON.stringify(action))
-      const TrustRuntimeEvent:TrustRuntimeEvent = state.find((TrustRuntimeEvent) => TrustRuntimeEvent.id === action.payload.TrustRuntimeEventId);
+      console.log("TrustRuntimeEvent TOGGLE");
+      console.warn(JSON.stringify(action));
+      const TrustRuntimeEvent: TrustRuntimeEvent = state.find(
+        (TrustRuntimeEvent) =>
+          TrustRuntimeEvent.id === action.payload.TrustRuntimeEventId,
+      );
       if (TrustRuntimeEvent) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     TrustRuntimeEventpropertySet(state, action) {
-      const TrustRuntimeEvent = state.find((TrustRuntimeEvent) => TrustRuntimeEvent.id === action.payload.TrustRuntimeEventId);
+      const TrustRuntimeEvent = state.find(
+        (TrustRuntimeEvent) =>
+          TrustRuntimeEvent.id === action.payload.TrustRuntimeEventId,
+      );
       if (TrustRuntimeEvent) {
-      //  TrustRuntimeEvent[action.property] = action.payload[action.property];
+        //  TrustRuntimeEvent[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const TrustRuntimeEventSlice = createSlice({
 export const {
   TrustRuntimeEventAdded,
   TrustRuntimeEventValueToggled,
-  TrustRuntimeEventpropertySet
+  TrustRuntimeEventpropertySet,
 } = TrustRuntimeEventSlice.actions;
 export default TrustRuntimeEventSlice.reducer;

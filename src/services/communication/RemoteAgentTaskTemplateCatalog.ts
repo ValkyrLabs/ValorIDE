@@ -1,4 +1,8 @@
-export type RemoteAgentTaskTemplateId = "bugfix" | "refactor" | "docs" | "data-patch";
+export type RemoteAgentTaskTemplateId =
+  | "bugfix"
+  | "refactor"
+  | "docs"
+  | "data-patch";
 
 export interface RemoteAgentTaskTemplateField {
   key: string;
@@ -15,13 +19,17 @@ export interface RemoteAgentTaskTemplate {
   fields: RemoteAgentTaskTemplateField[];
 }
 
-export type RemoteAgentTaskTemplateInput = Record<string, string | number | boolean | null | undefined>;
+export type RemoteAgentTaskTemplateInput = Record<
+  string,
+  string | number | boolean | null | undefined
+>;
 
 const CATALOG: RemoteAgentTaskTemplate[] = [
   {
     id: "bugfix",
     label: "Bugfix",
-    description: "Investigate and fix a production or test failure with minimal risk.",
+    description:
+      "Investigate and fix a production or test failure with minimal risk.",
     promptTemplate:
       "Fix bug in {{area}}. Symptoms: {{symptoms}}. Repro: {{repro}}. Deliver: root-cause summary, code fix, and regression tests.",
     fields: [
@@ -33,12 +41,18 @@ const CATALOG: RemoteAgentTaskTemplate[] = [
   {
     id: "refactor",
     label: "Refactor",
-    description: "Improve maintainability while preserving behavior and adding safety checks.",
+    description:
+      "Improve maintainability while preserving behavior and adding safety checks.",
     promptTemplate:
       "Refactor {{area}} for {{goal}}. Constraints: no behavior changes, keep interfaces stable, add/update tests.",
     fields: [
       { key: "area", label: "Area", required: true },
-      { key: "goal", label: "Refactor goal", required: true, placeholder: "readability/perf/modularity" },
+      {
+        key: "goal",
+        label: "Refactor goal",
+        required: true,
+        placeholder: "readability/perf/modularity",
+      },
     ],
   },
   {
@@ -49,13 +63,19 @@ const CATALOG: RemoteAgentTaskTemplate[] = [
       "Update docs for {{topic}} targeted to {{audience}}. Include quickstart, pitfalls, and validation steps.",
     fields: [
       { key: "topic", label: "Topic", required: true },
-      { key: "audience", label: "Audience", required: true, placeholder: "new contributors" },
+      {
+        key: "audience",
+        label: "Audience",
+        required: true,
+        placeholder: "new contributors",
+      },
     ],
   },
   {
     id: "data-patch",
     label: "Data patch",
-    description: "Apply a safe data correction with validation and rollback plan.",
+    description:
+      "Apply a safe data correction with validation and rollback plan.",
     promptTemplate:
       "Prepare data patch for {{dataset}} to correct {{problem}}. Include dry-run verification and rollback notes.",
     fields: [
@@ -67,10 +87,16 @@ const CATALOG: RemoteAgentTaskTemplate[] = [
 
 export class RemoteAgentTaskTemplateCatalog {
   list(): RemoteAgentTaskTemplate[] {
-    return CATALOG.map((template) => ({ ...template, fields: template.fields.map((field) => ({ ...field })) }));
+    return CATALOG.map((template) => ({
+      ...template,
+      fields: template.fields.map((field) => ({ ...field })),
+    }));
   }
 
-  buildTask(templateId: RemoteAgentTaskTemplateId, input: RemoteAgentTaskTemplateInput): string {
+  buildTask(
+    templateId: RemoteAgentTaskTemplateId,
+    input: RemoteAgentTaskTemplateInput,
+  ): string {
     const template = CATALOG.find((item) => item.id === templateId);
     if (!template) {
       throw new Error(`Unknown remote agent task template: ${templateId}`);
@@ -81,14 +107,25 @@ export class RemoteAgentTaskTemplateCatalog {
         continue;
       }
       const value = input[field.key];
-      if (value === undefined || value === null || String(value).trim() === "") {
-        throw new Error(`Missing required field for ${templateId}: ${field.key}`);
+      if (
+        value === undefined ||
+        value === null ||
+        String(value).trim() === ""
+      ) {
+        throw new Error(
+          `Missing required field for ${templateId}: ${field.key}`,
+        );
       }
     }
 
-    return template.promptTemplate.replace(/{{\s*([\w-]+)\s*}}/g, (_, key: string) => {
-      const value = input[key];
-      return value === undefined || value === null ? "" : String(value).trim();
-    });
+    return template.promptTemplate.replace(
+      /{{\s*([\w-]+)\s*}}/g,
+      (_, key: string) => {
+        const value = input[key];
+        return value === undefined || value === null
+          ? ""
+          : String(value).trim();
+      },
+    );
   }
 }

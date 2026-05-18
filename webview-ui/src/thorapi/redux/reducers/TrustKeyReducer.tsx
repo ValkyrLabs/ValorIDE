@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { TrustKey } from '@thorapi/model/TrustKey';
+import { TrustKey } from "@thorapi/model/TrustKey";
 
 const TrustKeySlice = createSlice({
   name: "TrustKeys",
@@ -27,28 +27,28 @@ const TrustKeySlice = createSlice({
     },
 
     TrustKeyValueToggled(state, action) {
-      console.log("TrustKey TOGGLE")
-      console.warn(JSON.stringify(action))
-      const TrustKey:TrustKey = state.find((TrustKey) => TrustKey.id === action.payload.TrustKeyId);
+      console.log("TrustKey TOGGLE");
+      console.warn(JSON.stringify(action));
+      const TrustKey: TrustKey = state.find(
+        (TrustKey) => TrustKey.id === action.payload.TrustKeyId,
+      );
       if (TrustKey) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     TrustKeypropertySet(state, action) {
-      const TrustKey = state.find((TrustKey) => TrustKey.id === action.payload.TrustKeyId);
+      const TrustKey = state.find(
+        (TrustKey) => TrustKey.id === action.payload.TrustKeyId,
+      );
       if (TrustKey) {
-      //  TrustKey[action.property] = action.payload[action.property];
+        //  TrustKey[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  TrustKeyAdded,
-  TrustKeyValueToggled,
-  TrustKeypropertySet
-} = TrustKeySlice.actions;
+export const { TrustKeyAdded, TrustKeyValueToggled, TrustKeypropertySet } =
+  TrustKeySlice.actions;
 export default TrustKeySlice.reducer;

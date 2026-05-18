@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { ExecModuleIOConfig } from '@thorapi/model/ExecModuleIOConfig'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { ExecModuleIOConfig } from "@thorapi/model/ExecModuleIOConfig";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type ExecModuleIOConfigResponse = ExecModuleIOConfig[]
+type ExecModuleIOConfigResponse = ExecModuleIOConfig[];
 
-const toExecModuleIOConfigList = (result: unknown): ExecModuleIOConfigResponse => {
+const toExecModuleIOConfigList = (
+  result: unknown,
+): ExecModuleIOConfigResponse => {
   if (Array.isArray(result)) {
-    return result as ExecModuleIOConfigResponse
+    return result as ExecModuleIOConfigResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as ExecModuleIOConfigResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as ExecModuleIOConfigResponse)
+    : [];
+};
 
 export const ExecModuleIOConfigService = createApi({
-  reducerPath: 'ExecModuleIOConfig', // This should remain unique
+  reducerPath: "ExecModuleIOConfig", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['ExecModuleIOConfig'],
+  tagTypes: ["ExecModuleIOConfig"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getExecModuleIOConfigsPaged: build.query<ExecModuleIOConfigResponse, { page: number; size?: number; example?: Partial<ExecModuleIOConfig> }>({
+    getExecModuleIOConfigsPaged: build.query<
+      ExecModuleIOConfigResponse,
+      { page: number; size?: number; example?: Partial<ExecModuleIOConfig> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ExecModuleIOConfig?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ExecModuleIOConfig?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toExecModuleIOConfigList(result)
+        const rows = toExecModuleIOConfigList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ExecModuleIOConfig' as const, id })),
-          { type: 'ExecModuleIOConfig', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "ExecModuleIOConfig" as const, id })),
+          { type: "ExecModuleIOConfig", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getExecModuleIOConfigs: build.query<ExecModuleIOConfigResponse, { example?: Partial<ExecModuleIOConfig> } | void>({
+    getExecModuleIOConfigs: build.query<
+      ExecModuleIOConfigResponse,
+      { example?: Partial<ExecModuleIOConfig> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,112 @@ export const ExecModuleIOConfigService = createApi({
         return `ExecModuleIOConfig`;
       },
       providesTags: (result) => {
-        const rows = toExecModuleIOConfigList(result)
+        const rows = toExecModuleIOConfigList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ExecModuleIOConfig' as const, id })),
-          { type: 'ExecModuleIOConfig', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "ExecModuleIOConfig" as const, id })),
+          { type: "ExecModuleIOConfig", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addExecModuleIOConfig: build.mutation<ExecModuleIOConfig, Partial<ExecModuleIOConfig>>({
+    addExecModuleIOConfig: build.mutation<
+      ExecModuleIOConfig,
+      Partial<ExecModuleIOConfig>
+    >({
       query: (body) => ({
         url: `ExecModuleIOConfig`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'ExecModuleIOConfig', id: 'LIST' }],
+      invalidatesTags: [{ type: "ExecModuleIOConfig", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getExecModuleIOConfig: build.query<ExecModuleIOConfig, string>({
       query: (id) => `ExecModuleIOConfig/${id}`,
-      providesTags: (result, error, id) => [{ type: 'ExecModuleIOConfig', id }],
+      providesTags: (result, error, id) => [{ type: "ExecModuleIOConfig", id }],
     }),
 
     // 5) Update
-    updateExecModuleIOConfig: build.mutation<void, Pick<ExecModuleIOConfig, 'id'> & Partial<ExecModuleIOConfig>>({
+    updateExecModuleIOConfig: build.mutation<
+      void,
+      Pick<ExecModuleIOConfig, "id"> & Partial<ExecModuleIOConfig>
+    >({
       query: ({ id, ...patch }) => ({
         url: `ExecModuleIOConfig/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            ExecModuleIOConfigService.util.updateQueryData('getExecModuleIOConfig', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            ExecModuleIOConfigService.util.updateQueryData(
+              "getExecModuleIOConfig",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<ExecModuleIOConfig, 'id'>) => [
-        { type: 'ExecModuleIOConfig', id },
-        { type: 'ExecModuleIOConfig', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<ExecModuleIOConfig, "id">,
+      ) => [
+        { type: "ExecModuleIOConfig", id },
+        { type: "ExecModuleIOConfig", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteExecModuleIOConfig: build.mutation<{ success: boolean; id: string }, number>({
+    deleteExecModuleIOConfig: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `ExecModuleIOConfig/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'ExecModuleIOConfig', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "ExecModuleIOConfig", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteExecModuleIOConfigCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteExecModuleIOConfigCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `ExecModuleIOConfig/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ExecModuleIOConfig', id }, { type: 'ExecModuleIOConfig', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "ExecModuleIOConfig", id },
+        { type: "ExecModuleIOConfig", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetExecModuleIOConfigsPagedQuery`
 export const {
-  useGetExecModuleIOConfigsPagedQuery,     // immediate fetch
+  useGetExecModuleIOConfigsPagedQuery, // immediate fetch
   useLazyGetExecModuleIOConfigsPagedQuery, // lazy fetch
   useGetExecModuleIOConfigQuery,
   useGetExecModuleIOConfigsQuery,
@@ -150,4 +190,4 @@ export const {
   useUpdateExecModuleIOConfigMutation,
   useDeleteExecModuleIOConfigMutation,
   useDeleteExecModuleIOConfigCascadeMutation,
-} = ExecModuleIOConfigService
+} = ExecModuleIOConfigService;

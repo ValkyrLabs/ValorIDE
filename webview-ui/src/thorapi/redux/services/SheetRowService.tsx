@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { SheetRow } from '@thorapi/model/SheetRow'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { SheetRow } from "@thorapi/model/SheetRow";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type SheetRowResponse = SheetRow[]
+type SheetRowResponse = SheetRow[];
 
 const toSheetRowList = (result: unknown): SheetRowResponse => {
   if (Array.isArray(result)) {
-    return result as SheetRowResponse
+    return result as SheetRowResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as SheetRowResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as SheetRowResponse) : [];
+};
 
 export const SheetRowService = createApi({
-  reducerPath: 'SheetRow', // This should remain unique
+  reducerPath: "SheetRow", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['SheetRow'],
+  tagTypes: ["SheetRow"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSheetRowsPaged: build.query<SheetRowResponse, { page: number; size?: number; example?: Partial<SheetRow> }>({
+    getSheetRowsPaged: build.query<
+      SheetRowResponse,
+      { page: number; size?: number; example?: Partial<SheetRow> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SheetRow?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SheetRow?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toSheetRowList(result)
+        const rows = toSheetRowList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'SheetRow' as const, id })),
-          { type: 'SheetRow', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "SheetRow" as const, id })),
+          { type: "SheetRow", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSheetRows: build.query<SheetRowResponse, { example?: Partial<SheetRow> } | void>({
+    getSheetRows: build.query<
+      SheetRowResponse,
+      { example?: Partial<SheetRow> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const SheetRowService = createApi({
         return `SheetRow`;
       },
       providesTags: (result) => {
-        const rows = toSheetRowList(result)
+        const rows = toSheetRowList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'SheetRow' as const, id })),
-          { type: 'SheetRow', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "SheetRow" as const, id })),
+          { type: "SheetRow", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,42 +87,45 @@ export const SheetRowService = createApi({
     addSheetRow: build.mutation<SheetRow, Partial<SheetRow>>({
       query: (body) => ({
         url: `SheetRow`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'SheetRow', id: 'LIST' }],
+      invalidatesTags: [{ type: "SheetRow", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getSheetRow: build.query<SheetRow, string>({
       query: (id) => `SheetRow/${id}`,
-      providesTags: (result, error, id) => [{ type: 'SheetRow', id }],
+      providesTags: (result, error, id) => [{ type: "SheetRow", id }],
     }),
 
     // 5) Update
-    updateSheetRow: build.mutation<void, Pick<SheetRow, 'id'> & Partial<SheetRow>>({
+    updateSheetRow: build.mutation<
+      void,
+      Pick<SheetRow, "id"> & Partial<SheetRow>
+    >({
       query: ({ id, ...patch }) => ({
         url: `SheetRow/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            SheetRowService.util.updateQueryData('getSheetRow', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            SheetRowService.util.updateQueryData("getSheetRow", id, (draft) => {
+              Object.assign(draft, patch);
+            }),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<SheetRow, 'id'>) => [
-        { type: 'SheetRow', id },
-        { type: 'SheetRow', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<SheetRow, "id">) => [
+        { type: "SheetRow", id },
+        { type: "SheetRow", id: "LIST" },
       ],
     }),
 
@@ -120,29 +134,35 @@ export const SheetRowService = createApi({
       query(id) {
         return {
           url: `SheetRow/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'SheetRow', id }],
+      invalidatesTags: (result, error, id) => [{ type: "SheetRow", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSheetRowCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteSheetRowCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `SheetRow/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'SheetRow', id }, { type: 'SheetRow', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "SheetRow", id },
+        { type: "SheetRow", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetSheetRowsPagedQuery`
 export const {
-  useGetSheetRowsPagedQuery,     // immediate fetch
+  useGetSheetRowsPagedQuery, // immediate fetch
   useLazyGetSheetRowsPagedQuery, // lazy fetch
   useGetSheetRowQuery,
   useGetSheetRowsQuery,
@@ -150,4 +170,4 @@ export const {
   useUpdateSheetRowMutation,
   useDeleteSheetRowMutation,
   useDeleteSheetRowCascadeMutation,
-} = SheetRowService
+} = SheetRowService;

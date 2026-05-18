@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_LOGIN_REQUEST,
-    FETCH_LOGIN_REQUEST,
-    LIST_LOGIN_REQUEST,
-    UPDATE_LOGIN_REQUEST,
-    DELETE_LOGIN_REQUEST,
-
-    addLoginFailure,
-    addLoginSuccess,
-
-    fetchLoginFailure,
-    fetchLoginSuccess,
-    
-    listLoginFailure,
-    listLoginSuccess,
-
-    updateLoginFailure,
-    updateLoginSuccess,
-    
-    deleteLoginFailure,
-    deleteLoginSuccess,
-    
-} from '../actions/LoginApiAction';
+  ADD_LOGIN_REQUEST,
+  FETCH_LOGIN_REQUEST,
+  LIST_LOGIN_REQUEST,
+  UPDATE_LOGIN_REQUEST,
+  DELETE_LOGIN_REQUEST,
+  addLoginFailure,
+  addLoginSuccess,
+  fetchLoginFailure,
+  fetchLoginSuccess,
+  listLoginFailure,
+  listLoginSuccess,
+  updateLoginFailure,
+  updateLoginSuccess,
+  deleteLoginFailure,
+  deleteLoginSuccess,
+} from "../actions/LoginApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Login
 */
 
-
-
-export const LoginMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("Login MIDDLEWARE: " + JSON.stringify(action) )
+export const LoginMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Login MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

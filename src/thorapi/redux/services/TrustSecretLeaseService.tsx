@@ -13,47 +13,60 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { TrustSecretLease } from '@thorapi/model/TrustSecretLease'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { TrustSecretLease } from "@thorapi/model/TrustSecretLease";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type TrustSecretLeaseResponse = TrustSecretLease[]
+type TrustSecretLeaseResponse = TrustSecretLease[];
 
 const toTrustSecretLeaseList = (result: unknown): TrustSecretLeaseResponse => {
   if (Array.isArray(result)) {
-    return result as TrustSecretLeaseResponse
+    return result as TrustSecretLeaseResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as TrustSecretLeaseResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as TrustSecretLeaseResponse)
+    : [];
+};
 
 export const TrustSecretLeaseService = createApi({
-  reducerPath: 'TrustSecretLease', // This should remain unique
+  reducerPath: "TrustSecretLease", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['TrustSecretLease'],
+  tagTypes: ["TrustSecretLease"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getTrustSecretLeasesPaged: build.query<TrustSecretLeaseResponse, { page: number; size?: number; example?: Partial<TrustSecretLease> }>({
+    getTrustSecretLeasesPaged: build.query<
+      TrustSecretLeaseResponse,
+      { page: number; size?: number; example?: Partial<TrustSecretLease> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `TrustSecretLease?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `TrustSecretLease?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toTrustSecretLeaseList(result)
+        const rows = toTrustSecretLeaseList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'TrustSecretLease' as const, id })),
-          { type: 'TrustSecretLease', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "TrustSecretLease" as const, id })),
+          { type: "TrustSecretLease", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getTrustSecretLeases: build.query<TrustSecretLeaseResponse, { example?: Partial<TrustSecretLease> } | void>({
+    getTrustSecretLeases: build.query<
+      TrustSecretLeaseResponse,
+      { example?: Partial<TrustSecretLease> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +75,112 @@ export const TrustSecretLeaseService = createApi({
         return `TrustSecretLease`;
       },
       providesTags: (result) => {
-        const rows = toTrustSecretLeaseList(result)
+        const rows = toTrustSecretLeaseList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'TrustSecretLease' as const, id })),
-          { type: 'TrustSecretLease', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "TrustSecretLease" as const, id })),
+          { type: "TrustSecretLease", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addTrustSecretLease: build.mutation<TrustSecretLease, Partial<TrustSecretLease>>({
+    addTrustSecretLease: build.mutation<
+      TrustSecretLease,
+      Partial<TrustSecretLease>
+    >({
       query: (body) => ({
         url: `TrustSecretLease`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'TrustSecretLease', id: 'LIST' }],
+      invalidatesTags: [{ type: "TrustSecretLease", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getTrustSecretLease: build.query<TrustSecretLease, string>({
       query: (id) => `TrustSecretLease/${id}`,
-      providesTags: (result, error, id) => [{ type: 'TrustSecretLease', id }],
+      providesTags: (result, error, id) => [{ type: "TrustSecretLease", id }],
     }),
 
     // 5) Update
-    updateTrustSecretLease: build.mutation<void, Pick<TrustSecretLease, 'id'> & Partial<TrustSecretLease>>({
+    updateTrustSecretLease: build.mutation<
+      void,
+      Pick<TrustSecretLease, "id"> & Partial<TrustSecretLease>
+    >({
       query: ({ id, ...patch }) => ({
         url: `TrustSecretLease/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            TrustSecretLeaseService.util.updateQueryData('getTrustSecretLease', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            TrustSecretLeaseService.util.updateQueryData(
+              "getTrustSecretLease",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<TrustSecretLease, 'id'>) => [
-        { type: 'TrustSecretLease', id },
-        { type: 'TrustSecretLease', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<TrustSecretLease, "id">,
+      ) => [
+        { type: "TrustSecretLease", id },
+        { type: "TrustSecretLease", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteTrustSecretLease: build.mutation<{ success: boolean; id: string }, number>({
+    deleteTrustSecretLease: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `TrustSecretLease/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'TrustSecretLease', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "TrustSecretLease", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteTrustSecretLeaseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteTrustSecretLeaseCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `TrustSecretLease/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'TrustSecretLease', id }, { type: 'TrustSecretLease', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "TrustSecretLease", id },
+        { type: "TrustSecretLease", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetTrustSecretLeasesPagedQuery`
 export const {
-  useGetTrustSecretLeasesPagedQuery,     // immediate fetch
+  useGetTrustSecretLeasesPagedQuery, // immediate fetch
   useLazyGetTrustSecretLeasesPagedQuery, // lazy fetch
   useGetTrustSecretLeaseQuery,
   useGetTrustSecretLeasesQuery,
@@ -150,4 +188,4 @@ export const {
   useUpdateTrustSecretLeaseMutation,
   useDeleteTrustSecretLeaseMutation,
   useDeleteTrustSecretLeaseCascadeMutation,
-} = TrustSecretLeaseService
+} = TrustSecretLeaseService;

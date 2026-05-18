@@ -19,20 +19,33 @@ Description: SwarmCommandResponse
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, SwarmCommandResponse } from '@thorapi/model';
-import { useGetSwarmCommandResponsesQuery, useAddSwarmCommandResponseMutation, useUpdateSwarmCommandResponseMutation } from '../../services/SwarmCommandResponseService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, SwarmCommandResponse } from "@thorapi/model";
+import {
+  useGetSwarmCommandResponsesQuery,
+  useAddSwarmCommandResponseMutation,
+  useUpdateSwarmCommandResponseMutation,
+} from "../../services/SwarmCommandResponseService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const SwarmCommandResponseChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetSwarmCommandResponsesQuery();
+  const { data: initialData = [], isLoading } =
+    useGetSwarmCommandResponsesQuery();
 
   const [data, setData] = useState<SwarmCommandResponse[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<SwarmCommandResponse>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +63,9 @@ const SwarmCommandResponseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +73,15 @@ const SwarmCommandResponseChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((swarmcommandresponse: DataObject) => [swarmcommandresponse])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((swarmcommandresponse: DataObject) => [
+            swarmcommandresponse,
+          ])}
+        />
+      )}
     </>
   );
 };

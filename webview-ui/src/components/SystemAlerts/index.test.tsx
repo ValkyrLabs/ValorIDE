@@ -73,7 +73,6 @@ const baseExtensionState = {
   userInfo: { id: "user-123" },
 };
 
-
 describe("SystemAlerts - Buy Credits modal visibility", () => {
   beforeEach(async () => {
     mockUseExtensionState.mockReturnValue(baseExtensionState);

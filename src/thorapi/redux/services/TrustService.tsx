@@ -13,42 +13,50 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { Trust } from '@thorapi/model/Trust'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { Trust } from "@thorapi/model/Trust";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type TrustResponse = Trust[]
+type TrustResponse = Trust[];
 
 const toTrustList = (result: unknown): TrustResponse => {
   if (Array.isArray(result)) {
-    return result as TrustResponse
+    return result as TrustResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as TrustResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as TrustResponse) : [];
+};
 
 export const TrustService = createApi({
-  reducerPath: 'Trust', // This should remain unique
+  reducerPath: "Trust", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['Trust'],
+  tagTypes: ["Trust"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getTrustsPaged: build.query<TrustResponse, { page: number; size?: number; example?: Partial<Trust> }>({
+    getTrustsPaged: build.query<
+      TrustResponse,
+      { page: number; size?: number; example?: Partial<Trust> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Trust?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Trust?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toTrustList(result)
+        const rows = toTrustList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'Trust' as const, id })),
-          { type: 'Trust', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "Trust" as const, id })),
+          { type: "Trust", id: `PAGE_${page}` },
+        ];
       },
     }),
 
@@ -62,13 +70,13 @@ export const TrustService = createApi({
         return `Trust`;
       },
       providesTags: (result) => {
-        const rows = toTrustList(result)
+        const rows = toTrustList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'Trust' as const, id })),
-          { type: 'Trust', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "Trust" as const, id })),
+          { type: "Trust", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,42 +84,42 @@ export const TrustService = createApi({
     addTrust: build.mutation<Trust, Partial<Trust>>({
       query: (body) => ({
         url: `Trust`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'Trust', id: 'LIST' }],
+      invalidatesTags: [{ type: "Trust", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getTrust: build.query<Trust, string>({
       query: (id) => `Trust/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Trust', id }],
+      providesTags: (result, error, id) => [{ type: "Trust", id }],
     }),
 
     // 5) Update
-    updateTrust: build.mutation<void, Pick<Trust, 'id'> & Partial<Trust>>({
+    updateTrust: build.mutation<void, Pick<Trust, "id"> & Partial<Trust>>({
       query: ({ id, ...patch }) => ({
         url: `Trust/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            TrustService.util.updateQueryData('getTrust', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            TrustService.util.updateQueryData("getTrust", id, (draft) => {
+              Object.assign(draft, patch);
+            }),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<Trust, 'id'>) => [
-        { type: 'Trust', id },
-        { type: 'Trust', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<Trust, "id">) => [
+        { type: "Trust", id },
+        { type: "Trust", id: "LIST" },
       ],
     }),
 
@@ -120,29 +128,35 @@ export const TrustService = createApi({
       query(id) {
         return {
           url: `Trust/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'Trust', id }],
+      invalidatesTags: (result, error, id) => [{ type: "Trust", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteTrustCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteTrustCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `Trust/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Trust', id }, { type: 'Trust', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Trust", id },
+        { type: "Trust", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetTrustsPagedQuery`
 export const {
-  useGetTrustsPagedQuery,     // immediate fetch
+  useGetTrustsPagedQuery, // immediate fetch
   useLazyGetTrustsPagedQuery, // lazy fetch
   useGetTrustQuery,
   useGetTrustsQuery,
@@ -150,4 +164,4 @@ export const {
   useUpdateTrustMutation,
   useDeleteTrustMutation,
   useDeleteTrustCascadeMutation,
-} = TrustService
+} = TrustService;

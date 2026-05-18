@@ -18,353 +18,421 @@ Template file: typescript-redux-query/apis.mustache
 Description: SwarmApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    Swarm,
-    SwarmFromJSON,
-    SwarmToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { Swarm, SwarmFromJSON, SwarmToJSON } from "../model";
 
 export interface DeleteSwarmApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetSwarmApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetSwarmListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface PatchSwarmByIdApiRequest {
-    id: string;
-    swarm: Swarm;
+  id: string;
+  swarm: Swarm;
 }
 
 export interface PostSwarmApiRequest {
-    swarm: Swarm;
+  swarm: Swarm;
 }
 
 export interface UpdateSwarmApiRequest {
-    id: string;
-    swarm: Swarm;
+  id: string;
+  swarm: Swarm;
 }
-
 
 /**
  * Deletes a specific Swarm.
  * Delete a Swarm.
  */
-function deleteSwarmRaw<T>(requestParameters: DeleteSwarmApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteSwarm.');
-    }
+function deleteSwarmRaw<T>(
+  requestParameters: DeleteSwarmApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteSwarm.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Swarm/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Swarm/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific Swarm.
-* Delete a Swarm.
-*/
-export function deleteSwarm<T>(requestParameters: DeleteSwarmApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteSwarmRaw(requestParameters, requestConfig);
+ * Deletes a specific Swarm.
+ * Delete a Swarm.
+ */
+export function deleteSwarm<T>(
+  requestParameters: DeleteSwarmApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteSwarmRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single Swarm for a specific uid.
  * Retrieve a single Swarm
  */
-function getSwarmRaw<T>(requestParameters: GetSwarmApiRequest, requestConfig: runtime.TypedQueryConfig<T, Swarm> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getSwarm.');
-    }
+function getSwarmRaw<T>(
+  requestParameters: GetSwarmApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Swarm> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getSwarm.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Swarm/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SwarmFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Swarm/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SwarmFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single Swarm for a specific uid.
-* Retrieve a single Swarm
-*/
-export function getSwarm<T>(requestParameters: GetSwarmApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Swarm>): QueryConfig<T> {
-    return getSwarmRaw(requestParameters, requestConfig);
+ * Retrieves a single Swarm for a specific uid.
+ * Retrieve a single Swarm
+ */
+export function getSwarm<T>(
+  requestParameters: GetSwarmApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Swarm>,
+): QueryConfig<T> {
+  return getSwarmRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Swarms.
  * Retrieve a list of Swarms
  */
-function getSwarmListRaw<T>(requestParameters: GetSwarmListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<Swarm>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getSwarmListRaw<T>(
+  requestParameters: GetSwarmListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<Swarm>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Swarm`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(SwarmFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Swarm`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(SwarmFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of Swarms.
-* Retrieve a list of Swarms
-*/
-export function getSwarmList<T>(requestParameters: GetSwarmListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Swarm>>): QueryConfig<T> {
-    return getSwarmListRaw(requestParameters, requestConfig);
+ * Retrieves a list of Swarms.
+ * Retrieve a list of Swarms
+ */
+export function getSwarmList<T>(
+  requestParameters: GetSwarmListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<Swarm>>,
+): QueryConfig<T> {
+  return getSwarmListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing Swarm.
  * Partially update an existing Swarm
  */
-function patchSwarmByIdRaw<T>(requestParameters: PatchSwarmByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Swarm> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchSwarmById.');
-    }
+function patchSwarmByIdRaw<T>(
+  requestParameters: PatchSwarmByIdApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Swarm> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling patchSwarmById.",
+    );
+  }
 
-    if (requestParameters.swarm === null || requestParameters.swarm === undefined) {
-        throw new runtime.RequiredError('swarm','Required parameter requestParameters.swarm was null or undefined when calling patchSwarmById.');
-    }
+  if (
+    requestParameters.swarm === null ||
+    requestParameters.swarm === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "swarm",
+      "Required parameter requestParameters.swarm was null or undefined when calling patchSwarmById.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/merge-patch+json";
 
-    headerParameters['Content-Type'] = 'application/merge-patch+json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Swarm/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PATCH",
+      headers: headerParameters,
+    },
+    body: queryParameters || SwarmToJSON(requestParameters.swarm),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SwarmFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Swarm/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PATCH',
-            headers: headerParameters,
-        },
-        body: queryParameters || SwarmToJSON(requestParameters.swarm),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SwarmFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing Swarm.
-* Partially update an existing Swarm
-*/
-export function patchSwarmById<T>(requestParameters: PatchSwarmByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Swarm>): QueryConfig<T> {
-    return patchSwarmByIdRaw(requestParameters, requestConfig);
+ * Updates an existing Swarm.
+ * Partially update an existing Swarm
+ */
+export function patchSwarmById<T>(
+  requestParameters: PatchSwarmByIdApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Swarm>,
+): QueryConfig<T> {
+  return patchSwarmByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new Swarm.
  * Create a new Swarm
  */
-function postSwarmRaw<T>(requestParameters: PostSwarmApiRequest, requestConfig: runtime.TypedQueryConfig<T, Swarm> = {}): QueryConfig<T> {
-    if (requestParameters.swarm === null || requestParameters.swarm === undefined) {
-        throw new runtime.RequiredError('swarm','Required parameter requestParameters.swarm was null or undefined when calling postSwarm.');
-    }
+function postSwarmRaw<T>(
+  requestParameters: PostSwarmApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Swarm> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.swarm === null ||
+    requestParameters.swarm === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "swarm",
+      "Required parameter requestParameters.swarm was null or undefined when calling postSwarm.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Swarm`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || SwarmToJSON(requestParameters.swarm),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SwarmFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Swarm`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || SwarmToJSON(requestParameters.swarm),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SwarmFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new Swarm.
-* Create a new Swarm
-*/
-export function postSwarm<T>(requestParameters: PostSwarmApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Swarm>): QueryConfig<T> {
-    return postSwarmRaw(requestParameters, requestConfig);
+ * Creates a new Swarm.
+ * Create a new Swarm
+ */
+export function postSwarm<T>(
+  requestParameters: PostSwarmApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Swarm>,
+): QueryConfig<T> {
+  return postSwarmRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing Swarm.
  * Update an existing Swarm
  */
-function updateSwarmRaw<T>(requestParameters: UpdateSwarmApiRequest, requestConfig: runtime.TypedQueryConfig<T, Swarm> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateSwarm.');
-    }
+function updateSwarmRaw<T>(
+  requestParameters: UpdateSwarmApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Swarm> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateSwarm.",
+    );
+  }
 
-    if (requestParameters.swarm === null || requestParameters.swarm === undefined) {
-        throw new runtime.RequiredError('swarm','Required parameter requestParameters.swarm was null or undefined when calling updateSwarm.');
-    }
+  if (
+    requestParameters.swarm === null ||
+    requestParameters.swarm === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "swarm",
+      "Required parameter requestParameters.swarm was null or undefined when calling updateSwarm.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Swarm/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || SwarmToJSON(requestParameters.swarm),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SwarmFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Swarm/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || SwarmToJSON(requestParameters.swarm),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SwarmFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing Swarm.
-* Update an existing Swarm
-*/
-export function updateSwarm<T>(requestParameters: UpdateSwarmApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Swarm>): QueryConfig<T> {
-    return updateSwarmRaw(requestParameters, requestConfig);
+ * Updates an existing Swarm.
+ * Update an existing Swarm
+ */
+export function updateSwarm<T>(
+  requestParameters: UpdateSwarmApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Swarm>,
+): QueryConfig<T> {
+  return updateSwarmRaw(requestParameters, requestConfig);
 }
-

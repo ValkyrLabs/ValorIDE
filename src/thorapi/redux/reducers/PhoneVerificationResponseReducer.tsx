@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { PhoneVerificationResponse } from '@thorapi/model/PhoneVerificationResponse';
+import { PhoneVerificationResponse } from "@thorapi/model/PhoneVerificationResponse";
 
 const PhoneVerificationResponseSlice = createSlice({
   name: "PhoneVerificationResponses",
@@ -27,20 +27,27 @@ const PhoneVerificationResponseSlice = createSlice({
     },
 
     PhoneVerificationResponseValueToggled(state, action) {
-      console.log("PhoneVerificationResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const PhoneVerificationResponse:PhoneVerificationResponse = state.find((PhoneVerificationResponse) => PhoneVerificationResponse.id === action.payload.PhoneVerificationResponseId);
+      console.log("PhoneVerificationResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const PhoneVerificationResponse: PhoneVerificationResponse = state.find(
+        (PhoneVerificationResponse) =>
+          PhoneVerificationResponse.id ===
+          action.payload.PhoneVerificationResponseId,
+      );
       if (PhoneVerificationResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     PhoneVerificationResponsepropertySet(state, action) {
-      const PhoneVerificationResponse = state.find((PhoneVerificationResponse) => PhoneVerificationResponse.id === action.payload.PhoneVerificationResponseId);
+      const PhoneVerificationResponse = state.find(
+        (PhoneVerificationResponse) =>
+          PhoneVerificationResponse.id ===
+          action.payload.PhoneVerificationResponseId,
+      );
       if (PhoneVerificationResponse) {
-      //  PhoneVerificationResponse[action.property] = action.payload[action.property];
+        //  PhoneVerificationResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const PhoneVerificationResponseSlice = createSlice({
 export const {
   PhoneVerificationResponseAdded,
   PhoneVerificationResponseValueToggled,
-  PhoneVerificationResponsepropertySet
+  PhoneVerificationResponsepropertySet,
 } = PhoneVerificationResponseSlice.actions;
 export default PhoneVerificationResponseSlice.reducer;

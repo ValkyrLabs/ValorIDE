@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,137 +36,149 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface MediaObject
  */
-export type MediaObject  = DataObject & {
-    /**
-     * 
-     * @type {string}
-     * @memberof MediaObject
-     */
-    sheetId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof MediaObject
-     */
-    type?: MediaObjectTypeEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof MediaObject
-     */
-    url?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof MediaObject
-     */
-    positionRow?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof MediaObject
-     */
-    positionCol?: number;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof MediaObject
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof MediaObject
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof MediaObject
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof MediaObject
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof MediaObject
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof MediaObject
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof MediaObject
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof MediaObject
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof MediaObject
-     */
-    trashed?: boolean;
-}
+export type MediaObject = DataObject & {
+  /**
+   *
+   * @type {string}
+   * @memberof MediaObject
+   */
+  sheetId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof MediaObject
+   */
+  type?: MediaObjectTypeEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof MediaObject
+   */
+  url?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof MediaObject
+   */
+  positionRow?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof MediaObject
+   */
+  positionCol?: number;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof MediaObject
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof MediaObject
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof MediaObject
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof MediaObject
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof MediaObject
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof MediaObject
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof MediaObject
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof MediaObject
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof MediaObject
+   */
+  trashed?: boolean;
+};
 
 export function MediaObjectFromJSON(json: any): MediaObject {
-    return {
-        ...DataObjectFromJSON(json),
-        'sheetId': !exists(json, 'sheetId') ? undefined : json['sheetId'],
-        'type': !exists(json, 'type') ? undefined : json['type'],
-        'url': !exists(json, 'url') ? undefined : json['url'],
-        'positionRow': !exists(json, 'position:-row') ? undefined : json['position:-row'],
-        'positionCol': !exists(json, 'position-col') ? undefined : json['position-col'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
+    type: !exists(json, "type") ? undefined : json["type"],
+    url: !exists(json, "url") ? undefined : json["url"],
+    positionRow: !exists(json, "position:-row")
+      ? undefined
+      : json["position:-row"],
+    positionCol: !exists(json, "position-col")
+      ? undefined
+      : json["position-col"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function MediaObjectToJSON(value?: MediaObject): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'sheetId': value.sheetId,
-        'type': value.type,
-        'url': value.url,
-        'position:-row': value.positionRow,
-        'position-col': value.positionCol,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    sheetId: value.sheetId,
+    type: value.type,
+    url: value.url,
+    "position:-row": value.positionRow,
+    "position-col": value.positionCol,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum MediaObjectTypeEnum {
-    MEDIAIMAGE = 'image',
-    MEDIAAUDIO = 'audio',
-    MEDIAVIDEO = 'video',
-    MEDIASHAPE = 'shape'
+  MEDIAIMAGE = "image",
+  MEDIAAUDIO = "audio",
+  MEDIAVIDEO = "video",
+  MEDIASHAPE = "shape",
 }
-
-

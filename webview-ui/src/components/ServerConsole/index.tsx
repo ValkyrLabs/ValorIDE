@@ -34,7 +34,10 @@ import SystemAlerts from "@thorapi/components/SystemAlerts";
 import "./ServerConsole.css";
 import { FaPaperPlane } from "react-icons/fa";
 import CoolButton from "../CoolButton";
-import { deriveWsUrlFromHost, getValkyraiHost } from "@thorapi/utils/valkyraiHost";
+import {
+  deriveWsUrlFromHost,
+  getValkyraiHost,
+} from "@thorapi/utils/valkyraiHost";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 
 const { Client } = StompJs;
@@ -176,12 +179,17 @@ const ServerConsole = () => {
         if (!Array.isArray(userAny.roleList)) userAny.roleList = [];
         if (!Array.isArray(userAny.authorityList)) userAny.authorityList = [];
         if (!Array.isArray(userAny.addresses)) userAny.addresses = [];
-        if (!Array.isArray(userAny.userPreferences)) userAny.userPreferences = [];
-        if (!Array.isArray(userAny.phoneVerifications)) userAny.phoneVerifications = [];
+        if (!Array.isArray(userAny.userPreferences))
+          userAny.userPreferences = [];
+        if (!Array.isArray(userAny.phoneVerifications))
+          userAny.phoneVerifications = [];
         if (!Array.isArray(userAny.loginAudits)) userAny.loginAudits = [];
       }
     } catch (e) {
-      console.warn("ServerConsole: Failed to sanitize user object for send message:", e);
+      console.warn(
+        "ServerConsole: Failed to sanitize user object for send message:",
+        e,
+      );
     }
 
     stompClient.publish({
@@ -238,7 +246,7 @@ const ServerConsole = () => {
                   size="sm"
                   className="control-btn"
                   onClick={() => setIsCompact(!isCompact)}
-                // title={isCompact ? 'Disable compact' : 'Enable compact'}
+                  // title={isCompact ? 'Disable compact' : 'Enable compact'}
                 >
                   <FiList size={14} />
                 </CoolButton>
@@ -247,7 +255,7 @@ const ServerConsole = () => {
                   size="sm"
                   className="control-btn"
                   onClick={() => setIsMaximized(!isMaximized)}
-                // title={isMaximized ? 'Minimize' : 'Maximize'}
+                  // title={isMaximized ? 'Minimize' : 'Maximize'}
                 >
                   {isMaximized ? (
                     <FiMinimize2 size={14} />

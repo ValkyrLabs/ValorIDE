@@ -19,20 +19,32 @@ Description: OasSecurityScheme
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, OasSecurityScheme } from '@thorapi/model';
-import { useGetOasSecuritySchemesQuery, useAddOasSecuritySchemeMutation, useUpdateOasSecuritySchemeMutation } from '../../services/OasSecuritySchemeService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, OasSecurityScheme } from "@thorapi/model";
+import {
+  useGetOasSecuritySchemesQuery,
+  useAddOasSecuritySchemeMutation,
+  useUpdateOasSecuritySchemeMutation,
+} from "../../services/OasSecuritySchemeService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const OasSecuritySchemeChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetOasSecuritySchemesQuery();
 
   const [data, setData] = useState<OasSecurityScheme[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<OasSecurityScheme>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const OasSecuritySchemeChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,15 @@ const OasSecuritySchemeChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((oassecurityscheme: DataObject) => [oassecurityscheme])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((oassecurityscheme: DataObject) => [
+            oassecurityscheme,
+          ])}
+        />
+      )}
     </>
   );
 };

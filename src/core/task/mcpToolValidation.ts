@@ -71,10 +71,14 @@ const getMissingRequiredArgs = (
     return [];
   }
 
-  const required = Array.isArray((inputSchema as { required?: unknown }).required)
+  const required = Array.isArray(
+    (inputSchema as { required?: unknown }).required,
+  )
     ? ((inputSchema as { required?: unknown }).required as unknown[])
     : [];
-  const requiredKeys = required.filter((key) => typeof key === "string") as string[];
+  const requiredKeys = required.filter(
+    (key) => typeof key === "string",
+  ) as string[];
   if (requiredKeys.length === 0) {
     return [];
   }

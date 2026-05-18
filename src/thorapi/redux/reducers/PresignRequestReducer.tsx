@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { PresignRequest } from '@thorapi/model/PresignRequest';
+import { PresignRequest } from "@thorapi/model/PresignRequest";
 
 const PresignRequestSlice = createSlice({
   name: "PresignRequests",
@@ -27,20 +27,25 @@ const PresignRequestSlice = createSlice({
     },
 
     PresignRequestValueToggled(state, action) {
-      console.log("PresignRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const PresignRequest:PresignRequest = state.find((PresignRequest) => PresignRequest.id === action.payload.PresignRequestId);
+      console.log("PresignRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const PresignRequest: PresignRequest = state.find(
+        (PresignRequest) =>
+          PresignRequest.id === action.payload.PresignRequestId,
+      );
       if (PresignRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     PresignRequestpropertySet(state, action) {
-      const PresignRequest = state.find((PresignRequest) => PresignRequest.id === action.payload.PresignRequestId);
+      const PresignRequest = state.find(
+        (PresignRequest) =>
+          PresignRequest.id === action.payload.PresignRequestId,
+      );
       if (PresignRequest) {
-      //  PresignRequest[action.property] = action.payload[action.property];
+        //  PresignRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const PresignRequestSlice = createSlice({
 export const {
   PresignRequestAdded,
   PresignRequestValueToggled,
-  PresignRequestpropertySet
+  PresignRequestpropertySet,
 } = PresignRequestSlice.actions;
 export default PresignRequestSlice.reducer;

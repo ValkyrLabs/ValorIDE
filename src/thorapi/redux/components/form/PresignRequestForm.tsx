@@ -13,32 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  PresignRequest,
-  PresignRequestDispositionEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddPresignRequestMutation } from '../../services/PresignRequestService';
+import { PresignRequest, PresignRequestDispositionEnum } from "@thorapi/model";
+
+import { useAddPresignRequestMutation } from "../../services/PresignRequestService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -62,32 +67,35 @@ Request to generate a presigned download token
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const DispositionValidation = () => {
-  return [
-    'inline',
-    'attachment',
-  ];
+  return ["inline", "attachment"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        ttlSeconds: asNumber(Yup.number().integer().typeError("ttlSeconds must be a number")),
-      disposition: Yup.mixed()
-        .oneOf(DispositionValidation(), "Invalid value for disposition")
-        ,
-        downloadFilename: Yup.string(),
-        trashed: Yup.boolean(),
+  ttlSeconds: asNumber(
+    Yup.number().integer().typeError("ttlSeconds must be a number"),
+  ),
+  disposition: Yup.mixed().oneOf(
+    DispositionValidation(),
+    "Invalid value for disposition",
+  ),
+  downloadFilename: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const PresignRequestForm: React.FC = () => {
-  const [addPresignRequest, addPresignRequestResult] = useAddPresignRequestMutation();
+  const [addPresignRequest, addPresignRequestResult] =
+    useAddPresignRequestMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -97,12 +105,18 @@ const PresignRequestForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -110,10 +124,10 @@ const PresignRequestForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<PresignRequest> = {
-          ttlSeconds: 0,
-        disposition: undefined,
-          downloadFilename: '',
-          trashed: false,
+    ttlSeconds: 0,
+    disposition: undefined,
+    downloadFilename: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -128,11 +142,14 @@ const PresignRequestForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new PresignRequest:', grants);
+    console.log("Permissions saved for new PresignRequest:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<PresignRequest>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<PresignRequest>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -143,7 +160,7 @@ const PresignRequestForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `PresignRequest created successfully! Would you like to set permissions for this object?`
+          `PresignRequest created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -151,8 +168,8 @@ const PresignRequestForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create PresignRequest:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create PresignRequest:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -173,52 +190,47 @@ const PresignRequestForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addPresignRequestResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New PresignRequest
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New PresignRequest
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="ttlSeconds" className="nice-form-control">
                       <b>
                         Ttl Seconds:
-                        {touched.ttlSeconds &&
-                         !errors.ttlSeconds && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.ttlSeconds && !errors.ttlSeconds && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="ttlSeconds"
-                            type="number"
-                            value={values.ttlSeconds || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('ttlSeconds', true);
-                              const v = e.target.value;
-                              setFieldValue('ttlSeconds', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.ttlSeconds
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="ttlSeconds"
+                        type="number"
+                        value={values.ttlSeconds || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("ttlSeconds", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "ttlSeconds",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.ttlSeconds
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -230,30 +242,33 @@ const PresignRequestForm: React.FC = () => {
                     <label htmlFor="disposition" className="nice-form-control">
                       <b>
                         Disposition:
-                        {touched.disposition &&
-                         !errors.disposition && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.disposition && !errors.disposition && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="disposition"
-                          value={values.disposition || ''}
-                          className={
-                            errors.disposition
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('disposition', true);
-                            setFieldValue('disposition', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Disposition" />
-                          <DispositionLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="disposition"
+                        value={values.disposition || ""}
+                        className={
+                          errors.disposition
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("disposition", true);
+                          setFieldValue(
+                            "disposition",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Disposition" />
+                        <DispositionLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -262,31 +277,28 @@ const PresignRequestForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="downloadFilename" className="nice-form-control">
+                    <label
+                      htmlFor="downloadFilename"
+                      className="nice-form-control"
+                    >
                       <b>
                         Download Filename:
                         {touched.downloadFilename &&
-                         !errors.downloadFilename && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.downloadFilename && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="downloadFilename"
-                            value={values?.downloadFilename}
-                            placeholder="Download Filename"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="downloadFilename"
+                        value={values?.downloadFilename}
+                        placeholder="Download Filename"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -298,32 +310,25 @@ const PresignRequestForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -333,45 +338,59 @@ const PresignRequestForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New PresignRequest
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New PresignRequest
+                    </CoolButton>
 
-                  {(addPresignRequestResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addPresignRequestResult as any).error ? (addPresignRequestResult as any).error.data : (addPresignRequestResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addPresignRequestResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addPresignRequestResult as any).error
+                              ? (addPresignRequestResult as any).error.data
+                              : (addPresignRequestResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addPresignRequestResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addPresignRequestResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addPresignRequestResult: {JSON.stringify(addPresignRequestResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addPresignRequestResult:{" "}
+                    {JSON.stringify(addPresignRequestResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -403,14 +422,11 @@ kebabcase disposition-lookup
 const DispositionLookup = () => {
   return (
     <>
-      <option value='inline' label="Inline" />
-      <option value='attachment' label="Attachment" />
+      <option value="inline" label="Inline" />
+      <option value="attachment" label="Attachment" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default PresignRequestForm;
-

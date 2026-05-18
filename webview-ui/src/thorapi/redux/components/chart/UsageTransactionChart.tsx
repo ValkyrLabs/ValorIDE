@@ -19,20 +19,32 @@ Description: UsageTransaction
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, UsageTransaction } from '@thorapi/model';
-import { useGetUsageTransactionsQuery, useAddUsageTransactionMutation, useUpdateUsageTransactionMutation } from '../../services/UsageTransactionService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, UsageTransaction } from "@thorapi/model";
+import {
+  useGetUsageTransactionsQuery,
+  useAddUsageTransactionMutation,
+  useUpdateUsageTransactionMutation,
+} from "../../services/UsageTransactionService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const UsageTransactionChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetUsageTransactionsQuery();
 
   const [data, setData] = useState<UsageTransaction[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<UsageTransaction>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const UsageTransactionChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,15 @@ const UsageTransactionChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((usagetransaction: DataObject) => [usagetransaction])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((usagetransaction: DataObject) => [
+            usagetransaction,
+          ])}
+        />
+      )}
     </>
   );
 };

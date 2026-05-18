@@ -21,10 +21,7 @@ module.exports = {
       "<rootDir>/webview-ui/src/thorapi/src/index.ts",
       "<rootDir>/src/thorapi/src/index.ts",
     ],
-    "^@thorapi/(.*)$": [
-      "<rootDir>/webview-ui/src/$1",
-      "<rootDir>/src/$1",
-    ],
+    "^@thorapi/(.*)$": ["<rootDir>/webview-ui/src/$1", "<rootDir>/src/$1"],
     "^@api/(.*)$": "<rootDir>/src/api/$1",
     "^@websocket/(.*)$": "<rootDir>/webview-ui/src/websocket/$1",
     "^@core/(.*)$": "<rootDir>/src/core/$1",

@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  ExecModuleTransportConfig,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddExecModuleTransportConfigMutation } from '../../services/ExecModuleTransportConfigService';
+import { ExecModuleTransportConfig } from "@thorapi/model";
+
+import { useAddExecModuleTransportConfigMutation } from "../../services/ExecModuleTransportConfigService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,34 +71,37 @@ ExecModuleTransportConfig
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        apiEndpoint: Yup.string(),
-        avatarUrl: Yup.string(),
-        cancelUrl: Yup.string(),
-        endpoint: Yup.string(),
-        fullMethodName: Yup.string(),
-        hasHeader: Yup.boolean(),
-        headers: Yup.string(),
-        host: Yup.string(),
-        includeHeaders: Yup.boolean(),
-        method: Yup.string(),
-        ollamaModelUrl: Yup.string(),
-        port: asNumber(Yup.number().integer().typeError("port must be a number")),
-        query: Yup.string(),
-        shorteningProvider: Yup.string(),
-        soql: Yup.string(),
-        successUrl: Yup.string(),
-        url: Yup.string(),
-        trashed: Yup.boolean(),
+  apiEndpoint: Yup.string(),
+  avatarUrl: Yup.string(),
+  cancelUrl: Yup.string(),
+  endpoint: Yup.string(),
+  fullMethodName: Yup.string(),
+  hasHeader: Yup.boolean(),
+  headers: Yup.string(),
+  host: Yup.string(),
+  includeHeaders: Yup.boolean(),
+  method: Yup.string(),
+  ollamaModelUrl: Yup.string(),
+  port: asNumber(Yup.number().integer().typeError("port must be a number")),
+  query: Yup.string(),
+  shorteningProvider: Yup.string(),
+  soql: Yup.string(),
+  successUrl: Yup.string(),
+  url: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ExecModuleTransportConfigForm: React.FC = () => {
-  const [addExecModuleTransportConfig, addExecModuleTransportConfigResult] = useAddExecModuleTransportConfigMutation();
+  const [addExecModuleTransportConfig, addExecModuleTransportConfigResult] =
+    useAddExecModuleTransportConfigMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -102,12 +111,18 @@ const ExecModuleTransportConfigForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -115,24 +130,24 @@ const ExecModuleTransportConfigForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ExecModuleTransportConfig> = {
-          apiEndpoint: '',
-          avatarUrl: '',
-          cancelUrl: '',
-          endpoint: '',
-          fullMethodName: '',
-          hasHeader: false,
-          headers: '',
-          host: '',
-          includeHeaders: false,
-          method: '',
-          ollamaModelUrl: '',
-          port: 0,
-          query: '',
-          shorteningProvider: '',
-          soql: '',
-          successUrl: '',
-          url: '',
-          trashed: false,
+    apiEndpoint: "",
+    avatarUrl: "",
+    cancelUrl: "",
+    endpoint: "",
+    fullMethodName: "",
+    hasHeader: false,
+    headers: "",
+    host: "",
+    includeHeaders: false,
+    method: "",
+    ollamaModelUrl: "",
+    port: 0,
+    query: "",
+    shorteningProvider: "",
+    soql: "",
+    successUrl: "",
+    url: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -147,11 +162,14 @@ const ExecModuleTransportConfigForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new ExecModuleTransportConfig:', grants);
+    console.log("Permissions saved for new ExecModuleTransportConfig:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ExecModuleTransportConfig>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<ExecModuleTransportConfig>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -162,7 +180,7 @@ const ExecModuleTransportConfigForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ExecModuleTransportConfig created successfully! Would you like to set permissions for this object?`
+          `ExecModuleTransportConfig created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -170,8 +188,8 @@ const ExecModuleTransportConfigForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create ExecModuleTransportConfig:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create ExecModuleTransportConfig:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -192,44 +210,38 @@ const ExecModuleTransportConfigForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addExecModuleTransportConfigResult.isLoading;
+          const isSaving =
+            isSubmitting || addExecModuleTransportConfigResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New ExecModuleTransportConfig
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    ExecModuleTransportConfig
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="apiEndpoint" className="nice-form-control">
                       <b>
                         Api Endpoint:
-                        {touched.apiEndpoint &&
-                         !errors.apiEndpoint && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.apiEndpoint && !errors.apiEndpoint && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="apiEndpoint"
-                            value={values?.apiEndpoint}
-                            placeholder="Api Endpoint"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="apiEndpoint"
+                        value={values?.apiEndpoint}
+                        placeholder="Api Endpoint"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -241,28 +253,21 @@ const ExecModuleTransportConfigForm: React.FC = () => {
                     <label htmlFor="avatarUrl" className="nice-form-control">
                       <b>
                         Avatar _ url:
-                        {touched.avatarUrl &&
-                         !errors.avatarUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.avatarUrl && !errors.avatarUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="avatarUrl"
-                            value={values?.avatarUrl}
-                            placeholder="Avatar _ url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="avatarUrl"
+                        value={values?.avatarUrl}
+                        placeholder="Avatar _ url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -274,28 +279,21 @@ const ExecModuleTransportConfigForm: React.FC = () => {
                     <label htmlFor="cancelUrl" className="nice-form-control">
                       <b>
                         Cancel _ url:
-                        {touched.cancelUrl &&
-                         !errors.cancelUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.cancelUrl && !errors.cancelUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="cancelUrl"
-                            value={values?.cancelUrl}
-                            placeholder="Cancel _ url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="cancelUrl"
+                        value={values?.cancelUrl}
+                        placeholder="Cancel _ url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -307,28 +305,21 @@ const ExecModuleTransportConfigForm: React.FC = () => {
                     <label htmlFor="endpoint" className="nice-form-control">
                       <b>
                         Endpoint:
-                        {touched.endpoint &&
-                         !errors.endpoint && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.endpoint && !errors.endpoint && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="endpoint"
-                            value={values?.endpoint}
-                            placeholder="Endpoint"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="endpoint"
+                        value={values?.endpoint}
+                        placeholder="Endpoint"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -337,31 +328,27 @@ const ExecModuleTransportConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="fullMethodName" className="nice-form-control">
+                    <label
+                      htmlFor="fullMethodName"
+                      className="nice-form-control"
+                    >
                       <b>
                         Full Method Name:
-                        {touched.fullMethodName &&
-                         !errors.fullMethodName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.fullMethodName && !errors.fullMethodName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="fullMethodName"
-                            value={values?.fullMethodName}
-                            placeholder="Full Method Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="fullMethodName"
+                        value={values?.fullMethodName}
+                        placeholder="Full Method Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -373,32 +360,25 @@ const ExecModuleTransportConfigForm: React.FC = () => {
                     <label htmlFor="hasHeader" className="nice-form-control">
                       <b>
                         Has _ header:
-                        {touched.hasHeader &&
-                         !errors.hasHeader && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.hasHeader && !errors.hasHeader && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="hasHeader"
-                            name="hasHeader"
-                            checked={values.hasHeader || false}
-                            onChange={(e) => {
-                              setFieldTouched('hasHeader', true);
-                              setFieldValue('hasHeader', e.target.checked);
-                            }}
-                            isInvalid={!!errors.hasHeader}
-                            className={errors.hasHeader ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="hasHeader"
+                        name="hasHeader"
+                        checked={values.hasHeader || false}
+                        onChange={(e) => {
+                          setFieldTouched("hasHeader", true);
+                          setFieldValue("hasHeader", e.target.checked);
+                        }}
+                        isInvalid={!!errors.hasHeader}
+                        className={errors.hasHeader ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -410,28 +390,21 @@ const ExecModuleTransportConfigForm: React.FC = () => {
                     <label htmlFor="headers" className="nice-form-control">
                       <b>
                         Headers:
-                        {touched.headers &&
-                         !errors.headers && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.headers && !errors.headers && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="headers"
-                            value={values?.headers}
-                            placeholder="Headers"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="headers"
+                        value={values?.headers}
+                        placeholder="Headers"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -443,28 +416,21 @@ const ExecModuleTransportConfigForm: React.FC = () => {
                     <label htmlFor="host" className="nice-form-control">
                       <b>
                         Host:
-                        {touched.host &&
-                         !errors.host && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.host && !errors.host && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="host"
-                            value={values?.host}
-                            placeholder="Host"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="host"
+                        value={values?.host}
+                        placeholder="Host"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -473,35 +439,31 @@ const ExecModuleTransportConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="includeHeaders" className="nice-form-control">
+                    <label
+                      htmlFor="includeHeaders"
+                      className="nice-form-control"
+                    >
                       <b>
                         Include _ headers:
-                        {touched.includeHeaders &&
-                         !errors.includeHeaders && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.includeHeaders && !errors.includeHeaders && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="includeHeaders"
-                            name="includeHeaders"
-                            checked={values.includeHeaders || false}
-                            onChange={(e) => {
-                              setFieldTouched('includeHeaders', true);
-                              setFieldValue('includeHeaders', e.target.checked);
-                            }}
-                            isInvalid={!!errors.includeHeaders}
-                            className={errors.includeHeaders ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="includeHeaders"
+                        name="includeHeaders"
+                        checked={values.includeHeaders || false}
+                        onChange={(e) => {
+                          setFieldTouched("includeHeaders", true);
+                          setFieldValue("includeHeaders", e.target.checked);
+                        }}
+                        isInvalid={!!errors.includeHeaders}
+                        className={errors.includeHeaders ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -513,28 +475,21 @@ const ExecModuleTransportConfigForm: React.FC = () => {
                     <label htmlFor="method" className="nice-form-control">
                       <b>
                         Method:
-                        {touched.method &&
-                         !errors.method && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.method && !errors.method && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="method"
-                            value={values?.method}
-                            placeholder="Method"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="method"
+                        value={values?.method}
+                        placeholder="Method"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -543,31 +498,27 @@ const ExecModuleTransportConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="ollamaModelUrl" className="nice-form-control">
+                    <label
+                      htmlFor="ollamaModelUrl"
+                      className="nice-form-control"
+                    >
                       <b>
                         Ollama Model Url:
-                        {touched.ollamaModelUrl &&
-                         !errors.ollamaModelUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.ollamaModelUrl && !errors.ollamaModelUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="ollamaModelUrl"
-                            value={values?.ollamaModelUrl}
-                            placeholder="Ollama Model Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="ollamaModelUrl"
+                        value={values?.ollamaModelUrl}
+                        placeholder="Ollama Model Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -579,36 +530,32 @@ const ExecModuleTransportConfigForm: React.FC = () => {
                     <label htmlFor="port" className="nice-form-control">
                       <b>
                         Port:
-                        {touched.port &&
-                         !errors.port && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.port && !errors.port && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="port"
-                            type="number"
-                            value={values.port || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('port', true);
-                              const v = e.target.value;
-                              setFieldValue('port', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.port
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="port"
+                        type="number"
+                        value={values.port || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("port", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "port",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.port
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -620,28 +567,21 @@ const ExecModuleTransportConfigForm: React.FC = () => {
                     <label htmlFor="query" className="nice-form-control">
                       <b>
                         Query:
-                        {touched.query &&
-                         !errors.query && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.query && !errors.query && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="query"
-                            value={values?.query}
-                            placeholder="Query"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="query"
+                        value={values?.query}
+                        placeholder="Query"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -650,31 +590,28 @@ const ExecModuleTransportConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="shorteningProvider" className="nice-form-control">
+                    <label
+                      htmlFor="shorteningProvider"
+                      className="nice-form-control"
+                    >
                       <b>
                         Shortening Provider:
                         {touched.shorteningProvider &&
-                         !errors.shorteningProvider && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.shorteningProvider && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="shorteningProvider"
-                            value={values?.shorteningProvider}
-                            placeholder="Shortening Provider"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="shorteningProvider"
+                        value={values?.shorteningProvider}
+                        placeholder="Shortening Provider"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -686,28 +623,21 @@ const ExecModuleTransportConfigForm: React.FC = () => {
                     <label htmlFor="soql" className="nice-form-control">
                       <b>
                         Soql:
-                        {touched.soql &&
-                         !errors.soql && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.soql && !errors.soql && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="soql"
-                            value={values?.soql}
-                            placeholder="Soql"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="soql"
+                        value={values?.soql}
+                        placeholder="Soql"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -719,28 +649,21 @@ const ExecModuleTransportConfigForm: React.FC = () => {
                     <label htmlFor="successUrl" className="nice-form-control">
                       <b>
                         Success _ url:
-                        {touched.successUrl &&
-                         !errors.successUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.successUrl && !errors.successUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="successUrl"
-                            value={values?.successUrl}
-                            placeholder="Success _ url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="successUrl"
+                        value={values?.successUrl}
+                        placeholder="Success _ url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -752,28 +675,21 @@ const ExecModuleTransportConfigForm: React.FC = () => {
                     <label htmlFor="url" className="nice-form-control">
                       <b>
                         Url:
-                        {touched.url &&
-                         !errors.url && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.url && !errors.url && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="url"
-                            value={values?.url}
-                            placeholder="Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="url"
+                        value={values?.url}
+                        placeholder="Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -785,32 +701,25 @@ const ExecModuleTransportConfigForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -820,45 +729,65 @@ const ExecModuleTransportConfigForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New ExecModuleTransportConfig
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      ExecModuleTransportConfig
+                    </CoolButton>
 
-                  {(addExecModuleTransportConfigResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addExecModuleTransportConfigResult as any).error ? (addExecModuleTransportConfigResult as any).error.data : (addExecModuleTransportConfigResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addExecModuleTransportConfigResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addExecModuleTransportConfigResult as any).error
+                              ? (addExecModuleTransportConfigResult as any)
+                                  .error.data
+                              : (addExecModuleTransportConfigResult as any)
+                                  .error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addExecModuleTransportConfigResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addExecModuleTransportConfigResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addExecModuleTransportConfigResult: {JSON.stringify(addExecModuleTransportConfigResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addExecModuleTransportConfigResult:{" "}
+                    {JSON.stringify(addExecModuleTransportConfigResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -878,8 +807,5 @@ const ExecModuleTransportConfigForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default ExecModuleTransportConfigForm;
-

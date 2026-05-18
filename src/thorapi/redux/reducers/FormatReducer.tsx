@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Format } from '@thorapi/model/Format';
+import { Format } from "@thorapi/model/Format";
 
 const FormatSlice = createSlice({
   name: "Formats",
@@ -27,28 +27,28 @@ const FormatSlice = createSlice({
     },
 
     FormatValueToggled(state, action) {
-      console.log("Format TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Format:Format = state.find((Format) => Format.id === action.payload.FormatId);
+      console.log("Format TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Format: Format = state.find(
+        (Format) => Format.id === action.payload.FormatId,
+      );
       if (Format) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     FormatpropertySet(state, action) {
-      const Format = state.find((Format) => Format.id === action.payload.FormatId);
+      const Format = state.find(
+        (Format) => Format.id === action.payload.FormatId,
+      );
       if (Format) {
-      //  Format[action.property] = action.payload[action.property];
+        //  Format[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  FormatAdded,
-  FormatValueToggled,
-  FormatpropertySet
-} = FormatSlice.actions;
+export const { FormatAdded, FormatValueToggled, FormatpropertySet } =
+  FormatSlice.actions;
 export default FormatSlice.reducer;

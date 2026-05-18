@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  PublishRestEndpointRequest,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddPublishRestEndpointRequestMutation } from '../../services/PublishRestEndpointRequestService';
+import { PublishRestEndpointRequest } from "@thorapi/model";
+
+import { useAddPublishRestEndpointRequestMutation } from "../../services/PublishRestEndpointRequestService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,35 +71,41 @@ Request to publish a REST endpoint as an MCP tool
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        controllerPath: Yup.string(),
-        endpointPath: Yup.string(),
-        toolSlug: Yup.string().matches(/^[a-z0-9\\-_.]+$/, "toolSlug must match pattern Unique slug for the MCP tool"),
-        displayName: Yup.string(),
-        summary: Yup.string(),
-        description: Yup.string(),
-        category: Yup.string(),
-        marketplaceCategory: Yup.string(),
-        apiBaseUrl: Yup.string(),
-        documentationUrl: Yup.string(),
-        repositoryUrl: Yup.string(),
-        icon: Yup.string(),
-        requiresApiKey: Yup.boolean(),
-        tags: Yup.string(),
-        marketplaceTags: Yup.string(),
-        authorName: Yup.string(),
-        autoApprove: Yup.boolean(),
-        recommendedFor: Yup.string(),
-        trashed: Yup.boolean(),
+  controllerPath: Yup.string(),
+  endpointPath: Yup.string(),
+  toolSlug: Yup.string().matches(
+    /^[a-z0-9\\-_.]+$/,
+    "toolSlug must match pattern Unique slug for the MCP tool",
+  ),
+  displayName: Yup.string(),
+  summary: Yup.string(),
+  description: Yup.string(),
+  category: Yup.string(),
+  marketplaceCategory: Yup.string(),
+  apiBaseUrl: Yup.string(),
+  documentationUrl: Yup.string(),
+  repositoryUrl: Yup.string(),
+  icon: Yup.string(),
+  requiresApiKey: Yup.boolean(),
+  tags: Yup.string(),
+  marketplaceTags: Yup.string(),
+  authorName: Yup.string(),
+  autoApprove: Yup.boolean(),
+  recommendedFor: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const PublishRestEndpointRequestForm: React.FC = () => {
-  const [addPublishRestEndpointRequest, addPublishRestEndpointRequestResult] = useAddPublishRestEndpointRequestMutation();
+  const [addPublishRestEndpointRequest, addPublishRestEndpointRequestResult] =
+    useAddPublishRestEndpointRequestMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -103,12 +115,18 @@ const PublishRestEndpointRequestForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -116,25 +134,25 @@ const PublishRestEndpointRequestForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<PublishRestEndpointRequest> = {
-          controllerPath: '',
-          endpointPath: '',
-          toolSlug: '',
-          displayName: '',
-          summary: '',
-          description: '',
-          category: '',
-          marketplaceCategory: '',
-          apiBaseUrl: '',
-          documentationUrl: '',
-          repositoryUrl: '',
-          icon: '',
-          requiresApiKey: false,
-          tags: '',
-          marketplaceTags: '',
-          authorName: '',
-          autoApprove: false,
-          recommendedFor: '',
-          trashed: false,
+    controllerPath: "",
+    endpointPath: "",
+    toolSlug: "",
+    displayName: "",
+    summary: "",
+    description: "",
+    category: "",
+    marketplaceCategory: "",
+    apiBaseUrl: "",
+    documentationUrl: "",
+    repositoryUrl: "",
+    icon: "",
+    requiresApiKey: false,
+    tags: "",
+    marketplaceTags: "",
+    authorName: "",
+    autoApprove: false,
+    recommendedFor: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -149,22 +167,30 @@ const PublishRestEndpointRequestForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new PublishRestEndpointRequest:', grants);
+    console.log(
+      "Permissions saved for new PublishRestEndpointRequest:",
+      grants,
+    );
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<PublishRestEndpointRequest>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<PublishRestEndpointRequest>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
       console.log("PublishRestEndpointRequest form values:", values);
 
       // NOTE: depending on your generated endpoint, you may need { body: values }
-      const result = await addPublishRestEndpointRequest(values as any).unwrap();
+      const result = await addPublishRestEndpointRequest(
+        values as any,
+      ).unwrap();
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `PublishRestEndpointRequest created successfully! Would you like to set permissions for this object?`
+          `PublishRestEndpointRequest created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -172,8 +198,8 @@ const PublishRestEndpointRequestForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create PublishRestEndpointRequest:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create PublishRestEndpointRequest:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -194,44 +220,41 @@ const PublishRestEndpointRequestForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addPublishRestEndpointRequestResult.isLoading;
+          const isSaving =
+            isSubmitting || addPublishRestEndpointRequestResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New PublishRestEndpointRequest
-                </Accordion.Header>
-                <Accordion.Body>
-                    <label htmlFor="controllerPath" className="nice-form-control">
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    PublishRestEndpointRequest
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <label
+                      htmlFor="controllerPath"
+                      className="nice-form-control"
+                    >
                       <b>
                         Controller Path:
-                        {touched.controllerPath &&
-                         !errors.controllerPath && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.controllerPath && !errors.controllerPath && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="controllerPath"
-                            value={values?.controllerPath}
-                            placeholder="Controller Path"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="controllerPath"
+                        value={values?.controllerPath}
+                        placeholder="Controller Path"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -243,28 +266,21 @@ const PublishRestEndpointRequestForm: React.FC = () => {
                     <label htmlFor="endpointPath" className="nice-form-control">
                       <b>
                         Endpoint Path:
-                        {touched.endpointPath &&
-                         !errors.endpointPath && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.endpointPath && !errors.endpointPath && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="endpointPath"
-                            value={values?.endpointPath}
-                            placeholder="Endpoint Path"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="endpointPath"
+                        value={values?.endpointPath}
+                        placeholder="Endpoint Path"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -276,28 +292,21 @@ const PublishRestEndpointRequestForm: React.FC = () => {
                     <label htmlFor="toolSlug" className="nice-form-control">
                       <b>
                         Tool Slug:
-                        {touched.toolSlug &&
-                         !errors.toolSlug && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.toolSlug && !errors.toolSlug && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="toolSlug"
-                            value={values?.toolSlug}
-                            placeholder="Tool Slug"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="toolSlug"
+                        value={values?.toolSlug}
+                        placeholder="Tool Slug"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -309,28 +318,21 @@ const PublishRestEndpointRequestForm: React.FC = () => {
                     <label htmlFor="displayName" className="nice-form-control">
                       <b>
                         Display Name:
-                        {touched.displayName &&
-                         !errors.displayName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.displayName && !errors.displayName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="displayName"
-                            value={values?.displayName}
-                            placeholder="Display Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="displayName"
+                        value={values?.displayName}
+                        placeholder="Display Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -342,28 +344,21 @@ const PublishRestEndpointRequestForm: React.FC = () => {
                     <label htmlFor="summary" className="nice-form-control">
                       <b>
                         Summary:
-                        {touched.summary &&
-                         !errors.summary && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.summary && !errors.summary && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="summary"
-                            value={values?.summary}
-                            placeholder="Summary"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="summary"
+                        value={values?.summary}
+                        placeholder="Summary"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -375,28 +370,21 @@ const PublishRestEndpointRequestForm: React.FC = () => {
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
-                        {touched.description &&
-                         !errors.description && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.description && !errors.description && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="description"
-                            value={values?.description}
-                            placeholder="Description"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="description"
+                        value={values?.description}
+                        placeholder="Description"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -408,28 +396,21 @@ const PublishRestEndpointRequestForm: React.FC = () => {
                     <label htmlFor="category" className="nice-form-control">
                       <b>
                         Category:
-                        {touched.category &&
-                         !errors.category && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.category && !errors.category && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="category"
-                            value={values?.category}
-                            placeholder="Category"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="category"
+                        value={values?.category}
+                        placeholder="Category"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -438,31 +419,28 @@ const PublishRestEndpointRequestForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="marketplaceCategory" className="nice-form-control">
+                    <label
+                      htmlFor="marketplaceCategory"
+                      className="nice-form-control"
+                    >
                       <b>
                         Marketplace Category:
                         {touched.marketplaceCategory &&
-                         !errors.marketplaceCategory && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.marketplaceCategory && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="marketplaceCategory"
-                            value={values?.marketplaceCategory}
-                            placeholder="Marketplace Category"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="marketplaceCategory"
+                        value={values?.marketplaceCategory}
+                        placeholder="Marketplace Category"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -474,28 +452,21 @@ const PublishRestEndpointRequestForm: React.FC = () => {
                     <label htmlFor="apiBaseUrl" className="nice-form-control">
                       <b>
                         Api Base Url:
-                        {touched.apiBaseUrl &&
-                         !errors.apiBaseUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.apiBaseUrl && !errors.apiBaseUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="apiBaseUrl"
-                            value={values?.apiBaseUrl}
-                            placeholder="Api Base Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="apiBaseUrl"
+                        value={values?.apiBaseUrl}
+                        placeholder="Api Base Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -504,31 +475,28 @@ const PublishRestEndpointRequestForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="documentationUrl" className="nice-form-control">
+                    <label
+                      htmlFor="documentationUrl"
+                      className="nice-form-control"
+                    >
                       <b>
                         Documentation Url:
                         {touched.documentationUrl &&
-                         !errors.documentationUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.documentationUrl && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="documentationUrl"
-                            value={values?.documentationUrl}
-                            placeholder="Documentation Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="documentationUrl"
+                        value={values?.documentationUrl}
+                        placeholder="Documentation Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -537,31 +505,27 @@ const PublishRestEndpointRequestForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="repositoryUrl" className="nice-form-control">
+                    <label
+                      htmlFor="repositoryUrl"
+                      className="nice-form-control"
+                    >
                       <b>
                         Repository Url:
-                        {touched.repositoryUrl &&
-                         !errors.repositoryUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.repositoryUrl && !errors.repositoryUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="repositoryUrl"
-                            value={values?.repositoryUrl}
-                            placeholder="Repository Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="repositoryUrl"
+                        value={values?.repositoryUrl}
+                        placeholder="Repository Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -573,28 +537,21 @@ const PublishRestEndpointRequestForm: React.FC = () => {
                     <label htmlFor="icon" className="nice-form-control">
                       <b>
                         Icon:
-                        {touched.icon &&
-                         !errors.icon && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.icon && !errors.icon && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="icon"
-                            value={values?.icon}
-                            placeholder="Icon"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="icon"
+                        value={values?.icon}
+                        placeholder="Icon"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -603,35 +560,31 @@ const PublishRestEndpointRequestForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="requiresApiKey" className="nice-form-control">
+                    <label
+                      htmlFor="requiresApiKey"
+                      className="nice-form-control"
+                    >
                       <b>
                         Requires Api Key:
-                        {touched.requiresApiKey &&
-                         !errors.requiresApiKey && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.requiresApiKey && !errors.requiresApiKey && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="requiresApiKey"
-                            name="requiresApiKey"
-                            checked={values.requiresApiKey || false}
-                            onChange={(e) => {
-                              setFieldTouched('requiresApiKey', true);
-                              setFieldValue('requiresApiKey', e.target.checked);
-                            }}
-                            isInvalid={!!errors.requiresApiKey}
-                            className={errors.requiresApiKey ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="requiresApiKey"
+                        name="requiresApiKey"
+                        checked={values.requiresApiKey || false}
+                        onChange={(e) => {
+                          setFieldTouched("requiresApiKey", true);
+                          setFieldValue("requiresApiKey", e.target.checked);
+                        }}
+                        isInvalid={!!errors.requiresApiKey}
+                        className={errors.requiresApiKey ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -643,28 +596,21 @@ const PublishRestEndpointRequestForm: React.FC = () => {
                     <label htmlFor="tags" className="nice-form-control">
                       <b>
                         Tags:
-                        {touched.tags &&
-                         !errors.tags && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.tags && !errors.tags && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="tags"
-                            value={values?.tags}
-                            placeholder="Tags"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="tags"
+                        value={values?.tags}
+                        placeholder="Tags"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -673,31 +619,27 @@ const PublishRestEndpointRequestForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="marketplaceTags" className="nice-form-control">
+                    <label
+                      htmlFor="marketplaceTags"
+                      className="nice-form-control"
+                    >
                       <b>
                         Marketplace Tags:
-                        {touched.marketplaceTags &&
-                         !errors.marketplaceTags && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.marketplaceTags && !errors.marketplaceTags && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="marketplaceTags"
-                            value={values?.marketplaceTags}
-                            placeholder="Marketplace Tags"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="marketplaceTags"
+                        value={values?.marketplaceTags}
+                        placeholder="Marketplace Tags"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -709,28 +651,21 @@ const PublishRestEndpointRequestForm: React.FC = () => {
                     <label htmlFor="authorName" className="nice-form-control">
                       <b>
                         Author Name:
-                        {touched.authorName &&
-                         !errors.authorName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.authorName && !errors.authorName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="authorName"
-                            value={values?.authorName}
-                            placeholder="Author Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="authorName"
+                        value={values?.authorName}
+                        placeholder="Author Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -742,32 +677,25 @@ const PublishRestEndpointRequestForm: React.FC = () => {
                     <label htmlFor="autoApprove" className="nice-form-control">
                       <b>
                         Auto Approve:
-                        {touched.autoApprove &&
-                         !errors.autoApprove && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.autoApprove && !errors.autoApprove && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="autoApprove"
-                            name="autoApprove"
-                            checked={values.autoApprove || false}
-                            onChange={(e) => {
-                              setFieldTouched('autoApprove', true);
-                              setFieldValue('autoApprove', e.target.checked);
-                            }}
-                            isInvalid={!!errors.autoApprove}
-                            className={errors.autoApprove ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="autoApprove"
+                        name="autoApprove"
+                        checked={values.autoApprove || false}
+                        onChange={(e) => {
+                          setFieldTouched("autoApprove", true);
+                          setFieldValue("autoApprove", e.target.checked);
+                        }}
+                        isInvalid={!!errors.autoApprove}
+                        className={errors.autoApprove ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -776,31 +704,27 @@ const PublishRestEndpointRequestForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="recommendedFor" className="nice-form-control">
+                    <label
+                      htmlFor="recommendedFor"
+                      className="nice-form-control"
+                    >
                       <b>
                         Recommended For:
-                        {touched.recommendedFor &&
-                         !errors.recommendedFor && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.recommendedFor && !errors.recommendedFor && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="recommendedFor"
-                            value={values?.recommendedFor}
-                            placeholder="Recommended For"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="recommendedFor"
+                        value={values?.recommendedFor}
+                        placeholder="Recommended For"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -812,32 +736,25 @@ const PublishRestEndpointRequestForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -847,45 +764,65 @@ const PublishRestEndpointRequestForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New PublishRestEndpointRequest
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      PublishRestEndpointRequest
+                    </CoolButton>
 
-                  {(addPublishRestEndpointRequestResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addPublishRestEndpointRequestResult as any).error ? (addPublishRestEndpointRequestResult as any).error.data : (addPublishRestEndpointRequestResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addPublishRestEndpointRequestResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addPublishRestEndpointRequestResult as any).error
+                              ? (addPublishRestEndpointRequestResult as any)
+                                  .error.data
+                              : (addPublishRestEndpointRequestResult as any)
+                                  .error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addPublishRestEndpointRequestResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addPublishRestEndpointRequestResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addPublishRestEndpointRequestResult: {JSON.stringify(addPublishRestEndpointRequestResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addPublishRestEndpointRequestResult:{" "}
+                    {JSON.stringify(addPublishRestEndpointRequestResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -905,8 +842,5 @@ const PublishRestEndpointRequestForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default PublishRestEndpointRequestForm;
-

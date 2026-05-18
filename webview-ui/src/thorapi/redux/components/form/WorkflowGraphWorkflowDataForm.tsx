@@ -13,33 +13,41 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   WorkflowGraphWorkflowData,
   WorkflowGraphWorkflowDataStatusEnum,
   WorkflowGraphWorkflowDataRoleEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddWorkflowGraphWorkflowDataMutation } from '../../services/WorkflowGraphWorkflowDataService';
+import { useAddWorkflowGraphWorkflowDataMutation } from "../../services/WorkflowGraphWorkflowDataService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -64,47 +72,42 @@ WorkflowGraphWorkflowData
 -------------------------------------------------------- */
 const StatusValidation = () => {
   return [
-    'ready',
-    'running',
-    'paused',
-    'stopped',
-    'warning',
-    'error',
-    'disabled',
+    "ready",
+    "running",
+    "paused",
+    "stopped",
+    "warning",
+    "error",
+    "disabled",
   ];
 };
 const RoleValidation = () => {
-  return [
-    'user',
-    'assistant',
-    'system',
-  ];
+  return ["user", "assistant", "system"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        description: Yup.string(),
-        name: Yup.string(),
-      status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        ,
-      role: Yup.mixed()
-        .oneOf(RoleValidation(), "Invalid value for role")
-        ,
-        schedule: Yup.string(),
-        trashed: Yup.boolean(),
+  description: Yup.string(),
+  name: Yup.string(),
+  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
+  role: Yup.mixed().oneOf(RoleValidation(), "Invalid value for role"),
+  schedule: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const WorkflowGraphWorkflowDataForm: React.FC = () => {
-  const [addWorkflowGraphWorkflowData, addWorkflowGraphWorkflowDataResult] = useAddWorkflowGraphWorkflowDataMutation();
+  const [addWorkflowGraphWorkflowData, addWorkflowGraphWorkflowDataResult] =
+    useAddWorkflowGraphWorkflowDataMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -114,12 +117,18 @@ const WorkflowGraphWorkflowDataForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -127,12 +136,12 @@ const WorkflowGraphWorkflowDataForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<WorkflowGraphWorkflowData> = {
-          description: '',
-          name: '',
-        status: undefined,
-        role: undefined,
-          schedule: '',
-          trashed: false,
+    description: "",
+    name: "",
+    status: undefined,
+    role: undefined,
+    schedule: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -147,11 +156,14 @@ const WorkflowGraphWorkflowDataForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new WorkflowGraphWorkflowData:', grants);
+    console.log("Permissions saved for new WorkflowGraphWorkflowData:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<WorkflowGraphWorkflowData>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<WorkflowGraphWorkflowData>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -162,7 +174,7 @@ const WorkflowGraphWorkflowDataForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `WorkflowGraphWorkflowData created successfully! Would you like to set permissions for this object?`
+          `WorkflowGraphWorkflowData created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -170,8 +182,8 @@ const WorkflowGraphWorkflowDataForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create WorkflowGraphWorkflowData:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create WorkflowGraphWorkflowData:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -192,44 +204,38 @@ const WorkflowGraphWorkflowDataForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addWorkflowGraphWorkflowDataResult.isLoading;
+          const isSaving =
+            isSubmitting || addWorkflowGraphWorkflowDataResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New WorkflowGraphWorkflowData
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    WorkflowGraphWorkflowData
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
-                        {touched.description &&
-                         !errors.description && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.description && !errors.description && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="description"
-                            value={values?.description}
-                            placeholder="Description"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="description"
+                        value={values?.description}
+                        placeholder="Description"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -241,28 +247,21 @@ const WorkflowGraphWorkflowDataForm: React.FC = () => {
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.name && !errors.name && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="name"
+                        value={values?.name}
+                        placeholder="Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -274,30 +273,30 @@ const WorkflowGraphWorkflowDataForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="status"
-                          value={values.status || ''}
-                          className={
-                            errors.status
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Status" />
-                          <StatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="status"
+                        value={values.status || ""}
+                        className={
+                          errors.status
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("status", true);
+                          setFieldValue("status", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Status" />
+                        <StatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -309,30 +308,30 @@ const WorkflowGraphWorkflowDataForm: React.FC = () => {
                     <label htmlFor="role" className="nice-form-control">
                       <b>
                         Role:
-                        {touched.role &&
-                         !errors.role && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.role && !errors.role && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="role"
-                          value={values.role || ''}
-                          className={
-                            errors.role
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('role', true);
-                            setFieldValue('role', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Role" />
-                          <RoleLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="role"
+                        value={values.role || ""}
+                        className={
+                          errors.role
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("role", true);
+                          setFieldValue("role", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Role" />
+                        <RoleLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -344,28 +343,21 @@ const WorkflowGraphWorkflowDataForm: React.FC = () => {
                     <label htmlFor="schedule" className="nice-form-control">
                       <b>
                         Schedule:
-                        {touched.schedule &&
-                         !errors.schedule && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.schedule && !errors.schedule && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="schedule"
-                            value={values?.schedule}
-                            placeholder="Schedule"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="schedule"
+                        value={values?.schedule}
+                        placeholder="Schedule"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -377,32 +369,25 @@ const WorkflowGraphWorkflowDataForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -412,45 +397,65 @@ const WorkflowGraphWorkflowDataForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New WorkflowGraphWorkflowData
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      WorkflowGraphWorkflowData
+                    </CoolButton>
 
-                  {(addWorkflowGraphWorkflowDataResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addWorkflowGraphWorkflowDataResult as any).error ? (addWorkflowGraphWorkflowDataResult as any).error.data : (addWorkflowGraphWorkflowDataResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addWorkflowGraphWorkflowDataResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addWorkflowGraphWorkflowDataResult as any).error
+                              ? (addWorkflowGraphWorkflowDataResult as any)
+                                  .error.data
+                              : (addWorkflowGraphWorkflowDataResult as any)
+                                  .error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addWorkflowGraphWorkflowDataResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addWorkflowGraphWorkflowDataResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addWorkflowGraphWorkflowDataResult: {JSON.stringify(addWorkflowGraphWorkflowDataResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addWorkflowGraphWorkflowDataResult:{" "}
+                    {JSON.stringify(addWorkflowGraphWorkflowDataResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -482,13 +487,13 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value='ready' label="Ready" />
-      <option value='running' label="Running" />
-      <option value='paused' label="Paused" />
-      <option value='stopped' label="Stopped" />
-      <option value='warning' label="Warning" />
-      <option value='error' label="Error" />
-      <option value='disabled' label="Disabled" />
+      <option value="ready" label="Ready" />
+      <option value="running" label="Running" />
+      <option value="paused" label="Paused" />
+      <option value="stopped" label="Stopped" />
+      <option value="warning" label="Warning" />
+      <option value="error" label="Error" />
+      <option value="disabled" label="Disabled" />
     </>
   );
 };
@@ -505,15 +510,12 @@ kebabcase role-lookup
 const RoleLookup = () => {
   return (
     <>
-      <option value='user' label="User" />
-      <option value='assistant' label="Assistant" />
-      <option value='system' label="System" />
+      <option value="user" label="User" />
+      <option value="assistant" label="Assistant" />
+      <option value="system" label="System" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default WorkflowGraphWorkflowDataForm;
-

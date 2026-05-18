@@ -26,56 +26,58 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
 /**
- * 
+ *
  * @export
  * @interface ValidateDeploymentSpec200Response
  */
-export type ValidateDeploymentSpec200Response  = DataObject & {
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ValidateDeploymentSpec200Response
-     */
-    valid?: boolean;
-    /**
-     * 
-     * @type {Array<string>}
-     * @memberof ValidateDeploymentSpec200Response
-     */
-    errors?: Array<string>;
-    /**
-     * 
-     * @type {Array<string>}
-     * @memberof ValidateDeploymentSpec200Response
-     */
-    warnings?: Array<string>;
+export type ValidateDeploymentSpec200Response = DataObject & {
+  /**
+   *
+   * @type {boolean}
+   * @memberof ValidateDeploymentSpec200Response
+   */
+  valid?: boolean;
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof ValidateDeploymentSpec200Response
+   */
+  errors?: Array<string>;
+  /**
+   *
+   * @type {Array<string>}
+   * @memberof ValidateDeploymentSpec200Response
+   */
+  warnings?: Array<string>;
+};
+
+export function ValidateDeploymentSpec200ResponseFromJSON(
+  json: any,
+): ValidateDeploymentSpec200Response {
+  return {
+    ...DataObjectFromJSON(json),
+    valid: !exists(json, "valid") ? undefined : json["valid"],
+    errors: !exists(json, "errors") ? undefined : json["errors"],
+    warnings: !exists(json, "warnings") ? undefined : json["warnings"],
+  };
 }
 
-export function ValidateDeploymentSpec200ResponseFromJSON(json: any): ValidateDeploymentSpec200Response {
-    return {
-        ...DataObjectFromJSON(json),
-        'valid': !exists(json, 'valid') ? undefined : json['valid'],
-        'errors': !exists(json, 'errors') ? undefined : json['errors'],
-        'warnings': !exists(json, 'warnings') ? undefined : json['warnings'],
-    };
+export function ValidateDeploymentSpec200ResponseToJSON(
+  value?: ValidateDeploymentSpec200Response,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    valid: value.valid,
+    errors: value.errors,
+    warnings: value.warnings,
+  };
 }
-
-export function ValidateDeploymentSpec200ResponseToJSON(value?: ValidateDeploymentSpec200Response): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'valid': value.valid,
-        'errors': value.errors,
-        'warnings': value.warnings,
-    };
-}
-
-

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { MemoryCostStats } from '@thorapi/model/MemoryCostStats';
+import { MemoryCostStats } from "@thorapi/model/MemoryCostStats";
 
 const MemoryCostStatsSlice = createSlice({
   name: "MemoryCostStatss",
@@ -27,20 +27,25 @@ const MemoryCostStatsSlice = createSlice({
     },
 
     MemoryCostStatsValueToggled(state, action) {
-      console.log("MemoryCostStats TOGGLE")
-      console.warn(JSON.stringify(action))
-      const MemoryCostStats:MemoryCostStats = state.find((MemoryCostStats) => MemoryCostStats.id === action.payload.MemoryCostStatsId);
+      console.log("MemoryCostStats TOGGLE");
+      console.warn(JSON.stringify(action));
+      const MemoryCostStats: MemoryCostStats = state.find(
+        (MemoryCostStats) =>
+          MemoryCostStats.id === action.payload.MemoryCostStatsId,
+      );
       if (MemoryCostStats) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     MemoryCostStatspropertySet(state, action) {
-      const MemoryCostStats = state.find((MemoryCostStats) => MemoryCostStats.id === action.payload.MemoryCostStatsId);
+      const MemoryCostStats = state.find(
+        (MemoryCostStats) =>
+          MemoryCostStats.id === action.payload.MemoryCostStatsId,
+      );
       if (MemoryCostStats) {
-      //  MemoryCostStats[action.property] = action.payload[action.property];
+        //  MemoryCostStats[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const MemoryCostStatsSlice = createSlice({
 export const {
   MemoryCostStatsAdded,
   MemoryCostStatsValueToggled,
-  MemoryCostStatspropertySet
+  MemoryCostStatspropertySet,
 } = MemoryCostStatsSlice.actions;
 export default MemoryCostStatsSlice.reducer;

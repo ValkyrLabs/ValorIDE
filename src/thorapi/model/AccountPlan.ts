@@ -26,16 +26,9 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
-import {
-
-
-    Principal,
-    PrincipalFromJSON,
-    PrincipalToJSON,
-} from './';
-
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { Principal, PrincipalFromJSON, PrincipalToJSON } from "./";
 
 // thorapi
 
@@ -44,123 +37,135 @@ import {
  * @export
  * @interface AccountPlan
  */
-export type AccountPlan  = DataObject & {
-    /**
-     * 
-     * @type {Principal}
-     * @memberof AccountPlan
-     */
-    principal?: Principal;
-    /**
-     * 
-     * @type {string}
-     * @memberof AccountPlan
-     */
-    planTier?: AccountPlanPlanTierEnum;
-    /**
-     * Custom organization limit override
-     * @type {number}
-     * @memberof AccountPlan
-     */
-    customOrganizationLimit?: number;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof AccountPlan
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof AccountPlan
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof AccountPlan
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof AccountPlan
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof AccountPlan
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof AccountPlan
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof AccountPlan
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof AccountPlan
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof AccountPlan
-     */
-    trashed?: boolean;
-}
+export type AccountPlan = DataObject & {
+  /**
+   *
+   * @type {Principal}
+   * @memberof AccountPlan
+   */
+  principal?: Principal;
+  /**
+   *
+   * @type {string}
+   * @memberof AccountPlan
+   */
+  planTier?: AccountPlanPlanTierEnum;
+  /**
+   * Custom organization limit override
+   * @type {number}
+   * @memberof AccountPlan
+   */
+  customOrganizationLimit?: number;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof AccountPlan
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof AccountPlan
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof AccountPlan
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof AccountPlan
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof AccountPlan
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof AccountPlan
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof AccountPlan
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof AccountPlan
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof AccountPlan
+   */
+  trashed?: boolean;
+};
 
 export function AccountPlanFromJSON(json: any): AccountPlan {
-    return {
-        ...DataObjectFromJSON(json),
-        'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
-        'planTier': !exists(json, 'planTier') ? undefined : json['planTier'],
-        'customOrganizationLimit': !exists(json, 'customOrganizationLimit') ? undefined : json['customOrganizationLimit'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    principal: !exists(json, "principal")
+      ? undefined
+      : PrincipalFromJSON(json["principal"]),
+    planTier: !exists(json, "planTier") ? undefined : json["planTier"],
+    customOrganizationLimit: !exists(json, "customOrganizationLimit")
+      ? undefined
+      : json["customOrganizationLimit"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function AccountPlanToJSON(value?: AccountPlan): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'principal': PrincipalToJSON(value.principal),
-        'planTier': value.planTier,
-        'customOrganizationLimit': value.customOrganizationLimit,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    principal: PrincipalToJSON(value.principal),
+    planTier: value.planTier,
+    customOrganizationLimit: value.customOrganizationLimit,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum AccountPlanPlanTierEnum {
-    FREE = 'free',
-    SOLO = 'solo',
-    TEAM = 'team',
-    PRO = 'pro',
-    RESELLER = 'reseller',
-    ENTERPRISE = 'enterprise'
+  FREE = "free",
+  SOLO = "solo",
+  TEAM = "team",
+  PRO = "pro",
+  RESELLER = "reseller",
+  ENTERPRISE = "enterprise",
 }
-
-

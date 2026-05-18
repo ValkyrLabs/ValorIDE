@@ -13,33 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  Border,
-  BorderStyleEnum,
-  BorderColorEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddBorderMutation } from '../../services/BorderService';
+import { Border, BorderStyleEnum, BorderColorEnum } from "@thorapi/model";
+
+import { useAddBorderMutation } from "../../services/BorderService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -64,49 +68,39 @@ GridHeim Formatting Border
 -------------------------------------------------------- */
 const StyleValidation = () => {
   return [
-    'None',
-    'Thin',
-    'Medium',
-    'Dashed',
-    'Dotted',
-    'Thick',
-    'Double',
-    'Hair',
-    'MediumDashed',
-    'DashDot',
-    'MediumDashDot',
-    'DashDotDot',
-    'MediumDashDotDot',
-    'SlantedDashDot',
+    "None",
+    "Thin",
+    "Medium",
+    "Dashed",
+    "Dotted",
+    "Thick",
+    "Double",
+    "Hair",
+    "MediumDashed",
+    "DashDot",
+    "MediumDashDot",
+    "DashDotDot",
+    "MediumDashDotDot",
+    "SlantedDashDot",
   ];
 };
 const ColorValidation = () => {
-  return [
-    'Black',
-    'Red',
-    'Blue',
-    'Yellow',
-    'Green',
-    'Teal',
-    'Gray50',
-  ];
+  return ["Black", "Red", "Blue", "Yellow", "Green", "Teal", "Gray50"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        formatId: Yup.string(),
-      style: Yup.mixed()
-        .oneOf(StyleValidation(), "Invalid value for style")
-        ,
-      color: Yup.mixed()
-        .oneOf(ColorValidation(), "Invalid value for color")
-        ,
-        trashed: Yup.boolean(),
+  formatId: Yup.string(),
+  style: Yup.mixed().oneOf(StyleValidation(), "Invalid value for style"),
+  color: Yup.mixed().oneOf(ColorValidation(), "Invalid value for color"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -123,12 +117,18 @@ const BorderForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -136,10 +136,10 @@ const BorderForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Border> = {
-          formatId: '',
-        style: undefined,
-        color: undefined,
-          trashed: false,
+    formatId: "",
+    style: undefined,
+    color: undefined,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -154,11 +154,14 @@ const BorderForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new Border:', grants);
+    console.log("Permissions saved for new Border:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Border>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<Border>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -169,7 +172,7 @@ const BorderForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Border created successfully! Would you like to set permissions for this object?`
+          `Border created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -177,8 +180,8 @@ const BorderForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create Border:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create Border:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -199,44 +202,36 @@ const BorderForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addBorderResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New Border
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New Border
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="formatId" className="nice-form-control">
                       <b>
                         Format Id:
-                        {touched.formatId &&
-                         !errors.formatId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.formatId && !errors.formatId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="formatId"
-                            value={values?.formatId}
-                            placeholder="Format Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="formatId"
+                        value={values?.formatId}
+                        placeholder="Format Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -248,30 +243,30 @@ const BorderForm: React.FC = () => {
                     <label htmlFor="style" className="nice-form-control">
                       <b>
                         Style:
-                        {touched.style &&
-                         !errors.style && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.style && !errors.style && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="style"
-                          value={values.style || ''}
-                          className={
-                            errors.style
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('style', true);
-                            setFieldValue('style', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Style" />
-                          <StyleLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="style"
+                        value={values.style || ""}
+                        className={
+                          errors.style
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("style", true);
+                          setFieldValue("style", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Style" />
+                        <StyleLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -283,30 +278,30 @@ const BorderForm: React.FC = () => {
                     <label htmlFor="color" className="nice-form-control">
                       <b>
                         Color:
-                        {touched.color &&
-                         !errors.color && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.color && !errors.color && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="color"
-                          value={values.color || ''}
-                          className={
-                            errors.color
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('color', true);
-                            setFieldValue('color', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Color" />
-                          <ColorLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="color"
+                        value={values.color || ""}
+                        className={
+                          errors.color
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("color", true);
+                          setFieldValue("color", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Color" />
+                        <ColorLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -318,32 +313,25 @@ const BorderForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -353,45 +341,58 @@ const BorderForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New Border
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New Border
+                    </CoolButton>
 
-                  {(addBorderResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addBorderResult as any).error ? (addBorderResult as any).error.data : (addBorderResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addBorderResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addBorderResult as any).error
+                              ? (addBorderResult as any).error.data
+                              : (addBorderResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addBorderResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addBorderResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addBorderResult: {JSON.stringify(addBorderResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addBorderResult: {JSON.stringify(addBorderResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -423,20 +424,20 @@ kebabcase style-lookup
 const StyleLookup = () => {
   return (
     <>
-      <option value='None' label="Border None" />
-      <option value='Thin' label="Border Thin" />
-      <option value='Medium' label="Border Medium" />
-      <option value='Dashed' label="Border Dashed" />
-      <option value='Dotted' label="Border Dotted" />
-      <option value='Thick' label="Border Thick" />
-      <option value='Double' label="Border Double" />
-      <option value='Hair' label="Border Hair" />
-      <option value='MediumDashed' label="Border Medium Dashed" />
-      <option value='DashDot' label="Border Dash Dot" />
-      <option value='MediumDashDot' label="Border Medium Dash Dot" />
-      <option value='DashDotDot' label="Border Dash Dot Dot" />
-      <option value='MediumDashDotDot' label="Border Medium Dash Dot Dot" />
-      <option value='SlantedDashDot' label="Border Slanted Dash Dot" />
+      <option value="None" label="Border None" />
+      <option value="Thin" label="Border Thin" />
+      <option value="Medium" label="Border Medium" />
+      <option value="Dashed" label="Border Dashed" />
+      <option value="Dotted" label="Border Dotted" />
+      <option value="Thick" label="Border Thick" />
+      <option value="Double" label="Border Double" />
+      <option value="Hair" label="Border Hair" />
+      <option value="MediumDashed" label="Border Medium Dashed" />
+      <option value="DashDot" label="Border Dash Dot" />
+      <option value="MediumDashDot" label="Border Medium Dash Dot" />
+      <option value="DashDotDot" label="Border Dash Dot Dot" />
+      <option value="MediumDashDotDot" label="Border Medium Dash Dot Dot" />
+      <option value="SlantedDashDot" label="Border Slanted Dash Dot" />
     </>
   );
 };
@@ -453,19 +454,16 @@ kebabcase color-lookup
 const ColorLookup = () => {
   return (
     <>
-      <option value='Black' label="Color Black" />
-      <option value='Red' label="Color Red" />
-      <option value='Blue' label="Color Blue" />
-      <option value='Yellow' label="Color Yellow" />
-      <option value='Green' label="Color Green" />
-      <option value='Teal' label="Color Teal" />
-      <option value='Gray50' label="Color Gray 50" />
+      <option value="Black" label="Color Black" />
+      <option value="Red" label="Color Red" />
+      <option value="Blue" label="Color Blue" />
+      <option value="Yellow" label="Color Yellow" />
+      <option value="Green" label="Color Green" />
+      <option value="Teal" label="Color Teal" />
+      <option value="Gray50" label="Color Gray 50" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default BorderForm;
-

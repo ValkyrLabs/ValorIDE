@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { MemoryRetentionPolicy } from '@thorapi/model/MemoryRetentionPolicy'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { MemoryRetentionPolicy } from "@thorapi/model/MemoryRetentionPolicy";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type MemoryRetentionPolicyResponse = MemoryRetentionPolicy[]
+type MemoryRetentionPolicyResponse = MemoryRetentionPolicy[];
 
-const toMemoryRetentionPolicyList = (result: unknown): MemoryRetentionPolicyResponse => {
+const toMemoryRetentionPolicyList = (
+  result: unknown,
+): MemoryRetentionPolicyResponse => {
   if (Array.isArray(result)) {
-    return result as MemoryRetentionPolicyResponse
+    return result as MemoryRetentionPolicyResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as MemoryRetentionPolicyResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as MemoryRetentionPolicyResponse)
+    : [];
+};
 
 export const MemoryRetentionPolicyService = createApi({
-  reducerPath: 'MemoryRetentionPolicy', // This should remain unique
+  reducerPath: "MemoryRetentionPolicy", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['MemoryRetentionPolicy'],
+  tagTypes: ["MemoryRetentionPolicy"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getMemoryRetentionPolicysPaged: build.query<MemoryRetentionPolicyResponse, { page: number; size?: number; example?: Partial<MemoryRetentionPolicy> }>({
+    getMemoryRetentionPolicysPaged: build.query<
+      MemoryRetentionPolicyResponse,
+      { page: number; size?: number; example?: Partial<MemoryRetentionPolicy> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `MemoryRetentionPolicy?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `MemoryRetentionPolicy?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toMemoryRetentionPolicyList(result)
+        const rows = toMemoryRetentionPolicyList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'MemoryRetentionPolicy' as const, id })),
-          { type: 'MemoryRetentionPolicy', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "MemoryRetentionPolicy" as const, id })),
+          { type: "MemoryRetentionPolicy", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getMemoryRetentionPolicys: build.query<MemoryRetentionPolicyResponse, { example?: Partial<MemoryRetentionPolicy> } | void>({
+    getMemoryRetentionPolicys: build.query<
+      MemoryRetentionPolicyResponse,
+      { example?: Partial<MemoryRetentionPolicy> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,114 @@ export const MemoryRetentionPolicyService = createApi({
         return `MemoryRetentionPolicy`;
       },
       providesTags: (result) => {
-        const rows = toMemoryRetentionPolicyList(result)
+        const rows = toMemoryRetentionPolicyList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'MemoryRetentionPolicy' as const, id })),
-          { type: 'MemoryRetentionPolicy', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "MemoryRetentionPolicy" as const, id })),
+          { type: "MemoryRetentionPolicy", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addMemoryRetentionPolicy: build.mutation<MemoryRetentionPolicy, Partial<MemoryRetentionPolicy>>({
+    addMemoryRetentionPolicy: build.mutation<
+      MemoryRetentionPolicy,
+      Partial<MemoryRetentionPolicy>
+    >({
       query: (body) => ({
         url: `MemoryRetentionPolicy`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'MemoryRetentionPolicy', id: 'LIST' }],
+      invalidatesTags: [{ type: "MemoryRetentionPolicy", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getMemoryRetentionPolicy: build.query<MemoryRetentionPolicy, string>({
       query: (id) => `MemoryRetentionPolicy/${id}`,
-      providesTags: (result, error, id) => [{ type: 'MemoryRetentionPolicy', id }],
+      providesTags: (result, error, id) => [
+        { type: "MemoryRetentionPolicy", id },
+      ],
     }),
 
     // 5) Update
-    updateMemoryRetentionPolicy: build.mutation<void, Pick<MemoryRetentionPolicy, 'id'> & Partial<MemoryRetentionPolicy>>({
+    updateMemoryRetentionPolicy: build.mutation<
+      void,
+      Pick<MemoryRetentionPolicy, "id"> & Partial<MemoryRetentionPolicy>
+    >({
       query: ({ id, ...patch }) => ({
         url: `MemoryRetentionPolicy/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            MemoryRetentionPolicyService.util.updateQueryData('getMemoryRetentionPolicy', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            MemoryRetentionPolicyService.util.updateQueryData(
+              "getMemoryRetentionPolicy",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<MemoryRetentionPolicy, 'id'>) => [
-        { type: 'MemoryRetentionPolicy', id },
-        { type: 'MemoryRetentionPolicy', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<MemoryRetentionPolicy, "id">,
+      ) => [
+        { type: "MemoryRetentionPolicy", id },
+        { type: "MemoryRetentionPolicy", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteMemoryRetentionPolicy: build.mutation<{ success: boolean; id: string }, number>({
+    deleteMemoryRetentionPolicy: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `MemoryRetentionPolicy/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'MemoryRetentionPolicy', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "MemoryRetentionPolicy", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteMemoryRetentionPolicyCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteMemoryRetentionPolicyCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `MemoryRetentionPolicy/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'MemoryRetentionPolicy', id }, { type: 'MemoryRetentionPolicy', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "MemoryRetentionPolicy", id },
+        { type: "MemoryRetentionPolicy", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetMemoryRetentionPolicysPagedQuery`
 export const {
-  useGetMemoryRetentionPolicysPagedQuery,     // immediate fetch
+  useGetMemoryRetentionPolicysPagedQuery, // immediate fetch
   useLazyGetMemoryRetentionPolicysPagedQuery, // lazy fetch
   useGetMemoryRetentionPolicyQuery,
   useGetMemoryRetentionPolicysQuery,
@@ -150,4 +192,4 @@ export const {
   useUpdateMemoryRetentionPolicyMutation,
   useDeleteMemoryRetentionPolicyMutation,
   useDeleteMemoryRetentionPolicyCascadeMutation,
-} = MemoryRetentionPolicyService
+} = MemoryRetentionPolicyService;

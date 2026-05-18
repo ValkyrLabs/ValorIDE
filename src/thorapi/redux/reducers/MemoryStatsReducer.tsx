@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { MemoryStats } from '@thorapi/model/MemoryStats';
+import { MemoryStats } from "@thorapi/model/MemoryStats";
 
 const MemoryStatsSlice = createSlice({
   name: "MemoryStatss",
@@ -27,20 +27,23 @@ const MemoryStatsSlice = createSlice({
     },
 
     MemoryStatsValueToggled(state, action) {
-      console.log("MemoryStats TOGGLE")
-      console.warn(JSON.stringify(action))
-      const MemoryStats:MemoryStats = state.find((MemoryStats) => MemoryStats.id === action.payload.MemoryStatsId);
+      console.log("MemoryStats TOGGLE");
+      console.warn(JSON.stringify(action));
+      const MemoryStats: MemoryStats = state.find(
+        (MemoryStats) => MemoryStats.id === action.payload.MemoryStatsId,
+      );
       if (MemoryStats) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     MemoryStatspropertySet(state, action) {
-      const MemoryStats = state.find((MemoryStats) => MemoryStats.id === action.payload.MemoryStatsId);
+      const MemoryStats = state.find(
+        (MemoryStats) => MemoryStats.id === action.payload.MemoryStatsId,
+      );
       if (MemoryStats) {
-      //  MemoryStats[action.property] = action.payload[action.property];
+        //  MemoryStats[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const MemoryStatsSlice = createSlice({
 export const {
   MemoryStatsAdded,
   MemoryStatsValueToggled,
-  MemoryStatspropertySet
+  MemoryStatspropertySet,
 } = MemoryStatsSlice.actions;
 export default MemoryStatsSlice.reducer;

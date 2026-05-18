@@ -19,20 +19,32 @@ Description: Border
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, Border } from '@thorapi/model';
-import { useGetBordersQuery, useAddBorderMutation, useUpdateBorderMutation } from '../../services/BorderService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, Border } from "@thorapi/model";
+import {
+  useGetBordersQuery,
+  useAddBorderMutation,
+  useUpdateBorderMutation,
+} from "../../services/BorderService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const BorderChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetBordersQuery();
 
   const [data, setData] = useState<Border[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<Border>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const BorderChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const BorderChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((border: DataObject) => [border])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((border: DataObject) => [border])}
+        />
+      )}
     </>
   );
 };

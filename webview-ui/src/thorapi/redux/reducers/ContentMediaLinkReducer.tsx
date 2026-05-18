@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ContentMediaLink } from '@thorapi/model/ContentMediaLink';
+import { ContentMediaLink } from "@thorapi/model/ContentMediaLink";
 
 const ContentMediaLinkSlice = createSlice({
   name: "ContentMediaLinks",
@@ -27,20 +27,25 @@ const ContentMediaLinkSlice = createSlice({
     },
 
     ContentMediaLinkValueToggled(state, action) {
-      console.log("ContentMediaLink TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ContentMediaLink:ContentMediaLink = state.find((ContentMediaLink) => ContentMediaLink.id === action.payload.ContentMediaLinkId);
+      console.log("ContentMediaLink TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ContentMediaLink: ContentMediaLink = state.find(
+        (ContentMediaLink) =>
+          ContentMediaLink.id === action.payload.ContentMediaLinkId,
+      );
       if (ContentMediaLink) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ContentMediaLinkpropertySet(state, action) {
-      const ContentMediaLink = state.find((ContentMediaLink) => ContentMediaLink.id === action.payload.ContentMediaLinkId);
+      const ContentMediaLink = state.find(
+        (ContentMediaLink) =>
+          ContentMediaLink.id === action.payload.ContentMediaLinkId,
+      );
       if (ContentMediaLink) {
-      //  ContentMediaLink[action.property] = action.payload[action.property];
+        //  ContentMediaLink[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const ContentMediaLinkSlice = createSlice({
 export const {
   ContentMediaLinkAdded,
   ContentMediaLinkValueToggled,
-  ContentMediaLinkpropertySet
+  ContentMediaLinkpropertySet,
 } = ContentMediaLinkSlice.actions;
 export default ContentMediaLinkSlice.reducer;

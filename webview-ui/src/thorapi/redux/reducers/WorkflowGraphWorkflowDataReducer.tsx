@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { WorkflowGraphWorkflowData } from '@thorapi/model/WorkflowGraphWorkflowData';
+import { WorkflowGraphWorkflowData } from "@thorapi/model/WorkflowGraphWorkflowData";
 
 const WorkflowGraphWorkflowDataSlice = createSlice({
   name: "WorkflowGraphWorkflowDatas",
@@ -27,20 +27,27 @@ const WorkflowGraphWorkflowDataSlice = createSlice({
     },
 
     WorkflowGraphWorkflowDataValueToggled(state, action) {
-      console.log("WorkflowGraphWorkflowData TOGGLE")
-      console.warn(JSON.stringify(action))
-      const WorkflowGraphWorkflowData:WorkflowGraphWorkflowData = state.find((WorkflowGraphWorkflowData) => WorkflowGraphWorkflowData.id === action.payload.WorkflowGraphWorkflowDataId);
+      console.log("WorkflowGraphWorkflowData TOGGLE");
+      console.warn(JSON.stringify(action));
+      const WorkflowGraphWorkflowData: WorkflowGraphWorkflowData = state.find(
+        (WorkflowGraphWorkflowData) =>
+          WorkflowGraphWorkflowData.id ===
+          action.payload.WorkflowGraphWorkflowDataId,
+      );
       if (WorkflowGraphWorkflowData) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     WorkflowGraphWorkflowDatapropertySet(state, action) {
-      const WorkflowGraphWorkflowData = state.find((WorkflowGraphWorkflowData) => WorkflowGraphWorkflowData.id === action.payload.WorkflowGraphWorkflowDataId);
+      const WorkflowGraphWorkflowData = state.find(
+        (WorkflowGraphWorkflowData) =>
+          WorkflowGraphWorkflowData.id ===
+          action.payload.WorkflowGraphWorkflowDataId,
+      );
       if (WorkflowGraphWorkflowData) {
-      //  WorkflowGraphWorkflowData[action.property] = action.payload[action.property];
+        //  WorkflowGraphWorkflowData[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const WorkflowGraphWorkflowDataSlice = createSlice({
 export const {
   WorkflowGraphWorkflowDataAdded,
   WorkflowGraphWorkflowDataValueToggled,
-  WorkflowGraphWorkflowDatapropertySet
+  WorkflowGraphWorkflowDatapropertySet,
 } = WorkflowGraphWorkflowDataSlice.actions;
 export default WorkflowGraphWorkflowDataSlice.reducer;

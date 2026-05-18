@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { McpTool } from '@thorapi/model/McpTool'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { McpTool } from "@thorapi/model/McpTool";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type McpToolResponse = McpTool[]
+type McpToolResponse = McpTool[];
 
 const toMcpToolList = (result: unknown): McpToolResponse => {
   if (Array.isArray(result)) {
-    return result as McpToolResponse
+    return result as McpToolResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as McpToolResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as McpToolResponse) : [];
+};
 
 export const McpToolService = createApi({
-  reducerPath: 'McpTool', // This should remain unique
+  reducerPath: "McpTool", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['McpTool'],
+  tagTypes: ["McpTool"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getMcpToolsPaged: build.query<McpToolResponse, { page: number; size?: number; example?: Partial<McpTool> }>({
+    getMcpToolsPaged: build.query<
+      McpToolResponse,
+      { page: number; size?: number; example?: Partial<McpTool> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `McpTool?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `McpTool?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toMcpToolList(result)
+        const rows = toMcpToolList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'McpTool' as const, id })),
-          { type: 'McpTool', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "McpTool" as const, id })),
+          { type: "McpTool", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getMcpTools: build.query<McpToolResponse, { example?: Partial<McpTool> } | void>({
+    getMcpTools: build.query<
+      McpToolResponse,
+      { example?: Partial<McpTool> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const McpToolService = createApi({
         return `McpTool`;
       },
       providesTags: (result) => {
-        const rows = toMcpToolList(result)
+        const rows = toMcpToolList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'McpTool' as const, id })),
-          { type: 'McpTool', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "McpTool" as const, id })),
+          { type: "McpTool", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,73 +87,81 @@ export const McpToolService = createApi({
     addMcpTool: build.mutation<McpTool, Partial<McpTool>>({
       query: (body) => ({
         url: `McpTool`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'McpTool', id: 'LIST' }],
+      invalidatesTags: [{ type: "McpTool", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getMcpTool: build.query<McpTool, string>({
       query: (id) => `McpTool/${id}`,
-      providesTags: (result, error, id) => [{ type: 'McpTool', id }],
+      providesTags: (result, error, id) => [{ type: "McpTool", id }],
     }),
 
     // 5) Update
-    updateMcpTool: build.mutation<void, Pick<McpTool, 'id'> & Partial<McpTool>>({
-      query: ({ id, ...patch }) => ({
-        url: `McpTool/${id}`,
-        method: 'PUT',
-        body: patch,
-      }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            McpToolService.util.updateQueryData('getMcpTool', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
-          try {
-            await queryFulfilled
-          } catch {
-            patchResult.undo()
+    updateMcpTool: build.mutation<void, Pick<McpTool, "id"> & Partial<McpTool>>(
+      {
+        query: ({ id, ...patch }) => ({
+          url: `McpTool/${id}`,
+          method: "PUT",
+          body: patch,
+        }),
+        async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+          if (id) {
+            const patchResult = dispatch(
+              McpToolService.util.updateQueryData("getMcpTool", id, (draft) => {
+                Object.assign(draft, patch);
+              }),
+            );
+            try {
+              await queryFulfilled;
+            } catch {
+              patchResult.undo();
+            }
           }
-        }
+        },
+        invalidatesTags: (result, error, { id }: Pick<McpTool, "id">) => [
+          { type: "McpTool", id },
+          { type: "McpTool", id: "LIST" },
+        ],
       },
-      invalidatesTags: (result, error, { id }: Pick<McpTool, 'id'>) => [
-        { type: 'McpTool', id },
-        { type: 'McpTool', id: 'LIST' },
-      ],
-    }),
+    ),
 
     // 6) Delete
     deleteMcpTool: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `McpTool/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'McpTool', id }],
+      invalidatesTags: (result, error, id) => [{ type: "McpTool", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteMcpToolCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteMcpToolCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `McpTool/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'McpTool', id }, { type: 'McpTool', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "McpTool", id },
+        { type: "McpTool", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetMcpToolsPagedQuery`
 export const {
-  useGetMcpToolsPagedQuery,     // immediate fetch
+  useGetMcpToolsPagedQuery, // immediate fetch
   useLazyGetMcpToolsPagedQuery, // lazy fetch
   useGetMcpToolQuery,
   useGetMcpToolsQuery,
@@ -150,4 +169,4 @@ export const {
   useUpdateMcpToolMutation,
   useDeleteMcpToolMutation,
   useDeleteMcpToolCascadeMutation,
-} = McpToolService
+} = McpToolService;

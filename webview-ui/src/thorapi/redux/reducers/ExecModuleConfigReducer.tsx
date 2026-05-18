@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ExecModuleConfig } from '@thorapi/model/ExecModuleConfig';
+import { ExecModuleConfig } from "@thorapi/model/ExecModuleConfig";
 
 const ExecModuleConfigSlice = createSlice({
   name: "ExecModuleConfigs",
@@ -27,20 +27,25 @@ const ExecModuleConfigSlice = createSlice({
     },
 
     ExecModuleConfigValueToggled(state, action) {
-      console.log("ExecModuleConfig TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ExecModuleConfig:ExecModuleConfig = state.find((ExecModuleConfig) => ExecModuleConfig.id === action.payload.ExecModuleConfigId);
+      console.log("ExecModuleConfig TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ExecModuleConfig: ExecModuleConfig = state.find(
+        (ExecModuleConfig) =>
+          ExecModuleConfig.id === action.payload.ExecModuleConfigId,
+      );
       if (ExecModuleConfig) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ExecModuleConfigpropertySet(state, action) {
-      const ExecModuleConfig = state.find((ExecModuleConfig) => ExecModuleConfig.id === action.payload.ExecModuleConfigId);
+      const ExecModuleConfig = state.find(
+        (ExecModuleConfig) =>
+          ExecModuleConfig.id === action.payload.ExecModuleConfigId,
+      );
       if (ExecModuleConfig) {
-      //  ExecModuleConfig[action.property] = action.payload[action.property];
+        //  ExecModuleConfig[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const ExecModuleConfigSlice = createSlice({
 export const {
   ExecModuleConfigAdded,
   ExecModuleConfigValueToggled,
-  ExecModuleConfigpropertySet
+  ExecModuleConfigpropertySet,
 } = ExecModuleConfigSlice.actions;
 export default ExecModuleConfigSlice.reducer;

@@ -19,20 +19,35 @@ Description: RewrapTrustKeyResponse
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, RewrapTrustKeyResponse } from '@thorapi/model';
-import { useGetRewrapTrustKeyResponsesQuery, useAddRewrapTrustKeyResponseMutation, useUpdateRewrapTrustKeyResponseMutation } from '../../services/RewrapTrustKeyResponseService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, RewrapTrustKeyResponse } from "@thorapi/model";
+import {
+  useGetRewrapTrustKeyResponsesQuery,
+  useAddRewrapTrustKeyResponseMutation,
+  useUpdateRewrapTrustKeyResponseMutation,
+} from "../../services/RewrapTrustKeyResponseService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const RewrapTrustKeyResponseChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetRewrapTrustKeyResponsesQuery();
+  const { data: initialData = [], isLoading } =
+    useGetRewrapTrustKeyResponsesQuery();
 
   const [data, setData] = useState<RewrapTrustKeyResponse[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<RewrapTrustKeyResponse>>({});
-  
+  const [chartData, setChartData] = useState<Partial<RewrapTrustKeyResponse>>(
+    {},
+  );
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +65,9 @@ const RewrapTrustKeyResponseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +75,15 @@ const RewrapTrustKeyResponseChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((rewraptrustkeyresponse: DataObject) => [rewraptrustkeyresponse])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((rewraptrustkeyresponse: DataObject) => [
+            rewraptrustkeyresponse,
+          ])}
+        />
+      )}
     </>
   );
 };

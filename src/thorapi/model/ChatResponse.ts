@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,152 +36,160 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface ChatResponse
  */
-export type ChatResponse  = DataObject & {
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatResponse
-     */
-    sessionId?: string;
-    /**
-     * Any JSON payload attached to this response.
-     * @type {string}
-     * @memberof ChatResponse
-     */
-    json?: string;
-    /**
-     * Type of the message source (e.g., \'api\', \'server_log\', \'p2p\').
-     * @type {string}
-     * @memberof ChatResponse
-     */
-    sourceType?: ChatResponseSourceTypeEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatResponse
-     */
-    sourceOwner?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ChatResponse
-     */
-    role?: ChatResponseRoleEnum;
-    /**
-     * The textual response from the LLM.
-     * @type {string}
-     * @memberof ChatResponse
-     */
-    content?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof ChatResponse
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof ChatResponse
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof ChatResponse
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof ChatResponse
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof ChatResponse
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof ChatResponse
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof ChatResponse
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof ChatResponse
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof ChatResponse
-     */
-    trashed?: boolean;
-}
+export type ChatResponse = DataObject & {
+  /**
+   *
+   * @type {string}
+   * @memberof ChatResponse
+   */
+  sessionId?: string;
+  /**
+   * Any JSON payload attached to this response.
+   * @type {string}
+   * @memberof ChatResponse
+   */
+  json?: string;
+  /**
+   * Type of the message source (e.g., \'api\', \'server_log\', \'p2p\').
+   * @type {string}
+   * @memberof ChatResponse
+   */
+  sourceType?: ChatResponseSourceTypeEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof ChatResponse
+   */
+  sourceOwner?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ChatResponse
+   */
+  role?: ChatResponseRoleEnum;
+  /**
+   * The textual response from the LLM.
+   * @type {string}
+   * @memberof ChatResponse
+   */
+  content?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof ChatResponse
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof ChatResponse
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof ChatResponse
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof ChatResponse
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof ChatResponse
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof ChatResponse
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof ChatResponse
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof ChatResponse
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof ChatResponse
+   */
+  trashed?: boolean;
+};
 
 export function ChatResponseFromJSON(json: any): ChatResponse {
-    return {
-        ...DataObjectFromJSON(json),
-        'sessionId': !exists(json, 'sessionId') ? undefined : json['sessionId'],
-        'json': !exists(json, 'json') ? undefined : json['json'],
-        'sourceType': !exists(json, 'sourceType') ? undefined : json['sourceType'],
-        'sourceOwner': !exists(json, 'sourceOwner') ? undefined : json['sourceOwner'],
-        'role': !exists(json, 'role') ? undefined : json['role'],
-        'content': !exists(json, 'content') ? undefined : json['content'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    sessionId: !exists(json, "sessionId") ? undefined : json["sessionId"],
+    json: !exists(json, "json") ? undefined : json["json"],
+    sourceType: !exists(json, "sourceType") ? undefined : json["sourceType"],
+    sourceOwner: !exists(json, "sourceOwner") ? undefined : json["sourceOwner"],
+    role: !exists(json, "role") ? undefined : json["role"],
+    content: !exists(json, "content") ? undefined : json["content"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function ChatResponseToJSON(value?: ChatResponse): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'sessionId': value.sessionId,
-        'json': value.json,
-        'sourceType': value.sourceType,
-        'sourceOwner': value.sourceOwner,
-        'role': value.role,
-        'content': value.content,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    sessionId: value.sessionId,
+    json: value.json,
+    sourceType: value.sourceType,
+    sourceOwner: value.sourceOwner,
+    role: value.role,
+    content: value.content,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum ChatResponseSourceTypeEnum {
-    API = 'api',
-    SERVERLOG = 'server_log',
-    P2P = 'p2p'
+  API = "api",
+  SERVERLOG = "server_log",
+  P2P = "p2p",
 }
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum ChatResponseRoleEnum {
-    USER = 'user',
-    ASSISTANT = 'assistant'
+  USER = "user",
+  ASSISTANT = "assistant",
 }
-
-

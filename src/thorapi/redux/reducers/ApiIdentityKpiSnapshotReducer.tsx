@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ApiIdentityKpiSnapshot } from '@thorapi/model/ApiIdentityKpiSnapshot';
+import { ApiIdentityKpiSnapshot } from "@thorapi/model/ApiIdentityKpiSnapshot";
 
 const ApiIdentityKpiSnapshotSlice = createSlice({
   name: "ApiIdentityKpiSnapshots",
@@ -27,20 +27,25 @@ const ApiIdentityKpiSnapshotSlice = createSlice({
     },
 
     ApiIdentityKpiSnapshotValueToggled(state, action) {
-      console.log("ApiIdentityKpiSnapshot TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ApiIdentityKpiSnapshot:ApiIdentityKpiSnapshot = state.find((ApiIdentityKpiSnapshot) => ApiIdentityKpiSnapshot.id === action.payload.ApiIdentityKpiSnapshotId);
+      console.log("ApiIdentityKpiSnapshot TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ApiIdentityKpiSnapshot: ApiIdentityKpiSnapshot = state.find(
+        (ApiIdentityKpiSnapshot) =>
+          ApiIdentityKpiSnapshot.id === action.payload.ApiIdentityKpiSnapshotId,
+      );
       if (ApiIdentityKpiSnapshot) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ApiIdentityKpiSnapshotpropertySet(state, action) {
-      const ApiIdentityKpiSnapshot = state.find((ApiIdentityKpiSnapshot) => ApiIdentityKpiSnapshot.id === action.payload.ApiIdentityKpiSnapshotId);
+      const ApiIdentityKpiSnapshot = state.find(
+        (ApiIdentityKpiSnapshot) =>
+          ApiIdentityKpiSnapshot.id === action.payload.ApiIdentityKpiSnapshotId,
+      );
       if (ApiIdentityKpiSnapshot) {
-      //  ApiIdentityKpiSnapshot[action.property] = action.payload[action.property];
+        //  ApiIdentityKpiSnapshot[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const ApiIdentityKpiSnapshotSlice = createSlice({
 export const {
   ApiIdentityKpiSnapshotAdded,
   ApiIdentityKpiSnapshotValueToggled,
-  ApiIdentityKpiSnapshotpropertySet
+  ApiIdentityKpiSnapshotpropertySet,
 } = ApiIdentityKpiSnapshotSlice.actions;
 export default ApiIdentityKpiSnapshotSlice.reducer;

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Tag } from '@thorapi/model/Tag';
+import { Tag } from "@thorapi/model/Tag";
 
 const TagSlice = createSlice({
   name: "Tags",
@@ -27,28 +27,23 @@ const TagSlice = createSlice({
     },
 
     TagValueToggled(state, action) {
-      console.log("Tag TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Tag:Tag = state.find((Tag) => Tag.id === action.payload.TagId);
+      console.log("Tag TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Tag: Tag = state.find((Tag) => Tag.id === action.payload.TagId);
       if (Tag) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     TagpropertySet(state, action) {
       const Tag = state.find((Tag) => Tag.id === action.payload.TagId);
       if (Tag) {
-      //  Tag[action.property] = action.payload[action.property];
+        //  Tag[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  TagAdded,
-  TagValueToggled,
-  TagpropertySet
-} = TagSlice.actions;
+export const { TagAdded, TagValueToggled, TagpropertySet } = TagSlice.actions;
 export default TagSlice.reducer;

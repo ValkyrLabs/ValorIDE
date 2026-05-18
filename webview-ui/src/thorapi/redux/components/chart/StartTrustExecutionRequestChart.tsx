@@ -19,20 +19,35 @@ Description: StartTrustExecutionRequest
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, StartTrustExecutionRequest } from '@thorapi/model';
-import { useGetStartTrustExecutionRequestsQuery, useAddStartTrustExecutionRequestMutation, useUpdateStartTrustExecutionRequestMutation } from '../../services/StartTrustExecutionRequestService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, StartTrustExecutionRequest } from "@thorapi/model";
+import {
+  useGetStartTrustExecutionRequestsQuery,
+  useAddStartTrustExecutionRequestMutation,
+  useUpdateStartTrustExecutionRequestMutation,
+} from "../../services/StartTrustExecutionRequestService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const StartTrustExecutionRequestChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetStartTrustExecutionRequestsQuery();
+  const { data: initialData = [], isLoading } =
+    useGetStartTrustExecutionRequestsQuery();
 
   const [data, setData] = useState<StartTrustExecutionRequest[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<StartTrustExecutionRequest>>({});
-  
+  const [chartData, setChartData] = useState<
+    Partial<StartTrustExecutionRequest>
+  >({});
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +65,9 @@ const StartTrustExecutionRequestChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +75,15 @@ const StartTrustExecutionRequestChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((starttrustexecutionrequest: DataObject) => [starttrustexecutionrequest])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((starttrustexecutionrequest: DataObject) => [
+            starttrustexecutionrequest,
+          ])}
+        />
+      )}
     </>
   );
 };

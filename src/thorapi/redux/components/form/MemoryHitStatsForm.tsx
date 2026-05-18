@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  MemoryHitStats,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddMemoryHitStatsMutation } from '../../services/MemoryHitStatsService';
+import { MemoryHitStats } from "@thorapi/model";
+
+import { useAddMemoryHitStatsMutation } from "../../services/MemoryHitStatsService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,20 +71,27 @@ Retrieval hit-rate and entry utilization metrics.
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        hitRate: asNumber(Yup.number().typeError("hitRate must be a number")),
-        totalEntries: asNumber(Yup.number().integer().typeError("totalEntries must be a number")),
-        hotEntries: asNumber(Yup.number().integer().typeError("hotEntries must be a number")),
-        trashed: Yup.boolean(),
+  hitRate: asNumber(Yup.number().typeError("hitRate must be a number")),
+  totalEntries: asNumber(
+    Yup.number().integer().typeError("totalEntries must be a number"),
+  ),
+  hotEntries: asNumber(
+    Yup.number().integer().typeError("hotEntries must be a number"),
+  ),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const MemoryHitStatsForm: React.FC = () => {
-  const [addMemoryHitStats, addMemoryHitStatsResult] = useAddMemoryHitStatsMutation();
+  const [addMemoryHitStats, addMemoryHitStatsResult] =
+    useAddMemoryHitStatsMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -88,12 +101,18 @@ const MemoryHitStatsForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -101,10 +120,10 @@ const MemoryHitStatsForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<MemoryHitStats> = {
-          hitRate: 0,
-          totalEntries: 0,
-          hotEntries: 0,
-          trashed: false,
+    hitRate: 0,
+    totalEntries: 0,
+    hotEntries: 0,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -119,11 +138,14 @@ const MemoryHitStatsForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new MemoryHitStats:', grants);
+    console.log("Permissions saved for new MemoryHitStats:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<MemoryHitStats>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<MemoryHitStats>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -134,7 +156,7 @@ const MemoryHitStatsForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `MemoryHitStats created successfully! Would you like to set permissions for this object?`
+          `MemoryHitStats created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -142,8 +164,8 @@ const MemoryHitStatsForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create MemoryHitStats:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create MemoryHitStats:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -164,53 +186,48 @@ const MemoryHitStatsForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addMemoryHitStatsResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New MemoryHitStats
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New MemoryHitStats
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="hitRate" className="nice-form-control">
                       <b>
                         Hit Rate:
-                        {touched.hitRate &&
-                         !errors.hitRate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.hitRate && !errors.hitRate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="hitRate"
-                            type="number"
-                            step="any"
-                            value={values.hitRate || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('hitRate', true);
-                              const v = e.target.value;
-                              setFieldValue('hitRate', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.hitRate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="hitRate"
+                        type="number"
+                        step="any"
+                        value={values.hitRate || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("hitRate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "hitRate",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.hitRate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -222,36 +239,32 @@ const MemoryHitStatsForm: React.FC = () => {
                     <label htmlFor="totalEntries" className="nice-form-control">
                       <b>
                         Total Entries:
-                        {touched.totalEntries &&
-                         !errors.totalEntries && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.totalEntries && !errors.totalEntries && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-                          {/* LONG FIELD */}
-                          <Field
-                            name="totalEntries"
-                            type="number"
-                            value={values.totalEntries || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('totalEntries', true);
-                              const v = e.target.value;
-                              setFieldValue('totalEntries', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.totalEntries
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
+                      {/* LONG FIELD */}
+                      <Field
+                        name="totalEntries"
+                        type="number"
+                        value={values.totalEntries || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("totalEntries", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "totalEntries",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.totalEntries
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -263,36 +276,32 @@ const MemoryHitStatsForm: React.FC = () => {
                     <label htmlFor="hotEntries" className="nice-form-control">
                       <b>
                         Hot Entries:
-                        {touched.hotEntries &&
-                         !errors.hotEntries && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.hotEntries && !errors.hotEntries && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-                          {/* LONG FIELD */}
-                          <Field
-                            name="hotEntries"
-                            type="number"
-                            value={values.hotEntries || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('hotEntries', true);
-                              const v = e.target.value;
-                              setFieldValue('hotEntries', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.hotEntries
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
+                      {/* LONG FIELD */}
+                      <Field
+                        name="hotEntries"
+                        type="number"
+                        value={values.hotEntries || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("hotEntries", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "hotEntries",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.hotEntries
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -304,32 +313,25 @@ const MemoryHitStatsForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -339,45 +341,59 @@ const MemoryHitStatsForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New MemoryHitStats
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New MemoryHitStats
+                    </CoolButton>
 
-                  {(addMemoryHitStatsResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addMemoryHitStatsResult as any).error ? (addMemoryHitStatsResult as any).error.data : (addMemoryHitStatsResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addMemoryHitStatsResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addMemoryHitStatsResult as any).error
+                              ? (addMemoryHitStatsResult as any).error.data
+                              : (addMemoryHitStatsResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addMemoryHitStatsResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addMemoryHitStatsResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addMemoryHitStatsResult: {JSON.stringify(addMemoryHitStatsResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addMemoryHitStatsResult:{" "}
+                    {JSON.stringify(addMemoryHitStatsResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -397,8 +413,5 @@ const MemoryHitStatsForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default MemoryHitStatsForm;
-

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AppendTrustEventRequest } from '@thorapi/model/AppendTrustEventRequest';
+import { AppendTrustEventRequest } from "@thorapi/model/AppendTrustEventRequest";
 
 const AppendTrustEventRequestSlice = createSlice({
   name: "AppendTrustEventRequests",
@@ -27,20 +27,27 @@ const AppendTrustEventRequestSlice = createSlice({
     },
 
     AppendTrustEventRequestValueToggled(state, action) {
-      console.log("AppendTrustEventRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const AppendTrustEventRequest:AppendTrustEventRequest = state.find((AppendTrustEventRequest) => AppendTrustEventRequest.id === action.payload.AppendTrustEventRequestId);
+      console.log("AppendTrustEventRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const AppendTrustEventRequest: AppendTrustEventRequest = state.find(
+        (AppendTrustEventRequest) =>
+          AppendTrustEventRequest.id ===
+          action.payload.AppendTrustEventRequestId,
+      );
       if (AppendTrustEventRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     AppendTrustEventRequestpropertySet(state, action) {
-      const AppendTrustEventRequest = state.find((AppendTrustEventRequest) => AppendTrustEventRequest.id === action.payload.AppendTrustEventRequestId);
+      const AppendTrustEventRequest = state.find(
+        (AppendTrustEventRequest) =>
+          AppendTrustEventRequest.id ===
+          action.payload.AppendTrustEventRequestId,
+      );
       if (AppendTrustEventRequest) {
-      //  AppendTrustEventRequest[action.property] = action.payload[action.property];
+        //  AppendTrustEventRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const AppendTrustEventRequestSlice = createSlice({
 export const {
   AppendTrustEventRequestAdded,
   AppendTrustEventRequestValueToggled,
-  AppendTrustEventRequestpropertySet
+  AppendTrustEventRequestpropertySet,
 } = AppendTrustEventRequestSlice.actions;
 export default AppendTrustEventRequestSlice.reducer;

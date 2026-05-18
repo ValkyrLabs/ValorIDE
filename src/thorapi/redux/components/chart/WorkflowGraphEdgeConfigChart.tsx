@@ -19,20 +19,35 @@ Description: WorkflowGraphEdgeConfig
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, WorkflowGraphEdgeConfig } from '@thorapi/model';
-import { useGetWorkflowGraphEdgeConfigsQuery, useAddWorkflowGraphEdgeConfigMutation, useUpdateWorkflowGraphEdgeConfigMutation } from '../../services/WorkflowGraphEdgeConfigService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, WorkflowGraphEdgeConfig } from "@thorapi/model";
+import {
+  useGetWorkflowGraphEdgeConfigsQuery,
+  useAddWorkflowGraphEdgeConfigMutation,
+  useUpdateWorkflowGraphEdgeConfigMutation,
+} from "../../services/WorkflowGraphEdgeConfigService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const WorkflowGraphEdgeConfigChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetWorkflowGraphEdgeConfigsQuery();
+  const { data: initialData = [], isLoading } =
+    useGetWorkflowGraphEdgeConfigsQuery();
 
   const [data, setData] = useState<WorkflowGraphEdgeConfig[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<WorkflowGraphEdgeConfig>>({});
-  
+  const [chartData, setChartData] = useState<Partial<WorkflowGraphEdgeConfig>>(
+    {},
+  );
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +65,9 @@ const WorkflowGraphEdgeConfigChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +75,15 @@ const WorkflowGraphEdgeConfigChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((workflowgraphedgeconfig: DataObject) => [workflowgraphedgeconfig])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((workflowgraphedgeconfig: DataObject) => [
+            workflowgraphedgeconfig,
+          ])}
+        />
+      )}
     </>
   );
 };

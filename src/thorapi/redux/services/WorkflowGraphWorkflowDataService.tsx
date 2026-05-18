@@ -13,47 +13,69 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { WorkflowGraphWorkflowData } from '@thorapi/model/WorkflowGraphWorkflowData'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { WorkflowGraphWorkflowData } from "@thorapi/model/WorkflowGraphWorkflowData";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type WorkflowGraphWorkflowDataResponse = WorkflowGraphWorkflowData[]
+type WorkflowGraphWorkflowDataResponse = WorkflowGraphWorkflowData[];
 
-const toWorkflowGraphWorkflowDataList = (result: unknown): WorkflowGraphWorkflowDataResponse => {
+const toWorkflowGraphWorkflowDataList = (
+  result: unknown,
+): WorkflowGraphWorkflowDataResponse => {
   if (Array.isArray(result)) {
-    return result as WorkflowGraphWorkflowDataResponse
+    return result as WorkflowGraphWorkflowDataResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as WorkflowGraphWorkflowDataResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as WorkflowGraphWorkflowDataResponse)
+    : [];
+};
 
 export const WorkflowGraphWorkflowDataService = createApi({
-  reducerPath: 'WorkflowGraphWorkflowData', // This should remain unique
+  reducerPath: "WorkflowGraphWorkflowData", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['WorkflowGraphWorkflowData'],
+  tagTypes: ["WorkflowGraphWorkflowData"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getWorkflowGraphWorkflowDatasPaged: build.query<WorkflowGraphWorkflowDataResponse, { page: number; size?: number; example?: Partial<WorkflowGraphWorkflowData> }>({
+    getWorkflowGraphWorkflowDatasPaged: build.query<
+      WorkflowGraphWorkflowDataResponse,
+      {
+        page: number;
+        size?: number;
+        example?: Partial<WorkflowGraphWorkflowData>;
+      }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `WorkflowGraphWorkflowData?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `WorkflowGraphWorkflowData?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toWorkflowGraphWorkflowDataList(result)
+        const rows = toWorkflowGraphWorkflowDataList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'WorkflowGraphWorkflowData' as const, id })),
-          { type: 'WorkflowGraphWorkflowData', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({
+              type: "WorkflowGraphWorkflowData" as const,
+              id,
+            })),
+          { type: "WorkflowGraphWorkflowData", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getWorkflowGraphWorkflowDatas: build.query<WorkflowGraphWorkflowDataResponse, { example?: Partial<WorkflowGraphWorkflowData> } | void>({
+    getWorkflowGraphWorkflowDatas: build.query<
+      WorkflowGraphWorkflowDataResponse,
+      { example?: Partial<WorkflowGraphWorkflowData> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +84,120 @@ export const WorkflowGraphWorkflowDataService = createApi({
         return `WorkflowGraphWorkflowData`;
       },
       providesTags: (result) => {
-        const rows = toWorkflowGraphWorkflowDataList(result)
+        const rows = toWorkflowGraphWorkflowDataList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'WorkflowGraphWorkflowData' as const, id })),
-          { type: 'WorkflowGraphWorkflowData', id: 'LIST' },
-        ]
+            .map(({ id }) => ({
+              type: "WorkflowGraphWorkflowData" as const,
+              id,
+            })),
+          { type: "WorkflowGraphWorkflowData", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addWorkflowGraphWorkflowData: build.mutation<WorkflowGraphWorkflowData, Partial<WorkflowGraphWorkflowData>>({
+    addWorkflowGraphWorkflowData: build.mutation<
+      WorkflowGraphWorkflowData,
+      Partial<WorkflowGraphWorkflowData>
+    >({
       query: (body) => ({
         url: `WorkflowGraphWorkflowData`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'WorkflowGraphWorkflowData', id: 'LIST' }],
+      invalidatesTags: [{ type: "WorkflowGraphWorkflowData", id: "LIST" }],
     }),
 
     // 4) Get single by ID
-    getWorkflowGraphWorkflowData: build.query<WorkflowGraphWorkflowData, string>({
+    getWorkflowGraphWorkflowData: build.query<
+      WorkflowGraphWorkflowData,
+      string
+    >({
       query: (id) => `WorkflowGraphWorkflowData/${id}`,
-      providesTags: (result, error, id) => [{ type: 'WorkflowGraphWorkflowData', id }],
+      providesTags: (result, error, id) => [
+        { type: "WorkflowGraphWorkflowData", id },
+      ],
     }),
 
     // 5) Update
-    updateWorkflowGraphWorkflowData: build.mutation<void, Pick<WorkflowGraphWorkflowData, 'id'> & Partial<WorkflowGraphWorkflowData>>({
+    updateWorkflowGraphWorkflowData: build.mutation<
+      void,
+      Pick<WorkflowGraphWorkflowData, "id"> & Partial<WorkflowGraphWorkflowData>
+    >({
       query: ({ id, ...patch }) => ({
         url: `WorkflowGraphWorkflowData/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            WorkflowGraphWorkflowDataService.util.updateQueryData('getWorkflowGraphWorkflowData', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            WorkflowGraphWorkflowDataService.util.updateQueryData(
+              "getWorkflowGraphWorkflowData",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<WorkflowGraphWorkflowData, 'id'>) => [
-        { type: 'WorkflowGraphWorkflowData', id },
-        { type: 'WorkflowGraphWorkflowData', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<WorkflowGraphWorkflowData, "id">,
+      ) => [
+        { type: "WorkflowGraphWorkflowData", id },
+        { type: "WorkflowGraphWorkflowData", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteWorkflowGraphWorkflowData: build.mutation<{ success: boolean; id: string }, number>({
+    deleteWorkflowGraphWorkflowData: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `WorkflowGraphWorkflowData/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'WorkflowGraphWorkflowData', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "WorkflowGraphWorkflowData", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteWorkflowGraphWorkflowDataCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteWorkflowGraphWorkflowDataCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `WorkflowGraphWorkflowData/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'WorkflowGraphWorkflowData', id }, { type: 'WorkflowGraphWorkflowData', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "WorkflowGraphWorkflowData", id },
+        { type: "WorkflowGraphWorkflowData", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetWorkflowGraphWorkflowDatasPagedQuery`
 export const {
-  useGetWorkflowGraphWorkflowDatasPagedQuery,     // immediate fetch
+  useGetWorkflowGraphWorkflowDatasPagedQuery, // immediate fetch
   useLazyGetWorkflowGraphWorkflowDatasPagedQuery, // lazy fetch
   useGetWorkflowGraphWorkflowDataQuery,
   useGetWorkflowGraphWorkflowDatasQuery,
@@ -150,4 +205,4 @@ export const {
   useUpdateWorkflowGraphWorkflowDataMutation,
   useDeleteWorkflowGraphWorkflowDataMutation,
   useDeleteWorkflowGraphWorkflowDataCascadeMutation,
-} = WorkflowGraphWorkflowDataService
+} = WorkflowGraphWorkflowDataService;

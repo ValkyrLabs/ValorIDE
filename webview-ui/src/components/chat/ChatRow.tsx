@@ -80,7 +80,9 @@ import {
   CheckpointOverlay,
 } from "../common/CheckpointControls";
 import CodeAccordian, { cleanPathPrefix } from "../common/CodeAccordian";
-import CodeBlock, { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
+import CodeBlock, {
+  CODE_BLOCK_BG_COLOR,
+} from "@thorapi/components/common/CodeBlock";
 import MarkdownBlock from "@thorapi/components/common/MarkdownBlock";
 import Thumbnails from "@thorapi/components/common/Thumbnails";
 import McpToolRow from "@thorapi/components/mcp/configuration/tabs/installed/server-row/McpToolRow";
@@ -295,8 +297,21 @@ const CompletionChangesSummary: React.FC<CompletionChangesSummaryProps> = ({
   const totalFilesLabel =
     summary.totalFiles === 1 ? "1 file" : `${summary.totalFiles} files`;
 
-  const [expandedFiles, setExpandedFiles] = useState<Record<string, boolean>>({});
-  const [previews, setPreviews] = useState<Record<string, { loading?: boolean; before?: string; after?: string; isBinary?: boolean; error?: string }>>({});
+  const [expandedFiles, setExpandedFiles] = useState<Record<string, boolean>>(
+    {},
+  );
+  const [previews, setPreviews] = useState<
+    Record<
+      string,
+      {
+        loading?: boolean;
+        before?: string;
+        after?: string;
+        isBinary?: boolean;
+        error?: string;
+      }
+    >
+  >({});
 
   useEffect(() => {
     const handler = (event: MessageEvent) => {
@@ -415,7 +430,12 @@ const CompletionChangesSummary: React.FC<CompletionChangesSummaryProps> = ({
                   )}
                   <FaChevronRight
                     size={12}
-                    style={{ transform: expandedFiles[file.relativePath] ? "rotate(90deg)" : "rotate(0deg)", transition: "transform 120ms" }}
+                    style={{
+                      transform: expandedFiles[file.relativePath]
+                        ? "rotate(90deg)"
+                        : "rotate(0deg)",
+                      transition: "transform 120ms",
+                    }}
                     onClick={(e) => {
                       // stop propagation to avoid toggling twice
                       e.stopPropagation();
@@ -424,61 +444,102 @@ const CompletionChangesSummary: React.FC<CompletionChangesSummaryProps> = ({
                   />
                 </RowRight>
               </ChangesSummaryRow>
-              {
-                expandedFiles[file.relativePath] && (
-                  <div style={{ padding: 12, paddingLeft: 44, paddingRight: 24, background: 'var(--vscode-editorWidget-background)', borderRadius: 6, marginTop: 6 }}>
-                    {previews[file.relativePath]?.loading ? (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ transform: 'scale(0.55)', transformOrigin: 'center' }}>
-                          <VSCodeProgressRing />
+              {expandedFiles[file.relativePath] && (
+                <div
+                  style={{
+                    padding: 12,
+                    paddingLeft: 44,
+                    paddingRight: 24,
+                    background: "var(--vscode-editorWidget-background)",
+                    borderRadius: 6,
+                    marginTop: 6,
+                  }}
+                >
+                  {previews[file.relativePath]?.loading ? (
+                    <div
+                      style={{ display: "flex", alignItems: "center", gap: 8 }}
+                    >
+                      <div
+                        style={{
+                          transform: "scale(0.55)",
+                          transformOrigin: "center",
+                        }}
+                      >
+                        <VSCodeProgressRing />
+                      </div>
+                      Loading preview...
+                    </div>
+                  ) : previews[file.relativePath]?.isBinary ? (
+                    <div>
+                      Binary file diff cannot be previewed here. Click Open in
+                      Diff to view.
+                    </div>
+                  ) : (
+                    <div>
+                      {previews[file.relativePath]?.after && (
+                        <div style={{ marginBottom: 8 }}>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              gap: 8,
+                              fontSize: 11,
+                              color: "var(--vscode-descriptionForeground)",
+                              marginBottom: 6,
+                            }}
+                          >
+                            <span>New</span>
+                            <VSCodeButton
+                              appearance="icon"
+                              disabled={disabled}
+                              aria-label="Open in Diff"
+                              title="Open in Diff"
+                              onClick={() => onOpenFileDiff(file.relativePath)}
+                              style={{ padding: 4 }}
+                            >
+                              <FaExternalLinkAlt size={12} />
+                            </VSCodeButton>
+                          </div>
+                          <CodeBlock
+                            source={`\`\`\`${getLanguageFromPath(file.relativePath) || ""}\n${(previews[file.relativePath]?.after || "").trim() || "// no preview available"}\n\`\`\``}
+                          />
                         </div>
-                        Loading preview...
-                      </div>
-                    ) : previews[file.relativePath]?.isBinary ? (
-                      <div>Binary file diff cannot be previewed here. Click Open in Diff to view.</div>
-                    ) : (
-                      <div>
-                        {previews[file.relativePath]?.after && (
-                          <div style={{ marginBottom: 8 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 11, color: 'var(--vscode-descriptionForeground)', marginBottom: 6 }}>
-                              <span>New</span>
-                              <VSCodeButton
-                                appearance="icon"
-                                disabled={disabled}
-                                aria-label="Open in Diff"
-                                title="Open in Diff"
-                                onClick={() => onOpenFileDiff(file.relativePath)}
-                                style={{ padding: 4 }}
-                              >
-                                <FaExternalLinkAlt size={12} />
-                              </VSCodeButton>
-                            </div>
-                            <CodeBlock source={`\`\`\`${getLanguageFromPath(file.relativePath) || ''}\n${(previews[file.relativePath]?.after || '').trim() || '// no preview available'}\n\`\`\``} />
+                      )}
+                      {previews[file.relativePath]?.before && (
+                        <div>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              gap: 8,
+                              fontSize: 11,
+                              color: "var(--vscode-descriptionForeground)",
+                              marginBottom: 6,
+                            }}
+                          >
+                            <span>Old</span>
+                            <VSCodeButton
+                              appearance="icon"
+                              disabled={disabled}
+                              aria-label="Open in Diff"
+                              title="Open in Diff"
+                              onClick={() => onOpenFileDiff(file.relativePath)}
+                              style={{ padding: 4 }}
+                            >
+                              <FaExternalLinkAlt size={12} />
+                            </VSCodeButton>
                           </div>
-                        )}
-                        {previews[file.relativePath]?.before && (
-                          <div>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 11, color: 'var(--vscode-descriptionForeground)', marginBottom: 6 }}>
-                              <span>Old</span>
-                              <VSCodeButton
-                                appearance="icon"
-                                disabled={disabled}
-                                aria-label="Open in Diff"
-                                title="Open in Diff"
-                                onClick={() => onOpenFileDiff(file.relativePath)}
-                                style={{ padding: 4 }}
-                              >
-                                <FaExternalLinkAlt size={12} />
-                              </VSCodeButton>
-                            </div>
-                            <CodeBlock source={`\`\`\`${getLanguageFromPath(file.relativePath) || ''}\n${(previews[file.relativePath]?.before || '').trim() || '// no preview available'}\n\`\`\``} />
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )
-              }
+                          <CodeBlock
+                            source={`\`\`\`${getLanguageFromPath(file.relativePath) || ""}\n${(previews[file.relativePath]?.before || "").trim() || "// no preview available"}\n\`\`\``}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
             </>
           );
         })}
@@ -519,8 +580,7 @@ type ChatRowContentProps = Omit<ChatRowProps, "onHeightChange"> & {
 
 export const API_REQUEST_TIMEOUT_MS = 10000;
 const severityColors: Record<"info" | "warning" | "error", string> = {
-  info:
-    "var(--vscode-notificationsInfoIcon-foreground, var(--vscode-charts-blue))",
+  info: "var(--vscode-notificationsInfoIcon-foreground, var(--vscode-charts-blue))",
   warning:
     "var(--vscode-notificationsWarningIcon-foreground, var(--vscode-charts-yellow))",
   error:
@@ -765,7 +825,8 @@ export const ChatRowContent = ({
   sendMessageFromChatRow,
   taskConfidence,
 }: ChatRowContentProps) => {
-  const { mcpServers, mcpMarketplaceCatalog, valorideMessages } = useExtensionState();
+  const { mcpServers, mcpMarketplaceCatalog, valorideMessages } =
+    useExtensionState();
   const [seeNewChangesDisabled, setSeeNewChangesDisabled] = useState(false);
   const [apiRequestTimedOut, setApiRequestTimedOut] = useState(false);
 
@@ -789,15 +850,14 @@ export const ChatRowContent = ({
     return undefined;
   }, [message.say, message.text]);
 
-  const [cost, apiReqCancelReason, apiReqStreamingFailedMessage] =
-    useMemo(
-      () => [
-        parsedApiReqInfo?.cost,
-        parsedApiReqInfo?.cancelReason,
-        parsedApiReqInfo?.streamingFailedMessage,
-      ],
-      [parsedApiReqInfo],
-    );
+  const [cost, apiReqCancelReason, apiReqStreamingFailedMessage] = useMemo(
+    () => [
+      parsedApiReqInfo?.cost,
+      parsedApiReqInfo?.cancelReason,
+      parsedApiReqInfo?.streamingFailedMessage,
+    ],
+    [parsedApiReqInfo],
+  );
 
   const apiRequestUsageAvailable = useMemo(() => {
     if (message.say !== "api_req_started" || !parsedApiReqInfo) {
@@ -860,8 +920,7 @@ export const ChatRowContent = ({
   const command = requestsApproval
     ? rawCommand.slice(0, -COMMAND_REQ_APP_STRING.length)
     : rawCommand;
-  const commandHeaderSuffix =
-    !isOutputOnly && command ? ` ${command}` : "";
+  const commandHeaderSuffix = !isOutputOnly && command ? ` ${command}` : "";
   const apiRequestTimeoutMessage = apiRequestTimedOut
     ? "API request timed out waiting for usage details."
     : undefined;
@@ -1175,7 +1234,11 @@ export const ChatRowContent = ({
               );
             }
 
-            if (apiRequestUsageAvailable || cost != null || isTaskCompletionMessage) {
+            if (
+              apiRequestUsageAvailable ||
+              cost != null ||
+              isTaskCompletionMessage
+            ) {
               return (
                 <span style={{ color: normalColor, fontWeight: "bold" }}>
                   API Request
@@ -1367,7 +1430,9 @@ export const ChatRowContent = ({
                 ? ` (occurrence: ${edit.occurrence})`
                 : "";
             const pair = formatPair(edit.find, edit.replace);
-            return pair ? `contextual${occurrence}: ${pair}` : `contextual${occurrence}`;
+            return pair
+              ? `contextual${occurrence}: ${pair}`
+              : `contextual${occurrence}`;
           }
           if (kind === "ts-ast") {
             const intent =
@@ -2024,23 +2089,23 @@ export const ChatRowContent = ({
                         {apiRequestFailedMessage
                           ?.toLowerCase()
                           .includes("powershell") && (
-                            <>
-                              <br />
-                              <br />
-                              It seems like you're having Windows PowerShell
-                              issues, please see this{" "}
-                              <a
-                                href="https://github.com/valkyrlabs/valoride/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
-                                style={{
-                                  color: "inherit",
-                                  textDecoration: "underline",
-                                }}
-                              >
-                                troubleshooting guide
-                              </a>
-                              .
-                            </>
-                          )}
+                          <>
+                            <br />
+                            <br />
+                            It seems like you're having Windows PowerShell
+                            issues, please see this{" "}
+                            <a
+                              href="https://github.com/valkyrlabs/valoride/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
+                              style={{
+                                color: "inherit",
+                                textDecoration: "underline",
+                              }}
+                            >
+                              troubleshooting guide
+                            </a>
+                            .
+                          </>
+                        )}
                       </p>
                     );
                   })()}
@@ -2121,7 +2186,11 @@ export const ChatRowContent = ({
               >
                 <FaBrain
                   data-testid="reasoning-icon"
-                  color={reasoningSeverity ? severityColors[reasoningSeverity] : undefined}
+                  color={
+                    reasoningSeverity
+                      ? severityColors[reasoningSeverity]
+                      : undefined
+                  }
                 />
                 <span style={{ fontWeight: 700, fontSize: 12 }}>
                   {message.partial ? "Thinking..." : "Thoughts"}
@@ -2294,7 +2363,6 @@ export const ChatRowContent = ({
           );
         case "workspace_access_error":
           return (
-
             <div
               style={{
                 display: "flex",
@@ -2323,13 +2391,12 @@ export const ChatRowContent = ({
                 </span>
               </div>
               <div>
-                ValorIDE can only operate inside the opened workspace. The
-                file <code>{message.text}</code> lives elsewhere. Open the
-                folder that contains it or share the contents manually if it
-                should be accessible.
+                ValorIDE can only operate inside the opened workspace. The file{" "}
+                <code>{message.text}</code> lives elsewhere. Open the folder
+                that contains it or share the contents manually if it should be
+                accessible.
               </div>
             </div>
-
           );
         case "checkpoint_created":
           return (
@@ -2371,7 +2438,8 @@ export const ChatRowContent = ({
           // Only hide text if there's a summary AND text matches the initial prompt
           const shouldHideText = Boolean(
             hasSummary &&
-            initialPromptText && text?.trim() === initialPromptText.trim(),
+              initialPromptText &&
+              text?.trim() === initialPromptText.trim(),
           );
           if (!text && !hasSummary && !hasChanges) {
             return null; // nothing to show
@@ -2415,8 +2483,11 @@ export const ChatRowContent = ({
                       sections.push(text.trim());
                     }
                     if (message.changesSummary) {
-                      const { totalInsertions, totalDeletions, files = [] } =
-                        message.changesSummary;
+                      const {
+                        totalInsertions,
+                        totalDeletions,
+                        files = [],
+                      } = message.changesSummary;
                       const keyFiles = files
                         .slice(0, 3)
                         .map(
@@ -2468,7 +2539,6 @@ export const ChatRowContent = ({
           );
         case "shell_integration_warning":
           return (
-
             <div
               style={{
                 display: "flex",
@@ -2498,9 +2568,9 @@ export const ChatRowContent = ({
               </div>
               <div>
                 ValorIDE won't be able to view the command's output. Please
-                update VSCode (<code>CMD/CTRL + Shift + P</code> → "Update")
-                and make sure you're using a supported shell: zsh, bash, fish,
-                or PowerShell (<code>CMD/CTRL + Shift + P</code> → "Terminal:
+                update VSCode (<code>CMD/CTRL + Shift + P</code> → "Update") and
+                make sure you're using a supported shell: zsh, bash, fish, or
+                PowerShell (<code>CMD/CTRL + Shift + P</code> → "Terminal:
                 Select Default Profile").{" "}
                 <a
                   href="https://valkyrlabs.com/v1/Products/ValorIDE/tools/cline-tools-guide"
@@ -2513,7 +2583,6 @@ export const ChatRowContent = ({
                 </a>
               </div>
             </div>
-
           );
         default:
           return (
@@ -2577,8 +2646,8 @@ export const ChatRowContent = ({
             const initialPromptText = valorideMessages?.[0]?.text;
             const shouldHideText = Boolean(
               text &&
-              initialPromptText &&
-              text.trim() === initialPromptText.trim(),
+                initialPromptText &&
+                text.trim() === initialPromptText.trim(),
             );
             if (!text && !hasSummary && !hasChanges) {
               return null; // nothing to show
@@ -2622,8 +2691,11 @@ export const ChatRowContent = ({
                         sections.push(text.trim());
                       }
                       if (message.changesSummary) {
-                        const { totalInsertions, totalDeletions, files = [] } =
-                          message.changesSummary;
+                        const {
+                          totalInsertions,
+                          totalDeletions,
+                          files = [],
+                        } = message.changesSummary;
                         const keyFiles = files
                           .slice(0, 3)
                           .map(

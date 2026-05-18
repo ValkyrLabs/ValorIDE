@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { MemoryCostStats } from '@thorapi/model/MemoryCostStats'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { MemoryCostStats } from "@thorapi/model/MemoryCostStats";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type MemoryCostStatsResponse = MemoryCostStats[]
+type MemoryCostStatsResponse = MemoryCostStats[];
 
 const toMemoryCostStatsList = (result: unknown): MemoryCostStatsResponse => {
   if (Array.isArray(result)) {
-    return result as MemoryCostStatsResponse
+    return result as MemoryCostStatsResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as MemoryCostStatsResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as MemoryCostStatsResponse) : [];
+};
 
 export const MemoryCostStatsService = createApi({
-  reducerPath: 'MemoryCostStats', // This should remain unique
+  reducerPath: "MemoryCostStats", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['MemoryCostStats'],
+  tagTypes: ["MemoryCostStats"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getMemoryCostStatssPaged: build.query<MemoryCostStatsResponse, { page: number; size?: number; example?: Partial<MemoryCostStats> }>({
+    getMemoryCostStatssPaged: build.query<
+      MemoryCostStatsResponse,
+      { page: number; size?: number; example?: Partial<MemoryCostStats> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `MemoryCostStats?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `MemoryCostStats?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toMemoryCostStatsList(result)
+        const rows = toMemoryCostStatsList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'MemoryCostStats' as const, id })),
-          { type: 'MemoryCostStats', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "MemoryCostStats" as const, id })),
+          { type: "MemoryCostStats", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getMemoryCostStatss: build.query<MemoryCostStatsResponse, { example?: Partial<MemoryCostStats> } | void>({
+    getMemoryCostStatss: build.query<
+      MemoryCostStatsResponse,
+      { example?: Partial<MemoryCostStats> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +73,106 @@ export const MemoryCostStatsService = createApi({
         return `MemoryCostStats`;
       },
       providesTags: (result) => {
-        const rows = toMemoryCostStatsList(result)
+        const rows = toMemoryCostStatsList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'MemoryCostStats' as const, id })),
-          { type: 'MemoryCostStats', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "MemoryCostStats" as const, id })),
+          { type: "MemoryCostStats", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addMemoryCostStats: build.mutation<MemoryCostStats, Partial<MemoryCostStats>>({
+    addMemoryCostStats: build.mutation<
+      MemoryCostStats,
+      Partial<MemoryCostStats>
+    >({
       query: (body) => ({
         url: `MemoryCostStats`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'MemoryCostStats', id: 'LIST' }],
+      invalidatesTags: [{ type: "MemoryCostStats", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getMemoryCostStats: build.query<MemoryCostStats, string>({
       query: (id) => `MemoryCostStats/${id}`,
-      providesTags: (result, error, id) => [{ type: 'MemoryCostStats', id }],
+      providesTags: (result, error, id) => [{ type: "MemoryCostStats", id }],
     }),
 
     // 5) Update
-    updateMemoryCostStats: build.mutation<void, Pick<MemoryCostStats, 'id'> & Partial<MemoryCostStats>>({
+    updateMemoryCostStats: build.mutation<
+      void,
+      Pick<MemoryCostStats, "id"> & Partial<MemoryCostStats>
+    >({
       query: ({ id, ...patch }) => ({
         url: `MemoryCostStats/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            MemoryCostStatsService.util.updateQueryData('getMemoryCostStats', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            MemoryCostStatsService.util.updateQueryData(
+              "getMemoryCostStats",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<MemoryCostStats, 'id'>) => [
-        { type: 'MemoryCostStats', id },
-        { type: 'MemoryCostStats', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<MemoryCostStats, "id">) => [
+        { type: "MemoryCostStats", id },
+        { type: "MemoryCostStats", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteMemoryCostStats: build.mutation<{ success: boolean; id: string }, number>({
+    deleteMemoryCostStats: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `MemoryCostStats/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'MemoryCostStats', id }],
+      invalidatesTags: (result, error, id) => [{ type: "MemoryCostStats", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteMemoryCostStatsCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteMemoryCostStatsCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `MemoryCostStats/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'MemoryCostStats', id }, { type: 'MemoryCostStats', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "MemoryCostStats", id },
+        { type: "MemoryCostStats", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetMemoryCostStatssPagedQuery`
 export const {
-  useGetMemoryCostStatssPagedQuery,     // immediate fetch
+  useGetMemoryCostStatssPagedQuery, // immediate fetch
   useLazyGetMemoryCostStatssPagedQuery, // lazy fetch
   useGetMemoryCostStatsQuery,
   useGetMemoryCostStatssQuery,
@@ -150,4 +180,4 @@ export const {
   useUpdateMemoryCostStatsMutation,
   useDeleteMemoryCostStatsMutation,
   useDeleteMemoryCostStatsCascadeMutation,
-} = MemoryCostStatsService
+} = MemoryCostStatsService;

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { CareerOpportunity } from '@thorapi/model/CareerOpportunity';
+import { CareerOpportunity } from "@thorapi/model/CareerOpportunity";
 
 const CareerOpportunitySlice = createSlice({
   name: "CareerOpportunitys",
@@ -27,20 +27,25 @@ const CareerOpportunitySlice = createSlice({
     },
 
     CareerOpportunityValueToggled(state, action) {
-      console.log("CareerOpportunity TOGGLE")
-      console.warn(JSON.stringify(action))
-      const CareerOpportunity:CareerOpportunity = state.find((CareerOpportunity) => CareerOpportunity.id === action.payload.CareerOpportunityId);
+      console.log("CareerOpportunity TOGGLE");
+      console.warn(JSON.stringify(action));
+      const CareerOpportunity: CareerOpportunity = state.find(
+        (CareerOpportunity) =>
+          CareerOpportunity.id === action.payload.CareerOpportunityId,
+      );
       if (CareerOpportunity) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     CareerOpportunitypropertySet(state, action) {
-      const CareerOpportunity = state.find((CareerOpportunity) => CareerOpportunity.id === action.payload.CareerOpportunityId);
+      const CareerOpportunity = state.find(
+        (CareerOpportunity) =>
+          CareerOpportunity.id === action.payload.CareerOpportunityId,
+      );
       if (CareerOpportunity) {
-      //  CareerOpportunity[action.property] = action.payload[action.property];
+        //  CareerOpportunity[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const CareerOpportunitySlice = createSlice({
 export const {
   CareerOpportunityAdded,
   CareerOpportunityValueToggled,
-  CareerOpportunitypropertySet
+  CareerOpportunitypropertySet,
 } = CareerOpportunitySlice.actions;
 export default CareerOpportunitySlice.reducer;

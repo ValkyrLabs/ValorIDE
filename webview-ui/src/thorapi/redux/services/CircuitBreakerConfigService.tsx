@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { CircuitBreakerConfig } from '@thorapi/model/CircuitBreakerConfig'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { CircuitBreakerConfig } from "@thorapi/model/CircuitBreakerConfig";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type CircuitBreakerConfigResponse = CircuitBreakerConfig[]
+type CircuitBreakerConfigResponse = CircuitBreakerConfig[];
 
-const toCircuitBreakerConfigList = (result: unknown): CircuitBreakerConfigResponse => {
+const toCircuitBreakerConfigList = (
+  result: unknown,
+): CircuitBreakerConfigResponse => {
   if (Array.isArray(result)) {
-    return result as CircuitBreakerConfigResponse
+    return result as CircuitBreakerConfigResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as CircuitBreakerConfigResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as CircuitBreakerConfigResponse)
+    : [];
+};
 
 export const CircuitBreakerConfigService = createApi({
-  reducerPath: 'CircuitBreakerConfig', // This should remain unique
+  reducerPath: "CircuitBreakerConfig", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['CircuitBreakerConfig'],
+  tagTypes: ["CircuitBreakerConfig"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getCircuitBreakerConfigsPaged: build.query<CircuitBreakerConfigResponse, { page: number; size?: number; example?: Partial<CircuitBreakerConfig> }>({
+    getCircuitBreakerConfigsPaged: build.query<
+      CircuitBreakerConfigResponse,
+      { page: number; size?: number; example?: Partial<CircuitBreakerConfig> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `CircuitBreakerConfig?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `CircuitBreakerConfig?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toCircuitBreakerConfigList(result)
+        const rows = toCircuitBreakerConfigList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'CircuitBreakerConfig' as const, id })),
-          { type: 'CircuitBreakerConfig', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "CircuitBreakerConfig" as const, id })),
+          { type: "CircuitBreakerConfig", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getCircuitBreakerConfigs: build.query<CircuitBreakerConfigResponse, { example?: Partial<CircuitBreakerConfig> } | void>({
+    getCircuitBreakerConfigs: build.query<
+      CircuitBreakerConfigResponse,
+      { example?: Partial<CircuitBreakerConfig> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,114 @@ export const CircuitBreakerConfigService = createApi({
         return `CircuitBreakerConfig`;
       },
       providesTags: (result) => {
-        const rows = toCircuitBreakerConfigList(result)
+        const rows = toCircuitBreakerConfigList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'CircuitBreakerConfig' as const, id })),
-          { type: 'CircuitBreakerConfig', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "CircuitBreakerConfig" as const, id })),
+          { type: "CircuitBreakerConfig", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addCircuitBreakerConfig: build.mutation<CircuitBreakerConfig, Partial<CircuitBreakerConfig>>({
+    addCircuitBreakerConfig: build.mutation<
+      CircuitBreakerConfig,
+      Partial<CircuitBreakerConfig>
+    >({
       query: (body) => ({
         url: `CircuitBreakerConfig`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'CircuitBreakerConfig', id: 'LIST' }],
+      invalidatesTags: [{ type: "CircuitBreakerConfig", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getCircuitBreakerConfig: build.query<CircuitBreakerConfig, string>({
       query: (id) => `CircuitBreakerConfig/${id}`,
-      providesTags: (result, error, id) => [{ type: 'CircuitBreakerConfig', id }],
+      providesTags: (result, error, id) => [
+        { type: "CircuitBreakerConfig", id },
+      ],
     }),
 
     // 5) Update
-    updateCircuitBreakerConfig: build.mutation<void, Pick<CircuitBreakerConfig, 'id'> & Partial<CircuitBreakerConfig>>({
+    updateCircuitBreakerConfig: build.mutation<
+      void,
+      Pick<CircuitBreakerConfig, "id"> & Partial<CircuitBreakerConfig>
+    >({
       query: ({ id, ...patch }) => ({
         url: `CircuitBreakerConfig/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            CircuitBreakerConfigService.util.updateQueryData('getCircuitBreakerConfig', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            CircuitBreakerConfigService.util.updateQueryData(
+              "getCircuitBreakerConfig",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<CircuitBreakerConfig, 'id'>) => [
-        { type: 'CircuitBreakerConfig', id },
-        { type: 'CircuitBreakerConfig', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<CircuitBreakerConfig, "id">,
+      ) => [
+        { type: "CircuitBreakerConfig", id },
+        { type: "CircuitBreakerConfig", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteCircuitBreakerConfig: build.mutation<{ success: boolean; id: string }, number>({
+    deleteCircuitBreakerConfig: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `CircuitBreakerConfig/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'CircuitBreakerConfig', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "CircuitBreakerConfig", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteCircuitBreakerConfigCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteCircuitBreakerConfigCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `CircuitBreakerConfig/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'CircuitBreakerConfig', id }, { type: 'CircuitBreakerConfig', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "CircuitBreakerConfig", id },
+        { type: "CircuitBreakerConfig", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetCircuitBreakerConfigsPagedQuery`
 export const {
-  useGetCircuitBreakerConfigsPagedQuery,     // immediate fetch
+  useGetCircuitBreakerConfigsPagedQuery, // immediate fetch
   useLazyGetCircuitBreakerConfigsPagedQuery, // lazy fetch
   useGetCircuitBreakerConfigQuery,
   useGetCircuitBreakerConfigsQuery,
@@ -150,4 +192,4 @@ export const {
   useUpdateCircuitBreakerConfigMutation,
   useDeleteCircuitBreakerConfigMutation,
   useDeleteCircuitBreakerConfigCascadeMutation,
-} = CircuitBreakerConfigService
+} = CircuitBreakerConfigService;

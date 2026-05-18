@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ArrayNumberItem } from '@thorapi/model/ArrayNumberItem';
+import { ArrayNumberItem } from "@thorapi/model/ArrayNumberItem";
 
 const ArrayNumberItemSlice = createSlice({
   name: "ArrayNumberItems",
@@ -27,20 +27,25 @@ const ArrayNumberItemSlice = createSlice({
     },
 
     ArrayNumberItemValueToggled(state, action) {
-      console.log("ArrayNumberItem TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ArrayNumberItem:ArrayNumberItem = state.find((ArrayNumberItem) => ArrayNumberItem.id === action.payload.ArrayNumberItemId);
+      console.log("ArrayNumberItem TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ArrayNumberItem: ArrayNumberItem = state.find(
+        (ArrayNumberItem) =>
+          ArrayNumberItem.id === action.payload.ArrayNumberItemId,
+      );
       if (ArrayNumberItem) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ArrayNumberItempropertySet(state, action) {
-      const ArrayNumberItem = state.find((ArrayNumberItem) => ArrayNumberItem.id === action.payload.ArrayNumberItemId);
+      const ArrayNumberItem = state.find(
+        (ArrayNumberItem) =>
+          ArrayNumberItem.id === action.payload.ArrayNumberItemId,
+      );
       if (ArrayNumberItem) {
-      //  ArrayNumberItem[action.property] = action.payload[action.property];
+        //  ArrayNumberItem[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const ArrayNumberItemSlice = createSlice({
 export const {
   ArrayNumberItemAdded,
   ArrayNumberItemValueToggled,
-  ArrayNumberItempropertySet
+  ArrayNumberItempropertySet,
 } = ArrayNumberItemSlice.actions;
 export default ArrayNumberItemSlice.reducer;

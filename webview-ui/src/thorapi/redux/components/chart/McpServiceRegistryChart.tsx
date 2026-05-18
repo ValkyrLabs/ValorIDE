@@ -19,20 +19,33 @@ Description: McpServiceRegistry
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, McpServiceRegistry } from '@thorapi/model';
-import { useGetMcpServiceRegistrysQuery, useAddMcpServiceRegistryMutation, useUpdateMcpServiceRegistryMutation } from '../../services/McpServiceRegistryService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, McpServiceRegistry } from "@thorapi/model";
+import {
+  useGetMcpServiceRegistrysQuery,
+  useAddMcpServiceRegistryMutation,
+  useUpdateMcpServiceRegistryMutation,
+} from "../../services/McpServiceRegistryService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const McpServiceRegistryChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetMcpServiceRegistrysQuery();
+  const { data: initialData = [], isLoading } =
+    useGetMcpServiceRegistrysQuery();
 
   const [data, setData] = useState<McpServiceRegistry[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<McpServiceRegistry>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +63,9 @@ const McpServiceRegistryChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +73,15 @@ const McpServiceRegistryChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((mcpserviceregistry: DataObject) => [mcpserviceregistry])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((mcpserviceregistry: DataObject) => [
+            mcpserviceregistry,
+          ])}
+        />
+      )}
     </>
   );
 };

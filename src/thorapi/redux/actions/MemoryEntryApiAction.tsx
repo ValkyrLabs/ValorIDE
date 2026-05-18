@@ -17,95 +17,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // MemoryEntry
 
-export const FETCH_MEMORYENTRY_REQUEST = 'FETCH_MEMORYENTRY_REQUEST';
-export const FETCH_MEMORYENTRY_SUCCESS = 'FETCH_MEMORYENTRY_SUCCESS';
-export const FETCH_MEMORYENTRY_FAILURE = 'FETCH_MEMORYENTRY_FAILURE';
+export const FETCH_MEMORYENTRY_REQUEST = "FETCH_MEMORYENTRY_REQUEST";
+export const FETCH_MEMORYENTRY_SUCCESS = "FETCH_MEMORYENTRY_SUCCESS";
+export const FETCH_MEMORYENTRY_FAILURE = "FETCH_MEMORYENTRY_FAILURE";
 
-export const ADD_MEMORYENTRY_REQUEST = 'ADD_MEMORYENTRY_REQUEST';
-export const ADD_MEMORYENTRY_SUCCESS = 'ADD_MEMORYENTRY_SUCCESS';
-export const ADD_MEMORYENTRY_FAILURE = 'ADD_MEMORYENTRY_FAILURE';
+export const ADD_MEMORYENTRY_REQUEST = "ADD_MEMORYENTRY_REQUEST";
+export const ADD_MEMORYENTRY_SUCCESS = "ADD_MEMORYENTRY_SUCCESS";
+export const ADD_MEMORYENTRY_FAILURE = "ADD_MEMORYENTRY_FAILURE";
 
-export const UPDATE_MEMORYENTRY_REQUEST = 'UPDATE_MEMORYENTRY_REQUEST';
-export const UPDATE_MEMORYENTRY_SUCCESS = 'UPDATE_MEMORYENTRY_SUCCESS';
-export const UPDATE_MEMORYENTRY_FAILURE = 'UPDATE_MEMORYENTRY_FAILURE';
+export const UPDATE_MEMORYENTRY_REQUEST = "UPDATE_MEMORYENTRY_REQUEST";
+export const UPDATE_MEMORYENTRY_SUCCESS = "UPDATE_MEMORYENTRY_SUCCESS";
+export const UPDATE_MEMORYENTRY_FAILURE = "UPDATE_MEMORYENTRY_FAILURE";
 
-export const DELETE_MEMORYENTRY_REQUEST = 'DELETE_MEMORYENTRY_REQUEST';
-export const DELETE_MEMORYENTRY_SUCCESS = 'DELETE_MEMORYENTRY_SUCCESS';
-export const DELETE_MEMORYENTRY_FAILURE = 'DELETE_MEMORYENTRY_FAILURE';
+export const DELETE_MEMORYENTRY_REQUEST = "DELETE_MEMORYENTRY_REQUEST";
+export const DELETE_MEMORYENTRY_SUCCESS = "DELETE_MEMORYENTRY_SUCCESS";
+export const DELETE_MEMORYENTRY_FAILURE = "DELETE_MEMORYENTRY_FAILURE";
 
-export const LIST_MEMORYENTRY_REQUEST = 'LIST_MEMORYENTRY_REQUEST';
-export const LIST_MEMORYENTRY_SUCCESS = 'LIST_MEMORYENTRY_SUCCESS';
-export const LIST_MEMORYENTRY_FAILURE = 'LIST_MEMORYENTRY_FAILURE';
+export const LIST_MEMORYENTRY_REQUEST = "LIST_MEMORYENTRY_REQUEST";
+export const LIST_MEMORYENTRY_SUCCESS = "LIST_MEMORYENTRY_SUCCESS";
+export const LIST_MEMORYENTRY_FAILURE = "LIST_MEMORYENTRY_FAILURE";
 
 export const addMemoryEntryRequest = () => ({
-    type: ADD_MEMORYENTRY_REQUEST,
+  type: ADD_MEMORYENTRY_REQUEST,
 });
 
 export const addMemoryEntrySuccess = (MemoryEntrys: any) => ({
-    type: ADD_MEMORYENTRY_SUCCESS,
-    payload: MemoryEntrys,
+  type: ADD_MEMORYENTRY_SUCCESS,
+  payload: MemoryEntrys,
 });
 
 export const addMemoryEntryFailure = (error: Error) => ({
-    type: ADD_MEMORYENTRY_FAILURE,
-    payload: error,
+  type: ADD_MEMORYENTRY_FAILURE,
+  payload: error,
 });
 
-
 export const fetchMemoryEntryRequest = () => ({
-    type: FETCH_MEMORYENTRY_REQUEST,
+  type: FETCH_MEMORYENTRY_REQUEST,
 });
 
 export const fetchMemoryEntrySuccess = (MemoryEntrys: any) => ({
-    type: FETCH_MEMORYENTRY_SUCCESS,
-    payload: MemoryEntrys,
+  type: FETCH_MEMORYENTRY_SUCCESS,
+  payload: MemoryEntrys,
 });
 
 export const fetchMemoryEntryFailure = (error: Error) => ({
-    type: FETCH_MEMORYENTRY_FAILURE,
-    payload: error,
+  type: FETCH_MEMORYENTRY_FAILURE,
+  payload: error,
 });
 
 export const listMemoryEntryRequest = () => ({
-    type: LIST_MEMORYENTRY_REQUEST,
+  type: LIST_MEMORYENTRY_REQUEST,
 });
 
 export const listMemoryEntrySuccess = (MemoryEntrys: any) => ({
-    type: LIST_MEMORYENTRY_SUCCESS,
-    payload: MemoryEntrys,
+  type: LIST_MEMORYENTRY_SUCCESS,
+  payload: MemoryEntrys,
 });
 
 export const listMemoryEntryFailure = (error: Error) => ({
-    type: LIST_MEMORYENTRY_FAILURE,
-    payload: error,
+  type: LIST_MEMORYENTRY_FAILURE,
+  payload: error,
 });
 
 export const updateMemoryEntryRequest = (MemoryEntry: any) => ({
-    type: UPDATE_MEMORYENTRY_REQUEST,
-    payload: MemoryEntry,
+  type: UPDATE_MEMORYENTRY_REQUEST,
+  payload: MemoryEntry,
 });
 
 export const updateMemoryEntrySuccess = (MemoryEntry: any) => ({
-    type: UPDATE_MEMORYENTRY_SUCCESS,
-    payload: MemoryEntry,
+  type: UPDATE_MEMORYENTRY_SUCCESS,
+  payload: MemoryEntry,
 });
 
 export const updateMemoryEntryFailure = (error: Error) => ({
-    type: UPDATE_MEMORYENTRY_FAILURE,
-    payload: error,
+  type: UPDATE_MEMORYENTRY_FAILURE,
+  payload: error,
 });
 
 export const deleteMemoryEntryRequest = (MemoryEntry: any) => ({
-    type: DELETE_MEMORYENTRY_REQUEST,
-    payload: MemoryEntry,
+  type: DELETE_MEMORYENTRY_REQUEST,
+  payload: MemoryEntry,
 });
 
 export const deleteMemoryEntrySuccess = (MemoryEntry: any) => ({
-    type: DELETE_MEMORYENTRY_SUCCESS,
-    payload: MemoryEntry,
+  type: DELETE_MEMORYENTRY_SUCCESS,
+  payload: MemoryEntry,
 });
 
 export const deleteMemoryEntryFailure = (error: Error) => ({
-    type: DELETE_MEMORYENTRY_FAILURE,
-    payload: error,
+  type: DELETE_MEMORYENTRY_FAILURE,
+  payload: error,
 });

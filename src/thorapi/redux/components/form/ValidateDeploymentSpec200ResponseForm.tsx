@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  ValidateDeploymentSpec200Response,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddValidateDeploymentSpec200ResponseMutation } from '../../services/ValidateDeploymentSpec200ResponseService';
+import { ValidateDeploymentSpec200Response } from "@thorapi/model";
+
+import { useAddValidateDeploymentSpec200ResponseMutation } from "../../services/ValidateDeploymentSpec200ResponseService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,17 +71,22 @@ ValidateDeploymentSpec200Response
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        valid: Yup.boolean(),
+  valid: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ValidateDeploymentSpec200ResponseForm: React.FC = () => {
-  const [addValidateDeploymentSpec200Response, addValidateDeploymentSpec200ResponseResult] = useAddValidateDeploymentSpec200ResponseMutation();
+  const [
+    addValidateDeploymentSpec200Response,
+    addValidateDeploymentSpec200ResponseResult,
+  ] = useAddValidateDeploymentSpec200ResponseMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -85,12 +96,18 @@ const ValidateDeploymentSpec200ResponseForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -98,7 +115,7 @@ const ValidateDeploymentSpec200ResponseForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ValidateDeploymentSpec200Response> = {
-          valid: false,
+    valid: false,
   };
 
   // Permission Management Handlers
@@ -113,22 +130,30 @@ const ValidateDeploymentSpec200ResponseForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new ValidateDeploymentSpec200Response:', grants);
+    console.log(
+      "Permissions saved for new ValidateDeploymentSpec200Response:",
+      grants,
+    );
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ValidateDeploymentSpec200Response>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<ValidateDeploymentSpec200Response>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
       console.log("ValidateDeploymentSpec200Response form values:", values);
 
       // NOTE: depending on your generated endpoint, you may need { body: values }
-      const result = await addValidateDeploymentSpec200Response(values as any).unwrap();
+      const result = await addValidateDeploymentSpec200Response(
+        values as any,
+      ).unwrap();
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ValidateDeploymentSpec200Response created successfully! Would you like to set permissions for this object?`
+          `ValidateDeploymentSpec200Response created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -136,8 +161,11 @@ const ValidateDeploymentSpec200ResponseForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create ValidateDeploymentSpec200Response:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error(
+        "Failed to create ValidateDeploymentSpec200Response:",
+        error,
+      );
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -158,48 +186,43 @@ const ValidateDeploymentSpec200ResponseForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addValidateDeploymentSpec200ResponseResult.isLoading;
+          const isSaving =
+            isSubmitting ||
+            addValidateDeploymentSpec200ResponseResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New ValidateDeploymentSpec200Response
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    ValidateDeploymentSpec200Response
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="valid" className="nice-form-control">
                       <b>
                         Valid:
-                        {touched.valid &&
-                         !errors.valid && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.valid && !errors.valid && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="valid"
-                            name="valid"
-                            checked={values.valid || false}
-                            onChange={(e) => {
-                              setFieldTouched('valid', true);
-                              setFieldValue('valid', e.target.checked);
-                            }}
-                            isInvalid={!!errors.valid}
-                            className={errors.valid ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="valid"
+                        name="valid"
+                        checked={values.valid || false}
+                        onChange={(e) => {
+                          setFieldTouched("valid", true);
+                          setFieldValue("valid", e.target.checked);
+                        }}
+                        isInvalid={!!errors.valid}
+                        className={errors.valid ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -209,45 +232,69 @@ const ValidateDeploymentSpec200ResponseForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New ValidateDeploymentSpec200Response
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      ValidateDeploymentSpec200Response
+                    </CoolButton>
 
-                  {(addValidateDeploymentSpec200ResponseResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addValidateDeploymentSpec200ResponseResult as any).error ? (addValidateDeploymentSpec200ResponseResult as any).error.data : (addValidateDeploymentSpec200ResponseResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addValidateDeploymentSpec200ResponseResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (
+                                addValidateDeploymentSpec200ResponseResult as any
+                              ).error
+                              ? (
+                                  addValidateDeploymentSpec200ResponseResult as any
+                                ).error.data
+                              : (
+                                  addValidateDeploymentSpec200ResponseResult as any
+                                ).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addValidateDeploymentSpec200ResponseResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addValidateDeploymentSpec200ResponseResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addValidateDeploymentSpec200ResponseResult: {JSON.stringify(addValidateDeploymentSpec200ResponseResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addValidateDeploymentSpec200ResponseResult:{" "}
+                    {JSON.stringify(addValidateDeploymentSpec200ResponseResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -267,8 +314,5 @@ const ValidateDeploymentSpec200ResponseForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default ValidateDeploymentSpec200ResponseForm;
-

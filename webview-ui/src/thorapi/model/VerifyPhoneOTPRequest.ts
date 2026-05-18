@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,102 +36,116 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface VerifyPhoneOTPRequest
  */
-export type VerifyPhoneOTPRequest  = DataObject & {
-    /**
-     * ID from PhoneVerificationRequest
-     * @type {string}
-     * @memberof VerifyPhoneOTPRequest
-     */
-    verificationId?: string;
-    /**
-     * Six-digit OTP code
-     * @type {string}
-     * @memberof VerifyPhoneOTPRequest
-     */
-    otp?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof VerifyPhoneOTPRequest
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof VerifyPhoneOTPRequest
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof VerifyPhoneOTPRequest
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof VerifyPhoneOTPRequest
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof VerifyPhoneOTPRequest
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof VerifyPhoneOTPRequest
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof VerifyPhoneOTPRequest
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof VerifyPhoneOTPRequest
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof VerifyPhoneOTPRequest
-     */
-    trashed?: boolean;
+export type VerifyPhoneOTPRequest = DataObject & {
+  /**
+   * ID from PhoneVerificationRequest
+   * @type {string}
+   * @memberof VerifyPhoneOTPRequest
+   */
+  verificationId?: string;
+  /**
+   * Six-digit OTP code
+   * @type {string}
+   * @memberof VerifyPhoneOTPRequest
+   */
+  otp?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof VerifyPhoneOTPRequest
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof VerifyPhoneOTPRequest
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof VerifyPhoneOTPRequest
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof VerifyPhoneOTPRequest
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof VerifyPhoneOTPRequest
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof VerifyPhoneOTPRequest
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof VerifyPhoneOTPRequest
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof VerifyPhoneOTPRequest
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof VerifyPhoneOTPRequest
+   */
+  trashed?: boolean;
+};
+
+export function VerifyPhoneOTPRequestFromJSON(
+  json: any,
+): VerifyPhoneOTPRequest {
+  return {
+    ...DataObjectFromJSON(json),
+    verificationId: !exists(json, "verificationId")
+      ? undefined
+      : json["verificationId"],
+    otp: !exists(json, "otp") ? undefined : json["otp"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
-export function VerifyPhoneOTPRequestFromJSON(json: any): VerifyPhoneOTPRequest {
-    return {
-        ...DataObjectFromJSON(json),
-        'verificationId': !exists(json, 'verificationId') ? undefined : json['verificationId'],
-        'otp': !exists(json, 'otp') ? undefined : json['otp'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+export function VerifyPhoneOTPRequestToJSON(
+  value?: VerifyPhoneOTPRequest,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    verificationId: value.verificationId,
+    otp: value.otp,
+    trashed: value.trashed,
+  };
 }
-
-export function VerifyPhoneOTPRequestToJSON(value?: VerifyPhoneOTPRequest): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'verificationId': value.verificationId,
-        'otp': value.otp,
-        'trashed': value.trashed,
-    };
-}
-
-

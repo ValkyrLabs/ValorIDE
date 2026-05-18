@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { AclSid } from '@thorapi/model/AclSid'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { AclSid } from "@thorapi/model/AclSid";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type AclSidResponse = AclSid[]
+type AclSidResponse = AclSid[];
 
 const toAclSidList = (result: unknown): AclSidResponse => {
   if (Array.isArray(result)) {
-    return result as AclSidResponse
+    return result as AclSidResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as AclSidResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as AclSidResponse) : [];
+};
 
 export const AclSidService = createApi({
-  reducerPath: 'AclSid', // This should remain unique
+  reducerPath: "AclSid", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['AclSid'],
+  tagTypes: ["AclSid"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getAclSidsPaged: build.query<AclSidResponse, { page: number; size?: number; example?: Partial<AclSid> }>({
+    getAclSidsPaged: build.query<
+      AclSidResponse,
+      { page: number; size?: number; example?: Partial<AclSid> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `AclSid?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `AclSid?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toAclSidList(result)
+        const rows = toAclSidList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'AclSid' as const, id })),
-          { type: 'AclSid', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "AclSid" as const, id })),
+          { type: "AclSid", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getAclSids: build.query<AclSidResponse, { example?: Partial<AclSid> } | void>({
+    getAclSids: build.query<
+      AclSidResponse,
+      { example?: Partial<AclSid> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const AclSidService = createApi({
         return `AclSid`;
       },
       providesTags: (result) => {
-        const rows = toAclSidList(result)
+        const rows = toAclSidList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'AclSid' as const, id })),
-          { type: 'AclSid', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "AclSid" as const, id })),
+          { type: "AclSid", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,42 +87,42 @@ export const AclSidService = createApi({
     addAclSid: build.mutation<AclSid, Partial<AclSid>>({
       query: (body) => ({
         url: `AclSid`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'AclSid', id: 'LIST' }],
+      invalidatesTags: [{ type: "AclSid", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getAclSid: build.query<AclSid, string>({
       query: (id) => `AclSid/${id}`,
-      providesTags: (result, error, id) => [{ type: 'AclSid', id }],
+      providesTags: (result, error, id) => [{ type: "AclSid", id }],
     }),
 
     // 5) Update
-    updateAclSid: build.mutation<void, Pick<AclSid, 'id'> & Partial<AclSid>>({
+    updateAclSid: build.mutation<void, Pick<AclSid, "id"> & Partial<AclSid>>({
       query: ({ id, ...patch }) => ({
         url: `AclSid/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            AclSidService.util.updateQueryData('getAclSid', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            AclSidService.util.updateQueryData("getAclSid", id, (draft) => {
+              Object.assign(draft, patch);
+            }),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<AclSid, 'id'>) => [
-        { type: 'AclSid', id },
-        { type: 'AclSid', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<AclSid, "id">) => [
+        { type: "AclSid", id },
+        { type: "AclSid", id: "LIST" },
       ],
     }),
 
@@ -120,29 +131,35 @@ export const AclSidService = createApi({
       query(id) {
         return {
           url: `AclSid/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'AclSid', id }],
+      invalidatesTags: (result, error, id) => [{ type: "AclSid", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteAclSidCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteAclSidCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `AclSid/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'AclSid', id }, { type: 'AclSid', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "AclSid", id },
+        { type: "AclSid", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetAclSidsPagedQuery`
 export const {
-  useGetAclSidsPagedQuery,     // immediate fetch
+  useGetAclSidsPagedQuery, // immediate fetch
   useLazyGetAclSidsPagedQuery, // lazy fetch
   useGetAclSidQuery,
   useGetAclSidsQuery,
@@ -150,4 +167,4 @@ export const {
   useUpdateAclSidMutation,
   useDeleteAclSidMutation,
   useDeleteAclSidCascadeMutation,
-} = AclSidService
+} = AclSidService;

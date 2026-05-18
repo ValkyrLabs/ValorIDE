@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { RequestPasswordResetRequest } from '@thorapi/model/RequestPasswordResetRequest';
+import { RequestPasswordResetRequest } from "@thorapi/model/RequestPasswordResetRequest";
 
 const RequestPasswordResetRequestSlice = createSlice({
   name: "RequestPasswordResetRequests",
@@ -27,20 +27,28 @@ const RequestPasswordResetRequestSlice = createSlice({
     },
 
     RequestPasswordResetRequestValueToggled(state, action) {
-      console.log("RequestPasswordResetRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const RequestPasswordResetRequest:RequestPasswordResetRequest = state.find((RequestPasswordResetRequest) => RequestPasswordResetRequest.id === action.payload.RequestPasswordResetRequestId);
+      console.log("RequestPasswordResetRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const RequestPasswordResetRequest: RequestPasswordResetRequest =
+        state.find(
+          (RequestPasswordResetRequest) =>
+            RequestPasswordResetRequest.id ===
+            action.payload.RequestPasswordResetRequestId,
+        );
       if (RequestPasswordResetRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     RequestPasswordResetRequestpropertySet(state, action) {
-      const RequestPasswordResetRequest = state.find((RequestPasswordResetRequest) => RequestPasswordResetRequest.id === action.payload.RequestPasswordResetRequestId);
+      const RequestPasswordResetRequest = state.find(
+        (RequestPasswordResetRequest) =>
+          RequestPasswordResetRequest.id ===
+          action.payload.RequestPasswordResetRequestId,
+      );
       if (RequestPasswordResetRequest) {
-      //  RequestPasswordResetRequest[action.property] = action.payload[action.property];
+        //  RequestPasswordResetRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +57,6 @@ const RequestPasswordResetRequestSlice = createSlice({
 export const {
   RequestPasswordResetRequestAdded,
   RequestPasswordResetRequestValueToggled,
-  RequestPasswordResetRequestpropertySet
+  RequestPasswordResetRequestpropertySet,
 } = RequestPasswordResetRequestSlice.actions;
 export default RequestPasswordResetRequestSlice.reducer;

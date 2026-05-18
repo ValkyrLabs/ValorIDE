@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_GOAL_REQUEST,
-    FETCH_GOAL_REQUEST,
-    LIST_GOAL_REQUEST,
-    UPDATE_GOAL_REQUEST,
-    DELETE_GOAL_REQUEST,
-
-    addGoalFailure,
-    addGoalSuccess,
-
-    fetchGoalFailure,
-    fetchGoalSuccess,
-    
-    listGoalFailure,
-    listGoalSuccess,
-
-    updateGoalFailure,
-    updateGoalSuccess,
-    
-    deleteGoalFailure,
-    deleteGoalSuccess,
-    
-} from '../actions/GoalApiAction';
+  ADD_GOAL_REQUEST,
+  FETCH_GOAL_REQUEST,
+  LIST_GOAL_REQUEST,
+  UPDATE_GOAL_REQUEST,
+  DELETE_GOAL_REQUEST,
+  addGoalFailure,
+  addGoalSuccess,
+  fetchGoalFailure,
+  fetchGoalSuccess,
+  listGoalFailure,
+  listGoalSuccess,
+  updateGoalFailure,
+  updateGoalSuccess,
+  deleteGoalFailure,
+  deleteGoalSuccess,
+} from "../actions/GoalApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Goal
 */
 
-
-
-export const GoalMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("Goal MIDDLEWARE: " + JSON.stringify(action) )
+export const GoalMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Goal MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

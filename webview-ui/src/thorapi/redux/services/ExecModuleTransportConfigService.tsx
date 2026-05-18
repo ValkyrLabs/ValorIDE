@@ -13,47 +13,69 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { ExecModuleTransportConfig } from '@thorapi/model/ExecModuleTransportConfig'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { ExecModuleTransportConfig } from "@thorapi/model/ExecModuleTransportConfig";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type ExecModuleTransportConfigResponse = ExecModuleTransportConfig[]
+type ExecModuleTransportConfigResponse = ExecModuleTransportConfig[];
 
-const toExecModuleTransportConfigList = (result: unknown): ExecModuleTransportConfigResponse => {
+const toExecModuleTransportConfigList = (
+  result: unknown,
+): ExecModuleTransportConfigResponse => {
   if (Array.isArray(result)) {
-    return result as ExecModuleTransportConfigResponse
+    return result as ExecModuleTransportConfigResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as ExecModuleTransportConfigResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as ExecModuleTransportConfigResponse)
+    : [];
+};
 
 export const ExecModuleTransportConfigService = createApi({
-  reducerPath: 'ExecModuleTransportConfig', // This should remain unique
+  reducerPath: "ExecModuleTransportConfig", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['ExecModuleTransportConfig'],
+  tagTypes: ["ExecModuleTransportConfig"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getExecModuleTransportConfigsPaged: build.query<ExecModuleTransportConfigResponse, { page: number; size?: number; example?: Partial<ExecModuleTransportConfig> }>({
+    getExecModuleTransportConfigsPaged: build.query<
+      ExecModuleTransportConfigResponse,
+      {
+        page: number;
+        size?: number;
+        example?: Partial<ExecModuleTransportConfig>;
+      }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ExecModuleTransportConfig?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ExecModuleTransportConfig?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toExecModuleTransportConfigList(result)
+        const rows = toExecModuleTransportConfigList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ExecModuleTransportConfig' as const, id })),
-          { type: 'ExecModuleTransportConfig', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({
+              type: "ExecModuleTransportConfig" as const,
+              id,
+            })),
+          { type: "ExecModuleTransportConfig", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getExecModuleTransportConfigs: build.query<ExecModuleTransportConfigResponse, { example?: Partial<ExecModuleTransportConfig> } | void>({
+    getExecModuleTransportConfigs: build.query<
+      ExecModuleTransportConfigResponse,
+      { example?: Partial<ExecModuleTransportConfig> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +84,120 @@ export const ExecModuleTransportConfigService = createApi({
         return `ExecModuleTransportConfig`;
       },
       providesTags: (result) => {
-        const rows = toExecModuleTransportConfigList(result)
+        const rows = toExecModuleTransportConfigList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ExecModuleTransportConfig' as const, id })),
-          { type: 'ExecModuleTransportConfig', id: 'LIST' },
-        ]
+            .map(({ id }) => ({
+              type: "ExecModuleTransportConfig" as const,
+              id,
+            })),
+          { type: "ExecModuleTransportConfig", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addExecModuleTransportConfig: build.mutation<ExecModuleTransportConfig, Partial<ExecModuleTransportConfig>>({
+    addExecModuleTransportConfig: build.mutation<
+      ExecModuleTransportConfig,
+      Partial<ExecModuleTransportConfig>
+    >({
       query: (body) => ({
         url: `ExecModuleTransportConfig`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'ExecModuleTransportConfig', id: 'LIST' }],
+      invalidatesTags: [{ type: "ExecModuleTransportConfig", id: "LIST" }],
     }),
 
     // 4) Get single by ID
-    getExecModuleTransportConfig: build.query<ExecModuleTransportConfig, string>({
+    getExecModuleTransportConfig: build.query<
+      ExecModuleTransportConfig,
+      string
+    >({
       query: (id) => `ExecModuleTransportConfig/${id}`,
-      providesTags: (result, error, id) => [{ type: 'ExecModuleTransportConfig', id }],
+      providesTags: (result, error, id) => [
+        { type: "ExecModuleTransportConfig", id },
+      ],
     }),
 
     // 5) Update
-    updateExecModuleTransportConfig: build.mutation<void, Pick<ExecModuleTransportConfig, 'id'> & Partial<ExecModuleTransportConfig>>({
+    updateExecModuleTransportConfig: build.mutation<
+      void,
+      Pick<ExecModuleTransportConfig, "id"> & Partial<ExecModuleTransportConfig>
+    >({
       query: ({ id, ...patch }) => ({
         url: `ExecModuleTransportConfig/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            ExecModuleTransportConfigService.util.updateQueryData('getExecModuleTransportConfig', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            ExecModuleTransportConfigService.util.updateQueryData(
+              "getExecModuleTransportConfig",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<ExecModuleTransportConfig, 'id'>) => [
-        { type: 'ExecModuleTransportConfig', id },
-        { type: 'ExecModuleTransportConfig', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<ExecModuleTransportConfig, "id">,
+      ) => [
+        { type: "ExecModuleTransportConfig", id },
+        { type: "ExecModuleTransportConfig", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteExecModuleTransportConfig: build.mutation<{ success: boolean; id: string }, number>({
+    deleteExecModuleTransportConfig: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `ExecModuleTransportConfig/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'ExecModuleTransportConfig', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "ExecModuleTransportConfig", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteExecModuleTransportConfigCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteExecModuleTransportConfigCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `ExecModuleTransportConfig/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ExecModuleTransportConfig', id }, { type: 'ExecModuleTransportConfig', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "ExecModuleTransportConfig", id },
+        { type: "ExecModuleTransportConfig", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetExecModuleTransportConfigsPagedQuery`
 export const {
-  useGetExecModuleTransportConfigsPagedQuery,     // immediate fetch
+  useGetExecModuleTransportConfigsPagedQuery, // immediate fetch
   useLazyGetExecModuleTransportConfigsPagedQuery, // lazy fetch
   useGetExecModuleTransportConfigQuery,
   useGetExecModuleTransportConfigsQuery,
@@ -150,4 +205,4 @@ export const {
   useUpdateExecModuleTransportConfigMutation,
   useDeleteExecModuleTransportConfigMutation,
   useDeleteExecModuleTransportConfigCascadeMutation,
-} = ExecModuleTransportConfigService
+} = ExecModuleTransportConfigService;

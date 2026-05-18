@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { CreditAccount } from '@thorapi/model/CreditAccount'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { CreditAccount } from "@thorapi/model/CreditAccount";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type CreditAccountResponse = CreditAccount[]
+type CreditAccountResponse = CreditAccount[];
 
 const toCreditAccountList = (result: unknown): CreditAccountResponse => {
   if (Array.isArray(result)) {
-    return result as CreditAccountResponse
+    return result as CreditAccountResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as CreditAccountResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as CreditAccountResponse) : [];
+};
 
 export const CreditAccountService = createApi({
-  reducerPath: 'CreditAccount', // This should remain unique
+  reducerPath: "CreditAccount", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['CreditAccount'],
+  tagTypes: ["CreditAccount"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getCreditAccountsPaged: build.query<CreditAccountResponse, { page: number; size?: number; example?: Partial<CreditAccount> }>({
+    getCreditAccountsPaged: build.query<
+      CreditAccountResponse,
+      { page: number; size?: number; example?: Partial<CreditAccount> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `CreditAccount?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `CreditAccount?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toCreditAccountList(result)
+        const rows = toCreditAccountList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'CreditAccount' as const, id })),
-          { type: 'CreditAccount', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "CreditAccount" as const, id })),
+          { type: "CreditAccount", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getCreditAccounts: build.query<CreditAccountResponse, { example?: Partial<CreditAccount> } | void>({
+    getCreditAccounts: build.query<
+      CreditAccountResponse,
+      { example?: Partial<CreditAccount> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const CreditAccountService = createApi({
         return `CreditAccount`;
       },
       providesTags: (result) => {
-        const rows = toCreditAccountList(result)
+        const rows = toCreditAccountList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'CreditAccount' as const, id })),
-          { type: 'CreditAccount', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "CreditAccount" as const, id })),
+          { type: "CreditAccount", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,73 +87,89 @@ export const CreditAccountService = createApi({
     addCreditAccount: build.mutation<CreditAccount, Partial<CreditAccount>>({
       query: (body) => ({
         url: `CreditAccount`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'CreditAccount', id: 'LIST' }],
+      invalidatesTags: [{ type: "CreditAccount", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getCreditAccount: build.query<CreditAccount, string>({
       query: (id) => `CreditAccount/${id}`,
-      providesTags: (result, error, id) => [{ type: 'CreditAccount', id }],
+      providesTags: (result, error, id) => [{ type: "CreditAccount", id }],
     }),
 
     // 5) Update
-    updateCreditAccount: build.mutation<void, Pick<CreditAccount, 'id'> & Partial<CreditAccount>>({
+    updateCreditAccount: build.mutation<
+      void,
+      Pick<CreditAccount, "id"> & Partial<CreditAccount>
+    >({
       query: ({ id, ...patch }) => ({
         url: `CreditAccount/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            CreditAccountService.util.updateQueryData('getCreditAccount', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            CreditAccountService.util.updateQueryData(
+              "getCreditAccount",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<CreditAccount, 'id'>) => [
-        { type: 'CreditAccount', id },
-        { type: 'CreditAccount', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<CreditAccount, "id">) => [
+        { type: "CreditAccount", id },
+        { type: "CreditAccount", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteCreditAccount: build.mutation<{ success: boolean; id: string }, number>({
+    deleteCreditAccount: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `CreditAccount/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'CreditAccount', id }],
+      invalidatesTags: (result, error, id) => [{ type: "CreditAccount", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteCreditAccountCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteCreditAccountCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `CreditAccount/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'CreditAccount', id }, { type: 'CreditAccount', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "CreditAccount", id },
+        { type: "CreditAccount", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetCreditAccountsPagedQuery`
 export const {
-  useGetCreditAccountsPagedQuery,     // immediate fetch
+  useGetCreditAccountsPagedQuery, // immediate fetch
   useLazyGetCreditAccountsPagedQuery, // lazy fetch
   useGetCreditAccountQuery,
   useGetCreditAccountsQuery,
@@ -150,4 +177,4 @@ export const {
   useUpdateCreditAccountMutation,
   useDeleteCreditAccountMutation,
   useDeleteCreditAccountCascadeMutation,
-} = CreditAccountService
+} = CreditAccountService;

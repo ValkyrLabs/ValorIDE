@@ -13,33 +13,41 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   SwarmMessage,
   SwarmMessageTypeEnum,
   SwarmMessagePriorityEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddSwarmMessageMutation } from '../../services/SwarmMessageService';
+import { useAddSwarmMessageMutation } from "../../services/SwarmMessageService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -63,48 +71,38 @@ Structured message envelope for agentic swarm coordination.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const TypeValidation = () => {
-  return [
-    'COMMAND',
-    'RESPONSE',
-    'BROADCAST',
-    'EVENT',
-    'ACK',
-    'NACK',
-  ];
+  return ["COMMAND", "RESPONSE", "BROADCAST", "EVENT", "ACK", "NACK"];
 };
 const PriorityValidation = () => {
-  return [
-    'LOW',
-    'NORMAL',
-    'HIGH',
-    'URGENT',
-  ];
+  return ["LOW", "NORMAL", "HIGH", "URGENT"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-      type: Yup.mixed()
-        .oneOf(TypeValidation(), "Invalid value for type")
-        ,
-        timestamp: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("timestamp must be a valid date"),
-        ackId: Yup.string(),
-        ttl: asNumber(Yup.number().integer().typeError("ttl must be a number")),
-      priority: Yup.mixed()
-        .oneOf(PriorityValidation(), "Invalid value for priority")
-        ,
-        trashed: Yup.boolean(),
+  type: Yup.mixed().oneOf(TypeValidation(), "Invalid value for type"),
+  timestamp: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("timestamp must be a valid date"),
+  ackId: Yup.string(),
+  ttl: asNumber(Yup.number().integer().typeError("ttl must be a number")),
+  priority: Yup.mixed().oneOf(
+    PriorityValidation(),
+    "Invalid value for priority",
+  ),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -121,12 +119,18 @@ const SwarmMessageForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -134,12 +138,12 @@ const SwarmMessageForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<SwarmMessage> = {
-        type: undefined,
-          timestamp: new Date(),
-          ackId: '',
-          ttl: 0,
-        priority: undefined,
-          trashed: false,
+    type: undefined,
+    timestamp: new Date(),
+    ackId: "",
+    ttl: 0,
+    priority: undefined,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -154,11 +158,14 @@ const SwarmMessageForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new SwarmMessage:', grants);
+    console.log("Permissions saved for new SwarmMessage:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<SwarmMessage>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<SwarmMessage>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -169,7 +176,7 @@ const SwarmMessageForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `SwarmMessage created successfully! Would you like to set permissions for this object?`
+          `SwarmMessage created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -177,8 +184,8 @@ const SwarmMessageForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create SwarmMessage:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create SwarmMessage:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -199,46 +206,45 @@ const SwarmMessageForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addSwarmMessageResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New SwarmMessage
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New SwarmMessage
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="type" className="nice-form-control">
                       <b>
                         Type:
-                        {touched.type &&
-                         !errors.type && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.type && !errors.type && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="type"
-                          value={values.type || ''}
-                          className={
-                            errors.type
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('type', true);
-                            setFieldValue('type', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Type" />
-                          <TypeLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="type"
+                        value={values.type || ""}
+                        className={
+                          errors.type
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("type", true);
+                          setFieldValue("type", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Type" />
+                        <TypeLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -250,38 +256,38 @@ const SwarmMessageForm: React.FC = () => {
                     <label htmlFor="timestamp" className="nice-form-control">
                       <b>
                         Timestamp:
-                        {touched.timestamp &&
-                         !errors.timestamp && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.timestamp && !errors.timestamp && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="timestamp"
-                            type="datetime-local"
-                            value={values.timestamp ? 
-                              new Date(values.timestamp).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('timestamp', true);
-                              const v = e.target.value;
-                              setFieldValue('timestamp', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.timestamp
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="timestamp"
+                        type="datetime-local"
+                        value={
+                          values.timestamp
+                            ? new Date(values.timestamp)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("timestamp", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "timestamp",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.timestamp
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -293,28 +299,21 @@ const SwarmMessageForm: React.FC = () => {
                     <label htmlFor="ackId" className="nice-form-control">
                       <b>
                         Ack Id:
-                        {touched.ackId &&
-                         !errors.ackId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.ackId && !errors.ackId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="ackId"
-                            value={values?.ackId}
-                            placeholder="Ack Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="ackId"
+                        value={values?.ackId}
+                        placeholder="Ack Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -326,36 +325,32 @@ const SwarmMessageForm: React.FC = () => {
                     <label htmlFor="ttl" className="nice-form-control">
                       <b>
                         Ttl:
-                        {touched.ttl &&
-                         !errors.ttl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.ttl && !errors.ttl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-                          {/* LONG FIELD */}
-                          <Field
-                            name="ttl"
-                            type="number"
-                            value={values.ttl || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('ttl', true);
-                              const v = e.target.value;
-                              setFieldValue('ttl', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.ttl
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
+                      {/* LONG FIELD */}
+                      <Field
+                        name="ttl"
+                        type="number"
+                        value={values.ttl || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("ttl", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "ttl",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.ttl
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -367,30 +362,33 @@ const SwarmMessageForm: React.FC = () => {
                     <label htmlFor="priority" className="nice-form-control">
                       <b>
                         Priority:
-                        {touched.priority &&
-                         !errors.priority && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.priority && !errors.priority && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="priority"
-                          value={values.priority || ''}
-                          className={
-                            errors.priority
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('priority', true);
-                            setFieldValue('priority', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Priority" />
-                          <PriorityLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="priority"
+                        value={values.priority || ""}
+                        className={
+                          errors.priority
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("priority", true);
+                          setFieldValue(
+                            "priority",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Priority" />
+                        <PriorityLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -402,32 +400,25 @@ const SwarmMessageForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -437,45 +428,59 @@ const SwarmMessageForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New SwarmMessage
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New SwarmMessage
+                    </CoolButton>
 
-                  {(addSwarmMessageResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addSwarmMessageResult as any).error ? (addSwarmMessageResult as any).error.data : (addSwarmMessageResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addSwarmMessageResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addSwarmMessageResult as any).error
+                              ? (addSwarmMessageResult as any).error.data
+                              : (addSwarmMessageResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addSwarmMessageResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addSwarmMessageResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addSwarmMessageResult: {JSON.stringify(addSwarmMessageResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addSwarmMessageResult:{" "}
+                    {JSON.stringify(addSwarmMessageResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -507,12 +512,12 @@ kebabcase type-lookup
 const TypeLookup = () => {
   return (
     <>
-      <option value='COMMAND' label="COMMAND" />
-      <option value='RESPONSE' label="RESPONSE" />
-      <option value='BROADCAST' label="BROADCAST" />
-      <option value='EVENT' label="EVENT" />
-      <option value='ACK' label="ACK" />
-      <option value='NACK' label="NACK" />
+      <option value="COMMAND" label="COMMAND" />
+      <option value="RESPONSE" label="RESPONSE" />
+      <option value="BROADCAST" label="BROADCAST" />
+      <option value="EVENT" label="EVENT" />
+      <option value="ACK" label="ACK" />
+      <option value="NACK" label="NACK" />
     </>
   );
 };
@@ -529,16 +534,13 @@ kebabcase priority-lookup
 const PriorityLookup = () => {
   return (
     <>
-      <option value='LOW' label="LOW" />
-      <option value='NORMAL' label="NORMAL" />
-      <option value='HIGH' label="HIGH" />
-      <option value='URGENT' label="URGENT" />
+      <option value="LOW" label="LOW" />
+      <option value="NORMAL" label="NORMAL" />
+      <option value="HIGH" label="HIGH" />
+      <option value="URGENT" label="URGENT" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default SwarmMessageForm;
-

@@ -26,112 +26,123 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    TrustRuntimeExecution,
-    TrustRuntimeExecutionFromJSON,
-    TrustRuntimeExecutionToJSON,
-} from './';
-
+  TrustRuntimeExecution,
+  TrustRuntimeExecutionFromJSON,
+  TrustRuntimeExecutionToJSON,
+} from "./";
 
 // thorapi
 
 /**
- * 
+ *
  * @export
  * @interface CompleteTrustExecutionResponse
  */
-export type CompleteTrustExecutionResponse  = DataObject & {
-    /**
-     * 
-     * @type {TrustRuntimeExecution}
-     * @memberof CompleteTrustExecutionResponse
-     */
-    execution?: TrustRuntimeExecution;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof CompleteTrustExecutionResponse
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof CompleteTrustExecutionResponse
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof CompleteTrustExecutionResponse
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof CompleteTrustExecutionResponse
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof CompleteTrustExecutionResponse
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof CompleteTrustExecutionResponse
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof CompleteTrustExecutionResponse
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof CompleteTrustExecutionResponse
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof CompleteTrustExecutionResponse
-     */
-    trashed?: boolean;
+export type CompleteTrustExecutionResponse = DataObject & {
+  /**
+   *
+   * @type {TrustRuntimeExecution}
+   * @memberof CompleteTrustExecutionResponse
+   */
+  execution?: TrustRuntimeExecution;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof CompleteTrustExecutionResponse
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof CompleteTrustExecutionResponse
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof CompleteTrustExecutionResponse
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof CompleteTrustExecutionResponse
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof CompleteTrustExecutionResponse
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof CompleteTrustExecutionResponse
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof CompleteTrustExecutionResponse
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof CompleteTrustExecutionResponse
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof CompleteTrustExecutionResponse
+   */
+  trashed?: boolean;
+};
+
+export function CompleteTrustExecutionResponseFromJSON(
+  json: any,
+): CompleteTrustExecutionResponse {
+  return {
+    ...DataObjectFromJSON(json),
+    execution: !exists(json, "execution")
+      ? undefined
+      : TrustRuntimeExecutionFromJSON(json["execution"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
-export function CompleteTrustExecutionResponseFromJSON(json: any): CompleteTrustExecutionResponse {
-    return {
-        ...DataObjectFromJSON(json),
-        'execution': !exists(json, 'execution') ? undefined : TrustRuntimeExecutionFromJSON(json['execution']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+export function CompleteTrustExecutionResponseToJSON(
+  value?: CompleteTrustExecutionResponse,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    execution: TrustRuntimeExecutionToJSON(value.execution),
+    trashed: value.trashed,
+  };
 }
-
-export function CompleteTrustExecutionResponseToJSON(value?: CompleteTrustExecutionResponse): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'execution': TrustRuntimeExecutionToJSON(value.execution),
-        'trashed': value.trashed,
-    };
-}
-
-

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { WorkflowGraphModule } from '@thorapi/model/WorkflowGraphModule';
+import { WorkflowGraphModule } from "@thorapi/model/WorkflowGraphModule";
 
 const WorkflowGraphModuleSlice = createSlice({
   name: "WorkflowGraphModules",
@@ -27,20 +27,25 @@ const WorkflowGraphModuleSlice = createSlice({
     },
 
     WorkflowGraphModuleValueToggled(state, action) {
-      console.log("WorkflowGraphModule TOGGLE")
-      console.warn(JSON.stringify(action))
-      const WorkflowGraphModule:WorkflowGraphModule = state.find((WorkflowGraphModule) => WorkflowGraphModule.id === action.payload.WorkflowGraphModuleId);
+      console.log("WorkflowGraphModule TOGGLE");
+      console.warn(JSON.stringify(action));
+      const WorkflowGraphModule: WorkflowGraphModule = state.find(
+        (WorkflowGraphModule) =>
+          WorkflowGraphModule.id === action.payload.WorkflowGraphModuleId,
+      );
       if (WorkflowGraphModule) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     WorkflowGraphModulepropertySet(state, action) {
-      const WorkflowGraphModule = state.find((WorkflowGraphModule) => WorkflowGraphModule.id === action.payload.WorkflowGraphModuleId);
+      const WorkflowGraphModule = state.find(
+        (WorkflowGraphModule) =>
+          WorkflowGraphModule.id === action.payload.WorkflowGraphModuleId,
+      );
       if (WorkflowGraphModule) {
-      //  WorkflowGraphModule[action.property] = action.payload[action.property];
+        //  WorkflowGraphModule[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const WorkflowGraphModuleSlice = createSlice({
 export const {
   WorkflowGraphModuleAdded,
   WorkflowGraphModuleValueToggled,
-  WorkflowGraphModulepropertySet
+  WorkflowGraphModulepropertySet,
 } = WorkflowGraphModuleSlice.actions;
 export default WorkflowGraphModuleSlice.reducer;

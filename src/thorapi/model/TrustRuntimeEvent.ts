@@ -26,19 +26,16 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    TrustKeyVersion,
-    TrustKeyVersionFromJSON,
-    TrustKeyVersionToJSON,
-    TrustRuntimeExecution,
-    TrustRuntimeExecutionFromJSON,
-    TrustRuntimeExecutionToJSON,
-} from './';
-
+  TrustKeyVersion,
+  TrustKeyVersionFromJSON,
+  TrustKeyVersionToJSON,
+  TrustRuntimeExecution,
+  TrustRuntimeExecutionFromJSON,
+  TrustRuntimeExecutionToJSON,
+} from "./";
 
 // thorapi
 
@@ -47,180 +44,198 @@ import {
  * @export
  * @interface TrustRuntimeEvent
  */
-export type TrustRuntimeEvent  = DataObject & {
-    /**
-     * 
-     * @type {TrustRuntimeExecution}
-     * @memberof TrustRuntimeEvent
-     */
-    execution?: TrustRuntimeExecution;
-    /**
-     * 
-     * @type {number}
-     * @memberof TrustRuntimeEvent
-     */
-    sequenceNumber?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustRuntimeEvent
-     */
-    eventType?: TrustRuntimeEventEventTypeEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustRuntimeEvent
-     */
-    previousEventHash?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustRuntimeEvent
-     */
-    payloadHash?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustRuntimeEvent
-     */
-    redactionPolicy?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustRuntimeEvent
-     */
-    eventHash?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustRuntimeEvent
-     */
-    signature?: string;
-    /**
-     * 
-     * @type {TrustKeyVersion}
-     * @memberof TrustRuntimeEvent
-     */
-    signingKeyVersion?: TrustKeyVersion;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustRuntimeEvent
-     */
-    ownerId?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof TrustRuntimeEvent
-     */
-    readonly id?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof TrustRuntimeEvent
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof TrustRuntimeEvent
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof TrustRuntimeEvent
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof TrustRuntimeEvent
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof TrustRuntimeEvent
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof TrustRuntimeEvent
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof TrustRuntimeEvent
-     */
-    trashed?: boolean;
-}
+export type TrustRuntimeEvent = DataObject & {
+  /**
+   *
+   * @type {TrustRuntimeExecution}
+   * @memberof TrustRuntimeEvent
+   */
+  execution?: TrustRuntimeExecution;
+  /**
+   *
+   * @type {number}
+   * @memberof TrustRuntimeEvent
+   */
+  sequenceNumber?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustRuntimeEvent
+   */
+  eventType?: TrustRuntimeEventEventTypeEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustRuntimeEvent
+   */
+  previousEventHash?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustRuntimeEvent
+   */
+  payloadHash?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustRuntimeEvent
+   */
+  redactionPolicy?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustRuntimeEvent
+   */
+  eventHash?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustRuntimeEvent
+   */
+  signature?: string;
+  /**
+   *
+   * @type {TrustKeyVersion}
+   * @memberof TrustRuntimeEvent
+   */
+  signingKeyVersion?: TrustKeyVersion;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustRuntimeEvent
+   */
+  ownerId?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof TrustRuntimeEvent
+   */
+  readonly id?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof TrustRuntimeEvent
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof TrustRuntimeEvent
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof TrustRuntimeEvent
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof TrustRuntimeEvent
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof TrustRuntimeEvent
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof TrustRuntimeEvent
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof TrustRuntimeEvent
+   */
+  trashed?: boolean;
+};
 
 export function TrustRuntimeEventFromJSON(json: any): TrustRuntimeEvent {
-    return {
-        ...DataObjectFromJSON(json),
-        'execution': !exists(json, 'execution') ? undefined : TrustRuntimeExecutionFromJSON(json['execution']),
-        'sequenceNumber': !exists(json, 'sequenceNumber') ? undefined : json['sequenceNumber'],
-        'eventType': !exists(json, 'eventType') ? undefined : json['eventType'],
-        'previousEventHash': !exists(json, 'previousEventHash') ? undefined : json['previousEventHash'],
-        'payloadHash': !exists(json, 'payloadHash') ? undefined : json['payloadHash'],
-        'redactionPolicy': !exists(json, 'redactionPolicy') ? undefined : json['redactionPolicy'],
-        'eventHash': !exists(json, 'eventHash') ? undefined : json['eventHash'],
-        'signature': !exists(json, 'signature') ? undefined : json['signature'],
-        'signingKeyVersion': !exists(json, 'signingKeyVersion') ? undefined : TrustKeyVersionFromJSON(json['signingKeyVersion']),
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    execution: !exists(json, "execution")
+      ? undefined
+      : TrustRuntimeExecutionFromJSON(json["execution"]),
+    sequenceNumber: !exists(json, "sequenceNumber")
+      ? undefined
+      : json["sequenceNumber"],
+    eventType: !exists(json, "eventType") ? undefined : json["eventType"],
+    previousEventHash: !exists(json, "previousEventHash")
+      ? undefined
+      : json["previousEventHash"],
+    payloadHash: !exists(json, "payloadHash") ? undefined : json["payloadHash"],
+    redactionPolicy: !exists(json, "redactionPolicy")
+      ? undefined
+      : json["redactionPolicy"],
+    eventHash: !exists(json, "eventHash") ? undefined : json["eventHash"],
+    signature: !exists(json, "signature") ? undefined : json["signature"],
+    signingKeyVersion: !exists(json, "signingKeyVersion")
+      ? undefined
+      : TrustKeyVersionFromJSON(json["signingKeyVersion"]),
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function TrustRuntimeEventToJSON(value?: TrustRuntimeEvent): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'execution': TrustRuntimeExecutionToJSON(value.execution),
-        'sequenceNumber': value.sequenceNumber,
-        'eventType': value.eventType,
-        'previousEventHash': value.previousEventHash,
-        'payloadHash': value.payloadHash,
-        'redactionPolicy': value.redactionPolicy,
-        'eventHash': value.eventHash,
-        'signature': value.signature,
-        'signingKeyVersion': TrustKeyVersionToJSON(value.signingKeyVersion),
-        'ownerId': value.ownerId,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    execution: TrustRuntimeExecutionToJSON(value.execution),
+    sequenceNumber: value.sequenceNumber,
+    eventType: value.eventType,
+    previousEventHash: value.previousEventHash,
+    payloadHash: value.payloadHash,
+    redactionPolicy: value.redactionPolicy,
+    eventHash: value.eventHash,
+    signature: value.signature,
+    signingKeyVersion: TrustKeyVersionToJSON(value.signingKeyVersion),
+    ownerId: value.ownerId,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum TrustRuntimeEventEventTypeEnum {
-    EXECUTIONSTARTED = 'execution_started',
-    RBACCHECK = 'rbac_check',
-    ACLCHECK = 'acl_check',
-    APICALL = 'api_call',
-    GRAYMATTERREAD = 'graymatter_read',
-    GRAYMATTERWRITE = 'graymatter_write',
-    SECUREFIELDENCRYPT = 'securefield_encrypt',
-    SECUREFIELDDECRYPT = 'securefield_decrypt',
-    KEYLEASE = 'key_lease',
-    MODELCALL = 'model_call',
-    TOOLCALL = 'tool_call',
-    PROOFGENERATED = 'proof_generated',
-    EXECUTIONCOMPLETED = 'execution_completed',
-    EXECUTIONFAILED = 'execution_failed'
+  EXECUTIONSTARTED = "execution_started",
+  RBACCHECK = "rbac_check",
+  ACLCHECK = "acl_check",
+  APICALL = "api_call",
+  GRAYMATTERREAD = "graymatter_read",
+  GRAYMATTERWRITE = "graymatter_write",
+  SECUREFIELDENCRYPT = "securefield_encrypt",
+  SECUREFIELDDECRYPT = "securefield_decrypt",
+  KEYLEASE = "key_lease",
+  MODELCALL = "model_call",
+  TOOLCALL = "tool_call",
+  PROOFGENERATED = "proof_generated",
+  EXECUTIONCOMPLETED = "execution_completed",
+  EXECUTIONFAILED = "execution_failed",
 }
-
-

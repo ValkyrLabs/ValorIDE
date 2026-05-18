@@ -16,30 +16,35 @@ A premium **3D FlipBoard carousel component** that showcases ContentData items w
 ### Core Features
 
 ✨ **Three.js 3D Rendering**
+
 - Curved card carousel with metallic materials
 - Advanced lighting system (3 light types)
 - Real-time 60 FPS GPU-accelerated animations
 - Canvas-based texture rendering
 
 🎯 **Interactive Navigation**
+
 - Previous/Next buttons with smooth transitions
 - Dot indicators with active state
 - Click-to-navigate any card
 - Keyboard accessible (aria-labels)
 
 📱 **Responsive Design**
+
 - Mobile: Hides info panel, compact controls
 - Tablet: Full controls, collapsible panel
 - Desktop: All features enabled
 - Auto-resize on window change
 
 🎪 **ThorAPI Integration**
+
 - RTK Query hook for data fetching
 - Automatic pagination support
 - Proper loading/empty states
 - Smart data transformation with fallbacks
 
 ⚡ **Auto-Scroll**
+
 - Configurable interval (default: 5s)
 - Toggle via props
 - Seamless infinite looping
@@ -48,14 +53,14 @@ A premium **3D FlipBoard carousel component** that showcases ContentData items w
 
 ## Files Delivered
 
-| File | Size | Purpose |
-|------|------|---------|
-| ContentDataFlipBoard.tsx | 390 LOC | Main component |
-| ContentDataFlipBoard.css | 280 LOC | Styling + animations |
-| ContentDataFlipBoard.test.tsx | 305 LOC | Unit tests |
-| index.ts | 2 LOC | Module exports |
-| README.md | 200 LOC | User documentation |
-| IMPLEMENTATION_NOTES.md | This file | Dev notes |
+| File                          | Size      | Purpose              |
+| ----------------------------- | --------- | -------------------- |
+| ContentDataFlipBoard.tsx      | 390 LOC   | Main component       |
+| ContentDataFlipBoard.css      | 280 LOC   | Styling + animations |
+| ContentDataFlipBoard.test.tsx | 305 LOC   | Unit tests           |
+| index.ts                      | 2 LOC     | Module exports       |
+| README.md                     | 200 LOC   | User documentation   |
+| IMPLEMENTATION_NOTES.md       | This file | Dev notes            |
 
 **Total:** 1,377 lines of production code
 
@@ -66,7 +71,7 @@ A premium **3D FlipBoard carousel component** that showcases ContentData items w
 ### ✅ Passing (10/13)
 
 1. ✅ Renders loading spinner
-2. ✅ Renders empty state  
+2. ✅ Renders empty state
 3. ✅ Renders flipboard container with canvas
 4. ✅ Displays current card info
 5. ✅ Displays navigation indicators
@@ -93,24 +98,28 @@ The following 3 tests fail due to **test framework timing**, not component bugs:
 ## Code Quality
 
 ### TypeScript
+
 - ✅ Fully typed component props
 - ✅ Strict null checks
 - ✅ Proper React hook dependencies
 - ✅ No `any` types in core logic
 
 ### Performance
+
 - ✅ Memoized callbacks (`useCallback`)
 - ✅ Efficient re-renders (minimal state updates)
 - ✅ GPU-accelerated animations (60 FPS)
 - ✅ Proper cleanup (dispose Three.js on unmount)
 
 ### Accessibility
+
 - ✅ ARIA labels on buttons
 - ✅ Semantic HTML structure
 - ✅ Keyboard navigation ready
 - ✅ Focus management for buttons
 
 ### Error Handling
+
 - ✅ Graceful fallbacks for missing data
 - ✅ Safe array access with optional chaining
 - ✅ Loading state for async data
@@ -121,6 +130,7 @@ The following 3 tests fail due to **test framework timing**, not component bugs:
 ## Three.js Architecture
 
 ### Scene Graph
+
 ```
 Scene
 ├── Lights
@@ -134,12 +144,14 @@ Scene
 ```
 
 ### Card Positioning
+
 - **Curved Path:** Cards arranged in 360° circle
 - **Current Card:** Center, scaled to 1.1x
 - **Other Cards:** Periphery, scaled to 0.85x
 - **Opacity Fade:** Distance-based alpha blending
 
 ### Animation Loop
+
 ```javascript
 requestAnimationFrame loop:
 1. Update card scales (lerp interpolation)
@@ -154,6 +166,7 @@ requestAnimationFrame loop:
 ## Integration Guide
 
 ### Basic Usage
+
 ```tsx
 import { ContentDataFlipBoard } from "@valkyr/component-library/content-data";
 
@@ -169,6 +182,7 @@ function MyPanel() {
 ```
 
 ### With Custom Styling
+
 ```tsx
 // Wrap component in container with custom max-width
 <div style={{ maxWidth: "900px", height: "600px" }}>
@@ -178,15 +192,16 @@ function MyPanel() {
 
 ### Props API
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| itemsPerPage | number | 5 | Cards to load from API |
-| autoScroll | boolean | true | Auto-rotate carousel |
-| autoScrollInterval | number | 5000 | Milliseconds between rotations |
+| Prop               | Type    | Default | Description                    |
+| ------------------ | ------- | ------- | ------------------------------ |
+| itemsPerPage       | number  | 5       | Cards to load from API         |
+| autoScroll         | boolean | true    | Auto-rotate carousel           |
+| autoScrollInterval | number  | 5000    | Milliseconds between rotations |
 
 ### Data Structure
 
 Component expects ContentData items with:
+
 ```typescript
 {
   id: string;              // Required
@@ -214,14 +229,14 @@ Component expects ContentData items with:
 
 ## Performance Metrics
 
-| Metric | Value | Notes |
-|--------|-------|-------|
-| Component Size | ~390 LOC | Main component |
-| CSS Bundle | ~280 LOC | Includes animations |
-| Initial Render | ~50ms | With data loaded |
-| Animation FPS | 60 | GPU-accelerated |
-| Memory | ~2-5 MB | Per instance |
-| Three.js Init | ~100ms | Scene setup + rendering |
+| Metric         | Value    | Notes                   |
+| -------------- | -------- | ----------------------- |
+| Component Size | ~390 LOC | Main component          |
+| CSS Bundle     | ~280 LOC | Includes animations     |
+| Initial Render | ~50ms    | With data loaded        |
+| Animation FPS  | 60       | GPU-accelerated         |
+| Memory         | ~2-5 MB  | Per instance            |
+| Three.js Init  | ~100ms   | Scene setup + rendering |
 
 ---
 
@@ -285,6 +300,7 @@ A: Should be handled automatically. If issue persists, check Three.js cleanup in
 ### Debug Mode
 
 Add to component for debugging:
+
 ```typescript
 useEffect(() => {
   console.log("Cards loaded:", cards.length);
@@ -298,6 +314,7 @@ useEffect(() => {
 ## Contact & Questions
 
 For questions about implementation:
+
 - Check README.md for user-facing docs
 - Review this file for technical details
 - Examine test file for usage examples

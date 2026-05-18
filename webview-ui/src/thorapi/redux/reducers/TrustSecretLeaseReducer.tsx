@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { TrustSecretLease } from '@thorapi/model/TrustSecretLease';
+import { TrustSecretLease } from "@thorapi/model/TrustSecretLease";
 
 const TrustSecretLeaseSlice = createSlice({
   name: "TrustSecretLeases",
@@ -27,20 +27,25 @@ const TrustSecretLeaseSlice = createSlice({
     },
 
     TrustSecretLeaseValueToggled(state, action) {
-      console.log("TrustSecretLease TOGGLE")
-      console.warn(JSON.stringify(action))
-      const TrustSecretLease:TrustSecretLease = state.find((TrustSecretLease) => TrustSecretLease.id === action.payload.TrustSecretLeaseId);
+      console.log("TrustSecretLease TOGGLE");
+      console.warn(JSON.stringify(action));
+      const TrustSecretLease: TrustSecretLease = state.find(
+        (TrustSecretLease) =>
+          TrustSecretLease.id === action.payload.TrustSecretLeaseId,
+      );
       if (TrustSecretLease) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     TrustSecretLeasepropertySet(state, action) {
-      const TrustSecretLease = state.find((TrustSecretLease) => TrustSecretLease.id === action.payload.TrustSecretLeaseId);
+      const TrustSecretLease = state.find(
+        (TrustSecretLease) =>
+          TrustSecretLease.id === action.payload.TrustSecretLeaseId,
+      );
       if (TrustSecretLease) {
-      //  TrustSecretLease[action.property] = action.payload[action.property];
+        //  TrustSecretLease[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const TrustSecretLeaseSlice = createSlice({
 export const {
   TrustSecretLeaseAdded,
   TrustSecretLeaseValueToggled,
-  TrustSecretLeasepropertySet
+  TrustSecretLeasepropertySet,
 } = TrustSecretLeaseSlice.actions;
 export default TrustSecretLeaseSlice.reducer;

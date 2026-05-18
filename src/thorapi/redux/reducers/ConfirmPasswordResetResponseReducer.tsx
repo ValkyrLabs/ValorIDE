@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ConfirmPasswordResetResponse } from '@thorapi/model/ConfirmPasswordResetResponse';
+import { ConfirmPasswordResetResponse } from "@thorapi/model/ConfirmPasswordResetResponse";
 
 const ConfirmPasswordResetResponseSlice = createSlice({
   name: "ConfirmPasswordResetResponses",
@@ -27,20 +27,28 @@ const ConfirmPasswordResetResponseSlice = createSlice({
     },
 
     ConfirmPasswordResetResponseValueToggled(state, action) {
-      console.log("ConfirmPasswordResetResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ConfirmPasswordResetResponse:ConfirmPasswordResetResponse = state.find((ConfirmPasswordResetResponse) => ConfirmPasswordResetResponse.id === action.payload.ConfirmPasswordResetResponseId);
+      console.log("ConfirmPasswordResetResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ConfirmPasswordResetResponse: ConfirmPasswordResetResponse =
+        state.find(
+          (ConfirmPasswordResetResponse) =>
+            ConfirmPasswordResetResponse.id ===
+            action.payload.ConfirmPasswordResetResponseId,
+        );
       if (ConfirmPasswordResetResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ConfirmPasswordResetResponsepropertySet(state, action) {
-      const ConfirmPasswordResetResponse = state.find((ConfirmPasswordResetResponse) => ConfirmPasswordResetResponse.id === action.payload.ConfirmPasswordResetResponseId);
+      const ConfirmPasswordResetResponse = state.find(
+        (ConfirmPasswordResetResponse) =>
+          ConfirmPasswordResetResponse.id ===
+          action.payload.ConfirmPasswordResetResponseId,
+      );
       if (ConfirmPasswordResetResponse) {
-      //  ConfirmPasswordResetResponse[action.property] = action.payload[action.property];
+        //  ConfirmPasswordResetResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +57,6 @@ const ConfirmPasswordResetResponseSlice = createSlice({
 export const {
   ConfirmPasswordResetResponseAdded,
   ConfirmPasswordResetResponseValueToggled,
-  ConfirmPasswordResetResponsepropertySet
+  ConfirmPasswordResetResponsepropertySet,
 } = ConfirmPasswordResetResponseSlice.actions;
 export default ConfirmPasswordResetResponseSlice.reducer;

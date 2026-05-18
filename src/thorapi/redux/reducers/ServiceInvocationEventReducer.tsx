@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ServiceInvocationEvent } from '@thorapi/model/ServiceInvocationEvent';
+import { ServiceInvocationEvent } from "@thorapi/model/ServiceInvocationEvent";
 
 const ServiceInvocationEventSlice = createSlice({
   name: "ServiceInvocationEvents",
@@ -27,20 +27,25 @@ const ServiceInvocationEventSlice = createSlice({
     },
 
     ServiceInvocationEventValueToggled(state, action) {
-      console.log("ServiceInvocationEvent TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ServiceInvocationEvent:ServiceInvocationEvent = state.find((ServiceInvocationEvent) => ServiceInvocationEvent.id === action.payload.ServiceInvocationEventId);
+      console.log("ServiceInvocationEvent TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ServiceInvocationEvent: ServiceInvocationEvent = state.find(
+        (ServiceInvocationEvent) =>
+          ServiceInvocationEvent.id === action.payload.ServiceInvocationEventId,
+      );
       if (ServiceInvocationEvent) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ServiceInvocationEventpropertySet(state, action) {
-      const ServiceInvocationEvent = state.find((ServiceInvocationEvent) => ServiceInvocationEvent.id === action.payload.ServiceInvocationEventId);
+      const ServiceInvocationEvent = state.find(
+        (ServiceInvocationEvent) =>
+          ServiceInvocationEvent.id === action.payload.ServiceInvocationEventId,
+      );
       if (ServiceInvocationEvent) {
-      //  ServiceInvocationEvent[action.property] = action.payload[action.property];
+        //  ServiceInvocationEvent[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const ServiceInvocationEventSlice = createSlice({
 export const {
   ServiceInvocationEventAdded,
   ServiceInvocationEventValueToggled,
-  ServiceInvocationEventpropertySet
+  ServiceInvocationEventpropertySet,
 } = ServiceInvocationEventSlice.actions;
 export default ServiceInvocationEventSlice.reducer;

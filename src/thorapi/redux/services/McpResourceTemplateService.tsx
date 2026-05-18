@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { McpResourceTemplate } from '@thorapi/model/McpResourceTemplate'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { McpResourceTemplate } from "@thorapi/model/McpResourceTemplate";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type McpResourceTemplateResponse = McpResourceTemplate[]
+type McpResourceTemplateResponse = McpResourceTemplate[];
 
-const toMcpResourceTemplateList = (result: unknown): McpResourceTemplateResponse => {
+const toMcpResourceTemplateList = (
+  result: unknown,
+): McpResourceTemplateResponse => {
   if (Array.isArray(result)) {
-    return result as McpResourceTemplateResponse
+    return result as McpResourceTemplateResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as McpResourceTemplateResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as McpResourceTemplateResponse)
+    : [];
+};
 
 export const McpResourceTemplateService = createApi({
-  reducerPath: 'McpResourceTemplate', // This should remain unique
+  reducerPath: "McpResourceTemplate", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['McpResourceTemplate'],
+  tagTypes: ["McpResourceTemplate"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getMcpResourceTemplatesPaged: build.query<McpResourceTemplateResponse, { page: number; size?: number; example?: Partial<McpResourceTemplate> }>({
+    getMcpResourceTemplatesPaged: build.query<
+      McpResourceTemplateResponse,
+      { page: number; size?: number; example?: Partial<McpResourceTemplate> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `McpResourceTemplate?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `McpResourceTemplate?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toMcpResourceTemplateList(result)
+        const rows = toMcpResourceTemplateList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'McpResourceTemplate' as const, id })),
-          { type: 'McpResourceTemplate', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "McpResourceTemplate" as const, id })),
+          { type: "McpResourceTemplate", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getMcpResourceTemplates: build.query<McpResourceTemplateResponse, { example?: Partial<McpResourceTemplate> } | void>({
+    getMcpResourceTemplates: build.query<
+      McpResourceTemplateResponse,
+      { example?: Partial<McpResourceTemplate> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,114 @@ export const McpResourceTemplateService = createApi({
         return `McpResourceTemplate`;
       },
       providesTags: (result) => {
-        const rows = toMcpResourceTemplateList(result)
+        const rows = toMcpResourceTemplateList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'McpResourceTemplate' as const, id })),
-          { type: 'McpResourceTemplate', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "McpResourceTemplate" as const, id })),
+          { type: "McpResourceTemplate", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addMcpResourceTemplate: build.mutation<McpResourceTemplate, Partial<McpResourceTemplate>>({
+    addMcpResourceTemplate: build.mutation<
+      McpResourceTemplate,
+      Partial<McpResourceTemplate>
+    >({
       query: (body) => ({
         url: `McpResourceTemplate`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'McpResourceTemplate', id: 'LIST' }],
+      invalidatesTags: [{ type: "McpResourceTemplate", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getMcpResourceTemplate: build.query<McpResourceTemplate, string>({
       query: (id) => `McpResourceTemplate/${id}`,
-      providesTags: (result, error, id) => [{ type: 'McpResourceTemplate', id }],
+      providesTags: (result, error, id) => [
+        { type: "McpResourceTemplate", id },
+      ],
     }),
 
     // 5) Update
-    updateMcpResourceTemplate: build.mutation<void, Pick<McpResourceTemplate, 'id'> & Partial<McpResourceTemplate>>({
+    updateMcpResourceTemplate: build.mutation<
+      void,
+      Pick<McpResourceTemplate, "id"> & Partial<McpResourceTemplate>
+    >({
       query: ({ id, ...patch }) => ({
         url: `McpResourceTemplate/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            McpResourceTemplateService.util.updateQueryData('getMcpResourceTemplate', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            McpResourceTemplateService.util.updateQueryData(
+              "getMcpResourceTemplate",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<McpResourceTemplate, 'id'>) => [
-        { type: 'McpResourceTemplate', id },
-        { type: 'McpResourceTemplate', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<McpResourceTemplate, "id">,
+      ) => [
+        { type: "McpResourceTemplate", id },
+        { type: "McpResourceTemplate", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteMcpResourceTemplate: build.mutation<{ success: boolean; id: string }, number>({
+    deleteMcpResourceTemplate: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `McpResourceTemplate/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'McpResourceTemplate', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "McpResourceTemplate", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteMcpResourceTemplateCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteMcpResourceTemplateCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `McpResourceTemplate/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'McpResourceTemplate', id }, { type: 'McpResourceTemplate', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "McpResourceTemplate", id },
+        { type: "McpResourceTemplate", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetMcpResourceTemplatesPagedQuery`
 export const {
-  useGetMcpResourceTemplatesPagedQuery,     // immediate fetch
+  useGetMcpResourceTemplatesPagedQuery, // immediate fetch
   useLazyGetMcpResourceTemplatesPagedQuery, // lazy fetch
   useGetMcpResourceTemplateQuery,
   useGetMcpResourceTemplatesQuery,
@@ -150,4 +192,4 @@ export const {
   useUpdateMcpResourceTemplateMutation,
   useDeleteMcpResourceTemplateMutation,
   useDeleteMcpResourceTemplateCascadeMutation,
-} = McpResourceTemplateService
+} = McpResourceTemplateService;

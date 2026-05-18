@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_SPACEMEMBER_REQUEST,
-    FETCH_SPACEMEMBER_REQUEST,
-    LIST_SPACEMEMBER_REQUEST,
-    UPDATE_SPACEMEMBER_REQUEST,
-    DELETE_SPACEMEMBER_REQUEST,
-
-    addSpaceMemberFailure,
-    addSpaceMemberSuccess,
-
-    fetchSpaceMemberFailure,
-    fetchSpaceMemberSuccess,
-    
-    listSpaceMemberFailure,
-    listSpaceMemberSuccess,
-
-    updateSpaceMemberFailure,
-    updateSpaceMemberSuccess,
-    
-    deleteSpaceMemberFailure,
-    deleteSpaceMemberSuccess,
-    
-} from '../actions/SpaceMemberApiAction';
+  ADD_SPACEMEMBER_REQUEST,
+  FETCH_SPACEMEMBER_REQUEST,
+  LIST_SPACEMEMBER_REQUEST,
+  UPDATE_SPACEMEMBER_REQUEST,
+  DELETE_SPACEMEMBER_REQUEST,
+  addSpaceMemberFailure,
+  addSpaceMemberSuccess,
+  fetchSpaceMemberFailure,
+  fetchSpaceMemberSuccess,
+  listSpaceMemberFailure,
+  listSpaceMemberSuccess,
+  updateSpaceMemberFailure,
+  updateSpaceMemberSuccess,
+  deleteSpaceMemberFailure,
+  deleteSpaceMemberSuccess,
+} from "../actions/SpaceMemberApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: SpaceMember
 */
 
-
-
-export const SpaceMemberMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("SpaceMember MIDDLEWARE: " + JSON.stringify(action) )
+export const SpaceMemberMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("SpaceMember MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

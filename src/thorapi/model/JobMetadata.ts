@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,162 +36,180 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface JobMetadata
  */
-export type JobMetadata  = DataObject & {
-    /**
-     * 
-     * @type {string}
-     * @memberof JobMetadata
-     */
-    type?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof JobMetadata
-     */
-    status?: JobMetadataStatusEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof JobMetadata
-     */
-    inputJson?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof JobMetadata
-     */
-    outputJson?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof JobMetadata
-     */
-    error?: string;
-    /**
-     * 
-     * @type {Date}
-     * @memberof JobMetadata
-     */
-    startedAt?: Date;
-    /**
-     * 
-     * @type {Date}
-     * @memberof JobMetadata
-     */
-    finishedAt?: Date;
-    /**
-     * 
-     * @type {string}
-     * @memberof JobMetadata
-     */
-    idempotencyKey?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof JobMetadata
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof JobMetadata
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof JobMetadata
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof JobMetadata
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof JobMetadata
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof JobMetadata
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof JobMetadata
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof JobMetadata
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof JobMetadata
-     */
-    trashed?: boolean;
-}
+export type JobMetadata = DataObject & {
+  /**
+   *
+   * @type {string}
+   * @memberof JobMetadata
+   */
+  type?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof JobMetadata
+   */
+  status?: JobMetadataStatusEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof JobMetadata
+   */
+  inputJson?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof JobMetadata
+   */
+  outputJson?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof JobMetadata
+   */
+  error?: string;
+  /**
+   *
+   * @type {Date}
+   * @memberof JobMetadata
+   */
+  startedAt?: Date;
+  /**
+   *
+   * @type {Date}
+   * @memberof JobMetadata
+   */
+  finishedAt?: Date;
+  /**
+   *
+   * @type {string}
+   * @memberof JobMetadata
+   */
+  idempotencyKey?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof JobMetadata
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof JobMetadata
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof JobMetadata
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof JobMetadata
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof JobMetadata
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof JobMetadata
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof JobMetadata
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof JobMetadata
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof JobMetadata
+   */
+  trashed?: boolean;
+};
 
 export function JobMetadataFromJSON(json: any): JobMetadata {
-    return {
-        ...DataObjectFromJSON(json),
-        'type': !exists(json, 'type') ? undefined : json['type'],
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'inputJson': !exists(json, 'inputJson') ? undefined : json['inputJson'],
-        'outputJson': !exists(json, 'outputJson') ? undefined : json['outputJson'],
-        'error': !exists(json, 'error') ? undefined : json['error'],
-        'startedAt': !exists(json, 'startedAt') ? undefined : new Date(json['startedAt']),
-        'finishedAt': !exists(json, 'finishedAt') ? undefined : new Date(json['finishedAt']),
-        'idempotencyKey': !exists(json, 'idempotencyKey') ? undefined : json['idempotencyKey'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    type: !exists(json, "type") ? undefined : json["type"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    inputJson: !exists(json, "inputJson") ? undefined : json["inputJson"],
+    outputJson: !exists(json, "outputJson") ? undefined : json["outputJson"],
+    error: !exists(json, "error") ? undefined : json["error"],
+    startedAt: !exists(json, "startedAt")
+      ? undefined
+      : new Date(json["startedAt"]),
+    finishedAt: !exists(json, "finishedAt")
+      ? undefined
+      : new Date(json["finishedAt"]),
+    idempotencyKey: !exists(json, "idempotencyKey")
+      ? undefined
+      : json["idempotencyKey"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function JobMetadataToJSON(value?: JobMetadata): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'type': value.type,
-        'status': value.status,
-        'inputJson': value.inputJson,
-        'outputJson': value.outputJson,
-        'error': value.error,
-        'startedAt': value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
-        'finishedAt': value.finishedAt === undefined ? undefined : value.finishedAt.toISOString(),
-        'idempotencyKey': value.idempotencyKey,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    type: value.type,
+    status: value.status,
+    inputJson: value.inputJson,
+    outputJson: value.outputJson,
+    error: value.error,
+    startedAt:
+      value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
+    finishedAt:
+      value.finishedAt === undefined
+        ? undefined
+        : value.finishedAt.toISOString(),
+    idempotencyKey: value.idempotencyKey,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum JobMetadataStatusEnum {
-    QUEUED = 'queued',
-    RUNNING = 'running',
-    COMPLETED = 'completed',
-    FAILED = 'failed',
-    CANCELLED = 'cancelled'
+  QUEUED = "queued",
+  RUNNING = "running",
+  COMPLETED = "completed",
+  FAILED = "failed",
+  CANCELLED = "cancelled",
 }
-
-

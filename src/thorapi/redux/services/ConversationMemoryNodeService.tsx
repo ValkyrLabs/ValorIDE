@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { ConversationMemoryNode } from '@thorapi/model/ConversationMemoryNode'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { ConversationMemoryNode } from "@thorapi/model/ConversationMemoryNode";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type ConversationMemoryNodeResponse = ConversationMemoryNode[]
+type ConversationMemoryNodeResponse = ConversationMemoryNode[];
 
-const toConversationMemoryNodeList = (result: unknown): ConversationMemoryNodeResponse => {
+const toConversationMemoryNodeList = (
+  result: unknown,
+): ConversationMemoryNodeResponse => {
   if (Array.isArray(result)) {
-    return result as ConversationMemoryNodeResponse
+    return result as ConversationMemoryNodeResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as ConversationMemoryNodeResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as ConversationMemoryNodeResponse)
+    : [];
+};
 
 export const ConversationMemoryNodeService = createApi({
-  reducerPath: 'ConversationMemoryNode', // This should remain unique
+  reducerPath: "ConversationMemoryNode", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['ConversationMemoryNode'],
+  tagTypes: ["ConversationMemoryNode"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getConversationMemoryNodesPaged: build.query<ConversationMemoryNodeResponse, { page: number; size?: number; example?: Partial<ConversationMemoryNode> }>({
+    getConversationMemoryNodesPaged: build.query<
+      ConversationMemoryNodeResponse,
+      { page: number; size?: number; example?: Partial<ConversationMemoryNode> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ConversationMemoryNode?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ConversationMemoryNode?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toConversationMemoryNodeList(result)
+        const rows = toConversationMemoryNodeList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ConversationMemoryNode' as const, id })),
-          { type: 'ConversationMemoryNode', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "ConversationMemoryNode" as const, id })),
+          { type: "ConversationMemoryNode", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getConversationMemoryNodes: build.query<ConversationMemoryNodeResponse, { example?: Partial<ConversationMemoryNode> } | void>({
+    getConversationMemoryNodes: build.query<
+      ConversationMemoryNodeResponse,
+      { example?: Partial<ConversationMemoryNode> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,114 @@ export const ConversationMemoryNodeService = createApi({
         return `ConversationMemoryNode`;
       },
       providesTags: (result) => {
-        const rows = toConversationMemoryNodeList(result)
+        const rows = toConversationMemoryNodeList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ConversationMemoryNode' as const, id })),
-          { type: 'ConversationMemoryNode', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "ConversationMemoryNode" as const, id })),
+          { type: "ConversationMemoryNode", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addConversationMemoryNode: build.mutation<ConversationMemoryNode, Partial<ConversationMemoryNode>>({
+    addConversationMemoryNode: build.mutation<
+      ConversationMemoryNode,
+      Partial<ConversationMemoryNode>
+    >({
       query: (body) => ({
         url: `ConversationMemoryNode`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'ConversationMemoryNode', id: 'LIST' }],
+      invalidatesTags: [{ type: "ConversationMemoryNode", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getConversationMemoryNode: build.query<ConversationMemoryNode, string>({
       query: (id) => `ConversationMemoryNode/${id}`,
-      providesTags: (result, error, id) => [{ type: 'ConversationMemoryNode', id }],
+      providesTags: (result, error, id) => [
+        { type: "ConversationMemoryNode", id },
+      ],
     }),
 
     // 5) Update
-    updateConversationMemoryNode: build.mutation<void, Pick<ConversationMemoryNode, 'id'> & Partial<ConversationMemoryNode>>({
+    updateConversationMemoryNode: build.mutation<
+      void,
+      Pick<ConversationMemoryNode, "id"> & Partial<ConversationMemoryNode>
+    >({
       query: ({ id, ...patch }) => ({
         url: `ConversationMemoryNode/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            ConversationMemoryNodeService.util.updateQueryData('getConversationMemoryNode', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            ConversationMemoryNodeService.util.updateQueryData(
+              "getConversationMemoryNode",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<ConversationMemoryNode, 'id'>) => [
-        { type: 'ConversationMemoryNode', id },
-        { type: 'ConversationMemoryNode', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<ConversationMemoryNode, "id">,
+      ) => [
+        { type: "ConversationMemoryNode", id },
+        { type: "ConversationMemoryNode", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteConversationMemoryNode: build.mutation<{ success: boolean; id: string }, number>({
+    deleteConversationMemoryNode: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `ConversationMemoryNode/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'ConversationMemoryNode', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "ConversationMemoryNode", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteConversationMemoryNodeCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteConversationMemoryNodeCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `ConversationMemoryNode/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ConversationMemoryNode', id }, { type: 'ConversationMemoryNode', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "ConversationMemoryNode", id },
+        { type: "ConversationMemoryNode", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetConversationMemoryNodesPagedQuery`
 export const {
-  useGetConversationMemoryNodesPagedQuery,     // immediate fetch
+  useGetConversationMemoryNodesPagedQuery, // immediate fetch
   useLazyGetConversationMemoryNodesPagedQuery, // lazy fetch
   useGetConversationMemoryNodeQuery,
   useGetConversationMemoryNodesQuery,
@@ -150,4 +192,4 @@ export const {
   useUpdateConversationMemoryNodeMutation,
   useDeleteConversationMemoryNodeMutation,
   useDeleteConversationMemoryNodeCascadeMutation,
-} = ConversationMemoryNodeService
+} = ConversationMemoryNodeService;

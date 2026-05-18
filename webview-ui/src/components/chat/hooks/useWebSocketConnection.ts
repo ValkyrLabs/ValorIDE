@@ -192,7 +192,7 @@ export const useWebSocketConnection = ({
               // If no task exists yet, start one; else inject as a user message
               if ((messages?.length ?? 0) === 0) {
                 TaskServiceClient.newTask({ text: cleaned, images: [] }).catch(
-                  () => { },
+                  () => {},
                 );
               } else {
                 vscode.postMessage({

@@ -1,4 +1,8 @@
-export type RemoteTaskTemplateId = "bugfix" | "refactor" | "docs" | "data-patch";
+export type RemoteTaskTemplateId =
+  | "bugfix"
+  | "refactor"
+  | "docs"
+  | "data-patch";
 
 export interface RemoteTaskTemplateParam {
   key: string;
@@ -48,7 +52,11 @@ const DEFAULT_TEMPLATES: RemoteTaskTemplate[] = [
     params: [
       { key: "area", label: "Affected area", required: true },
       { key: "repro", label: "Reproduction steps", required: true },
-      { key: "riskSurface", label: "Risk surface", defaultValue: "release notes" },
+      {
+        key: "riskSurface",
+        label: "Risk surface",
+        defaultValue: "release notes",
+      },
     ],
   },
   {
@@ -87,7 +95,10 @@ const DEFAULT_TEMPLATES: RemoteTaskTemplate[] = [
 ];
 
 export class RemoteCodingTaskPresetCatalog {
-  private readonly templates = new Map<RemoteTaskTemplateId, RemoteTaskTemplate>();
+  private readonly templates = new Map<
+    RemoteTaskTemplateId,
+    RemoteTaskTemplate
+  >();
 
   private readonly savedPresets = new Map<string, SavedRemoteTaskPreset>();
 
@@ -98,7 +109,10 @@ export class RemoteCodingTaskPresetCatalog {
   }
 
   listTemplates(): RemoteTaskTemplate[] {
-    return Array.from(this.templates.values()).map((template) => ({ ...template, params: [...template.params] }));
+    return Array.from(this.templates.values()).map((template) => ({
+      ...template,
+      params: [...template.params],
+    }));
   }
 
   savePreset(input: SaveRemoteTaskPresetInput): SavedRemoteTaskPreset {
@@ -124,17 +138,28 @@ export class RemoteCodingTaskPresetCatalog {
     return { ...preset, params: { ...preset.params } };
   }
 
-  listSavedPresets(scope?: RemotePresetScope, ownerId?: string): SavedRemoteTaskPreset[] {
+  listSavedPresets(
+    scope?: RemotePresetScope,
+    ownerId?: string,
+  ): SavedRemoteTaskPreset[] {
     return Array.from(this.savedPresets.values())
       .filter((preset) => (scope ? preset.scope === scope : true))
       .filter((preset) => (ownerId ? preset.ownerId === ownerId : true))
       .map((preset) => ({ ...preset, params: { ...preset.params } }));
   }
 
-  renderTask(templateId: RemoteTaskTemplateId, params: Record<string, string>): string {
+  renderTask(
+    templateId: RemoteTaskTemplateId,
+    params: Record<string, string>,
+  ): string {
     const template = this.requireTemplate(templateId);
     const normalizedParams = this.normalizeParams(template, params);
-    return template.taskTemplate.replace(/{{\s*([a-zA-Z0-9_-]+)\s*}}/g, (_match, key: string) => normalizedParams[key] ?? "").trim();
+    return template.taskTemplate
+      .replace(
+        /{{\s*([a-zA-Z0-9_-]+)\s*}}/g,
+        (_match, key: string) => normalizedParams[key] ?? "",
+      )
+      .trim();
   }
 
   renderTaskFromPreset(presetId: string): string {
@@ -145,7 +170,9 @@ export class RemoteCodingTaskPresetCatalog {
     return this.renderTask(preset.templateId, preset.params);
   }
 
-  private requireTemplate(templateId: RemoteTaskTemplateId): RemoteTaskTemplate {
+  private requireTemplate(
+    templateId: RemoteTaskTemplateId,
+  ): RemoteTaskTemplate {
     const template = this.templates.get(templateId);
     if (!template) {
       throw new Error(`Unknown remote task template: ${templateId}`);
@@ -153,7 +180,10 @@ export class RemoteCodingTaskPresetCatalog {
     return template;
   }
 
-  private normalizeParams(template: RemoteTaskTemplate, params: Record<string, string>): Record<string, string> {
+  private normalizeParams(
+    template: RemoteTaskTemplate,
+    params: Record<string, string>,
+  ): Record<string, string> {
     const normalized: Record<string, string> = {};
     for (const definition of template.params) {
       const provided = params[definition.key];

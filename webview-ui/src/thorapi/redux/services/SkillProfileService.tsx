@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { SkillProfile } from '@thorapi/model/SkillProfile'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { SkillProfile } from "@thorapi/model/SkillProfile";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type SkillProfileResponse = SkillProfile[]
+type SkillProfileResponse = SkillProfile[];
 
 const toSkillProfileList = (result: unknown): SkillProfileResponse => {
   if (Array.isArray(result)) {
-    return result as SkillProfileResponse
+    return result as SkillProfileResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as SkillProfileResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as SkillProfileResponse) : [];
+};
 
 export const SkillProfileService = createApi({
-  reducerPath: 'SkillProfile', // This should remain unique
+  reducerPath: "SkillProfile", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['SkillProfile'],
+  tagTypes: ["SkillProfile"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSkillProfilesPaged: build.query<SkillProfileResponse, { page: number; size?: number; example?: Partial<SkillProfile> }>({
+    getSkillProfilesPaged: build.query<
+      SkillProfileResponse,
+      { page: number; size?: number; example?: Partial<SkillProfile> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SkillProfile?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SkillProfile?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toSkillProfileList(result)
+        const rows = toSkillProfileList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'SkillProfile' as const, id })),
-          { type: 'SkillProfile', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "SkillProfile" as const, id })),
+          { type: "SkillProfile", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSkillProfiles: build.query<SkillProfileResponse, { example?: Partial<SkillProfile> } | void>({
+    getSkillProfiles: build.query<
+      SkillProfileResponse,
+      { example?: Partial<SkillProfile> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const SkillProfileService = createApi({
         return `SkillProfile`;
       },
       providesTags: (result) => {
-        const rows = toSkillProfileList(result)
+        const rows = toSkillProfileList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'SkillProfile' as const, id })),
-          { type: 'SkillProfile', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "SkillProfile" as const, id })),
+          { type: "SkillProfile", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,73 +87,89 @@ export const SkillProfileService = createApi({
     addSkillProfile: build.mutation<SkillProfile, Partial<SkillProfile>>({
       query: (body) => ({
         url: `SkillProfile`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'SkillProfile', id: 'LIST' }],
+      invalidatesTags: [{ type: "SkillProfile", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getSkillProfile: build.query<SkillProfile, string>({
       query: (id) => `SkillProfile/${id}`,
-      providesTags: (result, error, id) => [{ type: 'SkillProfile', id }],
+      providesTags: (result, error, id) => [{ type: "SkillProfile", id }],
     }),
 
     // 5) Update
-    updateSkillProfile: build.mutation<void, Pick<SkillProfile, 'id'> & Partial<SkillProfile>>({
+    updateSkillProfile: build.mutation<
+      void,
+      Pick<SkillProfile, "id"> & Partial<SkillProfile>
+    >({
       query: ({ id, ...patch }) => ({
         url: `SkillProfile/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            SkillProfileService.util.updateQueryData('getSkillProfile', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            SkillProfileService.util.updateQueryData(
+              "getSkillProfile",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<SkillProfile, 'id'>) => [
-        { type: 'SkillProfile', id },
-        { type: 'SkillProfile', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<SkillProfile, "id">) => [
+        { type: "SkillProfile", id },
+        { type: "SkillProfile", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteSkillProfile: build.mutation<{ success: boolean; id: string }, number>({
+    deleteSkillProfile: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `SkillProfile/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'SkillProfile', id }],
+      invalidatesTags: (result, error, id) => [{ type: "SkillProfile", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSkillProfileCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteSkillProfileCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `SkillProfile/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'SkillProfile', id }, { type: 'SkillProfile', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "SkillProfile", id },
+        { type: "SkillProfile", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetSkillProfilesPagedQuery`
 export const {
-  useGetSkillProfilesPagedQuery,     // immediate fetch
+  useGetSkillProfilesPagedQuery, // immediate fetch
   useLazyGetSkillProfilesPagedQuery, // lazy fetch
   useGetSkillProfileQuery,
   useGetSkillProfilesQuery,
@@ -150,4 +177,4 @@ export const {
   useUpdateSkillProfileMutation,
   useDeleteSkillProfileMutation,
   useDeleteSkillProfileCascadeMutation,
-} = SkillProfileService
+} = SkillProfileService;

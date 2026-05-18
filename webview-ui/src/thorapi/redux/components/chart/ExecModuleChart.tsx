@@ -19,20 +19,32 @@ Description: ExecModule
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, ExecModule } from '@thorapi/model';
-import { useGetExecModulesQuery, useAddExecModuleMutation, useUpdateExecModuleMutation } from '../../services/ExecModuleService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, ExecModule } from "@thorapi/model";
+import {
+  useGetExecModulesQuery,
+  useAddExecModuleMutation,
+  useUpdateExecModuleMutation,
+} from "../../services/ExecModuleService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const ExecModuleChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetExecModulesQuery();
 
   const [data, setData] = useState<ExecModule[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<ExecModule>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const ExecModuleChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const ExecModuleChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((execmodule: DataObject) => [execmodule])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((execmodule: DataObject) => [execmodule])}
+        />
+      )}
     </>
   );
 };

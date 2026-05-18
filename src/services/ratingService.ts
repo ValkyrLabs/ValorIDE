@@ -76,7 +76,7 @@ export class RatingServiceImpl {
       userRating: metrics.userRating,
       feedback: metrics.feedback,
       toolFailures,
-      createdAt: Date.now()
+      createdAt: Date.now(),
     };
 
     this.ratings.set(rating.ratingId, rating);
@@ -208,7 +208,7 @@ export class RatingServiceImpl {
     const avgRating =
       ratingsWithScore.length > 0
         ? ratingsWithScore.reduce((sum, r) => sum + (r.userRating || 0), 0) /
-        ratingsWithScore.length
+          ratingsWithScore.length
         : 0;
 
     return {
@@ -253,7 +253,7 @@ export class RatingServiceImpl {
     const avgRating =
       withRating.length > 0
         ? withRating.reduce((sum, r) => sum + (r.userRating || 0), 0) /
-        withRating.length
+          withRating.length
         : 0;
 
     this.logger.appendLine("[RatingService] Summary:");

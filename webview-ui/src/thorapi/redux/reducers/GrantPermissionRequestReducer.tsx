@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { GrantPermissionRequest } from '@thorapi/model/GrantPermissionRequest';
+import { GrantPermissionRequest } from "@thorapi/model/GrantPermissionRequest";
 
 const GrantPermissionRequestSlice = createSlice({
   name: "GrantPermissionRequests",
@@ -27,20 +27,25 @@ const GrantPermissionRequestSlice = createSlice({
     },
 
     GrantPermissionRequestValueToggled(state, action) {
-      console.log("GrantPermissionRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const GrantPermissionRequest:GrantPermissionRequest = state.find((GrantPermissionRequest) => GrantPermissionRequest.id === action.payload.GrantPermissionRequestId);
+      console.log("GrantPermissionRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const GrantPermissionRequest: GrantPermissionRequest = state.find(
+        (GrantPermissionRequest) =>
+          GrantPermissionRequest.id === action.payload.GrantPermissionRequestId,
+      );
       if (GrantPermissionRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     GrantPermissionRequestpropertySet(state, action) {
-      const GrantPermissionRequest = state.find((GrantPermissionRequest) => GrantPermissionRequest.id === action.payload.GrantPermissionRequestId);
+      const GrantPermissionRequest = state.find(
+        (GrantPermissionRequest) =>
+          GrantPermissionRequest.id === action.payload.GrantPermissionRequestId,
+      );
       if (GrantPermissionRequest) {
-      //  GrantPermissionRequest[action.property] = action.payload[action.property];
+        //  GrantPermissionRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const GrantPermissionRequestSlice = createSlice({
 export const {
   GrantPermissionRequestAdded,
   GrantPermissionRequestValueToggled,
-  GrantPermissionRequestpropertySet
+  GrantPermissionRequestpropertySet,
 } = GrantPermissionRequestSlice.actions;
 export default GrantPermissionRequestSlice.reducer;

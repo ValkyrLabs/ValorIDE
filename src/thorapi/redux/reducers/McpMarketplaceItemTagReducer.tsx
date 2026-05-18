@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpMarketplaceItemTag } from '@thorapi/model/McpMarketplaceItemTag';
+import { McpMarketplaceItemTag } from "@thorapi/model/McpMarketplaceItemTag";
 
 const McpMarketplaceItemTagSlice = createSlice({
   name: "McpMarketplaceItemTags",
@@ -27,20 +27,25 @@ const McpMarketplaceItemTagSlice = createSlice({
     },
 
     McpMarketplaceItemTagValueToggled(state, action) {
-      console.log("McpMarketplaceItemTag TOGGLE")
-      console.warn(JSON.stringify(action))
-      const McpMarketplaceItemTag:McpMarketplaceItemTag = state.find((McpMarketplaceItemTag) => McpMarketplaceItemTag.id === action.payload.McpMarketplaceItemTagId);
+      console.log("McpMarketplaceItemTag TOGGLE");
+      console.warn(JSON.stringify(action));
+      const McpMarketplaceItemTag: McpMarketplaceItemTag = state.find(
+        (McpMarketplaceItemTag) =>
+          McpMarketplaceItemTag.id === action.payload.McpMarketplaceItemTagId,
+      );
       if (McpMarketplaceItemTag) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     McpMarketplaceItemTagpropertySet(state, action) {
-      const McpMarketplaceItemTag = state.find((McpMarketplaceItemTag) => McpMarketplaceItemTag.id === action.payload.McpMarketplaceItemTagId);
+      const McpMarketplaceItemTag = state.find(
+        (McpMarketplaceItemTag) =>
+          McpMarketplaceItemTag.id === action.payload.McpMarketplaceItemTagId,
+      );
       if (McpMarketplaceItemTag) {
-      //  McpMarketplaceItemTag[action.property] = action.payload[action.property];
+        //  McpMarketplaceItemTag[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const McpMarketplaceItemTagSlice = createSlice({
 export const {
   McpMarketplaceItemTagAdded,
   McpMarketplaceItemTagValueToggled,
-  McpMarketplaceItemTagpropertySet
+  McpMarketplaceItemTagpropertySet,
 } = McpMarketplaceItemTagSlice.actions;
 export default McpMarketplaceItemTagSlice.reducer;

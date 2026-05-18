@@ -29,7 +29,7 @@ const isGeneratedFile = (relativePath: string): boolean => {
   const generatedPatterns = [
     /\/generated\//,
     /\/thorapi\//,
-    /\/[^/]+\/[^/]+\//,  // Matches */*/
+    /\/[^/]+\/[^/]+\//, // Matches */*/
   ];
   return generatedPatterns.some((pattern) => pattern.test(relativePath));
 };

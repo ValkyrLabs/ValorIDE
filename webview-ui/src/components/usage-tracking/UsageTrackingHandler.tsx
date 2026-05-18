@@ -17,12 +17,12 @@ interface UsageTrackingMessage {
 export const UsageTrackingHandler: React.FC = () => {
   const [addUsageTransaction] = useAddUsageTransactionMutation();
   const { authenticatedUser } = useExtensionState();
-  
+
   // Use the custom credits API endpoint for actual credit balance
   // GET /v1/credits/{accountId}/balance
   const { refetch: refetchAccountBalance } = useGetAccountBalanceQuery(
     authenticatedUser?.id ?? "",
-    { skip: !authenticatedUser?.id }
+    { skip: !authenticatedUser?.id },
   );
 
   useEffect(() => {

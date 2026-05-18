@@ -19,20 +19,32 @@ Description: MergeRange
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, MergeRange } from '@thorapi/model';
-import { useGetMergeRangesQuery, useAddMergeRangeMutation, useUpdateMergeRangeMutation } from '../../services/MergeRangeService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, MergeRange } from "@thorapi/model";
+import {
+  useGetMergeRangesQuery,
+  useAddMergeRangeMutation,
+  useUpdateMergeRangeMutation,
+} from "../../services/MergeRangeService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const MergeRangeChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetMergeRangesQuery();
 
   const [data, setData] = useState<MergeRange[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<MergeRange>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const MergeRangeChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const MergeRangeChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((mergerange: DataObject) => [mergerange])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((mergerange: DataObject) => [mergerange])}
+        />
+      )}
     </>
   );
 };

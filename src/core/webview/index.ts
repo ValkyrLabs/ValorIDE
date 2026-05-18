@@ -48,6 +48,7 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
   private disposables: vscode.Disposable[] = [];
   controller: Controller;
   private usageTrackingService: UsageTrackingService;
+  private cachedWebviewHtml: string = "";
 
   constructor(
     readonly context: vscode.ExtensionContext,
@@ -138,10 +139,14 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
       localResourceRoots: [this.context.extensionUri],
     };
 
-    webviewView.webview.html =
+    const htmlContent =
       this.context.extensionMode === vscode.ExtensionMode.Development
         ? await this.getHMRHtmlContent(webviewView.webview)
         : this.getHtmlContent(webviewView.webview);
+
+    // Cache the HTML for restoration if webview gets cleared
+    this.cachedWebviewHtml = htmlContent;
+    webviewView.webview.html = htmlContent;
 
     // Initialize bridge services with the active webview
     try {
@@ -186,6 +191,12 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
       webviewView.onDidChangeViewState(
         () => {
           if (this.view?.visible) {
+            // Restore webview HTML if it was cleared (e.g., due to an error or tab switch)
+            if (!webviewView.webview.html && this.cachedWebviewHtml) {
+              console.log("Restoring webview HTML after visibility change");
+              webviewView.webview.html = this.cachedWebviewHtml;
+            }
+
             this.controller.postMessageToWebview({
               type: "action",
               action: "didBecomeVisible",
@@ -200,6 +211,12 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
       webviewView.onDidChangeVisibility(
         () => {
           if (this.view?.visible) {
+            // Restore webview HTML if it was cleared (e.g., due to an error or tab switch)
+            if (!webviewView.webview.html && this.cachedWebviewHtml) {
+              console.log("Restoring webview HTML after visibility change");
+              webviewView.webview.html = this.cachedWebviewHtml;
+            }
+
             this.controller.postMessageToWebview({
               type: "action",
               action: "didBecomeVisible",

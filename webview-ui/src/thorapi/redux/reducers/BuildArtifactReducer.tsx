@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { BuildArtifact } from '@thorapi/model/BuildArtifact';
+import { BuildArtifact } from "@thorapi/model/BuildArtifact";
 
 const BuildArtifactSlice = createSlice({
   name: "BuildArtifacts",
@@ -27,20 +27,23 @@ const BuildArtifactSlice = createSlice({
     },
 
     BuildArtifactValueToggled(state, action) {
-      console.log("BuildArtifact TOGGLE")
-      console.warn(JSON.stringify(action))
-      const BuildArtifact:BuildArtifact = state.find((BuildArtifact) => BuildArtifact.id === action.payload.BuildArtifactId);
+      console.log("BuildArtifact TOGGLE");
+      console.warn(JSON.stringify(action));
+      const BuildArtifact: BuildArtifact = state.find(
+        (BuildArtifact) => BuildArtifact.id === action.payload.BuildArtifactId,
+      );
       if (BuildArtifact) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     BuildArtifactpropertySet(state, action) {
-      const BuildArtifact = state.find((BuildArtifact) => BuildArtifact.id === action.payload.BuildArtifactId);
+      const BuildArtifact = state.find(
+        (BuildArtifact) => BuildArtifact.id === action.payload.BuildArtifactId,
+      );
       if (BuildArtifact) {
-      //  BuildArtifact[action.property] = action.payload[action.property];
+        //  BuildArtifact[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const BuildArtifactSlice = createSlice({
 export const {
   BuildArtifactAdded,
   BuildArtifactValueToggled,
-  BuildArtifactpropertySet
+  BuildArtifactpropertySet,
 } = BuildArtifactSlice.actions;
 export default BuildArtifactSlice.reducer;

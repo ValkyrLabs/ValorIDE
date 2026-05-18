@@ -19,20 +19,32 @@ Description: PresignResponse
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, PresignResponse } from '@thorapi/model';
-import { useGetPresignResponsesQuery, useAddPresignResponseMutation, useUpdatePresignResponseMutation } from '../../services/PresignResponseService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, PresignResponse } from "@thorapi/model";
+import {
+  useGetPresignResponsesQuery,
+  useAddPresignResponseMutation,
+  useUpdatePresignResponseMutation,
+} from "../../services/PresignResponseService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const PresignResponseChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetPresignResponsesQuery();
 
   const [data, setData] = useState<PresignResponse[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<PresignResponse>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const PresignResponseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,15 @@ const PresignResponseChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((presignresponse: DataObject) => [presignresponse])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((presignresponse: DataObject) => [
+            presignresponse,
+          ])}
+        />
+      )}
     </>
   );
 };

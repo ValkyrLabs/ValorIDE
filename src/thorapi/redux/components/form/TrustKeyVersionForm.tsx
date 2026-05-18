@@ -13,33 +13,41 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   TrustKeyVersion,
   TrustKeyVersionAlgorithmEnum,
   TrustKeyVersionVersionStatusEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddTrustKeyVersionMutation } from '../../services/TrustKeyVersionService';
+import { useAddTrustKeyVersionMutation } from "../../services/TrustKeyVersionService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -64,21 +72,21 @@ Versioned Trust Fabric key material reference. wrappedKeyMaterial may store wrap
 -------------------------------------------------------- */
 const AlgorithmValidation = () => {
   return [
-    'AES_256_GCM',
-    'XCHACHA20_POLY1305',
-    'ED25519',
-    'ECDSA_P256',
-    'RSA_OAEP_3072',
+    "AES_256_GCM",
+    "XCHACHA20_POLY1305",
+    "ED25519",
+    "ECDSA_P256",
+    "RSA_OAEP_3072",
   ];
 };
 const VersionStatusValidation = () => {
   return [
-    'PENDING_ACTIVATION',
-    'ACTIVE',
-    'DECRYPT_ONLY',
-    'RETIRED',
-    'DESTROY_SCHEDULED',
-    'DESTROYED',
+    "PENDING_ACTIVATION",
+    "ACTIVE",
+    "DECRYPT_ONLY",
+    "RETIRED",
+    "DESTROY_SCHEDULED",
+    "DESTROYED",
   ];
 };
 
@@ -86,46 +94,55 @@ const VersionStatusValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        versionNumber: asNumber(Yup.number().integer().typeError("versionNumber must be a number")),
-        keyHash: Yup.string(),
-        publicKeyMaterial: Yup.string(),
-        wrappedKeyMaterial: Yup.string(),
-        wrappingKeyRef: Yup.string(),
-        providerKeyRef: Yup.string(),
-      algorithm: Yup.mixed()
-        .oneOf(AlgorithmValidation(), "Invalid value for algorithm")
-        ,
-      versionStatus: Yup.mixed()
-        .oneOf(VersionStatusValidation(), "Invalid value for versionStatus")
-        ,
-        notBefore: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("notBefore must be a valid date"),
-        notAfter: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("notAfter must be a valid date"),
-        ownerId: Yup.string(),
-        trashed: Yup.boolean(),
+  versionNumber: asNumber(
+    Yup.number().integer().typeError("versionNumber must be a number"),
+  ),
+  keyHash: Yup.string(),
+  publicKeyMaterial: Yup.string(),
+  wrappedKeyMaterial: Yup.string(),
+  wrappingKeyRef: Yup.string(),
+  providerKeyRef: Yup.string(),
+  algorithm: Yup.mixed().oneOf(
+    AlgorithmValidation(),
+    "Invalid value for algorithm",
+  ),
+  versionStatus: Yup.mixed().oneOf(
+    VersionStatusValidation(),
+    "Invalid value for versionStatus",
+  ),
+  notBefore: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("notBefore must be a valid date"),
+  notAfter: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("notAfter must be a valid date"),
+  ownerId: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const TrustKeyVersionForm: React.FC = () => {
-  const [addTrustKeyVersion, addTrustKeyVersionResult] = useAddTrustKeyVersionMutation();
+  const [addTrustKeyVersion, addTrustKeyVersionResult] =
+    useAddTrustKeyVersionMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -135,12 +152,18 @@ const TrustKeyVersionForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -148,18 +171,18 @@ const TrustKeyVersionForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<TrustKeyVersion> = {
-          versionNumber: 0,
-          keyHash: '',
-          publicKeyMaterial: '',
-          wrappedKeyMaterial: '',
-          wrappingKeyRef: '',
-          providerKeyRef: '',
-        algorithm: undefined,
-        versionStatus: undefined,
-          notBefore: new Date(),
-          notAfter: new Date(),
-          ownerId: '',
-          trashed: false,
+    versionNumber: 0,
+    keyHash: "",
+    publicKeyMaterial: "",
+    wrappedKeyMaterial: "",
+    wrappingKeyRef: "",
+    providerKeyRef: "",
+    algorithm: undefined,
+    versionStatus: undefined,
+    notBefore: new Date(),
+    notAfter: new Date(),
+    ownerId: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -174,11 +197,14 @@ const TrustKeyVersionForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new TrustKeyVersion:', grants);
+    console.log("Permissions saved for new TrustKeyVersion:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<TrustKeyVersion>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<TrustKeyVersion>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -189,7 +215,7 @@ const TrustKeyVersionForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `TrustKeyVersion created successfully! Would you like to set permissions for this object?`
+          `TrustKeyVersion created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -197,8 +223,8 @@ const TrustKeyVersionForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create TrustKeyVersion:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create TrustKeyVersion:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -219,52 +245,50 @@ const TrustKeyVersionForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addTrustKeyVersionResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New TrustKeyVersion
-                </Accordion.Header>
-                <Accordion.Body>
-                    <label htmlFor="versionNumber" className="nice-form-control">
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New TrustKeyVersion
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <label
+                      htmlFor="versionNumber"
+                      className="nice-form-control"
+                    >
                       <b>
                         Version Number:
-                        {touched.versionNumber &&
-                         !errors.versionNumber && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.versionNumber && !errors.versionNumber && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="versionNumber"
-                            type="number"
-                            value={values.versionNumber || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('versionNumber', true);
-                              const v = e.target.value;
-                              setFieldValue('versionNumber', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.versionNumber
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="versionNumber"
+                        type="number"
+                        value={values.versionNumber || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("versionNumber", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "versionNumber",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.versionNumber
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -276,28 +300,21 @@ const TrustKeyVersionForm: React.FC = () => {
                     <label htmlFor="keyHash" className="nice-form-control">
                       <b>
                         Key Hash:
-                        {touched.keyHash &&
-                         !errors.keyHash && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.keyHash && !errors.keyHash && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="keyHash"
-                            value={values?.keyHash}
-                            placeholder="Key Hash"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="keyHash"
+                        value={values?.keyHash}
+                        placeholder="Key Hash"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -306,31 +323,28 @@ const TrustKeyVersionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="publicKeyMaterial" className="nice-form-control">
+                    <label
+                      htmlFor="publicKeyMaterial"
+                      className="nice-form-control"
+                    >
                       <b>
                         Public Key Material:
                         {touched.publicKeyMaterial &&
-                         !errors.publicKeyMaterial && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.publicKeyMaterial && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="publicKeyMaterial"
-                            value={values?.publicKeyMaterial}
-                            placeholder="Public Key Material"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="publicKeyMaterial"
+                        value={values?.publicKeyMaterial}
+                        placeholder="Public Key Material"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -339,31 +353,28 @@ const TrustKeyVersionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="wrappedKeyMaterial" className="nice-form-control">
+                    <label
+                      htmlFor="wrappedKeyMaterial"
+                      className="nice-form-control"
+                    >
                       <b>
                         Wrapped Key Material:
                         {touched.wrappedKeyMaterial &&
-                         !errors.wrappedKeyMaterial && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.wrappedKeyMaterial && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="wrappedKeyMaterial"
-                            value={values?.wrappedKeyMaterial}
-                            placeholder="Wrapped Key Material"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="wrappedKeyMaterial"
+                        value={values?.wrappedKeyMaterial}
+                        placeholder="Wrapped Key Material"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -372,31 +383,27 @@ const TrustKeyVersionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="wrappingKeyRef" className="nice-form-control">
+                    <label
+                      htmlFor="wrappingKeyRef"
+                      className="nice-form-control"
+                    >
                       <b>
                         Wrapping Key Ref:
-                        {touched.wrappingKeyRef &&
-                         !errors.wrappingKeyRef && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.wrappingKeyRef && !errors.wrappingKeyRef && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="wrappingKeyRef"
-                            value={values?.wrappingKeyRef}
-                            placeholder="Wrapping Key Ref"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="wrappingKeyRef"
+                        value={values?.wrappingKeyRef}
+                        placeholder="Wrapping Key Ref"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -405,31 +412,27 @@ const TrustKeyVersionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="providerKeyRef" className="nice-form-control">
+                    <label
+                      htmlFor="providerKeyRef"
+                      className="nice-form-control"
+                    >
                       <b>
                         Provider Key Ref:
-                        {touched.providerKeyRef &&
-                         !errors.providerKeyRef && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.providerKeyRef && !errors.providerKeyRef && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="providerKeyRef"
-                            value={values?.providerKeyRef}
-                            placeholder="Provider Key Ref"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="providerKeyRef"
+                        value={values?.providerKeyRef}
+                        placeholder="Provider Key Ref"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -441,30 +444,33 @@ const TrustKeyVersionForm: React.FC = () => {
                     <label htmlFor="algorithm" className="nice-form-control">
                       <b>
                         Algorithm:
-                        {touched.algorithm &&
-                         !errors.algorithm && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.algorithm && !errors.algorithm && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="algorithm"
-                          value={values.algorithm || ''}
-                          className={
-                            errors.algorithm
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('algorithm', true);
-                            setFieldValue('algorithm', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Algorithm" />
-                          <AlgorithmLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="algorithm"
+                        value={values.algorithm || ""}
+                        className={
+                          errors.algorithm
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("algorithm", true);
+                          setFieldValue(
+                            "algorithm",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Algorithm" />
+                        <AlgorithmLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -473,33 +479,39 @@ const TrustKeyVersionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="versionStatus" className="nice-form-control">
+                    <label
+                      htmlFor="versionStatus"
+                      className="nice-form-control"
+                    >
                       <b>
                         Version Status:
-                        {touched.versionStatus &&
-                         !errors.versionStatus && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.versionStatus && !errors.versionStatus && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="versionStatus"
-                          value={values.versionStatus || ''}
-                          className={
-                            errors.versionStatus
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('versionStatus', true);
-                            setFieldValue('versionStatus', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Version Status" />
-                          <VersionStatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="versionStatus"
+                        value={values.versionStatus || ""}
+                        className={
+                          errors.versionStatus
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("versionStatus", true);
+                          setFieldValue(
+                            "versionStatus",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Version Status" />
+                        <VersionStatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -511,38 +523,38 @@ const TrustKeyVersionForm: React.FC = () => {
                     <label htmlFor="notBefore" className="nice-form-control">
                       <b>
                         Not Before:
-                        {touched.notBefore &&
-                         !errors.notBefore && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.notBefore && !errors.notBefore && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="notBefore"
-                            type="datetime-local"
-                            value={values.notBefore ? 
-                              new Date(values.notBefore).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('notBefore', true);
-                              const v = e.target.value;
-                              setFieldValue('notBefore', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.notBefore
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="notBefore"
+                        type="datetime-local"
+                        value={
+                          values.notBefore
+                            ? new Date(values.notBefore)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("notBefore", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "notBefore",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.notBefore
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -554,38 +566,38 @@ const TrustKeyVersionForm: React.FC = () => {
                     <label htmlFor="notAfter" className="nice-form-control">
                       <b>
                         Not After:
-                        {touched.notAfter &&
-                         !errors.notAfter && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.notAfter && !errors.notAfter && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="notAfter"
-                            type="datetime-local"
-                            value={values.notAfter ? 
-                              new Date(values.notAfter).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('notAfter', true);
-                              const v = e.target.value;
-                              setFieldValue('notAfter', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.notAfter
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="notAfter"
+                        type="datetime-local"
+                        value={
+                          values.notAfter
+                            ? new Date(values.notAfter)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("notAfter", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "notAfter",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.notAfter
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -597,28 +609,21 @@ const TrustKeyVersionForm: React.FC = () => {
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
-                        {touched.ownerId &&
-                         !errors.ownerId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.ownerId && !errors.ownerId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="ownerId"
-                            value={values?.ownerId}
-                            placeholder="Owner Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="ownerId"
+                        value={values?.ownerId}
+                        placeholder="Owner Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -630,32 +635,25 @@ const TrustKeyVersionForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -665,45 +663,59 @@ const TrustKeyVersionForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New TrustKeyVersion
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New TrustKeyVersion
+                    </CoolButton>
 
-                  {(addTrustKeyVersionResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addTrustKeyVersionResult as any).error ? (addTrustKeyVersionResult as any).error.data : (addTrustKeyVersionResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addTrustKeyVersionResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addTrustKeyVersionResult as any).error
+                              ? (addTrustKeyVersionResult as any).error.data
+                              : (addTrustKeyVersionResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addTrustKeyVersionResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addTrustKeyVersionResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addTrustKeyVersionResult: {JSON.stringify(addTrustKeyVersionResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addTrustKeyVersionResult:{" "}
+                    {JSON.stringify(addTrustKeyVersionResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -735,11 +747,11 @@ kebabcase algorithm-lookup
 const AlgorithmLookup = () => {
   return (
     <>
-      <option value='AES_256_GCM' label="Aes 256 Gcm" />
-      <option value='XCHACHA20_POLY1305' label="Xchacha 20 Poly 1305" />
-      <option value='ED25519' label="Ed 25519" />
-      <option value='ECDSA_P256' label="Ecdsa P 256" />
-      <option value='RSA_OAEP_3072' label="Rsa Oaep 3072" />
+      <option value="AES_256_GCM" label="Aes 256 Gcm" />
+      <option value="XCHACHA20_POLY1305" label="Xchacha 20 Poly 1305" />
+      <option value="ED25519" label="Ed 25519" />
+      <option value="ECDSA_P256" label="Ecdsa P 256" />
+      <option value="RSA_OAEP_3072" label="Rsa Oaep 3072" />
     </>
   );
 };
@@ -756,18 +768,15 @@ kebabcase version-status-lookup
 const VersionStatusLookup = () => {
   return (
     <>
-      <option value='PENDING_ACTIVATION' label="Pending Activation" />
-      <option value='ACTIVE' label="Active" />
-      <option value='DECRYPT_ONLY' label="Decrypt Only" />
-      <option value='RETIRED' label="Retired" />
-      <option value='DESTROY_SCHEDULED' label="Destroy Scheduled" />
-      <option value='DESTROYED' label="Destroyed" />
+      <option value="PENDING_ACTIVATION" label="Pending Activation" />
+      <option value="ACTIVE" label="Active" />
+      <option value="DECRYPT_ONLY" label="Decrypt Only" />
+      <option value="RETIRED" label="Retired" />
+      <option value="DESTROY_SCHEDULED" label="Destroy Scheduled" />
+      <option value="DESTROYED" label="Destroyed" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default TrustKeyVersionForm;
-

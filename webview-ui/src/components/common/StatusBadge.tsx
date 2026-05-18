@@ -22,14 +22,16 @@ export const StatusBadge: React.FC<{
         return {
           bg: "var(--vscode-editor-background)",
           fg: "var(--vscode-inputValidation-warningForeground, #cca700)",
-          border: "1px solid var(--vscode-inputValidation-warningBorder, #cca700)",
+          border:
+            "1px solid var(--vscode-inputValidation-warningBorder, #cca700)",
           dot: "#cca700",
         };
       case "error":
         return {
           bg: "var(--vscode-editor-background)",
           fg: "var(--vscode-inputValidation-errorForeground, #f48771)",
-          border: "1px solid var(--vscode-inputValidation-errorBorder, #f48771)",
+          border:
+            "1px solid var(--vscode-inputValidation-errorBorder, #f48771)",
           dot: "#f48771",
         };
       default:
@@ -70,9 +72,7 @@ export const StatusBadge: React.FC<{
         }}
       />
       <span style={{ opacity: 0.75 }}>{label}:</span>
-      {value && (
-        <span style={{ fontWeight: 600 }}>{value}</span>
-      )}
+      {value && <span style={{ fontWeight: 600 }}>{value}</span>}
     </span>
   );
 };

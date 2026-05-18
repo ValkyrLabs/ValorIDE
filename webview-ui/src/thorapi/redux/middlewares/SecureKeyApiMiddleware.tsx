@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_SECUREKEY_REQUEST,
-    FETCH_SECUREKEY_REQUEST,
-    LIST_SECUREKEY_REQUEST,
-    UPDATE_SECUREKEY_REQUEST,
-    DELETE_SECUREKEY_REQUEST,
-
-    addSecureKeyFailure,
-    addSecureKeySuccess,
-
-    fetchSecureKeyFailure,
-    fetchSecureKeySuccess,
-    
-    listSecureKeyFailure,
-    listSecureKeySuccess,
-
-    updateSecureKeyFailure,
-    updateSecureKeySuccess,
-    
-    deleteSecureKeyFailure,
-    deleteSecureKeySuccess,
-    
-} from '../actions/SecureKeyApiAction';
+  ADD_SECUREKEY_REQUEST,
+  FETCH_SECUREKEY_REQUEST,
+  LIST_SECUREKEY_REQUEST,
+  UPDATE_SECUREKEY_REQUEST,
+  DELETE_SECUREKEY_REQUEST,
+  addSecureKeyFailure,
+  addSecureKeySuccess,
+  fetchSecureKeyFailure,
+  fetchSecureKeySuccess,
+  listSecureKeyFailure,
+  listSecureKeySuccess,
+  updateSecureKeyFailure,
+  updateSecureKeySuccess,
+  deleteSecureKeyFailure,
+  deleteSecureKeySuccess,
+} from "../actions/SecureKeyApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: SecureKey
 */
 
-
-
-export const SecureKeyMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("SecureKey MIDDLEWARE: " + JSON.stringify(action) )
+export const SecureKeyMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("SecureKey MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

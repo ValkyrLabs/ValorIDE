@@ -19,20 +19,35 @@ Description: ChatCompletionResponse
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, ChatCompletionResponse } from '@thorapi/model';
-import { useGetChatCompletionResponsesQuery, useAddChatCompletionResponseMutation, useUpdateChatCompletionResponseMutation } from '../../services/ChatCompletionResponseService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, ChatCompletionResponse } from "@thorapi/model";
+import {
+  useGetChatCompletionResponsesQuery,
+  useAddChatCompletionResponseMutation,
+  useUpdateChatCompletionResponseMutation,
+} from "../../services/ChatCompletionResponseService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const ChatCompletionResponseChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetChatCompletionResponsesQuery();
+  const { data: initialData = [], isLoading } =
+    useGetChatCompletionResponsesQuery();
 
   const [data, setData] = useState<ChatCompletionResponse[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<ChatCompletionResponse>>({});
-  
+  const [chartData, setChartData] = useState<Partial<ChatCompletionResponse>>(
+    {},
+  );
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +65,9 @@ const ChatCompletionResponseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +75,15 @@ const ChatCompletionResponseChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((chatcompletionresponse: DataObject) => [chatcompletionresponse])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((chatcompletionresponse: DataObject) => [
+            chatcompletionresponse,
+          ])}
+        />
+      )}
     </>
   );
 };

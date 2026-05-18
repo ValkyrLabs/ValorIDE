@@ -76,7 +76,7 @@ export async function globalUuidLookup(
           });
           if (res.ok)
             return { entity: api.reducerPath, data: await res.json() };
-        } catch { }
+        } catch {}
         return null;
       }),
     );

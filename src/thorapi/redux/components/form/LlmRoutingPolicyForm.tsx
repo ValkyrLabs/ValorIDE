@@ -13,25 +13,33 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   LlmRoutingPolicy,
@@ -39,9 +47,9 @@ import {
   LlmRoutingPolicyPrimaryProviderEnum,
   LlmRoutingPolicyFallbackProvidersEnum,
   LlmRoutingPolicyAllowedProvidersEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddLlmRoutingPolicyMutation } from '../../services/LlmRoutingPolicyService';
+import { useAddLlmRoutingPolicyMutation } from "../../services/LlmRoutingPolicyService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,51 +73,48 @@ Provider-agnostic model routing policy with fallback and provider allow-list con
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const StrategyValidation = () => {
-  return [
-    'single_provider',
-    'fallback_chain',
-  ];
+  return ["single_provider", "fallback_chain"];
 };
 const PrimaryProviderValidation = () => {
   return [
-    'valkyrai',
-    'openai',
-    'llama',
-    'phi',
-    'gemma',
-    'mistral',
-    'claude',
-    'gemini',
-    'other',
-    'chatgpt_pass_through',
+    "valkyrai",
+    "openai",
+    "llama",
+    "phi",
+    "gemma",
+    "mistral",
+    "claude",
+    "gemini",
+    "other",
+    "chatgpt_pass_through",
   ];
 };
 const FallbackProvidersValidation = () => {
   return [
-    'valkyrai',
-    'openai',
-    'llama',
-    'phi',
-    'gemma',
-    'mistral',
-    'claude',
-    'gemini',
-    'other',
-    'chatgpt_pass_through',
+    "valkyrai",
+    "openai",
+    "llama",
+    "phi",
+    "gemma",
+    "mistral",
+    "claude",
+    "gemini",
+    "other",
+    "chatgpt_pass_through",
   ];
 };
 const AllowedProvidersValidation = () => {
   return [
-    'valkyrai',
-    'openai',
-    'llama',
-    'phi',
-    'gemma',
-    'mistral',
-    'claude',
-    'gemini',
-    'other',
-    'chatgpt_pass_through',
+    "valkyrai",
+    "openai",
+    "llama",
+    "phi",
+    "gemma",
+    "mistral",
+    "claude",
+    "gemini",
+    "other",
+    "chatgpt_pass_through",
   ];
 };
 
@@ -117,24 +122,31 @@ const AllowedProvidersValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-      strategy: Yup.mixed()
-        .oneOf(StrategyValidation(), "Invalid value for strategy")
-        ,
-      primaryProvider: Yup.mixed()
-        .oneOf(PrimaryProviderValidation(), "Invalid value for primaryProvider")
-        ,
-        maxFallbackAttempts: asNumber(Yup.number().integer().typeError("maxFallbackAttempts must be a number")),
-        trashed: Yup.boolean(),
+  strategy: Yup.mixed().oneOf(
+    StrategyValidation(),
+    "Invalid value for strategy",
+  ),
+  primaryProvider: Yup.mixed().oneOf(
+    PrimaryProviderValidation(),
+    "Invalid value for primaryProvider",
+  ),
+  maxFallbackAttempts: asNumber(
+    Yup.number().integer().typeError("maxFallbackAttempts must be a number"),
+  ),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const LlmRoutingPolicyForm: React.FC = () => {
-  const [addLlmRoutingPolicy, addLlmRoutingPolicyResult] = useAddLlmRoutingPolicyMutation();
+  const [addLlmRoutingPolicy, addLlmRoutingPolicyResult] =
+    useAddLlmRoutingPolicyMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -144,12 +156,18 @@ const LlmRoutingPolicyForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -157,10 +175,10 @@ const LlmRoutingPolicyForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<LlmRoutingPolicy> = {
-        strategy: undefined,
-        primaryProvider: undefined,
-          maxFallbackAttempts: 0,
-          trashed: false,
+    strategy: undefined,
+    primaryProvider: undefined,
+    maxFallbackAttempts: 0,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -175,11 +193,14 @@ const LlmRoutingPolicyForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new LlmRoutingPolicy:', grants);
+    console.log("Permissions saved for new LlmRoutingPolicy:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<LlmRoutingPolicy>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<LlmRoutingPolicy>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -190,7 +211,7 @@ const LlmRoutingPolicyForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `LlmRoutingPolicy created successfully! Would you like to set permissions for this object?`
+          `LlmRoutingPolicy created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -198,8 +219,8 @@ const LlmRoutingPolicyForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create LlmRoutingPolicy:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create LlmRoutingPolicy:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -220,46 +241,49 @@ const LlmRoutingPolicyForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addLlmRoutingPolicyResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New LlmRoutingPolicy
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    LlmRoutingPolicy
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="strategy" className="nice-form-control">
                       <b>
                         Strategy:
-                        {touched.strategy &&
-                         !errors.strategy && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.strategy && !errors.strategy && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="strategy"
-                          value={values.strategy || ''}
-                          className={
-                            errors.strategy
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('strategy', true);
-                            setFieldValue('strategy', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Strategy" />
-                          <StrategyLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="strategy"
+                        value={values.strategy || ""}
+                        className={
+                          errors.strategy
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("strategy", true);
+                          setFieldValue(
+                            "strategy",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Strategy" />
+                        <StrategyLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -268,33 +292,39 @@ const LlmRoutingPolicyForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="primaryProvider" className="nice-form-control">
+                    <label
+                      htmlFor="primaryProvider"
+                      className="nice-form-control"
+                    >
                       <b>
                         Primary Provider:
-                        {touched.primaryProvider &&
-                         !errors.primaryProvider && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.primaryProvider && !errors.primaryProvider && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="primaryProvider"
-                          value={values.primaryProvider || ''}
-                          className={
-                            errors.primaryProvider
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('primaryProvider', true);
-                            setFieldValue('primaryProvider', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Primary Provider" />
-                          <PrimaryProviderLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="primaryProvider"
+                        value={values.primaryProvider || ""}
+                        className={
+                          errors.primaryProvider
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("primaryProvider", true);
+                          setFieldValue(
+                            "primaryProvider",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Primary Provider" />
+                        <PrimaryProviderLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -303,39 +333,39 @@ const LlmRoutingPolicyForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="maxFallbackAttempts" className="nice-form-control">
+                    <label
+                      htmlFor="maxFallbackAttempts"
+                      className="nice-form-control"
+                    >
                       <b>
                         Max Fallback Attempts:
                         {touched.maxFallbackAttempts &&
-                         !errors.maxFallbackAttempts && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.maxFallbackAttempts && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="maxFallbackAttempts"
-                            type="number"
-                            value={values.maxFallbackAttempts || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('maxFallbackAttempts', true);
-                              const v = e.target.value;
-                              setFieldValue('maxFallbackAttempts', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.maxFallbackAttempts
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="maxFallbackAttempts"
+                        type="number"
+                        value={values.maxFallbackAttempts || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("maxFallbackAttempts", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "maxFallbackAttempts",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.maxFallbackAttempts
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -347,32 +377,25 @@ const LlmRoutingPolicyForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -382,45 +405,60 @@ const LlmRoutingPolicyForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New LlmRoutingPolicy
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New LlmRoutingPolicy
+                    </CoolButton>
 
-                  {(addLlmRoutingPolicyResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addLlmRoutingPolicyResult as any).error ? (addLlmRoutingPolicyResult as any).error.data : (addLlmRoutingPolicyResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addLlmRoutingPolicyResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addLlmRoutingPolicyResult as any).error
+                              ? (addLlmRoutingPolicyResult as any).error.data
+                              : (addLlmRoutingPolicyResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addLlmRoutingPolicyResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addLlmRoutingPolicyResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addLlmRoutingPolicyResult: {JSON.stringify(addLlmRoutingPolicyResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addLlmRoutingPolicyResult:{" "}
+                    {JSON.stringify(addLlmRoutingPolicyResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -452,8 +490,8 @@ kebabcase strategy-lookup
 const StrategyLookup = () => {
   return (
     <>
-      <option value='single_provider' label="Single Provider" />
-      <option value='fallback_chain' label="Fallback Chain" />
+      <option value="single_provider" label="Single Provider" />
+      <option value="fallback_chain" label="Fallback Chain" />
     </>
   );
 };
@@ -470,16 +508,16 @@ kebabcase primary-provider-lookup
 const PrimaryProviderLookup = () => {
   return (
     <>
-      <option value='valkyrai' label="Valkyrai" />
-      <option value='openai' label="Openai" />
-      <option value='llama' label="Llama" />
-      <option value='phi' label="Phi" />
-      <option value='gemma' label="Gemma" />
-      <option value='mistral' label="Mistral" />
-      <option value='claude' label="Claude" />
-      <option value='gemini' label="Gemini" />
-      <option value='other' label="Other" />
-      <option value='chatgpt_pass_through' label="Chatgpt Pass Through" />
+      <option value="valkyrai" label="Valkyrai" />
+      <option value="openai" label="Openai" />
+      <option value="llama" label="Llama" />
+      <option value="phi" label="Phi" />
+      <option value="gemma" label="Gemma" />
+      <option value="mistral" label="Mistral" />
+      <option value="claude" label="Claude" />
+      <option value="gemini" label="Gemini" />
+      <option value="other" label="Other" />
+      <option value="chatgpt_pass_through" label="Chatgpt Pass Through" />
     </>
   );
 };
@@ -492,7 +530,6 @@ pascalcase FallbackProvidersLookup
 camelcase fallbackProvidersLookup
 kebabcase fallback-providers-lookup
 */
-
 
 const FallbackProvidersLookup = () => {
   return (
@@ -519,7 +556,6 @@ camelcase allowedProvidersLookup
 kebabcase allowed-providers-lookup
 */
 
-
 const AllowedProvidersLookup = () => {
   return (
     <>
@@ -537,7 +573,5 @@ const AllowedProvidersLookup = () => {
   );
 };
 
-
 /* Export the generated form */
 export default LlmRoutingPolicyForm;
-

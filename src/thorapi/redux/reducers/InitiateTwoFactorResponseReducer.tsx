@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { InitiateTwoFactorResponse } from '@thorapi/model/InitiateTwoFactorResponse';
+import { InitiateTwoFactorResponse } from "@thorapi/model/InitiateTwoFactorResponse";
 
 const InitiateTwoFactorResponseSlice = createSlice({
   name: "InitiateTwoFactorResponses",
@@ -27,20 +27,27 @@ const InitiateTwoFactorResponseSlice = createSlice({
     },
 
     InitiateTwoFactorResponseValueToggled(state, action) {
-      console.log("InitiateTwoFactorResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const InitiateTwoFactorResponse:InitiateTwoFactorResponse = state.find((InitiateTwoFactorResponse) => InitiateTwoFactorResponse.id === action.payload.InitiateTwoFactorResponseId);
+      console.log("InitiateTwoFactorResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const InitiateTwoFactorResponse: InitiateTwoFactorResponse = state.find(
+        (InitiateTwoFactorResponse) =>
+          InitiateTwoFactorResponse.id ===
+          action.payload.InitiateTwoFactorResponseId,
+      );
       if (InitiateTwoFactorResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     InitiateTwoFactorResponsepropertySet(state, action) {
-      const InitiateTwoFactorResponse = state.find((InitiateTwoFactorResponse) => InitiateTwoFactorResponse.id === action.payload.InitiateTwoFactorResponseId);
+      const InitiateTwoFactorResponse = state.find(
+        (InitiateTwoFactorResponse) =>
+          InitiateTwoFactorResponse.id ===
+          action.payload.InitiateTwoFactorResponseId,
+      );
       if (InitiateTwoFactorResponse) {
-      //  InitiateTwoFactorResponse[action.property] = action.payload[action.property];
+        //  InitiateTwoFactorResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const InitiateTwoFactorResponseSlice = createSlice({
 export const {
   InitiateTwoFactorResponseAdded,
   InitiateTwoFactorResponseValueToggled,
-  InitiateTwoFactorResponsepropertySet
+  InitiateTwoFactorResponsepropertySet,
 } = InitiateTwoFactorResponseSlice.actions;
 export default InitiateTwoFactorResponseSlice.reducer;

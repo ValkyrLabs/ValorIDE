@@ -26,25 +26,22 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    AgentEventTrigger,
-    AgentEventTriggerFromJSON,
-    AgentEventTriggerToJSON,
-    Application,
-    ApplicationFromJSON,
-    ApplicationToJSON,
-    Role,
-    RoleFromJSON,
-    RoleToJSON,
-    Workflow,
-    WorkflowFromJSON,
-    WorkflowToJSON,
-} from './';
-
+  AgentEventTrigger,
+  AgentEventTriggerFromJSON,
+  AgentEventTriggerToJSON,
+  Application,
+  ApplicationFromJSON,
+  ApplicationToJSON,
+  Role,
+  RoleFromJSON,
+  RoleToJSON,
+  Workflow,
+  WorkflowFromJSON,
+  WorkflowToJSON,
+} from "./";
 
 // thorapi
 
@@ -53,162 +50,188 @@ import {
  * @export
  * @interface Agent
  */
-export type Agent  = DataObject & {
-    /**
-     * Display name for the Agent ie \'Sam\' or \'Accounting\'
-     * @type {string}
-     * @memberof Agent
-     */
-    name?: string;
-    /**
-     * 
-     * @type {Application}
-     * @memberof Agent
-     */
-    application?: Application;
-    /**
-     * 
-     * @type {Array<Workflow>}
-     * @memberof Agent
-     */
-    workflows?: Array<Workflow>;
-    /**
-     * 
-     * @type {Role}
-     * @memberof Agent
-     */
-    role?: Role;
-    /**
-     * CRON expression to (re)schedule workflows this Agent controls
-     * @type {string}
-     * @memberof Agent
-     */
-    cronSchedule?: string;
-    /**
-     * List of event trigger names to register to associated workflows
-     * @type {Array<AgentEventTrigger>}
-     * @memberof Agent
-     */
-    eventTriggers?: Array<AgentEventTrigger>;
-    /**
-     * Whether periodic agent heartbeats are enabled
-     * @type {boolean}
-     * @memberof Agent
-     */
-    heartbeatEnabled?: boolean;
-    /**
-     * Agentic control level for autonomous table/schema creation. Use \"none\" for manual-only control and \"unlimited\" for fully autonomous creation. 
-     * @type {string}
-     * @memberof Agent
-     */
-    autonomousTableCreationLevel?: AgentAutonomousTableCreationLevelEnum;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof Agent
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof Agent
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof Agent
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof Agent
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof Agent
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof Agent
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof Agent
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof Agent
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof Agent
-     */
-    trashed?: boolean;
-}
+export type Agent = DataObject & {
+  /**
+   * Display name for the Agent ie \'Sam\' or \'Accounting\'
+   * @type {string}
+   * @memberof Agent
+   */
+  name?: string;
+  /**
+   *
+   * @type {Application}
+   * @memberof Agent
+   */
+  application?: Application;
+  /**
+   *
+   * @type {Array<Workflow>}
+   * @memberof Agent
+   */
+  workflows?: Array<Workflow>;
+  /**
+   *
+   * @type {Role}
+   * @memberof Agent
+   */
+  role?: Role;
+  /**
+   * CRON expression to (re)schedule workflows this Agent controls
+   * @type {string}
+   * @memberof Agent
+   */
+  cronSchedule?: string;
+  /**
+   * List of event trigger names to register to associated workflows
+   * @type {Array<AgentEventTrigger>}
+   * @memberof Agent
+   */
+  eventTriggers?: Array<AgentEventTrigger>;
+  /**
+   * Whether periodic agent heartbeats are enabled
+   * @type {boolean}
+   * @memberof Agent
+   */
+  heartbeatEnabled?: boolean;
+  /**
+   * Agentic control level for autonomous table/schema creation. Use \"none\" for manual-only control and \"unlimited\" for fully autonomous creation.
+   * @type {string}
+   * @memberof Agent
+   */
+  autonomousTableCreationLevel?: AgentAutonomousTableCreationLevelEnum;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof Agent
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof Agent
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof Agent
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof Agent
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof Agent
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof Agent
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof Agent
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof Agent
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof Agent
+   */
+  trashed?: boolean;
+};
 
 export function AgentFromJSON(json: any): Agent {
-    return {
-        ...DataObjectFromJSON(json),
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'application': !exists(json, 'application') ? undefined : ApplicationFromJSON(json['application']),
-        'workflows': !exists(json, 'workflows') ? undefined : (json['workflows'] as Array<any>).map(WorkflowFromJSON),
-        'role': !exists(json, 'role') ? undefined : RoleFromJSON(json['role']),
-        'cronSchedule': !exists(json, 'cronSchedule') ? undefined : json['cronSchedule'],
-        'eventTriggers': !exists(json, 'eventTriggers') ? undefined : (json['eventTriggers'] as Array<any>).map(AgentEventTriggerFromJSON),
-        'heartbeatEnabled': !exists(json, 'heartbeatEnabled') ? undefined : json['heartbeatEnabled'],
-        'autonomousTableCreationLevel': !exists(json, 'autonomousTableCreationLevel') ? undefined : json['autonomousTableCreationLevel'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: !exists(json, "name") ? undefined : json["name"],
+    application: !exists(json, "application")
+      ? undefined
+      : ApplicationFromJSON(json["application"]),
+    workflows: !exists(json, "workflows")
+      ? undefined
+      : (json["workflows"] as Array<any>).map(WorkflowFromJSON),
+    role: !exists(json, "role") ? undefined : RoleFromJSON(json["role"]),
+    cronSchedule: !exists(json, "cronSchedule")
+      ? undefined
+      : json["cronSchedule"],
+    eventTriggers: !exists(json, "eventTriggers")
+      ? undefined
+      : (json["eventTriggers"] as Array<any>).map(AgentEventTriggerFromJSON),
+    heartbeatEnabled: !exists(json, "heartbeatEnabled")
+      ? undefined
+      : json["heartbeatEnabled"],
+    autonomousTableCreationLevel: !exists(json, "autonomousTableCreationLevel")
+      ? undefined
+      : json["autonomousTableCreationLevel"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function AgentToJSON(value?: Agent): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'name': value.name,
-        'application': ApplicationToJSON(value.application),
-        'workflows': value.workflows === undefined ? undefined : (value.workflows as Array<any>).map(WorkflowToJSON),
-        'role': RoleToJSON(value.role),
-        'cronSchedule': value.cronSchedule,
-        'eventTriggers': value.eventTriggers === undefined ? undefined : (value.eventTriggers as Array<any>).map(AgentEventTriggerToJSON),
-        'heartbeatEnabled': value.heartbeatEnabled,
-        'autonomousTableCreationLevel': value.autonomousTableCreationLevel,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    application: ApplicationToJSON(value.application),
+    workflows:
+      value.workflows === undefined
+        ? undefined
+        : (value.workflows as Array<any>).map(WorkflowToJSON),
+    role: RoleToJSON(value.role),
+    cronSchedule: value.cronSchedule,
+    eventTriggers:
+      value.eventTriggers === undefined
+        ? undefined
+        : (value.eventTriggers as Array<any>).map(AgentEventTriggerToJSON),
+    heartbeatEnabled: value.heartbeatEnabled,
+    autonomousTableCreationLevel: value.autonomousTableCreationLevel,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum AgentAutonomousTableCreationLevelEnum {
-    NONE = 'none',
-    GUIDED = 'guided',
-    BOUNDED = 'bounded',
-    HIGH = 'high',
-    UNLIMITED = 'unlimited'
+  NONE = "none",
+  GUIDED = "guided",
+  BOUNDED = "bounded",
+  HIGH = "high",
+  UNLIMITED = "unlimited",
 }
-
-

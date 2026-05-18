@@ -13,32 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  Deployment,
-  DeploymentStatusEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddDeploymentMutation } from '../../services/DeploymentService';
+import { Deployment, DeploymentStatusEnum } from "@thorapi/model";
+
+import { useAddDeploymentMutation } from "../../services/DeploymentService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -63,13 +68,13 @@ Active deployment of an application
 -------------------------------------------------------- */
 const StatusValidation = () => {
   return [
-    'pending',
-    'provisioning',
-    'running',
-    'updating',
-    'failed',
-    'stopped',
-    'terminated',
+    "pending",
+    "provisioning",
+    "running",
+    "updating",
+    "failed",
+    "stopped",
+    "terminated",
   ];
 };
 
@@ -77,36 +82,38 @@ const StatusValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        specId: Yup.string(),
-      status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        ,
-        deployedAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("deployedAt must be a valid date"),
-        completedAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("completedAt must be a valid date"),
-        endpoint: Yup.string(),
-        logs: Yup.string(),
-        errorMessage: Yup.string(),
-        cloudResourceId: Yup.string(),
-        deployedBy: Yup.string(),
-        metadata: Yup.string(),
-        trashed: Yup.boolean(),
+  specId: Yup.string(),
+  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
+  deployedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("deployedAt must be a valid date"),
+  completedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("completedAt must be a valid date"),
+  endpoint: Yup.string(),
+  logs: Yup.string(),
+  errorMessage: Yup.string(),
+  cloudResourceId: Yup.string(),
+  deployedBy: Yup.string(),
+  metadata: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -123,12 +130,18 @@ const DeploymentForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -136,17 +149,17 @@ const DeploymentForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Deployment> = {
-          specId: '',
-        status: undefined,
-          deployedAt: new Date(),
-          completedAt: new Date(),
-          endpoint: '',
-          logs: '',
-          errorMessage: '',
-          cloudResourceId: '',
-          deployedBy: '',
-          metadata: '',
-          trashed: false,
+    specId: "",
+    status: undefined,
+    deployedAt: new Date(),
+    completedAt: new Date(),
+    endpoint: "",
+    logs: "",
+    errorMessage: "",
+    cloudResourceId: "",
+    deployedBy: "",
+    metadata: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -161,11 +174,14 @@ const DeploymentForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new Deployment:', grants);
+    console.log("Permissions saved for new Deployment:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Deployment>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<Deployment>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -176,7 +192,7 @@ const DeploymentForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Deployment created successfully! Would you like to set permissions for this object?`
+          `Deployment created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -184,8 +200,8 @@ const DeploymentForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create Deployment:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create Deployment:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -206,44 +222,36 @@ const DeploymentForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addDeploymentResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New Deployment
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New Deployment
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="specId" className="nice-form-control">
                       <b>
                         Spec Id:
-                        {touched.specId &&
-                         !errors.specId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.specId && !errors.specId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="specId"
-                            value={values?.specId}
-                            placeholder="Spec Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="specId"
+                        value={values?.specId}
+                        placeholder="Spec Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -255,30 +263,30 @@ const DeploymentForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="status"
-                          value={values.status || ''}
-                          className={
-                            errors.status
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Status" />
-                          <StatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="status"
+                        value={values.status || ""}
+                        className={
+                          errors.status
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("status", true);
+                          setFieldValue("status", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Status" />
+                        <StatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -290,38 +298,38 @@ const DeploymentForm: React.FC = () => {
                     <label htmlFor="deployedAt" className="nice-form-control">
                       <b>
                         Deployed At:
-                        {touched.deployedAt &&
-                         !errors.deployedAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.deployedAt && !errors.deployedAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="deployedAt"
-                            type="datetime-local"
-                            value={values.deployedAt ? 
-                              new Date(values.deployedAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('deployedAt', true);
-                              const v = e.target.value;
-                              setFieldValue('deployedAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.deployedAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="deployedAt"
+                        type="datetime-local"
+                        value={
+                          values.deployedAt
+                            ? new Date(values.deployedAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("deployedAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "deployedAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.deployedAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -333,38 +341,38 @@ const DeploymentForm: React.FC = () => {
                     <label htmlFor="completedAt" className="nice-form-control">
                       <b>
                         Completed At:
-                        {touched.completedAt &&
-                         !errors.completedAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.completedAt && !errors.completedAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="completedAt"
-                            type="datetime-local"
-                            value={values.completedAt ? 
-                              new Date(values.completedAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('completedAt', true);
-                              const v = e.target.value;
-                              setFieldValue('completedAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.completedAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="completedAt"
+                        type="datetime-local"
+                        value={
+                          values.completedAt
+                            ? new Date(values.completedAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("completedAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "completedAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.completedAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -376,28 +384,21 @@ const DeploymentForm: React.FC = () => {
                     <label htmlFor="endpoint" className="nice-form-control">
                       <b>
                         Endpoint:
-                        {touched.endpoint &&
-                         !errors.endpoint && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.endpoint && !errors.endpoint && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="endpoint"
-                            value={values?.endpoint}
-                            placeholder="Endpoint"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="endpoint"
+                        value={values?.endpoint}
+                        placeholder="Endpoint"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -409,28 +410,21 @@ const DeploymentForm: React.FC = () => {
                     <label htmlFor="logs" className="nice-form-control">
                       <b>
                         Logs:
-                        {touched.logs &&
-                         !errors.logs && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.logs && !errors.logs && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="logs"
-                            value={values?.logs}
-                            placeholder="Logs"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="logs"
+                        value={values?.logs}
+                        placeholder="Logs"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -442,28 +436,21 @@ const DeploymentForm: React.FC = () => {
                     <label htmlFor="errorMessage" className="nice-form-control">
                       <b>
                         Error Message:
-                        {touched.errorMessage &&
-                         !errors.errorMessage && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.errorMessage && !errors.errorMessage && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="errorMessage"
-                            value={values?.errorMessage}
-                            placeholder="Error Message"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="errorMessage"
+                        value={values?.errorMessage}
+                        placeholder="Error Message"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -472,31 +459,27 @@ const DeploymentForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="cloudResourceId" className="nice-form-control">
+                    <label
+                      htmlFor="cloudResourceId"
+                      className="nice-form-control"
+                    >
                       <b>
                         Cloud Resource Id:
-                        {touched.cloudResourceId &&
-                         !errors.cloudResourceId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.cloudResourceId && !errors.cloudResourceId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="cloudResourceId"
-                            value={values?.cloudResourceId}
-                            placeholder="Cloud Resource Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="cloudResourceId"
+                        value={values?.cloudResourceId}
+                        placeholder="Cloud Resource Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -508,28 +491,21 @@ const DeploymentForm: React.FC = () => {
                     <label htmlFor="deployedBy" className="nice-form-control">
                       <b>
                         Deployed By:
-                        {touched.deployedBy &&
-                         !errors.deployedBy && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.deployedBy && !errors.deployedBy && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="deployedBy"
-                            value={values?.deployedBy}
-                            placeholder="Deployed By"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="deployedBy"
+                        value={values?.deployedBy}
+                        placeholder="Deployed By"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -541,28 +517,21 @@ const DeploymentForm: React.FC = () => {
                     <label htmlFor="metadata" className="nice-form-control">
                       <b>
                         Metadata:
-                        {touched.metadata &&
-                         !errors.metadata && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.metadata && !errors.metadata && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="metadata"
-                            value={values?.metadata}
-                            placeholder="Metadata"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="metadata"
+                        value={values?.metadata}
+                        placeholder="Metadata"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -574,32 +543,25 @@ const DeploymentForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -609,45 +571,58 @@ const DeploymentForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New Deployment
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New Deployment
+                    </CoolButton>
 
-                  {(addDeploymentResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addDeploymentResult as any).error ? (addDeploymentResult as any).error.data : (addDeploymentResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addDeploymentResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addDeploymentResult as any).error
+                              ? (addDeploymentResult as any).error.data
+                              : (addDeploymentResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addDeploymentResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addDeploymentResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addDeploymentResult: {JSON.stringify(addDeploymentResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addDeploymentResult: {JSON.stringify(addDeploymentResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -679,19 +654,16 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value='pending' label="Pending" />
-      <option value='provisioning' label="Provisioning" />
-      <option value='running' label="Running" />
-      <option value='updating' label="Updating" />
-      <option value='failed' label="Failed" />
-      <option value='stopped' label="Stopped" />
-      <option value='terminated' label="Terminated" />
+      <option value="pending" label="Pending" />
+      <option value="provisioning" label="Provisioning" />
+      <option value="running" label="Running" />
+      <option value="updating" label="Updating" />
+      <option value="failed" label="Failed" />
+      <option value="stopped" label="Stopped" />
+      <option value="terminated" label="Terminated" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default DeploymentForm;
-

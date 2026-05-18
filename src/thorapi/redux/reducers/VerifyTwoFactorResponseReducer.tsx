@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { VerifyTwoFactorResponse } from '@thorapi/model/VerifyTwoFactorResponse';
+import { VerifyTwoFactorResponse } from "@thorapi/model/VerifyTwoFactorResponse";
 
 const VerifyTwoFactorResponseSlice = createSlice({
   name: "VerifyTwoFactorResponses",
@@ -27,20 +27,27 @@ const VerifyTwoFactorResponseSlice = createSlice({
     },
 
     VerifyTwoFactorResponseValueToggled(state, action) {
-      console.log("VerifyTwoFactorResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const VerifyTwoFactorResponse:VerifyTwoFactorResponse = state.find((VerifyTwoFactorResponse) => VerifyTwoFactorResponse.id === action.payload.VerifyTwoFactorResponseId);
+      console.log("VerifyTwoFactorResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const VerifyTwoFactorResponse: VerifyTwoFactorResponse = state.find(
+        (VerifyTwoFactorResponse) =>
+          VerifyTwoFactorResponse.id ===
+          action.payload.VerifyTwoFactorResponseId,
+      );
       if (VerifyTwoFactorResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     VerifyTwoFactorResponsepropertySet(state, action) {
-      const VerifyTwoFactorResponse = state.find((VerifyTwoFactorResponse) => VerifyTwoFactorResponse.id === action.payload.VerifyTwoFactorResponseId);
+      const VerifyTwoFactorResponse = state.find(
+        (VerifyTwoFactorResponse) =>
+          VerifyTwoFactorResponse.id ===
+          action.payload.VerifyTwoFactorResponseId,
+      );
       if (VerifyTwoFactorResponse) {
-      //  VerifyTwoFactorResponse[action.property] = action.payload[action.property];
+        //  VerifyTwoFactorResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const VerifyTwoFactorResponseSlice = createSlice({
 export const {
   VerifyTwoFactorResponseAdded,
   VerifyTwoFactorResponseValueToggled,
-  VerifyTwoFactorResponsepropertySet
+  VerifyTwoFactorResponsepropertySet,
 } = VerifyTwoFactorResponseSlice.actions;
 export default VerifyTwoFactorResponseSlice.reducer;

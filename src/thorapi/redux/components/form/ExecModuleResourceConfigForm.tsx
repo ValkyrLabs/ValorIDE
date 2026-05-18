@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  ExecModuleResourceConfig,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddExecModuleResourceConfigMutation } from '../../services/ExecModuleResourceConfigService';
+import { ExecModuleResourceConfig } from "@thorapi/model";
+
+import { useAddExecModuleResourceConfigMutation } from "../../services/ExecModuleResourceConfigService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,35 +71,38 @@ ExecModuleResourceConfig
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        apiVersion: Yup.string(),
-        attachments: Yup.string(),
-        blocks: Yup.string(),
-        collection: Yup.string(),
-        connection: Yup.string(),
-        embeds: Yup.string(),
-        fileNameTemplate: Yup.string(),
-        itemKey: Yup.string(),
-        resourceKey: Yup.string(),
-        keyPath: Yup.string(),
-        media: Yup.string(),
-        mediaIds: Yup.string(),
-        mediaUrl: Yup.string(),
-        messagePath: Yup.string(),
-        partitionKey: Yup.string(),
-        path: Yup.string(),
-        valuePath: Yup.string(),
-        wkhtmlPath: Yup.string(),
-        trashed: Yup.boolean(),
+  apiVersion: Yup.string(),
+  attachments: Yup.string(),
+  blocks: Yup.string(),
+  collection: Yup.string(),
+  connection: Yup.string(),
+  embeds: Yup.string(),
+  fileNameTemplate: Yup.string(),
+  itemKey: Yup.string(),
+  resourceKey: Yup.string(),
+  keyPath: Yup.string(),
+  media: Yup.string(),
+  mediaIds: Yup.string(),
+  mediaUrl: Yup.string(),
+  messagePath: Yup.string(),
+  partitionKey: Yup.string(),
+  path: Yup.string(),
+  valuePath: Yup.string(),
+  wkhtmlPath: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ExecModuleResourceConfigForm: React.FC = () => {
-  const [addExecModuleResourceConfig, addExecModuleResourceConfigResult] = useAddExecModuleResourceConfigMutation();
+  const [addExecModuleResourceConfig, addExecModuleResourceConfigResult] =
+    useAddExecModuleResourceConfigMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -103,12 +112,18 @@ const ExecModuleResourceConfigForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -116,25 +131,25 @@ const ExecModuleResourceConfigForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ExecModuleResourceConfig> = {
-          apiVersion: '',
-          attachments: '',
-          blocks: '',
-          collection: '',
-          connection: '',
-          embeds: '',
-          fileNameTemplate: '',
-          itemKey: '',
-          resourceKey: '',
-          keyPath: '',
-          media: '',
-          mediaIds: '',
-          mediaUrl: '',
-          messagePath: '',
-          partitionKey: '',
-          path: '',
-          valuePath: '',
-          wkhtmlPath: '',
-          trashed: false,
+    apiVersion: "",
+    attachments: "",
+    blocks: "",
+    collection: "",
+    connection: "",
+    embeds: "",
+    fileNameTemplate: "",
+    itemKey: "",
+    resourceKey: "",
+    keyPath: "",
+    media: "",
+    mediaIds: "",
+    mediaUrl: "",
+    messagePath: "",
+    partitionKey: "",
+    path: "",
+    valuePath: "",
+    wkhtmlPath: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -149,11 +164,14 @@ const ExecModuleResourceConfigForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new ExecModuleResourceConfig:', grants);
+    console.log("Permissions saved for new ExecModuleResourceConfig:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ExecModuleResourceConfig>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<ExecModuleResourceConfig>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -164,7 +182,7 @@ const ExecModuleResourceConfigForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ExecModuleResourceConfig created successfully! Would you like to set permissions for this object?`
+          `ExecModuleResourceConfig created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -172,8 +190,8 @@ const ExecModuleResourceConfigForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create ExecModuleResourceConfig:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create ExecModuleResourceConfig:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -194,44 +212,38 @@ const ExecModuleResourceConfigForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addExecModuleResourceConfigResult.isLoading;
+          const isSaving =
+            isSubmitting || addExecModuleResourceConfigResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New ExecModuleResourceConfig
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    ExecModuleResourceConfig
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="apiVersion" className="nice-form-control">
                       <b>
                         Api Version:
-                        {touched.apiVersion &&
-                         !errors.apiVersion && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.apiVersion && !errors.apiVersion && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="apiVersion"
-                            value={values?.apiVersion}
-                            placeholder="Api Version"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="apiVersion"
+                        value={values?.apiVersion}
+                        placeholder="Api Version"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -243,28 +255,21 @@ const ExecModuleResourceConfigForm: React.FC = () => {
                     <label htmlFor="attachments" className="nice-form-control">
                       <b>
                         Attachments:
-                        {touched.attachments &&
-                         !errors.attachments && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.attachments && !errors.attachments && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="attachments"
-                            value={values?.attachments}
-                            placeholder="Attachments"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="attachments"
+                        value={values?.attachments}
+                        placeholder="Attachments"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -276,28 +281,21 @@ const ExecModuleResourceConfigForm: React.FC = () => {
                     <label htmlFor="blocks" className="nice-form-control">
                       <b>
                         Blocks:
-                        {touched.blocks &&
-                         !errors.blocks && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.blocks && !errors.blocks && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="blocks"
-                            value={values?.blocks}
-                            placeholder="Blocks"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="blocks"
+                        value={values?.blocks}
+                        placeholder="Blocks"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -309,28 +307,21 @@ const ExecModuleResourceConfigForm: React.FC = () => {
                     <label htmlFor="collection" className="nice-form-control">
                       <b>
                         Collection:
-                        {touched.collection &&
-                         !errors.collection && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.collection && !errors.collection && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="collection"
-                            value={values?.collection}
-                            placeholder="Collection"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="collection"
+                        value={values?.collection}
+                        placeholder="Collection"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -342,28 +333,21 @@ const ExecModuleResourceConfigForm: React.FC = () => {
                     <label htmlFor="connection" className="nice-form-control">
                       <b>
                         Connection:
-                        {touched.connection &&
-                         !errors.connection && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.connection && !errors.connection && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="connection"
-                            value={values?.connection}
-                            placeholder="Connection"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="connection"
+                        value={values?.connection}
+                        placeholder="Connection"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -375,28 +359,21 @@ const ExecModuleResourceConfigForm: React.FC = () => {
                     <label htmlFor="embeds" className="nice-form-control">
                       <b>
                         Embeds:
-                        {touched.embeds &&
-                         !errors.embeds && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.embeds && !errors.embeds && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="embeds"
-                            value={values?.embeds}
-                            placeholder="Embeds"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="embeds"
+                        value={values?.embeds}
+                        placeholder="Embeds"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -405,31 +382,28 @@ const ExecModuleResourceConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="fileNameTemplate" className="nice-form-control">
+                    <label
+                      htmlFor="fileNameTemplate"
+                      className="nice-form-control"
+                    >
                       <b>
                         File Name Template:
                         {touched.fileNameTemplate &&
-                         !errors.fileNameTemplate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.fileNameTemplate && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="fileNameTemplate"
-                            value={values?.fileNameTemplate}
-                            placeholder="File Name Template"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="fileNameTemplate"
+                        value={values?.fileNameTemplate}
+                        placeholder="File Name Template"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -441,28 +415,21 @@ const ExecModuleResourceConfigForm: React.FC = () => {
                     <label htmlFor="itemKey" className="nice-form-control">
                       <b>
                         Item _ key:
-                        {touched.itemKey &&
-                         !errors.itemKey && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.itemKey && !errors.itemKey && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="itemKey"
-                            value={values?.itemKey}
-                            placeholder="Item _ key"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="itemKey"
+                        value={values?.itemKey}
+                        placeholder="Item _ key"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -474,28 +441,21 @@ const ExecModuleResourceConfigForm: React.FC = () => {
                     <label htmlFor="resourceKey" className="nice-form-control">
                       <b>
                         Resource Key:
-                        {touched.resourceKey &&
-                         !errors.resourceKey && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.resourceKey && !errors.resourceKey && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="resourceKey"
-                            value={values?.resourceKey}
-                            placeholder="Resource Key"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="resourceKey"
+                        value={values?.resourceKey}
+                        placeholder="Resource Key"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -507,28 +467,21 @@ const ExecModuleResourceConfigForm: React.FC = () => {
                     <label htmlFor="keyPath" className="nice-form-control">
                       <b>
                         Key _ path:
-                        {touched.keyPath &&
-                         !errors.keyPath && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.keyPath && !errors.keyPath && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="keyPath"
-                            value={values?.keyPath}
-                            placeholder="Key _ path"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="keyPath"
+                        value={values?.keyPath}
+                        placeholder="Key _ path"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -540,28 +493,21 @@ const ExecModuleResourceConfigForm: React.FC = () => {
                     <label htmlFor="media" className="nice-form-control">
                       <b>
                         Media:
-                        {touched.media &&
-                         !errors.media && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.media && !errors.media && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="media"
-                            value={values?.media}
-                            placeholder="Media"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="media"
+                        value={values?.media}
+                        placeholder="Media"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -573,28 +519,21 @@ const ExecModuleResourceConfigForm: React.FC = () => {
                     <label htmlFor="mediaIds" className="nice-form-control">
                       <b>
                         Media _ ids:
-                        {touched.mediaIds &&
-                         !errors.mediaIds && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.mediaIds && !errors.mediaIds && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="mediaIds"
-                            value={values?.mediaIds}
-                            placeholder="Media _ ids"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="mediaIds"
+                        value={values?.mediaIds}
+                        placeholder="Media _ ids"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -606,28 +545,21 @@ const ExecModuleResourceConfigForm: React.FC = () => {
                     <label htmlFor="mediaUrl" className="nice-form-control">
                       <b>
                         Media _ url:
-                        {touched.mediaUrl &&
-                         !errors.mediaUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.mediaUrl && !errors.mediaUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="mediaUrl"
-                            value={values?.mediaUrl}
-                            placeholder="Media _ url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="mediaUrl"
+                        value={values?.mediaUrl}
+                        placeholder="Media _ url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -639,28 +571,21 @@ const ExecModuleResourceConfigForm: React.FC = () => {
                     <label htmlFor="messagePath" className="nice-form-control">
                       <b>
                         Message _ path:
-                        {touched.messagePath &&
-                         !errors.messagePath && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.messagePath && !errors.messagePath && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="messagePath"
-                            value={values?.messagePath}
-                            placeholder="Message _ path"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="messagePath"
+                        value={values?.messagePath}
+                        placeholder="Message _ path"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -672,28 +597,21 @@ const ExecModuleResourceConfigForm: React.FC = () => {
                     <label htmlFor="partitionKey" className="nice-form-control">
                       <b>
                         Partition _ key:
-                        {touched.partitionKey &&
-                         !errors.partitionKey && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.partitionKey && !errors.partitionKey && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="partitionKey"
-                            value={values?.partitionKey}
-                            placeholder="Partition _ key"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="partitionKey"
+                        value={values?.partitionKey}
+                        placeholder="Partition _ key"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -705,28 +623,21 @@ const ExecModuleResourceConfigForm: React.FC = () => {
                     <label htmlFor="path" className="nice-form-control">
                       <b>
                         Path:
-                        {touched.path &&
-                         !errors.path && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.path && !errors.path && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="path"
-                            value={values?.path}
-                            placeholder="Path"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="path"
+                        value={values?.path}
+                        placeholder="Path"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -738,28 +649,21 @@ const ExecModuleResourceConfigForm: React.FC = () => {
                     <label htmlFor="valuePath" className="nice-form-control">
                       <b>
                         Value _ path:
-                        {touched.valuePath &&
-                         !errors.valuePath && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.valuePath && !errors.valuePath && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="valuePath"
-                            value={values?.valuePath}
-                            placeholder="Value _ path"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="valuePath"
+                        value={values?.valuePath}
+                        placeholder="Value _ path"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -771,28 +675,21 @@ const ExecModuleResourceConfigForm: React.FC = () => {
                     <label htmlFor="wkhtmlPath" className="nice-form-control">
                       <b>
                         Wkhtml Path:
-                        {touched.wkhtmlPath &&
-                         !errors.wkhtmlPath && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.wkhtmlPath && !errors.wkhtmlPath && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="wkhtmlPath"
-                            value={values?.wkhtmlPath}
-                            placeholder="Wkhtml Path"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="wkhtmlPath"
+                        value={values?.wkhtmlPath}
+                        placeholder="Wkhtml Path"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -804,32 +701,25 @@ const ExecModuleResourceConfigForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -839,45 +729,65 @@ const ExecModuleResourceConfigForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New ExecModuleResourceConfig
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      ExecModuleResourceConfig
+                    </CoolButton>
 
-                  {(addExecModuleResourceConfigResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addExecModuleResourceConfigResult as any).error ? (addExecModuleResourceConfigResult as any).error.data : (addExecModuleResourceConfigResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addExecModuleResourceConfigResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addExecModuleResourceConfigResult as any).error
+                              ? (addExecModuleResourceConfigResult as any).error
+                                  .data
+                              : (addExecModuleResourceConfigResult as any)
+                                  .error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addExecModuleResourceConfigResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addExecModuleResourceConfigResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addExecModuleResourceConfigResult: {JSON.stringify(addExecModuleResourceConfigResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addExecModuleResourceConfigResult:{" "}
+                    {JSON.stringify(addExecModuleResourceConfigResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -897,8 +807,5 @@ const ExecModuleResourceConfigForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default ExecModuleResourceConfigForm;
-

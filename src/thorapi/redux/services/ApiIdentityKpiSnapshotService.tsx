@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { ApiIdentityKpiSnapshot } from '@thorapi/model/ApiIdentityKpiSnapshot'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { ApiIdentityKpiSnapshot } from "@thorapi/model/ApiIdentityKpiSnapshot";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type ApiIdentityKpiSnapshotResponse = ApiIdentityKpiSnapshot[]
+type ApiIdentityKpiSnapshotResponse = ApiIdentityKpiSnapshot[];
 
-const toApiIdentityKpiSnapshotList = (result: unknown): ApiIdentityKpiSnapshotResponse => {
+const toApiIdentityKpiSnapshotList = (
+  result: unknown,
+): ApiIdentityKpiSnapshotResponse => {
   if (Array.isArray(result)) {
-    return result as ApiIdentityKpiSnapshotResponse
+    return result as ApiIdentityKpiSnapshotResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as ApiIdentityKpiSnapshotResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as ApiIdentityKpiSnapshotResponse)
+    : [];
+};
 
 export const ApiIdentityKpiSnapshotService = createApi({
-  reducerPath: 'ApiIdentityKpiSnapshot', // This should remain unique
+  reducerPath: "ApiIdentityKpiSnapshot", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['ApiIdentityKpiSnapshot'],
+  tagTypes: ["ApiIdentityKpiSnapshot"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getApiIdentityKpiSnapshotsPaged: build.query<ApiIdentityKpiSnapshotResponse, { page: number; size?: number; example?: Partial<ApiIdentityKpiSnapshot> }>({
+    getApiIdentityKpiSnapshotsPaged: build.query<
+      ApiIdentityKpiSnapshotResponse,
+      { page: number; size?: number; example?: Partial<ApiIdentityKpiSnapshot> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ApiIdentityKpiSnapshot?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ApiIdentityKpiSnapshot?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toApiIdentityKpiSnapshotList(result)
+        const rows = toApiIdentityKpiSnapshotList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ApiIdentityKpiSnapshot' as const, id })),
-          { type: 'ApiIdentityKpiSnapshot', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "ApiIdentityKpiSnapshot" as const, id })),
+          { type: "ApiIdentityKpiSnapshot", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getApiIdentityKpiSnapshots: build.query<ApiIdentityKpiSnapshotResponse, { example?: Partial<ApiIdentityKpiSnapshot> } | void>({
+    getApiIdentityKpiSnapshots: build.query<
+      ApiIdentityKpiSnapshotResponse,
+      { example?: Partial<ApiIdentityKpiSnapshot> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,114 @@ export const ApiIdentityKpiSnapshotService = createApi({
         return `ApiIdentityKpiSnapshot`;
       },
       providesTags: (result) => {
-        const rows = toApiIdentityKpiSnapshotList(result)
+        const rows = toApiIdentityKpiSnapshotList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ApiIdentityKpiSnapshot' as const, id })),
-          { type: 'ApiIdentityKpiSnapshot', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "ApiIdentityKpiSnapshot" as const, id })),
+          { type: "ApiIdentityKpiSnapshot", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addApiIdentityKpiSnapshot: build.mutation<ApiIdentityKpiSnapshot, Partial<ApiIdentityKpiSnapshot>>({
+    addApiIdentityKpiSnapshot: build.mutation<
+      ApiIdentityKpiSnapshot,
+      Partial<ApiIdentityKpiSnapshot>
+    >({
       query: (body) => ({
         url: `ApiIdentityKpiSnapshot`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'ApiIdentityKpiSnapshot', id: 'LIST' }],
+      invalidatesTags: [{ type: "ApiIdentityKpiSnapshot", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getApiIdentityKpiSnapshot: build.query<ApiIdentityKpiSnapshot, string>({
       query: (id) => `ApiIdentityKpiSnapshot/${id}`,
-      providesTags: (result, error, id) => [{ type: 'ApiIdentityKpiSnapshot', id }],
+      providesTags: (result, error, id) => [
+        { type: "ApiIdentityKpiSnapshot", id },
+      ],
     }),
 
     // 5) Update
-    updateApiIdentityKpiSnapshot: build.mutation<void, Pick<ApiIdentityKpiSnapshot, 'id'> & Partial<ApiIdentityKpiSnapshot>>({
+    updateApiIdentityKpiSnapshot: build.mutation<
+      void,
+      Pick<ApiIdentityKpiSnapshot, "id"> & Partial<ApiIdentityKpiSnapshot>
+    >({
       query: ({ id, ...patch }) => ({
         url: `ApiIdentityKpiSnapshot/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            ApiIdentityKpiSnapshotService.util.updateQueryData('getApiIdentityKpiSnapshot', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            ApiIdentityKpiSnapshotService.util.updateQueryData(
+              "getApiIdentityKpiSnapshot",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<ApiIdentityKpiSnapshot, 'id'>) => [
-        { type: 'ApiIdentityKpiSnapshot', id },
-        { type: 'ApiIdentityKpiSnapshot', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<ApiIdentityKpiSnapshot, "id">,
+      ) => [
+        { type: "ApiIdentityKpiSnapshot", id },
+        { type: "ApiIdentityKpiSnapshot", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteApiIdentityKpiSnapshot: build.mutation<{ success: boolean; id: string }, number>({
+    deleteApiIdentityKpiSnapshot: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `ApiIdentityKpiSnapshot/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'ApiIdentityKpiSnapshot', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "ApiIdentityKpiSnapshot", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteApiIdentityKpiSnapshotCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteApiIdentityKpiSnapshotCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `ApiIdentityKpiSnapshot/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ApiIdentityKpiSnapshot', id }, { type: 'ApiIdentityKpiSnapshot', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "ApiIdentityKpiSnapshot", id },
+        { type: "ApiIdentityKpiSnapshot", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetApiIdentityKpiSnapshotsPagedQuery`
 export const {
-  useGetApiIdentityKpiSnapshotsPagedQuery,     // immediate fetch
+  useGetApiIdentityKpiSnapshotsPagedQuery, // immediate fetch
   useLazyGetApiIdentityKpiSnapshotsPagedQuery, // lazy fetch
   useGetApiIdentityKpiSnapshotQuery,
   useGetApiIdentityKpiSnapshotsQuery,
@@ -150,4 +192,4 @@ export const {
   useUpdateApiIdentityKpiSnapshotMutation,
   useDeleteApiIdentityKpiSnapshotMutation,
   useDeleteApiIdentityKpiSnapshotCascadeMutation,
-} = ApiIdentityKpiSnapshotService
+} = ApiIdentityKpiSnapshotService;

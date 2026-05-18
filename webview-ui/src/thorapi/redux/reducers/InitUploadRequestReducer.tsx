@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { InitUploadRequest } from '@thorapi/model/InitUploadRequest';
+import { InitUploadRequest } from "@thorapi/model/InitUploadRequest";
 
 const InitUploadRequestSlice = createSlice({
   name: "InitUploadRequests",
@@ -27,20 +27,25 @@ const InitUploadRequestSlice = createSlice({
     },
 
     InitUploadRequestValueToggled(state, action) {
-      console.log("InitUploadRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const InitUploadRequest:InitUploadRequest = state.find((InitUploadRequest) => InitUploadRequest.id === action.payload.InitUploadRequestId);
+      console.log("InitUploadRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const InitUploadRequest: InitUploadRequest = state.find(
+        (InitUploadRequest) =>
+          InitUploadRequest.id === action.payload.InitUploadRequestId,
+      );
       if (InitUploadRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     InitUploadRequestpropertySet(state, action) {
-      const InitUploadRequest = state.find((InitUploadRequest) => InitUploadRequest.id === action.payload.InitUploadRequestId);
+      const InitUploadRequest = state.find(
+        (InitUploadRequest) =>
+          InitUploadRequest.id === action.payload.InitUploadRequestId,
+      );
       if (InitUploadRequest) {
-      //  InitUploadRequest[action.property] = action.payload[action.property];
+        //  InitUploadRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const InitUploadRequestSlice = createSlice({
 export const {
   InitUploadRequestAdded,
   InitUploadRequestValueToggled,
-  InitUploadRequestpropertySet
+  InitUploadRequestpropertySet,
 } = InitUploadRequestSlice.actions;
 export default InitUploadRequestSlice.reducer;

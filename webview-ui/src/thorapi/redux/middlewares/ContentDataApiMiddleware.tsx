@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_CONTENTDATA_REQUEST,
-    FETCH_CONTENTDATA_REQUEST,
-    LIST_CONTENTDATA_REQUEST,
-    UPDATE_CONTENTDATA_REQUEST,
-    DELETE_CONTENTDATA_REQUEST,
-
-    addContentDataFailure,
-    addContentDataSuccess,
-
-    fetchContentDataFailure,
-    fetchContentDataSuccess,
-    
-    listContentDataFailure,
-    listContentDataSuccess,
-
-    updateContentDataFailure,
-    updateContentDataSuccess,
-    
-    deleteContentDataFailure,
-    deleteContentDataSuccess,
-    
-} from '../actions/ContentDataApiAction';
+  ADD_CONTENTDATA_REQUEST,
+  FETCH_CONTENTDATA_REQUEST,
+  LIST_CONTENTDATA_REQUEST,
+  UPDATE_CONTENTDATA_REQUEST,
+  DELETE_CONTENTDATA_REQUEST,
+  addContentDataFailure,
+  addContentDataSuccess,
+  fetchContentDataFailure,
+  fetchContentDataSuccess,
+  listContentDataFailure,
+  listContentDataSuccess,
+  updateContentDataFailure,
+  updateContentDataSuccess,
+  deleteContentDataFailure,
+  deleteContentDataSuccess,
+} from "../actions/ContentDataApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: ContentData
 */
 
-
-
-export const ContentDataMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("ContentData MIDDLEWARE: " + JSON.stringify(action) )
+export const ContentDataMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("ContentData MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

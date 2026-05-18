@@ -13,47 +13,60 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { ExecModuleConfig } from '@thorapi/model/ExecModuleConfig'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { ExecModuleConfig } from "@thorapi/model/ExecModuleConfig";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type ExecModuleConfigResponse = ExecModuleConfig[]
+type ExecModuleConfigResponse = ExecModuleConfig[];
 
 const toExecModuleConfigList = (result: unknown): ExecModuleConfigResponse => {
   if (Array.isArray(result)) {
-    return result as ExecModuleConfigResponse
+    return result as ExecModuleConfigResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as ExecModuleConfigResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as ExecModuleConfigResponse)
+    : [];
+};
 
 export const ExecModuleConfigService = createApi({
-  reducerPath: 'ExecModuleConfig', // This should remain unique
+  reducerPath: "ExecModuleConfig", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['ExecModuleConfig'],
+  tagTypes: ["ExecModuleConfig"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getExecModuleConfigsPaged: build.query<ExecModuleConfigResponse, { page: number; size?: number; example?: Partial<ExecModuleConfig> }>({
+    getExecModuleConfigsPaged: build.query<
+      ExecModuleConfigResponse,
+      { page: number; size?: number; example?: Partial<ExecModuleConfig> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ExecModuleConfig?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ExecModuleConfig?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toExecModuleConfigList(result)
+        const rows = toExecModuleConfigList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ExecModuleConfig' as const, id })),
-          { type: 'ExecModuleConfig', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "ExecModuleConfig" as const, id })),
+          { type: "ExecModuleConfig", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getExecModuleConfigs: build.query<ExecModuleConfigResponse, { example?: Partial<ExecModuleConfig> } | void>({
+    getExecModuleConfigs: build.query<
+      ExecModuleConfigResponse,
+      { example?: Partial<ExecModuleConfig> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +75,112 @@ export const ExecModuleConfigService = createApi({
         return `ExecModuleConfig`;
       },
       providesTags: (result) => {
-        const rows = toExecModuleConfigList(result)
+        const rows = toExecModuleConfigList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ExecModuleConfig' as const, id })),
-          { type: 'ExecModuleConfig', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "ExecModuleConfig" as const, id })),
+          { type: "ExecModuleConfig", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addExecModuleConfig: build.mutation<ExecModuleConfig, Partial<ExecModuleConfig>>({
+    addExecModuleConfig: build.mutation<
+      ExecModuleConfig,
+      Partial<ExecModuleConfig>
+    >({
       query: (body) => ({
         url: `ExecModuleConfig`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'ExecModuleConfig', id: 'LIST' }],
+      invalidatesTags: [{ type: "ExecModuleConfig", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getExecModuleConfig: build.query<ExecModuleConfig, string>({
       query: (id) => `ExecModuleConfig/${id}`,
-      providesTags: (result, error, id) => [{ type: 'ExecModuleConfig', id }],
+      providesTags: (result, error, id) => [{ type: "ExecModuleConfig", id }],
     }),
 
     // 5) Update
-    updateExecModuleConfig: build.mutation<void, Pick<ExecModuleConfig, 'id'> & Partial<ExecModuleConfig>>({
+    updateExecModuleConfig: build.mutation<
+      void,
+      Pick<ExecModuleConfig, "id"> & Partial<ExecModuleConfig>
+    >({
       query: ({ id, ...patch }) => ({
         url: `ExecModuleConfig/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            ExecModuleConfigService.util.updateQueryData('getExecModuleConfig', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            ExecModuleConfigService.util.updateQueryData(
+              "getExecModuleConfig",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<ExecModuleConfig, 'id'>) => [
-        { type: 'ExecModuleConfig', id },
-        { type: 'ExecModuleConfig', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<ExecModuleConfig, "id">,
+      ) => [
+        { type: "ExecModuleConfig", id },
+        { type: "ExecModuleConfig", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteExecModuleConfig: build.mutation<{ success: boolean; id: string }, number>({
+    deleteExecModuleConfig: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `ExecModuleConfig/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'ExecModuleConfig', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "ExecModuleConfig", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteExecModuleConfigCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteExecModuleConfigCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `ExecModuleConfig/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ExecModuleConfig', id }, { type: 'ExecModuleConfig', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "ExecModuleConfig", id },
+        { type: "ExecModuleConfig", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetExecModuleConfigsPagedQuery`
 export const {
-  useGetExecModuleConfigsPagedQuery,     // immediate fetch
+  useGetExecModuleConfigsPagedQuery, // immediate fetch
   useLazyGetExecModuleConfigsPagedQuery, // lazy fetch
   useGetExecModuleConfigQuery,
   useGetExecModuleConfigsQuery,
@@ -150,4 +188,4 @@ export const {
   useUpdateExecModuleConfigMutation,
   useDeleteExecModuleConfigMutation,
   useDeleteExecModuleConfigCascadeMutation,
-} = ExecModuleConfigService
+} = ExecModuleConfigService;

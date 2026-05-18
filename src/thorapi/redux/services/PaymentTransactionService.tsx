@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { PaymentTransaction } from '@thorapi/model/PaymentTransaction'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { PaymentTransaction } from "@thorapi/model/PaymentTransaction";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type PaymentTransactionResponse = PaymentTransaction[]
+type PaymentTransactionResponse = PaymentTransaction[];
 
-const toPaymentTransactionList = (result: unknown): PaymentTransactionResponse => {
+const toPaymentTransactionList = (
+  result: unknown,
+): PaymentTransactionResponse => {
   if (Array.isArray(result)) {
-    return result as PaymentTransactionResponse
+    return result as PaymentTransactionResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as PaymentTransactionResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as PaymentTransactionResponse)
+    : [];
+};
 
 export const PaymentTransactionService = createApi({
-  reducerPath: 'PaymentTransaction', // This should remain unique
+  reducerPath: "PaymentTransaction", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['PaymentTransaction'],
+  tagTypes: ["PaymentTransaction"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getPaymentTransactionsPaged: build.query<PaymentTransactionResponse, { page: number; size?: number; example?: Partial<PaymentTransaction> }>({
+    getPaymentTransactionsPaged: build.query<
+      PaymentTransactionResponse,
+      { page: number; size?: number; example?: Partial<PaymentTransaction> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `PaymentTransaction?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `PaymentTransaction?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toPaymentTransactionList(result)
+        const rows = toPaymentTransactionList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'PaymentTransaction' as const, id })),
-          { type: 'PaymentTransaction', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "PaymentTransaction" as const, id })),
+          { type: "PaymentTransaction", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getPaymentTransactions: build.query<PaymentTransactionResponse, { example?: Partial<PaymentTransaction> } | void>({
+    getPaymentTransactions: build.query<
+      PaymentTransactionResponse,
+      { example?: Partial<PaymentTransaction> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,112 @@ export const PaymentTransactionService = createApi({
         return `PaymentTransaction`;
       },
       providesTags: (result) => {
-        const rows = toPaymentTransactionList(result)
+        const rows = toPaymentTransactionList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'PaymentTransaction' as const, id })),
-          { type: 'PaymentTransaction', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "PaymentTransaction" as const, id })),
+          { type: "PaymentTransaction", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addPaymentTransaction: build.mutation<PaymentTransaction, Partial<PaymentTransaction>>({
+    addPaymentTransaction: build.mutation<
+      PaymentTransaction,
+      Partial<PaymentTransaction>
+    >({
       query: (body) => ({
         url: `PaymentTransaction`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'PaymentTransaction', id: 'LIST' }],
+      invalidatesTags: [{ type: "PaymentTransaction", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getPaymentTransaction: build.query<PaymentTransaction, string>({
       query: (id) => `PaymentTransaction/${id}`,
-      providesTags: (result, error, id) => [{ type: 'PaymentTransaction', id }],
+      providesTags: (result, error, id) => [{ type: "PaymentTransaction", id }],
     }),
 
     // 5) Update
-    updatePaymentTransaction: build.mutation<void, Pick<PaymentTransaction, 'id'> & Partial<PaymentTransaction>>({
+    updatePaymentTransaction: build.mutation<
+      void,
+      Pick<PaymentTransaction, "id"> & Partial<PaymentTransaction>
+    >({
       query: ({ id, ...patch }) => ({
         url: `PaymentTransaction/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            PaymentTransactionService.util.updateQueryData('getPaymentTransaction', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            PaymentTransactionService.util.updateQueryData(
+              "getPaymentTransaction",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<PaymentTransaction, 'id'>) => [
-        { type: 'PaymentTransaction', id },
-        { type: 'PaymentTransaction', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<PaymentTransaction, "id">,
+      ) => [
+        { type: "PaymentTransaction", id },
+        { type: "PaymentTransaction", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deletePaymentTransaction: build.mutation<{ success: boolean; id: string }, number>({
+    deletePaymentTransaction: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `PaymentTransaction/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'PaymentTransaction', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "PaymentTransaction", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deletePaymentTransactionCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deletePaymentTransactionCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `PaymentTransaction/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'PaymentTransaction', id }, { type: 'PaymentTransaction', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "PaymentTransaction", id },
+        { type: "PaymentTransaction", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetPaymentTransactionsPagedQuery`
 export const {
-  useGetPaymentTransactionsPagedQuery,     // immediate fetch
+  useGetPaymentTransactionsPagedQuery, // immediate fetch
   useLazyGetPaymentTransactionsPagedQuery, // lazy fetch
   useGetPaymentTransactionQuery,
   useGetPaymentTransactionsQuery,
@@ -150,4 +190,4 @@ export const {
   useUpdatePaymentTransactionMutation,
   useDeletePaymentTransactionMutation,
   useDeletePaymentTransactionCascadeMutation,
-} = PaymentTransactionService
+} = PaymentTransactionService;

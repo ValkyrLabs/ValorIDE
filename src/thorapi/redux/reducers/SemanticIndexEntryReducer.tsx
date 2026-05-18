@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SemanticIndexEntry } from '@thorapi/model/SemanticIndexEntry';
+import { SemanticIndexEntry } from "@thorapi/model/SemanticIndexEntry";
 
 const SemanticIndexEntrySlice = createSlice({
   name: "SemanticIndexEntrys",
@@ -27,20 +27,25 @@ const SemanticIndexEntrySlice = createSlice({
     },
 
     SemanticIndexEntryValueToggled(state, action) {
-      console.log("SemanticIndexEntry TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SemanticIndexEntry:SemanticIndexEntry = state.find((SemanticIndexEntry) => SemanticIndexEntry.id === action.payload.SemanticIndexEntryId);
+      console.log("SemanticIndexEntry TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SemanticIndexEntry: SemanticIndexEntry = state.find(
+        (SemanticIndexEntry) =>
+          SemanticIndexEntry.id === action.payload.SemanticIndexEntryId,
+      );
       if (SemanticIndexEntry) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SemanticIndexEntrypropertySet(state, action) {
-      const SemanticIndexEntry = state.find((SemanticIndexEntry) => SemanticIndexEntry.id === action.payload.SemanticIndexEntryId);
+      const SemanticIndexEntry = state.find(
+        (SemanticIndexEntry) =>
+          SemanticIndexEntry.id === action.payload.SemanticIndexEntryId,
+      );
       if (SemanticIndexEntry) {
-      //  SemanticIndexEntry[action.property] = action.payload[action.property];
+        //  SemanticIndexEntry[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const SemanticIndexEntrySlice = createSlice({
 export const {
   SemanticIndexEntryAdded,
   SemanticIndexEntryValueToggled,
-  SemanticIndexEntrypropertySet
+  SemanticIndexEntrypropertySet,
 } = SemanticIndexEntrySlice.actions;
 export default SemanticIndexEntrySlice.reducer;

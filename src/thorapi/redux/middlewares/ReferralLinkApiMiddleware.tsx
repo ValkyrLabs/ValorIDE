@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_REFERRALLINK_REQUEST,
-    FETCH_REFERRALLINK_REQUEST,
-    LIST_REFERRALLINK_REQUEST,
-    UPDATE_REFERRALLINK_REQUEST,
-    DELETE_REFERRALLINK_REQUEST,
-
-    addReferralLinkFailure,
-    addReferralLinkSuccess,
-
-    fetchReferralLinkFailure,
-    fetchReferralLinkSuccess,
-    
-    listReferralLinkFailure,
-    listReferralLinkSuccess,
-
-    updateReferralLinkFailure,
-    updateReferralLinkSuccess,
-    
-    deleteReferralLinkFailure,
-    deleteReferralLinkSuccess,
-    
-} from '../actions/ReferralLinkApiAction';
+  ADD_REFERRALLINK_REQUEST,
+  FETCH_REFERRALLINK_REQUEST,
+  LIST_REFERRALLINK_REQUEST,
+  UPDATE_REFERRALLINK_REQUEST,
+  DELETE_REFERRALLINK_REQUEST,
+  addReferralLinkFailure,
+  addReferralLinkSuccess,
+  fetchReferralLinkFailure,
+  fetchReferralLinkSuccess,
+  listReferralLinkFailure,
+  listReferralLinkSuccess,
+  updateReferralLinkFailure,
+  updateReferralLinkSuccess,
+  deleteReferralLinkFailure,
+  deleteReferralLinkSuccess,
+} from "../actions/ReferralLinkApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: ReferralLink
 */
 
-
-
-export const ReferralLinkMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("ReferralLink MIDDLEWARE: " + JSON.stringify(action) )
+export const ReferralLinkMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("ReferralLink MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

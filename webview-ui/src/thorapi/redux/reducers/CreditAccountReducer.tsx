@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { CreditAccount } from '@thorapi/model/CreditAccount';
+import { CreditAccount } from "@thorapi/model/CreditAccount";
 
 const CreditAccountSlice = createSlice({
   name: "CreditAccounts",
@@ -27,20 +27,23 @@ const CreditAccountSlice = createSlice({
     },
 
     CreditAccountValueToggled(state, action) {
-      console.log("CreditAccount TOGGLE")
-      console.warn(JSON.stringify(action))
-      const CreditAccount:CreditAccount = state.find((CreditAccount) => CreditAccount.id === action.payload.CreditAccountId);
+      console.log("CreditAccount TOGGLE");
+      console.warn(JSON.stringify(action));
+      const CreditAccount: CreditAccount = state.find(
+        (CreditAccount) => CreditAccount.id === action.payload.CreditAccountId,
+      );
       if (CreditAccount) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     CreditAccountpropertySet(state, action) {
-      const CreditAccount = state.find((CreditAccount) => CreditAccount.id === action.payload.CreditAccountId);
+      const CreditAccount = state.find(
+        (CreditAccount) => CreditAccount.id === action.payload.CreditAccountId,
+      );
       if (CreditAccount) {
-      //  CreditAccount[action.property] = action.payload[action.property];
+        //  CreditAccount[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const CreditAccountSlice = createSlice({
 export const {
   CreditAccountAdded,
   CreditAccountValueToggled,
-  CreditAccountpropertySet
+  CreditAccountpropertySet,
 } = CreditAccountSlice.actions;
 export default CreditAccountSlice.reducer;

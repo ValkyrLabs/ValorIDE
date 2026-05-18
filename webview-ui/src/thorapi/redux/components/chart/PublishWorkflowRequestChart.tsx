@@ -19,20 +19,35 @@ Description: PublishWorkflowRequest
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, PublishWorkflowRequest } from '@thorapi/model';
-import { useGetPublishWorkflowRequestsQuery, useAddPublishWorkflowRequestMutation, useUpdatePublishWorkflowRequestMutation } from '../../services/PublishWorkflowRequestService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, PublishWorkflowRequest } from "@thorapi/model";
+import {
+  useGetPublishWorkflowRequestsQuery,
+  useAddPublishWorkflowRequestMutation,
+  useUpdatePublishWorkflowRequestMutation,
+} from "../../services/PublishWorkflowRequestService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const PublishWorkflowRequestChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetPublishWorkflowRequestsQuery();
+  const { data: initialData = [], isLoading } =
+    useGetPublishWorkflowRequestsQuery();
 
   const [data, setData] = useState<PublishWorkflowRequest[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<PublishWorkflowRequest>>({});
-  
+  const [chartData, setChartData] = useState<Partial<PublishWorkflowRequest>>(
+    {},
+  );
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +65,9 @@ const PublishWorkflowRequestChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +75,15 @@ const PublishWorkflowRequestChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((publishworkflowrequest: DataObject) => [publishworkflowrequest])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((publishworkflowrequest: DataObject) => [
+            publishworkflowrequest,
+          ])}
+        />
+      )}
     </>
   );
 };

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { WorkflowExecution } from '@thorapi/model/WorkflowExecution';
+import { WorkflowExecution } from "@thorapi/model/WorkflowExecution";
 
 const WorkflowExecutionSlice = createSlice({
   name: "WorkflowExecutions",
@@ -27,20 +27,25 @@ const WorkflowExecutionSlice = createSlice({
     },
 
     WorkflowExecutionValueToggled(state, action) {
-      console.log("WorkflowExecution TOGGLE")
-      console.warn(JSON.stringify(action))
-      const WorkflowExecution:WorkflowExecution = state.find((WorkflowExecution) => WorkflowExecution.id === action.payload.WorkflowExecutionId);
+      console.log("WorkflowExecution TOGGLE");
+      console.warn(JSON.stringify(action));
+      const WorkflowExecution: WorkflowExecution = state.find(
+        (WorkflowExecution) =>
+          WorkflowExecution.id === action.payload.WorkflowExecutionId,
+      );
       if (WorkflowExecution) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     WorkflowExecutionpropertySet(state, action) {
-      const WorkflowExecution = state.find((WorkflowExecution) => WorkflowExecution.id === action.payload.WorkflowExecutionId);
+      const WorkflowExecution = state.find(
+        (WorkflowExecution) =>
+          WorkflowExecution.id === action.payload.WorkflowExecutionId,
+      );
       if (WorkflowExecution) {
-      //  WorkflowExecution[action.property] = action.payload[action.property];
+        //  WorkflowExecution[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const WorkflowExecutionSlice = createSlice({
 export const {
   WorkflowExecutionAdded,
   WorkflowExecutionValueToggled,
-  WorkflowExecutionpropertySet
+  WorkflowExecutionpropertySet,
 } = WorkflowExecutionSlice.actions;
 export default WorkflowExecutionSlice.reducer;

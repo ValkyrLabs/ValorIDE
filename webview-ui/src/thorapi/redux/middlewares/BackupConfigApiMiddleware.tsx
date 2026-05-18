@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_BACKUPCONFIG_REQUEST,
-    FETCH_BACKUPCONFIG_REQUEST,
-    LIST_BACKUPCONFIG_REQUEST,
-    UPDATE_BACKUPCONFIG_REQUEST,
-    DELETE_BACKUPCONFIG_REQUEST,
-
-    addBackupConfigFailure,
-    addBackupConfigSuccess,
-
-    fetchBackupConfigFailure,
-    fetchBackupConfigSuccess,
-    
-    listBackupConfigFailure,
-    listBackupConfigSuccess,
-
-    updateBackupConfigFailure,
-    updateBackupConfigSuccess,
-    
-    deleteBackupConfigFailure,
-    deleteBackupConfigSuccess,
-    
-} from '../actions/BackupConfigApiAction';
+  ADD_BACKUPCONFIG_REQUEST,
+  FETCH_BACKUPCONFIG_REQUEST,
+  LIST_BACKUPCONFIG_REQUEST,
+  UPDATE_BACKUPCONFIG_REQUEST,
+  DELETE_BACKUPCONFIG_REQUEST,
+  addBackupConfigFailure,
+  addBackupConfigSuccess,
+  fetchBackupConfigFailure,
+  fetchBackupConfigSuccess,
+  listBackupConfigFailure,
+  listBackupConfigSuccess,
+  updateBackupConfigFailure,
+  updateBackupConfigSuccess,
+  deleteBackupConfigFailure,
+  deleteBackupConfigSuccess,
+} from "../actions/BackupConfigApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: BackupConfig
 */
 
-
-
-export const BackupConfigMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("BackupConfig MIDDLEWARE: " + JSON.stringify(action) )
+export const BackupConfigMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("BackupConfig MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_MCPTOOL_REQUEST,
-    FETCH_MCPTOOL_REQUEST,
-    LIST_MCPTOOL_REQUEST,
-    UPDATE_MCPTOOL_REQUEST,
-    DELETE_MCPTOOL_REQUEST,
-
-    addMcpToolFailure,
-    addMcpToolSuccess,
-
-    fetchMcpToolFailure,
-    fetchMcpToolSuccess,
-    
-    listMcpToolFailure,
-    listMcpToolSuccess,
-
-    updateMcpToolFailure,
-    updateMcpToolSuccess,
-    
-    deleteMcpToolFailure,
-    deleteMcpToolSuccess,
-    
-} from '../actions/McpToolApiAction';
+  ADD_MCPTOOL_REQUEST,
+  FETCH_MCPTOOL_REQUEST,
+  LIST_MCPTOOL_REQUEST,
+  UPDATE_MCPTOOL_REQUEST,
+  DELETE_MCPTOOL_REQUEST,
+  addMcpToolFailure,
+  addMcpToolSuccess,
+  fetchMcpToolFailure,
+  fetchMcpToolSuccess,
+  listMcpToolFailure,
+  listMcpToolSuccess,
+  updateMcpToolFailure,
+  updateMcpToolSuccess,
+  deleteMcpToolFailure,
+  deleteMcpToolSuccess,
+} from "../actions/McpToolApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: McpTool
 */
 
-
-
-export const McpToolMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("McpTool MIDDLEWARE: " + JSON.stringify(action) )
+export const McpToolMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("McpTool MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

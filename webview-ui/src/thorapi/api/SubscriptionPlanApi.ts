@@ -18,353 +18,431 @@ Template file: typescript-redux-query/apis.mustache
 Description: SubscriptionPlanApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    SubscriptionPlan,
-    SubscriptionPlanFromJSON,
-    SubscriptionPlanToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  SubscriptionPlan,
+  SubscriptionPlanFromJSON,
+  SubscriptionPlanToJSON,
+} from "../model";
 
 export interface DeleteSubscriptionPlanApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetSubscriptionPlanApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetSubscriptionPlanListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface PatchSubscriptionPlanByIdApiRequest {
-    id: string;
-    subscriptionPlan: SubscriptionPlan;
+  id: string;
+  subscriptionPlan: SubscriptionPlan;
 }
 
 export interface PostSubscriptionPlanApiRequest {
-    subscriptionPlan: SubscriptionPlan;
+  subscriptionPlan: SubscriptionPlan;
 }
 
 export interface UpdateSubscriptionPlanApiRequest {
-    id: string;
-    subscriptionPlan: SubscriptionPlan;
+  id: string;
+  subscriptionPlan: SubscriptionPlan;
 }
-
 
 /**
  * Deletes a specific SubscriptionPlan.
  * Delete a SubscriptionPlan.
  */
-function deleteSubscriptionPlanRaw<T>(requestParameters: DeleteSubscriptionPlanApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteSubscriptionPlan.');
-    }
+function deleteSubscriptionPlanRaw<T>(
+  requestParameters: DeleteSubscriptionPlanApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteSubscriptionPlan.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SubscriptionPlan/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SubscriptionPlan/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific SubscriptionPlan.
-* Delete a SubscriptionPlan.
-*/
-export function deleteSubscriptionPlan<T>(requestParameters: DeleteSubscriptionPlanApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteSubscriptionPlanRaw(requestParameters, requestConfig);
+ * Deletes a specific SubscriptionPlan.
+ * Delete a SubscriptionPlan.
+ */
+export function deleteSubscriptionPlan<T>(
+  requestParameters: DeleteSubscriptionPlanApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteSubscriptionPlanRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single SubscriptionPlan for a specific uid.
  * Retrieve a single SubscriptionPlan
  */
-function getSubscriptionPlanRaw<T>(requestParameters: GetSubscriptionPlanApiRequest, requestConfig: runtime.TypedQueryConfig<T, SubscriptionPlan> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getSubscriptionPlan.');
-    }
+function getSubscriptionPlanRaw<T>(
+  requestParameters: GetSubscriptionPlanApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SubscriptionPlan> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getSubscriptionPlan.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SubscriptionPlan/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SubscriptionPlanFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SubscriptionPlan/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SubscriptionPlanFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single SubscriptionPlan for a specific uid.
-* Retrieve a single SubscriptionPlan
-*/
-export function getSubscriptionPlan<T>(requestParameters: GetSubscriptionPlanApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SubscriptionPlan>): QueryConfig<T> {
-    return getSubscriptionPlanRaw(requestParameters, requestConfig);
+ * Retrieves a single SubscriptionPlan for a specific uid.
+ * Retrieve a single SubscriptionPlan
+ */
+export function getSubscriptionPlan<T>(
+  requestParameters: GetSubscriptionPlanApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SubscriptionPlan>,
+): QueryConfig<T> {
+  return getSubscriptionPlanRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of SubscriptionPlans.
  * Retrieve a list of SubscriptionPlans
  */
-function getSubscriptionPlanListRaw<T>(requestParameters: GetSubscriptionPlanListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<SubscriptionPlan>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getSubscriptionPlanListRaw<T>(
+  requestParameters: GetSubscriptionPlanListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<SubscriptionPlan>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SubscriptionPlan`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(SubscriptionPlanFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SubscriptionPlan`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(SubscriptionPlanFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of SubscriptionPlans.
-* Retrieve a list of SubscriptionPlans
-*/
-export function getSubscriptionPlanList<T>(requestParameters: GetSubscriptionPlanListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<SubscriptionPlan>>): QueryConfig<T> {
-    return getSubscriptionPlanListRaw(requestParameters, requestConfig);
+ * Retrieves a list of SubscriptionPlans.
+ * Retrieve a list of SubscriptionPlans
+ */
+export function getSubscriptionPlanList<T>(
+  requestParameters: GetSubscriptionPlanListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<SubscriptionPlan>>,
+): QueryConfig<T> {
+  return getSubscriptionPlanListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing SubscriptionPlan.
  * Partially update an existing SubscriptionPlan
  */
-function patchSubscriptionPlanByIdRaw<T>(requestParameters: PatchSubscriptionPlanByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, SubscriptionPlan> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchSubscriptionPlanById.');
-    }
+function patchSubscriptionPlanByIdRaw<T>(
+  requestParameters: PatchSubscriptionPlanByIdApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SubscriptionPlan> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling patchSubscriptionPlanById.",
+    );
+  }
 
-    if (requestParameters.subscriptionPlan === null || requestParameters.subscriptionPlan === undefined) {
-        throw new runtime.RequiredError('subscriptionPlan','Required parameter requestParameters.subscriptionPlan was null or undefined when calling patchSubscriptionPlanById.');
-    }
+  if (
+    requestParameters.subscriptionPlan === null ||
+    requestParameters.subscriptionPlan === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "subscriptionPlan",
+      "Required parameter requestParameters.subscriptionPlan was null or undefined when calling patchSubscriptionPlanById.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/merge-patch+json";
 
-    headerParameters['Content-Type'] = 'application/merge-patch+json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SubscriptionPlan/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PATCH",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      SubscriptionPlanToJSON(requestParameters.subscriptionPlan),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SubscriptionPlanFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SubscriptionPlan/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PATCH',
-            headers: headerParameters,
-        },
-        body: queryParameters || SubscriptionPlanToJSON(requestParameters.subscriptionPlan),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SubscriptionPlanFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing SubscriptionPlan.
-* Partially update an existing SubscriptionPlan
-*/
-export function patchSubscriptionPlanById<T>(requestParameters: PatchSubscriptionPlanByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SubscriptionPlan>): QueryConfig<T> {
-    return patchSubscriptionPlanByIdRaw(requestParameters, requestConfig);
+ * Updates an existing SubscriptionPlan.
+ * Partially update an existing SubscriptionPlan
+ */
+export function patchSubscriptionPlanById<T>(
+  requestParameters: PatchSubscriptionPlanByIdApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SubscriptionPlan>,
+): QueryConfig<T> {
+  return patchSubscriptionPlanByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new SubscriptionPlan.
  * Create a new SubscriptionPlan
  */
-function postSubscriptionPlanRaw<T>(requestParameters: PostSubscriptionPlanApiRequest, requestConfig: runtime.TypedQueryConfig<T, SubscriptionPlan> = {}): QueryConfig<T> {
-    if (requestParameters.subscriptionPlan === null || requestParameters.subscriptionPlan === undefined) {
-        throw new runtime.RequiredError('subscriptionPlan','Required parameter requestParameters.subscriptionPlan was null or undefined when calling postSubscriptionPlan.');
-    }
+function postSubscriptionPlanRaw<T>(
+  requestParameters: PostSubscriptionPlanApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SubscriptionPlan> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.subscriptionPlan === null ||
+    requestParameters.subscriptionPlan === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "subscriptionPlan",
+      "Required parameter requestParameters.subscriptionPlan was null or undefined when calling postSubscriptionPlan.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SubscriptionPlan`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      SubscriptionPlanToJSON(requestParameters.subscriptionPlan),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SubscriptionPlanFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SubscriptionPlan`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || SubscriptionPlanToJSON(requestParameters.subscriptionPlan),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SubscriptionPlanFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new SubscriptionPlan.
-* Create a new SubscriptionPlan
-*/
-export function postSubscriptionPlan<T>(requestParameters: PostSubscriptionPlanApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SubscriptionPlan>): QueryConfig<T> {
-    return postSubscriptionPlanRaw(requestParameters, requestConfig);
+ * Creates a new SubscriptionPlan.
+ * Create a new SubscriptionPlan
+ */
+export function postSubscriptionPlan<T>(
+  requestParameters: PostSubscriptionPlanApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SubscriptionPlan>,
+): QueryConfig<T> {
+  return postSubscriptionPlanRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing SubscriptionPlan.
  * Update an existing SubscriptionPlan
  */
-function updateSubscriptionPlanRaw<T>(requestParameters: UpdateSubscriptionPlanApiRequest, requestConfig: runtime.TypedQueryConfig<T, SubscriptionPlan> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateSubscriptionPlan.');
-    }
+function updateSubscriptionPlanRaw<T>(
+  requestParameters: UpdateSubscriptionPlanApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SubscriptionPlan> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateSubscriptionPlan.",
+    );
+  }
 
-    if (requestParameters.subscriptionPlan === null || requestParameters.subscriptionPlan === undefined) {
-        throw new runtime.RequiredError('subscriptionPlan','Required parameter requestParameters.subscriptionPlan was null or undefined when calling updateSubscriptionPlan.');
-    }
+  if (
+    requestParameters.subscriptionPlan === null ||
+    requestParameters.subscriptionPlan === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "subscriptionPlan",
+      "Required parameter requestParameters.subscriptionPlan was null or undefined when calling updateSubscriptionPlan.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SubscriptionPlan/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      SubscriptionPlanToJSON(requestParameters.subscriptionPlan),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SubscriptionPlanFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SubscriptionPlan/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || SubscriptionPlanToJSON(requestParameters.subscriptionPlan),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SubscriptionPlanFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing SubscriptionPlan.
-* Update an existing SubscriptionPlan
-*/
-export function updateSubscriptionPlan<T>(requestParameters: UpdateSubscriptionPlanApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SubscriptionPlan>): QueryConfig<T> {
-    return updateSubscriptionPlanRaw(requestParameters, requestConfig);
+ * Updates an existing SubscriptionPlan.
+ * Update an existing SubscriptionPlan
+ */
+export function updateSubscriptionPlan<T>(
+  requestParameters: UpdateSubscriptionPlanApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SubscriptionPlan>,
+): QueryConfig<T> {
+  return updateSubscriptionPlanRaw(requestParameters, requestConfig);
 }
-

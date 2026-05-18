@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,110 +36,120 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface MemoryHitStats
  */
-export type MemoryHitStats  = DataObject & {
-    /**
-     * Memory retrieval hit rate (0.0 - 1.0).
-     * @type {number}
-     * @memberof MemoryHitStats
-     */
-    hitRate?: number;
-    /**
-     * Total MemoryEntry records available to the principal.
-     * @type {number}
-     * @memberof MemoryHitStats
-     */
-    totalEntries?: number;
-    /**
-     * Number of recently used or high-relevance entries.
-     * @type {number}
-     * @memberof MemoryHitStats
-     */
-    hotEntries?: number;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof MemoryHitStats
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof MemoryHitStats
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof MemoryHitStats
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof MemoryHitStats
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof MemoryHitStats
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof MemoryHitStats
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof MemoryHitStats
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof MemoryHitStats
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof MemoryHitStats
-     */
-    trashed?: boolean;
-}
+export type MemoryHitStats = DataObject & {
+  /**
+   * Memory retrieval hit rate (0.0 - 1.0).
+   * @type {number}
+   * @memberof MemoryHitStats
+   */
+  hitRate?: number;
+  /**
+   * Total MemoryEntry records available to the principal.
+   * @type {number}
+   * @memberof MemoryHitStats
+   */
+  totalEntries?: number;
+  /**
+   * Number of recently used or high-relevance entries.
+   * @type {number}
+   * @memberof MemoryHitStats
+   */
+  hotEntries?: number;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof MemoryHitStats
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof MemoryHitStats
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof MemoryHitStats
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof MemoryHitStats
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof MemoryHitStats
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof MemoryHitStats
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof MemoryHitStats
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof MemoryHitStats
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof MemoryHitStats
+   */
+  trashed?: boolean;
+};
 
 export function MemoryHitStatsFromJSON(json: any): MemoryHitStats {
-    return {
-        ...DataObjectFromJSON(json),
-        'hitRate': !exists(json, 'hitRate') ? undefined : json['hitRate'],
-        'totalEntries': !exists(json, 'totalEntries') ? undefined : json['totalEntries'],
-        'hotEntries': !exists(json, 'hotEntries') ? undefined : json['hotEntries'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    hitRate: !exists(json, "hitRate") ? undefined : json["hitRate"],
+    totalEntries: !exists(json, "totalEntries")
+      ? undefined
+      : json["totalEntries"],
+    hotEntries: !exists(json, "hotEntries") ? undefined : json["hotEntries"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function MemoryHitStatsToJSON(value?: MemoryHitStats): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'hitRate': value.hitRate,
-        'totalEntries': value.totalEntries,
-        'hotEntries': value.hotEntries,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    hitRate: value.hitRate,
+    totalEntries: value.totalEntries,
+    hotEntries: value.hotEntries,
+    trashed: value.trashed,
+  };
 }
-
-

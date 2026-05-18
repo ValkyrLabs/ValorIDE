@@ -39,7 +39,7 @@ export class MothershipService extends EventEmitter {
   private pingInterval: NodeJS.Timeout | null = null;
   private instanceId: string;
   // Simple guard to avoid ack loops
-  private suppressAckTopics = new Set<string>(['ack', 'nack']);
+  private suppressAckTopics = new Set<string>(["ack", "nack"]);
   private replayWindowSize = 200;
   private lastProcessedSequence = 0;
   private outboundSequence = 0;
@@ -98,15 +98,22 @@ export class MothershipService extends EventEmitter {
 
         // Announce presence and request roll call using BROADCAST payload envelope
         try {
-          this.sendAppTopic('presence:join', { id: this.instanceId, online: true });
-          this.sendAppTopic('auth:ack', { id: this.instanceId });
-          this.sendAppTopic('presence:rollcall', { id: this.instanceId });
-          this.sendAppTopic('session:resume', {
+          this.sendAppTopic("presence:join", {
+            id: this.instanceId,
+            online: true,
+          });
+          this.sendAppTopic("auth:ack", { id: this.instanceId });
+          this.sendAppTopic("presence:rollcall", { id: this.instanceId });
+          this.sendAppTopic("session:resume", {
             id: this.instanceId,
             lastProcessedSequence: this.lastProcessedSequence,
             replayWindowSize: this.replayWindowSize,
           });
-          this.emit('liveness', { id: this.instanceId, online: true, timestamp: Date.now() });
+          this.emit("liveness", {
+            id: this.instanceId,
+            online: true,
+            timestamp: Date.now(),
+          });
         } catch (e) {
           console.warn("Failed to send presence/rollcall on connect:", e);
         }
@@ -248,11 +255,14 @@ export class MothershipService extends EventEmitter {
         this.drainPendingSequenceBuffer();
       }
     } catch (error) {
-      console.error('Error handling mothership message:', error);
+      console.error("Error handling mothership message:", error);
     }
   }
 
-  private processIncomingMessage(message: WebsocketMessage, payload: any): void {
+  private processIncomingMessage(
+    message: WebsocketMessage,
+    payload: any,
+  ): void {
     try {
       this.appendReplay(message);
 
@@ -301,18 +311,37 @@ export class MothershipService extends EventEmitter {
 
         if (topic && typeof topic === "string") {
           // Respond to roll call requests from other instances
-          if (topic === 'presence:rollcall' && senderId && senderId !== this.instanceId) {
-            this.sendAppTopic('presence:here', { id: this.instanceId, online: true });
+          if (
+            topic === "presence:rollcall" &&
+            senderId &&
+            senderId !== this.instanceId
+          ) {
+            this.sendAppTopic("presence:here", {
+              id: this.instanceId,
+              online: true,
+            });
           }
 
-          if ((topic === 'presence:join' || topic === 'presence:here') && senderId) {
+          if (
+            (topic === "presence:join" || topic === "presence:here") &&
+            senderId
+          ) {
             this.recordPeerLiveness(senderId);
           }
 
           // Avoid acknowledging acks to prevent loops and duplicate acks
-          if (!this.suppressAckTopics.has(topic) && messageId && (senderId || '') !== this.instanceId && !this.acknowledgedMessageIds.has(messageId)) {
+          if (
+            !this.suppressAckTopics.has(topic) &&
+            messageId &&
+            (senderId || "") !== this.instanceId &&
+            !this.acknowledgedMessageIds.has(messageId)
+          ) {
             this.acknowledgedMessageIds.add(messageId);
-            this.sendAppTopic('ack', { messageId, to: senderId, from: this.instanceId });
+            this.sendAppTopic("ack", {
+              messageId,
+              to: senderId,
+              from: this.instanceId,
+            });
           }
         }
       } catch (e) {
@@ -345,15 +374,19 @@ export class MothershipService extends EventEmitter {
   private recordPeerLiveness(peerId: string): void {
     const now = Date.now();
     this.peerLiveness.set(peerId, now);
-    this.emit('presenceUpdated', {
+    this.emit("presenceUpdated", {
       peerId,
       lastSeenAt: now,
       online: true,
     });
   }
 
-  public getPresenceSnapshot(now: number = Date.now(), offlineAfterMs: number = 90_000): Record<string, { lastSeenAt: number; online: boolean }> {
-    const snapshot: Record<string, { lastSeenAt: number; online: boolean }> = {};
+  public getPresenceSnapshot(
+    now: number = Date.now(),
+    offlineAfterMs: number = 90_000,
+  ): Record<string, { lastSeenAt: number; online: boolean }> {
+    const snapshot: Record<string, { lastSeenAt: number; online: boolean }> =
+      {};
     this.peerLiveness.forEach((lastSeenAt, peerId) => {
       snapshot[peerId] = {
         lastSeenAt,
@@ -423,13 +456,18 @@ export class MothershipService extends EventEmitter {
           if (!Array.isArray(userAny.roleList)) userAny.roleList = [];
           if (!Array.isArray(userAny.authorityList)) userAny.authorityList = [];
           if (!Array.isArray(userAny.addresses)) userAny.addresses = [];
-          if (!Array.isArray(userAny.userPreferences)) userAny.userPreferences = [];
-          if (!Array.isArray(userAny.phoneVerifications)) userAny.phoneVerifications = [];
+          if (!Array.isArray(userAny.userPreferences))
+            userAny.userPreferences = [];
+          if (!Array.isArray(userAny.phoneVerifications))
+            userAny.phoneVerifications = [];
           if (!Array.isArray(userAny.loginAudits)) userAny.loginAudits = [];
         }
       } catch (e) {
         // Non-fatal; we'll still try to stringify and send the message.
-        console.warn("Failed to sanitize user object for WebsocketMessageToJSON:", e);
+        console.warn(
+          "Failed to sanitize user object for WebsocketMessageToJSON:",
+          e,
+        );
       }
 
       const jsonMessage = WebsocketMessageToJSON(fullMessage);

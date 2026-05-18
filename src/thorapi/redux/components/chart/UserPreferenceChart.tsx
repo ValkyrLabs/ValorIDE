@@ -19,20 +19,32 @@ Description: UserPreference
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, UserPreference } from '@thorapi/model';
-import { useGetUserPreferencesQuery, useAddUserPreferenceMutation, useUpdateUserPreferenceMutation } from '../../services/UserPreferenceService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, UserPreference } from "@thorapi/model";
+import {
+  useGetUserPreferencesQuery,
+  useAddUserPreferenceMutation,
+  useUpdateUserPreferenceMutation,
+} from "../../services/UserPreferenceService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const UserPreferenceChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetUserPreferencesQuery();
 
   const [data, setData] = useState<UserPreference[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<UserPreference>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const UserPreferenceChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const UserPreferenceChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((userpreference: DataObject) => [userpreference])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((userpreference: DataObject) => [userpreference])}
+        />
+      )}
     </>
   );
 };

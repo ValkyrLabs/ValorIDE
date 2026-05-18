@@ -545,10 +545,10 @@ export class Controller {
         await this.setUserInfo(
           message.user
             ? {
-              username: message.user.name || null,
-              email: null, // Replace with actual email if available
-              avatarUrl: null, // Replace with actual avatar URL if available
-            }
+                username: message.user.name || null,
+                email: null, // Replace with actual email if available
+                avatarUrl: null, // Replace with actual avatar URL if available
+              }
             : undefined,
         );
         await this.postStateToWebview();
@@ -2028,9 +2028,10 @@ export class Controller {
               );
             } catch (extractionError) {
               throw new Error(
-                `Failed to extract archive: ${extractionError instanceof Error
-                  ? extractionError.message
-                  : String(extractionError)
+                `Failed to extract archive: ${
+                  extractionError instanceof Error
+                    ? extractionError.message
+                    : String(extractionError)
                 }`,
               );
             }
@@ -2045,9 +2046,10 @@ export class Controller {
 
             await fs.unlink(filePath).catch((unlinkError) => {
               console.warn(
-                `Failed to delete archive ${filePath}: ${unlinkError instanceof Error
-                  ? unlinkError.message
-                  : String(unlinkError)
+                `Failed to delete archive ${filePath}: ${
+                  unlinkError instanceof Error
+                    ? unlinkError.message
+                    : String(unlinkError)
                 }`,
               );
             });
@@ -3819,16 +3821,18 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
           }
         } catch (subdirError) {
           console.warn(
-            `findReadmeFile: unable to scan ${subdir}: ${subdirError instanceof Error
-              ? subdirError.message
-              : String(subdirError)
+            `findReadmeFile: unable to scan ${subdir}: ${
+              subdirError instanceof Error
+                ? subdirError.message
+                : String(subdirError)
             }`,
           );
         }
       }
     } catch (error) {
       console.warn(
-        `findReadmeFile: unable to scan ${directory}: ${error instanceof Error ? error.message : String(error)
+        `findReadmeFile: unable to scan ${directory}: ${
+          error instanceof Error ? error.message : String(error)
         }`,
       );
     }

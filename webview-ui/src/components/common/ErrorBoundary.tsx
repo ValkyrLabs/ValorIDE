@@ -87,15 +87,25 @@ export class ErrorBoundary extends React.Component<
           }
         } catch (e) {}
         try {
-          if (typeof navigator !== "undefined" && typeof (navigator as any).sendBeacon === "function") {
-            const blob = new Blob([JSON.stringify(p)], { type: "application/json" });
-            (navigator as any).sendBeacon("http://localhost:3001/webview-error", blob);
+          if (
+            typeof navigator !== "undefined" &&
+            typeof (navigator as any).sendBeacon === "function"
+          ) {
+            const blob = new Blob([JSON.stringify(p)], {
+              type: "application/json",
+            });
+            (navigator as any).sendBeacon(
+              "http://localhost:3001/webview-error",
+              blob,
+            );
             return;
           }
         } catch (e) {}
         try {
           const img = new Image();
-          img.src = "http://localhost:3001/webview-error?payload=" + encodeURIComponent(JSON.stringify(p));
+          img.src =
+            "http://localhost:3001/webview-error?payload=" +
+            encodeURIComponent(JSON.stringify(p));
         } catch (e) {}
       };
 

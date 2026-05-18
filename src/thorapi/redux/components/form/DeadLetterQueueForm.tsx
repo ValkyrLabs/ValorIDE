@@ -13,33 +13,41 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   DeadLetterQueue,
   DeadLetterQueueFailureTypeEnum,
   DeadLetterQueueResolutionEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddDeadLetterQueueMutation } from '../../services/DeadLetterQueueService';
+import { useAddDeadLetterQueueMutation } from "../../services/DeadLetterQueueService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -63,68 +71,65 @@ Failed runs quarantined for manual intervention and replay
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const FailureTypeValidation = () => {
-  return [
-    'MAX_RETRIES',
-    'PERMANENT_ERROR',
-    'CIRCUIT_BREAKER',
-    'MANUAL',
-  ];
+  return ["MAX_RETRIES", "PERMANENT_ERROR", "CIRCUIT_BREAKER", "MANUAL"];
 };
 const ResolutionValidation = () => {
-  return [
-    'PENDING',
-    'REQUEUED',
-    'FIXED',
-    'DISCARDED',
-  ];
+  return ["PENDING", "REQUEUED", "FIXED", "DISCARDED"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        runId: Yup.string(),
-        executionId: Yup.string(),
-        taskId: Yup.string(),
-        failureReason: Yup.string(),
-      failureType: Yup.mixed()
-        .oneOf(FailureTypeValidation(), "Invalid value for failureType")
-        ,
-        originalInputs: Yup.string(),
-        originalConfig: Yup.string(),
-        quarantinedAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("quarantinedAt must be a valid date"),
-        reviewedBy: Yup.string(),
-      resolution: Yup.mixed()
-        .oneOf(ResolutionValidation(), "Invalid value for resolution")
-        ,
-        resolvedAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("resolvedAt must be a valid date"),
-        notes: Yup.string(),
-        requeuedAsRunId: Yup.string(),
-        trashed: Yup.boolean(),
+  runId: Yup.string(),
+  executionId: Yup.string(),
+  taskId: Yup.string(),
+  failureReason: Yup.string(),
+  failureType: Yup.mixed().oneOf(
+    FailureTypeValidation(),
+    "Invalid value for failureType",
+  ),
+  originalInputs: Yup.string(),
+  originalConfig: Yup.string(),
+  quarantinedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("quarantinedAt must be a valid date"),
+  reviewedBy: Yup.string(),
+  resolution: Yup.mixed().oneOf(
+    ResolutionValidation(),
+    "Invalid value for resolution",
+  ),
+  resolvedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("resolvedAt must be a valid date"),
+  notes: Yup.string(),
+  requeuedAsRunId: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const DeadLetterQueueForm: React.FC = () => {
-  const [addDeadLetterQueue, addDeadLetterQueueResult] = useAddDeadLetterQueueMutation();
+  const [addDeadLetterQueue, addDeadLetterQueueResult] =
+    useAddDeadLetterQueueMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -134,12 +139,18 @@ const DeadLetterQueueForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -147,20 +158,20 @@ const DeadLetterQueueForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<DeadLetterQueue> = {
-          runId: '',
-          executionId: '',
-          taskId: '',
-          failureReason: '',
-        failureType: undefined,
-          originalInputs: '',
-          originalConfig: '',
-          quarantinedAt: new Date(),
-          reviewedBy: '',
-        resolution: undefined,
-          resolvedAt: new Date(),
-          notes: '',
-          requeuedAsRunId: '',
-          trashed: false,
+    runId: "",
+    executionId: "",
+    taskId: "",
+    failureReason: "",
+    failureType: undefined,
+    originalInputs: "",
+    originalConfig: "",
+    quarantinedAt: new Date(),
+    reviewedBy: "",
+    resolution: undefined,
+    resolvedAt: new Date(),
+    notes: "",
+    requeuedAsRunId: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -175,11 +186,14 @@ const DeadLetterQueueForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new DeadLetterQueue:', grants);
+    console.log("Permissions saved for new DeadLetterQueue:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<DeadLetterQueue>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<DeadLetterQueue>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -190,7 +204,7 @@ const DeadLetterQueueForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `DeadLetterQueue created successfully! Would you like to set permissions for this object?`
+          `DeadLetterQueue created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -198,8 +212,8 @@ const DeadLetterQueueForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create DeadLetterQueue:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create DeadLetterQueue:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -220,44 +234,36 @@ const DeadLetterQueueForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addDeadLetterQueueResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New DeadLetterQueue
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New DeadLetterQueue
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="runId" className="nice-form-control">
                       <b>
                         Run Id:
-                        {touched.runId &&
-                         !errors.runId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.runId && !errors.runId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="runId"
-                            value={values?.runId}
-                            placeholder="Run Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="runId"
+                        value={values?.runId}
+                        placeholder="Run Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -269,28 +275,21 @@ const DeadLetterQueueForm: React.FC = () => {
                     <label htmlFor="executionId" className="nice-form-control">
                       <b>
                         Execution Id:
-                        {touched.executionId &&
-                         !errors.executionId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.executionId && !errors.executionId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="executionId"
-                            value={values?.executionId}
-                            placeholder="Execution Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="executionId"
+                        value={values?.executionId}
+                        placeholder="Execution Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -302,28 +301,21 @@ const DeadLetterQueueForm: React.FC = () => {
                     <label htmlFor="taskId" className="nice-form-control">
                       <b>
                         Task Id:
-                        {touched.taskId &&
-                         !errors.taskId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.taskId && !errors.taskId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="taskId"
-                            value={values?.taskId}
-                            placeholder="Task Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="taskId"
+                        value={values?.taskId}
+                        placeholder="Task Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -332,31 +324,27 @@ const DeadLetterQueueForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="failureReason" className="nice-form-control">
+                    <label
+                      htmlFor="failureReason"
+                      className="nice-form-control"
+                    >
                       <b>
                         Failure Reason:
-                        {touched.failureReason &&
-                         !errors.failureReason && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.failureReason && !errors.failureReason && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="failureReason"
-                            value={values?.failureReason}
-                            placeholder="Failure Reason"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="failureReason"
+                        value={values?.failureReason}
+                        placeholder="Failure Reason"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -368,30 +356,33 @@ const DeadLetterQueueForm: React.FC = () => {
                     <label htmlFor="failureType" className="nice-form-control">
                       <b>
                         Failure Type:
-                        {touched.failureType &&
-                         !errors.failureType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.failureType && !errors.failureType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="failureType"
-                          value={values.failureType || ''}
-                          className={
-                            errors.failureType
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('failureType', true);
-                            setFieldValue('failureType', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Failure Type" />
-                          <FailureTypeLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="failureType"
+                        value={values.failureType || ""}
+                        className={
+                          errors.failureType
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("failureType", true);
+                          setFieldValue(
+                            "failureType",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Failure Type" />
+                        <FailureTypeLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -400,31 +391,27 @@ const DeadLetterQueueForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="originalInputs" className="nice-form-control">
+                    <label
+                      htmlFor="originalInputs"
+                      className="nice-form-control"
+                    >
                       <b>
                         Original Inputs:
-                        {touched.originalInputs &&
-                         !errors.originalInputs && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.originalInputs && !errors.originalInputs && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="originalInputs"
-                            value={values?.originalInputs}
-                            placeholder="Original Inputs"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="originalInputs"
+                        value={values?.originalInputs}
+                        placeholder="Original Inputs"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -433,31 +420,27 @@ const DeadLetterQueueForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="originalConfig" className="nice-form-control">
+                    <label
+                      htmlFor="originalConfig"
+                      className="nice-form-control"
+                    >
                       <b>
                         Original Config:
-                        {touched.originalConfig &&
-                         !errors.originalConfig && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.originalConfig && !errors.originalConfig && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="originalConfig"
-                            value={values?.originalConfig}
-                            placeholder="Original Config"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="originalConfig"
+                        value={values?.originalConfig}
+                        placeholder="Original Config"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -466,41 +449,44 @@ const DeadLetterQueueForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="quarantinedAt" className="nice-form-control">
+                    <label
+                      htmlFor="quarantinedAt"
+                      className="nice-form-control"
+                    >
                       <b>
                         Quarantined At:
-                        {touched.quarantinedAt &&
-                         !errors.quarantinedAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.quarantinedAt && !errors.quarantinedAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="quarantinedAt"
-                            type="datetime-local"
-                            value={values.quarantinedAt ? 
-                              new Date(values.quarantinedAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('quarantinedAt', true);
-                              const v = e.target.value;
-                              setFieldValue('quarantinedAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.quarantinedAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="quarantinedAt"
+                        type="datetime-local"
+                        value={
+                          values.quarantinedAt
+                            ? new Date(values.quarantinedAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("quarantinedAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "quarantinedAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.quarantinedAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -512,28 +498,21 @@ const DeadLetterQueueForm: React.FC = () => {
                     <label htmlFor="reviewedBy" className="nice-form-control">
                       <b>
                         Reviewed By:
-                        {touched.reviewedBy &&
-                         !errors.reviewedBy && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.reviewedBy && !errors.reviewedBy && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="reviewedBy"
-                            value={values?.reviewedBy}
-                            placeholder="Reviewed By"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="reviewedBy"
+                        value={values?.reviewedBy}
+                        placeholder="Reviewed By"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -545,30 +524,33 @@ const DeadLetterQueueForm: React.FC = () => {
                     <label htmlFor="resolution" className="nice-form-control">
                       <b>
                         Resolution:
-                        {touched.resolution &&
-                         !errors.resolution && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.resolution && !errors.resolution && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="resolution"
-                          value={values.resolution || ''}
-                          className={
-                            errors.resolution
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('resolution', true);
-                            setFieldValue('resolution', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Resolution" />
-                          <ResolutionLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="resolution"
+                        value={values.resolution || ""}
+                        className={
+                          errors.resolution
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("resolution", true);
+                          setFieldValue(
+                            "resolution",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Resolution" />
+                        <ResolutionLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -580,38 +562,38 @@ const DeadLetterQueueForm: React.FC = () => {
                     <label htmlFor="resolvedAt" className="nice-form-control">
                       <b>
                         Resolved At:
-                        {touched.resolvedAt &&
-                         !errors.resolvedAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.resolvedAt && !errors.resolvedAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="resolvedAt"
-                            type="datetime-local"
-                            value={values.resolvedAt ? 
-                              new Date(values.resolvedAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('resolvedAt', true);
-                              const v = e.target.value;
-                              setFieldValue('resolvedAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.resolvedAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="resolvedAt"
+                        type="datetime-local"
+                        value={
+                          values.resolvedAt
+                            ? new Date(values.resolvedAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("resolvedAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "resolvedAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.resolvedAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -623,28 +605,21 @@ const DeadLetterQueueForm: React.FC = () => {
                     <label htmlFor="notes" className="nice-form-control">
                       <b>
                         Notes:
-                        {touched.notes &&
-                         !errors.notes && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.notes && !errors.notes && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="notes"
-                            value={values?.notes}
-                            placeholder="Notes"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="notes"
+                        value={values?.notes}
+                        placeholder="Notes"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -653,31 +628,27 @@ const DeadLetterQueueForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="requeuedAsRunId" className="nice-form-control">
+                    <label
+                      htmlFor="requeuedAsRunId"
+                      className="nice-form-control"
+                    >
                       <b>
                         Requeued As Run Id:
-                        {touched.requeuedAsRunId &&
-                         !errors.requeuedAsRunId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.requeuedAsRunId && !errors.requeuedAsRunId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="requeuedAsRunId"
-                            value={values?.requeuedAsRunId}
-                            placeholder="Requeued As Run Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="requeuedAsRunId"
+                        value={values?.requeuedAsRunId}
+                        placeholder="Requeued As Run Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -689,32 +660,25 @@ const DeadLetterQueueForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -724,45 +688,59 @@ const DeadLetterQueueForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New DeadLetterQueue
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New DeadLetterQueue
+                    </CoolButton>
 
-                  {(addDeadLetterQueueResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addDeadLetterQueueResult as any).error ? (addDeadLetterQueueResult as any).error.data : (addDeadLetterQueueResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addDeadLetterQueueResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addDeadLetterQueueResult as any).error
+                              ? (addDeadLetterQueueResult as any).error.data
+                              : (addDeadLetterQueueResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addDeadLetterQueueResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addDeadLetterQueueResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addDeadLetterQueueResult: {JSON.stringify(addDeadLetterQueueResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addDeadLetterQueueResult:{" "}
+                    {JSON.stringify(addDeadLetterQueueResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -794,10 +772,10 @@ kebabcase failure-type-lookup
 const FailureTypeLookup = () => {
   return (
     <>
-      <option value='MAX_RETRIES' label="Max Retries" />
-      <option value='PERMANENT_ERROR' label="Permanent Error" />
-      <option value='CIRCUIT_BREAKER' label="Circuit Breaker" />
-      <option value='MANUAL' label="Manual" />
+      <option value="MAX_RETRIES" label="Max Retries" />
+      <option value="PERMANENT_ERROR" label="Permanent Error" />
+      <option value="CIRCUIT_BREAKER" label="Circuit Breaker" />
+      <option value="MANUAL" label="Manual" />
     </>
   );
 };
@@ -814,16 +792,13 @@ kebabcase resolution-lookup
 const ResolutionLookup = () => {
   return (
     <>
-      <option value='PENDING' label="Pending" />
-      <option value='REQUEUED' label="Requeued" />
-      <option value='FIXED' label="Fixed" />
-      <option value='DISCARDED' label="Discarded" />
+      <option value="PENDING" label="Pending" />
+      <option value="REQUEUED" label="Requeued" />
+      <option value="FIXED" label="Fixed" />
+      <option value="DISCARDED" label="Discarded" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default DeadLetterQueueForm;
-

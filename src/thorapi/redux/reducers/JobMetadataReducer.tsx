@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { JobMetadata } from '@thorapi/model/JobMetadata';
+import { JobMetadata } from "@thorapi/model/JobMetadata";
 
 const JobMetadataSlice = createSlice({
   name: "JobMetadatas",
@@ -27,20 +27,23 @@ const JobMetadataSlice = createSlice({
     },
 
     JobMetadataValueToggled(state, action) {
-      console.log("JobMetadata TOGGLE")
-      console.warn(JSON.stringify(action))
-      const JobMetadata:JobMetadata = state.find((JobMetadata) => JobMetadata.id === action.payload.JobMetadataId);
+      console.log("JobMetadata TOGGLE");
+      console.warn(JSON.stringify(action));
+      const JobMetadata: JobMetadata = state.find(
+        (JobMetadata) => JobMetadata.id === action.payload.JobMetadataId,
+      );
       if (JobMetadata) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     JobMetadatapropertySet(state, action) {
-      const JobMetadata = state.find((JobMetadata) => JobMetadata.id === action.payload.JobMetadataId);
+      const JobMetadata = state.find(
+        (JobMetadata) => JobMetadata.id === action.payload.JobMetadataId,
+      );
       if (JobMetadata) {
-      //  JobMetadata[action.property] = action.payload[action.property];
+        //  JobMetadata[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const JobMetadataSlice = createSlice({
 export const {
   JobMetadataAdded,
   JobMetadataValueToggled,
-  JobMetadatapropertySet
+  JobMetadatapropertySet,
 } = JobMetadataSlice.actions;
 export default JobMetadataSlice.reducer;

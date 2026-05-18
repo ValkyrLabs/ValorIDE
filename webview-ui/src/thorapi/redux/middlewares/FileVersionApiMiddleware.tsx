@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_FILEVERSION_REQUEST,
-    FETCH_FILEVERSION_REQUEST,
-    LIST_FILEVERSION_REQUEST,
-    UPDATE_FILEVERSION_REQUEST,
-    DELETE_FILEVERSION_REQUEST,
-
-    addFileVersionFailure,
-    addFileVersionSuccess,
-
-    fetchFileVersionFailure,
-    fetchFileVersionSuccess,
-    
-    listFileVersionFailure,
-    listFileVersionSuccess,
-
-    updateFileVersionFailure,
-    updateFileVersionSuccess,
-    
-    deleteFileVersionFailure,
-    deleteFileVersionSuccess,
-    
-} from '../actions/FileVersionApiAction';
+  ADD_FILEVERSION_REQUEST,
+  FETCH_FILEVERSION_REQUEST,
+  LIST_FILEVERSION_REQUEST,
+  UPDATE_FILEVERSION_REQUEST,
+  DELETE_FILEVERSION_REQUEST,
+  addFileVersionFailure,
+  addFileVersionSuccess,
+  fetchFileVersionFailure,
+  fetchFileVersionSuccess,
+  listFileVersionFailure,
+  listFileVersionSuccess,
+  updateFileVersionFailure,
+  updateFileVersionSuccess,
+  deleteFileVersionFailure,
+  deleteFileVersionSuccess,
+} from "../actions/FileVersionApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: FileVersion
 */
 
-
-
-export const FileVersionMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("FileVersion MIDDLEWARE: " + JSON.stringify(action) )
+export const FileVersionMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("FileVersion MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

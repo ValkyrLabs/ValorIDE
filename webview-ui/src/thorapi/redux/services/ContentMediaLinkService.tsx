@@ -13,47 +13,60 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { ContentMediaLink } from '@thorapi/model/ContentMediaLink'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { ContentMediaLink } from "@thorapi/model/ContentMediaLink";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type ContentMediaLinkResponse = ContentMediaLink[]
+type ContentMediaLinkResponse = ContentMediaLink[];
 
 const toContentMediaLinkList = (result: unknown): ContentMediaLinkResponse => {
   if (Array.isArray(result)) {
-    return result as ContentMediaLinkResponse
+    return result as ContentMediaLinkResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as ContentMediaLinkResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as ContentMediaLinkResponse)
+    : [];
+};
 
 export const ContentMediaLinkService = createApi({
-  reducerPath: 'ContentMediaLink', // This should remain unique
+  reducerPath: "ContentMediaLink", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['ContentMediaLink'],
+  tagTypes: ["ContentMediaLink"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getContentMediaLinksPaged: build.query<ContentMediaLinkResponse, { page: number; size?: number; example?: Partial<ContentMediaLink> }>({
+    getContentMediaLinksPaged: build.query<
+      ContentMediaLinkResponse,
+      { page: number; size?: number; example?: Partial<ContentMediaLink> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ContentMediaLink?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ContentMediaLink?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toContentMediaLinkList(result)
+        const rows = toContentMediaLinkList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ContentMediaLink' as const, id })),
-          { type: 'ContentMediaLink', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "ContentMediaLink" as const, id })),
+          { type: "ContentMediaLink", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getContentMediaLinks: build.query<ContentMediaLinkResponse, { example?: Partial<ContentMediaLink> } | void>({
+    getContentMediaLinks: build.query<
+      ContentMediaLinkResponse,
+      { example?: Partial<ContentMediaLink> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +75,112 @@ export const ContentMediaLinkService = createApi({
         return `ContentMediaLink`;
       },
       providesTags: (result) => {
-        const rows = toContentMediaLinkList(result)
+        const rows = toContentMediaLinkList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ContentMediaLink' as const, id })),
-          { type: 'ContentMediaLink', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "ContentMediaLink" as const, id })),
+          { type: "ContentMediaLink", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addContentMediaLink: build.mutation<ContentMediaLink, Partial<ContentMediaLink>>({
+    addContentMediaLink: build.mutation<
+      ContentMediaLink,
+      Partial<ContentMediaLink>
+    >({
       query: (body) => ({
         url: `ContentMediaLink`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'ContentMediaLink', id: 'LIST' }],
+      invalidatesTags: [{ type: "ContentMediaLink", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getContentMediaLink: build.query<ContentMediaLink, string>({
       query: (id) => `ContentMediaLink/${id}`,
-      providesTags: (result, error, id) => [{ type: 'ContentMediaLink', id }],
+      providesTags: (result, error, id) => [{ type: "ContentMediaLink", id }],
     }),
 
     // 5) Update
-    updateContentMediaLink: build.mutation<void, Pick<ContentMediaLink, 'id'> & Partial<ContentMediaLink>>({
+    updateContentMediaLink: build.mutation<
+      void,
+      Pick<ContentMediaLink, "id"> & Partial<ContentMediaLink>
+    >({
       query: ({ id, ...patch }) => ({
         url: `ContentMediaLink/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            ContentMediaLinkService.util.updateQueryData('getContentMediaLink', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            ContentMediaLinkService.util.updateQueryData(
+              "getContentMediaLink",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<ContentMediaLink, 'id'>) => [
-        { type: 'ContentMediaLink', id },
-        { type: 'ContentMediaLink', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<ContentMediaLink, "id">,
+      ) => [
+        { type: "ContentMediaLink", id },
+        { type: "ContentMediaLink", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteContentMediaLink: build.mutation<{ success: boolean; id: string }, number>({
+    deleteContentMediaLink: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `ContentMediaLink/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'ContentMediaLink', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "ContentMediaLink", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteContentMediaLinkCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteContentMediaLinkCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `ContentMediaLink/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ContentMediaLink', id }, { type: 'ContentMediaLink', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "ContentMediaLink", id },
+        { type: "ContentMediaLink", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetContentMediaLinksPagedQuery`
 export const {
-  useGetContentMediaLinksPagedQuery,     // immediate fetch
+  useGetContentMediaLinksPagedQuery, // immediate fetch
   useLazyGetContentMediaLinksPagedQuery, // lazy fetch
   useGetContentMediaLinkQuery,
   useGetContentMediaLinksQuery,
@@ -150,4 +188,4 @@ export const {
   useUpdateContentMediaLinkMutation,
   useDeleteContentMediaLinkMutation,
   useDeleteContentMediaLinkCascadeMutation,
-} = ContentMediaLinkService
+} = ContentMediaLinkService;

@@ -19,20 +19,32 @@ Description: CloudProvider
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, CloudProvider } from '@thorapi/model';
-import { useGetCloudProvidersQuery, useAddCloudProviderMutation, useUpdateCloudProviderMutation } from '../../services/CloudProviderService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, CloudProvider } from "@thorapi/model";
+import {
+  useGetCloudProvidersQuery,
+  useAddCloudProviderMutation,
+  useUpdateCloudProviderMutation,
+} from "../../services/CloudProviderService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const CloudProviderChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetCloudProvidersQuery();
 
   const [data, setData] = useState<CloudProvider[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<CloudProvider>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const CloudProviderChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const CloudProviderChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((cloudprovider: DataObject) => [cloudprovider])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((cloudprovider: DataObject) => [cloudprovider])}
+        />
+      )}
     </>
   );
 };

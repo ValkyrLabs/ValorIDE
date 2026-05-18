@@ -13,33 +13,41 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   ValkyrJob,
   ValkyrJobTypeEnum,
   ValkyrJobStatusEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddValkyrJobMutation } from '../../services/ValkyrJobService';
+import { useAddValkyrJobMutation } from "../../services/ValkyrJobService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -64,57 +72,53 @@ Legacy file processing job payload; prefer FileProcessingJob.
 -------------------------------------------------------- */
 const TypeValidation = () => {
   return [
-    'file_processing',
-    'bulk_upload',
-    'export',
-    'virus_scan',
-    'thumbnail_generation',
+    "file_processing",
+    "bulk_upload",
+    "export",
+    "virus_scan",
+    "thumbnail_generation",
   ];
 };
 const StatusValidation = () => {
-  return [
-    'pending',
-    'running',
-    'completed',
-    'failed',
-    'cancelled',
-  ];
+  return ["pending", "running", "completed", "failed", "cancelled"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-      type: Yup.mixed()
-        .oneOf(TypeValidation(), "Invalid value for type")
-        ,
-      status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        ,
-        progress: asNumber(Yup.number().integer().typeError("progress must be a number")),
-        metadata: Yup.string(),
-        result: Yup.string(),
-        error: Yup.string(),
-        startedDate: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("startedDate must be a valid date"),
-        completedDate: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("completedDate must be a valid date"),
-        trashed: Yup.boolean(),
+  type: Yup.mixed().oneOf(TypeValidation(), "Invalid value for type"),
+  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
+  progress: asNumber(
+    Yup.number().integer().typeError("progress must be a number"),
+  ),
+  metadata: Yup.string(),
+  result: Yup.string(),
+  error: Yup.string(),
+  startedDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("startedDate must be a valid date"),
+  completedDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("completedDate must be a valid date"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -131,12 +135,18 @@ const ValkyrJobForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -144,15 +154,15 @@ const ValkyrJobForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ValkyrJob> = {
-        type: undefined,
-        status: undefined,
-          progress: 0,
-          metadata: '',
-          result: '',
-          error: '',
-          startedDate: new Date(),
-          completedDate: new Date(),
-          trashed: false,
+    type: undefined,
+    status: undefined,
+    progress: 0,
+    metadata: "",
+    result: "",
+    error: "",
+    startedDate: new Date(),
+    completedDate: new Date(),
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -167,11 +177,14 @@ const ValkyrJobForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new ValkyrJob:', grants);
+    console.log("Permissions saved for new ValkyrJob:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ValkyrJob>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<ValkyrJob>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -182,7 +195,7 @@ const ValkyrJobForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ValkyrJob created successfully! Would you like to set permissions for this object?`
+          `ValkyrJob created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -190,8 +203,8 @@ const ValkyrJobForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create ValkyrJob:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create ValkyrJob:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -212,46 +225,45 @@ const ValkyrJobForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addValkyrJobResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New ValkyrJob
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New ValkyrJob
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="type" className="nice-form-control">
                       <b>
                         Type:
-                        {touched.type &&
-                         !errors.type && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.type && !errors.type && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="type"
-                          value={values.type || ''}
-                          className={
-                            errors.type
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('type', true);
-                            setFieldValue('type', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Type" />
-                          <TypeLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="type"
+                        value={values.type || ""}
+                        className={
+                          errors.type
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("type", true);
+                          setFieldValue("type", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Type" />
+                        <TypeLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -263,30 +275,30 @@ const ValkyrJobForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="status"
-                          value={values.status || ''}
-                          className={
-                            errors.status
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Status" />
-                          <StatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="status"
+                        value={values.status || ""}
+                        className={
+                          errors.status
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("status", true);
+                          setFieldValue("status", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Status" />
+                        <StatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -298,36 +310,32 @@ const ValkyrJobForm: React.FC = () => {
                     <label htmlFor="progress" className="nice-form-control">
                       <b>
                         Progress:
-                        {touched.progress &&
-                         !errors.progress && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.progress && !errors.progress && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="progress"
-                            type="number"
-                            value={values.progress || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('progress', true);
-                              const v = e.target.value;
-                              setFieldValue('progress', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.progress
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="progress"
+                        type="number"
+                        value={values.progress || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("progress", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "progress",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.progress
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -339,28 +347,21 @@ const ValkyrJobForm: React.FC = () => {
                     <label htmlFor="metadata" className="nice-form-control">
                       <b>
                         Metadata:
-                        {touched.metadata &&
-                         !errors.metadata && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.metadata && !errors.metadata && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="metadata"
-                            value={values?.metadata}
-                            placeholder="Metadata"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="metadata"
+                        value={values?.metadata}
+                        placeholder="Metadata"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -372,28 +373,21 @@ const ValkyrJobForm: React.FC = () => {
                     <label htmlFor="result" className="nice-form-control">
                       <b>
                         Result:
-                        {touched.result &&
-                         !errors.result && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.result && !errors.result && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="result"
-                            value={values?.result}
-                            placeholder="Result"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="result"
+                        value={values?.result}
+                        placeholder="Result"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -405,28 +399,21 @@ const ValkyrJobForm: React.FC = () => {
                     <label htmlFor="error" className="nice-form-control">
                       <b>
                         Error:
-                        {touched.error &&
-                         !errors.error && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.error && !errors.error && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="error"
-                            value={values?.error}
-                            placeholder="Error"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="error"
+                        value={values?.error}
+                        placeholder="Error"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -438,38 +425,38 @@ const ValkyrJobForm: React.FC = () => {
                     <label htmlFor="startedDate" className="nice-form-control">
                       <b>
                         Started Date:
-                        {touched.startedDate &&
-                         !errors.startedDate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.startedDate && !errors.startedDate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="startedDate"
-                            type="datetime-local"
-                            value={values.startedDate ? 
-                              new Date(values.startedDate).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('startedDate', true);
-                              const v = e.target.value;
-                              setFieldValue('startedDate', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.startedDate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="startedDate"
+                        type="datetime-local"
+                        value={
+                          values.startedDate
+                            ? new Date(values.startedDate)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("startedDate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "startedDate",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.startedDate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -478,41 +465,44 @@ const ValkyrJobForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="completedDate" className="nice-form-control">
+                    <label
+                      htmlFor="completedDate"
+                      className="nice-form-control"
+                    >
                       <b>
                         Completed Date:
-                        {touched.completedDate &&
-                         !errors.completedDate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.completedDate && !errors.completedDate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="completedDate"
-                            type="datetime-local"
-                            value={values.completedDate ? 
-                              new Date(values.completedDate).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('completedDate', true);
-                              const v = e.target.value;
-                              setFieldValue('completedDate', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.completedDate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="completedDate"
+                        type="datetime-local"
+                        value={
+                          values.completedDate
+                            ? new Date(values.completedDate)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("completedDate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "completedDate",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.completedDate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -524,32 +514,25 @@ const ValkyrJobForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -559,45 +542,58 @@ const ValkyrJobForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New ValkyrJob
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New ValkyrJob
+                    </CoolButton>
 
-                  {(addValkyrJobResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addValkyrJobResult as any).error ? (addValkyrJobResult as any).error.data : (addValkyrJobResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addValkyrJobResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addValkyrJobResult as any).error
+                              ? (addValkyrJobResult as any).error.data
+                              : (addValkyrJobResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addValkyrJobResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addValkyrJobResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addValkyrJobResult: {JSON.stringify(addValkyrJobResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addValkyrJobResult: {JSON.stringify(addValkyrJobResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -629,11 +625,11 @@ kebabcase type-lookup
 const TypeLookup = () => {
   return (
     <>
-      <option value='file_processing' label="File Processing" />
-      <option value='bulk_upload' label="Bulk Upload" />
-      <option value='export' label="Export" />
-      <option value='virus_scan' label="Virus Scan" />
-      <option value='thumbnail_generation' label="Thumbnail Generation" />
+      <option value="file_processing" label="File Processing" />
+      <option value="bulk_upload" label="Bulk Upload" />
+      <option value="export" label="Export" />
+      <option value="virus_scan" label="Virus Scan" />
+      <option value="thumbnail_generation" label="Thumbnail Generation" />
     </>
   );
 };
@@ -650,17 +646,14 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value='pending' label="Pending" />
-      <option value='running' label="Running" />
-      <option value='completed' label="Completed" />
-      <option value='failed' label="Failed" />
-      <option value='cancelled' label="Cancelled" />
+      <option value="pending" label="Pending" />
+      <option value="running" label="Running" />
+      <option value="completed" label="Completed" />
+      <option value="failed" label="Failed" />
+      <option value="cancelled" label="Cancelled" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default ValkyrJobForm;
-

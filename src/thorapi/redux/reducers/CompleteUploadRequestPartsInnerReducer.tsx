@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { CompleteUploadRequestPartsInner } from '@thorapi/model/CompleteUploadRequestPartsInner';
+import { CompleteUploadRequestPartsInner } from "@thorapi/model/CompleteUploadRequestPartsInner";
 
 const CompleteUploadRequestPartsInnerSlice = createSlice({
   name: "CompleteUploadRequestPartsInners",
@@ -27,20 +27,28 @@ const CompleteUploadRequestPartsInnerSlice = createSlice({
     },
 
     CompleteUploadRequestPartsInnerValueToggled(state, action) {
-      console.log("CompleteUploadRequestPartsInner TOGGLE")
-      console.warn(JSON.stringify(action))
-      const CompleteUploadRequestPartsInner:CompleteUploadRequestPartsInner = state.find((CompleteUploadRequestPartsInner) => CompleteUploadRequestPartsInner.id === action.payload.CompleteUploadRequestPartsInnerId);
+      console.log("CompleteUploadRequestPartsInner TOGGLE");
+      console.warn(JSON.stringify(action));
+      const CompleteUploadRequestPartsInner: CompleteUploadRequestPartsInner =
+        state.find(
+          (CompleteUploadRequestPartsInner) =>
+            CompleteUploadRequestPartsInner.id ===
+            action.payload.CompleteUploadRequestPartsInnerId,
+        );
       if (CompleteUploadRequestPartsInner) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     CompleteUploadRequestPartsInnerpropertySet(state, action) {
-      const CompleteUploadRequestPartsInner = state.find((CompleteUploadRequestPartsInner) => CompleteUploadRequestPartsInner.id === action.payload.CompleteUploadRequestPartsInnerId);
+      const CompleteUploadRequestPartsInner = state.find(
+        (CompleteUploadRequestPartsInner) =>
+          CompleteUploadRequestPartsInner.id ===
+          action.payload.CompleteUploadRequestPartsInnerId,
+      );
       if (CompleteUploadRequestPartsInner) {
-      //  CompleteUploadRequestPartsInner[action.property] = action.payload[action.property];
+        //  CompleteUploadRequestPartsInner[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +57,6 @@ const CompleteUploadRequestPartsInnerSlice = createSlice({
 export const {
   CompleteUploadRequestPartsInnerAdded,
   CompleteUploadRequestPartsInnerValueToggled,
-  CompleteUploadRequestPartsInnerpropertySet
+  CompleteUploadRequestPartsInnerpropertySet,
 } = CompleteUploadRequestPartsInnerSlice.actions;
 export default CompleteUploadRequestPartsInnerSlice.reducer;

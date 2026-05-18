@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { MemoryEntry } from '@thorapi/model/MemoryEntry'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { MemoryEntry } from "@thorapi/model/MemoryEntry";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type MemoryEntryResponse = MemoryEntry[]
+type MemoryEntryResponse = MemoryEntry[];
 
 const toMemoryEntryList = (result: unknown): MemoryEntryResponse => {
   if (Array.isArray(result)) {
-    return result as MemoryEntryResponse
+    return result as MemoryEntryResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as MemoryEntryResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as MemoryEntryResponse) : [];
+};
 
 export const MemoryEntryService = createApi({
-  reducerPath: 'MemoryEntry', // This should remain unique
+  reducerPath: "MemoryEntry", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['MemoryEntry'],
+  tagTypes: ["MemoryEntry"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getMemoryEntrysPaged: build.query<MemoryEntryResponse, { page: number; size?: number; example?: Partial<MemoryEntry> }>({
+    getMemoryEntrysPaged: build.query<
+      MemoryEntryResponse,
+      { page: number; size?: number; example?: Partial<MemoryEntry> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `MemoryEntry?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `MemoryEntry?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toMemoryEntryList(result)
+        const rows = toMemoryEntryList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'MemoryEntry' as const, id })),
-          { type: 'MemoryEntry', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "MemoryEntry" as const, id })),
+          { type: "MemoryEntry", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getMemoryEntrys: build.query<MemoryEntryResponse, { example?: Partial<MemoryEntry> } | void>({
+    getMemoryEntrys: build.query<
+      MemoryEntryResponse,
+      { example?: Partial<MemoryEntry> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const MemoryEntryService = createApi({
         return `MemoryEntry`;
       },
       providesTags: (result) => {
-        const rows = toMemoryEntryList(result)
+        const rows = toMemoryEntryList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'MemoryEntry' as const, id })),
-          { type: 'MemoryEntry', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "MemoryEntry" as const, id })),
+          { type: "MemoryEntry", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,73 +87,88 @@ export const MemoryEntryService = createApi({
     addMemoryEntry: build.mutation<MemoryEntry, Partial<MemoryEntry>>({
       query: (body) => ({
         url: `MemoryEntry`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'MemoryEntry', id: 'LIST' }],
+      invalidatesTags: [{ type: "MemoryEntry", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getMemoryEntry: build.query<MemoryEntry, string>({
       query: (id) => `MemoryEntry/${id}`,
-      providesTags: (result, error, id) => [{ type: 'MemoryEntry', id }],
+      providesTags: (result, error, id) => [{ type: "MemoryEntry", id }],
     }),
 
     // 5) Update
-    updateMemoryEntry: build.mutation<void, Pick<MemoryEntry, 'id'> & Partial<MemoryEntry>>({
+    updateMemoryEntry: build.mutation<
+      void,
+      Pick<MemoryEntry, "id"> & Partial<MemoryEntry>
+    >({
       query: ({ id, ...patch }) => ({
         url: `MemoryEntry/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            MemoryEntryService.util.updateQueryData('getMemoryEntry', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            MemoryEntryService.util.updateQueryData(
+              "getMemoryEntry",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<MemoryEntry, 'id'>) => [
-        { type: 'MemoryEntry', id },
-        { type: 'MemoryEntry', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<MemoryEntry, "id">) => [
+        { type: "MemoryEntry", id },
+        { type: "MemoryEntry", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteMemoryEntry: build.mutation<{ success: boolean; id: string }, number>({
-      query(id) {
-        return {
-          url: `MemoryEntry/${id}`,
-          method: 'DELETE',
-        }
+    deleteMemoryEntry: build.mutation<{ success: boolean; id: string }, number>(
+      {
+        query(id) {
+          return {
+            url: `MemoryEntry/${id}`,
+            method: "DELETE",
+          };
+        },
+        invalidatesTags: (result, error, id) => [{ type: "MemoryEntry", id }],
       },
-      invalidatesTags: (result, error, id) => [{ type: 'MemoryEntry', id }],
-    }),
+    ),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteMemoryEntryCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteMemoryEntryCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `MemoryEntry/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'MemoryEntry', id }, { type: 'MemoryEntry', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "MemoryEntry", id },
+        { type: "MemoryEntry", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetMemoryEntrysPagedQuery`
 export const {
-  useGetMemoryEntrysPagedQuery,     // immediate fetch
+  useGetMemoryEntrysPagedQuery, // immediate fetch
   useLazyGetMemoryEntrysPagedQuery, // lazy fetch
   useGetMemoryEntryQuery,
   useGetMemoryEntrysQuery,
@@ -150,4 +176,4 @@ export const {
   useUpdateMemoryEntryMutation,
   useDeleteMemoryEntryMutation,
   useDeleteMemoryEntryCascadeMutation,
-} = MemoryEntryService
+} = MemoryEntryService;

@@ -13,47 +13,60 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { TrustKeyRotation } from '@thorapi/model/TrustKeyRotation'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { TrustKeyRotation } from "@thorapi/model/TrustKeyRotation";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type TrustKeyRotationResponse = TrustKeyRotation[]
+type TrustKeyRotationResponse = TrustKeyRotation[];
 
 const toTrustKeyRotationList = (result: unknown): TrustKeyRotationResponse => {
   if (Array.isArray(result)) {
-    return result as TrustKeyRotationResponse
+    return result as TrustKeyRotationResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as TrustKeyRotationResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as TrustKeyRotationResponse)
+    : [];
+};
 
 export const TrustKeyRotationService = createApi({
-  reducerPath: 'TrustKeyRotation', // This should remain unique
+  reducerPath: "TrustKeyRotation", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['TrustKeyRotation'],
+  tagTypes: ["TrustKeyRotation"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getTrustKeyRotationsPaged: build.query<TrustKeyRotationResponse, { page: number; size?: number; example?: Partial<TrustKeyRotation> }>({
+    getTrustKeyRotationsPaged: build.query<
+      TrustKeyRotationResponse,
+      { page: number; size?: number; example?: Partial<TrustKeyRotation> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `TrustKeyRotation?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `TrustKeyRotation?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toTrustKeyRotationList(result)
+        const rows = toTrustKeyRotationList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'TrustKeyRotation' as const, id })),
-          { type: 'TrustKeyRotation', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "TrustKeyRotation" as const, id })),
+          { type: "TrustKeyRotation", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getTrustKeyRotations: build.query<TrustKeyRotationResponse, { example?: Partial<TrustKeyRotation> } | void>({
+    getTrustKeyRotations: build.query<
+      TrustKeyRotationResponse,
+      { example?: Partial<TrustKeyRotation> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +75,112 @@ export const TrustKeyRotationService = createApi({
         return `TrustKeyRotation`;
       },
       providesTags: (result) => {
-        const rows = toTrustKeyRotationList(result)
+        const rows = toTrustKeyRotationList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'TrustKeyRotation' as const, id })),
-          { type: 'TrustKeyRotation', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "TrustKeyRotation" as const, id })),
+          { type: "TrustKeyRotation", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addTrustKeyRotation: build.mutation<TrustKeyRotation, Partial<TrustKeyRotation>>({
+    addTrustKeyRotation: build.mutation<
+      TrustKeyRotation,
+      Partial<TrustKeyRotation>
+    >({
       query: (body) => ({
         url: `TrustKeyRotation`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'TrustKeyRotation', id: 'LIST' }],
+      invalidatesTags: [{ type: "TrustKeyRotation", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getTrustKeyRotation: build.query<TrustKeyRotation, string>({
       query: (id) => `TrustKeyRotation/${id}`,
-      providesTags: (result, error, id) => [{ type: 'TrustKeyRotation', id }],
+      providesTags: (result, error, id) => [{ type: "TrustKeyRotation", id }],
     }),
 
     // 5) Update
-    updateTrustKeyRotation: build.mutation<void, Pick<TrustKeyRotation, 'id'> & Partial<TrustKeyRotation>>({
+    updateTrustKeyRotation: build.mutation<
+      void,
+      Pick<TrustKeyRotation, "id"> & Partial<TrustKeyRotation>
+    >({
       query: ({ id, ...patch }) => ({
         url: `TrustKeyRotation/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            TrustKeyRotationService.util.updateQueryData('getTrustKeyRotation', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            TrustKeyRotationService.util.updateQueryData(
+              "getTrustKeyRotation",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<TrustKeyRotation, 'id'>) => [
-        { type: 'TrustKeyRotation', id },
-        { type: 'TrustKeyRotation', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<TrustKeyRotation, "id">,
+      ) => [
+        { type: "TrustKeyRotation", id },
+        { type: "TrustKeyRotation", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteTrustKeyRotation: build.mutation<{ success: boolean; id: string }, number>({
+    deleteTrustKeyRotation: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `TrustKeyRotation/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'TrustKeyRotation', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "TrustKeyRotation", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteTrustKeyRotationCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteTrustKeyRotationCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `TrustKeyRotation/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'TrustKeyRotation', id }, { type: 'TrustKeyRotation', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "TrustKeyRotation", id },
+        { type: "TrustKeyRotation", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetTrustKeyRotationsPagedQuery`
 export const {
-  useGetTrustKeyRotationsPagedQuery,     // immediate fetch
+  useGetTrustKeyRotationsPagedQuery, // immediate fetch
   useLazyGetTrustKeyRotationsPagedQuery, // lazy fetch
   useGetTrustKeyRotationQuery,
   useGetTrustKeyRotationsQuery,
@@ -150,4 +188,4 @@ export const {
   useUpdateTrustKeyRotationMutation,
   useDeleteTrustKeyRotationMutation,
   useDeleteTrustKeyRotationCascadeMutation,
-} = TrustKeyRotationService
+} = TrustKeyRotationService;

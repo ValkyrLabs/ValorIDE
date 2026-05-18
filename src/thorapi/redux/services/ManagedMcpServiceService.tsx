@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { ManagedMcpService } from '@thorapi/model/ManagedMcpService'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { ManagedMcpService } from "@thorapi/model/ManagedMcpService";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type ManagedMcpServiceResponse = ManagedMcpService[]
+type ManagedMcpServiceResponse = ManagedMcpService[];
 
-const toManagedMcpServiceList = (result: unknown): ManagedMcpServiceResponse => {
+const toManagedMcpServiceList = (
+  result: unknown,
+): ManagedMcpServiceResponse => {
   if (Array.isArray(result)) {
-    return result as ManagedMcpServiceResponse
+    return result as ManagedMcpServiceResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as ManagedMcpServiceResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as ManagedMcpServiceResponse)
+    : [];
+};
 
 export const ManagedMcpServiceService = createApi({
-  reducerPath: 'ManagedMcpService', // This should remain unique
+  reducerPath: "ManagedMcpService", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['ManagedMcpService'],
+  tagTypes: ["ManagedMcpService"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getManagedMcpServicesPaged: build.query<ManagedMcpServiceResponse, { page: number; size?: number; example?: Partial<ManagedMcpService> }>({
+    getManagedMcpServicesPaged: build.query<
+      ManagedMcpServiceResponse,
+      { page: number; size?: number; example?: Partial<ManagedMcpService> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ManagedMcpService?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ManagedMcpService?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toManagedMcpServiceList(result)
+        const rows = toManagedMcpServiceList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ManagedMcpService' as const, id })),
-          { type: 'ManagedMcpService', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "ManagedMcpService" as const, id })),
+          { type: "ManagedMcpService", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getManagedMcpServices: build.query<ManagedMcpServiceResponse, { example?: Partial<ManagedMcpService> } | void>({
+    getManagedMcpServices: build.query<
+      ManagedMcpServiceResponse,
+      { example?: Partial<ManagedMcpService> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,112 @@ export const ManagedMcpServiceService = createApi({
         return `ManagedMcpService`;
       },
       providesTags: (result) => {
-        const rows = toManagedMcpServiceList(result)
+        const rows = toManagedMcpServiceList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ManagedMcpService' as const, id })),
-          { type: 'ManagedMcpService', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "ManagedMcpService" as const, id })),
+          { type: "ManagedMcpService", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addManagedMcpService: build.mutation<ManagedMcpService, Partial<ManagedMcpService>>({
+    addManagedMcpService: build.mutation<
+      ManagedMcpService,
+      Partial<ManagedMcpService>
+    >({
       query: (body) => ({
         url: `ManagedMcpService`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'ManagedMcpService', id: 'LIST' }],
+      invalidatesTags: [{ type: "ManagedMcpService", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getManagedMcpService: build.query<ManagedMcpService, string>({
       query: (id) => `ManagedMcpService/${id}`,
-      providesTags: (result, error, id) => [{ type: 'ManagedMcpService', id }],
+      providesTags: (result, error, id) => [{ type: "ManagedMcpService", id }],
     }),
 
     // 5) Update
-    updateManagedMcpService: build.mutation<void, Pick<ManagedMcpService, 'id'> & Partial<ManagedMcpService>>({
+    updateManagedMcpService: build.mutation<
+      void,
+      Pick<ManagedMcpService, "id"> & Partial<ManagedMcpService>
+    >({
       query: ({ id, ...patch }) => ({
         url: `ManagedMcpService/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            ManagedMcpServiceService.util.updateQueryData('getManagedMcpService', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            ManagedMcpServiceService.util.updateQueryData(
+              "getManagedMcpService",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<ManagedMcpService, 'id'>) => [
-        { type: 'ManagedMcpService', id },
-        { type: 'ManagedMcpService', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<ManagedMcpService, "id">,
+      ) => [
+        { type: "ManagedMcpService", id },
+        { type: "ManagedMcpService", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteManagedMcpService: build.mutation<{ success: boolean; id: string }, number>({
+    deleteManagedMcpService: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `ManagedMcpService/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'ManagedMcpService', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "ManagedMcpService", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteManagedMcpServiceCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteManagedMcpServiceCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `ManagedMcpService/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ManagedMcpService', id }, { type: 'ManagedMcpService', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "ManagedMcpService", id },
+        { type: "ManagedMcpService", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetManagedMcpServicesPagedQuery`
 export const {
-  useGetManagedMcpServicesPagedQuery,     // immediate fetch
+  useGetManagedMcpServicesPagedQuery, // immediate fetch
   useLazyGetManagedMcpServicesPagedQuery, // lazy fetch
   useGetManagedMcpServiceQuery,
   useGetManagedMcpServicesQuery,
@@ -150,4 +190,4 @@ export const {
   useUpdateManagedMcpServiceMutation,
   useDeleteManagedMcpServiceMutation,
   useDeleteManagedMcpServiceCascadeMutation,
-} = ManagedMcpServiceService
+} = ManagedMcpServiceService;

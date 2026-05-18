@@ -26,22 +26,19 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    TrustKey,
-    TrustKeyFromJSON,
-    TrustKeyToJSON,
-    TrustKeyVersion,
-    TrustKeyVersionFromJSON,
-    TrustKeyVersionToJSON,
-    TrustProof,
-    TrustProofFromJSON,
-    TrustProofToJSON,
-} from './';
-
+  TrustKey,
+  TrustKeyFromJSON,
+  TrustKeyToJSON,
+  TrustKeyVersion,
+  TrustKeyVersionFromJSON,
+  TrustKeyVersionToJSON,
+  TrustProof,
+  TrustProofFromJSON,
+  TrustProofToJSON,
+} from "./";
 
 // thorapi
 
@@ -50,193 +47,221 @@ import {
  * @export
  * @interface TrustKeyRotation
  */
-export type TrustKeyRotation  = DataObject & {
-    /**
-     * 
-     * @type {TrustKey}
-     * @memberof TrustKeyRotation
-     */
-    trustKey?: TrustKey;
-    /**
-     * 
-     * @type {TrustKeyVersion}
-     * @memberof TrustKeyRotation
-     */
-    fromVersion?: TrustKeyVersion;
-    /**
-     * 
-     * @type {TrustKeyVersion}
-     * @memberof TrustKeyRotation
-     */
-    toVersion?: TrustKeyVersion;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustKeyRotation
-     */
-    rotationType?: TrustKeyRotationRotationTypeEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustKeyRotation
-     */
-    rotationStatus?: TrustKeyRotationRotationStatusEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustKeyRotation
-     */
-    requestedBy?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustKeyRotation
-     */
-    approvedBy?: string;
-    /**
-     * 
-     * @type {Date}
-     * @memberof TrustKeyRotation
-     */
-    startedAt?: Date;
-    /**
-     * 
-     * @type {Date}
-     * @memberof TrustKeyRotation
-     */
-    completedAt?: Date;
-    /**
-     * 
-     * @type {TrustProof}
-     * @memberof TrustKeyRotation
-     */
-    proof?: TrustProof;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustKeyRotation
-     */
-    ownerId?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof TrustKeyRotation
-     */
-    readonly id?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof TrustKeyRotation
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof TrustKeyRotation
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof TrustKeyRotation
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof TrustKeyRotation
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof TrustKeyRotation
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof TrustKeyRotation
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof TrustKeyRotation
-     */
-    trashed?: boolean;
-}
+export type TrustKeyRotation = DataObject & {
+  /**
+   *
+   * @type {TrustKey}
+   * @memberof TrustKeyRotation
+   */
+  trustKey?: TrustKey;
+  /**
+   *
+   * @type {TrustKeyVersion}
+   * @memberof TrustKeyRotation
+   */
+  fromVersion?: TrustKeyVersion;
+  /**
+   *
+   * @type {TrustKeyVersion}
+   * @memberof TrustKeyRotation
+   */
+  toVersion?: TrustKeyVersion;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustKeyRotation
+   */
+  rotationType?: TrustKeyRotationRotationTypeEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustKeyRotation
+   */
+  rotationStatus?: TrustKeyRotationRotationStatusEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustKeyRotation
+   */
+  requestedBy?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustKeyRotation
+   */
+  approvedBy?: string;
+  /**
+   *
+   * @type {Date}
+   * @memberof TrustKeyRotation
+   */
+  startedAt?: Date;
+  /**
+   *
+   * @type {Date}
+   * @memberof TrustKeyRotation
+   */
+  completedAt?: Date;
+  /**
+   *
+   * @type {TrustProof}
+   * @memberof TrustKeyRotation
+   */
+  proof?: TrustProof;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustKeyRotation
+   */
+  ownerId?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof TrustKeyRotation
+   */
+  readonly id?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof TrustKeyRotation
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof TrustKeyRotation
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof TrustKeyRotation
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof TrustKeyRotation
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof TrustKeyRotation
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof TrustKeyRotation
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof TrustKeyRotation
+   */
+  trashed?: boolean;
+};
 
 export function TrustKeyRotationFromJSON(json: any): TrustKeyRotation {
-    return {
-        ...DataObjectFromJSON(json),
-        'trustKey': !exists(json, 'trustKey') ? undefined : TrustKeyFromJSON(json['trustKey']),
-        'fromVersion': !exists(json, 'fromVersion') ? undefined : TrustKeyVersionFromJSON(json['fromVersion']),
-        'toVersion': !exists(json, 'toVersion') ? undefined : TrustKeyVersionFromJSON(json['toVersion']),
-        'rotationType': !exists(json, 'rotationType') ? undefined : json['rotationType'],
-        'rotationStatus': !exists(json, 'rotationStatus') ? undefined : json['rotationStatus'],
-        'requestedBy': !exists(json, 'requestedBy') ? undefined : json['requestedBy'],
-        'approvedBy': !exists(json, 'approvedBy') ? undefined : json['approvedBy'],
-        'startedAt': !exists(json, 'startedAt') ? undefined : new Date(json['startedAt']),
-        'completedAt': !exists(json, 'completedAt') ? undefined : new Date(json['completedAt']),
-        'proof': !exists(json, 'proof') ? undefined : TrustProofFromJSON(json['proof']),
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    trustKey: !exists(json, "trustKey")
+      ? undefined
+      : TrustKeyFromJSON(json["trustKey"]),
+    fromVersion: !exists(json, "fromVersion")
+      ? undefined
+      : TrustKeyVersionFromJSON(json["fromVersion"]),
+    toVersion: !exists(json, "toVersion")
+      ? undefined
+      : TrustKeyVersionFromJSON(json["toVersion"]),
+    rotationType: !exists(json, "rotationType")
+      ? undefined
+      : json["rotationType"],
+    rotationStatus: !exists(json, "rotationStatus")
+      ? undefined
+      : json["rotationStatus"],
+    requestedBy: !exists(json, "requestedBy") ? undefined : json["requestedBy"],
+    approvedBy: !exists(json, "approvedBy") ? undefined : json["approvedBy"],
+    startedAt: !exists(json, "startedAt")
+      ? undefined
+      : new Date(json["startedAt"]),
+    completedAt: !exists(json, "completedAt")
+      ? undefined
+      : new Date(json["completedAt"]),
+    proof: !exists(json, "proof")
+      ? undefined
+      : TrustProofFromJSON(json["proof"]),
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function TrustKeyRotationToJSON(value?: TrustKeyRotation): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'trustKey': TrustKeyToJSON(value.trustKey),
-        'fromVersion': TrustKeyVersionToJSON(value.fromVersion),
-        'toVersion': TrustKeyVersionToJSON(value.toVersion),
-        'rotationType': value.rotationType,
-        'rotationStatus': value.rotationStatus,
-        'requestedBy': value.requestedBy,
-        'approvedBy': value.approvedBy,
-        'startedAt': value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
-        'completedAt': value.completedAt === undefined ? undefined : value.completedAt.toISOString(),
-        'proof': TrustProofToJSON(value.proof),
-        'ownerId': value.ownerId,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    trustKey: TrustKeyToJSON(value.trustKey),
+    fromVersion: TrustKeyVersionToJSON(value.fromVersion),
+    toVersion: TrustKeyVersionToJSON(value.toVersion),
+    rotationType: value.rotationType,
+    rotationStatus: value.rotationStatus,
+    requestedBy: value.requestedBy,
+    approvedBy: value.approvedBy,
+    startedAt:
+      value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
+    completedAt:
+      value.completedAt === undefined
+        ? undefined
+        : value.completedAt.toISOString(),
+    proof: TrustProofToJSON(value.proof),
+    ownerId: value.ownerId,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum TrustKeyRotationRotationTypeEnum {
-    SCHEDULED = 'scheduled',
-    MANUAL = 'manual',
-    COMPROMISERESPONSE = 'compromise_response',
-    PROVIDERMIGRATION = 'provider_migration',
-    ALGORITHMMIGRATION = 'algorithm_migration'
+  SCHEDULED = "scheduled",
+  MANUAL = "manual",
+  COMPROMISERESPONSE = "compromise_response",
+  PROVIDERMIGRATION = "provider_migration",
+  ALGORITHMMIGRATION = "algorithm_migration",
 }
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum TrustKeyRotationRotationStatusEnum {
-    REQUESTED = 'requested',
-    APPROVED = 'approved',
-    ACTIVATED = 'activated',
-    REWRAPRUNNING = 'rewrap_running',
-    REWRAPCOMPLETE = 'rewrap_complete',
-    RETIREMENTRUNNING = 'retirement_running',
-    COMPLETE = 'complete',
-    FAILED = 'failed'
+  REQUESTED = "requested",
+  APPROVED = "approved",
+  ACTIVATED = "activated",
+  REWRAPRUNNING = "rewrap_running",
+  REWRAPCOMPLETE = "rewrap_complete",
+  RETIREMENTRUNNING = "retirement_running",
+  COMPLETE = "complete",
+  FAILED = "failed",
 }
-
-

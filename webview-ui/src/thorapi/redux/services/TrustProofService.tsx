@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { TrustProof } from '@thorapi/model/TrustProof'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { TrustProof } from "@thorapi/model/TrustProof";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type TrustProofResponse = TrustProof[]
+type TrustProofResponse = TrustProof[];
 
 const toTrustProofList = (result: unknown): TrustProofResponse => {
   if (Array.isArray(result)) {
-    return result as TrustProofResponse
+    return result as TrustProofResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as TrustProofResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as TrustProofResponse) : [];
+};
 
 export const TrustProofService = createApi({
-  reducerPath: 'TrustProof', // This should remain unique
+  reducerPath: "TrustProof", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['TrustProof'],
+  tagTypes: ["TrustProof"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getTrustProofsPaged: build.query<TrustProofResponse, { page: number; size?: number; example?: Partial<TrustProof> }>({
+    getTrustProofsPaged: build.query<
+      TrustProofResponse,
+      { page: number; size?: number; example?: Partial<TrustProof> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `TrustProof?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `TrustProof?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toTrustProofList(result)
+        const rows = toTrustProofList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'TrustProof' as const, id })),
-          { type: 'TrustProof', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "TrustProof" as const, id })),
+          { type: "TrustProof", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getTrustProofs: build.query<TrustProofResponse, { example?: Partial<TrustProof> } | void>({
+    getTrustProofs: build.query<
+      TrustProofResponse,
+      { example?: Partial<TrustProof> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const TrustProofService = createApi({
         return `TrustProof`;
       },
       providesTags: (result) => {
-        const rows = toTrustProofList(result)
+        const rows = toTrustProofList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'TrustProof' as const, id })),
-          { type: 'TrustProof', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "TrustProof" as const, id })),
+          { type: "TrustProof", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,42 +87,49 @@ export const TrustProofService = createApi({
     addTrustProof: build.mutation<TrustProof, Partial<TrustProof>>({
       query: (body) => ({
         url: `TrustProof`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'TrustProof', id: 'LIST' }],
+      invalidatesTags: [{ type: "TrustProof", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getTrustProof: build.query<TrustProof, string>({
       query: (id) => `TrustProof/${id}`,
-      providesTags: (result, error, id) => [{ type: 'TrustProof', id }],
+      providesTags: (result, error, id) => [{ type: "TrustProof", id }],
     }),
 
     // 5) Update
-    updateTrustProof: build.mutation<void, Pick<TrustProof, 'id'> & Partial<TrustProof>>({
+    updateTrustProof: build.mutation<
+      void,
+      Pick<TrustProof, "id"> & Partial<TrustProof>
+    >({
       query: ({ id, ...patch }) => ({
         url: `TrustProof/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            TrustProofService.util.updateQueryData('getTrustProof', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            TrustProofService.util.updateQueryData(
+              "getTrustProof",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<TrustProof, 'id'>) => [
-        { type: 'TrustProof', id },
-        { type: 'TrustProof', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<TrustProof, "id">) => [
+        { type: "TrustProof", id },
+        { type: "TrustProof", id: "LIST" },
       ],
     }),
 
@@ -120,29 +138,35 @@ export const TrustProofService = createApi({
       query(id) {
         return {
           url: `TrustProof/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'TrustProof', id }],
+      invalidatesTags: (result, error, id) => [{ type: "TrustProof", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteTrustProofCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteTrustProofCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `TrustProof/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'TrustProof', id }, { type: 'TrustProof', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "TrustProof", id },
+        { type: "TrustProof", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetTrustProofsPagedQuery`
 export const {
-  useGetTrustProofsPagedQuery,     // immediate fetch
+  useGetTrustProofsPagedQuery, // immediate fetch
   useLazyGetTrustProofsPagedQuery, // lazy fetch
   useGetTrustProofQuery,
   useGetTrustProofsQuery,
@@ -150,4 +174,4 @@ export const {
   useUpdateTrustProofMutation,
   useDeleteTrustProofMutation,
   useDeleteTrustProofCascadeMutation,
-} = TrustProofService
+} = TrustProofService;

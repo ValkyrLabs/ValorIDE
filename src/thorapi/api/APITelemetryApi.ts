@@ -18,78 +18,84 @@ Template file: typescript-redux-query/apis.mustache
 Description: APITelemetryApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    ApiMetricsResponse,
-    ApiMetricsResponseFromJSON,
-    ApiMetricsResponseToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  ApiMetricsResponse,
+  ApiMetricsResponseFromJSON,
+  ApiMetricsResponseToJSON,
+} from "../model";
 
 export interface GetApiTelemetrySnapshotApiRequest {
-    customerId?: string;
-    organizationId?: string;
-    topN?: number;
+  customerId?: string;
+  organizationId?: string;
+  topN?: number;
 }
-
 
 /**
  * Returns endpoint telemetry, recent events, and KPI rollups keyed by customer and organization identities.
  * Get API telemetry snapshot
  */
-function getApiTelemetrySnapshotRaw<T>(requestParameters: GetApiTelemetrySnapshotApiRequest, requestConfig: runtime.TypedQueryConfig<T, ApiMetricsResponse> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getApiTelemetrySnapshotRaw<T>(
+  requestParameters: GetApiTelemetrySnapshotApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ApiMetricsResponse> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.customerId !== undefined) {
+    queryParameters["customerId"] = requestParameters.customerId;
+  }
 
-    if (requestParameters.customerId !== undefined) {
-        queryParameters['customerId'] = requestParameters.customerId;
-    }
+  if (requestParameters.organizationId !== undefined) {
+    queryParameters["organizationId"] = requestParameters.organizationId;
+  }
 
+  if (requestParameters.topN !== undefined) {
+    queryParameters["topN"] = requestParameters.topN;
+  }
 
-    if (requestParameters.organizationId !== undefined) {
-        queryParameters['organizationId'] = requestParameters.organizationId;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.topN !== undefined) {
-        queryParameters['topN'] = requestParameters.topN;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/api/telemetry`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ApiMetricsResponseFromJSON(body), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/api/telemetry`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ApiMetricsResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Returns endpoint telemetry, recent events, and KPI rollups keyed by customer and organization identities.
-* Get API telemetry snapshot
-*/
-export function getApiTelemetrySnapshot<T>(requestParameters: GetApiTelemetrySnapshotApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ApiMetricsResponse>): QueryConfig<T> {
-    return getApiTelemetrySnapshotRaw(requestParameters, requestConfig);
+ * Returns endpoint telemetry, recent events, and KPI rollups keyed by customer and organization identities.
+ * Get API telemetry snapshot
+ */
+export function getApiTelemetrySnapshot<T>(
+  requestParameters: GetApiTelemetrySnapshotApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ApiMetricsResponse>,
+): QueryConfig<T> {
+  return getApiTelemetrySnapshotRaw(requestParameters, requestConfig);
 }
-

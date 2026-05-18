@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { MemoryRetentionPolicy } from '@thorapi/model/MemoryRetentionPolicy';
+import { MemoryRetentionPolicy } from "@thorapi/model/MemoryRetentionPolicy";
 
 const MemoryRetentionPolicySlice = createSlice({
   name: "MemoryRetentionPolicys",
@@ -27,20 +27,25 @@ const MemoryRetentionPolicySlice = createSlice({
     },
 
     MemoryRetentionPolicyValueToggled(state, action) {
-      console.log("MemoryRetentionPolicy TOGGLE")
-      console.warn(JSON.stringify(action))
-      const MemoryRetentionPolicy:MemoryRetentionPolicy = state.find((MemoryRetentionPolicy) => MemoryRetentionPolicy.id === action.payload.MemoryRetentionPolicyId);
+      console.log("MemoryRetentionPolicy TOGGLE");
+      console.warn(JSON.stringify(action));
+      const MemoryRetentionPolicy: MemoryRetentionPolicy = state.find(
+        (MemoryRetentionPolicy) =>
+          MemoryRetentionPolicy.id === action.payload.MemoryRetentionPolicyId,
+      );
       if (MemoryRetentionPolicy) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     MemoryRetentionPolicypropertySet(state, action) {
-      const MemoryRetentionPolicy = state.find((MemoryRetentionPolicy) => MemoryRetentionPolicy.id === action.payload.MemoryRetentionPolicyId);
+      const MemoryRetentionPolicy = state.find(
+        (MemoryRetentionPolicy) =>
+          MemoryRetentionPolicy.id === action.payload.MemoryRetentionPolicyId,
+      );
       if (MemoryRetentionPolicy) {
-      //  MemoryRetentionPolicy[action.property] = action.payload[action.property];
+        //  MemoryRetentionPolicy[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const MemoryRetentionPolicySlice = createSlice({
 export const {
   MemoryRetentionPolicyAdded,
   MemoryRetentionPolicyValueToggled,
-  MemoryRetentionPolicypropertySet
+  MemoryRetentionPolicypropertySet,
 } = MemoryRetentionPolicySlice.actions;
 export default MemoryRetentionPolicySlice.reducer;

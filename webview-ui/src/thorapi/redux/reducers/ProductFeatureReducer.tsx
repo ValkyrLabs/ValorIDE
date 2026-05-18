@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ProductFeature } from '@thorapi/model/ProductFeature';
+import { ProductFeature } from "@thorapi/model/ProductFeature";
 
 const ProductFeatureSlice = createSlice({
   name: "ProductFeatures",
@@ -27,20 +27,25 @@ const ProductFeatureSlice = createSlice({
     },
 
     ProductFeatureValueToggled(state, action) {
-      console.log("ProductFeature TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ProductFeature:ProductFeature = state.find((ProductFeature) => ProductFeature.id === action.payload.ProductFeatureId);
+      console.log("ProductFeature TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ProductFeature: ProductFeature = state.find(
+        (ProductFeature) =>
+          ProductFeature.id === action.payload.ProductFeatureId,
+      );
       if (ProductFeature) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ProductFeaturepropertySet(state, action) {
-      const ProductFeature = state.find((ProductFeature) => ProductFeature.id === action.payload.ProductFeatureId);
+      const ProductFeature = state.find(
+        (ProductFeature) =>
+          ProductFeature.id === action.payload.ProductFeatureId,
+      );
       if (ProductFeature) {
-      //  ProductFeature[action.property] = action.payload[action.property];
+        //  ProductFeature[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const ProductFeatureSlice = createSlice({
 export const {
   ProductFeatureAdded,
   ProductFeatureValueToggled,
-  ProductFeaturepropertySet
+  ProductFeaturepropertySet,
 } = ProductFeatureSlice.actions;
 export default ProductFeatureSlice.reducer;

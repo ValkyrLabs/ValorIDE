@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { PublishRestEndpointRequest } from '@thorapi/model/PublishRestEndpointRequest';
+import { PublishRestEndpointRequest } from "@thorapi/model/PublishRestEndpointRequest";
 
 const PublishRestEndpointRequestSlice = createSlice({
   name: "PublishRestEndpointRequests",
@@ -27,20 +27,27 @@ const PublishRestEndpointRequestSlice = createSlice({
     },
 
     PublishRestEndpointRequestValueToggled(state, action) {
-      console.log("PublishRestEndpointRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const PublishRestEndpointRequest:PublishRestEndpointRequest = state.find((PublishRestEndpointRequest) => PublishRestEndpointRequest.id === action.payload.PublishRestEndpointRequestId);
+      console.log("PublishRestEndpointRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const PublishRestEndpointRequest: PublishRestEndpointRequest = state.find(
+        (PublishRestEndpointRequest) =>
+          PublishRestEndpointRequest.id ===
+          action.payload.PublishRestEndpointRequestId,
+      );
       if (PublishRestEndpointRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     PublishRestEndpointRequestpropertySet(state, action) {
-      const PublishRestEndpointRequest = state.find((PublishRestEndpointRequest) => PublishRestEndpointRequest.id === action.payload.PublishRestEndpointRequestId);
+      const PublishRestEndpointRequest = state.find(
+        (PublishRestEndpointRequest) =>
+          PublishRestEndpointRequest.id ===
+          action.payload.PublishRestEndpointRequestId,
+      );
       if (PublishRestEndpointRequest) {
-      //  PublishRestEndpointRequest[action.property] = action.payload[action.property];
+        //  PublishRestEndpointRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const PublishRestEndpointRequestSlice = createSlice({
 export const {
   PublishRestEndpointRequestAdded,
   PublishRestEndpointRequestValueToggled,
-  PublishRestEndpointRequestpropertySet
+  PublishRestEndpointRequestpropertySet,
 } = PublishRestEndpointRequestSlice.actions;
 export default PublishRestEndpointRequestSlice.reducer;

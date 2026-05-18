@@ -26,48 +26,50 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
 /**
- * 
+ *
  * @export
  * @interface CompleteUploadRequestPartsInner
  */
-export type CompleteUploadRequestPartsInner  = DataObject & {
-    /**
-     * 
-     * @type {number}
-     * @memberof CompleteUploadRequestPartsInner
-     */
-    partNumber?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof CompleteUploadRequestPartsInner
-     */
-    etag?: string;
+export type CompleteUploadRequestPartsInner = DataObject & {
+  /**
+   *
+   * @type {number}
+   * @memberof CompleteUploadRequestPartsInner
+   */
+  partNumber?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof CompleteUploadRequestPartsInner
+   */
+  etag?: string;
+};
+
+export function CompleteUploadRequestPartsInnerFromJSON(
+  json: any,
+): CompleteUploadRequestPartsInner {
+  return {
+    ...DataObjectFromJSON(json),
+    partNumber: !exists(json, "partNumber") ? undefined : json["partNumber"],
+    etag: !exists(json, "etag") ? undefined : json["etag"],
+  };
 }
 
-export function CompleteUploadRequestPartsInnerFromJSON(json: any): CompleteUploadRequestPartsInner {
-    return {
-        ...DataObjectFromJSON(json),
-        'partNumber': !exists(json, 'partNumber') ? undefined : json['partNumber'],
-        'etag': !exists(json, 'etag') ? undefined : json['etag'],
-    };
+export function CompleteUploadRequestPartsInnerToJSON(
+  value?: CompleteUploadRequestPartsInner,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    partNumber: value.partNumber,
+    etag: value.etag,
+  };
 }
-
-export function CompleteUploadRequestPartsInnerToJSON(value?: CompleteUploadRequestPartsInner): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'partNumber': value.partNumber,
-        'etag': value.etag,
-    };
-}
-
-

@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { MemoryRecommendation } from '@thorapi/model/MemoryRecommendation'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { MemoryRecommendation } from "@thorapi/model/MemoryRecommendation";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type MemoryRecommendationResponse = MemoryRecommendation[]
+type MemoryRecommendationResponse = MemoryRecommendation[];
 
-const toMemoryRecommendationList = (result: unknown): MemoryRecommendationResponse => {
+const toMemoryRecommendationList = (
+  result: unknown,
+): MemoryRecommendationResponse => {
   if (Array.isArray(result)) {
-    return result as MemoryRecommendationResponse
+    return result as MemoryRecommendationResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as MemoryRecommendationResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as MemoryRecommendationResponse)
+    : [];
+};
 
 export const MemoryRecommendationService = createApi({
-  reducerPath: 'MemoryRecommendation', // This should remain unique
+  reducerPath: "MemoryRecommendation", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['MemoryRecommendation'],
+  tagTypes: ["MemoryRecommendation"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getMemoryRecommendationsPaged: build.query<MemoryRecommendationResponse, { page: number; size?: number; example?: Partial<MemoryRecommendation> }>({
+    getMemoryRecommendationsPaged: build.query<
+      MemoryRecommendationResponse,
+      { page: number; size?: number; example?: Partial<MemoryRecommendation> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `MemoryRecommendation?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `MemoryRecommendation?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toMemoryRecommendationList(result)
+        const rows = toMemoryRecommendationList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'MemoryRecommendation' as const, id })),
-          { type: 'MemoryRecommendation', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "MemoryRecommendation" as const, id })),
+          { type: "MemoryRecommendation", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getMemoryRecommendations: build.query<MemoryRecommendationResponse, { example?: Partial<MemoryRecommendation> } | void>({
+    getMemoryRecommendations: build.query<
+      MemoryRecommendationResponse,
+      { example?: Partial<MemoryRecommendation> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,114 @@ export const MemoryRecommendationService = createApi({
         return `MemoryRecommendation`;
       },
       providesTags: (result) => {
-        const rows = toMemoryRecommendationList(result)
+        const rows = toMemoryRecommendationList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'MemoryRecommendation' as const, id })),
-          { type: 'MemoryRecommendation', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "MemoryRecommendation" as const, id })),
+          { type: "MemoryRecommendation", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addMemoryRecommendation: build.mutation<MemoryRecommendation, Partial<MemoryRecommendation>>({
+    addMemoryRecommendation: build.mutation<
+      MemoryRecommendation,
+      Partial<MemoryRecommendation>
+    >({
       query: (body) => ({
         url: `MemoryRecommendation`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'MemoryRecommendation', id: 'LIST' }],
+      invalidatesTags: [{ type: "MemoryRecommendation", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getMemoryRecommendation: build.query<MemoryRecommendation, string>({
       query: (id) => `MemoryRecommendation/${id}`,
-      providesTags: (result, error, id) => [{ type: 'MemoryRecommendation', id }],
+      providesTags: (result, error, id) => [
+        { type: "MemoryRecommendation", id },
+      ],
     }),
 
     // 5) Update
-    updateMemoryRecommendation: build.mutation<void, Pick<MemoryRecommendation, 'id'> & Partial<MemoryRecommendation>>({
+    updateMemoryRecommendation: build.mutation<
+      void,
+      Pick<MemoryRecommendation, "id"> & Partial<MemoryRecommendation>
+    >({
       query: ({ id, ...patch }) => ({
         url: `MemoryRecommendation/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            MemoryRecommendationService.util.updateQueryData('getMemoryRecommendation', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            MemoryRecommendationService.util.updateQueryData(
+              "getMemoryRecommendation",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<MemoryRecommendation, 'id'>) => [
-        { type: 'MemoryRecommendation', id },
-        { type: 'MemoryRecommendation', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<MemoryRecommendation, "id">,
+      ) => [
+        { type: "MemoryRecommendation", id },
+        { type: "MemoryRecommendation", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteMemoryRecommendation: build.mutation<{ success: boolean; id: string }, number>({
+    deleteMemoryRecommendation: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `MemoryRecommendation/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'MemoryRecommendation', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "MemoryRecommendation", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteMemoryRecommendationCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteMemoryRecommendationCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `MemoryRecommendation/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'MemoryRecommendation', id }, { type: 'MemoryRecommendation', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "MemoryRecommendation", id },
+        { type: "MemoryRecommendation", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetMemoryRecommendationsPagedQuery`
 export const {
-  useGetMemoryRecommendationsPagedQuery,     // immediate fetch
+  useGetMemoryRecommendationsPagedQuery, // immediate fetch
   useLazyGetMemoryRecommendationsPagedQuery, // lazy fetch
   useGetMemoryRecommendationQuery,
   useGetMemoryRecommendationsQuery,
@@ -150,4 +192,4 @@ export const {
   useUpdateMemoryRecommendationMutation,
   useDeleteMemoryRecommendationMutation,
   useDeleteMemoryRecommendationCascadeMutation,
-} = MemoryRecommendationService
+} = MemoryRecommendationService;

@@ -19,20 +19,33 @@ Description: IntegrationAccount
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, IntegrationAccount } from '@thorapi/model';
-import { useGetIntegrationAccountsQuery, useAddIntegrationAccountMutation, useUpdateIntegrationAccountMutation } from '../../services/IntegrationAccountService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, IntegrationAccount } from "@thorapi/model";
+import {
+  useGetIntegrationAccountsQuery,
+  useAddIntegrationAccountMutation,
+  useUpdateIntegrationAccountMutation,
+} from "../../services/IntegrationAccountService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const IntegrationAccountChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetIntegrationAccountsQuery();
+  const { data: initialData = [], isLoading } =
+    useGetIntegrationAccountsQuery();
 
   const [data, setData] = useState<IntegrationAccount[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<IntegrationAccount>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +63,9 @@ const IntegrationAccountChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +73,15 @@ const IntegrationAccountChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((integrationaccount: DataObject) => [integrationaccount])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((integrationaccount: DataObject) => [
+            integrationaccount,
+          ])}
+        />
+      )}
     </>
   );
 };

@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { ProductFunnelWizard } from '@thorapi/model/ProductFunnelWizard'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { ProductFunnelWizard } from "@thorapi/model/ProductFunnelWizard";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type ProductFunnelWizardResponse = ProductFunnelWizard[]
+type ProductFunnelWizardResponse = ProductFunnelWizard[];
 
-const toProductFunnelWizardList = (result: unknown): ProductFunnelWizardResponse => {
+const toProductFunnelWizardList = (
+  result: unknown,
+): ProductFunnelWizardResponse => {
   if (Array.isArray(result)) {
-    return result as ProductFunnelWizardResponse
+    return result as ProductFunnelWizardResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as ProductFunnelWizardResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as ProductFunnelWizardResponse)
+    : [];
+};
 
 export const ProductFunnelWizardService = createApi({
-  reducerPath: 'ProductFunnelWizard', // This should remain unique
+  reducerPath: "ProductFunnelWizard", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['ProductFunnelWizard'],
+  tagTypes: ["ProductFunnelWizard"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getProductFunnelWizardsPaged: build.query<ProductFunnelWizardResponse, { page: number; size?: number; example?: Partial<ProductFunnelWizard> }>({
+    getProductFunnelWizardsPaged: build.query<
+      ProductFunnelWizardResponse,
+      { page: number; size?: number; example?: Partial<ProductFunnelWizard> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ProductFunnelWizard?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ProductFunnelWizard?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toProductFunnelWizardList(result)
+        const rows = toProductFunnelWizardList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ProductFunnelWizard' as const, id })),
-          { type: 'ProductFunnelWizard', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "ProductFunnelWizard" as const, id })),
+          { type: "ProductFunnelWizard", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getProductFunnelWizards: build.query<ProductFunnelWizardResponse, { example?: Partial<ProductFunnelWizard> } | void>({
+    getProductFunnelWizards: build.query<
+      ProductFunnelWizardResponse,
+      { example?: Partial<ProductFunnelWizard> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,114 @@ export const ProductFunnelWizardService = createApi({
         return `ProductFunnelWizard`;
       },
       providesTags: (result) => {
-        const rows = toProductFunnelWizardList(result)
+        const rows = toProductFunnelWizardList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ProductFunnelWizard' as const, id })),
-          { type: 'ProductFunnelWizard', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "ProductFunnelWizard" as const, id })),
+          { type: "ProductFunnelWizard", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addProductFunnelWizard: build.mutation<ProductFunnelWizard, Partial<ProductFunnelWizard>>({
+    addProductFunnelWizard: build.mutation<
+      ProductFunnelWizard,
+      Partial<ProductFunnelWizard>
+    >({
       query: (body) => ({
         url: `ProductFunnelWizard`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'ProductFunnelWizard', id: 'LIST' }],
+      invalidatesTags: [{ type: "ProductFunnelWizard", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getProductFunnelWizard: build.query<ProductFunnelWizard, string>({
       query: (id) => `ProductFunnelWizard/${id}`,
-      providesTags: (result, error, id) => [{ type: 'ProductFunnelWizard', id }],
+      providesTags: (result, error, id) => [
+        { type: "ProductFunnelWizard", id },
+      ],
     }),
 
     // 5) Update
-    updateProductFunnelWizard: build.mutation<void, Pick<ProductFunnelWizard, 'id'> & Partial<ProductFunnelWizard>>({
+    updateProductFunnelWizard: build.mutation<
+      void,
+      Pick<ProductFunnelWizard, "id"> & Partial<ProductFunnelWizard>
+    >({
       query: ({ id, ...patch }) => ({
         url: `ProductFunnelWizard/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            ProductFunnelWizardService.util.updateQueryData('getProductFunnelWizard', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            ProductFunnelWizardService.util.updateQueryData(
+              "getProductFunnelWizard",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<ProductFunnelWizard, 'id'>) => [
-        { type: 'ProductFunnelWizard', id },
-        { type: 'ProductFunnelWizard', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<ProductFunnelWizard, "id">,
+      ) => [
+        { type: "ProductFunnelWizard", id },
+        { type: "ProductFunnelWizard", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteProductFunnelWizard: build.mutation<{ success: boolean; id: string }, number>({
+    deleteProductFunnelWizard: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `ProductFunnelWizard/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'ProductFunnelWizard', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "ProductFunnelWizard", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteProductFunnelWizardCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteProductFunnelWizardCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `ProductFunnelWizard/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ProductFunnelWizard', id }, { type: 'ProductFunnelWizard', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "ProductFunnelWizard", id },
+        { type: "ProductFunnelWizard", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetProductFunnelWizardsPagedQuery`
 export const {
-  useGetProductFunnelWizardsPagedQuery,     // immediate fetch
+  useGetProductFunnelWizardsPagedQuery, // immediate fetch
   useLazyGetProductFunnelWizardsPagedQuery, // lazy fetch
   useGetProductFunnelWizardQuery,
   useGetProductFunnelWizardsQuery,
@@ -150,4 +192,4 @@ export const {
   useUpdateProductFunnelWizardMutation,
   useDeleteProductFunnelWizardMutation,
   useDeleteProductFunnelWizardCascadeMutation,
-} = ProductFunnelWizardService
+} = ProductFunnelWizardService;

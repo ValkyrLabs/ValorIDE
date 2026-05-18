@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  ScanBuildArtifacts200Response,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddScanBuildArtifacts200ResponseMutation } from '../../services/ScanBuildArtifacts200ResponseService';
+import { ScanBuildArtifacts200Response } from "@thorapi/model";
+
+import { useAddScanBuildArtifacts200ResponseMutation } from "../../services/ScanBuildArtifacts200ResponseService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,17 +71,22 @@ ScanBuildArtifacts200Response
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        found: Yup.boolean(),
+  found: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ScanBuildArtifacts200ResponseForm: React.FC = () => {
-  const [addScanBuildArtifacts200Response, addScanBuildArtifacts200ResponseResult] = useAddScanBuildArtifacts200ResponseMutation();
+  const [
+    addScanBuildArtifacts200Response,
+    addScanBuildArtifacts200ResponseResult,
+  ] = useAddScanBuildArtifacts200ResponseMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -85,12 +96,18 @@ const ScanBuildArtifacts200ResponseForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -98,7 +115,7 @@ const ScanBuildArtifacts200ResponseForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ScanBuildArtifacts200Response> = {
-          found: false,
+    found: false,
   };
 
   // Permission Management Handlers
@@ -113,22 +130,30 @@ const ScanBuildArtifacts200ResponseForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new ScanBuildArtifacts200Response:', grants);
+    console.log(
+      "Permissions saved for new ScanBuildArtifacts200Response:",
+      grants,
+    );
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ScanBuildArtifacts200Response>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<ScanBuildArtifacts200Response>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
       console.log("ScanBuildArtifacts200Response form values:", values);
 
       // NOTE: depending on your generated endpoint, you may need { body: values }
-      const result = await addScanBuildArtifacts200Response(values as any).unwrap();
+      const result = await addScanBuildArtifacts200Response(
+        values as any,
+      ).unwrap();
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ScanBuildArtifacts200Response created successfully! Would you like to set permissions for this object?`
+          `ScanBuildArtifacts200Response created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -136,8 +161,8 @@ const ScanBuildArtifacts200ResponseForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create ScanBuildArtifacts200Response:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create ScanBuildArtifacts200Response:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -158,48 +183,42 @@ const ScanBuildArtifacts200ResponseForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addScanBuildArtifacts200ResponseResult.isLoading;
+          const isSaving =
+            isSubmitting || addScanBuildArtifacts200ResponseResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New ScanBuildArtifacts200Response
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    ScanBuildArtifacts200Response
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="found" className="nice-form-control">
                       <b>
                         Found:
-                        {touched.found &&
-                         !errors.found && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.found && !errors.found && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="found"
-                            name="found"
-                            checked={values.found || false}
-                            onChange={(e) => {
-                              setFieldTouched('found', true);
-                              setFieldValue('found', e.target.checked);
-                            }}
-                            isInvalid={!!errors.found}
-                            className={errors.found ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="found"
+                        name="found"
+                        checked={values.found || false}
+                        onChange={(e) => {
+                          setFieldTouched("found", true);
+                          setFieldValue("found", e.target.checked);
+                        }}
+                        isInvalid={!!errors.found}
+                        className={errors.found ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -209,45 +228,66 @@ const ScanBuildArtifacts200ResponseForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New ScanBuildArtifacts200Response
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      ScanBuildArtifacts200Response
+                    </CoolButton>
 
-                  {(addScanBuildArtifacts200ResponseResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addScanBuildArtifacts200ResponseResult as any).error ? (addScanBuildArtifacts200ResponseResult as any).error.data : (addScanBuildArtifacts200ResponseResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addScanBuildArtifacts200ResponseResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addScanBuildArtifacts200ResponseResult as any)
+                                .error
+                              ? (addScanBuildArtifacts200ResponseResult as any)
+                                  .error.data
+                              : (addScanBuildArtifacts200ResponseResult as any)
+                                  .error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addScanBuildArtifacts200ResponseResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addScanBuildArtifacts200ResponseResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addScanBuildArtifacts200ResponseResult: {JSON.stringify(addScanBuildArtifacts200ResponseResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addScanBuildArtifacts200ResponseResult:{" "}
+                    {JSON.stringify(addScanBuildArtifacts200ResponseResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -267,8 +307,5 @@ const ScanBuildArtifacts200ResponseForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default ScanBuildArtifacts200ResponseForm;
-

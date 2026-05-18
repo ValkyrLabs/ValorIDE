@@ -17,95 +17,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // Discount
 
-export const FETCH_DISCOUNT_REQUEST = 'FETCH_DISCOUNT_REQUEST';
-export const FETCH_DISCOUNT_SUCCESS = 'FETCH_DISCOUNT_SUCCESS';
-export const FETCH_DISCOUNT_FAILURE = 'FETCH_DISCOUNT_FAILURE';
+export const FETCH_DISCOUNT_REQUEST = "FETCH_DISCOUNT_REQUEST";
+export const FETCH_DISCOUNT_SUCCESS = "FETCH_DISCOUNT_SUCCESS";
+export const FETCH_DISCOUNT_FAILURE = "FETCH_DISCOUNT_FAILURE";
 
-export const ADD_DISCOUNT_REQUEST = 'ADD_DISCOUNT_REQUEST';
-export const ADD_DISCOUNT_SUCCESS = 'ADD_DISCOUNT_SUCCESS';
-export const ADD_DISCOUNT_FAILURE = 'ADD_DISCOUNT_FAILURE';
+export const ADD_DISCOUNT_REQUEST = "ADD_DISCOUNT_REQUEST";
+export const ADD_DISCOUNT_SUCCESS = "ADD_DISCOUNT_SUCCESS";
+export const ADD_DISCOUNT_FAILURE = "ADD_DISCOUNT_FAILURE";
 
-export const UPDATE_DISCOUNT_REQUEST = 'UPDATE_DISCOUNT_REQUEST';
-export const UPDATE_DISCOUNT_SUCCESS = 'UPDATE_DISCOUNT_SUCCESS';
-export const UPDATE_DISCOUNT_FAILURE = 'UPDATE_DISCOUNT_FAILURE';
+export const UPDATE_DISCOUNT_REQUEST = "UPDATE_DISCOUNT_REQUEST";
+export const UPDATE_DISCOUNT_SUCCESS = "UPDATE_DISCOUNT_SUCCESS";
+export const UPDATE_DISCOUNT_FAILURE = "UPDATE_DISCOUNT_FAILURE";
 
-export const DELETE_DISCOUNT_REQUEST = 'DELETE_DISCOUNT_REQUEST';
-export const DELETE_DISCOUNT_SUCCESS = 'DELETE_DISCOUNT_SUCCESS';
-export const DELETE_DISCOUNT_FAILURE = 'DELETE_DISCOUNT_FAILURE';
+export const DELETE_DISCOUNT_REQUEST = "DELETE_DISCOUNT_REQUEST";
+export const DELETE_DISCOUNT_SUCCESS = "DELETE_DISCOUNT_SUCCESS";
+export const DELETE_DISCOUNT_FAILURE = "DELETE_DISCOUNT_FAILURE";
 
-export const LIST_DISCOUNT_REQUEST = 'LIST_DISCOUNT_REQUEST';
-export const LIST_DISCOUNT_SUCCESS = 'LIST_DISCOUNT_SUCCESS';
-export const LIST_DISCOUNT_FAILURE = 'LIST_DISCOUNT_FAILURE';
+export const LIST_DISCOUNT_REQUEST = "LIST_DISCOUNT_REQUEST";
+export const LIST_DISCOUNT_SUCCESS = "LIST_DISCOUNT_SUCCESS";
+export const LIST_DISCOUNT_FAILURE = "LIST_DISCOUNT_FAILURE";
 
 export const addDiscountRequest = () => ({
-    type: ADD_DISCOUNT_REQUEST,
+  type: ADD_DISCOUNT_REQUEST,
 });
 
 export const addDiscountSuccess = (Discounts: any) => ({
-    type: ADD_DISCOUNT_SUCCESS,
-    payload: Discounts,
+  type: ADD_DISCOUNT_SUCCESS,
+  payload: Discounts,
 });
 
 export const addDiscountFailure = (error: Error) => ({
-    type: ADD_DISCOUNT_FAILURE,
-    payload: error,
+  type: ADD_DISCOUNT_FAILURE,
+  payload: error,
 });
 
-
 export const fetchDiscountRequest = () => ({
-    type: FETCH_DISCOUNT_REQUEST,
+  type: FETCH_DISCOUNT_REQUEST,
 });
 
 export const fetchDiscountSuccess = (Discounts: any) => ({
-    type: FETCH_DISCOUNT_SUCCESS,
-    payload: Discounts,
+  type: FETCH_DISCOUNT_SUCCESS,
+  payload: Discounts,
 });
 
 export const fetchDiscountFailure = (error: Error) => ({
-    type: FETCH_DISCOUNT_FAILURE,
-    payload: error,
+  type: FETCH_DISCOUNT_FAILURE,
+  payload: error,
 });
 
 export const listDiscountRequest = () => ({
-    type: LIST_DISCOUNT_REQUEST,
+  type: LIST_DISCOUNT_REQUEST,
 });
 
 export const listDiscountSuccess = (Discounts: any) => ({
-    type: LIST_DISCOUNT_SUCCESS,
-    payload: Discounts,
+  type: LIST_DISCOUNT_SUCCESS,
+  payload: Discounts,
 });
 
 export const listDiscountFailure = (error: Error) => ({
-    type: LIST_DISCOUNT_FAILURE,
-    payload: error,
+  type: LIST_DISCOUNT_FAILURE,
+  payload: error,
 });
 
 export const updateDiscountRequest = (Discount: any) => ({
-    type: UPDATE_DISCOUNT_REQUEST,
-    payload: Discount,
+  type: UPDATE_DISCOUNT_REQUEST,
+  payload: Discount,
 });
 
 export const updateDiscountSuccess = (Discount: any) => ({
-    type: UPDATE_DISCOUNT_SUCCESS,
-    payload: Discount,
+  type: UPDATE_DISCOUNT_SUCCESS,
+  payload: Discount,
 });
 
 export const updateDiscountFailure = (error: Error) => ({
-    type: UPDATE_DISCOUNT_FAILURE,
-    payload: error,
+  type: UPDATE_DISCOUNT_FAILURE,
+  payload: error,
 });
 
 export const deleteDiscountRequest = (Discount: any) => ({
-    type: DELETE_DISCOUNT_REQUEST,
-    payload: Discount,
+  type: DELETE_DISCOUNT_REQUEST,
+  payload: Discount,
 });
 
 export const deleteDiscountSuccess = (Discount: any) => ({
-    type: DELETE_DISCOUNT_SUCCESS,
-    payload: Discount,
+  type: DELETE_DISCOUNT_SUCCESS,
+  payload: Discount,
 });
 
 export const deleteDiscountFailure = (error: Error) => ({
-    type: DELETE_DISCOUNT_FAILURE,
-    payload: error,
+  type: DELETE_DISCOUNT_FAILURE,
+  payload: error,
 });

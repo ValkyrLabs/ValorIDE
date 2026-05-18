@@ -178,7 +178,7 @@ const RestoreButton = forwardRef(
       },
       children: label,
     });
-  }
+  },
 );
 export default UserMessage;
 //# sourceMappingURL=UserMessage.js.map

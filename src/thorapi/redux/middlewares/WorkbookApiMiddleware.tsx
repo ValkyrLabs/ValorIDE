@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_WORKBOOK_REQUEST,
-    FETCH_WORKBOOK_REQUEST,
-    LIST_WORKBOOK_REQUEST,
-    UPDATE_WORKBOOK_REQUEST,
-    DELETE_WORKBOOK_REQUEST,
-
-    addWorkbookFailure,
-    addWorkbookSuccess,
-
-    fetchWorkbookFailure,
-    fetchWorkbookSuccess,
-    
-    listWorkbookFailure,
-    listWorkbookSuccess,
-
-    updateWorkbookFailure,
-    updateWorkbookSuccess,
-    
-    deleteWorkbookFailure,
-    deleteWorkbookSuccess,
-    
-} from '../actions/WorkbookApiAction';
+  ADD_WORKBOOK_REQUEST,
+  FETCH_WORKBOOK_REQUEST,
+  LIST_WORKBOOK_REQUEST,
+  UPDATE_WORKBOOK_REQUEST,
+  DELETE_WORKBOOK_REQUEST,
+  addWorkbookFailure,
+  addWorkbookSuccess,
+  fetchWorkbookFailure,
+  fetchWorkbookSuccess,
+  listWorkbookFailure,
+  listWorkbookSuccess,
+  updateWorkbookFailure,
+  updateWorkbookSuccess,
+  deleteWorkbookFailure,
+  deleteWorkbookSuccess,
+} from "../actions/WorkbookApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Workbook
 */
 
-
-
-export const WorkbookMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("Workbook MIDDLEWARE: " + JSON.stringify(action) )
+export const WorkbookMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Workbook MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

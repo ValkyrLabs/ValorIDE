@@ -36,7 +36,7 @@ const CodeAccordian = ({
 }) => {
   const inferredLanguage = useMemo(
     () => code && (language ?? (path ? getLanguageFromPath(path) : undefined)),
-    [path, language, code]
+    [path, language, code],
   );
   const numberOfEdits = useMemo(() => {
     if (code) {

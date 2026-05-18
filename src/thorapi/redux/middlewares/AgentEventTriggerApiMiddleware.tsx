@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_AGENTEVENTTRIGGER_REQUEST,
-    FETCH_AGENTEVENTTRIGGER_REQUEST,
-    LIST_AGENTEVENTTRIGGER_REQUEST,
-    UPDATE_AGENTEVENTTRIGGER_REQUEST,
-    DELETE_AGENTEVENTTRIGGER_REQUEST,
-
-    addAgentEventTriggerFailure,
-    addAgentEventTriggerSuccess,
-
-    fetchAgentEventTriggerFailure,
-    fetchAgentEventTriggerSuccess,
-    
-    listAgentEventTriggerFailure,
-    listAgentEventTriggerSuccess,
-
-    updateAgentEventTriggerFailure,
-    updateAgentEventTriggerSuccess,
-    
-    deleteAgentEventTriggerFailure,
-    deleteAgentEventTriggerSuccess,
-    
-} from '../actions/AgentEventTriggerApiAction';
+  ADD_AGENTEVENTTRIGGER_REQUEST,
+  FETCH_AGENTEVENTTRIGGER_REQUEST,
+  LIST_AGENTEVENTTRIGGER_REQUEST,
+  UPDATE_AGENTEVENTTRIGGER_REQUEST,
+  DELETE_AGENTEVENTTRIGGER_REQUEST,
+  addAgentEventTriggerFailure,
+  addAgentEventTriggerSuccess,
+  fetchAgentEventTriggerFailure,
+  fetchAgentEventTriggerSuccess,
+  listAgentEventTriggerFailure,
+  listAgentEventTriggerSuccess,
+  updateAgentEventTriggerFailure,
+  updateAgentEventTriggerSuccess,
+  deleteAgentEventTriggerFailure,
+  deleteAgentEventTriggerSuccess,
+} from "../actions/AgentEventTriggerApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: AgentEventTrigger
 */
 
-
-
-export const AgentEventTriggerMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("AgentEventTrigger MIDDLEWARE: " + JSON.stringify(action) )
+export const AgentEventTriggerMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("AgentEventTrigger MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

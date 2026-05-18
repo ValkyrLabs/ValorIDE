@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_CHATCOMPLETIONRESPONSE_REQUEST,
-    FETCH_CHATCOMPLETIONRESPONSE_REQUEST,
-    LIST_CHATCOMPLETIONRESPONSE_REQUEST,
-    UPDATE_CHATCOMPLETIONRESPONSE_REQUEST,
-    DELETE_CHATCOMPLETIONRESPONSE_REQUEST,
-
-    addChatCompletionResponseFailure,
-    addChatCompletionResponseSuccess,
-
-    fetchChatCompletionResponseFailure,
-    fetchChatCompletionResponseSuccess,
-    
-    listChatCompletionResponseFailure,
-    listChatCompletionResponseSuccess,
-
-    updateChatCompletionResponseFailure,
-    updateChatCompletionResponseSuccess,
-    
-    deleteChatCompletionResponseFailure,
-    deleteChatCompletionResponseSuccess,
-    
-} from '../actions/ChatCompletionResponseApiAction';
+  ADD_CHATCOMPLETIONRESPONSE_REQUEST,
+  FETCH_CHATCOMPLETIONRESPONSE_REQUEST,
+  LIST_CHATCOMPLETIONRESPONSE_REQUEST,
+  UPDATE_CHATCOMPLETIONRESPONSE_REQUEST,
+  DELETE_CHATCOMPLETIONRESPONSE_REQUEST,
+  addChatCompletionResponseFailure,
+  addChatCompletionResponseSuccess,
+  fetchChatCompletionResponseFailure,
+  fetchChatCompletionResponseSuccess,
+  listChatCompletionResponseFailure,
+  listChatCompletionResponseSuccess,
+  updateChatCompletionResponseFailure,
+  updateChatCompletionResponseSuccess,
+  deleteChatCompletionResponseFailure,
+  deleteChatCompletionResponseSuccess,
+} from "../actions/ChatCompletionResponseApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: ChatCompletionResponse
 */
 
-
-
-export const ChatCompletionResponseMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("ChatCompletionResponse MIDDLEWARE: " + JSON.stringify(action) )
+export const ChatCompletionResponseMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("ChatCompletionResponse MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

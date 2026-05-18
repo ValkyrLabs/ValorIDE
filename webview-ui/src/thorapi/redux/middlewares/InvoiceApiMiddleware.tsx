@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_INVOICE_REQUEST,
-    FETCH_INVOICE_REQUEST,
-    LIST_INVOICE_REQUEST,
-    UPDATE_INVOICE_REQUEST,
-    DELETE_INVOICE_REQUEST,
-
-    addInvoiceFailure,
-    addInvoiceSuccess,
-
-    fetchInvoiceFailure,
-    fetchInvoiceSuccess,
-    
-    listInvoiceFailure,
-    listInvoiceSuccess,
-
-    updateInvoiceFailure,
-    updateInvoiceSuccess,
-    
-    deleteInvoiceFailure,
-    deleteInvoiceSuccess,
-    
-} from '../actions/InvoiceApiAction';
+  ADD_INVOICE_REQUEST,
+  FETCH_INVOICE_REQUEST,
+  LIST_INVOICE_REQUEST,
+  UPDATE_INVOICE_REQUEST,
+  DELETE_INVOICE_REQUEST,
+  addInvoiceFailure,
+  addInvoiceSuccess,
+  fetchInvoiceFailure,
+  fetchInvoiceSuccess,
+  listInvoiceFailure,
+  listInvoiceSuccess,
+  updateInvoiceFailure,
+  updateInvoiceSuccess,
+  deleteInvoiceFailure,
+  deleteInvoiceSuccess,
+} from "../actions/InvoiceApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Invoice
 */
 
-
-
-export const InvoiceMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("Invoice MIDDLEWARE: " + JSON.stringify(action) )
+export const InvoiceMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Invoice MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { PublishWorkflowRequest } from '@thorapi/model/PublishWorkflowRequest';
+import { PublishWorkflowRequest } from "@thorapi/model/PublishWorkflowRequest";
 
 const PublishWorkflowRequestSlice = createSlice({
   name: "PublishWorkflowRequests",
@@ -27,20 +27,25 @@ const PublishWorkflowRequestSlice = createSlice({
     },
 
     PublishWorkflowRequestValueToggled(state, action) {
-      console.log("PublishWorkflowRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const PublishWorkflowRequest:PublishWorkflowRequest = state.find((PublishWorkflowRequest) => PublishWorkflowRequest.id === action.payload.PublishWorkflowRequestId);
+      console.log("PublishWorkflowRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const PublishWorkflowRequest: PublishWorkflowRequest = state.find(
+        (PublishWorkflowRequest) =>
+          PublishWorkflowRequest.id === action.payload.PublishWorkflowRequestId,
+      );
       if (PublishWorkflowRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     PublishWorkflowRequestpropertySet(state, action) {
-      const PublishWorkflowRequest = state.find((PublishWorkflowRequest) => PublishWorkflowRequest.id === action.payload.PublishWorkflowRequestId);
+      const PublishWorkflowRequest = state.find(
+        (PublishWorkflowRequest) =>
+          PublishWorkflowRequest.id === action.payload.PublishWorkflowRequestId,
+      );
       if (PublishWorkflowRequest) {
-      //  PublishWorkflowRequest[action.property] = action.payload[action.property];
+        //  PublishWorkflowRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const PublishWorkflowRequestSlice = createSlice({
 export const {
   PublishWorkflowRequestAdded,
   PublishWorkflowRequestValueToggled,
-  PublishWorkflowRequestpropertySet
+  PublishWorkflowRequestpropertySet,
 } = PublishWorkflowRequestSlice.actions;
 export default PublishWorkflowRequestSlice.reducer;

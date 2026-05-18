@@ -11,7 +11,7 @@ export const usePeerCommunication = () => {
   useEffect(() => {
     const handlePresence = (list) =>
       setPeerCount(
-        Array.isArray(list) ? list.length : typeof list === "number" ? list : 0
+        Array.isArray(list) ? list.length : typeof list === "number" ? list : 0,
       );
     const handleP2PStatus = (s) =>
       setP2pOpen(typeof s?.open === "number" ? s.open : 0);
@@ -72,7 +72,7 @@ export const usePeerCommunication = () => {
             timestamp: Date.now(),
             reason: "peer-discovery",
           },
-        })
+        }),
       );
       // Send presence announcement over websocket broker
       window.dispatchEvent(
@@ -88,7 +88,7 @@ export const usePeerCommunication = () => {
             messageId: Math.random().toString(36).substring(2, 12),
             timestamp: Date.now(),
           },
-        })
+        }),
       );
     } catch (e) {
       console.warn("Failed to establish websocket broker connection:", e);

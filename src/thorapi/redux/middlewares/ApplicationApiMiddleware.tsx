@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_APPLICATION_REQUEST,
-    FETCH_APPLICATION_REQUEST,
-    LIST_APPLICATION_REQUEST,
-    UPDATE_APPLICATION_REQUEST,
-    DELETE_APPLICATION_REQUEST,
-
-    addApplicationFailure,
-    addApplicationSuccess,
-
-    fetchApplicationFailure,
-    fetchApplicationSuccess,
-    
-    listApplicationFailure,
-    listApplicationSuccess,
-
-    updateApplicationFailure,
-    updateApplicationSuccess,
-    
-    deleteApplicationFailure,
-    deleteApplicationSuccess,
-    
-} from '../actions/ApplicationApiAction';
+  ADD_APPLICATION_REQUEST,
+  FETCH_APPLICATION_REQUEST,
+  LIST_APPLICATION_REQUEST,
+  UPDATE_APPLICATION_REQUEST,
+  DELETE_APPLICATION_REQUEST,
+  addApplicationFailure,
+  addApplicationSuccess,
+  fetchApplicationFailure,
+  fetchApplicationSuccess,
+  listApplicationFailure,
+  listApplicationSuccess,
+  updateApplicationFailure,
+  updateApplicationSuccess,
+  deleteApplicationFailure,
+  deleteApplicationSuccess,
+} from "../actions/ApplicationApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Application
 */
 
-
-
-export const ApplicationMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("Application MIDDLEWARE: " + JSON.stringify(action) )
+export const ApplicationMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Application MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

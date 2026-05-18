@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ApiSpineKpiSnapshot } from '@thorapi/model/ApiSpineKpiSnapshot';
+import { ApiSpineKpiSnapshot } from "@thorapi/model/ApiSpineKpiSnapshot";
 
 const ApiSpineKpiSnapshotSlice = createSlice({
   name: "ApiSpineKpiSnapshots",
@@ -27,20 +27,25 @@ const ApiSpineKpiSnapshotSlice = createSlice({
     },
 
     ApiSpineKpiSnapshotValueToggled(state, action) {
-      console.log("ApiSpineKpiSnapshot TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ApiSpineKpiSnapshot:ApiSpineKpiSnapshot = state.find((ApiSpineKpiSnapshot) => ApiSpineKpiSnapshot.id === action.payload.ApiSpineKpiSnapshotId);
+      console.log("ApiSpineKpiSnapshot TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ApiSpineKpiSnapshot: ApiSpineKpiSnapshot = state.find(
+        (ApiSpineKpiSnapshot) =>
+          ApiSpineKpiSnapshot.id === action.payload.ApiSpineKpiSnapshotId,
+      );
       if (ApiSpineKpiSnapshot) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ApiSpineKpiSnapshotpropertySet(state, action) {
-      const ApiSpineKpiSnapshot = state.find((ApiSpineKpiSnapshot) => ApiSpineKpiSnapshot.id === action.payload.ApiSpineKpiSnapshotId);
+      const ApiSpineKpiSnapshot = state.find(
+        (ApiSpineKpiSnapshot) =>
+          ApiSpineKpiSnapshot.id === action.payload.ApiSpineKpiSnapshotId,
+      );
       if (ApiSpineKpiSnapshot) {
-      //  ApiSpineKpiSnapshot[action.property] = action.payload[action.property];
+        //  ApiSpineKpiSnapshot[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const ApiSpineKpiSnapshotSlice = createSlice({
 export const {
   ApiSpineKpiSnapshotAdded,
   ApiSpineKpiSnapshotValueToggled,
-  ApiSpineKpiSnapshotpropertySet
+  ApiSpineKpiSnapshotpropertySet,
 } = ApiSpineKpiSnapshotSlice.actions;
 export default ApiSpineKpiSnapshotSlice.reducer;

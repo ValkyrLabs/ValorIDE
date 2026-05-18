@@ -13,47 +13,69 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { StartTrustExecutionRequest } from '@thorapi/model/StartTrustExecutionRequest'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { StartTrustExecutionRequest } from "@thorapi/model/StartTrustExecutionRequest";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type StartTrustExecutionRequestResponse = StartTrustExecutionRequest[]
+type StartTrustExecutionRequestResponse = StartTrustExecutionRequest[];
 
-const toStartTrustExecutionRequestList = (result: unknown): StartTrustExecutionRequestResponse => {
+const toStartTrustExecutionRequestList = (
+  result: unknown,
+): StartTrustExecutionRequestResponse => {
   if (Array.isArray(result)) {
-    return result as StartTrustExecutionRequestResponse
+    return result as StartTrustExecutionRequestResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as StartTrustExecutionRequestResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as StartTrustExecutionRequestResponse)
+    : [];
+};
 
 export const StartTrustExecutionRequestService = createApi({
-  reducerPath: 'StartTrustExecutionRequest', // This should remain unique
+  reducerPath: "StartTrustExecutionRequest", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['StartTrustExecutionRequest'],
+  tagTypes: ["StartTrustExecutionRequest"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getStartTrustExecutionRequestsPaged: build.query<StartTrustExecutionRequestResponse, { page: number; size?: number; example?: Partial<StartTrustExecutionRequest> }>({
+    getStartTrustExecutionRequestsPaged: build.query<
+      StartTrustExecutionRequestResponse,
+      {
+        page: number;
+        size?: number;
+        example?: Partial<StartTrustExecutionRequest>;
+      }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `StartTrustExecutionRequest?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `StartTrustExecutionRequest?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toStartTrustExecutionRequestList(result)
+        const rows = toStartTrustExecutionRequestList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'StartTrustExecutionRequest' as const, id })),
-          { type: 'StartTrustExecutionRequest', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({
+              type: "StartTrustExecutionRequest" as const,
+              id,
+            })),
+          { type: "StartTrustExecutionRequest", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getStartTrustExecutionRequests: build.query<StartTrustExecutionRequestResponse, { example?: Partial<StartTrustExecutionRequest> } | void>({
+    getStartTrustExecutionRequests: build.query<
+      StartTrustExecutionRequestResponse,
+      { example?: Partial<StartTrustExecutionRequest> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +84,121 @@ export const StartTrustExecutionRequestService = createApi({
         return `StartTrustExecutionRequest`;
       },
       providesTags: (result) => {
-        const rows = toStartTrustExecutionRequestList(result)
+        const rows = toStartTrustExecutionRequestList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'StartTrustExecutionRequest' as const, id })),
-          { type: 'StartTrustExecutionRequest', id: 'LIST' },
-        ]
+            .map(({ id }) => ({
+              type: "StartTrustExecutionRequest" as const,
+              id,
+            })),
+          { type: "StartTrustExecutionRequest", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addStartTrustExecutionRequest: build.mutation<StartTrustExecutionRequest, Partial<StartTrustExecutionRequest>>({
+    addStartTrustExecutionRequest: build.mutation<
+      StartTrustExecutionRequest,
+      Partial<StartTrustExecutionRequest>
+    >({
       query: (body) => ({
         url: `StartTrustExecutionRequest`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'StartTrustExecutionRequest', id: 'LIST' }],
+      invalidatesTags: [{ type: "StartTrustExecutionRequest", id: "LIST" }],
     }),
 
     // 4) Get single by ID
-    getStartTrustExecutionRequest: build.query<StartTrustExecutionRequest, string>({
+    getStartTrustExecutionRequest: build.query<
+      StartTrustExecutionRequest,
+      string
+    >({
       query: (id) => `StartTrustExecutionRequest/${id}`,
-      providesTags: (result, error, id) => [{ type: 'StartTrustExecutionRequest', id }],
+      providesTags: (result, error, id) => [
+        { type: "StartTrustExecutionRequest", id },
+      ],
     }),
 
     // 5) Update
-    updateStartTrustExecutionRequest: build.mutation<void, Pick<StartTrustExecutionRequest, 'id'> & Partial<StartTrustExecutionRequest>>({
+    updateStartTrustExecutionRequest: build.mutation<
+      void,
+      Pick<StartTrustExecutionRequest, "id"> &
+        Partial<StartTrustExecutionRequest>
+    >({
       query: ({ id, ...patch }) => ({
         url: `StartTrustExecutionRequest/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            StartTrustExecutionRequestService.util.updateQueryData('getStartTrustExecutionRequest', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            StartTrustExecutionRequestService.util.updateQueryData(
+              "getStartTrustExecutionRequest",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<StartTrustExecutionRequest, 'id'>) => [
-        { type: 'StartTrustExecutionRequest', id },
-        { type: 'StartTrustExecutionRequest', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<StartTrustExecutionRequest, "id">,
+      ) => [
+        { type: "StartTrustExecutionRequest", id },
+        { type: "StartTrustExecutionRequest", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteStartTrustExecutionRequest: build.mutation<{ success: boolean; id: string }, number>({
+    deleteStartTrustExecutionRequest: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `StartTrustExecutionRequest/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'StartTrustExecutionRequest', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "StartTrustExecutionRequest", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteStartTrustExecutionRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteStartTrustExecutionRequestCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `StartTrustExecutionRequest/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'StartTrustExecutionRequest', id }, { type: 'StartTrustExecutionRequest', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "StartTrustExecutionRequest", id },
+        { type: "StartTrustExecutionRequest", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetStartTrustExecutionRequestsPagedQuery`
 export const {
-  useGetStartTrustExecutionRequestsPagedQuery,     // immediate fetch
+  useGetStartTrustExecutionRequestsPagedQuery, // immediate fetch
   useLazyGetStartTrustExecutionRequestsPagedQuery, // lazy fetch
   useGetStartTrustExecutionRequestQuery,
   useGetStartTrustExecutionRequestsQuery,
@@ -150,4 +206,4 @@ export const {
   useUpdateStartTrustExecutionRequestMutation,
   useDeleteStartTrustExecutionRequestMutation,
   useDeleteStartTrustExecutionRequestCascadeMutation,
-} = StartTrustExecutionRequestService
+} = StartTrustExecutionRequestService;

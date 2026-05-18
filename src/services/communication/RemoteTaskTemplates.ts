@@ -1,4 +1,8 @@
-export type RemoteTaskTemplateId = "bugfix" | "refactor" | "docs" | "data-patch";
+export type RemoteTaskTemplateId =
+  | "bugfix"
+  | "refactor"
+  | "docs"
+  | "data-patch";
 
 export interface RemoteTaskTemplateField {
   key: string;
@@ -34,9 +38,13 @@ const CATALOG: RemoteTaskTemplate[] = [
     fields: [
       { key: "issue", label: "Issue", required: true },
       { key: "target", label: "Target module", required: true },
-      { key: "constraints", label: "Constraints", defaultValue: "Keep scope minimal." }
+      {
+        key: "constraints",
+        label: "Constraints",
+        defaultValue: "Keep scope minimal.",
+      },
     ],
-    prompt: "Fix issue {{issue}} in {{target}}. Constraints: {{constraints}}"
+    prompt: "Fix issue {{issue}} in {{target}}. Constraints: {{constraints}}",
   },
   {
     id: "refactor",
@@ -44,9 +52,9 @@ const CATALOG: RemoteTaskTemplate[] = [
     summary: "Improve internal design while preserving behavior.",
     fields: [
       { key: "target", label: "Target module", required: true },
-      { key: "goal", label: "Refactor goal", required: true }
+      { key: "goal", label: "Refactor goal", required: true },
     ],
-    prompt: "Refactor {{target}} to improve {{goal}} without behavior changes."
+    prompt: "Refactor {{target}} to improve {{goal}} without behavior changes.",
   },
   {
     id: "docs",
@@ -54,9 +62,10 @@ const CATALOG: RemoteTaskTemplate[] = [
     summary: "Improve or add documentation with examples.",
     fields: [
       { key: "topic", label: "Topic", required: true },
-      { key: "audience", label: "Audience", defaultValue: "engineers" }
+      { key: "audience", label: "Audience", defaultValue: "engineers" },
     ],
-    prompt: "Write documentation for {{topic}} for {{audience}}, including practical examples."
+    prompt:
+      "Write documentation for {{topic}} for {{audience}}, including practical examples.",
   },
   {
     id: "data-patch",
@@ -64,15 +73,19 @@ const CATALOG: RemoteTaskTemplate[] = [
     summary: "Apply a deterministic data correction with rollback notes.",
     fields: [
       { key: "dataset", label: "Dataset", required: true },
-      { key: "change", label: "Requested change", required: true }
+      { key: "change", label: "Requested change", required: true },
     ],
-    prompt: "Create a safe data patch for {{dataset}} that performs: {{change}}. Include rollback steps."
-  }
+    prompt:
+      "Create a safe data patch for {{dataset}} that performs: {{change}}. Include rollback steps.",
+  },
 ];
 
 export class RemoteTaskTemplateCatalog {
   list(): RemoteTaskTemplate[] {
-    return CATALOG.map((template) => ({ ...template, fields: [...template.fields] }));
+    return CATALOG.map((template) => ({
+      ...template,
+      fields: [...template.fields],
+    }));
   }
 
   get(templateId: RemoteTaskTemplateId): RemoteTaskTemplate {
@@ -83,7 +96,10 @@ export class RemoteTaskTemplateCatalog {
     return { ...template, fields: [...template.fields] };
   }
 
-  renderPrompt(templateId: RemoteTaskTemplateId, payload: RemoteTaskTemplatePayload): string {
+  renderPrompt(
+    templateId: RemoteTaskTemplateId,
+    payload: RemoteTaskTemplatePayload,
+  ): string {
     const template = this.get(templateId);
 
     for (const field of template.fields) {
@@ -93,16 +109,20 @@ export class RemoteTaskTemplateCatalog {
       }
     }
 
-    return template.prompt.replace(/{{\s*([a-zA-Z0-9_-]+)\s*}}/g, (_match, key: string) => {
-      const value = payload[key] ?? template.fields.find((field) => field.key === key)?.defaultValue;
-      return value?.trim() ?? "";
-    }).trim();
+    return template.prompt
+      .replace(/{{\s*([a-zA-Z0-9_-]+)\s*}}/g, (_match, key: string) => {
+        const value =
+          payload[key] ??
+          template.fields.find((field) => field.key === key)?.defaultValue;
+        return value?.trim() ?? "";
+      })
+      .trim();
   }
 
   buildExecutionSummary(
     templateId: RemoteTaskTemplateId,
     payload: RemoteTaskTemplatePayload,
-    outputLinks: string[]
+    outputLinks: string[],
   ): RemoteTaskExecutionSummary {
     const template = this.get(templateId);
     return {

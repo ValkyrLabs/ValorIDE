@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpServiceRegistry } from '@thorapi/model/McpServiceRegistry';
+import { McpServiceRegistry } from "@thorapi/model/McpServiceRegistry";
 
 const McpServiceRegistrySlice = createSlice({
   name: "McpServiceRegistrys",
@@ -27,20 +27,25 @@ const McpServiceRegistrySlice = createSlice({
     },
 
     McpServiceRegistryValueToggled(state, action) {
-      console.log("McpServiceRegistry TOGGLE")
-      console.warn(JSON.stringify(action))
-      const McpServiceRegistry:McpServiceRegistry = state.find((McpServiceRegistry) => McpServiceRegistry.id === action.payload.McpServiceRegistryId);
+      console.log("McpServiceRegistry TOGGLE");
+      console.warn(JSON.stringify(action));
+      const McpServiceRegistry: McpServiceRegistry = state.find(
+        (McpServiceRegistry) =>
+          McpServiceRegistry.id === action.payload.McpServiceRegistryId,
+      );
       if (McpServiceRegistry) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     McpServiceRegistrypropertySet(state, action) {
-      const McpServiceRegistry = state.find((McpServiceRegistry) => McpServiceRegistry.id === action.payload.McpServiceRegistryId);
+      const McpServiceRegistry = state.find(
+        (McpServiceRegistry) =>
+          McpServiceRegistry.id === action.payload.McpServiceRegistryId,
+      );
       if (McpServiceRegistry) {
-      //  McpServiceRegistry[action.property] = action.payload[action.property];
+        //  McpServiceRegistry[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const McpServiceRegistrySlice = createSlice({
 export const {
   McpServiceRegistryAdded,
   McpServiceRegistryValueToggled,
-  McpServiceRegistrypropertySet
+  McpServiceRegistrypropertySet,
 } = McpServiceRegistrySlice.actions;
 export default McpServiceRegistrySlice.reducer;

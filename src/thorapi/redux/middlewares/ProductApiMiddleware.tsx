@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_PRODUCT_REQUEST,
-    FETCH_PRODUCT_REQUEST,
-    LIST_PRODUCT_REQUEST,
-    UPDATE_PRODUCT_REQUEST,
-    DELETE_PRODUCT_REQUEST,
-
-    addProductFailure,
-    addProductSuccess,
-
-    fetchProductFailure,
-    fetchProductSuccess,
-    
-    listProductFailure,
-    listProductSuccess,
-
-    updateProductFailure,
-    updateProductSuccess,
-    
-    deleteProductFailure,
-    deleteProductSuccess,
-    
-} from '../actions/ProductApiAction';
+  ADD_PRODUCT_REQUEST,
+  FETCH_PRODUCT_REQUEST,
+  LIST_PRODUCT_REQUEST,
+  UPDATE_PRODUCT_REQUEST,
+  DELETE_PRODUCT_REQUEST,
+  addProductFailure,
+  addProductSuccess,
+  fetchProductFailure,
+  fetchProductSuccess,
+  listProductFailure,
+  listProductSuccess,
+  updateProductFailure,
+  updateProductSuccess,
+  deleteProductFailure,
+  deleteProductSuccess,
+} from "../actions/ProductApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Product
 */
 
-
-
-export const ProductMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("Product MIDDLEWARE: " + JSON.stringify(action) )
+export const ProductMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Product MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

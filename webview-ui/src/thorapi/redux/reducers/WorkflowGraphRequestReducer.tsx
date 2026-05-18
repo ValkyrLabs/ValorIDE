@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { WorkflowGraphRequest } from '@thorapi/model/WorkflowGraphRequest';
+import { WorkflowGraphRequest } from "@thorapi/model/WorkflowGraphRequest";
 
 const WorkflowGraphRequestSlice = createSlice({
   name: "WorkflowGraphRequests",
@@ -27,20 +27,25 @@ const WorkflowGraphRequestSlice = createSlice({
     },
 
     WorkflowGraphRequestValueToggled(state, action) {
-      console.log("WorkflowGraphRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const WorkflowGraphRequest:WorkflowGraphRequest = state.find((WorkflowGraphRequest) => WorkflowGraphRequest.id === action.payload.WorkflowGraphRequestId);
+      console.log("WorkflowGraphRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const WorkflowGraphRequest: WorkflowGraphRequest = state.find(
+        (WorkflowGraphRequest) =>
+          WorkflowGraphRequest.id === action.payload.WorkflowGraphRequestId,
+      );
       if (WorkflowGraphRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     WorkflowGraphRequestpropertySet(state, action) {
-      const WorkflowGraphRequest = state.find((WorkflowGraphRequest) => WorkflowGraphRequest.id === action.payload.WorkflowGraphRequestId);
+      const WorkflowGraphRequest = state.find(
+        (WorkflowGraphRequest) =>
+          WorkflowGraphRequest.id === action.payload.WorkflowGraphRequestId,
+      );
       if (WorkflowGraphRequest) {
-      //  WorkflowGraphRequest[action.property] = action.payload[action.property];
+        //  WorkflowGraphRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const WorkflowGraphRequestSlice = createSlice({
 export const {
   WorkflowGraphRequestAdded,
   WorkflowGraphRequestValueToggled,
-  WorkflowGraphRequestpropertySet
+  WorkflowGraphRequestpropertySet,
 } = WorkflowGraphRequestSlice.actions;
 export default WorkflowGraphRequestSlice.reducer;

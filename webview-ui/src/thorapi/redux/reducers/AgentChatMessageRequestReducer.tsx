@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AgentChatMessageRequest } from '@thorapi/model/AgentChatMessageRequest';
+import { AgentChatMessageRequest } from "@thorapi/model/AgentChatMessageRequest";
 
 const AgentChatMessageRequestSlice = createSlice({
   name: "AgentChatMessageRequests",
@@ -27,20 +27,27 @@ const AgentChatMessageRequestSlice = createSlice({
     },
 
     AgentChatMessageRequestValueToggled(state, action) {
-      console.log("AgentChatMessageRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const AgentChatMessageRequest:AgentChatMessageRequest = state.find((AgentChatMessageRequest) => AgentChatMessageRequest.id === action.payload.AgentChatMessageRequestId);
+      console.log("AgentChatMessageRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const AgentChatMessageRequest: AgentChatMessageRequest = state.find(
+        (AgentChatMessageRequest) =>
+          AgentChatMessageRequest.id ===
+          action.payload.AgentChatMessageRequestId,
+      );
       if (AgentChatMessageRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     AgentChatMessageRequestpropertySet(state, action) {
-      const AgentChatMessageRequest = state.find((AgentChatMessageRequest) => AgentChatMessageRequest.id === action.payload.AgentChatMessageRequestId);
+      const AgentChatMessageRequest = state.find(
+        (AgentChatMessageRequest) =>
+          AgentChatMessageRequest.id ===
+          action.payload.AgentChatMessageRequestId,
+      );
       if (AgentChatMessageRequest) {
-      //  AgentChatMessageRequest[action.property] = action.payload[action.property];
+        //  AgentChatMessageRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const AgentChatMessageRequestSlice = createSlice({
 export const {
   AgentChatMessageRequestAdded,
   AgentChatMessageRequestValueToggled,
-  AgentChatMessageRequestpropertySet
+  AgentChatMessageRequestpropertySet,
 } = AgentChatMessageRequestSlice.actions;
 export default AgentChatMessageRequestSlice.reducer;

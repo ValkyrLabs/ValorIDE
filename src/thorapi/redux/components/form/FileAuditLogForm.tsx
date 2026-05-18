@@ -13,32 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  FileAuditLog,
-  FileAuditLogActionEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddFileAuditLogMutation } from '../../services/FileAuditLogService';
+import { FileAuditLog, FileAuditLogActionEnum } from "@thorapi/model";
+
+import { useAddFileAuditLogMutation } from "../../services/FileAuditLogService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -63,14 +68,14 @@ Audit trail entry for file-related actions.
 -------------------------------------------------------- */
 const ActionValidation = () => {
   return [
-    'upload',
-    'download',
-    'view',
-    'edit',
-    'delete',
-    'share',
-    'move',
-    'copy',
+    "upload",
+    "download",
+    "view",
+    "edit",
+    "delete",
+    "share",
+    "move",
+    "copy",
   ];
 };
 
@@ -78,16 +83,18 @@ const ActionValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-      action: Yup.mixed()
-        .oneOf(ActionValidation(), "Invalid value for action")
-        .required("action is required."),
-        details: Yup.string(),
-        ipAddress: Yup.string(),
-        userAgent: Yup.string(),
-        trashed: Yup.boolean(),
+  action: Yup.mixed()
+    .oneOf(ActionValidation(), "Invalid value for action")
+    .required("action is required."),
+  details: Yup.string(),
+  ipAddress: Yup.string(),
+  userAgent: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -104,12 +111,18 @@ const FileAuditLogForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -117,11 +130,11 @@ const FileAuditLogForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<FileAuditLog> = {
-        action: undefined,
-          details: '',
-          ipAddress: '',
-          userAgent: '',
-          trashed: false,
+    action: undefined,
+    details: "",
+    ipAddress: "",
+    userAgent: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -136,11 +149,14 @@ const FileAuditLogForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new FileAuditLog:', grants);
+    console.log("Permissions saved for new FileAuditLog:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<FileAuditLog>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<FileAuditLog>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -151,7 +167,7 @@ const FileAuditLogForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `FileAuditLog created successfully! Would you like to set permissions for this object?`
+          `FileAuditLog created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -159,8 +175,8 @@ const FileAuditLogForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create FileAuditLog:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create FileAuditLog:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -181,46 +197,45 @@ const FileAuditLogForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addFileAuditLogResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New FileAuditLog
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New FileAuditLog
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="action" className="nice-form-control">
                       <b>
                         Action:
-                        {touched.action &&
-                         !errors.action && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.action && !errors.action && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="action"
-                          value={values.action || ''}
-                          className={
-                            errors.action
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('action', true);
-                            setFieldValue('action', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Action" />
-                          <ActionLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="action"
+                        value={values.action || ""}
+                        className={
+                          errors.action
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("action", true);
+                          setFieldValue("action", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Action" />
+                        <ActionLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -232,28 +247,21 @@ const FileAuditLogForm: React.FC = () => {
                     <label htmlFor="details" className="nice-form-control">
                       <b>
                         Details:
-                        {touched.details &&
-                         !errors.details && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.details && !errors.details && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="details"
-                            value={values?.details}
-                            placeholder="Details"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="details"
+                        value={values?.details}
+                        placeholder="Details"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -265,28 +273,21 @@ const FileAuditLogForm: React.FC = () => {
                     <label htmlFor="ipAddress" className="nice-form-control">
                       <b>
                         Ip Address:
-                        {touched.ipAddress &&
-                         !errors.ipAddress && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.ipAddress && !errors.ipAddress && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="ipAddress"
-                            value={values?.ipAddress}
-                            placeholder="Ip Address"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="ipAddress"
+                        value={values?.ipAddress}
+                        placeholder="Ip Address"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -298,28 +299,21 @@ const FileAuditLogForm: React.FC = () => {
                     <label htmlFor="userAgent" className="nice-form-control">
                       <b>
                         User Agent:
-                        {touched.userAgent &&
-                         !errors.userAgent && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.userAgent && !errors.userAgent && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="userAgent"
-                            value={values?.userAgent}
-                            placeholder="User Agent"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="userAgent"
+                        value={values?.userAgent}
+                        placeholder="User Agent"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -331,32 +325,25 @@ const FileAuditLogForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -366,45 +353,59 @@ const FileAuditLogForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New FileAuditLog
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New FileAuditLog
+                    </CoolButton>
 
-                  {(addFileAuditLogResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addFileAuditLogResult as any).error ? (addFileAuditLogResult as any).error.data : (addFileAuditLogResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addFileAuditLogResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addFileAuditLogResult as any).error
+                              ? (addFileAuditLogResult as any).error.data
+                              : (addFileAuditLogResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addFileAuditLogResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addFileAuditLogResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addFileAuditLogResult: {JSON.stringify(addFileAuditLogResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addFileAuditLogResult:{" "}
+                    {JSON.stringify(addFileAuditLogResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -436,20 +437,17 @@ kebabcase action-lookup
 const ActionLookup = () => {
   return (
     <>
-      <option value='upload' label="Upload" />
-      <option value='download' label="Download" />
-      <option value='view' label="View" />
-      <option value='edit' label="Edit" />
-      <option value='delete' label="Delete" />
-      <option value='share' label="Share" />
-      <option value='move' label="Move" />
-      <option value='copy' label="Copy" />
+      <option value="upload" label="Upload" />
+      <option value="download" label="Download" />
+      <option value="view" label="View" />
+      <option value="edit" label="Edit" />
+      <option value="delete" label="Delete" />
+      <option value="share" label="Share" />
+      <option value="move" label="Move" />
+      <option value="copy" label="Copy" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default FileAuditLogForm;
-

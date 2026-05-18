@@ -19,20 +19,32 @@ Description: HostInstance
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, HostInstance } from '@thorapi/model';
-import { useGetHostInstancesQuery, useAddHostInstanceMutation, useUpdateHostInstanceMutation } from '../../services/HostInstanceService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, HostInstance } from "@thorapi/model";
+import {
+  useGetHostInstancesQuery,
+  useAddHostInstanceMutation,
+  useUpdateHostInstanceMutation,
+} from "../../services/HostInstanceService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const HostInstanceChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetHostInstancesQuery();
 
   const [data, setData] = useState<HostInstance[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<HostInstance>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const HostInstanceChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const HostInstanceChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((hostinstance: DataObject) => [hostinstance])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((hostinstance: DataObject) => [hostinstance])}
+        />
+      )}
     </>
   );
 };

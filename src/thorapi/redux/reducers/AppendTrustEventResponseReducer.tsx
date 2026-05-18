@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AppendTrustEventResponse } from '@thorapi/model/AppendTrustEventResponse';
+import { AppendTrustEventResponse } from "@thorapi/model/AppendTrustEventResponse";
 
 const AppendTrustEventResponseSlice = createSlice({
   name: "AppendTrustEventResponses",
@@ -27,20 +27,27 @@ const AppendTrustEventResponseSlice = createSlice({
     },
 
     AppendTrustEventResponseValueToggled(state, action) {
-      console.log("AppendTrustEventResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const AppendTrustEventResponse:AppendTrustEventResponse = state.find((AppendTrustEventResponse) => AppendTrustEventResponse.id === action.payload.AppendTrustEventResponseId);
+      console.log("AppendTrustEventResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const AppendTrustEventResponse: AppendTrustEventResponse = state.find(
+        (AppendTrustEventResponse) =>
+          AppendTrustEventResponse.id ===
+          action.payload.AppendTrustEventResponseId,
+      );
       if (AppendTrustEventResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     AppendTrustEventResponsepropertySet(state, action) {
-      const AppendTrustEventResponse = state.find((AppendTrustEventResponse) => AppendTrustEventResponse.id === action.payload.AppendTrustEventResponseId);
+      const AppendTrustEventResponse = state.find(
+        (AppendTrustEventResponse) =>
+          AppendTrustEventResponse.id ===
+          action.payload.AppendTrustEventResponseId,
+      );
       if (AppendTrustEventResponse) {
-      //  AppendTrustEventResponse[action.property] = action.payload[action.property];
+        //  AppendTrustEventResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const AppendTrustEventResponseSlice = createSlice({
 export const {
   AppendTrustEventResponseAdded,
   AppendTrustEventResponseValueToggled,
-  AppendTrustEventResponsepropertySet
+  AppendTrustEventResponsepropertySet,
 } = AppendTrustEventResponseSlice.actions;
 export default AppendTrustEventResponseSlice.reducer;

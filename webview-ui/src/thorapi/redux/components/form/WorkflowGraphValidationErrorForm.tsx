@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  WorkflowGraphValidationError,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddWorkflowGraphValidationErrorMutation } from '../../services/WorkflowGraphValidationErrorService';
+import { WorkflowGraphValidationError } from "@thorapi/model";
+
+import { useAddWorkflowGraphValidationErrorMutation } from "../../services/WorkflowGraphValidationErrorService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,21 +71,26 @@ WorkflowGraphValidationError
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        type: Yup.string(),
-        nodeId: Yup.string(),
-        edgeId: Yup.string(),
-        message: Yup.string(),
-        trashed: Yup.boolean(),
+  type: Yup.string(),
+  nodeId: Yup.string(),
+  edgeId: Yup.string(),
+  message: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const WorkflowGraphValidationErrorForm: React.FC = () => {
-  const [addWorkflowGraphValidationError, addWorkflowGraphValidationErrorResult] = useAddWorkflowGraphValidationErrorMutation();
+  const [
+    addWorkflowGraphValidationError,
+    addWorkflowGraphValidationErrorResult,
+  ] = useAddWorkflowGraphValidationErrorMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -89,12 +100,18 @@ const WorkflowGraphValidationErrorForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -102,11 +119,11 @@ const WorkflowGraphValidationErrorForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<WorkflowGraphValidationError> = {
-          type: '',
-          nodeId: '',
-          edgeId: '',
-          message: '',
-          trashed: false,
+    type: "",
+    nodeId: "",
+    edgeId: "",
+    message: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -121,22 +138,30 @@ const WorkflowGraphValidationErrorForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new WorkflowGraphValidationError:', grants);
+    console.log(
+      "Permissions saved for new WorkflowGraphValidationError:",
+      grants,
+    );
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<WorkflowGraphValidationError>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<WorkflowGraphValidationError>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
       console.log("WorkflowGraphValidationError form values:", values);
 
       // NOTE: depending on your generated endpoint, you may need { body: values }
-      const result = await addWorkflowGraphValidationError(values as any).unwrap();
+      const result = await addWorkflowGraphValidationError(
+        values as any,
+      ).unwrap();
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `WorkflowGraphValidationError created successfully! Would you like to set permissions for this object?`
+          `WorkflowGraphValidationError created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -144,8 +169,8 @@ const WorkflowGraphValidationErrorForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create WorkflowGraphValidationError:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create WorkflowGraphValidationError:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -166,44 +191,38 @@ const WorkflowGraphValidationErrorForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addWorkflowGraphValidationErrorResult.isLoading;
+          const isSaving =
+            isSubmitting || addWorkflowGraphValidationErrorResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New WorkflowGraphValidationError
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    WorkflowGraphValidationError
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="type" className="nice-form-control">
                       <b>
                         Type:
-                        {touched.type &&
-                         !errors.type && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.type && !errors.type && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="type"
-                            value={values?.type}
-                            placeholder="Type"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="type"
+                        value={values?.type}
+                        placeholder="Type"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -215,28 +234,21 @@ const WorkflowGraphValidationErrorForm: React.FC = () => {
                     <label htmlFor="nodeId" className="nice-form-control">
                       <b>
                         Node Id:
-                        {touched.nodeId &&
-                         !errors.nodeId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.nodeId && !errors.nodeId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="nodeId"
-                            value={values?.nodeId}
-                            placeholder="Node Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="nodeId"
+                        value={values?.nodeId}
+                        placeholder="Node Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -248,28 +260,21 @@ const WorkflowGraphValidationErrorForm: React.FC = () => {
                     <label htmlFor="edgeId" className="nice-form-control">
                       <b>
                         Edge Id:
-                        {touched.edgeId &&
-                         !errors.edgeId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.edgeId && !errors.edgeId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="edgeId"
-                            value={values?.edgeId}
-                            placeholder="Edge Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="edgeId"
+                        value={values?.edgeId}
+                        placeholder="Edge Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -281,28 +286,21 @@ const WorkflowGraphValidationErrorForm: React.FC = () => {
                     <label htmlFor="message" className="nice-form-control">
                       <b>
                         Message:
-                        {touched.message &&
-                         !errors.message && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.message && !errors.message && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="message"
-                            value={values?.message}
-                            placeholder="Message"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="message"
+                        value={values?.message}
+                        placeholder="Message"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -314,32 +312,25 @@ const WorkflowGraphValidationErrorForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -349,45 +340,66 @@ const WorkflowGraphValidationErrorForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New WorkflowGraphValidationError
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      WorkflowGraphValidationError
+                    </CoolButton>
 
-                  {(addWorkflowGraphValidationErrorResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addWorkflowGraphValidationErrorResult as any).error ? (addWorkflowGraphValidationErrorResult as any).error.data : (addWorkflowGraphValidationErrorResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addWorkflowGraphValidationErrorResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addWorkflowGraphValidationErrorResult as any)
+                                .error
+                              ? (addWorkflowGraphValidationErrorResult as any)
+                                  .error.data
+                              : (addWorkflowGraphValidationErrorResult as any)
+                                  .error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addWorkflowGraphValidationErrorResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addWorkflowGraphValidationErrorResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addWorkflowGraphValidationErrorResult: {JSON.stringify(addWorkflowGraphValidationErrorResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addWorkflowGraphValidationErrorResult:{" "}
+                    {JSON.stringify(addWorkflowGraphValidationErrorResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -407,8 +419,5 @@ const WorkflowGraphValidationErrorForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default WorkflowGraphValidationErrorForm;
-

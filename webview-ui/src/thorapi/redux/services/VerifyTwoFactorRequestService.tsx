@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { VerifyTwoFactorRequest } from '@thorapi/model/VerifyTwoFactorRequest'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { VerifyTwoFactorRequest } from "@thorapi/model/VerifyTwoFactorRequest";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type VerifyTwoFactorRequestResponse = VerifyTwoFactorRequest[]
+type VerifyTwoFactorRequestResponse = VerifyTwoFactorRequest[];
 
-const toVerifyTwoFactorRequestList = (result: unknown): VerifyTwoFactorRequestResponse => {
+const toVerifyTwoFactorRequestList = (
+  result: unknown,
+): VerifyTwoFactorRequestResponse => {
   if (Array.isArray(result)) {
-    return result as VerifyTwoFactorRequestResponse
+    return result as VerifyTwoFactorRequestResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as VerifyTwoFactorRequestResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as VerifyTwoFactorRequestResponse)
+    : [];
+};
 
 export const VerifyTwoFactorRequestService = createApi({
-  reducerPath: 'VerifyTwoFactorRequest', // This should remain unique
+  reducerPath: "VerifyTwoFactorRequest", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['VerifyTwoFactorRequest'],
+  tagTypes: ["VerifyTwoFactorRequest"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getVerifyTwoFactorRequestsPaged: build.query<VerifyTwoFactorRequestResponse, { page: number; size?: number; example?: Partial<VerifyTwoFactorRequest> }>({
+    getVerifyTwoFactorRequestsPaged: build.query<
+      VerifyTwoFactorRequestResponse,
+      { page: number; size?: number; example?: Partial<VerifyTwoFactorRequest> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `VerifyTwoFactorRequest?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `VerifyTwoFactorRequest?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toVerifyTwoFactorRequestList(result)
+        const rows = toVerifyTwoFactorRequestList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'VerifyTwoFactorRequest' as const, id })),
-          { type: 'VerifyTwoFactorRequest', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "VerifyTwoFactorRequest" as const, id })),
+          { type: "VerifyTwoFactorRequest", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getVerifyTwoFactorRequests: build.query<VerifyTwoFactorRequestResponse, { example?: Partial<VerifyTwoFactorRequest> } | void>({
+    getVerifyTwoFactorRequests: build.query<
+      VerifyTwoFactorRequestResponse,
+      { example?: Partial<VerifyTwoFactorRequest> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,114 @@ export const VerifyTwoFactorRequestService = createApi({
         return `VerifyTwoFactorRequest`;
       },
       providesTags: (result) => {
-        const rows = toVerifyTwoFactorRequestList(result)
+        const rows = toVerifyTwoFactorRequestList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'VerifyTwoFactorRequest' as const, id })),
-          { type: 'VerifyTwoFactorRequest', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "VerifyTwoFactorRequest" as const, id })),
+          { type: "VerifyTwoFactorRequest", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addVerifyTwoFactorRequest: build.mutation<VerifyTwoFactorRequest, Partial<VerifyTwoFactorRequest>>({
+    addVerifyTwoFactorRequest: build.mutation<
+      VerifyTwoFactorRequest,
+      Partial<VerifyTwoFactorRequest>
+    >({
       query: (body) => ({
         url: `VerifyTwoFactorRequest`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'VerifyTwoFactorRequest', id: 'LIST' }],
+      invalidatesTags: [{ type: "VerifyTwoFactorRequest", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getVerifyTwoFactorRequest: build.query<VerifyTwoFactorRequest, string>({
       query: (id) => `VerifyTwoFactorRequest/${id}`,
-      providesTags: (result, error, id) => [{ type: 'VerifyTwoFactorRequest', id }],
+      providesTags: (result, error, id) => [
+        { type: "VerifyTwoFactorRequest", id },
+      ],
     }),
 
     // 5) Update
-    updateVerifyTwoFactorRequest: build.mutation<void, Pick<VerifyTwoFactorRequest, 'id'> & Partial<VerifyTwoFactorRequest>>({
+    updateVerifyTwoFactorRequest: build.mutation<
+      void,
+      Pick<VerifyTwoFactorRequest, "id"> & Partial<VerifyTwoFactorRequest>
+    >({
       query: ({ id, ...patch }) => ({
         url: `VerifyTwoFactorRequest/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            VerifyTwoFactorRequestService.util.updateQueryData('getVerifyTwoFactorRequest', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            VerifyTwoFactorRequestService.util.updateQueryData(
+              "getVerifyTwoFactorRequest",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<VerifyTwoFactorRequest, 'id'>) => [
-        { type: 'VerifyTwoFactorRequest', id },
-        { type: 'VerifyTwoFactorRequest', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<VerifyTwoFactorRequest, "id">,
+      ) => [
+        { type: "VerifyTwoFactorRequest", id },
+        { type: "VerifyTwoFactorRequest", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteVerifyTwoFactorRequest: build.mutation<{ success: boolean; id: string }, number>({
+    deleteVerifyTwoFactorRequest: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `VerifyTwoFactorRequest/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'VerifyTwoFactorRequest', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "VerifyTwoFactorRequest", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteVerifyTwoFactorRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteVerifyTwoFactorRequestCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `VerifyTwoFactorRequest/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'VerifyTwoFactorRequest', id }, { type: 'VerifyTwoFactorRequest', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "VerifyTwoFactorRequest", id },
+        { type: "VerifyTwoFactorRequest", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetVerifyTwoFactorRequestsPagedQuery`
 export const {
-  useGetVerifyTwoFactorRequestsPagedQuery,     // immediate fetch
+  useGetVerifyTwoFactorRequestsPagedQuery, // immediate fetch
   useLazyGetVerifyTwoFactorRequestsPagedQuery, // lazy fetch
   useGetVerifyTwoFactorRequestQuery,
   useGetVerifyTwoFactorRequestsQuery,
@@ -150,4 +192,4 @@ export const {
   useUpdateVerifyTwoFactorRequestMutation,
   useDeleteVerifyTwoFactorRequestMutation,
   useDeleteVerifyTwoFactorRequestCascadeMutation,
-} = VerifyTwoFactorRequestService
+} = VerifyTwoFactorRequestService;

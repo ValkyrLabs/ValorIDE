@@ -18,353 +18,421 @@ Template file: typescript-redux-query/apis.mustache
 Description: MemoryEntryApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    MemoryEntry,
-    MemoryEntryFromJSON,
-    MemoryEntryToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { MemoryEntry, MemoryEntryFromJSON, MemoryEntryToJSON } from "../model";
 
 export interface DeleteMemoryEntryApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetMemoryEntryApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetMemoryEntryListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface PatchMemoryEntryByIdApiRequest {
-    id: string;
-    memoryEntry: MemoryEntry;
+  id: string;
+  memoryEntry: MemoryEntry;
 }
 
 export interface PostMemoryEntryApiRequest {
-    memoryEntry: MemoryEntry;
+  memoryEntry: MemoryEntry;
 }
 
 export interface UpdateMemoryEntryApiRequest {
-    id: string;
-    memoryEntry: MemoryEntry;
+  id: string;
+  memoryEntry: MemoryEntry;
 }
-
 
 /**
  * Deletes a specific MemoryEntry.
  * Delete a MemoryEntry.
  */
-function deleteMemoryEntryRaw<T>(requestParameters: DeleteMemoryEntryApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteMemoryEntry.');
-    }
+function deleteMemoryEntryRaw<T>(
+  requestParameters: DeleteMemoryEntryApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteMemoryEntry.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MemoryEntry/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/MemoryEntry/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific MemoryEntry.
-* Delete a MemoryEntry.
-*/
-export function deleteMemoryEntry<T>(requestParameters: DeleteMemoryEntryApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteMemoryEntryRaw(requestParameters, requestConfig);
+ * Deletes a specific MemoryEntry.
+ * Delete a MemoryEntry.
+ */
+export function deleteMemoryEntry<T>(
+  requestParameters: DeleteMemoryEntryApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteMemoryEntryRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single MemoryEntry for a specific uid.
  * Retrieve a single MemoryEntry
  */
-function getMemoryEntryRaw<T>(requestParameters: GetMemoryEntryApiRequest, requestConfig: runtime.TypedQueryConfig<T, MemoryEntry> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getMemoryEntry.');
-    }
+function getMemoryEntryRaw<T>(
+  requestParameters: GetMemoryEntryApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, MemoryEntry> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getMemoryEntry.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MemoryEntry/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(MemoryEntryFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/MemoryEntry/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(MemoryEntryFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single MemoryEntry for a specific uid.
-* Retrieve a single MemoryEntry
-*/
-export function getMemoryEntry<T>(requestParameters: GetMemoryEntryApiRequest, requestConfig?: runtime.TypedQueryConfig<T, MemoryEntry>): QueryConfig<T> {
-    return getMemoryEntryRaw(requestParameters, requestConfig);
+ * Retrieves a single MemoryEntry for a specific uid.
+ * Retrieve a single MemoryEntry
+ */
+export function getMemoryEntry<T>(
+  requestParameters: GetMemoryEntryApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, MemoryEntry>,
+): QueryConfig<T> {
+  return getMemoryEntryRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of MemoryEntrys.
  * Retrieve a list of MemoryEntrys
  */
-function getMemoryEntryListRaw<T>(requestParameters: GetMemoryEntryListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<MemoryEntry>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getMemoryEntryListRaw<T>(
+  requestParameters: GetMemoryEntryListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<MemoryEntry>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MemoryEntry`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(MemoryEntryFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/MemoryEntry`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(MemoryEntryFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of MemoryEntrys.
-* Retrieve a list of MemoryEntrys
-*/
-export function getMemoryEntryList<T>(requestParameters: GetMemoryEntryListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<MemoryEntry>>): QueryConfig<T> {
-    return getMemoryEntryListRaw(requestParameters, requestConfig);
+ * Retrieves a list of MemoryEntrys.
+ * Retrieve a list of MemoryEntrys
+ */
+export function getMemoryEntryList<T>(
+  requestParameters: GetMemoryEntryListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<MemoryEntry>>,
+): QueryConfig<T> {
+  return getMemoryEntryListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing MemoryEntry.
  * Partially update an existing MemoryEntry
  */
-function patchMemoryEntryByIdRaw<T>(requestParameters: PatchMemoryEntryByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, MemoryEntry> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchMemoryEntryById.');
-    }
+function patchMemoryEntryByIdRaw<T>(
+  requestParameters: PatchMemoryEntryByIdApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, MemoryEntry> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling patchMemoryEntryById.",
+    );
+  }
 
-    if (requestParameters.memoryEntry === null || requestParameters.memoryEntry === undefined) {
-        throw new runtime.RequiredError('memoryEntry','Required parameter requestParameters.memoryEntry was null or undefined when calling patchMemoryEntryById.');
-    }
+  if (
+    requestParameters.memoryEntry === null ||
+    requestParameters.memoryEntry === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "memoryEntry",
+      "Required parameter requestParameters.memoryEntry was null or undefined when calling patchMemoryEntryById.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/merge-patch+json";
 
-    headerParameters['Content-Type'] = 'application/merge-patch+json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MemoryEntry/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PATCH",
+      headers: headerParameters,
+    },
+    body: queryParameters || MemoryEntryToJSON(requestParameters.memoryEntry),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(MemoryEntryFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/MemoryEntry/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PATCH',
-            headers: headerParameters,
-        },
-        body: queryParameters || MemoryEntryToJSON(requestParameters.memoryEntry),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(MemoryEntryFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing MemoryEntry.
-* Partially update an existing MemoryEntry
-*/
-export function patchMemoryEntryById<T>(requestParameters: PatchMemoryEntryByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, MemoryEntry>): QueryConfig<T> {
-    return patchMemoryEntryByIdRaw(requestParameters, requestConfig);
+ * Updates an existing MemoryEntry.
+ * Partially update an existing MemoryEntry
+ */
+export function patchMemoryEntryById<T>(
+  requestParameters: PatchMemoryEntryByIdApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, MemoryEntry>,
+): QueryConfig<T> {
+  return patchMemoryEntryByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new MemoryEntry.
  * Create a new MemoryEntry
  */
-function postMemoryEntryRaw<T>(requestParameters: PostMemoryEntryApiRequest, requestConfig: runtime.TypedQueryConfig<T, MemoryEntry> = {}): QueryConfig<T> {
-    if (requestParameters.memoryEntry === null || requestParameters.memoryEntry === undefined) {
-        throw new runtime.RequiredError('memoryEntry','Required parameter requestParameters.memoryEntry was null or undefined when calling postMemoryEntry.');
-    }
+function postMemoryEntryRaw<T>(
+  requestParameters: PostMemoryEntryApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, MemoryEntry> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.memoryEntry === null ||
+    requestParameters.memoryEntry === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "memoryEntry",
+      "Required parameter requestParameters.memoryEntry was null or undefined when calling postMemoryEntry.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MemoryEntry`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || MemoryEntryToJSON(requestParameters.memoryEntry),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(MemoryEntryFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/MemoryEntry`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || MemoryEntryToJSON(requestParameters.memoryEntry),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(MemoryEntryFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new MemoryEntry.
-* Create a new MemoryEntry
-*/
-export function postMemoryEntry<T>(requestParameters: PostMemoryEntryApiRequest, requestConfig?: runtime.TypedQueryConfig<T, MemoryEntry>): QueryConfig<T> {
-    return postMemoryEntryRaw(requestParameters, requestConfig);
+ * Creates a new MemoryEntry.
+ * Create a new MemoryEntry
+ */
+export function postMemoryEntry<T>(
+  requestParameters: PostMemoryEntryApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, MemoryEntry>,
+): QueryConfig<T> {
+  return postMemoryEntryRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing MemoryEntry.
  * Update an existing MemoryEntry
  */
-function updateMemoryEntryRaw<T>(requestParameters: UpdateMemoryEntryApiRequest, requestConfig: runtime.TypedQueryConfig<T, MemoryEntry> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateMemoryEntry.');
-    }
+function updateMemoryEntryRaw<T>(
+  requestParameters: UpdateMemoryEntryApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, MemoryEntry> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateMemoryEntry.",
+    );
+  }
 
-    if (requestParameters.memoryEntry === null || requestParameters.memoryEntry === undefined) {
-        throw new runtime.RequiredError('memoryEntry','Required parameter requestParameters.memoryEntry was null or undefined when calling updateMemoryEntry.');
-    }
+  if (
+    requestParameters.memoryEntry === null ||
+    requestParameters.memoryEntry === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "memoryEntry",
+      "Required parameter requestParameters.memoryEntry was null or undefined when calling updateMemoryEntry.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MemoryEntry/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || MemoryEntryToJSON(requestParameters.memoryEntry),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(MemoryEntryFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/MemoryEntry/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || MemoryEntryToJSON(requestParameters.memoryEntry),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(MemoryEntryFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing MemoryEntry.
-* Update an existing MemoryEntry
-*/
-export function updateMemoryEntry<T>(requestParameters: UpdateMemoryEntryApiRequest, requestConfig?: runtime.TypedQueryConfig<T, MemoryEntry>): QueryConfig<T> {
-    return updateMemoryEntryRaw(requestParameters, requestConfig);
+ * Updates an existing MemoryEntry.
+ * Update an existing MemoryEntry
+ */
+export function updateMemoryEntry<T>(
+  requestParameters: UpdateMemoryEntryApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, MemoryEntry>,
+): QueryConfig<T> {
+  return updateMemoryEntryRaw(requestParameters, requestConfig);
 }
-

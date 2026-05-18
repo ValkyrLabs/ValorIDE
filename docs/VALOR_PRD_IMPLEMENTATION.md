@@ -305,7 +305,7 @@ export async function generateApp(openApiSpec: string) {
 
       // 3. Download artifact
       const artifact = await thorapiGeneratorService.downloadArtifact(
-        job.jobId
+        job.jobId,
       );
 
       // 4. Extract to /thorapi

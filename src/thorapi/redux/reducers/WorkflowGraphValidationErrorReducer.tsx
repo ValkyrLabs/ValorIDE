@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { WorkflowGraphValidationError } from '@thorapi/model/WorkflowGraphValidationError';
+import { WorkflowGraphValidationError } from "@thorapi/model/WorkflowGraphValidationError";
 
 const WorkflowGraphValidationErrorSlice = createSlice({
   name: "WorkflowGraphValidationErrors",
@@ -27,20 +27,28 @@ const WorkflowGraphValidationErrorSlice = createSlice({
     },
 
     WorkflowGraphValidationErrorValueToggled(state, action) {
-      console.log("WorkflowGraphValidationError TOGGLE")
-      console.warn(JSON.stringify(action))
-      const WorkflowGraphValidationError:WorkflowGraphValidationError = state.find((WorkflowGraphValidationError) => WorkflowGraphValidationError.id === action.payload.WorkflowGraphValidationErrorId);
+      console.log("WorkflowGraphValidationError TOGGLE");
+      console.warn(JSON.stringify(action));
+      const WorkflowGraphValidationError: WorkflowGraphValidationError =
+        state.find(
+          (WorkflowGraphValidationError) =>
+            WorkflowGraphValidationError.id ===
+            action.payload.WorkflowGraphValidationErrorId,
+        );
       if (WorkflowGraphValidationError) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     WorkflowGraphValidationErrorpropertySet(state, action) {
-      const WorkflowGraphValidationError = state.find((WorkflowGraphValidationError) => WorkflowGraphValidationError.id === action.payload.WorkflowGraphValidationErrorId);
+      const WorkflowGraphValidationError = state.find(
+        (WorkflowGraphValidationError) =>
+          WorkflowGraphValidationError.id ===
+          action.payload.WorkflowGraphValidationErrorId,
+      );
       if (WorkflowGraphValidationError) {
-      //  WorkflowGraphValidationError[action.property] = action.payload[action.property];
+        //  WorkflowGraphValidationError[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +57,6 @@ const WorkflowGraphValidationErrorSlice = createSlice({
 export const {
   WorkflowGraphValidationErrorAdded,
   WorkflowGraphValidationErrorValueToggled,
-  WorkflowGraphValidationErrorpropertySet
+  WorkflowGraphValidationErrorpropertySet,
 } = WorkflowGraphValidationErrorSlice.actions;
 export default WorkflowGraphValidationErrorSlice.reducer;

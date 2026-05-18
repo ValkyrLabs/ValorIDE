@@ -69,7 +69,7 @@ class ImagePreview extends React.Component {
     // For SVG files, we don't need to calculate aspect ratio as they're vector-based
     if (isSvg) {
       console.log(
-        `SVG image detected, skipping aspect ratio calculation: ${url}`
+        `SVG image detected, skipping aspect ratio calculation: ${url}`,
       );
       // Default aspect ratio for SVGs
       this.aspectRatio = 1;
@@ -313,7 +313,7 @@ class ImagePreview extends React.Component {
 // Create a wrapper component that memoizes the ImagePreview to prevent unnecessary re-renders
 const MemoizedImagePreview = React.memo(
   (props) => _jsx(ImagePreview, { ...props }),
-  (prevProps, nextProps) => prevProps.url === nextProps.url
+  (prevProps, nextProps) => prevProps.url === nextProps.url,
 );
 // Wrap the ImagePreview component with an error boundary
 const ImagePreviewWithErrorBoundary = (props) => {

@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_DISCOUNT_REQUEST,
-    FETCH_DISCOUNT_REQUEST,
-    LIST_DISCOUNT_REQUEST,
-    UPDATE_DISCOUNT_REQUEST,
-    DELETE_DISCOUNT_REQUEST,
-
-    addDiscountFailure,
-    addDiscountSuccess,
-
-    fetchDiscountFailure,
-    fetchDiscountSuccess,
-    
-    listDiscountFailure,
-    listDiscountSuccess,
-
-    updateDiscountFailure,
-    updateDiscountSuccess,
-    
-    deleteDiscountFailure,
-    deleteDiscountSuccess,
-    
-} from '../actions/DiscountApiAction';
+  ADD_DISCOUNT_REQUEST,
+  FETCH_DISCOUNT_REQUEST,
+  LIST_DISCOUNT_REQUEST,
+  UPDATE_DISCOUNT_REQUEST,
+  DELETE_DISCOUNT_REQUEST,
+  addDiscountFailure,
+  addDiscountSuccess,
+  fetchDiscountFailure,
+  fetchDiscountSuccess,
+  listDiscountFailure,
+  listDiscountSuccess,
+  updateDiscountFailure,
+  updateDiscountSuccess,
+  deleteDiscountFailure,
+  deleteDiscountSuccess,
+} from "../actions/DiscountApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Discount
 */
 
-
-
-export const DiscountMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("Discount MIDDLEWARE: " + JSON.stringify(action) )
+export const DiscountMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Discount MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

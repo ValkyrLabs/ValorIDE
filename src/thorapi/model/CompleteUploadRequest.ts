@@ -26,16 +26,13 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    CompleteUploadRequestPartsInner,
-    CompleteUploadRequestPartsInnerFromJSON,
-    CompleteUploadRequestPartsInnerToJSON,
-} from './';
-
+  CompleteUploadRequestPartsInner,
+  CompleteUploadRequestPartsInnerFromJSON,
+  CompleteUploadRequestPartsInnerToJSON,
+} from "./";
 
 // thorapi
 
@@ -44,126 +41,151 @@ import {
  * @export
  * @interface CompleteUploadRequest
  */
-export type CompleteUploadRequest  = DataObject & {
-    /**
-     * 
-     * @type {string}
-     * @memberof CompleteUploadRequest
-     */
-    sessionId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof CompleteUploadRequest
-     */
-    uploadId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof CompleteUploadRequest
-     */
-    checksumSha256?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof CompleteUploadRequest
-     */
-    providerEtag?: string;
-    /**
-     * 
-     * @type {Array<CompleteUploadRequestPartsInner>}
-     * @memberof CompleteUploadRequest
-     */
-    parts?: Array<CompleteUploadRequestPartsInner>;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof CompleteUploadRequest
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof CompleteUploadRequest
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof CompleteUploadRequest
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof CompleteUploadRequest
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof CompleteUploadRequest
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof CompleteUploadRequest
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof CompleteUploadRequest
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof CompleteUploadRequest
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof CompleteUploadRequest
-     */
-    trashed?: boolean;
+export type CompleteUploadRequest = DataObject & {
+  /**
+   *
+   * @type {string}
+   * @memberof CompleteUploadRequest
+   */
+  sessionId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof CompleteUploadRequest
+   */
+  uploadId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof CompleteUploadRequest
+   */
+  checksumSha256?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof CompleteUploadRequest
+   */
+  providerEtag?: string;
+  /**
+   *
+   * @type {Array<CompleteUploadRequestPartsInner>}
+   * @memberof CompleteUploadRequest
+   */
+  parts?: Array<CompleteUploadRequestPartsInner>;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof CompleteUploadRequest
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof CompleteUploadRequest
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof CompleteUploadRequest
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof CompleteUploadRequest
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof CompleteUploadRequest
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof CompleteUploadRequest
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof CompleteUploadRequest
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof CompleteUploadRequest
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof CompleteUploadRequest
+   */
+  trashed?: boolean;
+};
+
+export function CompleteUploadRequestFromJSON(
+  json: any,
+): CompleteUploadRequest {
+  return {
+    ...DataObjectFromJSON(json),
+    sessionId: !exists(json, "sessionId") ? undefined : json["sessionId"],
+    uploadId: !exists(json, "uploadId") ? undefined : json["uploadId"],
+    checksumSha256: !exists(json, "checksumSha256")
+      ? undefined
+      : json["checksumSha256"],
+    providerEtag: !exists(json, "providerEtag")
+      ? undefined
+      : json["providerEtag"],
+    parts: !exists(json, "parts")
+      ? undefined
+      : (json["parts"] as Array<any>).map(
+          CompleteUploadRequestPartsInnerFromJSON,
+        ),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
-export function CompleteUploadRequestFromJSON(json: any): CompleteUploadRequest {
-    return {
-        ...DataObjectFromJSON(json),
-        'sessionId': !exists(json, 'sessionId') ? undefined : json['sessionId'],
-        'uploadId': !exists(json, 'uploadId') ? undefined : json['uploadId'],
-        'checksumSha256': !exists(json, 'checksumSha256') ? undefined : json['checksumSha256'],
-        'providerEtag': !exists(json, 'providerEtag') ? undefined : json['providerEtag'],
-        'parts': !exists(json, 'parts') ? undefined : (json['parts'] as Array<any>).map(CompleteUploadRequestPartsInnerFromJSON),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+export function CompleteUploadRequestToJSON(
+  value?: CompleteUploadRequest,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    sessionId: value.sessionId,
+    uploadId: value.uploadId,
+    checksumSha256: value.checksumSha256,
+    providerEtag: value.providerEtag,
+    parts:
+      value.parts === undefined
+        ? undefined
+        : (value.parts as Array<any>).map(
+            CompleteUploadRequestPartsInnerToJSON,
+          ),
+    trashed: value.trashed,
+  };
 }
-
-export function CompleteUploadRequestToJSON(value?: CompleteUploadRequest): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'sessionId': value.sessionId,
-        'uploadId': value.uploadId,
-        'checksumSha256': value.checksumSha256,
-        'providerEtag': value.providerEtag,
-        'parts': value.parts === undefined ? undefined : (value.parts as Array<any>).map(CompleteUploadRequestPartsInnerToJSON),
-        'trashed': value.trashed,
-    };
-}
-
-

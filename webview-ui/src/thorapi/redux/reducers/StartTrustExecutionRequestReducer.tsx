@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { StartTrustExecutionRequest } from '@thorapi/model/StartTrustExecutionRequest';
+import { StartTrustExecutionRequest } from "@thorapi/model/StartTrustExecutionRequest";
 
 const StartTrustExecutionRequestSlice = createSlice({
   name: "StartTrustExecutionRequests",
@@ -27,20 +27,27 @@ const StartTrustExecutionRequestSlice = createSlice({
     },
 
     StartTrustExecutionRequestValueToggled(state, action) {
-      console.log("StartTrustExecutionRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const StartTrustExecutionRequest:StartTrustExecutionRequest = state.find((StartTrustExecutionRequest) => StartTrustExecutionRequest.id === action.payload.StartTrustExecutionRequestId);
+      console.log("StartTrustExecutionRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const StartTrustExecutionRequest: StartTrustExecutionRequest = state.find(
+        (StartTrustExecutionRequest) =>
+          StartTrustExecutionRequest.id ===
+          action.payload.StartTrustExecutionRequestId,
+      );
       if (StartTrustExecutionRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     StartTrustExecutionRequestpropertySet(state, action) {
-      const StartTrustExecutionRequest = state.find((StartTrustExecutionRequest) => StartTrustExecutionRequest.id === action.payload.StartTrustExecutionRequestId);
+      const StartTrustExecutionRequest = state.find(
+        (StartTrustExecutionRequest) =>
+          StartTrustExecutionRequest.id ===
+          action.payload.StartTrustExecutionRequestId,
+      );
       if (StartTrustExecutionRequest) {
-      //  StartTrustExecutionRequest[action.property] = action.payload[action.property];
+        //  StartTrustExecutionRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const StartTrustExecutionRequestSlice = createSlice({
 export const {
   StartTrustExecutionRequestAdded,
   StartTrustExecutionRequestValueToggled,
-  StartTrustExecutionRequestpropertySet
+  StartTrustExecutionRequestpropertySet,
 } = StartTrustExecutionRequestSlice.actions;
 export default StartTrustExecutionRequestSlice.reducer;

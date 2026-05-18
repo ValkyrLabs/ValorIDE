@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { WorkflowGraphEdge } from '@thorapi/model/WorkflowGraphEdge';
+import { WorkflowGraphEdge } from "@thorapi/model/WorkflowGraphEdge";
 
 const WorkflowGraphEdgeSlice = createSlice({
   name: "WorkflowGraphEdges",
@@ -27,20 +27,25 @@ const WorkflowGraphEdgeSlice = createSlice({
     },
 
     WorkflowGraphEdgeValueToggled(state, action) {
-      console.log("WorkflowGraphEdge TOGGLE")
-      console.warn(JSON.stringify(action))
-      const WorkflowGraphEdge:WorkflowGraphEdge = state.find((WorkflowGraphEdge) => WorkflowGraphEdge.id === action.payload.WorkflowGraphEdgeId);
+      console.log("WorkflowGraphEdge TOGGLE");
+      console.warn(JSON.stringify(action));
+      const WorkflowGraphEdge: WorkflowGraphEdge = state.find(
+        (WorkflowGraphEdge) =>
+          WorkflowGraphEdge.id === action.payload.WorkflowGraphEdgeId,
+      );
       if (WorkflowGraphEdge) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     WorkflowGraphEdgepropertySet(state, action) {
-      const WorkflowGraphEdge = state.find((WorkflowGraphEdge) => WorkflowGraphEdge.id === action.payload.WorkflowGraphEdgeId);
+      const WorkflowGraphEdge = state.find(
+        (WorkflowGraphEdge) =>
+          WorkflowGraphEdge.id === action.payload.WorkflowGraphEdgeId,
+      );
       if (WorkflowGraphEdge) {
-      //  WorkflowGraphEdge[action.property] = action.payload[action.property];
+        //  WorkflowGraphEdge[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const WorkflowGraphEdgeSlice = createSlice({
 export const {
   WorkflowGraphEdgeAdded,
   WorkflowGraphEdgeValueToggled,
-  WorkflowGraphEdgepropertySet
+  WorkflowGraphEdgepropertySet,
 } = WorkflowGraphEdgeSlice.actions;
 export default WorkflowGraphEdgeSlice.reducer;

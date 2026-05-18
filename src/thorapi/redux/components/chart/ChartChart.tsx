@@ -19,20 +19,32 @@ Description: Chart
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, Chart } from '@thorapi/model';
-import { useGetChartsQuery, useAddChartMutation, useUpdateChartMutation } from '../../services/ChartService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, Chart } from "@thorapi/model";
+import {
+  useGetChartsQuery,
+  useAddChartMutation,
+  useUpdateChartMutation,
+} from "../../services/ChartService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const ChartChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetChartsQuery();
 
   const [data, setData] = useState<Chart[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<Chart>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const ChartChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,11 @@ const ChartChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((chart: DataObject) => [chart])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart data={data.flatMap((chart: DataObject) => [chart])} />
+      )}
     </>
   );
 };

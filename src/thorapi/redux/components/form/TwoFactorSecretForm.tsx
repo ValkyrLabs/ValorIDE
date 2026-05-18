@@ -13,32 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  TwoFactorSecret,
-  TwoFactorSecretAlgorithmEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddTwoFactorSecretMutation } from '../../services/TwoFactorSecretService';
+import { TwoFactorSecret, TwoFactorSecretAlgorithmEnum } from "@thorapi/model";
+
+import { useAddTwoFactorSecretMutation } from "../../services/TwoFactorSecretService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -62,35 +67,38 @@ TOTP-based 2FA secret linked to a Principal. Store securely encrypted.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const AlgorithmValidation = () => {
-  return [
-    'HmacSHA1',
-    'HmacSHA256',
-    'HmacSHA512',
-  ];
+  return ["HmacSHA1", "HmacSHA256", "HmacSHA512"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        secretKey: Yup.string().required("secretKey is required."),
-      algorithm: Yup.mixed()
-        .oneOf(AlgorithmValidation(), "Invalid value for algorithm")
-        .required("algorithm is required."),
-        digits: asNumber(Yup.number().integer().typeError("digits must be a number")).required("digits is required."),
-        period: asNumber(Yup.number().integer().typeError("period must be a number")).required("period is required."),
-        enabled: Yup.boolean(),
-        trashed: Yup.boolean(),
+  secretKey: Yup.string().required("secretKey is required."),
+  algorithm: Yup.mixed()
+    .oneOf(AlgorithmValidation(), "Invalid value for algorithm")
+    .required("algorithm is required."),
+  digits: asNumber(
+    Yup.number().integer().typeError("digits must be a number"),
+  ).required("digits is required."),
+  period: asNumber(
+    Yup.number().integer().typeError("period must be a number"),
+  ).required("period is required."),
+  enabled: Yup.boolean(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const TwoFactorSecretForm: React.FC = () => {
-  const [addTwoFactorSecret, addTwoFactorSecretResult] = useAddTwoFactorSecretMutation();
+  const [addTwoFactorSecret, addTwoFactorSecretResult] =
+    useAddTwoFactorSecretMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -100,12 +108,18 @@ const TwoFactorSecretForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -113,12 +127,12 @@ const TwoFactorSecretForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<TwoFactorSecret> = {
-          secretKey: '',
-        algorithm: undefined,
-          digits: 0,
-          period: 0,
-          enabled: false,
-          trashed: false,
+    secretKey: "",
+    algorithm: undefined,
+    digits: 0,
+    period: 0,
+    enabled: false,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -133,11 +147,14 @@ const TwoFactorSecretForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new TwoFactorSecret:', grants);
+    console.log("Permissions saved for new TwoFactorSecret:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<TwoFactorSecret>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<TwoFactorSecret>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -148,7 +165,7 @@ const TwoFactorSecretForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `TwoFactorSecret created successfully! Would you like to set permissions for this object?`
+          `TwoFactorSecret created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -156,8 +173,8 @@ const TwoFactorSecretForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create TwoFactorSecret:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create TwoFactorSecret:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -178,44 +195,36 @@ const TwoFactorSecretForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addTwoFactorSecretResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New TwoFactorSecret
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New TwoFactorSecret
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="secretKey" className="nice-form-control">
                       <b>
                         Secret Key:
-                        {touched.secretKey &&
-                         !errors.secretKey && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.secretKey && !errors.secretKey && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="secretKey"
-                            value={values?.secretKey}
-                            placeholder="Secret Key"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="secretKey"
+                        value={values?.secretKey}
+                        placeholder="Secret Key"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -227,30 +236,33 @@ const TwoFactorSecretForm: React.FC = () => {
                     <label htmlFor="algorithm" className="nice-form-control">
                       <b>
                         Algorithm:
-                        {touched.algorithm &&
-                         !errors.algorithm && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.algorithm && !errors.algorithm && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="algorithm"
-                          value={values.algorithm || ''}
-                          className={
-                            errors.algorithm
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('algorithm', true);
-                            setFieldValue('algorithm', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Algorithm" />
-                          <AlgorithmLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="algorithm"
+                        value={values.algorithm || ""}
+                        className={
+                          errors.algorithm
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("algorithm", true);
+                          setFieldValue(
+                            "algorithm",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Algorithm" />
+                        <AlgorithmLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -262,36 +274,32 @@ const TwoFactorSecretForm: React.FC = () => {
                     <label htmlFor="digits" className="nice-form-control">
                       <b>
                         Digits:
-                        {touched.digits &&
-                         !errors.digits && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.digits && !errors.digits && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="digits"
-                            type="number"
-                            value={values.digits || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('digits', true);
-                              const v = e.target.value;
-                              setFieldValue('digits', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.digits
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="digits"
+                        type="number"
+                        value={values.digits || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("digits", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "digits",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.digits
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -303,36 +311,32 @@ const TwoFactorSecretForm: React.FC = () => {
                     <label htmlFor="period" className="nice-form-control">
                       <b>
                         Period:
-                        {touched.period &&
-                         !errors.period && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.period && !errors.period && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="period"
-                            type="number"
-                            value={values.period || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('period', true);
-                              const v = e.target.value;
-                              setFieldValue('period', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.period
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="period"
+                        type="number"
+                        value={values.period || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("period", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "period",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.period
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -344,32 +348,25 @@ const TwoFactorSecretForm: React.FC = () => {
                     <label htmlFor="enabled" className="nice-form-control">
                       <b>
                         Enabled:
-                        {touched.enabled &&
-                         !errors.enabled && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.enabled && !errors.enabled && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="enabled"
-                            name="enabled"
-                            checked={values.enabled || false}
-                            onChange={(e) => {
-                              setFieldTouched('enabled', true);
-                              setFieldValue('enabled', e.target.checked);
-                            }}
-                            isInvalid={!!errors.enabled}
-                            className={errors.enabled ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="enabled"
+                        name="enabled"
+                        checked={values.enabled || false}
+                        onChange={(e) => {
+                          setFieldTouched("enabled", true);
+                          setFieldValue("enabled", e.target.checked);
+                        }}
+                        isInvalid={!!errors.enabled}
+                        className={errors.enabled ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -381,32 +378,25 @@ const TwoFactorSecretForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -416,45 +406,59 @@ const TwoFactorSecretForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New TwoFactorSecret
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New TwoFactorSecret
+                    </CoolButton>
 
-                  {(addTwoFactorSecretResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addTwoFactorSecretResult as any).error ? (addTwoFactorSecretResult as any).error.data : (addTwoFactorSecretResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addTwoFactorSecretResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addTwoFactorSecretResult as any).error
+                              ? (addTwoFactorSecretResult as any).error.data
+                              : (addTwoFactorSecretResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addTwoFactorSecretResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addTwoFactorSecretResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addTwoFactorSecretResult: {JSON.stringify(addTwoFactorSecretResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addTwoFactorSecretResult:{" "}
+                    {JSON.stringify(addTwoFactorSecretResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -486,15 +490,12 @@ kebabcase algorithm-lookup
 const AlgorithmLookup = () => {
   return (
     <>
-      <option value='HmacSHA1' label="Hmac Sha 1" />
-      <option value='HmacSHA256' label="Hmac Sha 256" />
-      <option value='HmacSHA512' label="Hmac Sha 512" />
+      <option value="HmacSHA1" label="Hmac Sha 1" />
+      <option value="HmacSHA256" label="Hmac Sha 256" />
+      <option value="HmacSHA512" label="Hmac Sha 512" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default TwoFactorSecretForm;
-

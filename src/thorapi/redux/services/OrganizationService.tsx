@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { Organization } from '@thorapi/model/Organization'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { Organization } from "@thorapi/model/Organization";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type OrganizationResponse = Organization[]
+type OrganizationResponse = Organization[];
 
 const toOrganizationList = (result: unknown): OrganizationResponse => {
   if (Array.isArray(result)) {
-    return result as OrganizationResponse
+    return result as OrganizationResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as OrganizationResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as OrganizationResponse) : [];
+};
 
 export const OrganizationService = createApi({
-  reducerPath: 'Organization', // This should remain unique
+  reducerPath: "Organization", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['Organization'],
+  tagTypes: ["Organization"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getOrganizationsPaged: build.query<OrganizationResponse, { page: number; size?: number; example?: Partial<Organization> }>({
+    getOrganizationsPaged: build.query<
+      OrganizationResponse,
+      { page: number; size?: number; example?: Partial<Organization> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Organization?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Organization?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toOrganizationList(result)
+        const rows = toOrganizationList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'Organization' as const, id })),
-          { type: 'Organization', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "Organization" as const, id })),
+          { type: "Organization", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOrganizations: build.query<OrganizationResponse, { example?: Partial<Organization> } | void>({
+    getOrganizations: build.query<
+      OrganizationResponse,
+      { example?: Partial<Organization> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const OrganizationService = createApi({
         return `Organization`;
       },
       providesTags: (result) => {
-        const rows = toOrganizationList(result)
+        const rows = toOrganizationList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'Organization' as const, id })),
-          { type: 'Organization', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "Organization" as const, id })),
+          { type: "Organization", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,73 +87,89 @@ export const OrganizationService = createApi({
     addOrganization: build.mutation<Organization, Partial<Organization>>({
       query: (body) => ({
         url: `Organization`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'Organization', id: 'LIST' }],
+      invalidatesTags: [{ type: "Organization", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getOrganization: build.query<Organization, string>({
       query: (id) => `Organization/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Organization', id }],
+      providesTags: (result, error, id) => [{ type: "Organization", id }],
     }),
 
     // 5) Update
-    updateOrganization: build.mutation<void, Pick<Organization, 'id'> & Partial<Organization>>({
+    updateOrganization: build.mutation<
+      void,
+      Pick<Organization, "id"> & Partial<Organization>
+    >({
       query: ({ id, ...patch }) => ({
         url: `Organization/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            OrganizationService.util.updateQueryData('getOrganization', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            OrganizationService.util.updateQueryData(
+              "getOrganization",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<Organization, 'id'>) => [
-        { type: 'Organization', id },
-        { type: 'Organization', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<Organization, "id">) => [
+        { type: "Organization", id },
+        { type: "Organization", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteOrganization: build.mutation<{ success: boolean; id: string }, number>({
+    deleteOrganization: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `Organization/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'Organization', id }],
+      invalidatesTags: (result, error, id) => [{ type: "Organization", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteOrganizationCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteOrganizationCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `Organization/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Organization', id }, { type: 'Organization', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Organization", id },
+        { type: "Organization", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetOrganizationsPagedQuery`
 export const {
-  useGetOrganizationsPagedQuery,     // immediate fetch
+  useGetOrganizationsPagedQuery, // immediate fetch
   useLazyGetOrganizationsPagedQuery, // lazy fetch
   useGetOrganizationQuery,
   useGetOrganizationsQuery,
@@ -150,4 +177,4 @@ export const {
   useUpdateOrganizationMutation,
   useDeleteOrganizationMutation,
   useDeleteOrganizationCascadeMutation,
-} = OrganizationService
+} = OrganizationService;

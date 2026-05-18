@@ -13,34 +13,42 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   SemanticIndexEntry,
   SemanticIndexEntryCompressionStrategyEnum,
   SemanticIndexEntryVectorEncodingEnum,
   SemanticIndexEntryStatusEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddSemanticIndexEntryMutation } from '../../services/SemanticIndexEntryService';
+import { useAddSemanticIndexEntryMutation } from "../../services/SemanticIndexEntryService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -64,89 +72,97 @@ Central GrayMatter semantic index row. This stores vector embeddings and compres
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const CompressionStrategyValidation = () => {
-  return [
-    'none',
-    'summary_v1',
-    'hierarchical_summary_v1',
-  ];
+  return ["none", "summary_v1", "hierarchical_summary_v1"];
 };
 const VectorEncodingValidation = () => {
-  return [
-    'float32_le',
-    'uint8_quantized',
-    'summary_only',
-  ];
+  return ["float32_le", "uint8_quantized", "summary_only"];
 };
 const StatusValidation = () => {
-  return [
-    'active',
-    'stale',
-    'deleted',
-  ];
+  return ["active", "stale", "deleted"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        targetType: Yup.string().required("targetType is required."),
-        targetId: Yup.string().required("targetId is required."),
-        sourceHash: Yup.string().required("sourceHash is required."),
-      compressionStrategy: Yup.mixed()
-        .oneOf(CompressionStrategyValidation(), "Invalid value for compressionStrategy")
-        .required("compressionStrategy is required."),
-        embeddingProvider: Yup.string().required("embeddingProvider is required."),
-        embeddingModel: Yup.string().required("embeddingModel is required."),
-        embeddingDimensions: asNumber(Yup.number().integer().typeError("embeddingDimensions must be a number")).required("embeddingDimensions is required."),
-        embeddingChecksum: Yup.string().required("embeddingChecksum is required."),
-      vectorEncoding: Yup.mixed()
-        .oneOf(VectorEncodingValidation(), "Invalid value for vectorEncoding")
-        .required("vectorEncoding is required."),
-      status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        .required("status is required."),
-        indexedAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).required("indexedAt is required.").typeError("indexedAt must be a valid date"),
-        tenantScope: Yup.string(),
-        summaryText: Yup.string(),
-        keywordsText: Yup.string(),
-        contentChars: asNumber(Yup.number().integer().typeError("contentChars must be a number")),
-        estimatedTokens: asNumber(Yup.number().integer().typeError("estimatedTokens must be a number")),
-        relevanceScore: asNumber(Yup.number().typeError("relevanceScore must be a number")),
-        hitCount: asNumber(Yup.number().integer().typeError("hitCount must be a number")),
-        lastHitAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("lastHitAt must be a valid date"),
-        semanticDeletedAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("semanticDeletedAt must be a valid date"),
-        trashed: Yup.boolean(),
+  targetType: Yup.string().required("targetType is required."),
+  targetId: Yup.string().required("targetId is required."),
+  sourceHash: Yup.string().required("sourceHash is required."),
+  compressionStrategy: Yup.mixed()
+    .oneOf(
+      CompressionStrategyValidation(),
+      "Invalid value for compressionStrategy",
+    )
+    .required("compressionStrategy is required."),
+  embeddingProvider: Yup.string().required("embeddingProvider is required."),
+  embeddingModel: Yup.string().required("embeddingModel is required."),
+  embeddingDimensions: asNumber(
+    Yup.number().integer().typeError("embeddingDimensions must be a number"),
+  ).required("embeddingDimensions is required."),
+  embeddingChecksum: Yup.string().required("embeddingChecksum is required."),
+  vectorEncoding: Yup.mixed()
+    .oneOf(VectorEncodingValidation(), "Invalid value for vectorEncoding")
+    .required("vectorEncoding is required."),
+  status: Yup.mixed()
+    .oneOf(StatusValidation(), "Invalid value for status")
+    .required("status is required."),
+  indexedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .required("indexedAt is required.")
+    .typeError("indexedAt must be a valid date"),
+  tenantScope: Yup.string(),
+  summaryText: Yup.string(),
+  keywordsText: Yup.string(),
+  contentChars: asNumber(
+    Yup.number().integer().typeError("contentChars must be a number"),
+  ),
+  estimatedTokens: asNumber(
+    Yup.number().integer().typeError("estimatedTokens must be a number"),
+  ),
+  relevanceScore: asNumber(
+    Yup.number().typeError("relevanceScore must be a number"),
+  ),
+  hitCount: asNumber(
+    Yup.number().integer().typeError("hitCount must be a number"),
+  ),
+  lastHitAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("lastHitAt must be a valid date"),
+  semanticDeletedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("semanticDeletedAt must be a valid date"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const SemanticIndexEntryForm: React.FC = () => {
-  const [addSemanticIndexEntry, addSemanticIndexEntryResult] = useAddSemanticIndexEntryMutation();
+  const [addSemanticIndexEntry, addSemanticIndexEntryResult] =
+    useAddSemanticIndexEntryMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -156,12 +172,18 @@ const SemanticIndexEntryForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -169,27 +191,27 @@ const SemanticIndexEntryForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<SemanticIndexEntry> = {
-          targetType: '',
-          targetId: '',
-          sourceHash: '',
-        compressionStrategy: undefined,
-          embeddingProvider: '',
-          embeddingModel: '',
-          embeddingDimensions: 0,
-          embeddingChecksum: '',
-        vectorEncoding: undefined,
-        status: undefined,
-          indexedAt: new Date(),
-          tenantScope: '',
-          summaryText: '',
-          keywordsText: '',
-          contentChars: 0,
-          estimatedTokens: 0,
-          relevanceScore: 0,
-          hitCount: 0,
-          lastHitAt: new Date(),
-          semanticDeletedAt: new Date(),
-          trashed: false,
+    targetType: "",
+    targetId: "",
+    sourceHash: "",
+    compressionStrategy: undefined,
+    embeddingProvider: "",
+    embeddingModel: "",
+    embeddingDimensions: 0,
+    embeddingChecksum: "",
+    vectorEncoding: undefined,
+    status: undefined,
+    indexedAt: new Date(),
+    tenantScope: "",
+    summaryText: "",
+    keywordsText: "",
+    contentChars: 0,
+    estimatedTokens: 0,
+    relevanceScore: 0,
+    hitCount: 0,
+    lastHitAt: new Date(),
+    semanticDeletedAt: new Date(),
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -204,11 +226,14 @@ const SemanticIndexEntryForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new SemanticIndexEntry:', grants);
+    console.log("Permissions saved for new SemanticIndexEntry:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<SemanticIndexEntry>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<SemanticIndexEntry>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -219,7 +244,7 @@ const SemanticIndexEntryForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `SemanticIndexEntry created successfully! Would you like to set permissions for this object?`
+          `SemanticIndexEntry created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -227,8 +252,8 @@ const SemanticIndexEntryForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create SemanticIndexEntry:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create SemanticIndexEntry:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -249,44 +274,38 @@ const SemanticIndexEntryForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addSemanticIndexEntryResult.isLoading;
+          const isSaving =
+            isSubmitting || addSemanticIndexEntryResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New SemanticIndexEntry
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    SemanticIndexEntry
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="targetType" className="nice-form-control">
                       <b>
                         Target Type:
-                        {touched.targetType &&
-                         !errors.targetType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.targetType && !errors.targetType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="targetType"
-                            value={values?.targetType}
-                            placeholder="Target Type"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="targetType"
+                        value={values?.targetType}
+                        placeholder="Target Type"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -298,28 +317,21 @@ const SemanticIndexEntryForm: React.FC = () => {
                     <label htmlFor="targetId" className="nice-form-control">
                       <b>
                         Target Id:
-                        {touched.targetId &&
-                         !errors.targetId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.targetId && !errors.targetId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="targetId"
-                            value={values?.targetId}
-                            placeholder="Target Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="targetId"
+                        value={values?.targetId}
+                        placeholder="Target Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -331,28 +343,21 @@ const SemanticIndexEntryForm: React.FC = () => {
                     <label htmlFor="sourceHash" className="nice-form-control">
                       <b>
                         Source Hash:
-                        {touched.sourceHash &&
-                         !errors.sourceHash && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.sourceHash && !errors.sourceHash && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="sourceHash"
-                            value={values?.sourceHash}
-                            placeholder="Source Hash"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="sourceHash"
+                        value={values?.sourceHash}
+                        placeholder="Source Hash"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -361,33 +366,40 @@ const SemanticIndexEntryForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="compressionStrategy" className="nice-form-control">
+                    <label
+                      htmlFor="compressionStrategy"
+                      className="nice-form-control"
+                    >
                       <b>
                         Compression Strategy:
                         {touched.compressionStrategy &&
-                         !errors.compressionStrategy && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.compressionStrategy && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="compressionStrategy"
-                          value={values.compressionStrategy || ''}
-                          className={
-                            errors.compressionStrategy
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('compressionStrategy', true);
-                            setFieldValue('compressionStrategy', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Compression Strategy" />
-                          <CompressionStrategyLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="compressionStrategy"
+                        value={values.compressionStrategy || ""}
+                        className={
+                          errors.compressionStrategy
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("compressionStrategy", true);
+                          setFieldValue(
+                            "compressionStrategy",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Compression Strategy" />
+                        <CompressionStrategyLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -396,31 +408,28 @@ const SemanticIndexEntryForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="embeddingProvider" className="nice-form-control">
+                    <label
+                      htmlFor="embeddingProvider"
+                      className="nice-form-control"
+                    >
                       <b>
                         Embedding Provider:
                         {touched.embeddingProvider &&
-                         !errors.embeddingProvider && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.embeddingProvider && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="embeddingProvider"
-                            value={values?.embeddingProvider}
-                            placeholder="Embedding Provider"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="embeddingProvider"
+                        value={values?.embeddingProvider}
+                        placeholder="Embedding Provider"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -429,31 +438,27 @@ const SemanticIndexEntryForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="embeddingModel" className="nice-form-control">
+                    <label
+                      htmlFor="embeddingModel"
+                      className="nice-form-control"
+                    >
                       <b>
                         Embedding Model:
-                        {touched.embeddingModel &&
-                         !errors.embeddingModel && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.embeddingModel && !errors.embeddingModel && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="embeddingModel"
-                            value={values?.embeddingModel}
-                            placeholder="Embedding Model"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="embeddingModel"
+                        value={values?.embeddingModel}
+                        placeholder="Embedding Model"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -462,39 +467,39 @@ const SemanticIndexEntryForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="embeddingDimensions" className="nice-form-control">
+                    <label
+                      htmlFor="embeddingDimensions"
+                      className="nice-form-control"
+                    >
                       <b>
                         Embedding Dimensions:
                         {touched.embeddingDimensions &&
-                         !errors.embeddingDimensions && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.embeddingDimensions && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="embeddingDimensions"
-                            type="number"
-                            value={values.embeddingDimensions || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('embeddingDimensions', true);
-                              const v = e.target.value;
-                              setFieldValue('embeddingDimensions', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.embeddingDimensions
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="embeddingDimensions"
+                        type="number"
+                        value={values.embeddingDimensions || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("embeddingDimensions", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "embeddingDimensions",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.embeddingDimensions
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -503,23 +508,18 @@ const SemanticIndexEntryForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="embeddingVector" className="nice-form-control">
+                    <label
+                      htmlFor="embeddingVector"
+                      className="nice-form-control"
+                    >
                       <b>
                         Embedding Vector:
-                        {touched.embeddingVector &&
-                         !errors.embeddingVector && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.embeddingVector && !errors.embeddingVector && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -528,31 +528,28 @@ const SemanticIndexEntryForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="embeddingChecksum" className="nice-form-control">
+                    <label
+                      htmlFor="embeddingChecksum"
+                      className="nice-form-control"
+                    >
                       <b>
                         Embedding Checksum:
                         {touched.embeddingChecksum &&
-                         !errors.embeddingChecksum && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.embeddingChecksum && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="embeddingChecksum"
-                            value={values?.embeddingChecksum}
-                            placeholder="Embedding Checksum"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="embeddingChecksum"
+                        value={values?.embeddingChecksum}
+                        placeholder="Embedding Checksum"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -561,33 +558,39 @@ const SemanticIndexEntryForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="vectorEncoding" className="nice-form-control">
+                    <label
+                      htmlFor="vectorEncoding"
+                      className="nice-form-control"
+                    >
                       <b>
                         Vector Encoding:
-                        {touched.vectorEncoding &&
-                         !errors.vectorEncoding && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.vectorEncoding && !errors.vectorEncoding && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="vectorEncoding"
-                          value={values.vectorEncoding || ''}
-                          className={
-                            errors.vectorEncoding
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('vectorEncoding', true);
-                            setFieldValue('vectorEncoding', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Vector Encoding" />
-                          <VectorEncodingLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="vectorEncoding"
+                        value={values.vectorEncoding || ""}
+                        className={
+                          errors.vectorEncoding
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("vectorEncoding", true);
+                          setFieldValue(
+                            "vectorEncoding",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Vector Encoding" />
+                        <VectorEncodingLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -599,30 +602,30 @@ const SemanticIndexEntryForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="status"
-                          value={values.status || ''}
-                          className={
-                            errors.status
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Status" />
-                          <StatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="status"
+                        value={values.status || ""}
+                        className={
+                          errors.status
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("status", true);
+                          setFieldValue("status", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Status" />
+                        <StatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -634,38 +637,38 @@ const SemanticIndexEntryForm: React.FC = () => {
                     <label htmlFor="indexedAt" className="nice-form-control">
                       <b>
                         Indexed At:
-                        {touched.indexedAt &&
-                         !errors.indexedAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.indexedAt && !errors.indexedAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="indexedAt"
-                            type="datetime-local"
-                            value={values.indexedAt ? 
-                              new Date(values.indexedAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('indexedAt', true);
-                              const v = e.target.value;
-                              setFieldValue('indexedAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.indexedAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="indexedAt"
+                        type="datetime-local"
+                        value={
+                          values.indexedAt
+                            ? new Date(values.indexedAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("indexedAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "indexedAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.indexedAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -677,28 +680,21 @@ const SemanticIndexEntryForm: React.FC = () => {
                     <label htmlFor="tenantScope" className="nice-form-control">
                       <b>
                         Tenant Scope:
-                        {touched.tenantScope &&
-                         !errors.tenantScope && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.tenantScope && !errors.tenantScope && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="tenantScope"
-                            value={values?.tenantScope}
-                            placeholder="Tenant Scope"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="tenantScope"
+                        value={values?.tenantScope}
+                        placeholder="Tenant Scope"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -710,28 +706,21 @@ const SemanticIndexEntryForm: React.FC = () => {
                     <label htmlFor="summaryText" className="nice-form-control">
                       <b>
                         Summary Text:
-                        {touched.summaryText &&
-                         !errors.summaryText && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.summaryText && !errors.summaryText && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="summaryText"
-                            value={values?.summaryText}
-                            placeholder="Summary Text"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="summaryText"
+                        value={values?.summaryText}
+                        placeholder="Summary Text"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -743,28 +732,21 @@ const SemanticIndexEntryForm: React.FC = () => {
                     <label htmlFor="keywordsText" className="nice-form-control">
                       <b>
                         Keywords Text:
-                        {touched.keywordsText &&
-                         !errors.keywordsText && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.keywordsText && !errors.keywordsText && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="keywordsText"
-                            value={values?.keywordsText}
-                            placeholder="Keywords Text"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="keywordsText"
+                        value={values?.keywordsText}
+                        placeholder="Keywords Text"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -776,36 +758,32 @@ const SemanticIndexEntryForm: React.FC = () => {
                     <label htmlFor="contentChars" className="nice-form-control">
                       <b>
                         Content Chars:
-                        {touched.contentChars &&
-                         !errors.contentChars && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.contentChars && !errors.contentChars && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="contentChars"
-                            type="number"
-                            value={values.contentChars || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('contentChars', true);
-                              const v = e.target.value;
-                              setFieldValue('contentChars', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.contentChars
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="contentChars"
+                        type="number"
+                        value={values.contentChars || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("contentChars", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "contentChars",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.contentChars
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -814,39 +792,38 @@ const SemanticIndexEntryForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="estimatedTokens" className="nice-form-control">
+                    <label
+                      htmlFor="estimatedTokens"
+                      className="nice-form-control"
+                    >
                       <b>
                         Estimated Tokens:
-                        {touched.estimatedTokens &&
-                         !errors.estimatedTokens && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.estimatedTokens && !errors.estimatedTokens && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="estimatedTokens"
-                            type="number"
-                            value={values.estimatedTokens || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('estimatedTokens', true);
-                              const v = e.target.value;
-                              setFieldValue('estimatedTokens', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.estimatedTokens
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="estimatedTokens"
+                        type="number"
+                        value={values.estimatedTokens || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("estimatedTokens", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "estimatedTokens",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.estimatedTokens
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -855,40 +832,39 @@ const SemanticIndexEntryForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="relevanceScore" className="nice-form-control">
+                    <label
+                      htmlFor="relevanceScore"
+                      className="nice-form-control"
+                    >
                       <b>
                         Relevance Score:
-                        {touched.relevanceScore &&
-                         !errors.relevanceScore && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.relevanceScore && !errors.relevanceScore && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="relevanceScore"
-                            type="number"
-                            step="any"
-                            value={values.relevanceScore || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('relevanceScore', true);
-                              const v = e.target.value;
-                              setFieldValue('relevanceScore', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.relevanceScore
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="relevanceScore"
+                        type="number"
+                        step="any"
+                        value={values.relevanceScore || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("relevanceScore", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "relevanceScore",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.relevanceScore
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -900,36 +876,32 @@ const SemanticIndexEntryForm: React.FC = () => {
                     <label htmlFor="hitCount" className="nice-form-control">
                       <b>
                         Hit Count:
-                        {touched.hitCount &&
-                         !errors.hitCount && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.hitCount && !errors.hitCount && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-                          {/* LONG FIELD */}
-                          <Field
-                            name="hitCount"
-                            type="number"
-                            value={values.hitCount || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('hitCount', true);
-                              const v = e.target.value;
-                              setFieldValue('hitCount', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.hitCount
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
+                      {/* LONG FIELD */}
+                      <Field
+                        name="hitCount"
+                        type="number"
+                        value={values.hitCount || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("hitCount", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "hitCount",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.hitCount
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -941,38 +913,38 @@ const SemanticIndexEntryForm: React.FC = () => {
                     <label htmlFor="lastHitAt" className="nice-form-control">
                       <b>
                         Last Hit At:
-                        {touched.lastHitAt &&
-                         !errors.lastHitAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.lastHitAt && !errors.lastHitAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="lastHitAt"
-                            type="datetime-local"
-                            value={values.lastHitAt ? 
-                              new Date(values.lastHitAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('lastHitAt', true);
-                              const v = e.target.value;
-                              setFieldValue('lastHitAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.lastHitAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="lastHitAt"
+                        type="datetime-local"
+                        value={
+                          values.lastHitAt
+                            ? new Date(values.lastHitAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("lastHitAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "lastHitAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.lastHitAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -981,41 +953,45 @@ const SemanticIndexEntryForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="semanticDeletedAt" className="nice-form-control">
+                    <label
+                      htmlFor="semanticDeletedAt"
+                      className="nice-form-control"
+                    >
                       <b>
                         Semantic Deleted At:
                         {touched.semanticDeletedAt &&
-                         !errors.semanticDeletedAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.semanticDeletedAt && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="semanticDeletedAt"
-                            type="datetime-local"
-                            value={values.semanticDeletedAt ? 
-                              new Date(values.semanticDeletedAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('semanticDeletedAt', true);
-                              const v = e.target.value;
-                              setFieldValue('semanticDeletedAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.semanticDeletedAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="semanticDeletedAt"
+                        type="datetime-local"
+                        value={
+                          values.semanticDeletedAt
+                            ? new Date(values.semanticDeletedAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("semanticDeletedAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "semanticDeletedAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.semanticDeletedAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1027,32 +1003,25 @@ const SemanticIndexEntryForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1062,45 +1031,60 @@ const SemanticIndexEntryForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New SemanticIndexEntry
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New SemanticIndexEntry
+                    </CoolButton>
 
-                  {(addSemanticIndexEntryResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addSemanticIndexEntryResult as any).error ? (addSemanticIndexEntryResult as any).error.data : (addSemanticIndexEntryResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addSemanticIndexEntryResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addSemanticIndexEntryResult as any).error
+                              ? (addSemanticIndexEntryResult as any).error.data
+                              : (addSemanticIndexEntryResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addSemanticIndexEntryResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addSemanticIndexEntryResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addSemanticIndexEntryResult: {JSON.stringify(addSemanticIndexEntryResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addSemanticIndexEntryResult:{" "}
+                    {JSON.stringify(addSemanticIndexEntryResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -1132,9 +1116,12 @@ kebabcase compression-strategy-lookup
 const CompressionStrategyLookup = () => {
   return (
     <>
-      <option value='none' label="None" />
-      <option value='summary_v1' label="Summary V 1" />
-      <option value='hierarchical_summary_v1' label="Hierarchical Summary V 1" />
+      <option value="none" label="None" />
+      <option value="summary_v1" label="Summary V 1" />
+      <option
+        value="hierarchical_summary_v1"
+        label="Hierarchical Summary V 1"
+      />
     </>
   );
 };
@@ -1151,9 +1138,9 @@ kebabcase vector-encoding-lookup
 const VectorEncodingLookup = () => {
   return (
     <>
-      <option value='float32_le' label="Float 32 Le" />
-      <option value='uint8_quantized' label="Uint 8 Quantized" />
-      <option value='summary_only' label="Summary Only" />
+      <option value="float32_le" label="Float 32 Le" />
+      <option value="uint8_quantized" label="Uint 8 Quantized" />
+      <option value="summary_only" label="Summary Only" />
     </>
   );
 };
@@ -1170,15 +1157,12 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value='active' label="Active" />
-      <option value='stale' label="Stale" />
-      <option value='deleted' label="Deleted" />
+      <option value="active" label="Active" />
+      <option value="stale" label="Stale" />
+      <option value="deleted" label="Deleted" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default SemanticIndexEntryForm;
-

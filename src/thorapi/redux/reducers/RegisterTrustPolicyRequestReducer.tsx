@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { RegisterTrustPolicyRequest } from '@thorapi/model/RegisterTrustPolicyRequest';
+import { RegisterTrustPolicyRequest } from "@thorapi/model/RegisterTrustPolicyRequest";
 
 const RegisterTrustPolicyRequestSlice = createSlice({
   name: "RegisterTrustPolicyRequests",
@@ -27,20 +27,27 @@ const RegisterTrustPolicyRequestSlice = createSlice({
     },
 
     RegisterTrustPolicyRequestValueToggled(state, action) {
-      console.log("RegisterTrustPolicyRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const RegisterTrustPolicyRequest:RegisterTrustPolicyRequest = state.find((RegisterTrustPolicyRequest) => RegisterTrustPolicyRequest.id === action.payload.RegisterTrustPolicyRequestId);
+      console.log("RegisterTrustPolicyRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const RegisterTrustPolicyRequest: RegisterTrustPolicyRequest = state.find(
+        (RegisterTrustPolicyRequest) =>
+          RegisterTrustPolicyRequest.id ===
+          action.payload.RegisterTrustPolicyRequestId,
+      );
       if (RegisterTrustPolicyRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     RegisterTrustPolicyRequestpropertySet(state, action) {
-      const RegisterTrustPolicyRequest = state.find((RegisterTrustPolicyRequest) => RegisterTrustPolicyRequest.id === action.payload.RegisterTrustPolicyRequestId);
+      const RegisterTrustPolicyRequest = state.find(
+        (RegisterTrustPolicyRequest) =>
+          RegisterTrustPolicyRequest.id ===
+          action.payload.RegisterTrustPolicyRequestId,
+      );
       if (RegisterTrustPolicyRequest) {
-      //  RegisterTrustPolicyRequest[action.property] = action.payload[action.property];
+        //  RegisterTrustPolicyRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const RegisterTrustPolicyRequestSlice = createSlice({
 export const {
   RegisterTrustPolicyRequestAdded,
   RegisterTrustPolicyRequestValueToggled,
-  RegisterTrustPolicyRequestpropertySet
+  RegisterTrustPolicyRequestpropertySet,
 } = RegisterTrustPolicyRequestSlice.actions;
 export default RegisterTrustPolicyRequestSlice.reducer;

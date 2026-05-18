@@ -13,32 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  SubscriptionPlan,
-  SubscriptionPlanIntervalEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddSubscriptionPlanMutation } from '../../services/SubscriptionPlanService';
+import { SubscriptionPlan, SubscriptionPlanIntervalEnum } from "@thorapi/model";
+
+import { useAddSubscriptionPlanMutation } from "../../services/SubscriptionPlanService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -62,37 +67,36 @@ Plan metadata used for recurring subscription products.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const IntervalValidation = () => {
-  return [
-    'daily',
-    'weekly',
-    'monthly',
-    'yearly',
-  ];
+  return ["daily", "weekly", "monthly", "yearly"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        name: Yup.string(),
-        planCode: Yup.string(),
-        price: asNumber(Yup.number().typeError("price must be a number")),
-        currency: Yup.string(),
-      interval: Yup.mixed()
-        .oneOf(IntervalValidation(), "Invalid value for interval")
-        ,
-        active: Yup.boolean(),
-        trashed: Yup.boolean(),
+  name: Yup.string(),
+  planCode: Yup.string(),
+  price: asNumber(Yup.number().typeError("price must be a number")),
+  currency: Yup.string(),
+  interval: Yup.mixed().oneOf(
+    IntervalValidation(),
+    "Invalid value for interval",
+  ),
+  active: Yup.boolean(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const SubscriptionPlanForm: React.FC = () => {
-  const [addSubscriptionPlan, addSubscriptionPlanResult] = useAddSubscriptionPlanMutation();
+  const [addSubscriptionPlan, addSubscriptionPlanResult] =
+    useAddSubscriptionPlanMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -102,12 +106,18 @@ const SubscriptionPlanForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -115,13 +125,13 @@ const SubscriptionPlanForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<SubscriptionPlan> = {
-          name: '',
-          planCode: '',
-          price: 0,
-          currency: '',
-        interval: undefined,
-          active: false,
-          trashed: false,
+    name: "",
+    planCode: "",
+    price: 0,
+    currency: "",
+    interval: undefined,
+    active: false,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -136,11 +146,14 @@ const SubscriptionPlanForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new SubscriptionPlan:', grants);
+    console.log("Permissions saved for new SubscriptionPlan:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<SubscriptionPlan>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<SubscriptionPlan>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -151,7 +164,7 @@ const SubscriptionPlanForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `SubscriptionPlan created successfully! Would you like to set permissions for this object?`
+          `SubscriptionPlan created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -159,8 +172,8 @@ const SubscriptionPlanForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create SubscriptionPlan:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create SubscriptionPlan:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -181,44 +194,37 @@ const SubscriptionPlanForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addSubscriptionPlanResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New SubscriptionPlan
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    SubscriptionPlan
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.name && !errors.name && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="name"
+                        value={values?.name}
+                        placeholder="Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -230,28 +236,21 @@ const SubscriptionPlanForm: React.FC = () => {
                     <label htmlFor="planCode" className="nice-form-control">
                       <b>
                         Plan Code:
-                        {touched.planCode &&
-                         !errors.planCode && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.planCode && !errors.planCode && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="planCode"
-                            value={values?.planCode}
-                            placeholder="Plan Code"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="planCode"
+                        value={values?.planCode}
+                        placeholder="Plan Code"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -263,37 +262,33 @@ const SubscriptionPlanForm: React.FC = () => {
                     <label htmlFor="price" className="nice-form-control">
                       <b>
                         Price:
-                        {touched.price &&
-                         !errors.price && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.price && !errors.price && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="price"
-                            type="number"
-                            step="any"
-                            value={values.price || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('price', true);
-                              const v = e.target.value;
-                              setFieldValue('price', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.price
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="price"
+                        type="number"
+                        step="any"
+                        value={values.price || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("price", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "price",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.price
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -305,28 +300,21 @@ const SubscriptionPlanForm: React.FC = () => {
                     <label htmlFor="currency" className="nice-form-control">
                       <b>
                         Currency:
-                        {touched.currency &&
-                         !errors.currency && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.currency && !errors.currency && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="currency"
-                            value={values?.currency}
-                            placeholder="Currency"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="currency"
+                        value={values?.currency}
+                        placeholder="Currency"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -338,30 +326,33 @@ const SubscriptionPlanForm: React.FC = () => {
                     <label htmlFor="interval" className="nice-form-control">
                       <b>
                         Interval:
-                        {touched.interval &&
-                         !errors.interval && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.interval && !errors.interval && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="interval"
-                          value={values.interval || ''}
-                          className={
-                            errors.interval
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('interval', true);
-                            setFieldValue('interval', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Interval" />
-                          <IntervalLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="interval"
+                        value={values.interval || ""}
+                        className={
+                          errors.interval
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("interval", true);
+                          setFieldValue(
+                            "interval",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Interval" />
+                        <IntervalLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -373,32 +364,25 @@ const SubscriptionPlanForm: React.FC = () => {
                     <label htmlFor="active" className="nice-form-control">
                       <b>
                         Active:
-                        {touched.active &&
-                         !errors.active && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.active && !errors.active && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="active"
-                            name="active"
-                            checked={values.active || false}
-                            onChange={(e) => {
-                              setFieldTouched('active', true);
-                              setFieldValue('active', e.target.checked);
-                            }}
-                            isInvalid={!!errors.active}
-                            className={errors.active ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="active"
+                        name="active"
+                        checked={values.active || false}
+                        onChange={(e) => {
+                          setFieldTouched("active", true);
+                          setFieldValue("active", e.target.checked);
+                        }}
+                        isInvalid={!!errors.active}
+                        className={errors.active ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -410,32 +394,25 @@ const SubscriptionPlanForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -445,45 +422,60 @@ const SubscriptionPlanForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New SubscriptionPlan
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New SubscriptionPlan
+                    </CoolButton>
 
-                  {(addSubscriptionPlanResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addSubscriptionPlanResult as any).error ? (addSubscriptionPlanResult as any).error.data : (addSubscriptionPlanResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addSubscriptionPlanResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addSubscriptionPlanResult as any).error
+                              ? (addSubscriptionPlanResult as any).error.data
+                              : (addSubscriptionPlanResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addSubscriptionPlanResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addSubscriptionPlanResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addSubscriptionPlanResult: {JSON.stringify(addSubscriptionPlanResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addSubscriptionPlanResult:{" "}
+                    {JSON.stringify(addSubscriptionPlanResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -515,16 +507,13 @@ kebabcase interval-lookup
 const IntervalLookup = () => {
   return (
     <>
-      <option value='daily' label="Daily" />
-      <option value='weekly' label="Weekly" />
-      <option value='monthly' label="Monthly" />
-      <option value='yearly' label="Yearly" />
+      <option value="daily" label="Daily" />
+      <option value="weekly" label="Weekly" />
+      <option value="monthly" label="Monthly" />
+      <option value="yearly" label="Yearly" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default SubscriptionPlanForm;
-

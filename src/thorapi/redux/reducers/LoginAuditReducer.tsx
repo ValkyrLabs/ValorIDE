@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { LoginAudit } from '@thorapi/model/LoginAudit';
+import { LoginAudit } from "@thorapi/model/LoginAudit";
 
 const LoginAuditSlice = createSlice({
   name: "LoginAudits",
@@ -27,20 +27,23 @@ const LoginAuditSlice = createSlice({
     },
 
     LoginAuditValueToggled(state, action) {
-      console.log("LoginAudit TOGGLE")
-      console.warn(JSON.stringify(action))
-      const LoginAudit:LoginAudit = state.find((LoginAudit) => LoginAudit.id === action.payload.LoginAuditId);
+      console.log("LoginAudit TOGGLE");
+      console.warn(JSON.stringify(action));
+      const LoginAudit: LoginAudit = state.find(
+        (LoginAudit) => LoginAudit.id === action.payload.LoginAuditId,
+      );
       if (LoginAudit) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     LoginAuditpropertySet(state, action) {
-      const LoginAudit = state.find((LoginAudit) => LoginAudit.id === action.payload.LoginAuditId);
+      const LoginAudit = state.find(
+        (LoginAudit) => LoginAudit.id === action.payload.LoginAuditId,
+      );
       if (LoginAudit) {
-      //  LoginAudit[action.property] = action.payload[action.property];
+        //  LoginAudit[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const LoginAuditSlice = createSlice({
 export const {
   LoginAuditAdded,
   LoginAuditValueToggled,
-  LoginAuditpropertySet
+  LoginAuditpropertySet,
 } = LoginAuditSlice.actions;
 export default LoginAuditSlice.reducer;

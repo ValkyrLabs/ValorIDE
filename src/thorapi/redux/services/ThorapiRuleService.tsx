@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { ThorapiRule } from '@thorapi/model/ThorapiRule'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { ThorapiRule } from "@thorapi/model/ThorapiRule";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type ThorapiRuleResponse = ThorapiRule[]
+type ThorapiRuleResponse = ThorapiRule[];
 
 const toThorapiRuleList = (result: unknown): ThorapiRuleResponse => {
   if (Array.isArray(result)) {
-    return result as ThorapiRuleResponse
+    return result as ThorapiRuleResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as ThorapiRuleResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as ThorapiRuleResponse) : [];
+};
 
 export const ThorapiRuleService = createApi({
-  reducerPath: 'ThorapiRule', // This should remain unique
+  reducerPath: "ThorapiRule", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['ThorapiRule'],
+  tagTypes: ["ThorapiRule"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getThorapiRulesPaged: build.query<ThorapiRuleResponse, { page: number; size?: number; example?: Partial<ThorapiRule> }>({
+    getThorapiRulesPaged: build.query<
+      ThorapiRuleResponse,
+      { page: number; size?: number; example?: Partial<ThorapiRule> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ThorapiRule?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ThorapiRule?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toThorapiRuleList(result)
+        const rows = toThorapiRuleList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ThorapiRule' as const, id })),
-          { type: 'ThorapiRule', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "ThorapiRule" as const, id })),
+          { type: "ThorapiRule", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getThorapiRules: build.query<ThorapiRuleResponse, { example?: Partial<ThorapiRule> } | void>({
+    getThorapiRules: build.query<
+      ThorapiRuleResponse,
+      { example?: Partial<ThorapiRule> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const ThorapiRuleService = createApi({
         return `ThorapiRule`;
       },
       providesTags: (result) => {
-        const rows = toThorapiRuleList(result)
+        const rows = toThorapiRuleList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ThorapiRule' as const, id })),
-          { type: 'ThorapiRule', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "ThorapiRule" as const, id })),
+          { type: "ThorapiRule", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,73 +87,88 @@ export const ThorapiRuleService = createApi({
     addThorapiRule: build.mutation<ThorapiRule, Partial<ThorapiRule>>({
       query: (body) => ({
         url: `ThorapiRule`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'ThorapiRule', id: 'LIST' }],
+      invalidatesTags: [{ type: "ThorapiRule", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getThorapiRule: build.query<ThorapiRule, string>({
       query: (id) => `ThorapiRule/${id}`,
-      providesTags: (result, error, id) => [{ type: 'ThorapiRule', id }],
+      providesTags: (result, error, id) => [{ type: "ThorapiRule", id }],
     }),
 
     // 5) Update
-    updateThorapiRule: build.mutation<void, Pick<ThorapiRule, 'id'> & Partial<ThorapiRule>>({
+    updateThorapiRule: build.mutation<
+      void,
+      Pick<ThorapiRule, "id"> & Partial<ThorapiRule>
+    >({
       query: ({ id, ...patch }) => ({
         url: `ThorapiRule/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            ThorapiRuleService.util.updateQueryData('getThorapiRule', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            ThorapiRuleService.util.updateQueryData(
+              "getThorapiRule",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<ThorapiRule, 'id'>) => [
-        { type: 'ThorapiRule', id },
-        { type: 'ThorapiRule', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<ThorapiRule, "id">) => [
+        { type: "ThorapiRule", id },
+        { type: "ThorapiRule", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteThorapiRule: build.mutation<{ success: boolean; id: string }, number>({
-      query(id) {
-        return {
-          url: `ThorapiRule/${id}`,
-          method: 'DELETE',
-        }
+    deleteThorapiRule: build.mutation<{ success: boolean; id: string }, number>(
+      {
+        query(id) {
+          return {
+            url: `ThorapiRule/${id}`,
+            method: "DELETE",
+          };
+        },
+        invalidatesTags: (result, error, id) => [{ type: "ThorapiRule", id }],
       },
-      invalidatesTags: (result, error, id) => [{ type: 'ThorapiRule', id }],
-    }),
+    ),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteThorapiRuleCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteThorapiRuleCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `ThorapiRule/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ThorapiRule', id }, { type: 'ThorapiRule', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "ThorapiRule", id },
+        { type: "ThorapiRule", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetThorapiRulesPagedQuery`
 export const {
-  useGetThorapiRulesPagedQuery,     // immediate fetch
+  useGetThorapiRulesPagedQuery, // immediate fetch
   useLazyGetThorapiRulesPagedQuery, // lazy fetch
   useGetThorapiRuleQuery,
   useGetThorapiRulesQuery,
@@ -150,4 +176,4 @@ export const {
   useUpdateThorapiRuleMutation,
   useDeleteThorapiRuleMutation,
   useDeleteThorapiRuleCascadeMutation,
-} = ThorapiRuleService
+} = ThorapiRuleService;

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasPath } from '@thorapi/model/OasPath';
+import { OasPath } from "@thorapi/model/OasPath";
 
 const OasPathSlice = createSlice({
   name: "OasPaths",
@@ -27,28 +27,28 @@ const OasPathSlice = createSlice({
     },
 
     OasPathValueToggled(state, action) {
-      console.log("OasPath TOGGLE")
-      console.warn(JSON.stringify(action))
-      const OasPath:OasPath = state.find((OasPath) => OasPath.id === action.payload.OasPathId);
+      console.log("OasPath TOGGLE");
+      console.warn(JSON.stringify(action));
+      const OasPath: OasPath = state.find(
+        (OasPath) => OasPath.id === action.payload.OasPathId,
+      );
       if (OasPath) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     OasPathpropertySet(state, action) {
-      const OasPath = state.find((OasPath) => OasPath.id === action.payload.OasPathId);
+      const OasPath = state.find(
+        (OasPath) => OasPath.id === action.payload.OasPathId,
+      );
       if (OasPath) {
-      //  OasPath[action.property] = action.payload[action.property];
+        //  OasPath[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  OasPathAdded,
-  OasPathValueToggled,
-  OasPathpropertySet
-} = OasPathSlice.actions;
+export const { OasPathAdded, OasPathValueToggled, OasPathpropertySet } =
+  OasPathSlice.actions;
 export default OasPathSlice.reducer;

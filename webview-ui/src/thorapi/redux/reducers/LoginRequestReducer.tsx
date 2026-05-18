@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { LoginRequest } from '@thorapi/model/LoginRequest';
+import { LoginRequest } from "@thorapi/model/LoginRequest";
 
 const LoginRequestSlice = createSlice({
   name: "LoginRequests",
@@ -27,20 +27,23 @@ const LoginRequestSlice = createSlice({
     },
 
     LoginRequestValueToggled(state, action) {
-      console.log("LoginRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const LoginRequest:LoginRequest = state.find((LoginRequest) => LoginRequest.id === action.payload.LoginRequestId);
+      console.log("LoginRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const LoginRequest: LoginRequest = state.find(
+        (LoginRequest) => LoginRequest.id === action.payload.LoginRequestId,
+      );
       if (LoginRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     LoginRequestpropertySet(state, action) {
-      const LoginRequest = state.find((LoginRequest) => LoginRequest.id === action.payload.LoginRequestId);
+      const LoginRequest = state.find(
+        (LoginRequest) => LoginRequest.id === action.payload.LoginRequestId,
+      );
       if (LoginRequest) {
-      //  LoginRequest[action.property] = action.payload[action.property];
+        //  LoginRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const LoginRequestSlice = createSlice({
 export const {
   LoginRequestAdded,
   LoginRequestValueToggled,
-  LoginRequestpropertySet
+  LoginRequestpropertySet,
 } = LoginRequestSlice.actions;
 export default LoginRequestSlice.reducer;

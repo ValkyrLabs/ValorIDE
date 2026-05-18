@@ -13,32 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  FileMetadata,
-  FileMetadataStatusEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddFileMetadataMutation } from '../../services/FileMetadataService';
+import { FileMetadata, FileMetadataStatusEnum } from "@thorapi/model";
+
+import { useAddFileMetadataMutation } from "../../services/FileMetadataService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -62,30 +67,25 @@ File metadata response for API operations
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const StatusValidation = () => {
-  return [
-    'UPLOADING',
-    'SCANNING',
-    'AVAILABLE',
-    'BLOCKED',
-    'DELETED',
-    'FAILED',
-  ];
+  return ["UPLOADING", "SCANNING", "AVAILABLE", "BLOCKED", "DELETED", "FAILED"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        filename: Yup.string(),
-        mimeType: Yup.string(),
-        sizeBytes: asNumber(Yup.number().integer().typeError("sizeBytes must be a number")),
-      status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        ,
-        trashed: Yup.boolean(),
+  filename: Yup.string(),
+  mimeType: Yup.string(),
+  sizeBytes: asNumber(
+    Yup.number().integer().typeError("sizeBytes must be a number"),
+  ),
+  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -102,12 +102,18 @@ const FileMetadataForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -115,11 +121,11 @@ const FileMetadataForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<FileMetadata> = {
-          filename: '',
-          mimeType: '',
-          sizeBytes: 0,
-        status: undefined,
-          trashed: false,
+    filename: "",
+    mimeType: "",
+    sizeBytes: 0,
+    status: undefined,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -134,11 +140,14 @@ const FileMetadataForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new FileMetadata:', grants);
+    console.log("Permissions saved for new FileMetadata:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<FileMetadata>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<FileMetadata>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -149,7 +158,7 @@ const FileMetadataForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `FileMetadata created successfully! Would you like to set permissions for this object?`
+          `FileMetadata created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -157,8 +166,8 @@ const FileMetadataForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create FileMetadata:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create FileMetadata:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -179,44 +188,36 @@ const FileMetadataForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addFileMetadataResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New FileMetadata
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New FileMetadata
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="filename" className="nice-form-control">
                       <b>
                         Filename:
-                        {touched.filename &&
-                         !errors.filename && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.filename && !errors.filename && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="filename"
-                            value={values?.filename}
-                            placeholder="Filename"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="filename"
+                        value={values?.filename}
+                        placeholder="Filename"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -228,28 +229,21 @@ const FileMetadataForm: React.FC = () => {
                     <label htmlFor="mimeType" className="nice-form-control">
                       <b>
                         Mime Type:
-                        {touched.mimeType &&
-                         !errors.mimeType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.mimeType && !errors.mimeType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="mimeType"
-                            value={values?.mimeType}
-                            placeholder="Mime Type"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="mimeType"
+                        value={values?.mimeType}
+                        placeholder="Mime Type"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -261,36 +255,32 @@ const FileMetadataForm: React.FC = () => {
                     <label htmlFor="sizeBytes" className="nice-form-control">
                       <b>
                         Size Bytes:
-                        {touched.sizeBytes &&
-                         !errors.sizeBytes && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.sizeBytes && !errors.sizeBytes && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-                          {/* LONG FIELD */}
-                          <Field
-                            name="sizeBytes"
-                            type="number"
-                            value={values.sizeBytes || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('sizeBytes', true);
-                              const v = e.target.value;
-                              setFieldValue('sizeBytes', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.sizeBytes
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
+                      {/* LONG FIELD */}
+                      <Field
+                        name="sizeBytes"
+                        type="number"
+                        value={values.sizeBytes || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("sizeBytes", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "sizeBytes",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.sizeBytes
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -302,30 +292,30 @@ const FileMetadataForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="status"
-                          value={values.status || ''}
-                          className={
-                            errors.status
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Status" />
-                          <StatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="status"
+                        value={values.status || ""}
+                        className={
+                          errors.status
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("status", true);
+                          setFieldValue("status", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Status" />
+                        <StatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -337,32 +327,25 @@ const FileMetadataForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -372,45 +355,59 @@ const FileMetadataForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New FileMetadata
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New FileMetadata
+                    </CoolButton>
 
-                  {(addFileMetadataResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addFileMetadataResult as any).error ? (addFileMetadataResult as any).error.data : (addFileMetadataResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addFileMetadataResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addFileMetadataResult as any).error
+                              ? (addFileMetadataResult as any).error.data
+                              : (addFileMetadataResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addFileMetadataResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addFileMetadataResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addFileMetadataResult: {JSON.stringify(addFileMetadataResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addFileMetadataResult:{" "}
+                    {JSON.stringify(addFileMetadataResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -442,18 +439,15 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value='UPLOADING' label="Uploading" />
-      <option value='SCANNING' label="Scanning" />
-      <option value='AVAILABLE' label="Available" />
-      <option value='BLOCKED' label="Blocked" />
-      <option value='DELETED' label="Deleted" />
-      <option value='FAILED' label="Failed" />
+      <option value="UPLOADING" label="Uploading" />
+      <option value="SCANNING" label="Scanning" />
+      <option value="AVAILABLE" label="Available" />
+      <option value="BLOCKED" label="Blocked" />
+      <option value="DELETED" label="Deleted" />
+      <option value="FAILED" label="Failed" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default FileMetadataForm;
-

@@ -26,124 +26,137 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    TrustKey,
-    TrustKeyFromJSON,
-    TrustKeyToJSON,
-    TrustKeyVersion,
-    TrustKeyVersionFromJSON,
-    TrustKeyVersionToJSON,
-} from './';
-
+  TrustKey,
+  TrustKeyFromJSON,
+  TrustKeyToJSON,
+  TrustKeyVersion,
+  TrustKeyVersionFromJSON,
+  TrustKeyVersionToJSON,
+} from "./";
 
 // thorapi
 
 /**
- * 
+ *
  * @export
  * @interface GenerateTrustKeyResponse
  */
-export type GenerateTrustKeyResponse  = DataObject & {
-    /**
-     * 
-     * @type {TrustKey}
-     * @memberof GenerateTrustKeyResponse
-     */
-    trustKey?: TrustKey;
-    /**
-     * 
-     * @type {TrustKeyVersion}
-     * @memberof GenerateTrustKeyResponse
-     */
-    activeVersion?: TrustKeyVersion;
-    /**
-     * 
-     * @type {string}
-     * @memberof GenerateTrustKeyResponse
-     */
-    ownerId?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof GenerateTrustKeyResponse
-     */
-    readonly id?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof GenerateTrustKeyResponse
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof GenerateTrustKeyResponse
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof GenerateTrustKeyResponse
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof GenerateTrustKeyResponse
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof GenerateTrustKeyResponse
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof GenerateTrustKeyResponse
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof GenerateTrustKeyResponse
-     */
-    trashed?: boolean;
+export type GenerateTrustKeyResponse = DataObject & {
+  /**
+   *
+   * @type {TrustKey}
+   * @memberof GenerateTrustKeyResponse
+   */
+  trustKey?: TrustKey;
+  /**
+   *
+   * @type {TrustKeyVersion}
+   * @memberof GenerateTrustKeyResponse
+   */
+  activeVersion?: TrustKeyVersion;
+  /**
+   *
+   * @type {string}
+   * @memberof GenerateTrustKeyResponse
+   */
+  ownerId?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof GenerateTrustKeyResponse
+   */
+  readonly id?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof GenerateTrustKeyResponse
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof GenerateTrustKeyResponse
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof GenerateTrustKeyResponse
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof GenerateTrustKeyResponse
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof GenerateTrustKeyResponse
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof GenerateTrustKeyResponse
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof GenerateTrustKeyResponse
+   */
+  trashed?: boolean;
+};
+
+export function GenerateTrustKeyResponseFromJSON(
+  json: any,
+): GenerateTrustKeyResponse {
+  return {
+    ...DataObjectFromJSON(json),
+    trustKey: !exists(json, "trustKey")
+      ? undefined
+      : TrustKeyFromJSON(json["trustKey"]),
+    activeVersion: !exists(json, "activeVersion")
+      ? undefined
+      : TrustKeyVersionFromJSON(json["activeVersion"]),
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
-export function GenerateTrustKeyResponseFromJSON(json: any): GenerateTrustKeyResponse {
-    return {
-        ...DataObjectFromJSON(json),
-        'trustKey': !exists(json, 'trustKey') ? undefined : TrustKeyFromJSON(json['trustKey']),
-        'activeVersion': !exists(json, 'activeVersion') ? undefined : TrustKeyVersionFromJSON(json['activeVersion']),
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+export function GenerateTrustKeyResponseToJSON(
+  value?: GenerateTrustKeyResponse,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    trustKey: TrustKeyToJSON(value.trustKey),
+    activeVersion: TrustKeyVersionToJSON(value.activeVersion),
+    ownerId: value.ownerId,
+    trashed: value.trashed,
+  };
 }
-
-export function GenerateTrustKeyResponseToJSON(value?: GenerateTrustKeyResponse): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'trustKey': TrustKeyToJSON(value.trustKey),
-        'activeVersion': TrustKeyVersionToJSON(value.activeVersion),
-        'ownerId': value.ownerId,
-        'trashed': value.trashed,
-    };
-}
-
-

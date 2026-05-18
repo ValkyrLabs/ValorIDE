@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { OasRequired } from '@thorapi/model/OasRequired'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { OasRequired } from "@thorapi/model/OasRequired";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type OasRequiredResponse = OasRequired[]
+type OasRequiredResponse = OasRequired[];
 
 const toOasRequiredList = (result: unknown): OasRequiredResponse => {
   if (Array.isArray(result)) {
-    return result as OasRequiredResponse
+    return result as OasRequiredResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as OasRequiredResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as OasRequiredResponse) : [];
+};
 
 export const OasRequiredService = createApi({
-  reducerPath: 'OasRequired', // This should remain unique
+  reducerPath: "OasRequired", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['OasRequired'],
+  tagTypes: ["OasRequired"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getOasRequiredsPaged: build.query<OasRequiredResponse, { page: number; size?: number; example?: Partial<OasRequired> }>({
+    getOasRequiredsPaged: build.query<
+      OasRequiredResponse,
+      { page: number; size?: number; example?: Partial<OasRequired> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `OasRequired?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `OasRequired?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toOasRequiredList(result)
+        const rows = toOasRequiredList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'OasRequired' as const, id })),
-          { type: 'OasRequired', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "OasRequired" as const, id })),
+          { type: "OasRequired", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOasRequireds: build.query<OasRequiredResponse, { example?: Partial<OasRequired> } | void>({
+    getOasRequireds: build.query<
+      OasRequiredResponse,
+      { example?: Partial<OasRequired> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const OasRequiredService = createApi({
         return `OasRequired`;
       },
       providesTags: (result) => {
-        const rows = toOasRequiredList(result)
+        const rows = toOasRequiredList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'OasRequired' as const, id })),
-          { type: 'OasRequired', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "OasRequired" as const, id })),
+          { type: "OasRequired", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,73 +87,88 @@ export const OasRequiredService = createApi({
     addOasRequired: build.mutation<OasRequired, Partial<OasRequired>>({
       query: (body) => ({
         url: `OasRequired`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'OasRequired', id: 'LIST' }],
+      invalidatesTags: [{ type: "OasRequired", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getOasRequired: build.query<OasRequired, string>({
       query: (id) => `OasRequired/${id}`,
-      providesTags: (result, error, id) => [{ type: 'OasRequired', id }],
+      providesTags: (result, error, id) => [{ type: "OasRequired", id }],
     }),
 
     // 5) Update
-    updateOasRequired: build.mutation<void, Pick<OasRequired, 'id'> & Partial<OasRequired>>({
+    updateOasRequired: build.mutation<
+      void,
+      Pick<OasRequired, "id"> & Partial<OasRequired>
+    >({
       query: ({ id, ...patch }) => ({
         url: `OasRequired/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            OasRequiredService.util.updateQueryData('getOasRequired', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            OasRequiredService.util.updateQueryData(
+              "getOasRequired",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<OasRequired, 'id'>) => [
-        { type: 'OasRequired', id },
-        { type: 'OasRequired', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<OasRequired, "id">) => [
+        { type: "OasRequired", id },
+        { type: "OasRequired", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteOasRequired: build.mutation<{ success: boolean; id: string }, number>({
-      query(id) {
-        return {
-          url: `OasRequired/${id}`,
-          method: 'DELETE',
-        }
+    deleteOasRequired: build.mutation<{ success: boolean; id: string }, number>(
+      {
+        query(id) {
+          return {
+            url: `OasRequired/${id}`,
+            method: "DELETE",
+          };
+        },
+        invalidatesTags: (result, error, id) => [{ type: "OasRequired", id }],
       },
-      invalidatesTags: (result, error, id) => [{ type: 'OasRequired', id }],
-    }),
+    ),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteOasRequiredCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteOasRequiredCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `OasRequired/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'OasRequired', id }, { type: 'OasRequired', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "OasRequired", id },
+        { type: "OasRequired", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetOasRequiredsPagedQuery`
 export const {
-  useGetOasRequiredsPagedQuery,     // immediate fetch
+  useGetOasRequiredsPagedQuery, // immediate fetch
   useLazyGetOasRequiredsPagedQuery, // lazy fetch
   useGetOasRequiredQuery,
   useGetOasRequiredsQuery,
@@ -150,4 +176,4 @@ export const {
   useUpdateOasRequiredMutation,
   useDeleteOasRequiredMutation,
   useDeleteOasRequiredCascadeMutation,
-} = OasRequiredService
+} = OasRequiredService;

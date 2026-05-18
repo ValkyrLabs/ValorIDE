@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SwarmSecurity } from '@thorapi/model/SwarmSecurity';
+import { SwarmSecurity } from "@thorapi/model/SwarmSecurity";
 
 const SwarmSecuritySlice = createSlice({
   name: "SwarmSecuritys",
@@ -27,20 +27,23 @@ const SwarmSecuritySlice = createSlice({
     },
 
     SwarmSecurityValueToggled(state, action) {
-      console.log("SwarmSecurity TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SwarmSecurity:SwarmSecurity = state.find((SwarmSecurity) => SwarmSecurity.id === action.payload.SwarmSecurityId);
+      console.log("SwarmSecurity TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SwarmSecurity: SwarmSecurity = state.find(
+        (SwarmSecurity) => SwarmSecurity.id === action.payload.SwarmSecurityId,
+      );
       if (SwarmSecurity) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SwarmSecuritypropertySet(state, action) {
-      const SwarmSecurity = state.find((SwarmSecurity) => SwarmSecurity.id === action.payload.SwarmSecurityId);
+      const SwarmSecurity = state.find(
+        (SwarmSecurity) => SwarmSecurity.id === action.payload.SwarmSecurityId,
+      );
       if (SwarmSecurity) {
-      //  SwarmSecurity[action.property] = action.payload[action.property];
+        //  SwarmSecurity[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const SwarmSecuritySlice = createSlice({
 export const {
   SwarmSecurityAdded,
   SwarmSecurityValueToggled,
-  SwarmSecuritypropertySet
+  SwarmSecuritypropertySet,
 } = SwarmSecuritySlice.actions;
 export default SwarmSecuritySlice.reducer;

@@ -19,20 +19,35 @@ Description: CompleteTrustExecutionRequest
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, CompleteTrustExecutionRequest } from '@thorapi/model';
-import { useGetCompleteTrustExecutionRequestsQuery, useAddCompleteTrustExecutionRequestMutation, useUpdateCompleteTrustExecutionRequestMutation } from '../../services/CompleteTrustExecutionRequestService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, CompleteTrustExecutionRequest } from "@thorapi/model";
+import {
+  useGetCompleteTrustExecutionRequestsQuery,
+  useAddCompleteTrustExecutionRequestMutation,
+  useUpdateCompleteTrustExecutionRequestMutation,
+} from "../../services/CompleteTrustExecutionRequestService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const CompleteTrustExecutionRequestChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetCompleteTrustExecutionRequestsQuery();
+  const { data: initialData = [], isLoading } =
+    useGetCompleteTrustExecutionRequestsQuery();
 
   const [data, setData] = useState<CompleteTrustExecutionRequest[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<CompleteTrustExecutionRequest>>({});
-  
+  const [chartData, setChartData] = useState<
+    Partial<CompleteTrustExecutionRequest>
+  >({});
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +65,9 @@ const CompleteTrustExecutionRequestChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +75,15 @@ const CompleteTrustExecutionRequestChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((completetrustexecutionrequest: DataObject) => [completetrustexecutionrequest])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((completetrustexecutionrequest: DataObject) => [
+            completetrustexecutionrequest,
+          ])}
+        />
+      )}
     </>
   );
 };

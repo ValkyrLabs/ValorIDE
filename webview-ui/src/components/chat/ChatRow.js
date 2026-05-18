@@ -332,7 +332,7 @@ const CompletionChangesSummary = ({
                 }),
               ],
             },
-            `${file.relativePath}-${index}`
+            `${file.relativePath}-${index}`,
           );
         }),
       }),
@@ -449,7 +449,7 @@ const ChatRow = memo(
     // This allows us to detect changes without causing re-renders
     const prevHeightRef = useRef(0);
     const [chatrow, { height }] = useSize(
-      _jsx(ChatRowContainer, { children: _jsx(ChatRowContent, { ...props }) })
+      _jsx(ChatRowContainer, { children: _jsx(ChatRowContent, { ...props }) }),
     );
     useEffect(() => {
       // used for partials command output etc.
@@ -472,7 +472,7 @@ const ChatRow = memo(
     return chatrow;
   },
   // memo does shallow comparison of props, so we need to do deep comparison of arrays/objects whose properties might change
-  deepEqual
+  deepEqual,
 );
 export default ChatRow;
 export const ChatRowContent = ({
@@ -553,7 +553,7 @@ export const ChatRowContent = ({
         seeNewChangesSinceLastTaskCompletion: seeNewChangesSinceLastCompletion,
       });
     },
-    [message.ts, seeNewChangesDisabled, seeNewChangesSinceLastCompletion]
+    [message.ts, seeNewChangesDisabled, seeNewChangesSinceLastCompletion],
   );
   const [icon, title] = useMemo(() => {
     switch (type) {
@@ -642,7 +642,7 @@ export const ChatRowContent = ({
                 style: { wordBreak: "break-all" },
                 children: getMcpServerDisplayName(
                   mcpServerUse.serverName,
-                  mcpMarketplaceCatalog
+                  mcpMarketplaceCatalog,
                 ),
               }),
               " ",
@@ -801,7 +801,7 @@ export const ChatRowContent = ({
                     FaSignOutAlt,
                     "yellow",
                     -90,
-                    "This file is outside of your workspace"
+                    "This file is outside of your workspace",
                   ),
                 _jsx("span", {
                   style: { fontWeight: "bold" },
@@ -818,7 +818,7 @@ export const ChatRowContent = ({
                 path: tool.path,
                 isExpanded: isExpanded,
                 onToggleExpand: onToggleExpand,
-              }
+              },
             ),
           ],
         });
@@ -834,7 +834,7 @@ export const ChatRowContent = ({
                     FaSignOutAlt,
                     "yellow",
                     -90,
-                    "This file is outside of your workspace"
+                    "This file is outside of your workspace",
                   ),
                 _jsx("span", {
                   style: { fontWeight: "bold" },
@@ -921,7 +921,7 @@ export const ChatRowContent = ({
                     FaSignOutAlt,
                     "yellow",
                     -90,
-                    "This file is outside of your workspace"
+                    "This file is outside of your workspace",
                   ),
                 _jsx("span", {
                   style: { fontWeight: "bold" },
@@ -1004,7 +1004,7 @@ export const ChatRowContent = ({
                     FaSignOutAlt,
                     "yellow",
                     -90,
-                    "This file is outside of your workspace"
+                    "This file is outside of your workspace",
                   ),
                 _jsx("span", {
                   style: { fontWeight: "bold" },
@@ -1033,7 +1033,7 @@ export const ChatRowContent = ({
                 },
                 onClick: () => {
                   FileServiceClient.openFile({ value: tool.content }).catch(
-                    (err) => console.error("Failed to open file:", err)
+                    (err) => console.error("Failed to open file:", err),
                   );
                 },
                 children: [
@@ -1073,7 +1073,7 @@ export const ChatRowContent = ({
                     FaSignOutAlt,
                     "yellow",
                     -90,
-                    "This is outside of your workspace"
+                    "This is outside of your workspace",
                   ),
                 _jsx("span", {
                   style: { fontWeight: "bold" },
@@ -1105,7 +1105,7 @@ export const ChatRowContent = ({
                     FaSignOutAlt,
                     "yellow",
                     -90,
-                    "This is outside of your workspace"
+                    "This is outside of your workspace",
                   ),
                 _jsx("span", {
                   style: { fontWeight: "bold" },
@@ -1137,7 +1137,7 @@ export const ChatRowContent = ({
                     FaSignOutAlt,
                     "yellow",
                     -90,
-                    "This is outside of your workspace"
+                    "This is outside of your workspace",
                   ),
                 _jsx("span", {
                   style: { fontWeight: "bold" },
@@ -1168,7 +1168,7 @@ export const ChatRowContent = ({
                     FaSignOutAlt,
                     "yellow",
                     -90,
-                    "This is outside of your workspace"
+                    "This is outside of your workspace",
                   ),
                 _jsxs("span", {
                   style: { fontWeight: "bold" },
@@ -1358,7 +1358,7 @@ export const ChatRowContent = ({
   if (message.ask === "use_mcp_server" || message.say === "use_mcp_server") {
     const useMcpServer = safeParseJSON(message.text) || {};
     const server = mcpServers.find(
-      (server) => server.name === useMcpServer.serverName
+      (server) => server.name === useMcpServer.serverName,
     );
     return _jsxs(_Fragment, {
       children: [
@@ -1377,7 +1377,7 @@ export const ChatRowContent = ({
                   ...(findMatchingResourceOrTemplate(
                     useMcpServer.uri || "",
                     server?.resources,
-                    server?.resourceTemplates
+                    server?.resourceTemplates,
                   ) || {
                     name: "",
                     mimeType: "",
@@ -1396,11 +1396,11 @@ export const ChatRowContent = ({
                         name: useMcpServer.toolName || "",
                         description:
                           server?.tools?.find(
-                            (tool) => tool.name === useMcpServer.toolName
+                            (tool) => tool.name === useMcpServer.toolName,
                           )?.description || "",
                         autoApprove:
                           server?.tools?.find(
-                            (tool) => tool.name === useMcpServer.toolName
+                            (tool) => tool.name === useMcpServer.toolName,
                           )?.autoApprove || false,
                       },
                       serverName: useMcpServer.serverName,

@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { EventLog } from '@thorapi/model/EventLog'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { EventLog } from "@thorapi/model/EventLog";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type EventLogResponse = EventLog[]
+type EventLogResponse = EventLog[];
 
 const toEventLogList = (result: unknown): EventLogResponse => {
   if (Array.isArray(result)) {
-    return result as EventLogResponse
+    return result as EventLogResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as EventLogResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as EventLogResponse) : [];
+};
 
 export const EventLogService = createApi({
-  reducerPath: 'EventLog', // This should remain unique
+  reducerPath: "EventLog", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['EventLog'],
+  tagTypes: ["EventLog"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getEventLogsPaged: build.query<EventLogResponse, { page: number; size?: number; example?: Partial<EventLog> }>({
+    getEventLogsPaged: build.query<
+      EventLogResponse,
+      { page: number; size?: number; example?: Partial<EventLog> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `EventLog?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `EventLog?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toEventLogList(result)
+        const rows = toEventLogList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'EventLog' as const, id })),
-          { type: 'EventLog', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "EventLog" as const, id })),
+          { type: "EventLog", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getEventLogs: build.query<EventLogResponse, { example?: Partial<EventLog> } | void>({
+    getEventLogs: build.query<
+      EventLogResponse,
+      { example?: Partial<EventLog> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const EventLogService = createApi({
         return `EventLog`;
       },
       providesTags: (result) => {
-        const rows = toEventLogList(result)
+        const rows = toEventLogList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'EventLog' as const, id })),
-          { type: 'EventLog', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "EventLog" as const, id })),
+          { type: "EventLog", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,42 +87,45 @@ export const EventLogService = createApi({
     addEventLog: build.mutation<EventLog, Partial<EventLog>>({
       query: (body) => ({
         url: `EventLog`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'EventLog', id: 'LIST' }],
+      invalidatesTags: [{ type: "EventLog", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getEventLog: build.query<EventLog, string>({
       query: (id) => `EventLog/${id}`,
-      providesTags: (result, error, id) => [{ type: 'EventLog', id }],
+      providesTags: (result, error, id) => [{ type: "EventLog", id }],
     }),
 
     // 5) Update
-    updateEventLog: build.mutation<void, Pick<EventLog, 'id'> & Partial<EventLog>>({
+    updateEventLog: build.mutation<
+      void,
+      Pick<EventLog, "id"> & Partial<EventLog>
+    >({
       query: ({ id, ...patch }) => ({
         url: `EventLog/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            EventLogService.util.updateQueryData('getEventLog', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            EventLogService.util.updateQueryData("getEventLog", id, (draft) => {
+              Object.assign(draft, patch);
+            }),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<EventLog, 'id'>) => [
-        { type: 'EventLog', id },
-        { type: 'EventLog', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<EventLog, "id">) => [
+        { type: "EventLog", id },
+        { type: "EventLog", id: "LIST" },
       ],
     }),
 
@@ -120,29 +134,35 @@ export const EventLogService = createApi({
       query(id) {
         return {
           url: `EventLog/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'EventLog', id }],
+      invalidatesTags: (result, error, id) => [{ type: "EventLog", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteEventLogCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteEventLogCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `EventLog/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'EventLog', id }, { type: 'EventLog', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "EventLog", id },
+        { type: "EventLog", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetEventLogsPagedQuery`
 export const {
-  useGetEventLogsPagedQuery,     // immediate fetch
+  useGetEventLogsPagedQuery, // immediate fetch
   useLazyGetEventLogsPagedQuery, // lazy fetch
   useGetEventLogQuery,
   useGetEventLogsQuery,
@@ -150,4 +170,4 @@ export const {
   useUpdateEventLogMutation,
   useDeleteEventLogMutation,
   useDeleteEventLogCascadeMutation,
-} = EventLogService
+} = EventLogService;

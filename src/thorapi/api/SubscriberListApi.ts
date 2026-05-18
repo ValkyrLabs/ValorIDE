@@ -18,353 +18,428 @@ Template file: typescript-redux-query/apis.mustache
 Description: SubscriberListApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    SubscriberList,
-    SubscriberListFromJSON,
-    SubscriberListToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  SubscriberList,
+  SubscriberListFromJSON,
+  SubscriberListToJSON,
+} from "../model";
 
 export interface DeleteSubscriberListApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetSubscriberListApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetSubscriberListListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface PatchSubscriberListByIdApiRequest {
-    id: string;
-    subscriberList: SubscriberList;
+  id: string;
+  subscriberList: SubscriberList;
 }
 
 export interface PostSubscriberListApiRequest {
-    subscriberList: SubscriberList;
+  subscriberList: SubscriberList;
 }
 
 export interface UpdateSubscriberListApiRequest {
-    id: string;
-    subscriberList: SubscriberList;
+  id: string;
+  subscriberList: SubscriberList;
 }
-
 
 /**
  * Deletes a specific SubscriberList.
  * Delete a SubscriberList.
  */
-function deleteSubscriberListRaw<T>(requestParameters: DeleteSubscriberListApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteSubscriberList.');
-    }
+function deleteSubscriberListRaw<T>(
+  requestParameters: DeleteSubscriberListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteSubscriberList.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SubscriberList/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SubscriberList/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific SubscriberList.
-* Delete a SubscriberList.
-*/
-export function deleteSubscriberList<T>(requestParameters: DeleteSubscriberListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteSubscriberListRaw(requestParameters, requestConfig);
+ * Deletes a specific SubscriberList.
+ * Delete a SubscriberList.
+ */
+export function deleteSubscriberList<T>(
+  requestParameters: DeleteSubscriberListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteSubscriberListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single SubscriberList for a specific uid.
  * Retrieve a single SubscriberList
  */
-function getSubscriberListRaw<T>(requestParameters: GetSubscriberListApiRequest, requestConfig: runtime.TypedQueryConfig<T, SubscriberList> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getSubscriberList.');
-    }
+function getSubscriberListRaw<T>(
+  requestParameters: GetSubscriberListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SubscriberList> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getSubscriberList.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SubscriberList/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SubscriberListFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SubscriberList/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SubscriberListFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single SubscriberList for a specific uid.
-* Retrieve a single SubscriberList
-*/
-export function getSubscriberList<T>(requestParameters: GetSubscriberListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SubscriberList>): QueryConfig<T> {
-    return getSubscriberListRaw(requestParameters, requestConfig);
+ * Retrieves a single SubscriberList for a specific uid.
+ * Retrieve a single SubscriberList
+ */
+export function getSubscriberList<T>(
+  requestParameters: GetSubscriberListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SubscriberList>,
+): QueryConfig<T> {
+  return getSubscriberListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of SubscriberLists.
  * Retrieve a list of SubscriberLists
  */
-function getSubscriberListListRaw<T>(requestParameters: GetSubscriberListListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<SubscriberList>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getSubscriberListListRaw<T>(
+  requestParameters: GetSubscriberListListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<SubscriberList>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SubscriberList`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(SubscriberListFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SubscriberList`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(SubscriberListFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of SubscriberLists.
-* Retrieve a list of SubscriberLists
-*/
-export function getSubscriberListList<T>(requestParameters: GetSubscriberListListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<SubscriberList>>): QueryConfig<T> {
-    return getSubscriberListListRaw(requestParameters, requestConfig);
+ * Retrieves a list of SubscriberLists.
+ * Retrieve a list of SubscriberLists
+ */
+export function getSubscriberListList<T>(
+  requestParameters: GetSubscriberListListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<SubscriberList>>,
+): QueryConfig<T> {
+  return getSubscriberListListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing SubscriberList.
  * Partially update an existing SubscriberList
  */
-function patchSubscriberListByIdRaw<T>(requestParameters: PatchSubscriberListByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, SubscriberList> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchSubscriberListById.');
-    }
+function patchSubscriberListByIdRaw<T>(
+  requestParameters: PatchSubscriberListByIdApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SubscriberList> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling patchSubscriberListById.",
+    );
+  }
 
-    if (requestParameters.subscriberList === null || requestParameters.subscriberList === undefined) {
-        throw new runtime.RequiredError('subscriberList','Required parameter requestParameters.subscriberList was null or undefined when calling patchSubscriberListById.');
-    }
+  if (
+    requestParameters.subscriberList === null ||
+    requestParameters.subscriberList === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "subscriberList",
+      "Required parameter requestParameters.subscriberList was null or undefined when calling patchSubscriberListById.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/merge-patch+json";
 
-    headerParameters['Content-Type'] = 'application/merge-patch+json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SubscriberList/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PATCH",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters || SubscriberListToJSON(requestParameters.subscriberList),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SubscriberListFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SubscriberList/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PATCH',
-            headers: headerParameters,
-        },
-        body: queryParameters || SubscriberListToJSON(requestParameters.subscriberList),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SubscriberListFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing SubscriberList.
-* Partially update an existing SubscriberList
-*/
-export function patchSubscriberListById<T>(requestParameters: PatchSubscriberListByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SubscriberList>): QueryConfig<T> {
-    return patchSubscriberListByIdRaw(requestParameters, requestConfig);
+ * Updates an existing SubscriberList.
+ * Partially update an existing SubscriberList
+ */
+export function patchSubscriberListById<T>(
+  requestParameters: PatchSubscriberListByIdApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SubscriberList>,
+): QueryConfig<T> {
+  return patchSubscriberListByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new SubscriberList.
  * Create a new SubscriberList
  */
-function postSubscriberListRaw<T>(requestParameters: PostSubscriberListApiRequest, requestConfig: runtime.TypedQueryConfig<T, SubscriberList> = {}): QueryConfig<T> {
-    if (requestParameters.subscriberList === null || requestParameters.subscriberList === undefined) {
-        throw new runtime.RequiredError('subscriberList','Required parameter requestParameters.subscriberList was null or undefined when calling postSubscriberList.');
-    }
+function postSubscriberListRaw<T>(
+  requestParameters: PostSubscriberListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SubscriberList> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.subscriberList === null ||
+    requestParameters.subscriberList === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "subscriberList",
+      "Required parameter requestParameters.subscriberList was null or undefined when calling postSubscriberList.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SubscriberList`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters || SubscriberListToJSON(requestParameters.subscriberList),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SubscriberListFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SubscriberList`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || SubscriberListToJSON(requestParameters.subscriberList),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SubscriberListFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new SubscriberList.
-* Create a new SubscriberList
-*/
-export function postSubscriberList<T>(requestParameters: PostSubscriberListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SubscriberList>): QueryConfig<T> {
-    return postSubscriberListRaw(requestParameters, requestConfig);
+ * Creates a new SubscriberList.
+ * Create a new SubscriberList
+ */
+export function postSubscriberList<T>(
+  requestParameters: PostSubscriberListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SubscriberList>,
+): QueryConfig<T> {
+  return postSubscriberListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing SubscriberList.
  * Update an existing SubscriberList
  */
-function updateSubscriberListRaw<T>(requestParameters: UpdateSubscriberListApiRequest, requestConfig: runtime.TypedQueryConfig<T, SubscriberList> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateSubscriberList.');
-    }
+function updateSubscriberListRaw<T>(
+  requestParameters: UpdateSubscriberListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SubscriberList> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateSubscriberList.",
+    );
+  }
 
-    if (requestParameters.subscriberList === null || requestParameters.subscriberList === undefined) {
-        throw new runtime.RequiredError('subscriberList','Required parameter requestParameters.subscriberList was null or undefined when calling updateSubscriberList.');
-    }
+  if (
+    requestParameters.subscriberList === null ||
+    requestParameters.subscriberList === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "subscriberList",
+      "Required parameter requestParameters.subscriberList was null or undefined when calling updateSubscriberList.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SubscriberList/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters || SubscriberListToJSON(requestParameters.subscriberList),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SubscriberListFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SubscriberList/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || SubscriberListToJSON(requestParameters.subscriberList),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SubscriberListFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing SubscriberList.
-* Update an existing SubscriberList
-*/
-export function updateSubscriberList<T>(requestParameters: UpdateSubscriberListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SubscriberList>): QueryConfig<T> {
-    return updateSubscriberListRaw(requestParameters, requestConfig);
+ * Updates an existing SubscriberList.
+ * Update an existing SubscriberList
+ */
+export function updateSubscriberList<T>(
+  requestParameters: UpdateSubscriberListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SubscriberList>,
+): QueryConfig<T> {
+  return updateSubscriberListRaw(requestParameters, requestConfig);
 }
-

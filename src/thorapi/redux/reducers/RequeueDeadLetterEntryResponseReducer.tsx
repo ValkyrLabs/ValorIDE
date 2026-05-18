@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { RequeueDeadLetterEntryResponse } from '@thorapi/model/RequeueDeadLetterEntryResponse';
+import { RequeueDeadLetterEntryResponse } from "@thorapi/model/RequeueDeadLetterEntryResponse";
 
 const RequeueDeadLetterEntryResponseSlice = createSlice({
   name: "RequeueDeadLetterEntryResponses",
@@ -27,20 +27,28 @@ const RequeueDeadLetterEntryResponseSlice = createSlice({
     },
 
     RequeueDeadLetterEntryResponseValueToggled(state, action) {
-      console.log("RequeueDeadLetterEntryResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const RequeueDeadLetterEntryResponse:RequeueDeadLetterEntryResponse = state.find((RequeueDeadLetterEntryResponse) => RequeueDeadLetterEntryResponse.id === action.payload.RequeueDeadLetterEntryResponseId);
+      console.log("RequeueDeadLetterEntryResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const RequeueDeadLetterEntryResponse: RequeueDeadLetterEntryResponse =
+        state.find(
+          (RequeueDeadLetterEntryResponse) =>
+            RequeueDeadLetterEntryResponse.id ===
+            action.payload.RequeueDeadLetterEntryResponseId,
+        );
       if (RequeueDeadLetterEntryResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     RequeueDeadLetterEntryResponsepropertySet(state, action) {
-      const RequeueDeadLetterEntryResponse = state.find((RequeueDeadLetterEntryResponse) => RequeueDeadLetterEntryResponse.id === action.payload.RequeueDeadLetterEntryResponseId);
+      const RequeueDeadLetterEntryResponse = state.find(
+        (RequeueDeadLetterEntryResponse) =>
+          RequeueDeadLetterEntryResponse.id ===
+          action.payload.RequeueDeadLetterEntryResponseId,
+      );
       if (RequeueDeadLetterEntryResponse) {
-      //  RequeueDeadLetterEntryResponse[action.property] = action.payload[action.property];
+        //  RequeueDeadLetterEntryResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +57,6 @@ const RequeueDeadLetterEntryResponseSlice = createSlice({
 export const {
   RequeueDeadLetterEntryResponseAdded,
   RequeueDeadLetterEntryResponseValueToggled,
-  RequeueDeadLetterEntryResponsepropertySet
+  RequeueDeadLetterEntryResponsepropertySet,
 } = RequeueDeadLetterEntryResponseSlice.actions;
 export default RequeueDeadLetterEntryResponseSlice.reducer;

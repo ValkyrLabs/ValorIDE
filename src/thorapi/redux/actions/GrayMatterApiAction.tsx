@@ -17,95 +17,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // GrayMatter
 
-export const FETCH_GRAYMATTER_REQUEST = 'FETCH_GRAYMATTER_REQUEST';
-export const FETCH_GRAYMATTER_SUCCESS = 'FETCH_GRAYMATTER_SUCCESS';
-export const FETCH_GRAYMATTER_FAILURE = 'FETCH_GRAYMATTER_FAILURE';
+export const FETCH_GRAYMATTER_REQUEST = "FETCH_GRAYMATTER_REQUEST";
+export const FETCH_GRAYMATTER_SUCCESS = "FETCH_GRAYMATTER_SUCCESS";
+export const FETCH_GRAYMATTER_FAILURE = "FETCH_GRAYMATTER_FAILURE";
 
-export const ADD_GRAYMATTER_REQUEST = 'ADD_GRAYMATTER_REQUEST';
-export const ADD_GRAYMATTER_SUCCESS = 'ADD_GRAYMATTER_SUCCESS';
-export const ADD_GRAYMATTER_FAILURE = 'ADD_GRAYMATTER_FAILURE';
+export const ADD_GRAYMATTER_REQUEST = "ADD_GRAYMATTER_REQUEST";
+export const ADD_GRAYMATTER_SUCCESS = "ADD_GRAYMATTER_SUCCESS";
+export const ADD_GRAYMATTER_FAILURE = "ADD_GRAYMATTER_FAILURE";
 
-export const UPDATE_GRAYMATTER_REQUEST = 'UPDATE_GRAYMATTER_REQUEST';
-export const UPDATE_GRAYMATTER_SUCCESS = 'UPDATE_GRAYMATTER_SUCCESS';
-export const UPDATE_GRAYMATTER_FAILURE = 'UPDATE_GRAYMATTER_FAILURE';
+export const UPDATE_GRAYMATTER_REQUEST = "UPDATE_GRAYMATTER_REQUEST";
+export const UPDATE_GRAYMATTER_SUCCESS = "UPDATE_GRAYMATTER_SUCCESS";
+export const UPDATE_GRAYMATTER_FAILURE = "UPDATE_GRAYMATTER_FAILURE";
 
-export const DELETE_GRAYMATTER_REQUEST = 'DELETE_GRAYMATTER_REQUEST';
-export const DELETE_GRAYMATTER_SUCCESS = 'DELETE_GRAYMATTER_SUCCESS';
-export const DELETE_GRAYMATTER_FAILURE = 'DELETE_GRAYMATTER_FAILURE';
+export const DELETE_GRAYMATTER_REQUEST = "DELETE_GRAYMATTER_REQUEST";
+export const DELETE_GRAYMATTER_SUCCESS = "DELETE_GRAYMATTER_SUCCESS";
+export const DELETE_GRAYMATTER_FAILURE = "DELETE_GRAYMATTER_FAILURE";
 
-export const LIST_GRAYMATTER_REQUEST = 'LIST_GRAYMATTER_REQUEST';
-export const LIST_GRAYMATTER_SUCCESS = 'LIST_GRAYMATTER_SUCCESS';
-export const LIST_GRAYMATTER_FAILURE = 'LIST_GRAYMATTER_FAILURE';
+export const LIST_GRAYMATTER_REQUEST = "LIST_GRAYMATTER_REQUEST";
+export const LIST_GRAYMATTER_SUCCESS = "LIST_GRAYMATTER_SUCCESS";
+export const LIST_GRAYMATTER_FAILURE = "LIST_GRAYMATTER_FAILURE";
 
 export const addGrayMatterRequest = () => ({
-    type: ADD_GRAYMATTER_REQUEST,
+  type: ADD_GRAYMATTER_REQUEST,
 });
 
 export const addGrayMatterSuccess = (GrayMatters: any) => ({
-    type: ADD_GRAYMATTER_SUCCESS,
-    payload: GrayMatters,
+  type: ADD_GRAYMATTER_SUCCESS,
+  payload: GrayMatters,
 });
 
 export const addGrayMatterFailure = (error: Error) => ({
-    type: ADD_GRAYMATTER_FAILURE,
-    payload: error,
+  type: ADD_GRAYMATTER_FAILURE,
+  payload: error,
 });
 
-
 export const fetchGrayMatterRequest = () => ({
-    type: FETCH_GRAYMATTER_REQUEST,
+  type: FETCH_GRAYMATTER_REQUEST,
 });
 
 export const fetchGrayMatterSuccess = (GrayMatters: any) => ({
-    type: FETCH_GRAYMATTER_SUCCESS,
-    payload: GrayMatters,
+  type: FETCH_GRAYMATTER_SUCCESS,
+  payload: GrayMatters,
 });
 
 export const fetchGrayMatterFailure = (error: Error) => ({
-    type: FETCH_GRAYMATTER_FAILURE,
-    payload: error,
+  type: FETCH_GRAYMATTER_FAILURE,
+  payload: error,
 });
 
 export const listGrayMatterRequest = () => ({
-    type: LIST_GRAYMATTER_REQUEST,
+  type: LIST_GRAYMATTER_REQUEST,
 });
 
 export const listGrayMatterSuccess = (GrayMatters: any) => ({
-    type: LIST_GRAYMATTER_SUCCESS,
-    payload: GrayMatters,
+  type: LIST_GRAYMATTER_SUCCESS,
+  payload: GrayMatters,
 });
 
 export const listGrayMatterFailure = (error: Error) => ({
-    type: LIST_GRAYMATTER_FAILURE,
-    payload: error,
+  type: LIST_GRAYMATTER_FAILURE,
+  payload: error,
 });
 
 export const updateGrayMatterRequest = (GrayMatter: any) => ({
-    type: UPDATE_GRAYMATTER_REQUEST,
-    payload: GrayMatter,
+  type: UPDATE_GRAYMATTER_REQUEST,
+  payload: GrayMatter,
 });
 
 export const updateGrayMatterSuccess = (GrayMatter: any) => ({
-    type: UPDATE_GRAYMATTER_SUCCESS,
-    payload: GrayMatter,
+  type: UPDATE_GRAYMATTER_SUCCESS,
+  payload: GrayMatter,
 });
 
 export const updateGrayMatterFailure = (error: Error) => ({
-    type: UPDATE_GRAYMATTER_FAILURE,
-    payload: error,
+  type: UPDATE_GRAYMATTER_FAILURE,
+  payload: error,
 });
 
 export const deleteGrayMatterRequest = (GrayMatter: any) => ({
-    type: DELETE_GRAYMATTER_REQUEST,
-    payload: GrayMatter,
+  type: DELETE_GRAYMATTER_REQUEST,
+  payload: GrayMatter,
 });
 
 export const deleteGrayMatterSuccess = (GrayMatter: any) => ({
-    type: DELETE_GRAYMATTER_SUCCESS,
-    payload: GrayMatter,
+  type: DELETE_GRAYMATTER_SUCCESS,
+  payload: GrayMatter,
 });
 
 export const deleteGrayMatterFailure = (error: Error) => ({
-    type: DELETE_GRAYMATTER_FAILURE,
-    payload: error,
+  type: DELETE_GRAYMATTER_FAILURE,
+  payload: error,
 });

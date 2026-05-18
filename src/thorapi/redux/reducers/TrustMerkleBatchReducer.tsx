@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { TrustMerkleBatch } from '@thorapi/model/TrustMerkleBatch';
+import { TrustMerkleBatch } from "@thorapi/model/TrustMerkleBatch";
 
 const TrustMerkleBatchSlice = createSlice({
   name: "TrustMerkleBatchs",
@@ -27,20 +27,25 @@ const TrustMerkleBatchSlice = createSlice({
     },
 
     TrustMerkleBatchValueToggled(state, action) {
-      console.log("TrustMerkleBatch TOGGLE")
-      console.warn(JSON.stringify(action))
-      const TrustMerkleBatch:TrustMerkleBatch = state.find((TrustMerkleBatch) => TrustMerkleBatch.id === action.payload.TrustMerkleBatchId);
+      console.log("TrustMerkleBatch TOGGLE");
+      console.warn(JSON.stringify(action));
+      const TrustMerkleBatch: TrustMerkleBatch = state.find(
+        (TrustMerkleBatch) =>
+          TrustMerkleBatch.id === action.payload.TrustMerkleBatchId,
+      );
       if (TrustMerkleBatch) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     TrustMerkleBatchpropertySet(state, action) {
-      const TrustMerkleBatch = state.find((TrustMerkleBatch) => TrustMerkleBatch.id === action.payload.TrustMerkleBatchId);
+      const TrustMerkleBatch = state.find(
+        (TrustMerkleBatch) =>
+          TrustMerkleBatch.id === action.payload.TrustMerkleBatchId,
+      );
       if (TrustMerkleBatch) {
-      //  TrustMerkleBatch[action.property] = action.payload[action.property];
+        //  TrustMerkleBatch[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const TrustMerkleBatchSlice = createSlice({
 export const {
   TrustMerkleBatchAdded,
   TrustMerkleBatchValueToggled,
-  TrustMerkleBatchpropertySet
+  TrustMerkleBatchpropertySet,
 } = TrustMerkleBatchSlice.actions;
 export default TrustMerkleBatchSlice.reducer;

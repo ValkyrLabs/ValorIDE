@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { MemoryActionResponse } from '@thorapi/model/MemoryActionResponse'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { MemoryActionResponse } from "@thorapi/model/MemoryActionResponse";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type MemoryActionResponseResponse = MemoryActionResponse[]
+type MemoryActionResponseResponse = MemoryActionResponse[];
 
-const toMemoryActionResponseList = (result: unknown): MemoryActionResponseResponse => {
+const toMemoryActionResponseList = (
+  result: unknown,
+): MemoryActionResponseResponse => {
   if (Array.isArray(result)) {
-    return result as MemoryActionResponseResponse
+    return result as MemoryActionResponseResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as MemoryActionResponseResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as MemoryActionResponseResponse)
+    : [];
+};
 
 export const MemoryActionResponseService = createApi({
-  reducerPath: 'MemoryActionResponse', // This should remain unique
+  reducerPath: "MemoryActionResponse", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['MemoryActionResponse'],
+  tagTypes: ["MemoryActionResponse"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getMemoryActionResponsesPaged: build.query<MemoryActionResponseResponse, { page: number; size?: number; example?: Partial<MemoryActionResponse> }>({
+    getMemoryActionResponsesPaged: build.query<
+      MemoryActionResponseResponse,
+      { page: number; size?: number; example?: Partial<MemoryActionResponse> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `MemoryActionResponse?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `MemoryActionResponse?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toMemoryActionResponseList(result)
+        const rows = toMemoryActionResponseList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'MemoryActionResponse' as const, id })),
-          { type: 'MemoryActionResponse', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "MemoryActionResponse" as const, id })),
+          { type: "MemoryActionResponse", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getMemoryActionResponses: build.query<MemoryActionResponseResponse, { example?: Partial<MemoryActionResponse> } | void>({
+    getMemoryActionResponses: build.query<
+      MemoryActionResponseResponse,
+      { example?: Partial<MemoryActionResponse> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,114 @@ export const MemoryActionResponseService = createApi({
         return `MemoryActionResponse`;
       },
       providesTags: (result) => {
-        const rows = toMemoryActionResponseList(result)
+        const rows = toMemoryActionResponseList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'MemoryActionResponse' as const, id })),
-          { type: 'MemoryActionResponse', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "MemoryActionResponse" as const, id })),
+          { type: "MemoryActionResponse", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addMemoryActionResponse: build.mutation<MemoryActionResponse, Partial<MemoryActionResponse>>({
+    addMemoryActionResponse: build.mutation<
+      MemoryActionResponse,
+      Partial<MemoryActionResponse>
+    >({
       query: (body) => ({
         url: `MemoryActionResponse`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'MemoryActionResponse', id: 'LIST' }],
+      invalidatesTags: [{ type: "MemoryActionResponse", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getMemoryActionResponse: build.query<MemoryActionResponse, string>({
       query: (id) => `MemoryActionResponse/${id}`,
-      providesTags: (result, error, id) => [{ type: 'MemoryActionResponse', id }],
+      providesTags: (result, error, id) => [
+        { type: "MemoryActionResponse", id },
+      ],
     }),
 
     // 5) Update
-    updateMemoryActionResponse: build.mutation<void, Pick<MemoryActionResponse, 'id'> & Partial<MemoryActionResponse>>({
+    updateMemoryActionResponse: build.mutation<
+      void,
+      Pick<MemoryActionResponse, "id"> & Partial<MemoryActionResponse>
+    >({
       query: ({ id, ...patch }) => ({
         url: `MemoryActionResponse/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            MemoryActionResponseService.util.updateQueryData('getMemoryActionResponse', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            MemoryActionResponseService.util.updateQueryData(
+              "getMemoryActionResponse",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<MemoryActionResponse, 'id'>) => [
-        { type: 'MemoryActionResponse', id },
-        { type: 'MemoryActionResponse', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<MemoryActionResponse, "id">,
+      ) => [
+        { type: "MemoryActionResponse", id },
+        { type: "MemoryActionResponse", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteMemoryActionResponse: build.mutation<{ success: boolean; id: string }, number>({
+    deleteMemoryActionResponse: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `MemoryActionResponse/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'MemoryActionResponse', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "MemoryActionResponse", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteMemoryActionResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteMemoryActionResponseCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `MemoryActionResponse/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'MemoryActionResponse', id }, { type: 'MemoryActionResponse', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "MemoryActionResponse", id },
+        { type: "MemoryActionResponse", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetMemoryActionResponsesPagedQuery`
 export const {
-  useGetMemoryActionResponsesPagedQuery,     // immediate fetch
+  useGetMemoryActionResponsesPagedQuery, // immediate fetch
   useLazyGetMemoryActionResponsesPagedQuery, // lazy fetch
   useGetMemoryActionResponseQuery,
   useGetMemoryActionResponsesQuery,
@@ -150,4 +192,4 @@ export const {
   useUpdateMemoryActionResponseMutation,
   useDeleteMemoryActionResponseMutation,
   useDeleteMemoryActionResponseCascadeMutation,
-} = MemoryActionResponseService
+} = MemoryActionResponseService;

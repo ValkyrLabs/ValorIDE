@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SwarmPayload } from '@thorapi/model/SwarmPayload';
+import { SwarmPayload } from "@thorapi/model/SwarmPayload";
 
 const SwarmPayloadSlice = createSlice({
   name: "SwarmPayloads",
@@ -27,20 +27,23 @@ const SwarmPayloadSlice = createSlice({
     },
 
     SwarmPayloadValueToggled(state, action) {
-      console.log("SwarmPayload TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SwarmPayload:SwarmPayload = state.find((SwarmPayload) => SwarmPayload.id === action.payload.SwarmPayloadId);
+      console.log("SwarmPayload TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SwarmPayload: SwarmPayload = state.find(
+        (SwarmPayload) => SwarmPayload.id === action.payload.SwarmPayloadId,
+      );
       if (SwarmPayload) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SwarmPayloadpropertySet(state, action) {
-      const SwarmPayload = state.find((SwarmPayload) => SwarmPayload.id === action.payload.SwarmPayloadId);
+      const SwarmPayload = state.find(
+        (SwarmPayload) => SwarmPayload.id === action.payload.SwarmPayloadId,
+      );
       if (SwarmPayload) {
-      //  SwarmPayload[action.property] = action.payload[action.property];
+        //  SwarmPayload[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const SwarmPayloadSlice = createSlice({
 export const {
   SwarmPayloadAdded,
   SwarmPayloadValueToggled,
-  SwarmPayloadpropertySet
+  SwarmPayloadpropertySet,
 } = SwarmPayloadSlice.actions;
 export default SwarmPayloadSlice.reducer;

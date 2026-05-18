@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { PaymentType } from '@thorapi/model/PaymentType'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { PaymentType } from "@thorapi/model/PaymentType";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type PaymentTypeResponse = PaymentType[]
+type PaymentTypeResponse = PaymentType[];
 
 const toPaymentTypeList = (result: unknown): PaymentTypeResponse => {
   if (Array.isArray(result)) {
-    return result as PaymentTypeResponse
+    return result as PaymentTypeResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as PaymentTypeResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as PaymentTypeResponse) : [];
+};
 
 export const PaymentTypeService = createApi({
-  reducerPath: 'PaymentType', // This should remain unique
+  reducerPath: "PaymentType", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['PaymentType'],
+  tagTypes: ["PaymentType"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getPaymentTypesPaged: build.query<PaymentTypeResponse, { page: number; size?: number; example?: Partial<PaymentType> }>({
+    getPaymentTypesPaged: build.query<
+      PaymentTypeResponse,
+      { page: number; size?: number; example?: Partial<PaymentType> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `PaymentType?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `PaymentType?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toPaymentTypeList(result)
+        const rows = toPaymentTypeList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'PaymentType' as const, id })),
-          { type: 'PaymentType', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "PaymentType" as const, id })),
+          { type: "PaymentType", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getPaymentTypes: build.query<PaymentTypeResponse, { example?: Partial<PaymentType> } | void>({
+    getPaymentTypes: build.query<
+      PaymentTypeResponse,
+      { example?: Partial<PaymentType> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const PaymentTypeService = createApi({
         return `PaymentType`;
       },
       providesTags: (result) => {
-        const rows = toPaymentTypeList(result)
+        const rows = toPaymentTypeList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'PaymentType' as const, id })),
-          { type: 'PaymentType', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "PaymentType" as const, id })),
+          { type: "PaymentType", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,73 +87,88 @@ export const PaymentTypeService = createApi({
     addPaymentType: build.mutation<PaymentType, Partial<PaymentType>>({
       query: (body) => ({
         url: `PaymentType`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'PaymentType', id: 'LIST' }],
+      invalidatesTags: [{ type: "PaymentType", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getPaymentType: build.query<PaymentType, string>({
       query: (id) => `PaymentType/${id}`,
-      providesTags: (result, error, id) => [{ type: 'PaymentType', id }],
+      providesTags: (result, error, id) => [{ type: "PaymentType", id }],
     }),
 
     // 5) Update
-    updatePaymentType: build.mutation<void, Pick<PaymentType, 'id'> & Partial<PaymentType>>({
+    updatePaymentType: build.mutation<
+      void,
+      Pick<PaymentType, "id"> & Partial<PaymentType>
+    >({
       query: ({ id, ...patch }) => ({
         url: `PaymentType/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            PaymentTypeService.util.updateQueryData('getPaymentType', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            PaymentTypeService.util.updateQueryData(
+              "getPaymentType",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<PaymentType, 'id'>) => [
-        { type: 'PaymentType', id },
-        { type: 'PaymentType', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<PaymentType, "id">) => [
+        { type: "PaymentType", id },
+        { type: "PaymentType", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deletePaymentType: build.mutation<{ success: boolean; id: string }, number>({
-      query(id) {
-        return {
-          url: `PaymentType/${id}`,
-          method: 'DELETE',
-        }
+    deletePaymentType: build.mutation<{ success: boolean; id: string }, number>(
+      {
+        query(id) {
+          return {
+            url: `PaymentType/${id}`,
+            method: "DELETE",
+          };
+        },
+        invalidatesTags: (result, error, id) => [{ type: "PaymentType", id }],
       },
-      invalidatesTags: (result, error, id) => [{ type: 'PaymentType', id }],
-    }),
+    ),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deletePaymentTypeCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deletePaymentTypeCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `PaymentType/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'PaymentType', id }, { type: 'PaymentType', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "PaymentType", id },
+        { type: "PaymentType", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetPaymentTypesPagedQuery`
 export const {
-  useGetPaymentTypesPagedQuery,     // immediate fetch
+  useGetPaymentTypesPagedQuery, // immediate fetch
   useLazyGetPaymentTypesPagedQuery, // lazy fetch
   useGetPaymentTypeQuery,
   useGetPaymentTypesQuery,
@@ -150,4 +176,4 @@ export const {
   useUpdatePaymentTypeMutation,
   useDeletePaymentTypeMutation,
   useDeletePaymentTypeCascadeMutation,
-} = PaymentTypeService
+} = PaymentTypeService;

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ExecModuleTransportConfig } from '@thorapi/model/ExecModuleTransportConfig';
+import { ExecModuleTransportConfig } from "@thorapi/model/ExecModuleTransportConfig";
 
 const ExecModuleTransportConfigSlice = createSlice({
   name: "ExecModuleTransportConfigs",
@@ -27,20 +27,27 @@ const ExecModuleTransportConfigSlice = createSlice({
     },
 
     ExecModuleTransportConfigValueToggled(state, action) {
-      console.log("ExecModuleTransportConfig TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ExecModuleTransportConfig:ExecModuleTransportConfig = state.find((ExecModuleTransportConfig) => ExecModuleTransportConfig.id === action.payload.ExecModuleTransportConfigId);
+      console.log("ExecModuleTransportConfig TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ExecModuleTransportConfig: ExecModuleTransportConfig = state.find(
+        (ExecModuleTransportConfig) =>
+          ExecModuleTransportConfig.id ===
+          action.payload.ExecModuleTransportConfigId,
+      );
       if (ExecModuleTransportConfig) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ExecModuleTransportConfigpropertySet(state, action) {
-      const ExecModuleTransportConfig = state.find((ExecModuleTransportConfig) => ExecModuleTransportConfig.id === action.payload.ExecModuleTransportConfigId);
+      const ExecModuleTransportConfig = state.find(
+        (ExecModuleTransportConfig) =>
+          ExecModuleTransportConfig.id ===
+          action.payload.ExecModuleTransportConfigId,
+      );
       if (ExecModuleTransportConfig) {
-      //  ExecModuleTransportConfig[action.property] = action.payload[action.property];
+        //  ExecModuleTransportConfig[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const ExecModuleTransportConfigSlice = createSlice({
 export const {
   ExecModuleTransportConfigAdded,
   ExecModuleTransportConfigValueToggled,
-  ExecModuleTransportConfigpropertySet
+  ExecModuleTransportConfigpropertySet,
 } = ExecModuleTransportConfigSlice.actions;
 export default ExecModuleTransportConfigSlice.reducer;

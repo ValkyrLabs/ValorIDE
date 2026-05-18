@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { FileMetadata } from '@thorapi/model/FileMetadata'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { FileMetadata } from "@thorapi/model/FileMetadata";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type FileMetadataResponse = FileMetadata[]
+type FileMetadataResponse = FileMetadata[];
 
 const toFileMetadataList = (result: unknown): FileMetadataResponse => {
   if (Array.isArray(result)) {
-    return result as FileMetadataResponse
+    return result as FileMetadataResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as FileMetadataResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as FileMetadataResponse) : [];
+};
 
 export const FileMetadataService = createApi({
-  reducerPath: 'FileMetadata', // This should remain unique
+  reducerPath: "FileMetadata", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['FileMetadata'],
+  tagTypes: ["FileMetadata"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getFileMetadatasPaged: build.query<FileMetadataResponse, { page: number; size?: number; example?: Partial<FileMetadata> }>({
+    getFileMetadatasPaged: build.query<
+      FileMetadataResponse,
+      { page: number; size?: number; example?: Partial<FileMetadata> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `FileMetadata?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `FileMetadata?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toFileMetadataList(result)
+        const rows = toFileMetadataList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'FileMetadata' as const, id })),
-          { type: 'FileMetadata', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "FileMetadata" as const, id })),
+          { type: "FileMetadata", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getFileMetadatas: build.query<FileMetadataResponse, { example?: Partial<FileMetadata> } | void>({
+    getFileMetadatas: build.query<
+      FileMetadataResponse,
+      { example?: Partial<FileMetadata> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const FileMetadataService = createApi({
         return `FileMetadata`;
       },
       providesTags: (result) => {
-        const rows = toFileMetadataList(result)
+        const rows = toFileMetadataList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'FileMetadata' as const, id })),
-          { type: 'FileMetadata', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "FileMetadata" as const, id })),
+          { type: "FileMetadata", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,73 +87,89 @@ export const FileMetadataService = createApi({
     addFileMetadata: build.mutation<FileMetadata, Partial<FileMetadata>>({
       query: (body) => ({
         url: `FileMetadata`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'FileMetadata', id: 'LIST' }],
+      invalidatesTags: [{ type: "FileMetadata", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getFileMetadata: build.query<FileMetadata, string>({
       query: (id) => `FileMetadata/${id}`,
-      providesTags: (result, error, id) => [{ type: 'FileMetadata', id }],
+      providesTags: (result, error, id) => [{ type: "FileMetadata", id }],
     }),
 
     // 5) Update
-    updateFileMetadata: build.mutation<void, Pick<FileMetadata, 'id'> & Partial<FileMetadata>>({
+    updateFileMetadata: build.mutation<
+      void,
+      Pick<FileMetadata, "id"> & Partial<FileMetadata>
+    >({
       query: ({ id, ...patch }) => ({
         url: `FileMetadata/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            FileMetadataService.util.updateQueryData('getFileMetadata', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            FileMetadataService.util.updateQueryData(
+              "getFileMetadata",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<FileMetadata, 'id'>) => [
-        { type: 'FileMetadata', id },
-        { type: 'FileMetadata', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<FileMetadata, "id">) => [
+        { type: "FileMetadata", id },
+        { type: "FileMetadata", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteFileMetadata: build.mutation<{ success: boolean; id: string }, number>({
+    deleteFileMetadata: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `FileMetadata/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'FileMetadata', id }],
+      invalidatesTags: (result, error, id) => [{ type: "FileMetadata", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteFileMetadataCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteFileMetadataCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `FileMetadata/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'FileMetadata', id }, { type: 'FileMetadata', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "FileMetadata", id },
+        { type: "FileMetadata", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetFileMetadatasPagedQuery`
 export const {
-  useGetFileMetadatasPagedQuery,     // immediate fetch
+  useGetFileMetadatasPagedQuery, // immediate fetch
   useLazyGetFileMetadatasPagedQuery, // lazy fetch
   useGetFileMetadataQuery,
   useGetFileMetadatasQuery,
@@ -150,4 +177,4 @@ export const {
   useUpdateFileMetadataMutation,
   useDeleteFileMetadataMutation,
   useDeleteFileMetadataCascadeMutation,
-} = FileMetadataService
+} = FileMetadataService;

@@ -13,33 +13,41 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   CreatorEarnings,
   CreatorEarningsPayoutStatusEnum,
   CreatorEarningsPayoutMethodEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddCreatorEarningsMutation } from '../../services/CreatorEarningsService';
+import { useAddCreatorEarningsMutation } from "../../services/CreatorEarningsService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -63,53 +71,55 @@ Aggregated monthly earnings for a creator from their monetized services.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const PayoutStatusValidation = () => {
-  return [
-    'PENDING',
-    'PROCESSING',
-    'PAID',
-    'FAILED',
-  ];
+  return ["PENDING", "PROCESSING", "PAID", "FAILED"];
 };
 const PayoutMethodValidation = () => {
-  return [
-    'STRIPE',
-    'CRYPTO_WALLET',
-    'BANK_TRANSFER',
-  ];
+  return ["STRIPE", "CRYPTO_WALLET", "BANK_TRANSFER"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        month: Yup.string().matches(/^\\d{4}-\\d{2}$/, "month must match pattern Year-month for earnings (e.g., 2025-12)"),
-        totalEarned: asNumber(Yup.number().typeError("totalEarned must be a number")),
-        totalInvocations: asNumber(Yup.number().integer().typeError("totalInvocations must be a number")),
-      payoutStatus: Yup.mixed()
-        .oneOf(PayoutStatusValidation(), "Invalid value for payoutStatus")
-        ,
-      payoutMethod: Yup.mixed()
-        .oneOf(PayoutMethodValidation(), "Invalid value for payoutMethod")
-        ,
-        payoutDate: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("payoutDate must be a valid date"),
-        trashed: Yup.boolean(),
+  month: Yup.string().matches(
+    /^\\d{4}-\\d{2}$/,
+    "month must match pattern Year-month for earnings (e.g., 2025-12)",
+  ),
+  totalEarned: asNumber(Yup.number().typeError("totalEarned must be a number")),
+  totalInvocations: asNumber(
+    Yup.number().integer().typeError("totalInvocations must be a number"),
+  ),
+  payoutStatus: Yup.mixed().oneOf(
+    PayoutStatusValidation(),
+    "Invalid value for payoutStatus",
+  ),
+  payoutMethod: Yup.mixed().oneOf(
+    PayoutMethodValidation(),
+    "Invalid value for payoutMethod",
+  ),
+  payoutDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("payoutDate must be a valid date"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const CreatorEarningsForm: React.FC = () => {
-  const [addCreatorEarnings, addCreatorEarningsResult] = useAddCreatorEarningsMutation();
+  const [addCreatorEarnings, addCreatorEarningsResult] =
+    useAddCreatorEarningsMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -119,12 +129,18 @@ const CreatorEarningsForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -132,13 +148,13 @@ const CreatorEarningsForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<CreatorEarnings> = {
-          month: '',
-          totalEarned: 0,
-          totalInvocations: 0,
-        payoutStatus: undefined,
-        payoutMethod: undefined,
-          payoutDate: new Date(),
-          trashed: false,
+    month: "",
+    totalEarned: 0,
+    totalInvocations: 0,
+    payoutStatus: undefined,
+    payoutMethod: undefined,
+    payoutDate: new Date(),
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -153,11 +169,14 @@ const CreatorEarningsForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new CreatorEarnings:', grants);
+    console.log("Permissions saved for new CreatorEarnings:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<CreatorEarnings>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<CreatorEarnings>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -168,7 +187,7 @@ const CreatorEarningsForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `CreatorEarnings created successfully! Would you like to set permissions for this object?`
+          `CreatorEarnings created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -176,8 +195,8 @@ const CreatorEarningsForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create CreatorEarnings:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create CreatorEarnings:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -198,44 +217,36 @@ const CreatorEarningsForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addCreatorEarningsResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New CreatorEarnings
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New CreatorEarnings
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="month" className="nice-form-control">
                       <b>
                         Month:
-                        {touched.month &&
-                         !errors.month && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.month && !errors.month && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="month"
-                            value={values?.month}
-                            placeholder="Month"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="month"
+                        value={values?.month}
+                        placeholder="Month"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -247,37 +258,33 @@ const CreatorEarningsForm: React.FC = () => {
                     <label htmlFor="totalEarned" className="nice-form-control">
                       <b>
                         Total Earned:
-                        {touched.totalEarned &&
-                         !errors.totalEarned && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.totalEarned && !errors.totalEarned && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="totalEarned"
-                            type="number"
-                            step="any"
-                            value={values.totalEarned || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('totalEarned', true);
-                              const v = e.target.value;
-                              setFieldValue('totalEarned', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.totalEarned
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="totalEarned"
+                        type="number"
+                        step="any"
+                        value={values.totalEarned || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("totalEarned", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "totalEarned",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.totalEarned
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -286,39 +293,39 @@ const CreatorEarningsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="totalInvocations" className="nice-form-control">
+                    <label
+                      htmlFor="totalInvocations"
+                      className="nice-form-control"
+                    >
                       <b>
                         Total Invocations:
                         {touched.totalInvocations &&
-                         !errors.totalInvocations && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.totalInvocations && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="totalInvocations"
-                            type="number"
-                            value={values.totalInvocations || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('totalInvocations', true);
-                              const v = e.target.value;
-                              setFieldValue('totalInvocations', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.totalInvocations
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="totalInvocations"
+                        type="number"
+                        value={values.totalInvocations || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("totalInvocations", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "totalInvocations",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.totalInvocations
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -330,30 +337,33 @@ const CreatorEarningsForm: React.FC = () => {
                     <label htmlFor="payoutStatus" className="nice-form-control">
                       <b>
                         Payout Status:
-                        {touched.payoutStatus &&
-                         !errors.payoutStatus && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.payoutStatus && !errors.payoutStatus && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="payoutStatus"
-                          value={values.payoutStatus || ''}
-                          className={
-                            errors.payoutStatus
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('payoutStatus', true);
-                            setFieldValue('payoutStatus', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Payout Status" />
-                          <PayoutStatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="payoutStatus"
+                        value={values.payoutStatus || ""}
+                        className={
+                          errors.payoutStatus
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("payoutStatus", true);
+                          setFieldValue(
+                            "payoutStatus",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Payout Status" />
+                        <PayoutStatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -365,30 +375,33 @@ const CreatorEarningsForm: React.FC = () => {
                     <label htmlFor="payoutMethod" className="nice-form-control">
                       <b>
                         Payout Method:
-                        {touched.payoutMethod &&
-                         !errors.payoutMethod && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.payoutMethod && !errors.payoutMethod && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="payoutMethod"
-                          value={values.payoutMethod || ''}
-                          className={
-                            errors.payoutMethod
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('payoutMethod', true);
-                            setFieldValue('payoutMethod', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Payout Method" />
-                          <PayoutMethodLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="payoutMethod"
+                        value={values.payoutMethod || ""}
+                        className={
+                          errors.payoutMethod
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("payoutMethod", true);
+                          setFieldValue(
+                            "payoutMethod",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Payout Method" />
+                        <PayoutMethodLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -400,38 +413,38 @@ const CreatorEarningsForm: React.FC = () => {
                     <label htmlFor="payoutDate" className="nice-form-control">
                       <b>
                         Payout Date:
-                        {touched.payoutDate &&
-                         !errors.payoutDate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.payoutDate && !errors.payoutDate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="payoutDate"
-                            type="datetime-local"
-                            value={values.payoutDate ? 
-                              new Date(values.payoutDate).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('payoutDate', true);
-                              const v = e.target.value;
-                              setFieldValue('payoutDate', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.payoutDate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="payoutDate"
+                        type="datetime-local"
+                        value={
+                          values.payoutDate
+                            ? new Date(values.payoutDate)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("payoutDate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "payoutDate",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.payoutDate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -443,32 +456,25 @@ const CreatorEarningsForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -478,45 +484,59 @@ const CreatorEarningsForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New CreatorEarnings
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New CreatorEarnings
+                    </CoolButton>
 
-                  {(addCreatorEarningsResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addCreatorEarningsResult as any).error ? (addCreatorEarningsResult as any).error.data : (addCreatorEarningsResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addCreatorEarningsResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addCreatorEarningsResult as any).error
+                              ? (addCreatorEarningsResult as any).error.data
+                              : (addCreatorEarningsResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addCreatorEarningsResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addCreatorEarningsResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addCreatorEarningsResult: {JSON.stringify(addCreatorEarningsResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addCreatorEarningsResult:{" "}
+                    {JSON.stringify(addCreatorEarningsResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -548,10 +568,10 @@ kebabcase payout-status-lookup
 const PayoutStatusLookup = () => {
   return (
     <>
-      <option value='PENDING' label="PENDING" />
-      <option value='PROCESSING' label="PROCESSING" />
-      <option value='PAID' label="PAID" />
-      <option value='FAILED' label="FAILED" />
+      <option value="PENDING" label="PENDING" />
+      <option value="PROCESSING" label="PROCESSING" />
+      <option value="PAID" label="PAID" />
+      <option value="FAILED" label="FAILED" />
     </>
   );
 };
@@ -568,15 +588,12 @@ kebabcase payout-method-lookup
 const PayoutMethodLookup = () => {
   return (
     <>
-      <option value='STRIPE' label="STRIPE" />
-      <option value='CRYPTO_WALLET' label="CRYPTO _ WALLET" />
-      <option value='BANK_TRANSFER' label="BANK _ TRANSFER" />
+      <option value="STRIPE" label="STRIPE" />
+      <option value="CRYPTO_WALLET" label="CRYPTO _ WALLET" />
+      <option value="BANK_TRANSFER" label="BANK _ TRANSFER" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default CreatorEarningsForm;
-

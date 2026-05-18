@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_APITELEMETRY_REQUEST,
-    FETCH_APITELEMETRY_REQUEST,
-    LIST_APITELEMETRY_REQUEST,
-    UPDATE_APITELEMETRY_REQUEST,
-    DELETE_APITELEMETRY_REQUEST,
-
-    addAPITelemetryFailure,
-    addAPITelemetrySuccess,
-
-    fetchAPITelemetryFailure,
-    fetchAPITelemetrySuccess,
-    
-    listAPITelemetryFailure,
-    listAPITelemetrySuccess,
-
-    updateAPITelemetryFailure,
-    updateAPITelemetrySuccess,
-    
-    deleteAPITelemetryFailure,
-    deleteAPITelemetrySuccess,
-    
-} from '../actions/APITelemetryApiAction';
+  ADD_APITELEMETRY_REQUEST,
+  FETCH_APITELEMETRY_REQUEST,
+  LIST_APITELEMETRY_REQUEST,
+  UPDATE_APITELEMETRY_REQUEST,
+  DELETE_APITELEMETRY_REQUEST,
+  addAPITelemetryFailure,
+  addAPITelemetrySuccess,
+  fetchAPITelemetryFailure,
+  fetchAPITelemetrySuccess,
+  listAPITelemetryFailure,
+  listAPITelemetrySuccess,
+  updateAPITelemetryFailure,
+  updateAPITelemetrySuccess,
+  deleteAPITelemetryFailure,
+  deleteAPITelemetrySuccess,
+} from "../actions/APITelemetryApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: APITelemetry
 */
 
-
-
-export const APITelemetryMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("APITelemetry MIDDLEWARE: " + JSON.stringify(action) )
+export const APITelemetryMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("APITelemetry MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

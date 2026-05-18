@@ -5,6 +5,7 @@
 ✅ **GENERATED:** Production-ready `Email Notification & Lead Enrichment Workflow`
 
 **What was built:**
+
 - **7-task linear workflow** with database polling, API enrichment, validation, filtering, looping, template merging, and email delivery
 - **DAG-enforced graph** with start/end nodes and looper-controlled iteration
 - **Live ExecModule metadata** integration (100% validated against Valkyr API)
@@ -12,6 +13,7 @@
 - **Enterprise-grade error handling** with dual-end nodes
 
 **Impact:**
+
 - Demonstrates canonical workflow structure for **lead nurturing, bulk notifications, and data pipelines**
 - Fully compliant with ValkyrAI OpenAPI workflow specification (V1.0)
 - Ready for deployment to production Valkyr cluster
@@ -24,10 +26,10 @@
 
 ### Files Created
 
-| File | LOC | Purpose |
-|------|-----|---------|
-| `samples/email-notification-workflow.json` | 330 | Executable workflow payload |
-| `samples/WORKFLOW_GENERATION_REPORT.md` | This | Specification & validation proof |
+| File                                       | LOC  | Purpose                          |
+| ------------------------------------------ | ---- | -------------------------------- |
+| `samples/email-notification-workflow.json` | 330  | Executable workflow payload      |
+| `samples/WORKFLOW_GENERATION_REPORT.md`    | This | Specification & validation proof |
 
 ### Architecture
 
@@ -72,19 +74,20 @@ Edges: 10 (fully connected, no cycles)
 
 ### Module Binding (Node → Task → ExecModule)
 
-| Node ID | Task ID | Module Type | ExecModule Class | Status |
-|---------|---------|-------------|------------------|--------|
-| `fetch-leads` | `task-fetch-leads` | DatabasePoller | `DatabasePollerModule` | ✅ ready |
-| `enrich-via-api` | `task-enrich-api` | RestGeneric | `RestGenericModule` | ✅ ready |
-| `validate-data` | `task-validate` | DataValidation | `DataValidationModule` | ✅ ready |
-| `filter-preferences` | `task-filter-prefs` | PreferenceFilter | `PreferenceFilterModule` | ✅ ready |
-| `prepare-email` | `task-prepare-email` | TemplateMerge | `TemplateMergeModule` | ✅ ready |
-| `send-email` | `task-send-email` | MailtrapSend | `MailtrapSendModule` | ✅ ready |
-| `collect-stats` | `task-stats` | StatisticsCollector | `StatisticsCollectorExecModule` | ✅ ready |
+| Node ID              | Task ID              | Module Type         | ExecModule Class                | Status   |
+| -------------------- | -------------------- | ------------------- | ------------------------------- | -------- |
+| `fetch-leads`        | `task-fetch-leads`   | DatabasePoller      | `DatabasePollerModule`          | ✅ ready |
+| `enrich-via-api`     | `task-enrich-api`    | RestGeneric         | `RestGenericModule`             | ✅ ready |
+| `validate-data`      | `task-validate`      | DataValidation      | `DataValidationModule`          | ✅ ready |
+| `filter-preferences` | `task-filter-prefs`  | PreferenceFilter    | `PreferenceFilterModule`        | ✅ ready |
+| `prepare-email`      | `task-prepare-email` | TemplateMerge       | `TemplateMergeModule`           | ✅ ready |
+| `send-email`         | `task-send-email`    | MailtrapSend        | `MailtrapSendModule`            | ✅ ready |
+| `collect-stats`      | `task-stats`         | StatisticsCollector | `StatisticsCollectorExecModule` | ✅ ready |
 
 ### ExecModule Configuration (Validated Against Live Metadata)
 
 #### 1. **DatabasePollerModule** (Fetch Leads)
+
 ```json
 {
   "moduleType": "DatabasePollerModule",
@@ -105,14 +108,15 @@ Edges: 10 (fully connected, no cycles)
 ```
 
 #### 2. **RestGenericModule** (Enrich Via API)
+
 ```json
 {
   "moduleType": "RestGeneric",
   "moduleClass": "com.valkyrlabs.workflow.modules.rest.RestGenericModule",
   "moduleData": {
     "operationId": "enrichLead",
-    "params": {"email": "{{lead.email}}"},
-    "headers": {"Authorization": "Bearer {{enrichmentApiKey}}"}
+    "params": { "email": "{{lead.email}}" },
+    "headers": { "Authorization": "Bearer {{enrichmentApiKey}}" }
   },
   "inputs": ["operationId", "params", "body", "headers", "mapping_profile"],
   "outputs": ["api.rest.status", "api.rest.body", "api.rest.headers"],
@@ -125,6 +129,7 @@ Edges: 10 (fully connected, no cycles)
 ```
 
 #### 3. **DataValidationModule** (Validate Data)
+
 ```json
 {
   "moduleType": "DataValidation",
@@ -137,11 +142,11 @@ Edges: 10 (fully connected, no cycles)
       "type": "object",
       "required": ["email", "firstName", "lastName"],
       "properties": {
-        "email": {"type": "string", "format": "email"},
-        "firstName": {"type": "string", "minLength": 1, "maxLength": 100},
-        "lastName": {"type": "string", "minLength": 1, "maxLength": 100},
-        "company": {"type": "string", "maxLength": 255},
-        "enrichmentScore": {"type": "number", "minimum": 0, "maximum": 100}
+        "email": { "type": "string", "format": "email" },
+        "firstName": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "lastName": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "company": { "type": "string", "maxLength": 255 },
+        "enrichmentScore": { "type": "number", "minimum": 0, "maximum": 100 }
       }
     }
   },
@@ -153,6 +158,7 @@ Edges: 10 (fully connected, no cycles)
 ```
 
 #### 4. **PreferenceFilterModule** (Filter Preferences)
+
 ```json
 {
   "moduleType": "PreferenceFilter",
@@ -166,6 +172,7 @@ Edges: 10 (fully connected, no cycles)
 ```
 
 #### 5. **TemplateMergeModule** (Prepare Email)
+
 ```json
 {
   "moduleType": "TemplateMerge",
@@ -180,6 +187,7 @@ Edges: 10 (fully connected, no cycles)
 ```
 
 #### 6. **MailtrapSendModule** (Send Email)
+
 ```json
 {
   "moduleType": "MailtrapSend",
@@ -203,13 +211,29 @@ Edges: 10 (fully connected, no cycles)
 ```
 
 #### 7. **StatisticsCollectorModule** (Collect Statistics)
+
 ```json
 {
   "moduleType": "StatisticsCollectorExecModule",
   "moduleClass": "com.valkyrlabs.workflow.modules.analytics.StatisticsCollectorExecModule",
   "moduleData": {},
-  "inputs": ["workflowId", "executionTimeMs", "status", "taskCount", "failedTasks", "tags"],
-  "outputs": ["statisticsId", "aggregatedMetrics", "successRate", "averageExecutionTime", "recordedAt", "status", "error"],
+  "inputs": [
+    "workflowId",
+    "executionTimeMs",
+    "status",
+    "taskCount",
+    "failedTasks",
+    "tags"
+  ],
+  "outputs": [
+    "statisticsId",
+    "aggregatedMetrics",
+    "successRate",
+    "averageExecutionTime",
+    "recordedAt",
+    "status",
+    "error"
+  ],
   "behavior": {
     "idempotent": true,
     "parallel": true
@@ -219,10 +243,10 @@ Edges: 10 (fully connected, no cycles)
 
 ### IntegrationAccounts Required
 
-| Account Name | Purpose | Required Fields | Status |
-|--------------|---------|-----------------|--------|
-| `ENRICHMENT_API` | External lead enrichment service | `apiKey` | Optional (for task-enrich-api) |
-| `MAILTRAP_PRIMARY` | Email delivery via Mailtrap | `apiKey` | Optional (for task-send-email) |
+| Account Name       | Purpose                          | Required Fields | Status                         |
+| ------------------ | -------------------------------- | --------------- | ------------------------------ |
+| `ENRICHMENT_API`   | External lead enrichment service | `apiKey`        | Optional (for task-enrich-api) |
+| `MAILTRAP_PRIMARY` | Email delivery via Mailtrap      | `apiKey`        | Optional (for task-send-email) |
 
 > **Note:** IntegrationAccounts are **derived from metadata** and marked optional when not critical to workflow execution. In production, both should be provisioned.
 
@@ -230,32 +254,32 @@ Edges: 10 (fully connected, no cycles)
 
 ## ✅ Quality Gates
 
-| Gate | Status | Evidence |
-|------|--------|----------|
-| **JSON Valid** | ✅ PASS | Parsed successfully via `json.load()` |
-| **Graph Acyclic** | ✅ PASS | DAG structure verified; all edges point forward |
-| **Node-Task Binding** | ✅ PASS | Every task node has `taskId` pointing to valid task object |
-| **Module Presence** | ✅ PASS | All 7 tasks have non-empty `modules[]` array |
-| **ExecModule Metadata** | ✅ PASS | All modules validated against live `/v1/modules/metadata` |
-| **moduleData Valid** | ✅ PASS | JSON strings match metadata field requirements |
-| **IntegrationAccount Binding** | ✅ PASS | Account references match metadata `integrationAccount` declarations |
-| **No TODOs/Mocks** | ✅ PASS | All modules use real ExecModule classes & valid configs |
-| **Start/End Nodes** | ✅ PASS | Single start; dual-end (success/error) |
-| **Looper Semantics** | ✅ PASS | Looper has `listPath` + `itemAlias`; correct edge labels (`each`, `complete`) |
+| Gate                           | Status  | Evidence                                                                      |
+| ------------------------------ | ------- | ----------------------------------------------------------------------------- |
+| **JSON Valid**                 | ✅ PASS | Parsed successfully via `json.load()`                                         |
+| **Graph Acyclic**              | ✅ PASS | DAG structure verified; all edges point forward                               |
+| **Node-Task Binding**          | ✅ PASS | Every task node has `taskId` pointing to valid task object                    |
+| **Module Presence**            | ✅ PASS | All 7 tasks have non-empty `modules[]` array                                  |
+| **ExecModule Metadata**        | ✅ PASS | All modules validated against live `/v1/modules/metadata`                     |
+| **moduleData Valid**           | ✅ PASS | JSON strings match metadata field requirements                                |
+| **IntegrationAccount Binding** | ✅ PASS | Account references match metadata `integrationAccount` declarations           |
+| **No TODOs/Mocks**             | ✅ PASS | All modules use real ExecModule classes & valid configs                       |
+| **Start/End Nodes**            | ✅ PASS | Single start; dual-end (success/error)                                        |
+| **Looper Semantics**           | ✅ PASS | Looper has `listPath` + `itemAlias`; correct edge labels (`each`, `complete`) |
 
 ---
 
 ## 📈 Before/After Comparison
 
-| Metric | Before | After |
-|--------|--------|-------|
-| **Workflows Available** | 5 sample docs | ✅ 1 executable workflow + documentation |
-| **Production-Ready** | ❌ Examples only | ✅ Fully validated, deployable |
-| **Module Binding** | ❌ Unclear | ✅ Explicit node→task→module chain |
-| **Graph Authority** | ❌ Ambiguous | ✅ `meta.graph` is definitive |
-| **Looper Support** | ❌ Not shown | ✅ Proper iteration with labeled edges |
-| **IntegrationAccounts** | ❌ Generic placeholders | ✅ Derived from metadata |
-| **Metadata Validation** | ❌ Manual checks | ✅ Live API verification |
+| Metric                  | Before                  | After                                    |
+| ----------------------- | ----------------------- | ---------------------------------------- |
+| **Workflows Available** | 5 sample docs           | ✅ 1 executable workflow + documentation |
+| **Production-Ready**    | ❌ Examples only        | ✅ Fully validated, deployable           |
+| **Module Binding**      | ❌ Unclear              | ✅ Explicit node→task→module chain       |
+| **Graph Authority**     | ❌ Ambiguous            | ✅ `meta.graph` is definitive            |
+| **Looper Support**      | ❌ Not shown            | ✅ Proper iteration with labeled edges   |
+| **IntegrationAccounts** | ❌ Generic placeholders | ✅ Derived from metadata                 |
+| **Metadata Validation** | ❌ Manual checks        | ✅ Live API verification                 |
 
 ---
 
@@ -277,6 +301,7 @@ Edges: 10 (fully connected, no cycles)
 ### Next Steps (Post-Deployment)
 
 1. **Provision IntegrationAccounts:**
+
    ```bash
    POST /v1/integration-accounts
    {
@@ -284,7 +309,7 @@ Edges: 10 (fully connected, no cycles)
      "apiKey": "sk_live_...",
      "verified": true
    }
-   
+
    POST /v1/integration-accounts
    {
      "accountName": "MAILTRAP_PRIMARY",
@@ -294,6 +319,7 @@ Edges: 10 (fully connected, no cycles)
    ```
 
 2. **Load Workflow:**
+
    ```bash
    POST /v1/workflows
    {
@@ -304,6 +330,7 @@ Edges: 10 (fully connected, no cycles)
    ```
 
 3. **Schedule Execution:**
+
    ```bash
    PATCH /v1/workflows/{id}
    {
@@ -467,7 +494,7 @@ This workflow demonstrates:
 ✅ **Generated:** Production-ready workflow JSON  
 ✅ **Validated:** Against live ExecModule metadata  
 ✅ **Documented:** Comprehensive specification & examples  
-✅ **Ship-Ready:** All quality gates passed  
+✅ **Ship-Ready:** All quality gates passed
 
 **Definition of Done:** ✅ ACHIEVED
 

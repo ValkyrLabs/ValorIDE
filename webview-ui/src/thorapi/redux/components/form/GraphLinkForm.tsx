@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  GraphLink,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddGraphLinkMutation } from '../../services/GraphLinkService';
+import { GraphLink } from "@thorapi/model";
+
+import { useAddGraphLinkMutation } from "../../services/GraphLinkService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,19 +71,21 @@ Generic semantic edge between two first-class nodes in the relational memory gra
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        fromType: Yup.string().required("fromType is required."),
-        fromId: Yup.string().required("fromId is required."),
-        toType: Yup.string().required("toType is required."),
-        toId: Yup.string().required("toId is required."),
-        relationType: Yup.string().required("relationType is required."),
-        weight: asNumber(Yup.number().typeError("weight must be a number")),
-        sourceChannel: Yup.string(),
-        sourceMessageId: Yup.string(),
-        sourceUrl: Yup.string(),
-        trashed: Yup.boolean(),
+  fromType: Yup.string().required("fromType is required."),
+  fromId: Yup.string().required("fromId is required."),
+  toType: Yup.string().required("toType is required."),
+  toId: Yup.string().required("toId is required."),
+  relationType: Yup.string().required("relationType is required."),
+  weight: asNumber(Yup.number().typeError("weight must be a number")),
+  sourceChannel: Yup.string(),
+  sourceMessageId: Yup.string(),
+  sourceUrl: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -94,12 +102,18 @@ const GraphLinkForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -107,16 +121,16 @@ const GraphLinkForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<GraphLink> = {
-          fromType: '',
-          fromId: '',
-          toType: '',
-          toId: '',
-          relationType: '',
-          weight: 0,
-          sourceChannel: '',
-          sourceMessageId: '',
-          sourceUrl: '',
-          trashed: false,
+    fromType: "",
+    fromId: "",
+    toType: "",
+    toId: "",
+    relationType: "",
+    weight: 0,
+    sourceChannel: "",
+    sourceMessageId: "",
+    sourceUrl: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -131,11 +145,14 @@ const GraphLinkForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new GraphLink:', grants);
+    console.log("Permissions saved for new GraphLink:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<GraphLink>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<GraphLink>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -146,7 +163,7 @@ const GraphLinkForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `GraphLink created successfully! Would you like to set permissions for this object?`
+          `GraphLink created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -154,8 +171,8 @@ const GraphLinkForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create GraphLink:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create GraphLink:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -176,44 +193,36 @@ const GraphLinkForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addGraphLinkResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New GraphLink
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New GraphLink
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="fromType" className="nice-form-control">
                       <b>
                         From Type:
-                        {touched.fromType &&
-                         !errors.fromType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.fromType && !errors.fromType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="fromType"
-                            value={values?.fromType}
-                            placeholder="From Type"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="fromType"
+                        value={values?.fromType}
+                        placeholder="From Type"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -225,28 +234,21 @@ const GraphLinkForm: React.FC = () => {
                     <label htmlFor="fromId" className="nice-form-control">
                       <b>
                         From Id:
-                        {touched.fromId &&
-                         !errors.fromId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.fromId && !errors.fromId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="fromId"
-                            value={values?.fromId}
-                            placeholder="From Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="fromId"
+                        value={values?.fromId}
+                        placeholder="From Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -258,28 +260,21 @@ const GraphLinkForm: React.FC = () => {
                     <label htmlFor="toType" className="nice-form-control">
                       <b>
                         To Type:
-                        {touched.toType &&
-                         !errors.toType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.toType && !errors.toType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="toType"
-                            value={values?.toType}
-                            placeholder="To Type"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="toType"
+                        value={values?.toType}
+                        placeholder="To Type"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -291,28 +286,21 @@ const GraphLinkForm: React.FC = () => {
                     <label htmlFor="toId" className="nice-form-control">
                       <b>
                         To Id:
-                        {touched.toId &&
-                         !errors.toId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.toId && !errors.toId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="toId"
-                            value={values?.toId}
-                            placeholder="To Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="toId"
+                        value={values?.toId}
+                        placeholder="To Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -324,28 +312,21 @@ const GraphLinkForm: React.FC = () => {
                     <label htmlFor="relationType" className="nice-form-control">
                       <b>
                         Relation Type:
-                        {touched.relationType &&
-                         !errors.relationType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.relationType && !errors.relationType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="relationType"
-                            value={values?.relationType}
-                            placeholder="Relation Type"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="relationType"
+                        value={values?.relationType}
+                        placeholder="Relation Type"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -357,37 +338,33 @@ const GraphLinkForm: React.FC = () => {
                     <label htmlFor="weight" className="nice-form-control">
                       <b>
                         Weight:
-                        {touched.weight &&
-                         !errors.weight && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.weight && !errors.weight && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="weight"
-                            type="number"
-                            step="any"
-                            value={values.weight || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('weight', true);
-                              const v = e.target.value;
-                              setFieldValue('weight', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.weight
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="weight"
+                        type="number"
+                        step="any"
+                        value={values.weight || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("weight", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "weight",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.weight
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -396,31 +373,27 @@ const GraphLinkForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="sourceChannel" className="nice-form-control">
+                    <label
+                      htmlFor="sourceChannel"
+                      className="nice-form-control"
+                    >
                       <b>
                         Source Channel:
-                        {touched.sourceChannel &&
-                         !errors.sourceChannel && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.sourceChannel && !errors.sourceChannel && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="sourceChannel"
-                            value={values?.sourceChannel}
-                            placeholder="Source Channel"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="sourceChannel"
+                        value={values?.sourceChannel}
+                        placeholder="Source Channel"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -429,31 +402,27 @@ const GraphLinkForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="sourceMessageId" className="nice-form-control">
+                    <label
+                      htmlFor="sourceMessageId"
+                      className="nice-form-control"
+                    >
                       <b>
                         Source Message Id:
-                        {touched.sourceMessageId &&
-                         !errors.sourceMessageId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.sourceMessageId && !errors.sourceMessageId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="sourceMessageId"
-                            value={values?.sourceMessageId}
-                            placeholder="Source Message Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="sourceMessageId"
+                        value={values?.sourceMessageId}
+                        placeholder="Source Message Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -465,28 +434,21 @@ const GraphLinkForm: React.FC = () => {
                     <label htmlFor="sourceUrl" className="nice-form-control">
                       <b>
                         Source Url:
-                        {touched.sourceUrl &&
-                         !errors.sourceUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.sourceUrl && !errors.sourceUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="sourceUrl"
-                            value={values?.sourceUrl}
-                            placeholder="Source Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="sourceUrl"
+                        value={values?.sourceUrl}
+                        placeholder="Source Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -498,32 +460,25 @@ const GraphLinkForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -533,45 +488,58 @@ const GraphLinkForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New GraphLink
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New GraphLink
+                    </CoolButton>
 
-                  {(addGraphLinkResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addGraphLinkResult as any).error ? (addGraphLinkResult as any).error.data : (addGraphLinkResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addGraphLinkResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addGraphLinkResult as any).error
+                              ? (addGraphLinkResult as any).error.data
+                              : (addGraphLinkResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addGraphLinkResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addGraphLinkResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addGraphLinkResult: {JSON.stringify(addGraphLinkResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addGraphLinkResult: {JSON.stringify(addGraphLinkResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -591,8 +559,5 @@ const GraphLinkForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default GraphLinkForm;
-

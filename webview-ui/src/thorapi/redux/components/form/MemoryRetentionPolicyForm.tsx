@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  MemoryRetentionPolicy,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddMemoryRetentionPolicyMutation } from '../../services/MemoryRetentionPolicyService';
+import { MemoryRetentionPolicy } from "@thorapi/model";
+
+import { useAddMemoryRetentionPolicyMutation } from "../../services/MemoryRetentionPolicyService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,20 +71,25 @@ Per-workspace retention policy for MemoryEntry pruning.
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        workspaceId: Yup.string().required("workspaceId is required."),
-        retentionDays: asNumber(Yup.number().integer().typeError("retentionDays must be a number")).required("retentionDays is required."),
-        hardDeleteEnabled: Yup.boolean(),
-        trashed: Yup.boolean(),
+  workspaceId: Yup.string().required("workspaceId is required."),
+  retentionDays: asNumber(
+    Yup.number().integer().typeError("retentionDays must be a number"),
+  ).required("retentionDays is required."),
+  hardDeleteEnabled: Yup.boolean(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const MemoryRetentionPolicyForm: React.FC = () => {
-  const [addMemoryRetentionPolicy, addMemoryRetentionPolicyResult] = useAddMemoryRetentionPolicyMutation();
+  const [addMemoryRetentionPolicy, addMemoryRetentionPolicyResult] =
+    useAddMemoryRetentionPolicyMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -88,12 +99,18 @@ const MemoryRetentionPolicyForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -101,10 +118,10 @@ const MemoryRetentionPolicyForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<MemoryRetentionPolicy> = {
-          workspaceId: '',
-          retentionDays: 0,
-          hardDeleteEnabled: false,
-          trashed: false,
+    workspaceId: "",
+    retentionDays: 0,
+    hardDeleteEnabled: false,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -119,11 +136,14 @@ const MemoryRetentionPolicyForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new MemoryRetentionPolicy:', grants);
+    console.log("Permissions saved for new MemoryRetentionPolicy:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<MemoryRetentionPolicy>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<MemoryRetentionPolicy>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -134,7 +154,7 @@ const MemoryRetentionPolicyForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `MemoryRetentionPolicy created successfully! Would you like to set permissions for this object?`
+          `MemoryRetentionPolicy created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -142,8 +162,8 @@ const MemoryRetentionPolicyForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create MemoryRetentionPolicy:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create MemoryRetentionPolicy:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -164,44 +184,38 @@ const MemoryRetentionPolicyForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addMemoryRetentionPolicyResult.isLoading;
+          const isSaving =
+            isSubmitting || addMemoryRetentionPolicyResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New MemoryRetentionPolicy
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    MemoryRetentionPolicy
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="workspaceId" className="nice-form-control">
                       <b>
                         Workspace Id:
-                        {touched.workspaceId &&
-                         !errors.workspaceId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.workspaceId && !errors.workspaceId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="workspaceId"
-                            value={values?.workspaceId}
-                            placeholder="Workspace Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="workspaceId"
+                        value={values?.workspaceId}
+                        placeholder="Workspace Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -210,39 +224,38 @@ const MemoryRetentionPolicyForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="retentionDays" className="nice-form-control">
+                    <label
+                      htmlFor="retentionDays"
+                      className="nice-form-control"
+                    >
                       <b>
                         Retention Days:
-                        {touched.retentionDays &&
-                         !errors.retentionDays && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.retentionDays && !errors.retentionDays && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="retentionDays"
-                            type="number"
-                            value={values.retentionDays || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('retentionDays', true);
-                              const v = e.target.value;
-                              setFieldValue('retentionDays', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.retentionDays
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="retentionDays"
+                        type="number"
+                        value={values.retentionDays || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("retentionDays", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "retentionDays",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.retentionDays
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -251,35 +264,32 @@ const MemoryRetentionPolicyForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="hardDeleteEnabled" className="nice-form-control">
+                    <label
+                      htmlFor="hardDeleteEnabled"
+                      className="nice-form-control"
+                    >
                       <b>
                         Hard Delete Enabled:
                         {touched.hardDeleteEnabled &&
-                         !errors.hardDeleteEnabled && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.hardDeleteEnabled && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="hardDeleteEnabled"
-                            name="hardDeleteEnabled"
-                            checked={values.hardDeleteEnabled || false}
-                            onChange={(e) => {
-                              setFieldTouched('hardDeleteEnabled', true);
-                              setFieldValue('hardDeleteEnabled', e.target.checked);
-                            }}
-                            isInvalid={!!errors.hardDeleteEnabled}
-                            className={errors.hardDeleteEnabled ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="hardDeleteEnabled"
+                        name="hardDeleteEnabled"
+                        checked={values.hardDeleteEnabled || false}
+                        onChange={(e) => {
+                          setFieldTouched("hardDeleteEnabled", true);
+                          setFieldValue("hardDeleteEnabled", e.target.checked);
+                        }}
+                        isInvalid={!!errors.hardDeleteEnabled}
+                        className={errors.hardDeleteEnabled ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -291,32 +301,25 @@ const MemoryRetentionPolicyForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -326,45 +329,64 @@ const MemoryRetentionPolicyForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New MemoryRetentionPolicy
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      MemoryRetentionPolicy
+                    </CoolButton>
 
-                  {(addMemoryRetentionPolicyResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addMemoryRetentionPolicyResult as any).error ? (addMemoryRetentionPolicyResult as any).error.data : (addMemoryRetentionPolicyResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addMemoryRetentionPolicyResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addMemoryRetentionPolicyResult as any).error
+                              ? (addMemoryRetentionPolicyResult as any).error
+                                  .data
+                              : (addMemoryRetentionPolicyResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addMemoryRetentionPolicyResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addMemoryRetentionPolicyResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addMemoryRetentionPolicyResult: {JSON.stringify(addMemoryRetentionPolicyResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addMemoryRetentionPolicyResult:{" "}
+                    {JSON.stringify(addMemoryRetentionPolicyResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -384,8 +406,5 @@ const MemoryRetentionPolicyForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default MemoryRetentionPolicyForm;
-

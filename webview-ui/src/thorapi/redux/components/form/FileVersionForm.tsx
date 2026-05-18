@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  FileVersion,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddFileVersionMutation } from '../../services/FileVersionService';
+import { FileVersion } from "@thorapi/model";
+
+import { useAddFileVersionMutation } from "../../services/FileVersionService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,18 +71,24 @@ Immutable snapshot of a file at a specific point in time.
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        versionNumber: asNumber(Yup.number().integer().typeError("versionNumber must be a number")).required("versionNumber is required."),
-        storageKey: Yup.string().required("storageKey is required."),
-        sizeBytes: asNumber(Yup.number().integer().typeError("sizeBytes must be a number")).required("sizeBytes is required."),
-        storageDriverId: Yup.string(),
-        checksumSha256: Yup.string(),
-        contentType: Yup.string(),
-        changeLog: Yup.string(),
-        isCurrent: Yup.boolean(),
-        trashed: Yup.boolean(),
+  versionNumber: asNumber(
+    Yup.number().integer().typeError("versionNumber must be a number"),
+  ).required("versionNumber is required."),
+  storageKey: Yup.string().required("storageKey is required."),
+  sizeBytes: asNumber(
+    Yup.number().integer().typeError("sizeBytes must be a number"),
+  ).required("sizeBytes is required."),
+  storageDriverId: Yup.string(),
+  checksumSha256: Yup.string(),
+  contentType: Yup.string(),
+  changeLog: Yup.string(),
+  isCurrent: Yup.boolean(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -93,12 +105,18 @@ const FileVersionForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -106,15 +124,15 @@ const FileVersionForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<FileVersion> = {
-          versionNumber: 0,
-          storageKey: '',
-          sizeBytes: 0,
-          storageDriverId: '',
-          checksumSha256: '',
-          contentType: '',
-          changeLog: '',
-          isCurrent: false,
-          trashed: false,
+    versionNumber: 0,
+    storageKey: "",
+    sizeBytes: 0,
+    storageDriverId: "",
+    checksumSha256: "",
+    contentType: "",
+    changeLog: "",
+    isCurrent: false,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -129,11 +147,14 @@ const FileVersionForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new FileVersion:', grants);
+    console.log("Permissions saved for new FileVersion:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<FileVersion>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<FileVersion>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -144,7 +165,7 @@ const FileVersionForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `FileVersion created successfully! Would you like to set permissions for this object?`
+          `FileVersion created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -152,8 +173,8 @@ const FileVersionForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create FileVersion:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create FileVersion:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -174,52 +195,50 @@ const FileVersionForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addFileVersionResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New FileVersion
-                </Accordion.Header>
-                <Accordion.Body>
-                    <label htmlFor="versionNumber" className="nice-form-control">
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New FileVersion
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <label
+                      htmlFor="versionNumber"
+                      className="nice-form-control"
+                    >
                       <b>
                         Version Number:
-                        {touched.versionNumber &&
-                         !errors.versionNumber && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.versionNumber && !errors.versionNumber && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="versionNumber"
-                            type="number"
-                            value={values.versionNumber || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('versionNumber', true);
-                              const v = e.target.value;
-                              setFieldValue('versionNumber', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.versionNumber
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="versionNumber"
+                        type="number"
+                        value={values.versionNumber || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("versionNumber", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "versionNumber",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.versionNumber
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -231,28 +250,21 @@ const FileVersionForm: React.FC = () => {
                     <label htmlFor="storageKey" className="nice-form-control">
                       <b>
                         Storage Key:
-                        {touched.storageKey &&
-                         !errors.storageKey && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.storageKey && !errors.storageKey && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="storageKey"
-                            value={values?.storageKey}
-                            placeholder="Storage Key"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="storageKey"
+                        value={values?.storageKey}
+                        placeholder="Storage Key"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -264,36 +276,32 @@ const FileVersionForm: React.FC = () => {
                     <label htmlFor="sizeBytes" className="nice-form-control">
                       <b>
                         Size Bytes:
-                        {touched.sizeBytes &&
-                         !errors.sizeBytes && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.sizeBytes && !errors.sizeBytes && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-                          {/* LONG FIELD */}
-                          <Field
-                            name="sizeBytes"
-                            type="number"
-                            value={values.sizeBytes || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('sizeBytes', true);
-                              const v = e.target.value;
-                              setFieldValue('sizeBytes', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.sizeBytes
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
+                      {/* LONG FIELD */}
+                      <Field
+                        name="sizeBytes"
+                        type="number"
+                        value={values.sizeBytes || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("sizeBytes", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "sizeBytes",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.sizeBytes
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -302,31 +310,27 @@ const FileVersionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="storageDriverId" className="nice-form-control">
+                    <label
+                      htmlFor="storageDriverId"
+                      className="nice-form-control"
+                    >
                       <b>
                         Storage Driver Id:
-                        {touched.storageDriverId &&
-                         !errors.storageDriverId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.storageDriverId && !errors.storageDriverId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="storageDriverId"
-                            value={values?.storageDriverId}
-                            placeholder="Storage Driver Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="storageDriverId"
+                        value={values?.storageDriverId}
+                        placeholder="Storage Driver Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -335,31 +339,27 @@ const FileVersionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="checksumSha256" className="nice-form-control">
+                    <label
+                      htmlFor="checksumSha256"
+                      className="nice-form-control"
+                    >
                       <b>
                         Checksum Sha 256:
-                        {touched.checksumSha256 &&
-                         !errors.checksumSha256 && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.checksumSha256 && !errors.checksumSha256 && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="checksumSha256"
-                            value={values?.checksumSha256}
-                            placeholder="Checksum Sha 256"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="checksumSha256"
+                        value={values?.checksumSha256}
+                        placeholder="Checksum Sha 256"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -371,28 +371,21 @@ const FileVersionForm: React.FC = () => {
                     <label htmlFor="contentType" className="nice-form-control">
                       <b>
                         Content Type:
-                        {touched.contentType &&
-                         !errors.contentType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.contentType && !errors.contentType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="contentType"
-                            value={values?.contentType}
-                            placeholder="Content Type"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="contentType"
+                        value={values?.contentType}
+                        placeholder="Content Type"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -404,28 +397,21 @@ const FileVersionForm: React.FC = () => {
                     <label htmlFor="changeLog" className="nice-form-control">
                       <b>
                         Change Log:
-                        {touched.changeLog &&
-                         !errors.changeLog && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.changeLog && !errors.changeLog && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="changeLog"
-                            value={values?.changeLog}
-                            placeholder="Change Log"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="changeLog"
+                        value={values?.changeLog}
+                        placeholder="Change Log"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -437,32 +423,25 @@ const FileVersionForm: React.FC = () => {
                     <label htmlFor="isCurrent" className="nice-form-control">
                       <b>
                         Is Current:
-                        {touched.isCurrent &&
-                         !errors.isCurrent && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.isCurrent && !errors.isCurrent && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="isCurrent"
-                            name="isCurrent"
-                            checked={values.isCurrent || false}
-                            onChange={(e) => {
-                              setFieldTouched('isCurrent', true);
-                              setFieldValue('isCurrent', e.target.checked);
-                            }}
-                            isInvalid={!!errors.isCurrent}
-                            className={errors.isCurrent ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="isCurrent"
+                        name="isCurrent"
+                        checked={values.isCurrent || false}
+                        onChange={(e) => {
+                          setFieldTouched("isCurrent", true);
+                          setFieldValue("isCurrent", e.target.checked);
+                        }}
+                        isInvalid={!!errors.isCurrent}
+                        className={errors.isCurrent ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -474,32 +453,25 @@ const FileVersionForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -509,45 +481,58 @@ const FileVersionForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New FileVersion
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New FileVersion
+                    </CoolButton>
 
-                  {(addFileVersionResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addFileVersionResult as any).error ? (addFileVersionResult as any).error.data : (addFileVersionResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addFileVersionResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addFileVersionResult as any).error
+                              ? (addFileVersionResult as any).error.data
+                              : (addFileVersionResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addFileVersionResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addFileVersionResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addFileVersionResult: {JSON.stringify(addFileVersionResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addFileVersionResult: {JSON.stringify(addFileVersionResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -567,8 +552,5 @@ const FileVersionForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default FileVersionForm;
-

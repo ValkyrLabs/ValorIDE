@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  ExecModulePayloadConfig,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddExecModulePayloadConfigMutation } from '../../services/ExecModulePayloadConfigService';
+import { ExecModulePayloadConfig } from "@thorapi/model";
+
+import { useAddExecModulePayloadConfigMutation } from "../../services/ExecModulePayloadConfigService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,163 +71,196 @@ Payload configuration for ExecModule execution.
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        contentType: Yup.string(),
-        parameters: Yup.string(),
-        action: Yup.string(),
-        actionSize: asNumber(Yup.number().integer().typeError("actionSize must be a number")),
-        activate: Yup.boolean(),
-        activation: Yup.string(),
-        age: Yup.string(),
-        agenda: Yup.string(),
-        algorithm: Yup.string(),
-        allowCreate: Yup.boolean(),
-        allowUpdate: Yup.boolean(),
-        anonymizationStrategy: Yup.string(),
-        architecture: Yup.string(),
-        augmentData: Yup.boolean(),
-        avg: Yup.string(),
-        avgPrice: Yup.string(),
-        bidirectional: Yup.boolean(),
-        bootstrapServers: Yup.string(),
-        bottleneckActivation: Yup.string(),
-        caption: Yup.string(),
-        caseSensitive: Yup.string(),
-        categories: Yup.string(),
-        cellType: Yup.string(),
-        closeAfterMs: Yup.string(),
-        company: Yup.string(),
-        companyId: Yup.string(),
-        compression: Yup.string(),
-        connectionString: Yup.string(),
-        content: Yup.string(),
-        countOnly: Yup.string(),
-        currency: Yup.string(),
-        d: asNumber(Yup.number().integer().typeError("d must be a number")),
-        dataAugmentation: Yup.boolean(),
-        dataType: Yup.string(),
-        database: Yup.string(),
-        dateOffsetDays: asNumber(Yup.number().integer().typeError("dateOffsetDays must be a number")),
-        deepMerge: Yup.string(),
-        delimiter: Yup.string(),
-        description: Yup.string(),
-        dlqTopic: Yup.string(),
-        dryRun: Yup.string(),
-        earlyStoppingPatience: asNumber(Yup.number().integer().typeError("earlyStoppingPatience must be a number")),
-        embeddingDim: asNumber(Yup.number().integer().typeError("embeddingDim must be a number")),
-        embeddingType: Yup.string(),
-        enforceStrongPassword: Yup.string(),
-        episodes: asNumber(Yup.number().integer().typeError("episodes must be a number")),
-        epochs: asNumber(Yup.number().integer().typeError("epochs must be a number")),
-        expectedHash: Yup.string(),
-        filter: Yup.string(),
-        firstName: Yup.string(),
-        flattenNested: Yup.boolean(),
-        frozenLayers: asNumber(Yup.number().integer().typeError("frozenLayers must be a number")),
-        fuzzyMatch: Yup.string(),
-        ganType: Yup.string(),
-        hashOperations: Yup.string(),
-        highlight: Yup.string(),
-        html: Yup.string(),
-        iconEmoji: Yup.string(),
-        includeIntercept: Yup.boolean(),
-        includeItems: Yup.string(),
-        index: Yup.string(),
-        inferTypes: Yup.boolean(),
-        initialMessage: Yup.string(),
-        inlineSubject: Yup.string(),
-        inlineTemplate: Yup.string(),
-        introspection: Yup.boolean(),
-        inviteeName: Yup.string(),
-        lastName: Yup.string(),
-        latentDim: asNumber(Yup.number().integer().typeError("latentDim must be a number")),
-        listOperations: Yup.string(),
-        locationId: Yup.string(),
-        loss: Yup.string(),
-        lstmUnits: asNumber(Yup.number().integer().typeError("lstmUnits must be a number")),
-        match: Yup.string(),
-        maxLength: asNumber(Yup.number().integer().typeError("maxLength must be a number")),
-        maxDepth: Yup.string(),
-        memorySize: asNumber(Yup.number().integer().typeError("memorySize must be a number")),
-        message: Yup.string(),
-        metadata: Yup.string(),
-        minWordFreq: asNumber(Yup.number().integer().typeError("minWordFreq must be a number")),
-        modelType: Yup.string(),
-        name: Yup.string(),
-        nullFirst: Yup.string(),
-        numLayers: asNumber(Yup.number().integer().typeError("numLayers must be a number")),
-        numUnits: asNumber(Yup.number().integer().typeError("numUnits must be a number")),
-        operation: Yup.string(),
-        operationName: Yup.string(),
-        optimizer: Yup.string(),
-        outliers: Yup.string(),
-        owner: Yup.string(),
-        p: asNumber(Yup.number().integer().typeError("p must be a number")),
-        password: Yup.string(),
-        pattern: Yup.string(),
-        pingIntervalMs: Yup.string(),
-        polynomialDegree: asNumber(Yup.number().integer().typeError("polynomialDegree must be a number")),
-        postTemplateId: Yup.string(),
-        pretrainedModel: Yup.string(),
-        properties: Yup.string(),
-        provider: Yup.string(),
-        published: Yup.boolean(),
-        pubsub: Yup.string(),
-        q: asNumber(Yup.number().integer().typeError("q must be a number")),
-        quality: Yup.string(),
-        readPreference: Yup.string(),
-        recordId: Yup.string(),
-        recordType: Yup.string(),
-        repo: Yup.string(),
-        requireHashMatch: Yup.boolean(),
-        resourceGroup: Yup.string(),
-        rewardFunction: Yup.string(),
-        robust: Yup.boolean(),
-        rootElement: Yup.string(),
-        segmentExpression: Yup.string(),
-        similarityThreshold: Yup.string(),
-        size: Yup.string(),
-        slideInterval: Yup.string(),
-        sobject: Yup.string(),
-        source: Yup.string(),
-        sourceName: Yup.string(),
-        sql: Yup.string(),
-        startTime: Yup.string(),
-        stateSize: asNumber(Yup.number().integer().typeError("stateSize must be a number")),
-        status: Yup.string(),
-        stripNamespaces: Yup.boolean(),
-        teamId: Yup.string(),
-        terms: Yup.string(),
-        testStatistic: Yup.string(),
-        text: Yup.string(),
-        timestampFormat: Yup.string(),
-        timezone: Yup.string(),
-        title: Yup.string(),
-        tone: Yup.string(),
-        topic: Yup.string(),
-        transaction: Yup.boolean(),
-        transactionalId: Yup.string(),
-        transferLearning: Yup.boolean(),
-        type: Yup.string(),
-        useAttention: Yup.boolean(),
-        useVariational: Yup.boolean(),
-        username: Yup.string(),
-        valueText: Yup.string(),
-        variables: Yup.string(),
-        version: Yup.string(),
-        wkhtmlArgs: Yup.string(),
-        writeConcern: Yup.string(),
-        xmlSource: Yup.string(),
-        trashed: Yup.boolean(),
+  contentType: Yup.string(),
+  parameters: Yup.string(),
+  action: Yup.string(),
+  actionSize: asNumber(
+    Yup.number().integer().typeError("actionSize must be a number"),
+  ),
+  activate: Yup.boolean(),
+  activation: Yup.string(),
+  age: Yup.string(),
+  agenda: Yup.string(),
+  algorithm: Yup.string(),
+  allowCreate: Yup.boolean(),
+  allowUpdate: Yup.boolean(),
+  anonymizationStrategy: Yup.string(),
+  architecture: Yup.string(),
+  augmentData: Yup.boolean(),
+  avg: Yup.string(),
+  avgPrice: Yup.string(),
+  bidirectional: Yup.boolean(),
+  bootstrapServers: Yup.string(),
+  bottleneckActivation: Yup.string(),
+  caption: Yup.string(),
+  caseSensitive: Yup.string(),
+  categories: Yup.string(),
+  cellType: Yup.string(),
+  closeAfterMs: Yup.string(),
+  company: Yup.string(),
+  companyId: Yup.string(),
+  compression: Yup.string(),
+  connectionString: Yup.string(),
+  content: Yup.string(),
+  countOnly: Yup.string(),
+  currency: Yup.string(),
+  d: asNumber(Yup.number().integer().typeError("d must be a number")),
+  dataAugmentation: Yup.boolean(),
+  dataType: Yup.string(),
+  database: Yup.string(),
+  dateOffsetDays: asNumber(
+    Yup.number().integer().typeError("dateOffsetDays must be a number"),
+  ),
+  deepMerge: Yup.string(),
+  delimiter: Yup.string(),
+  description: Yup.string(),
+  dlqTopic: Yup.string(),
+  dryRun: Yup.string(),
+  earlyStoppingPatience: asNumber(
+    Yup.number().integer().typeError("earlyStoppingPatience must be a number"),
+  ),
+  embeddingDim: asNumber(
+    Yup.number().integer().typeError("embeddingDim must be a number"),
+  ),
+  embeddingType: Yup.string(),
+  enforceStrongPassword: Yup.string(),
+  episodes: asNumber(
+    Yup.number().integer().typeError("episodes must be a number"),
+  ),
+  epochs: asNumber(Yup.number().integer().typeError("epochs must be a number")),
+  expectedHash: Yup.string(),
+  filter: Yup.string(),
+  firstName: Yup.string(),
+  flattenNested: Yup.boolean(),
+  frozenLayers: asNumber(
+    Yup.number().integer().typeError("frozenLayers must be a number"),
+  ),
+  fuzzyMatch: Yup.string(),
+  ganType: Yup.string(),
+  hashOperations: Yup.string(),
+  highlight: Yup.string(),
+  html: Yup.string(),
+  iconEmoji: Yup.string(),
+  includeIntercept: Yup.boolean(),
+  includeItems: Yup.string(),
+  index: Yup.string(),
+  inferTypes: Yup.boolean(),
+  initialMessage: Yup.string(),
+  inlineSubject: Yup.string(),
+  inlineTemplate: Yup.string(),
+  introspection: Yup.boolean(),
+  inviteeName: Yup.string(),
+  lastName: Yup.string(),
+  latentDim: asNumber(
+    Yup.number().integer().typeError("latentDim must be a number"),
+  ),
+  listOperations: Yup.string(),
+  locationId: Yup.string(),
+  loss: Yup.string(),
+  lstmUnits: asNumber(
+    Yup.number().integer().typeError("lstmUnits must be a number"),
+  ),
+  match: Yup.string(),
+  maxLength: asNumber(
+    Yup.number().integer().typeError("maxLength must be a number"),
+  ),
+  maxDepth: Yup.string(),
+  memorySize: asNumber(
+    Yup.number().integer().typeError("memorySize must be a number"),
+  ),
+  message: Yup.string(),
+  metadata: Yup.string(),
+  minWordFreq: asNumber(
+    Yup.number().integer().typeError("minWordFreq must be a number"),
+  ),
+  modelType: Yup.string(),
+  name: Yup.string(),
+  nullFirst: Yup.string(),
+  numLayers: asNumber(
+    Yup.number().integer().typeError("numLayers must be a number"),
+  ),
+  numUnits: asNumber(
+    Yup.number().integer().typeError("numUnits must be a number"),
+  ),
+  operation: Yup.string(),
+  operationName: Yup.string(),
+  optimizer: Yup.string(),
+  outliers: Yup.string(),
+  owner: Yup.string(),
+  p: asNumber(Yup.number().integer().typeError("p must be a number")),
+  password: Yup.string(),
+  pattern: Yup.string(),
+  pingIntervalMs: Yup.string(),
+  polynomialDegree: asNumber(
+    Yup.number().integer().typeError("polynomialDegree must be a number"),
+  ),
+  postTemplateId: Yup.string(),
+  pretrainedModel: Yup.string(),
+  properties: Yup.string(),
+  provider: Yup.string(),
+  published: Yup.boolean(),
+  pubsub: Yup.string(),
+  q: asNumber(Yup.number().integer().typeError("q must be a number")),
+  quality: Yup.string(),
+  readPreference: Yup.string(),
+  recordId: Yup.string(),
+  recordType: Yup.string(),
+  repo: Yup.string(),
+  requireHashMatch: Yup.boolean(),
+  resourceGroup: Yup.string(),
+  rewardFunction: Yup.string(),
+  robust: Yup.boolean(),
+  rootElement: Yup.string(),
+  segmentExpression: Yup.string(),
+  similarityThreshold: Yup.string(),
+  size: Yup.string(),
+  slideInterval: Yup.string(),
+  sobject: Yup.string(),
+  source: Yup.string(),
+  sourceName: Yup.string(),
+  sql: Yup.string(),
+  startTime: Yup.string(),
+  stateSize: asNumber(
+    Yup.number().integer().typeError("stateSize must be a number"),
+  ),
+  status: Yup.string(),
+  stripNamespaces: Yup.boolean(),
+  teamId: Yup.string(),
+  terms: Yup.string(),
+  testStatistic: Yup.string(),
+  text: Yup.string(),
+  timestampFormat: Yup.string(),
+  timezone: Yup.string(),
+  title: Yup.string(),
+  tone: Yup.string(),
+  topic: Yup.string(),
+  transaction: Yup.boolean(),
+  transactionalId: Yup.string(),
+  transferLearning: Yup.boolean(),
+  type: Yup.string(),
+  useAttention: Yup.boolean(),
+  useVariational: Yup.boolean(),
+  username: Yup.string(),
+  valueText: Yup.string(),
+  variables: Yup.string(),
+  version: Yup.string(),
+  wkhtmlArgs: Yup.string(),
+  writeConcern: Yup.string(),
+  xmlSource: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ExecModulePayloadConfigForm: React.FC = () => {
-  const [addExecModulePayloadConfig, addExecModulePayloadConfigResult] = useAddExecModulePayloadConfigMutation();
+  const [addExecModulePayloadConfig, addExecModulePayloadConfigResult] =
+    useAddExecModulePayloadConfigMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -231,12 +270,18 @@ const ExecModulePayloadConfigForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -244,153 +289,153 @@ const ExecModulePayloadConfigForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ExecModulePayloadConfig> = {
-          contentType: '',
-          parameters: '',
-          action: '',
-          actionSize: 0,
-          activate: false,
-          activation: '',
-          age: '',
-          agenda: '',
-          algorithm: '',
-          allowCreate: false,
-          allowUpdate: false,
-          anonymizationStrategy: '',
-          architecture: '',
-          augmentData: false,
-          avg: '',
-          avgPrice: '',
-          bidirectional: false,
-          bootstrapServers: '',
-          bottleneckActivation: '',
-          caption: '',
-          caseSensitive: '',
-          categories: '',
-          cellType: '',
-          closeAfterMs: '',
-          company: '',
-          companyId: '',
-          compression: '',
-          connectionString: '',
-          content: '',
-          countOnly: '',
-          currency: '',
-          d: 0,
-          dataAugmentation: false,
-          dataType: '',
-          database: '',
-          dateOffsetDays: 0,
-          deepMerge: '',
-          delimiter: '',
-          description: '',
-          dlqTopic: '',
-          dryRun: '',
-          earlyStoppingPatience: 0,
-          embeddingDim: 0,
-          embeddingType: '',
-          enforceStrongPassword: '',
-          episodes: 0,
-          epochs: 0,
-          expectedHash: '',
-          filter: '',
-          firstName: '',
-          flattenNested: false,
-          frozenLayers: 0,
-          fuzzyMatch: '',
-          ganType: '',
-          hashOperations: '',
-          highlight: '',
-          html: '',
-          iconEmoji: '',
-          includeIntercept: false,
-          includeItems: '',
-          index: '',
-          inferTypes: false,
-          initialMessage: '',
-          inlineSubject: '',
-          inlineTemplate: '',
-          introspection: false,
-          inviteeName: '',
-          lastName: '',
-          latentDim: 0,
-          listOperations: '',
-          locationId: '',
-          loss: '',
-          lstmUnits: 0,
-          match: '',
-          maxLength: 0,
-          maxDepth: '',
-          memorySize: 0,
-          message: '',
-          metadata: '',
-          minWordFreq: 0,
-          modelType: '',
-          name: '',
-          nullFirst: '',
-          numLayers: 0,
-          numUnits: 0,
-          operation: '',
-          operationName: '',
-          optimizer: '',
-          outliers: '',
-          owner: '',
-          p: 0,
-          password: '',
-          pattern: '',
-          pingIntervalMs: '',
-          polynomialDegree: 0,
-          postTemplateId: '',
-          pretrainedModel: '',
-          properties: '',
-          provider: '',
-          published: false,
-          pubsub: '',
-          q: 0,
-          quality: '',
-          readPreference: '',
-          recordId: '',
-          recordType: '',
-          repo: '',
-          requireHashMatch: false,
-          resourceGroup: '',
-          rewardFunction: '',
-          robust: false,
-          rootElement: '',
-          segmentExpression: '',
-          similarityThreshold: '',
-          size: '',
-          slideInterval: '',
-          sobject: '',
-          source: '',
-          sourceName: '',
-          sql: '',
-          startTime: '',
-          stateSize: 0,
-          status: '',
-          stripNamespaces: false,
-          teamId: '',
-          terms: '',
-          testStatistic: '',
-          text: '',
-          timestampFormat: '',
-          timezone: '',
-          title: '',
-          tone: '',
-          topic: '',
-          transaction: false,
-          transactionalId: '',
-          transferLearning: false,
-          type: '',
-          useAttention: false,
-          useVariational: false,
-          username: '',
-          valueText: '',
-          variables: '',
-          version: '',
-          wkhtmlArgs: '',
-          writeConcern: '',
-          xmlSource: '',
-          trashed: false,
+    contentType: "",
+    parameters: "",
+    action: "",
+    actionSize: 0,
+    activate: false,
+    activation: "",
+    age: "",
+    agenda: "",
+    algorithm: "",
+    allowCreate: false,
+    allowUpdate: false,
+    anonymizationStrategy: "",
+    architecture: "",
+    augmentData: false,
+    avg: "",
+    avgPrice: "",
+    bidirectional: false,
+    bootstrapServers: "",
+    bottleneckActivation: "",
+    caption: "",
+    caseSensitive: "",
+    categories: "",
+    cellType: "",
+    closeAfterMs: "",
+    company: "",
+    companyId: "",
+    compression: "",
+    connectionString: "",
+    content: "",
+    countOnly: "",
+    currency: "",
+    d: 0,
+    dataAugmentation: false,
+    dataType: "",
+    database: "",
+    dateOffsetDays: 0,
+    deepMerge: "",
+    delimiter: "",
+    description: "",
+    dlqTopic: "",
+    dryRun: "",
+    earlyStoppingPatience: 0,
+    embeddingDim: 0,
+    embeddingType: "",
+    enforceStrongPassword: "",
+    episodes: 0,
+    epochs: 0,
+    expectedHash: "",
+    filter: "",
+    firstName: "",
+    flattenNested: false,
+    frozenLayers: 0,
+    fuzzyMatch: "",
+    ganType: "",
+    hashOperations: "",
+    highlight: "",
+    html: "",
+    iconEmoji: "",
+    includeIntercept: false,
+    includeItems: "",
+    index: "",
+    inferTypes: false,
+    initialMessage: "",
+    inlineSubject: "",
+    inlineTemplate: "",
+    introspection: false,
+    inviteeName: "",
+    lastName: "",
+    latentDim: 0,
+    listOperations: "",
+    locationId: "",
+    loss: "",
+    lstmUnits: 0,
+    match: "",
+    maxLength: 0,
+    maxDepth: "",
+    memorySize: 0,
+    message: "",
+    metadata: "",
+    minWordFreq: 0,
+    modelType: "",
+    name: "",
+    nullFirst: "",
+    numLayers: 0,
+    numUnits: 0,
+    operation: "",
+    operationName: "",
+    optimizer: "",
+    outliers: "",
+    owner: "",
+    p: 0,
+    password: "",
+    pattern: "",
+    pingIntervalMs: "",
+    polynomialDegree: 0,
+    postTemplateId: "",
+    pretrainedModel: "",
+    properties: "",
+    provider: "",
+    published: false,
+    pubsub: "",
+    q: 0,
+    quality: "",
+    readPreference: "",
+    recordId: "",
+    recordType: "",
+    repo: "",
+    requireHashMatch: false,
+    resourceGroup: "",
+    rewardFunction: "",
+    robust: false,
+    rootElement: "",
+    segmentExpression: "",
+    similarityThreshold: "",
+    size: "",
+    slideInterval: "",
+    sobject: "",
+    source: "",
+    sourceName: "",
+    sql: "",
+    startTime: "",
+    stateSize: 0,
+    status: "",
+    stripNamespaces: false,
+    teamId: "",
+    terms: "",
+    testStatistic: "",
+    text: "",
+    timestampFormat: "",
+    timezone: "",
+    title: "",
+    tone: "",
+    topic: "",
+    transaction: false,
+    transactionalId: "",
+    transferLearning: false,
+    type: "",
+    useAttention: false,
+    useVariational: false,
+    username: "",
+    valueText: "",
+    variables: "",
+    version: "",
+    wkhtmlArgs: "",
+    writeConcern: "",
+    xmlSource: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -405,11 +450,14 @@ const ExecModulePayloadConfigForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new ExecModulePayloadConfig:', grants);
+    console.log("Permissions saved for new ExecModulePayloadConfig:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ExecModulePayloadConfig>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<ExecModulePayloadConfig>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -420,7 +468,7 @@ const ExecModulePayloadConfigForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ExecModulePayloadConfig created successfully! Would you like to set permissions for this object?`
+          `ExecModulePayloadConfig created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -428,8 +476,8 @@ const ExecModulePayloadConfigForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create ExecModulePayloadConfig:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create ExecModulePayloadConfig:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -450,44 +498,38 @@ const ExecModulePayloadConfigForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addExecModulePayloadConfigResult.isLoading;
+          const isSaving =
+            isSubmitting || addExecModulePayloadConfigResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New ExecModulePayloadConfig
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    ExecModulePayloadConfig
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="contentType" className="nice-form-control">
                       <b>
                         Content Type:
-                        {touched.contentType &&
-                         !errors.contentType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.contentType && !errors.contentType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="contentType"
-                            value={values?.contentType}
-                            placeholder="Content Type"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="contentType"
+                        value={values?.contentType}
+                        placeholder="Content Type"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -499,28 +541,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="parameters" className="nice-form-control">
                       <b>
                         Parameters:
-                        {touched.parameters &&
-                         !errors.parameters && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.parameters && !errors.parameters && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="parameters"
-                            value={values?.parameters}
-                            placeholder="Parameters"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="parameters"
+                        value={values?.parameters}
+                        placeholder="Parameters"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -532,28 +567,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="action" className="nice-form-control">
                       <b>
                         Action:
-                        {touched.action &&
-                         !errors.action && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.action && !errors.action && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="action"
-                            value={values?.action}
-                            placeholder="Action"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="action"
+                        value={values?.action}
+                        placeholder="Action"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -565,36 +593,32 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="actionSize" className="nice-form-control">
                       <b>
                         Action Size:
-                        {touched.actionSize &&
-                         !errors.actionSize && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.actionSize && !errors.actionSize && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="actionSize"
-                            type="number"
-                            value={values.actionSize || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('actionSize', true);
-                              const v = e.target.value;
-                              setFieldValue('actionSize', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.actionSize
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="actionSize"
+                        type="number"
+                        value={values.actionSize || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("actionSize", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "actionSize",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.actionSize
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -606,32 +630,25 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="activate" className="nice-form-control">
                       <b>
                         Activate:
-                        {touched.activate &&
-                         !errors.activate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.activate && !errors.activate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="activate"
-                            name="activate"
-                            checked={values.activate || false}
-                            onChange={(e) => {
-                              setFieldTouched('activate', true);
-                              setFieldValue('activate', e.target.checked);
-                            }}
-                            isInvalid={!!errors.activate}
-                            className={errors.activate ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="activate"
+                        name="activate"
+                        checked={values.activate || false}
+                        onChange={(e) => {
+                          setFieldTouched("activate", true);
+                          setFieldValue("activate", e.target.checked);
+                        }}
+                        isInvalid={!!errors.activate}
+                        className={errors.activate ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -643,28 +660,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="activation" className="nice-form-control">
                       <b>
                         Activation:
-                        {touched.activation &&
-                         !errors.activation && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.activation && !errors.activation && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="activation"
-                            value={values?.activation}
-                            placeholder="Activation"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="activation"
+                        value={values?.activation}
+                        placeholder="Activation"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -676,28 +686,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="age" className="nice-form-control">
                       <b>
                         Age:
-                        {touched.age &&
-                         !errors.age && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.age && !errors.age && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="age"
-                            value={values?.age}
-                            placeholder="Age"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="age"
+                        value={values?.age}
+                        placeholder="Age"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -709,28 +712,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="agenda" className="nice-form-control">
                       <b>
                         Agenda:
-                        {touched.agenda &&
-                         !errors.agenda && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.agenda && !errors.agenda && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="agenda"
-                            value={values?.agenda}
-                            placeholder="Agenda"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="agenda"
+                        value={values?.agenda}
+                        placeholder="Agenda"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -742,28 +738,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="algorithm" className="nice-form-control">
                       <b>
                         Algorithm:
-                        {touched.algorithm &&
-                         !errors.algorithm && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.algorithm && !errors.algorithm && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="algorithm"
-                            value={values?.algorithm}
-                            placeholder="Algorithm"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="algorithm"
+                        value={values?.algorithm}
+                        placeholder="Algorithm"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -775,32 +764,25 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="allowCreate" className="nice-form-control">
                       <b>
                         Allow Create:
-                        {touched.allowCreate &&
-                         !errors.allowCreate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.allowCreate && !errors.allowCreate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="allowCreate"
-                            name="allowCreate"
-                            checked={values.allowCreate || false}
-                            onChange={(e) => {
-                              setFieldTouched('allowCreate', true);
-                              setFieldValue('allowCreate', e.target.checked);
-                            }}
-                            isInvalid={!!errors.allowCreate}
-                            className={errors.allowCreate ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="allowCreate"
+                        name="allowCreate"
+                        checked={values.allowCreate || false}
+                        onChange={(e) => {
+                          setFieldTouched("allowCreate", true);
+                          setFieldValue("allowCreate", e.target.checked);
+                        }}
+                        isInvalid={!!errors.allowCreate}
+                        className={errors.allowCreate ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -812,32 +794,25 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="allowUpdate" className="nice-form-control">
                       <b>
                         Allow Update:
-                        {touched.allowUpdate &&
-                         !errors.allowUpdate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.allowUpdate && !errors.allowUpdate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="allowUpdate"
-                            name="allowUpdate"
-                            checked={values.allowUpdate || false}
-                            onChange={(e) => {
-                              setFieldTouched('allowUpdate', true);
-                              setFieldValue('allowUpdate', e.target.checked);
-                            }}
-                            isInvalid={!!errors.allowUpdate}
-                            className={errors.allowUpdate ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="allowUpdate"
+                        name="allowUpdate"
+                        checked={values.allowUpdate || false}
+                        onChange={(e) => {
+                          setFieldTouched("allowUpdate", true);
+                          setFieldValue("allowUpdate", e.target.checked);
+                        }}
+                        isInvalid={!!errors.allowUpdate}
+                        className={errors.allowUpdate ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -849,20 +824,12 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="alpha" className="nice-form-control">
                       <b>
                         Alpha:
-                        {touched.alpha &&
-                         !errors.alpha && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.alpha && !errors.alpha && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -871,23 +838,19 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="anomalyThreshold" className="nice-form-control">
+                    <label
+                      htmlFor="anomalyThreshold"
+                      className="nice-form-control"
+                    >
                       <b>
                         Anomaly Threshold:
                         {touched.anomalyThreshold &&
-                         !errors.anomalyThreshold && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.anomalyThreshold && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -896,31 +859,28 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="anonymizationStrategy" className="nice-form-control">
+                    <label
+                      htmlFor="anonymizationStrategy"
+                      className="nice-form-control"
+                    >
                       <b>
                         Anonymization Strategy:
                         {touched.anonymizationStrategy &&
-                         !errors.anonymizationStrategy && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.anonymizationStrategy && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="anonymizationStrategy"
-                            value={values?.anonymizationStrategy}
-                            placeholder="Anonymization Strategy"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="anonymizationStrategy"
+                        value={values?.anonymizationStrategy}
+                        placeholder="Anonymization Strategy"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -932,28 +892,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="architecture" className="nice-form-control">
                       <b>
                         Architecture:
-                        {touched.architecture &&
-                         !errors.architecture && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.architecture && !errors.architecture && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="architecture"
-                            value={values?.architecture}
-                            placeholder="Architecture"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="architecture"
+                        value={values?.architecture}
+                        placeholder="Architecture"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -965,32 +918,25 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="augmentData" className="nice-form-control">
                       <b>
                         Augment Data:
-                        {touched.augmentData &&
-                         !errors.augmentData && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.augmentData && !errors.augmentData && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="augmentData"
-                            name="augmentData"
-                            checked={values.augmentData || false}
-                            onChange={(e) => {
-                              setFieldTouched('augmentData', true);
-                              setFieldValue('augmentData', e.target.checked);
-                            }}
-                            isInvalid={!!errors.augmentData}
-                            className={errors.augmentData ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="augmentData"
+                        name="augmentData"
+                        checked={values.augmentData || false}
+                        onChange={(e) => {
+                          setFieldTouched("augmentData", true);
+                          setFieldValue("augmentData", e.target.checked);
+                        }}
+                        isInvalid={!!errors.augmentData}
+                        className={errors.augmentData ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1002,28 +948,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="avg" className="nice-form-control">
                       <b>
                         Avg:
-                        {touched.avg &&
-                         !errors.avg && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.avg && !errors.avg && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="avg"
-                            value={values?.avg}
-                            placeholder="Avg"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="avg"
+                        value={values?.avg}
+                        placeholder="Avg"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1035,28 +974,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="avgPrice" className="nice-form-control">
                       <b>
                         Avg _ price:
-                        {touched.avgPrice &&
-                         !errors.avgPrice && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.avgPrice && !errors.avgPrice && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="avgPrice"
-                            value={values?.avgPrice}
-                            placeholder="Avg _ price"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="avgPrice"
+                        value={values?.avgPrice}
+                        placeholder="Avg _ price"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1068,20 +1000,12 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="beta1" className="nice-form-control">
                       <b>
                         Beta 1:
-                        {touched.beta1 &&
-                         !errors.beta1 && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.beta1 && !errors.beta1 && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -1090,35 +1014,31 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="bidirectional" className="nice-form-control">
+                    <label
+                      htmlFor="bidirectional"
+                      className="nice-form-control"
+                    >
                       <b>
                         Bidirectional:
-                        {touched.bidirectional &&
-                         !errors.bidirectional && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.bidirectional && !errors.bidirectional && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="bidirectional"
-                            name="bidirectional"
-                            checked={values.bidirectional || false}
-                            onChange={(e) => {
-                              setFieldTouched('bidirectional', true);
-                              setFieldValue('bidirectional', e.target.checked);
-                            }}
-                            isInvalid={!!errors.bidirectional}
-                            className={errors.bidirectional ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="bidirectional"
+                        name="bidirectional"
+                        checked={values.bidirectional || false}
+                        onChange={(e) => {
+                          setFieldTouched("bidirectional", true);
+                          setFieldValue("bidirectional", e.target.checked);
+                        }}
+                        isInvalid={!!errors.bidirectional}
+                        className={errors.bidirectional ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1127,31 +1047,28 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="bootstrapServers" className="nice-form-control">
+                    <label
+                      htmlFor="bootstrapServers"
+                      className="nice-form-control"
+                    >
                       <b>
                         Bootstrap _ servers:
                         {touched.bootstrapServers &&
-                         !errors.bootstrapServers && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.bootstrapServers && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="bootstrapServers"
-                            value={values?.bootstrapServers}
-                            placeholder="Bootstrap _ servers"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="bootstrapServers"
+                        value={values?.bootstrapServers}
+                        placeholder="Bootstrap _ servers"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1160,31 +1077,28 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="bottleneckActivation" className="nice-form-control">
+                    <label
+                      htmlFor="bottleneckActivation"
+                      className="nice-form-control"
+                    >
                       <b>
                         Bottleneck Activation:
                         {touched.bottleneckActivation &&
-                         !errors.bottleneckActivation && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.bottleneckActivation && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="bottleneckActivation"
-                            value={values?.bottleneckActivation}
-                            placeholder="Bottleneck Activation"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="bottleneckActivation"
+                        value={values?.bottleneckActivation}
+                        placeholder="Bottleneck Activation"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1196,20 +1110,12 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="bulkSize" className="nice-form-control">
                       <b>
                         Bulk _ size:
-                        {touched.bulkSize &&
-                         !errors.bulkSize && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.bulkSize && !errors.bulkSize && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -1221,28 +1127,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="caption" className="nice-form-control">
                       <b>
                         Caption:
-                        {touched.caption &&
-                         !errors.caption && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.caption && !errors.caption && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="caption"
-                            value={values?.caption}
-                            placeholder="Caption"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="caption"
+                        value={values?.caption}
+                        placeholder="Caption"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1251,31 +1150,27 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="caseSensitive" className="nice-form-control">
+                    <label
+                      htmlFor="caseSensitive"
+                      className="nice-form-control"
+                    >
                       <b>
                         Case _ sensitive:
-                        {touched.caseSensitive &&
-                         !errors.caseSensitive && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.caseSensitive && !errors.caseSensitive && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="caseSensitive"
-                            value={values?.caseSensitive}
-                            placeholder="Case _ sensitive"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="caseSensitive"
+                        value={values?.caseSensitive}
+                        placeholder="Case _ sensitive"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1287,28 +1182,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="categories" className="nice-form-control">
                       <b>
                         Categories:
-                        {touched.categories &&
-                         !errors.categories && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.categories && !errors.categories && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="categories"
-                            value={values?.categories}
-                            placeholder="Categories"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="categories"
+                        value={values?.categories}
+                        placeholder="Categories"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1320,28 +1208,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="cellType" className="nice-form-control">
                       <b>
                         Cell Type:
-                        {touched.cellType &&
-                         !errors.cellType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.cellType && !errors.cellType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="cellType"
-                            value={values?.cellType}
-                            placeholder="Cell Type"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="cellType"
+                        value={values?.cellType}
+                        placeholder="Cell Type"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1353,20 +1234,12 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="clipValue" className="nice-form-control">
                       <b>
                         Clip Value:
-                        {touched.clipValue &&
-                         !errors.clipValue && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.clipValue && !errors.clipValue && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -1378,28 +1251,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="closeAfterMs" className="nice-form-control">
                       <b>
                         Close _ after _ ms:
-                        {touched.closeAfterMs &&
-                         !errors.closeAfterMs && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.closeAfterMs && !errors.closeAfterMs && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="closeAfterMs"
-                            value={values?.closeAfterMs}
-                            placeholder="Close _ after _ ms"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="closeAfterMs"
+                        value={values?.closeAfterMs}
+                        placeholder="Close _ after _ ms"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1411,28 +1277,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="company" className="nice-form-control">
                       <b>
                         Company:
-                        {touched.company &&
-                         !errors.company && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.company && !errors.company && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="company"
-                            value={values?.company}
-                            placeholder="Company"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="company"
+                        value={values?.company}
+                        placeholder="Company"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1444,28 +1303,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="companyId" className="nice-form-control">
                       <b>
                         Company _ id:
-                        {touched.companyId &&
-                         !errors.companyId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.companyId && !errors.companyId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="companyId"
-                            value={values?.companyId}
-                            placeholder="Company _ id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="companyId"
+                        value={values?.companyId}
+                        placeholder="Company _ id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1477,28 +1329,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="compression" className="nice-form-control">
                       <b>
                         Compression:
-                        {touched.compression &&
-                         !errors.compression && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.compression && !errors.compression && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="compression"
-                            value={values?.compression}
-                            placeholder="Compression"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="compression"
+                        value={values?.compression}
+                        placeholder="Compression"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1510,20 +1355,12 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="confidence" className="nice-form-control">
                       <b>
                         Confidence:
-                        {touched.confidence &&
-                         !errors.confidence && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.confidence && !errors.confidence && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -1532,23 +1369,18 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="confidenceLevel" className="nice-form-control">
+                    <label
+                      htmlFor="confidenceLevel"
+                      className="nice-form-control"
+                    >
                       <b>
                         Confidence Level:
-                        {touched.confidenceLevel &&
-                         !errors.confidenceLevel && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.confidenceLevel && !errors.confidenceLevel && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -1557,31 +1389,28 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="connectionString" className="nice-form-control">
+                    <label
+                      htmlFor="connectionString"
+                      className="nice-form-control"
+                    >
                       <b>
                         Connection _ string:
                         {touched.connectionString &&
-                         !errors.connectionString && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.connectionString && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="connectionString"
-                            value={values?.connectionString}
-                            placeholder="Connection _ string"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="connectionString"
+                        value={values?.connectionString}
+                        placeholder="Connection _ string"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1593,28 +1422,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="content" className="nice-form-control">
                       <b>
                         Content:
-                        {touched.content &&
-                         !errors.content && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.content && !errors.content && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="content"
-                            value={values?.content}
-                            placeholder="Content"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="content"
+                        value={values?.content}
+                        placeholder="Content"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1626,28 +1448,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="countOnly" className="nice-form-control">
                       <b>
                         Count _ only:
-                        {touched.countOnly &&
-                         !errors.countOnly && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.countOnly && !errors.countOnly && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="countOnly"
-                            value={values?.countOnly}
-                            placeholder="Count _ only"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="countOnly"
+                        value={values?.countOnly}
+                        placeholder="Count _ only"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1659,28 +1474,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="currency" className="nice-form-control">
                       <b>
                         Currency:
-                        {touched.currency &&
-                         !errors.currency && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.currency && !errors.currency && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="currency"
-                            value={values?.currency}
-                            placeholder="Currency"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="currency"
+                        value={values?.currency}
+                        placeholder="Currency"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1692,36 +1500,29 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="d" className="nice-form-control">
                       <b>
                         D:
-                        {touched.d &&
-                         !errors.d && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.d && !errors.d && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="d"
-                            type="number"
-                            value={values.d || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('d', true);
-                              const v = e.target.value;
-                              setFieldValue('d', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.d
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="d"
+                        type="number"
+                        value={values.d || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("d", true);
+                          const v = e.target.value;
+                          setFieldValue("d", v === "" ? undefined : Number(v));
+                        }}
+                        className={
+                          errors.d
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1730,35 +1531,32 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="dataAugmentation" className="nice-form-control">
+                    <label
+                      htmlFor="dataAugmentation"
+                      className="nice-form-control"
+                    >
                       <b>
                         Data Augmentation:
                         {touched.dataAugmentation &&
-                         !errors.dataAugmentation && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.dataAugmentation && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="dataAugmentation"
-                            name="dataAugmentation"
-                            checked={values.dataAugmentation || false}
-                            onChange={(e) => {
-                              setFieldTouched('dataAugmentation', true);
-                              setFieldValue('dataAugmentation', e.target.checked);
-                            }}
-                            isInvalid={!!errors.dataAugmentation}
-                            className={errors.dataAugmentation ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="dataAugmentation"
+                        name="dataAugmentation"
+                        checked={values.dataAugmentation || false}
+                        onChange={(e) => {
+                          setFieldTouched("dataAugmentation", true);
+                          setFieldValue("dataAugmentation", e.target.checked);
+                        }}
+                        isInvalid={!!errors.dataAugmentation}
+                        className={errors.dataAugmentation ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1770,28 +1568,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="dataType" className="nice-form-control">
                       <b>
                         Data _ type:
-                        {touched.dataType &&
-                         !errors.dataType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.dataType && !errors.dataType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="dataType"
-                            value={values?.dataType}
-                            placeholder="Data _ type"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="dataType"
+                        value={values?.dataType}
+                        placeholder="Data _ type"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1803,28 +1594,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="database" className="nice-form-control">
                       <b>
                         Database:
-                        {touched.database &&
-                         !errors.database && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.database && !errors.database && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="database"
-                            value={values?.database}
-                            placeholder="Database"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="database"
+                        value={values?.database}
+                        placeholder="Database"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1833,39 +1617,38 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="dateOffsetDays" className="nice-form-control">
+                    <label
+                      htmlFor="dateOffsetDays"
+                      className="nice-form-control"
+                    >
                       <b>
                         Date Offset Days:
-                        {touched.dateOffsetDays &&
-                         !errors.dateOffsetDays && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.dateOffsetDays && !errors.dateOffsetDays && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="dateOffsetDays"
-                            type="number"
-                            value={values.dateOffsetDays || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('dateOffsetDays', true);
-                              const v = e.target.value;
-                              setFieldValue('dateOffsetDays', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.dateOffsetDays
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="dateOffsetDays"
+                        type="number"
+                        value={values.dateOffsetDays || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("dateOffsetDays", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "dateOffsetDays",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.dateOffsetDays
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1877,28 +1660,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="deepMerge" className="nice-form-control">
                       <b>
                         Deep _ merge:
-                        {touched.deepMerge &&
-                         !errors.deepMerge && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.deepMerge && !errors.deepMerge && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="deepMerge"
-                            value={values?.deepMerge}
-                            placeholder="Deep _ merge"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="deepMerge"
+                        value={values?.deepMerge}
+                        placeholder="Deep _ merge"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1910,28 +1686,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="delimiter" className="nice-form-control">
                       <b>
                         Delimiter:
-                        {touched.delimiter &&
-                         !errors.delimiter && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.delimiter && !errors.delimiter && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="delimiter"
-                            value={values?.delimiter}
-                            placeholder="Delimiter"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="delimiter"
+                        value={values?.delimiter}
+                        placeholder="Delimiter"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1943,28 +1712,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
-                        {touched.description &&
-                         !errors.description && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.description && !errors.description && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="description"
-                            value={values?.description}
-                            placeholder="Description"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="description"
+                        value={values?.description}
+                        placeholder="Description"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1973,23 +1735,18 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="discountFactor" className="nice-form-control">
+                    <label
+                      htmlFor="discountFactor"
+                      className="nice-form-control"
+                    >
                       <b>
                         Discount Factor:
-                        {touched.discountFactor &&
-                         !errors.discountFactor && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.discountFactor && !errors.discountFactor && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -2001,28 +1758,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="dlqTopic" className="nice-form-control">
                       <b>
                         Dlq _ topic:
-                        {touched.dlqTopic &&
-                         !errors.dlqTopic && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.dlqTopic && !errors.dlqTopic && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="dlqTopic"
-                            value={values?.dlqTopic}
-                            placeholder="Dlq _ topic"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="dlqTopic"
+                        value={values?.dlqTopic}
+                        placeholder="Dlq _ topic"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2034,20 +1784,12 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="dropoutRate" className="nice-form-control">
                       <b>
                         Dropout Rate:
-                        {touched.dropoutRate &&
-                         !errors.dropoutRate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.dropoutRate && !errors.dropoutRate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -2059,28 +1801,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="dryRun" className="nice-form-control">
                       <b>
                         Dry _ run:
-                        {touched.dryRun &&
-                         !errors.dryRun && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.dryRun && !errors.dryRun && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="dryRun"
-                            value={values?.dryRun}
-                            placeholder="Dry _ run"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="dryRun"
+                        value={values?.dryRun}
+                        placeholder="Dry _ run"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2092,20 +1827,12 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="duration" className="nice-form-control">
                       <b>
                         Duration:
-                        {touched.duration &&
-                         !errors.duration && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.duration && !errors.duration && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -2114,39 +1841,39 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="earlyStoppingPatience" className="nice-form-control">
+                    <label
+                      htmlFor="earlyStoppingPatience"
+                      className="nice-form-control"
+                    >
                       <b>
                         Early Stopping Patience:
                         {touched.earlyStoppingPatience &&
-                         !errors.earlyStoppingPatience && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.earlyStoppingPatience && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="earlyStoppingPatience"
-                            type="number"
-                            value={values.earlyStoppingPatience || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('earlyStoppingPatience', true);
-                              const v = e.target.value;
-                              setFieldValue('earlyStoppingPatience', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.earlyStoppingPatience
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="earlyStoppingPatience"
+                        type="number"
+                        value={values.earlyStoppingPatience || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("earlyStoppingPatience", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "earlyStoppingPatience",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.earlyStoppingPatience
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2158,36 +1885,32 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="embeddingDim" className="nice-form-control">
                       <b>
                         Embedding Dim:
-                        {touched.embeddingDim &&
-                         !errors.embeddingDim && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.embeddingDim && !errors.embeddingDim && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="embeddingDim"
-                            type="number"
-                            value={values.embeddingDim || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('embeddingDim', true);
-                              const v = e.target.value;
-                              setFieldValue('embeddingDim', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.embeddingDim
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="embeddingDim"
+                        type="number"
+                        value={values.embeddingDim || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("embeddingDim", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "embeddingDim",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.embeddingDim
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2196,31 +1919,27 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="embeddingType" className="nice-form-control">
+                    <label
+                      htmlFor="embeddingType"
+                      className="nice-form-control"
+                    >
                       <b>
                         Embedding Type:
-                        {touched.embeddingType &&
-                         !errors.embeddingType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.embeddingType && !errors.embeddingType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="embeddingType"
-                            value={values?.embeddingType}
-                            placeholder="Embedding Type"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="embeddingType"
+                        value={values?.embeddingType}
+                        placeholder="Embedding Type"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2229,31 +1948,28 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="enforceStrongPassword" className="nice-form-control">
+                    <label
+                      htmlFor="enforceStrongPassword"
+                      className="nice-form-control"
+                    >
                       <b>
                         Enforce _ strong _ password:
                         {touched.enforceStrongPassword &&
-                         !errors.enforceStrongPassword && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.enforceStrongPassword && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="enforceStrongPassword"
-                            value={values?.enforceStrongPassword}
-                            placeholder="Enforce _ strong _ password"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="enforceStrongPassword"
+                        value={values?.enforceStrongPassword}
+                        placeholder="Enforce _ strong _ password"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2265,36 +1981,32 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="episodes" className="nice-form-control">
                       <b>
                         Episodes:
-                        {touched.episodes &&
-                         !errors.episodes && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.episodes && !errors.episodes && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="episodes"
-                            type="number"
-                            value={values.episodes || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('episodes', true);
-                              const v = e.target.value;
-                              setFieldValue('episodes', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.episodes
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="episodes"
+                        type="number"
+                        value={values.episodes || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("episodes", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "episodes",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.episodes
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2306,36 +2018,32 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="epochs" className="nice-form-control">
                       <b>
                         Epochs:
-                        {touched.epochs &&
-                         !errors.epochs && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.epochs && !errors.epochs && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="epochs"
-                            type="number"
-                            value={values.epochs || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('epochs', true);
-                              const v = e.target.value;
-                              setFieldValue('epochs', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.epochs
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="epochs"
+                        type="number"
+                        value={values.epochs || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("epochs", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "epochs",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.epochs
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2347,20 +2055,12 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="epsilon" className="nice-form-control">
                       <b>
                         Epsilon:
-                        {touched.epsilon &&
-                         !errors.epsilon && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.epsilon && !errors.epsilon && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -2372,20 +2072,12 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="epsilonDecay" className="nice-form-control">
                       <b>
                         Epsilon Decay:
-                        {touched.epsilonDecay &&
-                         !errors.epsilonDecay && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.epsilonDecay && !errors.epsilonDecay && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -2397,28 +2089,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="expectedHash" className="nice-form-control">
                       <b>
                         Expected Hash:
-                        {touched.expectedHash &&
-                         !errors.expectedHash && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.expectedHash && !errors.expectedHash && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="expectedHash"
-                            value={values?.expectedHash}
-                            placeholder="Expected Hash"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="expectedHash"
+                        value={values?.expectedHash}
+                        placeholder="Expected Hash"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2427,23 +2112,18 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="explorationRate" className="nice-form-control">
+                    <label
+                      htmlFor="explorationRate"
+                      className="nice-form-control"
+                    >
                       <b>
                         Exploration Rate:
-                        {touched.explorationRate &&
-                         !errors.explorationRate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.explorationRate && !errors.explorationRate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -2455,28 +2135,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="filter" className="nice-form-control">
                       <b>
                         Filter:
-                        {touched.filter &&
-                         !errors.filter && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.filter && !errors.filter && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="filter"
-                            value={values?.filter}
-                            placeholder="Filter"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="filter"
+                        value={values?.filter}
+                        placeholder="Filter"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2488,20 +2161,12 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="finetuneRate" className="nice-form-control">
                       <b>
                         Finetune Rate:
-                        {touched.finetuneRate &&
-                         !errors.finetuneRate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.finetuneRate && !errors.finetuneRate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -2513,28 +2178,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="firstName" className="nice-form-control">
                       <b>
                         First _ name:
-                        {touched.firstName &&
-                         !errors.firstName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.firstName && !errors.firstName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="firstName"
-                            value={values?.firstName}
-                            placeholder="First _ name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="firstName"
+                        value={values?.firstName}
+                        placeholder="First _ name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2543,35 +2201,31 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="flattenNested" className="nice-form-control">
+                    <label
+                      htmlFor="flattenNested"
+                      className="nice-form-control"
+                    >
                       <b>
                         Flatten _ nested:
-                        {touched.flattenNested &&
-                         !errors.flattenNested && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.flattenNested && !errors.flattenNested && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="flattenNested"
-                            name="flattenNested"
-                            checked={values.flattenNested || false}
-                            onChange={(e) => {
-                              setFieldTouched('flattenNested', true);
-                              setFieldValue('flattenNested', e.target.checked);
-                            }}
-                            isInvalid={!!errors.flattenNested}
-                            className={errors.flattenNested ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="flattenNested"
+                        name="flattenNested"
+                        checked={values.flattenNested || false}
+                        onChange={(e) => {
+                          setFieldTouched("flattenNested", true);
+                          setFieldValue("flattenNested", e.target.checked);
+                        }}
+                        isInvalid={!!errors.flattenNested}
+                        className={errors.flattenNested ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2583,20 +2237,12 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="fromValue" className="nice-form-control">
                       <b>
                         From Value:
-                        {touched.fromValue &&
-                         !errors.fromValue && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.fromValue && !errors.fromValue && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -2608,36 +2254,32 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="frozenLayers" className="nice-form-control">
                       <b>
                         Frozen Layers:
-                        {touched.frozenLayers &&
-                         !errors.frozenLayers && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.frozenLayers && !errors.frozenLayers && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="frozenLayers"
-                            type="number"
-                            value={values.frozenLayers || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('frozenLayers', true);
-                              const v = e.target.value;
-                              setFieldValue('frozenLayers', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.frozenLayers
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="frozenLayers"
+                        type="number"
+                        value={values.frozenLayers || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("frozenLayers", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "frozenLayers",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.frozenLayers
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2649,28 +2291,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="fuzzyMatch" className="nice-form-control">
                       <b>
                         Fuzzy _ match:
-                        {touched.fuzzyMatch &&
-                         !errors.fuzzyMatch && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.fuzzyMatch && !errors.fuzzyMatch && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="fuzzyMatch"
-                            value={values?.fuzzyMatch}
-                            placeholder="Fuzzy _ match"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="fuzzyMatch"
+                        value={values?.fuzzyMatch}
+                        placeholder="Fuzzy _ match"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2682,28 +2317,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="ganType" className="nice-form-control">
                       <b>
                         Gan Type:
-                        {touched.ganType &&
-                         !errors.ganType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.ganType && !errors.ganType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="ganType"
-                            value={values?.ganType}
-                            placeholder="Gan Type"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="ganType"
+                        value={values?.ganType}
+                        placeholder="Gan Type"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2712,31 +2340,27 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="hashOperations" className="nice-form-control">
+                    <label
+                      htmlFor="hashOperations"
+                      className="nice-form-control"
+                    >
                       <b>
                         Hash _ operations:
-                        {touched.hashOperations &&
-                         !errors.hashOperations && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.hashOperations && !errors.hashOperations && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="hashOperations"
-                            value={values?.hashOperations}
-                            placeholder="Hash _ operations"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="hashOperations"
+                        value={values?.hashOperations}
+                        placeholder="Hash _ operations"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2748,28 +2372,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="highlight" className="nice-form-control">
                       <b>
                         Highlight:
-                        {touched.highlight &&
-                         !errors.highlight && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.highlight && !errors.highlight && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="highlight"
-                            value={values?.highlight}
-                            placeholder="Highlight"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="highlight"
+                        value={values?.highlight}
+                        placeholder="Highlight"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2781,28 +2398,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="html" className="nice-form-control">
                       <b>
                         Html:
-                        {touched.html &&
-                         !errors.html && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.html && !errors.html && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="html"
-                            value={values?.html}
-                            placeholder="Html"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="html"
+                        value={values?.html}
+                        placeholder="Html"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2814,28 +2424,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="iconEmoji" className="nice-form-control">
                       <b>
                         Icon _ emoji:
-                        {touched.iconEmoji &&
-                         !errors.iconEmoji && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.iconEmoji && !errors.iconEmoji && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="iconEmoji"
-                            value={values?.iconEmoji}
-                            placeholder="Icon _ emoji"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="iconEmoji"
+                        value={values?.iconEmoji}
+                        placeholder="Icon _ emoji"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2844,35 +2447,32 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="includeIntercept" className="nice-form-control">
+                    <label
+                      htmlFor="includeIntercept"
+                      className="nice-form-control"
+                    >
                       <b>
                         Include Intercept:
                         {touched.includeIntercept &&
-                         !errors.includeIntercept && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.includeIntercept && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="includeIntercept"
-                            name="includeIntercept"
-                            checked={values.includeIntercept || false}
-                            onChange={(e) => {
-                              setFieldTouched('includeIntercept', true);
-                              setFieldValue('includeIntercept', e.target.checked);
-                            }}
-                            isInvalid={!!errors.includeIntercept}
-                            className={errors.includeIntercept ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="includeIntercept"
+                        name="includeIntercept"
+                        checked={values.includeIntercept || false}
+                        onChange={(e) => {
+                          setFieldTouched("includeIntercept", true);
+                          setFieldValue("includeIntercept", e.target.checked);
+                        }}
+                        isInvalid={!!errors.includeIntercept}
+                        className={errors.includeIntercept ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2884,28 +2484,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="includeItems" className="nice-form-control">
                       <b>
                         Include _ items:
-                        {touched.includeItems &&
-                         !errors.includeItems && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.includeItems && !errors.includeItems && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="includeItems"
-                            value={values?.includeItems}
-                            placeholder="Include _ items"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="includeItems"
+                        value={values?.includeItems}
+                        placeholder="Include _ items"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2917,28 +2510,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="index" className="nice-form-control">
                       <b>
                         Index:
-                        {touched.index &&
-                         !errors.index && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.index && !errors.index && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="index"
-                            value={values?.index}
-                            placeholder="Index"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="index"
+                        value={values?.index}
+                        placeholder="Index"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2950,32 +2536,25 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="inferTypes" className="nice-form-control">
                       <b>
                         Infer _ types:
-                        {touched.inferTypes &&
-                         !errors.inferTypes && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.inferTypes && !errors.inferTypes && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="inferTypes"
-                            name="inferTypes"
-                            checked={values.inferTypes || false}
-                            onChange={(e) => {
-                              setFieldTouched('inferTypes', true);
-                              setFieldValue('inferTypes', e.target.checked);
-                            }}
-                            isInvalid={!!errors.inferTypes}
-                            className={errors.inferTypes ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="inferTypes"
+                        name="inferTypes"
+                        checked={values.inferTypes || false}
+                        onChange={(e) => {
+                          setFieldTouched("inferTypes", true);
+                          setFieldValue("inferTypes", e.target.checked);
+                        }}
+                        isInvalid={!!errors.inferTypes}
+                        className={errors.inferTypes ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -2984,31 +2563,27 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="initialMessage" className="nice-form-control">
+                    <label
+                      htmlFor="initialMessage"
+                      className="nice-form-control"
+                    >
                       <b>
                         Initial _ message:
-                        {touched.initialMessage &&
-                         !errors.initialMessage && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.initialMessage && !errors.initialMessage && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="initialMessage"
-                            value={values?.initialMessage}
-                            placeholder="Initial _ message"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="initialMessage"
+                        value={values?.initialMessage}
+                        placeholder="Initial _ message"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3017,31 +2592,27 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="inlineSubject" className="nice-form-control">
+                    <label
+                      htmlFor="inlineSubject"
+                      className="nice-form-control"
+                    >
                       <b>
                         Inline Subject:
-                        {touched.inlineSubject &&
-                         !errors.inlineSubject && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.inlineSubject && !errors.inlineSubject && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="inlineSubject"
-                            value={values?.inlineSubject}
-                            placeholder="Inline Subject"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="inlineSubject"
+                        value={values?.inlineSubject}
+                        placeholder="Inline Subject"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3050,31 +2621,27 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="inlineTemplate" className="nice-form-control">
+                    <label
+                      htmlFor="inlineTemplate"
+                      className="nice-form-control"
+                    >
                       <b>
                         Inline Template:
-                        {touched.inlineTemplate &&
-                         !errors.inlineTemplate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.inlineTemplate && !errors.inlineTemplate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="inlineTemplate"
-                            value={values?.inlineTemplate}
-                            placeholder="Inline Template"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="inlineTemplate"
+                        value={values?.inlineTemplate}
+                        placeholder="Inline Template"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3083,35 +2650,31 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="introspection" className="nice-form-control">
+                    <label
+                      htmlFor="introspection"
+                      className="nice-form-control"
+                    >
                       <b>
                         Introspection:
-                        {touched.introspection &&
-                         !errors.introspection && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.introspection && !errors.introspection && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="introspection"
-                            name="introspection"
-                            checked={values.introspection || false}
-                            onChange={(e) => {
-                              setFieldTouched('introspection', true);
-                              setFieldValue('introspection', e.target.checked);
-                            }}
-                            isInvalid={!!errors.introspection}
-                            className={errors.introspection ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="introspection"
+                        name="introspection"
+                        checked={values.introspection || false}
+                        onChange={(e) => {
+                          setFieldTouched("introspection", true);
+                          setFieldValue("introspection", e.target.checked);
+                        }}
+                        isInvalid={!!errors.introspection}
+                        className={errors.introspection ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3123,28 +2686,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="inviteeName" className="nice-form-control">
                       <b>
                         Invitee _ name:
-                        {touched.inviteeName &&
-                         !errors.inviteeName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.inviteeName && !errors.inviteeName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="inviteeName"
-                            value={values?.inviteeName}
-                            placeholder="Invitee _ name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="inviteeName"
+                        value={values?.inviteeName}
+                        placeholder="Invitee _ name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3156,28 +2712,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="lastName" className="nice-form-control">
                       <b>
                         Last _ name:
-                        {touched.lastName &&
-                         !errors.lastName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.lastName && !errors.lastName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="lastName"
-                            value={values?.lastName}
-                            placeholder="Last _ name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="lastName"
+                        value={values?.lastName}
+                        placeholder="Last _ name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3189,36 +2738,32 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="latentDim" className="nice-form-control">
                       <b>
                         Latent Dim:
-                        {touched.latentDim &&
-                         !errors.latentDim && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.latentDim && !errors.latentDim && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="latentDim"
-                            type="number"
-                            value={values.latentDim || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('latentDim', true);
-                              const v = e.target.value;
-                              setFieldValue('latentDim', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.latentDim
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="latentDim"
+                        type="number"
+                        value={values.latentDim || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("latentDim", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "latentDim",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.latentDim
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3230,20 +2775,12 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="learningRate" className="nice-form-control">
                       <b>
                         Learning Rate:
-                        {touched.learningRate &&
-                         !errors.learningRate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.learningRate && !errors.learningRate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -3252,31 +2789,27 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="listOperations" className="nice-form-control">
+                    <label
+                      htmlFor="listOperations"
+                      className="nice-form-control"
+                    >
                       <b>
                         List _ operations:
-                        {touched.listOperations &&
-                         !errors.listOperations && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.listOperations && !errors.listOperations && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="listOperations"
-                            value={values?.listOperations}
-                            placeholder="List _ operations"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="listOperations"
+                        value={values?.listOperations}
+                        placeholder="List _ operations"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3288,28 +2821,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="locationId" className="nice-form-control">
                       <b>
                         Location _ id:
-                        {touched.locationId &&
-                         !errors.locationId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.locationId && !errors.locationId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="locationId"
-                            value={values?.locationId}
-                            placeholder="Location _ id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="locationId"
+                        value={values?.locationId}
+                        placeholder="Location _ id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3321,28 +2847,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="loss" className="nice-form-control">
                       <b>
                         Loss:
-                        {touched.loss &&
-                         !errors.loss && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.loss && !errors.loss && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="loss"
-                            value={values?.loss}
-                            placeholder="Loss"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="loss"
+                        value={values?.loss}
+                        placeholder="Loss"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3354,36 +2873,32 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="lstmUnits" className="nice-form-control">
                       <b>
                         Lstm Units:
-                        {touched.lstmUnits &&
-                         !errors.lstmUnits && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.lstmUnits && !errors.lstmUnits && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="lstmUnits"
-                            type="number"
-                            value={values.lstmUnits || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('lstmUnits', true);
-                              const v = e.target.value;
-                              setFieldValue('lstmUnits', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.lstmUnits
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="lstmUnits"
+                        type="number"
+                        value={values.lstmUnits || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("lstmUnits", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "lstmUnits",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.lstmUnits
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3392,23 +2907,19 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="mainLearningRate" className="nice-form-control">
+                    <label
+                      htmlFor="mainLearningRate"
+                      className="nice-form-control"
+                    >
                       <b>
                         Main Learning Rate:
                         {touched.mainLearningRate &&
-                         !errors.mainLearningRate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.mainLearningRate && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -3420,28 +2931,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="match" className="nice-form-control">
                       <b>
                         Match:
-                        {touched.match &&
-                         !errors.match && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.match && !errors.match && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="match"
-                            value={values?.match}
-                            placeholder="Match"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="match"
+                        value={values?.match}
+                        placeholder="Match"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3453,36 +2957,32 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="maxLength" className="nice-form-control">
                       <b>
                         Max Length:
-                        {touched.maxLength &&
-                         !errors.maxLength && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.maxLength && !errors.maxLength && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="maxLength"
-                            type="number"
-                            value={values.maxLength || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('maxLength', true);
-                              const v = e.target.value;
-                              setFieldValue('maxLength', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.maxLength
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="maxLength"
+                        type="number"
+                        value={values.maxLength || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("maxLength", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "maxLength",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.maxLength
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3494,28 +2994,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="maxDepth" className="nice-form-control">
                       <b>
                         Max _ depth:
-                        {touched.maxDepth &&
-                         !errors.maxDepth && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.maxDepth && !errors.maxDepth && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="maxDepth"
-                            value={values?.maxDepth}
-                            placeholder="Max _ depth"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="maxDepth"
+                        value={values?.maxDepth}
+                        placeholder="Max _ depth"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3527,36 +3020,32 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="memorySize" className="nice-form-control">
                       <b>
                         Memory Size:
-                        {touched.memorySize &&
-                         !errors.memorySize && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.memorySize && !errors.memorySize && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="memorySize"
-                            type="number"
-                            value={values.memorySize || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('memorySize', true);
-                              const v = e.target.value;
-                              setFieldValue('memorySize', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.memorySize
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="memorySize"
+                        type="number"
+                        value={values.memorySize || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("memorySize", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "memorySize",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.memorySize
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3568,28 +3057,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="message" className="nice-form-control">
                       <b>
                         Message:
-                        {touched.message &&
-                         !errors.message && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.message && !errors.message && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="message"
-                            value={values?.message}
-                            placeholder="Message"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="message"
+                        value={values?.message}
+                        placeholder="Message"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3601,28 +3083,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="metadata" className="nice-form-control">
                       <b>
                         Metadata:
-                        {touched.metadata &&
-                         !errors.metadata && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.metadata && !errors.metadata && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="metadata"
-                            value={values?.metadata}
-                            placeholder="Metadata"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="metadata"
+                        value={values?.metadata}
+                        placeholder="Metadata"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3634,20 +3109,12 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="minEpsilon" className="nice-form-control">
                       <b>
                         Min Epsilon:
-                        {touched.minEpsilon &&
-                         !errors.minEpsilon && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.minEpsilon && !errors.minEpsilon && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -3659,20 +3126,12 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="minLength" className="nice-form-control">
                       <b>
                         Min Length:
-                        {touched.minLength &&
-                         !errors.minLength && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.minLength && !errors.minLength && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -3684,36 +3143,32 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="minWordFreq" className="nice-form-control">
                       <b>
                         Min Word Freq:
-                        {touched.minWordFreq &&
-                         !errors.minWordFreq && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.minWordFreq && !errors.minWordFreq && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="minWordFreq"
-                            type="number"
-                            value={values.minWordFreq || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('minWordFreq', true);
-                              const v = e.target.value;
-                              setFieldValue('minWordFreq', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.minWordFreq
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="minWordFreq"
+                        type="number"
+                        value={values.minWordFreq || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("minWordFreq", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "minWordFreq",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.minWordFreq
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3725,28 +3180,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="modelType" className="nice-form-control">
                       <b>
                         Model Type:
-                        {touched.modelType &&
-                         !errors.modelType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.modelType && !errors.modelType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="modelType"
-                            value={values?.modelType}
-                            placeholder="Model Type"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="modelType"
+                        value={values?.modelType}
+                        placeholder="Model Type"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3758,28 +3206,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.name && !errors.name && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="name"
+                        value={values?.name}
+                        placeholder="Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3791,28 +3232,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="nullFirst" className="nice-form-control">
                       <b>
                         Null _ first:
-                        {touched.nullFirst &&
-                         !errors.nullFirst && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.nullFirst && !errors.nullFirst && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="nullFirst"
-                            value={values?.nullFirst}
-                            placeholder="Null _ first"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="nullFirst"
+                        value={values?.nullFirst}
+                        placeholder="Null _ first"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3824,36 +3258,32 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="numLayers" className="nice-form-control">
                       <b>
                         Num Layers:
-                        {touched.numLayers &&
-                         !errors.numLayers && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.numLayers && !errors.numLayers && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="numLayers"
-                            type="number"
-                            value={values.numLayers || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('numLayers', true);
-                              const v = e.target.value;
-                              setFieldValue('numLayers', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.numLayers
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="numLayers"
+                        type="number"
+                        value={values.numLayers || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("numLayers", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "numLayers",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.numLayers
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3865,36 +3295,32 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="numUnits" className="nice-form-control">
                       <b>
                         Num Units:
-                        {touched.numUnits &&
-                         !errors.numUnits && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.numUnits && !errors.numUnits && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="numUnits"
-                            type="number"
-                            value={values.numUnits || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('numUnits', true);
-                              const v = e.target.value;
-                              setFieldValue('numUnits', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.numUnits
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="numUnits"
+                        type="number"
+                        value={values.numUnits || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("numUnits", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "numUnits",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.numUnits
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3906,28 +3332,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="operation" className="nice-form-control">
                       <b>
                         Operation:
-                        {touched.operation &&
-                         !errors.operation && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.operation && !errors.operation && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="operation"
-                            value={values?.operation}
-                            placeholder="Operation"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="operation"
+                        value={values?.operation}
+                        placeholder="Operation"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3936,31 +3355,27 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="operationName" className="nice-form-control">
+                    <label
+                      htmlFor="operationName"
+                      className="nice-form-control"
+                    >
                       <b>
                         Operation Name:
-                        {touched.operationName &&
-                         !errors.operationName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.operationName && !errors.operationName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="operationName"
-                            value={values?.operationName}
-                            placeholder="Operation Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="operationName"
+                        value={values?.operationName}
+                        placeholder="Operation Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -3972,28 +3387,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="optimizer" className="nice-form-control">
                       <b>
                         Optimizer:
-                        {touched.optimizer &&
-                         !errors.optimizer && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.optimizer && !errors.optimizer && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="optimizer"
-                            value={values?.optimizer}
-                            placeholder="Optimizer"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="optimizer"
+                        value={values?.optimizer}
+                        placeholder="Optimizer"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4002,23 +3410,19 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="outlierThreshold" className="nice-form-control">
+                    <label
+                      htmlFor="outlierThreshold"
+                      className="nice-form-control"
+                    >
                       <b>
                         Outlier _ threshold:
                         {touched.outlierThreshold &&
-                         !errors.outlierThreshold && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.outlierThreshold && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -4030,28 +3434,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="outliers" className="nice-form-control">
                       <b>
                         Outliers:
-                        {touched.outliers &&
-                         !errors.outliers && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.outliers && !errors.outliers && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="outliers"
-                            value={values?.outliers}
-                            placeholder="Outliers"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="outliers"
+                        value={values?.outliers}
+                        placeholder="Outliers"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4063,28 +3460,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="owner" className="nice-form-control">
                       <b>
                         Owner:
-                        {touched.owner &&
-                         !errors.owner && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.owner && !errors.owner && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="owner"
-                            value={values?.owner}
-                            placeholder="Owner"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="owner"
+                        value={values?.owner}
+                        placeholder="Owner"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4096,36 +3486,29 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="p" className="nice-form-control">
                       <b>
                         P:
-                        {touched.p &&
-                         !errors.p && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.p && !errors.p && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="p"
-                            type="number"
-                            value={values.p || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('p', true);
-                              const v = e.target.value;
-                              setFieldValue('p', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.p
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="p"
+                        type="number"
+                        value={values.p || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("p", true);
+                          const v = e.target.value;
+                          setFieldValue("p", v === "" ? undefined : Number(v));
+                        }}
+                        className={
+                          errors.p
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4137,28 +3520,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="password" className="nice-form-control">
                       <b>
                         Password:
-                        {touched.password &&
-                         !errors.password && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.password && !errors.password && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="password"
-                            value={values?.password}
-                            placeholder="Password"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="password"
+                        value={values?.password}
+                        placeholder="Password"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4170,28 +3546,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="pattern" className="nice-form-control">
                       <b>
                         Pattern:
-                        {touched.pattern &&
-                         !errors.pattern && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.pattern && !errors.pattern && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="pattern"
-                            value={values?.pattern}
-                            placeholder="Pattern"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="pattern"
+                        value={values?.pattern}
+                        placeholder="Pattern"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4200,31 +3569,27 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="pingIntervalMs" className="nice-form-control">
+                    <label
+                      htmlFor="pingIntervalMs"
+                      className="nice-form-control"
+                    >
                       <b>
                         Ping _ interval _ ms:
-                        {touched.pingIntervalMs &&
-                         !errors.pingIntervalMs && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.pingIntervalMs && !errors.pingIntervalMs && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="pingIntervalMs"
-                            value={values?.pingIntervalMs}
-                            placeholder="Ping _ interval _ ms"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="pingIntervalMs"
+                        value={values?.pingIntervalMs}
+                        placeholder="Ping _ interval _ ms"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4233,39 +3598,39 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="polynomialDegree" className="nice-form-control">
+                    <label
+                      htmlFor="polynomialDegree"
+                      className="nice-form-control"
+                    >
                       <b>
                         Polynomial Degree:
                         {touched.polynomialDegree &&
-                         !errors.polynomialDegree && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.polynomialDegree && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="polynomialDegree"
-                            type="number"
-                            value={values.polynomialDegree || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('polynomialDegree', true);
-                              const v = e.target.value;
-                              setFieldValue('polynomialDegree', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.polynomialDegree
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="polynomialDegree"
+                        type="number"
+                        value={values.polynomialDegree || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("polynomialDegree", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "polynomialDegree",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.polynomialDegree
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4274,31 +3639,27 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="postTemplateId" className="nice-form-control">
+                    <label
+                      htmlFor="postTemplateId"
+                      className="nice-form-control"
+                    >
                       <b>
                         Post Template Id:
-                        {touched.postTemplateId &&
-                         !errors.postTemplateId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.postTemplateId && !errors.postTemplateId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="postTemplateId"
-                            value={values?.postTemplateId}
-                            placeholder="Post Template Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="postTemplateId"
+                        value={values?.postTemplateId}
+                        placeholder="Post Template Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4307,31 +3668,27 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="pretrainedModel" className="nice-form-control">
+                    <label
+                      htmlFor="pretrainedModel"
+                      className="nice-form-control"
+                    >
                       <b>
                         Pretrained Model:
-                        {touched.pretrainedModel &&
-                         !errors.pretrainedModel && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.pretrainedModel && !errors.pretrainedModel && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="pretrainedModel"
-                            value={values?.pretrainedModel}
-                            placeholder="Pretrained Model"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="pretrainedModel"
+                        value={values?.pretrainedModel}
+                        placeholder="Pretrained Model"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4343,28 +3700,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="properties" className="nice-form-control">
                       <b>
                         Properties:
-                        {touched.properties &&
-                         !errors.properties && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.properties && !errors.properties && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="properties"
-                            value={values?.properties}
-                            placeholder="Properties"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="properties"
+                        value={values?.properties}
+                        placeholder="Properties"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4376,28 +3726,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="provider" className="nice-form-control">
                       <b>
                         Provider:
-                        {touched.provider &&
-                         !errors.provider && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.provider && !errors.provider && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="provider"
-                            value={values?.provider}
-                            placeholder="Provider"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="provider"
+                        value={values?.provider}
+                        placeholder="Provider"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4409,32 +3752,25 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="published" className="nice-form-control">
                       <b>
                         Published:
-                        {touched.published &&
-                         !errors.published && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.published && !errors.published && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="published"
-                            name="published"
-                            checked={values.published || false}
-                            onChange={(e) => {
-                              setFieldTouched('published', true);
-                              setFieldValue('published', e.target.checked);
-                            }}
-                            isInvalid={!!errors.published}
-                            className={errors.published ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="published"
+                        name="published"
+                        checked={values.published || false}
+                        onChange={(e) => {
+                          setFieldTouched("published", true);
+                          setFieldValue("published", e.target.checked);
+                        }}
+                        isInvalid={!!errors.published}
+                        className={errors.published ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4446,28 +3782,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="pubsub" className="nice-form-control">
                       <b>
                         Pubsub:
-                        {touched.pubsub &&
-                         !errors.pubsub && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.pubsub && !errors.pubsub && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="pubsub"
-                            value={values?.pubsub}
-                            placeholder="Pubsub"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="pubsub"
+                        value={values?.pubsub}
+                        placeholder="Pubsub"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4479,36 +3808,29 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="q" className="nice-form-control">
                       <b>
                         Q:
-                        {touched.q &&
-                         !errors.q && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.q && !errors.q && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="q"
-                            type="number"
-                            value={values.q || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('q', true);
-                              const v = e.target.value;
-                              setFieldValue('q', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.q
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="q"
+                        type="number"
+                        value={values.q || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("q", true);
+                          const v = e.target.value;
+                          setFieldValue("q", v === "" ? undefined : Number(v));
+                        }}
+                        className={
+                          errors.q
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4520,28 +3842,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="quality" className="nice-form-control">
                       <b>
                         Quality:
-                        {touched.quality &&
-                         !errors.quality && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.quality && !errors.quality && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="quality"
-                            value={values?.quality}
-                            placeholder="Quality"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="quality"
+                        value={values?.quality}
+                        placeholder="Quality"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4550,31 +3865,27 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="readPreference" className="nice-form-control">
+                    <label
+                      htmlFor="readPreference"
+                      className="nice-form-control"
+                    >
                       <b>
                         Read _ preference:
-                        {touched.readPreference &&
-                         !errors.readPreference && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.readPreference && !errors.readPreference && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="readPreference"
-                            value={values?.readPreference}
-                            placeholder="Read _ preference"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="readPreference"
+                        value={values?.readPreference}
+                        placeholder="Read _ preference"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4586,28 +3897,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="recordId" className="nice-form-control">
                       <b>
                         Record _ id:
-                        {touched.recordId &&
-                         !errors.recordId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.recordId && !errors.recordId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="recordId"
-                            value={values?.recordId}
-                            placeholder="Record _ id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="recordId"
+                        value={values?.recordId}
+                        placeholder="Record _ id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4619,28 +3923,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="recordType" className="nice-form-control">
                       <b>
                         Record _ type:
-                        {touched.recordType &&
-                         !errors.recordType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.recordType && !errors.recordType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="recordType"
-                            value={values?.recordType}
-                            placeholder="Record _ type"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="recordType"
+                        value={values?.recordType}
+                        placeholder="Record _ type"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4652,28 +3949,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="repo" className="nice-form-control">
                       <b>
                         Repo:
-                        {touched.repo &&
-                         !errors.repo && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.repo && !errors.repo && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="repo"
-                            value={values?.repo}
-                            placeholder="Repo"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="repo"
+                        value={values?.repo}
+                        placeholder="Repo"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4682,35 +3972,32 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="requireHashMatch" className="nice-form-control">
+                    <label
+                      htmlFor="requireHashMatch"
+                      className="nice-form-control"
+                    >
                       <b>
                         Require Hash Match:
                         {touched.requireHashMatch &&
-                         !errors.requireHashMatch && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.requireHashMatch && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="requireHashMatch"
-                            name="requireHashMatch"
-                            checked={values.requireHashMatch || false}
-                            onChange={(e) => {
-                              setFieldTouched('requireHashMatch', true);
-                              setFieldValue('requireHashMatch', e.target.checked);
-                            }}
-                            isInvalid={!!errors.requireHashMatch}
-                            className={errors.requireHashMatch ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="requireHashMatch"
+                        name="requireHashMatch"
+                        checked={values.requireHashMatch || false}
+                        onChange={(e) => {
+                          setFieldTouched("requireHashMatch", true);
+                          setFieldValue("requireHashMatch", e.target.checked);
+                        }}
+                        isInvalid={!!errors.requireHashMatch}
+                        className={errors.requireHashMatch ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4719,31 +4006,27 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="resourceGroup" className="nice-form-control">
+                    <label
+                      htmlFor="resourceGroup"
+                      className="nice-form-control"
+                    >
                       <b>
                         Resource _ group:
-                        {touched.resourceGroup &&
-                         !errors.resourceGroup && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.resourceGroup && !errors.resourceGroup && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="resourceGroup"
-                            value={values?.resourceGroup}
-                            placeholder="Resource _ group"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="resourceGroup"
+                        value={values?.resourceGroup}
+                        placeholder="Resource _ group"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4752,31 +4035,27 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="rewardFunction" className="nice-form-control">
+                    <label
+                      htmlFor="rewardFunction"
+                      className="nice-form-control"
+                    >
                       <b>
                         Reward Function:
-                        {touched.rewardFunction &&
-                         !errors.rewardFunction && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.rewardFunction && !errors.rewardFunction && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="rewardFunction"
-                            value={values?.rewardFunction}
-                            placeholder="Reward Function"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="rewardFunction"
+                        value={values?.rewardFunction}
+                        placeholder="Reward Function"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4788,32 +4067,25 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="robust" className="nice-form-control">
                       <b>
                         Robust:
-                        {touched.robust &&
-                         !errors.robust && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.robust && !errors.robust && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="robust"
-                            name="robust"
-                            checked={values.robust || false}
-                            onChange={(e) => {
-                              setFieldTouched('robust', true);
-                              setFieldValue('robust', e.target.checked);
-                            }}
-                            isInvalid={!!errors.robust}
-                            className={errors.robust ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="robust"
+                        name="robust"
+                        checked={values.robust || false}
+                        onChange={(e) => {
+                          setFieldTouched("robust", true);
+                          setFieldValue("robust", e.target.checked);
+                        }}
+                        isInvalid={!!errors.robust}
+                        className={errors.robust ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4825,28 +4097,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="rootElement" className="nice-form-control">
                       <b>
                         Root _ element:
-                        {touched.rootElement &&
-                         !errors.rootElement && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.rootElement && !errors.rootElement && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="rootElement"
-                            value={values?.rootElement}
-                            placeholder="Root _ element"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="rootElement"
+                        value={values?.rootElement}
+                        placeholder="Root _ element"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4855,31 +4120,28 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="segmentExpression" className="nice-form-control">
+                    <label
+                      htmlFor="segmentExpression"
+                      className="nice-form-control"
+                    >
                       <b>
                         Segment Expression:
                         {touched.segmentExpression &&
-                         !errors.segmentExpression && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.segmentExpression && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="segmentExpression"
-                            value={values?.segmentExpression}
-                            placeholder="Segment Expression"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="segmentExpression"
+                        value={values?.segmentExpression}
+                        placeholder="Segment Expression"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4888,31 +4150,28 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="similarityThreshold" className="nice-form-control">
+                    <label
+                      htmlFor="similarityThreshold"
+                      className="nice-form-control"
+                    >
                       <b>
                         Similarity _ threshold:
                         {touched.similarityThreshold &&
-                         !errors.similarityThreshold && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.similarityThreshold && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="similarityThreshold"
-                            value={values?.similarityThreshold}
-                            placeholder="Similarity _ threshold"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="similarityThreshold"
+                        value={values?.similarityThreshold}
+                        placeholder="Similarity _ threshold"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4924,28 +4183,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="size" className="nice-form-control">
                       <b>
                         Size:
-                        {touched.size &&
-                         !errors.size && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.size && !errors.size && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="size"
-                            value={values?.size}
-                            placeholder="Size"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="size"
+                        value={values?.size}
+                        placeholder="Size"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -4957,20 +4209,12 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="skip" className="nice-form-control">
                       <b>
                         Skip:
-                        {touched.skip &&
-                         !errors.skip && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.skip && !errors.skip && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -4979,31 +4223,27 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="slideInterval" className="nice-form-control">
+                    <label
+                      htmlFor="slideInterval"
+                      className="nice-form-control"
+                    >
                       <b>
                         Slide _ interval:
-                        {touched.slideInterval &&
-                         !errors.slideInterval && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.slideInterval && !errors.slideInterval && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="slideInterval"
-                            value={values?.slideInterval}
-                            placeholder="Slide _ interval"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="slideInterval"
+                        value={values?.slideInterval}
+                        placeholder="Slide _ interval"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5015,28 +4255,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="sobject" className="nice-form-control">
                       <b>
                         Sobject:
-                        {touched.sobject &&
-                         !errors.sobject && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.sobject && !errors.sobject && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="sobject"
-                            value={values?.sobject}
-                            placeholder="Sobject"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="sobject"
+                        value={values?.sobject}
+                        placeholder="Sobject"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5048,28 +4281,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="source" className="nice-form-control">
                       <b>
                         Source:
-                        {touched.source &&
-                         !errors.source && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.source && !errors.source && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="source"
-                            value={values?.source}
-                            placeholder="Source"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="source"
+                        value={values?.source}
+                        placeholder="Source"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5081,28 +4307,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="sourceName" className="nice-form-control">
                       <b>
                         Source Name:
-                        {touched.sourceName &&
-                         !errors.sourceName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.sourceName && !errors.sourceName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="sourceName"
-                            value={values?.sourceName}
-                            placeholder="Source Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="sourceName"
+                        value={values?.sourceName}
+                        placeholder="Source Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5114,20 +4333,12 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="sparsity" className="nice-form-control">
                       <b>
                         Sparsity:
-                        {touched.sparsity &&
-                         !errors.sparsity && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.sparsity && !errors.sparsity && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -5139,28 +4350,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="sql" className="nice-form-control">
                       <b>
                         Sql:
-                        {touched.sql &&
-                         !errors.sql && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.sql && !errors.sql && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="sql"
-                            value={values?.sql}
-                            placeholder="Sql"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="sql"
+                        value={values?.sql}
+                        placeholder="Sql"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5172,28 +4376,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="startTime" className="nice-form-control">
                       <b>
                         Start Time:
-                        {touched.startTime &&
-                         !errors.startTime && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.startTime && !errors.startTime && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="startTime"
-                            value={values?.startTime}
-                            placeholder="Start Time"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="startTime"
+                        value={values?.startTime}
+                        placeholder="Start Time"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5205,36 +4402,32 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="stateSize" className="nice-form-control">
                       <b>
                         State Size:
-                        {touched.stateSize &&
-                         !errors.stateSize && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.stateSize && !errors.stateSize && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="stateSize"
-                            type="number"
-                            value={values.stateSize || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('stateSize', true);
-                              const v = e.target.value;
-                              setFieldValue('stateSize', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.stateSize
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="stateSize"
+                        type="number"
+                        value={values.stateSize || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("stateSize", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "stateSize",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.stateSize
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5246,28 +4439,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="status"
-                            value={values?.status}
-                            placeholder="Status"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="status"
+                        value={values?.status}
+                        placeholder="Status"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5276,35 +4462,31 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="stripNamespaces" className="nice-form-control">
+                    <label
+                      htmlFor="stripNamespaces"
+                      className="nice-form-control"
+                    >
                       <b>
                         Strip _ namespaces:
-                        {touched.stripNamespaces &&
-                         !errors.stripNamespaces && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.stripNamespaces && !errors.stripNamespaces && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="stripNamespaces"
-                            name="stripNamespaces"
-                            checked={values.stripNamespaces || false}
-                            onChange={(e) => {
-                              setFieldTouched('stripNamespaces', true);
-                              setFieldValue('stripNamespaces', e.target.checked);
-                            }}
-                            isInvalid={!!errors.stripNamespaces}
-                            className={errors.stripNamespaces ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="stripNamespaces"
+                        name="stripNamespaces"
+                        checked={values.stripNamespaces || false}
+                        onChange={(e) => {
+                          setFieldTouched("stripNamespaces", true);
+                          setFieldValue("stripNamespaces", e.target.checked);
+                        }}
+                        isInvalid={!!errors.stripNamespaces}
+                        className={errors.stripNamespaces ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5316,28 +4498,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="teamId" className="nice-form-control">
                       <b>
                         Team _ id:
-                        {touched.teamId &&
-                         !errors.teamId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.teamId && !errors.teamId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="teamId"
-                            value={values?.teamId}
-                            placeholder="Team _ id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="teamId"
+                        value={values?.teamId}
+                        placeholder="Team _ id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5349,20 +4524,12 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="temperature" className="nice-form-control">
                       <b>
                         Temperature:
-                        {touched.temperature &&
-                         !errors.temperature && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.temperature && !errors.temperature && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -5374,28 +4541,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="terms" className="nice-form-control">
                       <b>
                         Terms:
-                        {touched.terms &&
-                         !errors.terms && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.terms && !errors.terms && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="terms"
-                            value={values?.terms}
-                            placeholder="Terms"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="terms"
+                        value={values?.terms}
+                        placeholder="Terms"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5404,31 +4564,27 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="testStatistic" className="nice-form-control">
+                    <label
+                      htmlFor="testStatistic"
+                      className="nice-form-control"
+                    >
                       <b>
                         Test Statistic:
-                        {touched.testStatistic &&
-                         !errors.testStatistic && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.testStatistic && !errors.testStatistic && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="testStatistic"
-                            value={values?.testStatistic}
-                            placeholder="Test Statistic"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="testStatistic"
+                        value={values?.testStatistic}
+                        placeholder="Test Statistic"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5440,28 +4596,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="text" className="nice-form-control">
                       <b>
                         Text:
-                        {touched.text &&
-                         !errors.text && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.text && !errors.text && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="text"
-                            value={values?.text}
-                            placeholder="Text"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="text"
+                        value={values?.text}
+                        placeholder="Text"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5470,31 +4619,27 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="timestampFormat" className="nice-form-control">
+                    <label
+                      htmlFor="timestampFormat"
+                      className="nice-form-control"
+                    >
                       <b>
                         Timestamp _ format:
-                        {touched.timestampFormat &&
-                         !errors.timestampFormat && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.timestampFormat && !errors.timestampFormat && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="timestampFormat"
-                            value={values?.timestampFormat}
-                            placeholder="Timestamp _ format"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="timestampFormat"
+                        value={values?.timestampFormat}
+                        placeholder="Timestamp _ format"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5506,28 +4651,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="timezone" className="nice-form-control">
                       <b>
                         Timezone:
-                        {touched.timezone &&
-                         !errors.timezone && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.timezone && !errors.timezone && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="timezone"
-                            value={values?.timezone}
-                            placeholder="Timezone"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="timezone"
+                        value={values?.timezone}
+                        placeholder="Timezone"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5539,28 +4677,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="title" className="nice-form-control">
                       <b>
                         Title:
-                        {touched.title &&
-                         !errors.title && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.title && !errors.title && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="title"
-                            value={values?.title}
-                            placeholder="Title"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="title"
+                        value={values?.title}
+                        placeholder="Title"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5572,28 +4703,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="tone" className="nice-form-control">
                       <b>
                         Tone:
-                        {touched.tone &&
-                         !errors.tone && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.tone && !errors.tone && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="tone"
-                            value={values?.tone}
-                            placeholder="Tone"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="tone"
+                        value={values?.tone}
+                        placeholder="Tone"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5605,28 +4729,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="topic" className="nice-form-control">
                       <b>
                         Topic:
-                        {touched.topic &&
-                         !errors.topic && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.topic && !errors.topic && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="topic"
-                            value={values?.topic}
-                            placeholder="Topic"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="topic"
+                        value={values?.topic}
+                        placeholder="Topic"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5638,32 +4755,25 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="transaction" className="nice-form-control">
                       <b>
                         Transaction:
-                        {touched.transaction &&
-                         !errors.transaction && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.transaction && !errors.transaction && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="transaction"
-                            name="transaction"
-                            checked={values.transaction || false}
-                            onChange={(e) => {
-                              setFieldTouched('transaction', true);
-                              setFieldValue('transaction', e.target.checked);
-                            }}
-                            isInvalid={!!errors.transaction}
-                            className={errors.transaction ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="transaction"
+                        name="transaction"
+                        checked={values.transaction || false}
+                        onChange={(e) => {
+                          setFieldTouched("transaction", true);
+                          setFieldValue("transaction", e.target.checked);
+                        }}
+                        isInvalid={!!errors.transaction}
+                        className={errors.transaction ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5672,31 +4782,27 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="transactionalId" className="nice-form-control">
+                    <label
+                      htmlFor="transactionalId"
+                      className="nice-form-control"
+                    >
                       <b>
                         Transactional _ id:
-                        {touched.transactionalId &&
-                         !errors.transactionalId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.transactionalId && !errors.transactionalId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="transactionalId"
-                            value={values?.transactionalId}
-                            placeholder="Transactional _ id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="transactionalId"
+                        value={values?.transactionalId}
+                        placeholder="Transactional _ id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5705,35 +4811,32 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="transferLearning" className="nice-form-control">
+                    <label
+                      htmlFor="transferLearning"
+                      className="nice-form-control"
+                    >
                       <b>
                         Transfer Learning:
                         {touched.transferLearning &&
-                         !errors.transferLearning && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.transferLearning && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="transferLearning"
-                            name="transferLearning"
-                            checked={values.transferLearning || false}
-                            onChange={(e) => {
-                              setFieldTouched('transferLearning', true);
-                              setFieldValue('transferLearning', e.target.checked);
-                            }}
-                            isInvalid={!!errors.transferLearning}
-                            className={errors.transferLearning ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="transferLearning"
+                        name="transferLearning"
+                        checked={values.transferLearning || false}
+                        onChange={(e) => {
+                          setFieldTouched("transferLearning", true);
+                          setFieldValue("transferLearning", e.target.checked);
+                        }}
+                        isInvalid={!!errors.transferLearning}
+                        className={errors.transferLearning ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5745,20 +4848,12 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="ttl" className="nice-form-control">
                       <b>
                         Ttl:
-                        {touched.ttl &&
-                         !errors.ttl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.ttl && !errors.ttl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -5770,28 +4865,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="type" className="nice-form-control">
                       <b>
                         Type:
-                        {touched.type &&
-                         !errors.type && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.type && !errors.type && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="type"
-                            value={values?.type}
-                            placeholder="Type"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="type"
+                        value={values?.type}
+                        placeholder="Type"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5803,32 +4891,25 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="useAttention" className="nice-form-control">
                       <b>
                         Use Attention:
-                        {touched.useAttention &&
-                         !errors.useAttention && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.useAttention && !errors.useAttention && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="useAttention"
-                            name="useAttention"
-                            checked={values.useAttention || false}
-                            onChange={(e) => {
-                              setFieldTouched('useAttention', true);
-                              setFieldValue('useAttention', e.target.checked);
-                            }}
-                            isInvalid={!!errors.useAttention}
-                            className={errors.useAttention ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="useAttention"
+                        name="useAttention"
+                        checked={values.useAttention || false}
+                        onChange={(e) => {
+                          setFieldTouched("useAttention", true);
+                          setFieldValue("useAttention", e.target.checked);
+                        }}
+                        isInvalid={!!errors.useAttention}
+                        className={errors.useAttention ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5837,35 +4918,31 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="useVariational" className="nice-form-control">
+                    <label
+                      htmlFor="useVariational"
+                      className="nice-form-control"
+                    >
                       <b>
                         Use Variational:
-                        {touched.useVariational &&
-                         !errors.useVariational && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.useVariational && !errors.useVariational && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="useVariational"
-                            name="useVariational"
-                            checked={values.useVariational || false}
-                            onChange={(e) => {
-                              setFieldTouched('useVariational', true);
-                              setFieldValue('useVariational', e.target.checked);
-                            }}
-                            isInvalid={!!errors.useVariational}
-                            className={errors.useVariational ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="useVariational"
+                        name="useVariational"
+                        checked={values.useVariational || false}
+                        onChange={(e) => {
+                          setFieldTouched("useVariational", true);
+                          setFieldValue("useVariational", e.target.checked);
+                        }}
+                        isInvalid={!!errors.useVariational}
+                        className={errors.useVariational ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5877,28 +4954,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="username" className="nice-form-control">
                       <b>
                         Username:
-                        {touched.username &&
-                         !errors.username && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.username && !errors.username && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="username"
-                            value={values?.username}
-                            placeholder="Username"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="username"
+                        value={values?.username}
+                        placeholder="Username"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5907,23 +4977,18 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="validationSplit" className="nice-form-control">
+                    <label
+                      htmlFor="validationSplit"
+                      className="nice-form-control"
+                    >
                       <b>
                         Validation Split:
-                        {touched.validationSplit &&
-                         !errors.validationSplit && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.validationSplit && !errors.validationSplit && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
-
-
-
-
-
-
-
-
-
 
                       <ErrorMessage
                         className="error"
@@ -5935,28 +5000,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="valueText" className="nice-form-control">
                       <b>
                         Value Text:
-                        {touched.valueText &&
-                         !errors.valueText && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.valueText && !errors.valueText && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="valueText"
-                            value={values?.valueText}
-                            placeholder="Value Text"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="valueText"
+                        value={values?.valueText}
+                        placeholder="Value Text"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -5968,28 +5026,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="variables" className="nice-form-control">
                       <b>
                         Variables:
-                        {touched.variables &&
-                         !errors.variables && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.variables && !errors.variables && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="variables"
-                            value={values?.variables}
-                            placeholder="Variables"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="variables"
+                        value={values?.variables}
+                        placeholder="Variables"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -6001,28 +5052,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="version" className="nice-form-control">
                       <b>
                         Version:
-                        {touched.version &&
-                         !errors.version && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.version && !errors.version && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="version"
-                            value={values?.version}
-                            placeholder="Version"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="version"
+                        value={values?.version}
+                        placeholder="Version"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -6034,28 +5078,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="wkhtmlArgs" className="nice-form-control">
                       <b>
                         Wkhtml Args:
-                        {touched.wkhtmlArgs &&
-                         !errors.wkhtmlArgs && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.wkhtmlArgs && !errors.wkhtmlArgs && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="wkhtmlArgs"
-                            value={values?.wkhtmlArgs}
-                            placeholder="Wkhtml Args"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="wkhtmlArgs"
+                        value={values?.wkhtmlArgs}
+                        placeholder="Wkhtml Args"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -6067,28 +5104,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="writeConcern" className="nice-form-control">
                       <b>
                         Write _ concern:
-                        {touched.writeConcern &&
-                         !errors.writeConcern && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.writeConcern && !errors.writeConcern && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="writeConcern"
-                            value={values?.writeConcern}
-                            placeholder="Write _ concern"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="writeConcern"
+                        value={values?.writeConcern}
+                        placeholder="Write _ concern"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -6100,28 +5130,21 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="xmlSource" className="nice-form-control">
                       <b>
                         Xml _ source:
-                        {touched.xmlSource &&
-                         !errors.xmlSource && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.xmlSource && !errors.xmlSource && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="xmlSource"
-                            value={values?.xmlSource}
-                            placeholder="Xml _ source"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="xmlSource"
+                        value={values?.xmlSource}
+                        placeholder="Xml _ source"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -6133,32 +5156,25 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -6168,45 +5184,64 @@ const ExecModulePayloadConfigForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New ExecModulePayloadConfig
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      ExecModulePayloadConfig
+                    </CoolButton>
 
-                  {(addExecModulePayloadConfigResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addExecModulePayloadConfigResult as any).error ? (addExecModulePayloadConfigResult as any).error.data : (addExecModulePayloadConfigResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addExecModulePayloadConfigResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addExecModulePayloadConfigResult as any).error
+                              ? (addExecModulePayloadConfigResult as any).error
+                                  .data
+                              : (addExecModulePayloadConfigResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addExecModulePayloadConfigResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addExecModulePayloadConfigResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addExecModulePayloadConfigResult: {JSON.stringify(addExecModulePayloadConfigResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addExecModulePayloadConfigResult:{" "}
+                    {JSON.stringify(addExecModulePayloadConfigResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -6226,8 +5261,5 @@ const ExecModulePayloadConfigForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default ExecModulePayloadConfigForm;
-

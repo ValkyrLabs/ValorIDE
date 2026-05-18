@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { WorkflowGraphEdgeConnectionMapping } from '@thorapi/model/WorkflowGraphEdgeConnectionMapping';
+import { WorkflowGraphEdgeConnectionMapping } from "@thorapi/model/WorkflowGraphEdgeConnectionMapping";
 
 const WorkflowGraphEdgeConnectionMappingSlice = createSlice({
   name: "WorkflowGraphEdgeConnectionMappings",
@@ -27,20 +27,28 @@ const WorkflowGraphEdgeConnectionMappingSlice = createSlice({
     },
 
     WorkflowGraphEdgeConnectionMappingValueToggled(state, action) {
-      console.log("WorkflowGraphEdgeConnectionMapping TOGGLE")
-      console.warn(JSON.stringify(action))
-      const WorkflowGraphEdgeConnectionMapping:WorkflowGraphEdgeConnectionMapping = state.find((WorkflowGraphEdgeConnectionMapping) => WorkflowGraphEdgeConnectionMapping.id === action.payload.WorkflowGraphEdgeConnectionMappingId);
+      console.log("WorkflowGraphEdgeConnectionMapping TOGGLE");
+      console.warn(JSON.stringify(action));
+      const WorkflowGraphEdgeConnectionMapping: WorkflowGraphEdgeConnectionMapping =
+        state.find(
+          (WorkflowGraphEdgeConnectionMapping) =>
+            WorkflowGraphEdgeConnectionMapping.id ===
+            action.payload.WorkflowGraphEdgeConnectionMappingId,
+        );
       if (WorkflowGraphEdgeConnectionMapping) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     WorkflowGraphEdgeConnectionMappingpropertySet(state, action) {
-      const WorkflowGraphEdgeConnectionMapping = state.find((WorkflowGraphEdgeConnectionMapping) => WorkflowGraphEdgeConnectionMapping.id === action.payload.WorkflowGraphEdgeConnectionMappingId);
+      const WorkflowGraphEdgeConnectionMapping = state.find(
+        (WorkflowGraphEdgeConnectionMapping) =>
+          WorkflowGraphEdgeConnectionMapping.id ===
+          action.payload.WorkflowGraphEdgeConnectionMappingId,
+      );
       if (WorkflowGraphEdgeConnectionMapping) {
-      //  WorkflowGraphEdgeConnectionMapping[action.property] = action.payload[action.property];
+        //  WorkflowGraphEdgeConnectionMapping[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +57,6 @@ const WorkflowGraphEdgeConnectionMappingSlice = createSlice({
 export const {
   WorkflowGraphEdgeConnectionMappingAdded,
   WorkflowGraphEdgeConnectionMappingValueToggled,
-  WorkflowGraphEdgeConnectionMappingpropertySet
+  WorkflowGraphEdgeConnectionMappingpropertySet,
 } = WorkflowGraphEdgeConnectionMappingSlice.actions;
 export default WorkflowGraphEdgeConnectionMappingSlice.reducer;

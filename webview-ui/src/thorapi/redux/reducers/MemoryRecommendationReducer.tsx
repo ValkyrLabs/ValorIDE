@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { MemoryRecommendation } from '@thorapi/model/MemoryRecommendation';
+import { MemoryRecommendation } from "@thorapi/model/MemoryRecommendation";
 
 const MemoryRecommendationSlice = createSlice({
   name: "MemoryRecommendations",
@@ -27,20 +27,25 @@ const MemoryRecommendationSlice = createSlice({
     },
 
     MemoryRecommendationValueToggled(state, action) {
-      console.log("MemoryRecommendation TOGGLE")
-      console.warn(JSON.stringify(action))
-      const MemoryRecommendation:MemoryRecommendation = state.find((MemoryRecommendation) => MemoryRecommendation.id === action.payload.MemoryRecommendationId);
+      console.log("MemoryRecommendation TOGGLE");
+      console.warn(JSON.stringify(action));
+      const MemoryRecommendation: MemoryRecommendation = state.find(
+        (MemoryRecommendation) =>
+          MemoryRecommendation.id === action.payload.MemoryRecommendationId,
+      );
       if (MemoryRecommendation) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     MemoryRecommendationpropertySet(state, action) {
-      const MemoryRecommendation = state.find((MemoryRecommendation) => MemoryRecommendation.id === action.payload.MemoryRecommendationId);
+      const MemoryRecommendation = state.find(
+        (MemoryRecommendation) =>
+          MemoryRecommendation.id === action.payload.MemoryRecommendationId,
+      );
       if (MemoryRecommendation) {
-      //  MemoryRecommendation[action.property] = action.payload[action.property];
+        //  MemoryRecommendation[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const MemoryRecommendationSlice = createSlice({
 export const {
   MemoryRecommendationAdded,
   MemoryRecommendationValueToggled,
-  MemoryRecommendationpropertySet
+  MemoryRecommendationpropertySet,
 } = MemoryRecommendationSlice.actions;
 export default MemoryRecommendationSlice.reducer;

@@ -19,20 +19,33 @@ Description: OrderFulfillmentTask
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, OrderFulfillmentTask } from '@thorapi/model';
-import { useGetOrderFulfillmentTasksQuery, useAddOrderFulfillmentTaskMutation, useUpdateOrderFulfillmentTaskMutation } from '../../services/OrderFulfillmentTaskService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, OrderFulfillmentTask } from "@thorapi/model";
+import {
+  useGetOrderFulfillmentTasksQuery,
+  useAddOrderFulfillmentTaskMutation,
+  useUpdateOrderFulfillmentTaskMutation,
+} from "../../services/OrderFulfillmentTaskService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const OrderFulfillmentTaskChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetOrderFulfillmentTasksQuery();
+  const { data: initialData = [], isLoading } =
+    useGetOrderFulfillmentTasksQuery();
 
   const [data, setData] = useState<OrderFulfillmentTask[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<OrderFulfillmentTask>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +63,9 @@ const OrderFulfillmentTaskChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +73,15 @@ const OrderFulfillmentTaskChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((orderfulfillmenttask: DataObject) => [orderfulfillmenttask])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((orderfulfillmenttask: DataObject) => [
+            orderfulfillmenttask,
+          ])}
+        />
+      )}
     </>
   );
 };

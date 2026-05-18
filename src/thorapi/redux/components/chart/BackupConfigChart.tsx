@@ -19,20 +19,32 @@ Description: BackupConfig
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, BackupConfig } from '@thorapi/model';
-import { useGetBackupConfigsQuery, useAddBackupConfigMutation, useUpdateBackupConfigMutation } from '../../services/BackupConfigService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, BackupConfig } from "@thorapi/model";
+import {
+  useGetBackupConfigsQuery,
+  useAddBackupConfigMutation,
+  useUpdateBackupConfigMutation,
+} from "../../services/BackupConfigService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const BackupConfigChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetBackupConfigsQuery();
 
   const [data, setData] = useState<BackupConfig[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<BackupConfig>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const BackupConfigChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const BackupConfigChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((backupconfig: DataObject) => [backupconfig])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((backupconfig: DataObject) => [backupconfig])}
+        />
+      )}
     </>
   );
 };

@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  RequeueDeadLetterEntryResponse,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddRequeueDeadLetterEntryResponseMutation } from '../../services/RequeueDeadLetterEntryResponseService';
+import { RequeueDeadLetterEntryResponse } from "@thorapi/model";
+
+import { useAddRequeueDeadLetterEntryResponseMutation } from "../../services/RequeueDeadLetterEntryResponseService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,28 +71,34 @@ Response object after successfully requeuing a DeadLetterQueue entry
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        newRunId: Yup.string(),
-        message: Yup.string(),
-        dlqId: Yup.string(),
-        timestamp: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("timestamp must be a valid date"),
-        trashed: Yup.boolean(),
+  newRunId: Yup.string(),
+  message: Yup.string(),
+  dlqId: Yup.string(),
+  timestamp: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("timestamp must be a valid date"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const RequeueDeadLetterEntryResponseForm: React.FC = () => {
-  const [addRequeueDeadLetterEntryResponse, addRequeueDeadLetterEntryResponseResult] = useAddRequeueDeadLetterEntryResponseMutation();
+  const [
+    addRequeueDeadLetterEntryResponse,
+    addRequeueDeadLetterEntryResponseResult,
+  ] = useAddRequeueDeadLetterEntryResponseMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -96,12 +108,18 @@ const RequeueDeadLetterEntryResponseForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -109,11 +127,11 @@ const RequeueDeadLetterEntryResponseForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<RequeueDeadLetterEntryResponse> = {
-          newRunId: '',
-          message: '',
-          dlqId: '',
-          timestamp: new Date(),
-          trashed: false,
+    newRunId: "",
+    message: "",
+    dlqId: "",
+    timestamp: new Date(),
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -128,22 +146,30 @@ const RequeueDeadLetterEntryResponseForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new RequeueDeadLetterEntryResponse:', grants);
+    console.log(
+      "Permissions saved for new RequeueDeadLetterEntryResponse:",
+      grants,
+    );
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<RequeueDeadLetterEntryResponse>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<RequeueDeadLetterEntryResponse>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
       console.log("RequeueDeadLetterEntryResponse form values:", values);
 
       // NOTE: depending on your generated endpoint, you may need { body: values }
-      const result = await addRequeueDeadLetterEntryResponse(values as any).unwrap();
+      const result = await addRequeueDeadLetterEntryResponse(
+        values as any,
+      ).unwrap();
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `RequeueDeadLetterEntryResponse created successfully! Would you like to set permissions for this object?`
+          `RequeueDeadLetterEntryResponse created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -151,8 +177,8 @@ const RequeueDeadLetterEntryResponseForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create RequeueDeadLetterEntryResponse:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create RequeueDeadLetterEntryResponse:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -173,44 +199,38 @@ const RequeueDeadLetterEntryResponseForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addRequeueDeadLetterEntryResponseResult.isLoading;
+          const isSaving =
+            isSubmitting || addRequeueDeadLetterEntryResponseResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New RequeueDeadLetterEntryResponse
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    RequeueDeadLetterEntryResponse
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="newRunId" className="nice-form-control">
                       <b>
                         New Run Id:
-                        {touched.newRunId &&
-                         !errors.newRunId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.newRunId && !errors.newRunId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="newRunId"
-                            value={values?.newRunId}
-                            placeholder="New Run Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="newRunId"
+                        value={values?.newRunId}
+                        placeholder="New Run Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -222,28 +242,21 @@ const RequeueDeadLetterEntryResponseForm: React.FC = () => {
                     <label htmlFor="message" className="nice-form-control">
                       <b>
                         Message:
-                        {touched.message &&
-                         !errors.message && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.message && !errors.message && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="message"
-                            value={values?.message}
-                            placeholder="Message"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="message"
+                        value={values?.message}
+                        placeholder="Message"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -255,28 +268,21 @@ const RequeueDeadLetterEntryResponseForm: React.FC = () => {
                     <label htmlFor="dlqId" className="nice-form-control">
                       <b>
                         Dlq Id:
-                        {touched.dlqId &&
-                         !errors.dlqId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.dlqId && !errors.dlqId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="dlqId"
-                            value={values?.dlqId}
-                            placeholder="Dlq Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="dlqId"
+                        value={values?.dlqId}
+                        placeholder="Dlq Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -288,38 +294,38 @@ const RequeueDeadLetterEntryResponseForm: React.FC = () => {
                     <label htmlFor="timestamp" className="nice-form-control">
                       <b>
                         Timestamp:
-                        {touched.timestamp &&
-                         !errors.timestamp && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.timestamp && !errors.timestamp && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="timestamp"
-                            type="datetime-local"
-                            value={values.timestamp ? 
-                              new Date(values.timestamp).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('timestamp', true);
-                              const v = e.target.value;
-                              setFieldValue('timestamp', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.timestamp
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="timestamp"
+                        type="datetime-local"
+                        value={
+                          values.timestamp
+                            ? new Date(values.timestamp)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("timestamp", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "timestamp",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.timestamp
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -331,32 +337,25 @@ const RequeueDeadLetterEntryResponseForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -366,45 +365,66 @@ const RequeueDeadLetterEntryResponseForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New RequeueDeadLetterEntryResponse
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      RequeueDeadLetterEntryResponse
+                    </CoolButton>
 
-                  {(addRequeueDeadLetterEntryResponseResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addRequeueDeadLetterEntryResponseResult as any).error ? (addRequeueDeadLetterEntryResponseResult as any).error.data : (addRequeueDeadLetterEntryResponseResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addRequeueDeadLetterEntryResponseResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addRequeueDeadLetterEntryResponseResult as any)
+                                .error
+                              ? (addRequeueDeadLetterEntryResponseResult as any)
+                                  .error.data
+                              : (addRequeueDeadLetterEntryResponseResult as any)
+                                  .error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addRequeueDeadLetterEntryResponseResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addRequeueDeadLetterEntryResponseResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addRequeueDeadLetterEntryResponseResult: {JSON.stringify(addRequeueDeadLetterEntryResponseResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addRequeueDeadLetterEntryResponseResult:{" "}
+                    {JSON.stringify(addRequeueDeadLetterEntryResponseResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -424,8 +444,5 @@ const RequeueDeadLetterEntryResponseForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default RequeueDeadLetterEntryResponseForm;
-

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { StrategicPriority } from '@thorapi/model/StrategicPriority';
+import { StrategicPriority } from "@thorapi/model/StrategicPriority";
 
 const StrategicPrioritySlice = createSlice({
   name: "StrategicPrioritys",
@@ -27,20 +27,25 @@ const StrategicPrioritySlice = createSlice({
     },
 
     StrategicPriorityValueToggled(state, action) {
-      console.log("StrategicPriority TOGGLE")
-      console.warn(JSON.stringify(action))
-      const StrategicPriority:StrategicPriority = state.find((StrategicPriority) => StrategicPriority.id === action.payload.StrategicPriorityId);
+      console.log("StrategicPriority TOGGLE");
+      console.warn(JSON.stringify(action));
+      const StrategicPriority: StrategicPriority = state.find(
+        (StrategicPriority) =>
+          StrategicPriority.id === action.payload.StrategicPriorityId,
+      );
       if (StrategicPriority) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     StrategicPrioritypropertySet(state, action) {
-      const StrategicPriority = state.find((StrategicPriority) => StrategicPriority.id === action.payload.StrategicPriorityId);
+      const StrategicPriority = state.find(
+        (StrategicPriority) =>
+          StrategicPriority.id === action.payload.StrategicPriorityId,
+      );
       if (StrategicPriority) {
-      //  StrategicPriority[action.property] = action.payload[action.property];
+        //  StrategicPriority[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const StrategicPrioritySlice = createSlice({
 export const {
   StrategicPriorityAdded,
   StrategicPriorityValueToggled,
-  StrategicPrioritypropertySet
+  StrategicPrioritypropertySet,
 } = StrategicPrioritySlice.actions;
 export default StrategicPrioritySlice.reducer;

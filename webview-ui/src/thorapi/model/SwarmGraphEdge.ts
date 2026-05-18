@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,126 +36,137 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface SwarmGraphEdge
  */
-export type SwarmGraphEdge  = DataObject & {
-    /**
-     * Node identifier where the edge originates.
-     * @type {string}
-     * @memberof SwarmGraphEdge
-     */
-    source?: string;
-    /**
-     * Node identifier where the edge terminates.
-     * @type {string}
-     * @memberof SwarmGraphEdge
-     */
-    target?: string;
-    /**
-     * Action, event type, or command identifier associated with the edge.
-     * @type {string}
-     * @memberof SwarmGraphEdge
-     */
-    action?: string;
-    /**
-     * Optional delivery status related to the edge.
-     * @type {string}
-     * @memberof SwarmGraphEdge
-     */
-    status?: string;
-    /**
-     * Timestamp when the edge was recorded.
-     * @type {Date}
-     * @memberof SwarmGraphEdge
-     */
-    timestamp?: Date;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof SwarmGraphEdge
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof SwarmGraphEdge
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof SwarmGraphEdge
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof SwarmGraphEdge
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof SwarmGraphEdge
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof SwarmGraphEdge
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof SwarmGraphEdge
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof SwarmGraphEdge
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof SwarmGraphEdge
-     */
-    trashed?: boolean;
-}
+export type SwarmGraphEdge = DataObject & {
+  /**
+   * Node identifier where the edge originates.
+   * @type {string}
+   * @memberof SwarmGraphEdge
+   */
+  source?: string;
+  /**
+   * Node identifier where the edge terminates.
+   * @type {string}
+   * @memberof SwarmGraphEdge
+   */
+  target?: string;
+  /**
+   * Action, event type, or command identifier associated with the edge.
+   * @type {string}
+   * @memberof SwarmGraphEdge
+   */
+  action?: string;
+  /**
+   * Optional delivery status related to the edge.
+   * @type {string}
+   * @memberof SwarmGraphEdge
+   */
+  status?: string;
+  /**
+   * Timestamp when the edge was recorded.
+   * @type {Date}
+   * @memberof SwarmGraphEdge
+   */
+  timestamp?: Date;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof SwarmGraphEdge
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof SwarmGraphEdge
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof SwarmGraphEdge
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof SwarmGraphEdge
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof SwarmGraphEdge
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof SwarmGraphEdge
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof SwarmGraphEdge
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof SwarmGraphEdge
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof SwarmGraphEdge
+   */
+  trashed?: boolean;
+};
 
 export function SwarmGraphEdgeFromJSON(json: any): SwarmGraphEdge {
-    return {
-        ...DataObjectFromJSON(json),
-        'source': !exists(json, 'source') ? undefined : json['source'],
-        'target': !exists(json, 'target') ? undefined : json['target'],
-        'action': !exists(json, 'action') ? undefined : json['action'],
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'timestamp': !exists(json, 'timestamp') ? undefined : new Date(json['timestamp']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    source: !exists(json, "source") ? undefined : json["source"],
+    target: !exists(json, "target") ? undefined : json["target"],
+    action: !exists(json, "action") ? undefined : json["action"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    timestamp: !exists(json, "timestamp")
+      ? undefined
+      : new Date(json["timestamp"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function SwarmGraphEdgeToJSON(value?: SwarmGraphEdge): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'source': value.source,
-        'target': value.target,
-        'action': value.action,
-        'status': value.status,
-        'timestamp': value.timestamp === undefined ? undefined : value.timestamp.toISOString(),
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    source: value.source,
+    target: value.target,
+    action: value.action,
+    status: value.status,
+    timestamp:
+      value.timestamp === undefined ? undefined : value.timestamp.toISOString(),
+    trashed: value.trashed,
+  };
 }
-
-

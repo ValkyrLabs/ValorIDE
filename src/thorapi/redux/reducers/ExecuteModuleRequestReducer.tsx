@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ExecuteModuleRequest } from '@thorapi/model/ExecuteModuleRequest';
+import { ExecuteModuleRequest } from "@thorapi/model/ExecuteModuleRequest";
 
 const ExecuteModuleRequestSlice = createSlice({
   name: "ExecuteModuleRequests",
@@ -27,20 +27,25 @@ const ExecuteModuleRequestSlice = createSlice({
     },
 
     ExecuteModuleRequestValueToggled(state, action) {
-      console.log("ExecuteModuleRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ExecuteModuleRequest:ExecuteModuleRequest = state.find((ExecuteModuleRequest) => ExecuteModuleRequest.id === action.payload.ExecuteModuleRequestId);
+      console.log("ExecuteModuleRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ExecuteModuleRequest: ExecuteModuleRequest = state.find(
+        (ExecuteModuleRequest) =>
+          ExecuteModuleRequest.id === action.payload.ExecuteModuleRequestId,
+      );
       if (ExecuteModuleRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ExecuteModuleRequestpropertySet(state, action) {
-      const ExecuteModuleRequest = state.find((ExecuteModuleRequest) => ExecuteModuleRequest.id === action.payload.ExecuteModuleRequestId);
+      const ExecuteModuleRequest = state.find(
+        (ExecuteModuleRequest) =>
+          ExecuteModuleRequest.id === action.payload.ExecuteModuleRequestId,
+      );
       if (ExecuteModuleRequest) {
-      //  ExecuteModuleRequest[action.property] = action.payload[action.property];
+        //  ExecuteModuleRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const ExecuteModuleRequestSlice = createSlice({
 export const {
   ExecuteModuleRequestAdded,
   ExecuteModuleRequestValueToggled,
-  ExecuteModuleRequestpropertySet
+  ExecuteModuleRequestpropertySet,
 } = ExecuteModuleRequestSlice.actions;
 export default ExecuteModuleRequestSlice.reducer;

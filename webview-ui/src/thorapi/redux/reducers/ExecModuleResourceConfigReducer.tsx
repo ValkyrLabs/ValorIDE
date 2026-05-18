@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ExecModuleResourceConfig } from '@thorapi/model/ExecModuleResourceConfig';
+import { ExecModuleResourceConfig } from "@thorapi/model/ExecModuleResourceConfig";
 
 const ExecModuleResourceConfigSlice = createSlice({
   name: "ExecModuleResourceConfigs",
@@ -27,20 +27,27 @@ const ExecModuleResourceConfigSlice = createSlice({
     },
 
     ExecModuleResourceConfigValueToggled(state, action) {
-      console.log("ExecModuleResourceConfig TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ExecModuleResourceConfig:ExecModuleResourceConfig = state.find((ExecModuleResourceConfig) => ExecModuleResourceConfig.id === action.payload.ExecModuleResourceConfigId);
+      console.log("ExecModuleResourceConfig TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ExecModuleResourceConfig: ExecModuleResourceConfig = state.find(
+        (ExecModuleResourceConfig) =>
+          ExecModuleResourceConfig.id ===
+          action.payload.ExecModuleResourceConfigId,
+      );
       if (ExecModuleResourceConfig) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ExecModuleResourceConfigpropertySet(state, action) {
-      const ExecModuleResourceConfig = state.find((ExecModuleResourceConfig) => ExecModuleResourceConfig.id === action.payload.ExecModuleResourceConfigId);
+      const ExecModuleResourceConfig = state.find(
+        (ExecModuleResourceConfig) =>
+          ExecModuleResourceConfig.id ===
+          action.payload.ExecModuleResourceConfigId,
+      );
       if (ExecModuleResourceConfig) {
-      //  ExecModuleResourceConfig[action.property] = action.payload[action.property];
+        //  ExecModuleResourceConfig[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const ExecModuleResourceConfigSlice = createSlice({
 export const {
   ExecModuleResourceConfigAdded,
   ExecModuleResourceConfigValueToggled,
-  ExecModuleResourceConfigpropertySet
+  ExecModuleResourceConfigpropertySet,
 } = ExecModuleResourceConfigSlice.actions;
 export default ExecModuleResourceConfigSlice.reducer;

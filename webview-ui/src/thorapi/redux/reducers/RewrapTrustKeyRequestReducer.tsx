@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { RewrapTrustKeyRequest } from '@thorapi/model/RewrapTrustKeyRequest';
+import { RewrapTrustKeyRequest } from "@thorapi/model/RewrapTrustKeyRequest";
 
 const RewrapTrustKeyRequestSlice = createSlice({
   name: "RewrapTrustKeyRequests",
@@ -27,20 +27,25 @@ const RewrapTrustKeyRequestSlice = createSlice({
     },
 
     RewrapTrustKeyRequestValueToggled(state, action) {
-      console.log("RewrapTrustKeyRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const RewrapTrustKeyRequest:RewrapTrustKeyRequest = state.find((RewrapTrustKeyRequest) => RewrapTrustKeyRequest.id === action.payload.RewrapTrustKeyRequestId);
+      console.log("RewrapTrustKeyRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const RewrapTrustKeyRequest: RewrapTrustKeyRequest = state.find(
+        (RewrapTrustKeyRequest) =>
+          RewrapTrustKeyRequest.id === action.payload.RewrapTrustKeyRequestId,
+      );
       if (RewrapTrustKeyRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     RewrapTrustKeyRequestpropertySet(state, action) {
-      const RewrapTrustKeyRequest = state.find((RewrapTrustKeyRequest) => RewrapTrustKeyRequest.id === action.payload.RewrapTrustKeyRequestId);
+      const RewrapTrustKeyRequest = state.find(
+        (RewrapTrustKeyRequest) =>
+          RewrapTrustKeyRequest.id === action.payload.RewrapTrustKeyRequestId,
+      );
       if (RewrapTrustKeyRequest) {
-      //  RewrapTrustKeyRequest[action.property] = action.payload[action.property];
+        //  RewrapTrustKeyRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const RewrapTrustKeyRequestSlice = createSlice({
 export const {
   RewrapTrustKeyRequestAdded,
   RewrapTrustKeyRequestValueToggled,
-  RewrapTrustKeyRequestpropertySet
+  RewrapTrustKeyRequestpropertySet,
 } = RewrapTrustKeyRequestSlice.actions;
 export default RewrapTrustKeyRequestSlice.reducer;

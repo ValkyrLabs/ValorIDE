@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { HostInstance } from '@thorapi/model/HostInstance';
+import { HostInstance } from "@thorapi/model/HostInstance";
 
 const HostInstanceSlice = createSlice({
   name: "HostInstances",
@@ -27,20 +27,23 @@ const HostInstanceSlice = createSlice({
     },
 
     HostInstanceValueToggled(state, action) {
-      console.log("HostInstance TOGGLE")
-      console.warn(JSON.stringify(action))
-      const HostInstance:HostInstance = state.find((HostInstance) => HostInstance.id === action.payload.HostInstanceId);
+      console.log("HostInstance TOGGLE");
+      console.warn(JSON.stringify(action));
+      const HostInstance: HostInstance = state.find(
+        (HostInstance) => HostInstance.id === action.payload.HostInstanceId,
+      );
       if (HostInstance) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     HostInstancepropertySet(state, action) {
-      const HostInstance = state.find((HostInstance) => HostInstance.id === action.payload.HostInstanceId);
+      const HostInstance = state.find(
+        (HostInstance) => HostInstance.id === action.payload.HostInstanceId,
+      );
       if (HostInstance) {
-      //  HostInstance[action.property] = action.payload[action.property];
+        //  HostInstance[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const HostInstanceSlice = createSlice({
 export const {
   HostInstanceAdded,
   HostInstanceValueToggled,
-  HostInstancepropertySet
+  HostInstancepropertySet,
 } = HostInstanceSlice.actions;
 export default HostInstanceSlice.reducer;

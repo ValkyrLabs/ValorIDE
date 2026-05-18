@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ThorapiRule } from '@thorapi/model/ThorapiRule';
+import { ThorapiRule } from "@thorapi/model/ThorapiRule";
 
 const ThorapiRuleSlice = createSlice({
   name: "ThorapiRules",
@@ -27,20 +27,23 @@ const ThorapiRuleSlice = createSlice({
     },
 
     ThorapiRuleValueToggled(state, action) {
-      console.log("ThorapiRule TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ThorapiRule:ThorapiRule = state.find((ThorapiRule) => ThorapiRule.id === action.payload.ThorapiRuleId);
+      console.log("ThorapiRule TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ThorapiRule: ThorapiRule = state.find(
+        (ThorapiRule) => ThorapiRule.id === action.payload.ThorapiRuleId,
+      );
       if (ThorapiRule) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ThorapiRulepropertySet(state, action) {
-      const ThorapiRule = state.find((ThorapiRule) => ThorapiRule.id === action.payload.ThorapiRuleId);
+      const ThorapiRule = state.find(
+        (ThorapiRule) => ThorapiRule.id === action.payload.ThorapiRuleId,
+      );
       if (ThorapiRule) {
-      //  ThorapiRule[action.property] = action.payload[action.property];
+        //  ThorapiRule[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const ThorapiRuleSlice = createSlice({
 export const {
   ThorapiRuleAdded,
   ThorapiRuleValueToggled,
-  ThorapiRulepropertySet
+  ThorapiRulepropertySet,
 } = ThorapiRuleSlice.actions;
 export default ThorapiRuleSlice.reducer;

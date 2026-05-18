@@ -3,7 +3,10 @@ import { MothershipService } from "../../services/communication/MothershipServic
 
 describe("MothershipService reliability", () => {
   it("acks each inbound messageId only once", () => {
-    const service = new MothershipService({ jwtToken: "token", instanceId: "self" }) as any;
+    const service = new MothershipService({
+      jwtToken: "token",
+      instanceId: "self",
+    }) as any;
     const sentTopics: string[] = [];
     service.sendAppTopic = (topic: string) => {
       sentTopics.push(topic);
@@ -11,7 +14,11 @@ describe("MothershipService reliability", () => {
 
     const mk = (id: string) => ({
       type: "broadcast",
-      payload: JSON.stringify({ topic: "tool:run", senderId: "peer", messageId: id }),
+      payload: JSON.stringify({
+        topic: "tool:run",
+        senderId: "peer",
+        messageId: id,
+      }),
     });
 
     service.handleIncomingMessage(mk("m-1"));
@@ -21,7 +28,10 @@ describe("MothershipService reliability", () => {
   });
 
   it("replays buffered out-of-order sequence when gap closes", () => {
-    const service = new MothershipService({ jwtToken: "token", instanceId: "self" }) as any;
+    const service = new MothershipService({
+      jwtToken: "token",
+      instanceId: "self",
+    }) as any;
     const seen: number[] = [];
 
     service.on("broadcast", (payload: any) => {
@@ -30,7 +40,12 @@ describe("MothershipService reliability", () => {
 
     const msg = (sequence: number) => ({
       type: "broadcast",
-      payload: JSON.stringify({ topic: "presence:here", senderId: `peer-${sequence}`, messageId: `m-${sequence}`, sequence }),
+      payload: JSON.stringify({
+        topic: "presence:here",
+        senderId: `peer-${sequence}`,
+        messageId: `m-${sequence}`,
+        sequence,
+      }),
     });
 
     service.handleIncomingMessage(msg(1));
@@ -41,10 +56,18 @@ describe("MothershipService reliability", () => {
   });
 
   it("tracks liveness snapshot from presence events", () => {
-    const service = new MothershipService({ jwtToken: "token", instanceId: "self" }) as any;
+    const service = new MothershipService({
+      jwtToken: "token",
+      instanceId: "self",
+    }) as any;
     service.handleIncomingMessage({
       type: "broadcast",
-      payload: JSON.stringify({ topic: "presence:here", senderId: "peer-a", messageId: "m-1", sequence: 1 }),
+      payload: JSON.stringify({
+        topic: "presence:here",
+        senderId: "peer-a",
+        messageId: "m-1",
+        sequence: 1,
+      }),
     });
 
     const snapshot = service.getPresenceSnapshot(Date.now(), 5 * 60 * 1000);

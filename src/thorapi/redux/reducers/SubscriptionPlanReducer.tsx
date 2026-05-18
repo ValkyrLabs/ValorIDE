@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SubscriptionPlan } from '@thorapi/model/SubscriptionPlan';
+import { SubscriptionPlan } from "@thorapi/model/SubscriptionPlan";
 
 const SubscriptionPlanSlice = createSlice({
   name: "SubscriptionPlans",
@@ -27,20 +27,25 @@ const SubscriptionPlanSlice = createSlice({
     },
 
     SubscriptionPlanValueToggled(state, action) {
-      console.log("SubscriptionPlan TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SubscriptionPlan:SubscriptionPlan = state.find((SubscriptionPlan) => SubscriptionPlan.id === action.payload.SubscriptionPlanId);
+      console.log("SubscriptionPlan TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SubscriptionPlan: SubscriptionPlan = state.find(
+        (SubscriptionPlan) =>
+          SubscriptionPlan.id === action.payload.SubscriptionPlanId,
+      );
       if (SubscriptionPlan) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SubscriptionPlanpropertySet(state, action) {
-      const SubscriptionPlan = state.find((SubscriptionPlan) => SubscriptionPlan.id === action.payload.SubscriptionPlanId);
+      const SubscriptionPlan = state.find(
+        (SubscriptionPlan) =>
+          SubscriptionPlan.id === action.payload.SubscriptionPlanId,
+      );
       if (SubscriptionPlan) {
-      //  SubscriptionPlan[action.property] = action.payload[action.property];
+        //  SubscriptionPlan[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const SubscriptionPlanSlice = createSlice({
 export const {
   SubscriptionPlanAdded,
   SubscriptionPlanValueToggled,
-  SubscriptionPlanpropertySet
+  SubscriptionPlanpropertySet,
 } = SubscriptionPlanSlice.actions;
 export default SubscriptionPlanSlice.reducer;

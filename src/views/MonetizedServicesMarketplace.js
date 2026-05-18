@@ -226,7 +226,7 @@ export const MonetizedServicesMarketplace = () => {
                         _jsx("span", {
                           className: "created-date",
                           children: new Date(
-                            service.createdAt
+                            service.createdAt,
                           ).toLocaleDateString(),
                         }),
                       ],
@@ -251,8 +251,8 @@ export const MonetizedServicesMarketplace = () => {
                     }),
                   ],
                 },
-                service.id
-              )
+                service.id,
+              ),
             ),
           })
         : _jsxs("div", {

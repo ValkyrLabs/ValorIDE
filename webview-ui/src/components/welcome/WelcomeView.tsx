@@ -71,9 +71,18 @@ const WelcomeView = memo(() => {
   return (
     <>
       <SystemAlerts />
-      <div className="fixed inset-0 flex flex-col overflow-auto" style={{ background: "var(--vscode-editor-background)" }}>
-        <div style={{ maxWidth: 480, margin: "0 auto", padding: "24px 20px 40px", width: "100%" }}>
-
+      <div
+        className="fixed inset-0 flex flex-col overflow-auto"
+        style={{ background: "var(--vscode-editor-background)" }}
+      >
+        <div
+          style={{
+            maxWidth: 480,
+            margin: "0 auto",
+            padding: "24px 20px 40px",
+            width: "100%",
+          }}
+        >
           {/* Logo */}
           <div style={{ textAlign: "center", marginBottom: 24 }}>
             <img
@@ -93,19 +102,47 @@ const WelcomeView = memo(() => {
               marginBottom: 16,
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                marginBottom: 10,
+              }}
+            >
               <FaBrain size={22} color="var(--vscode-focusBorder, #06ffa5)" />
-              <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700, color: "var(--vscode-foreground)" }}>
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: "var(--vscode-foreground)",
+                }}
+              >
                 Train Your Digital Mind
               </h2>
             </div>
-            <p style={{ margin: "0 0 12px", fontSize: 13, lineHeight: 1.6, color: "var(--vscode-descriptionForeground)" }}>
-              ValorIDE is an agentic coding environment powered by <strong>ValkyrAI GrayMatter</strong> —
-              the intelligence layer purpose-built for developers. Choose your AI instincts, configure your
-              memory, and vibe code at full speed.
+            <p
+              style={{
+                margin: "0 0 12px",
+                fontSize: 13,
+                lineHeight: 1.6,
+                color: "var(--vscode-descriptionForeground)",
+              }}
+            >
+              ValorIDE is an agentic coding environment powered by{" "}
+              <strong>ValkyrAI GrayMatter</strong> — the intelligence layer
+              purpose-built for developers. Choose your AI instincts, configure
+              your memory, and vibe code at full speed.
             </p>
 
-            <ul style={{ margin: "0 0 4px", padding: "0 0 0 4px", listStyle: "none" }}>
+            <ul
+              style={{
+                margin: "0 0 4px",
+                padding: "0 0 0 4px",
+                listStyle: "none",
+              }}
+            >
               {FEATURES.map((f) => (
                 <li
                   key={f}
@@ -121,7 +158,11 @@ const WelcomeView = memo(() => {
                 >
                   <FaChevronRight
                     size={9}
-                    style={{ marginTop: 3, flexShrink: 0, color: "var(--vscode-focusBorder, #06ffa5)" }}
+                    style={{
+                      marginTop: 3,
+                      flexShrink: 0,
+                      color: "var(--vscode-focusBorder, #06ffa5)",
+                    }}
                   />
                   {f}
                 </li>
@@ -139,15 +180,35 @@ const WelcomeView = memo(() => {
               marginBottom: 12,
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                marginBottom: 8,
+              }}
+            >
               <FaRocket size={15} color="var(--vscode-focusBorder, #06ffa5)" />
-              <span style={{ fontSize: 14, fontWeight: 600, color: "var(--vscode-foreground)" }}>
+              <span
+                style={{
+                  fontSize: 14,
+                  fontWeight: 600,
+                  color: "var(--vscode-foreground)",
+                }}
+              >
                 Start with ValkyrAI
               </span>
             </div>
-            <p style={{ margin: "0 0 14px", fontSize: 12, color: "var(--vscode-descriptionForeground)", lineHeight: 1.5 }}>
-              Create a free account to access ValkyrAI GrayMatter prompts, memory presets,
-              and curated models. No credit card required.
+            <p
+              style={{
+                margin: "0 0 14px",
+                fontSize: 12,
+                color: "var(--vscode-descriptionForeground)",
+                lineHeight: 1.5,
+              }}
+            >
+              Create a free account to access ValkyrAI GrayMatter prompts,
+              memory presets, and curated models. No credit card required.
             </p>
             <VSCodeButton
               appearance="primary"
@@ -156,9 +217,19 @@ const WelcomeView = memo(() => {
             >
               Get Started for Free
             </VSCodeButton>
-            <div style={{ marginTop: 10, textAlign: "center", fontSize: 11, color: "var(--vscode-descriptionForeground)" }}>
+            <div
+              style={{
+                marginTop: 10,
+                textAlign: "center",
+                fontSize: 11,
+                color: "var(--vscode-descriptionForeground)",
+              }}
+            >
               Already have an account?{" "}
-              <VSCodeLink href="https://valkyrlabs.com/sign-in" style={{ fontSize: 11 }}>
+              <VSCodeLink
+                href="https://valkyrlabs.com/sign-in"
+                style={{ fontSize: 11 }}
+              >
                 Sign in
               </VSCodeLink>
             </div>
@@ -190,7 +261,9 @@ const WelcomeView = memo(() => {
               }}
             >
               <FaKey size={13} style={{ opacity: 0.7 }} />
-              <span style={{ fontSize: 13, fontWeight: 600 }}>Bring Your Own API Key</span>
+              <span style={{ fontSize: 13, fontWeight: 600 }}>
+                Bring Your Own API Key
+              </span>
               <FaChevronRight
                 size={10}
                 style={{
@@ -204,8 +277,16 @@ const WelcomeView = memo(() => {
 
             {showApiOptions && (
               <div style={{ marginTop: 14 }}>
-                <p style={{ margin: "0 0 12px", fontSize: 12, color: "var(--vscode-descriptionForeground)", lineHeight: 1.5 }}>
-                  Connect your existing API key from Anthropic, OpenAI, OpenRouter, or any compatible provider.
+                <p
+                  style={{
+                    margin: "0 0 12px",
+                    fontSize: 12,
+                    color: "var(--vscode-descriptionForeground)",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  Connect your existing API key from Anthropic, OpenAI,
+                  OpenRouter, or any compatible provider.
                 </p>
                 <ApiOptions showModelOptions={false} />
                 <VSCodeButton
@@ -221,16 +302,31 @@ const WelcomeView = memo(() => {
           </div>
 
           {/* Footer links */}
-          <div style={{ textAlign: "center", fontSize: 11, color: "var(--vscode-descriptionForeground)" }}>
-            <VSCodeLink href="https://valkyrlabs.com/v1/Products/ValorIDE/getting-started" style={{ fontSize: 11 }}>
+          <div
+            style={{
+              textAlign: "center",
+              fontSize: 11,
+              color: "var(--vscode-descriptionForeground)",
+            }}
+          >
+            <VSCodeLink
+              href="https://valkyrlabs.com/v1/Products/ValorIDE/getting-started"
+              style={{ fontSize: 11 }}
+            >
               Getting Started Guide
             </VSCodeLink>
             {" · "}
-            <VSCodeLink href="https://valkyrlabs.com/v1/docs/Legal/privacy" style={{ fontSize: 11 }}>
+            <VSCodeLink
+              href="https://valkyrlabs.com/v1/docs/Legal/privacy"
+              style={{ fontSize: 11 }}
+            >
               Privacy Policy
             </VSCodeLink>
             {" · "}
-            <VSCodeLink href="https://github.com/valkyrlabs/valoride" style={{ fontSize: 11 }}>
+            <VSCodeLink
+              href="https://github.com/valkyrlabs/valoride"
+              style={{ fontSize: 11 }}
+            >
               GitHub
             </VSCodeLink>
           </div>

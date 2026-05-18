@@ -19,20 +19,32 @@ Description: WebsocketMessage
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, WebsocketMessage } from '@thorapi/model';
-import { useGetWebsocketMessagesQuery, useAddWebsocketMessageMutation, useUpdateWebsocketMessageMutation } from '../../services/WebsocketMessageService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, WebsocketMessage } from "@thorapi/model";
+import {
+  useGetWebsocketMessagesQuery,
+  useAddWebsocketMessageMutation,
+  useUpdateWebsocketMessageMutation,
+} from "../../services/WebsocketMessageService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const WebsocketMessageChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetWebsocketMessagesQuery();
 
   const [data, setData] = useState<WebsocketMessage[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<WebsocketMessage>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const WebsocketMessageChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,15 @@ const WebsocketMessageChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((websocketmessage: DataObject) => [websocketmessage])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((websocketmessage: DataObject) => [
+            websocketmessage,
+          ])}
+        />
+      )}
     </>
   );
 };

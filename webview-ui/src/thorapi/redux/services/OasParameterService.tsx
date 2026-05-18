@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { OasParameter } from '@thorapi/model/OasParameter'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { OasParameter } from "@thorapi/model/OasParameter";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type OasParameterResponse = OasParameter[]
+type OasParameterResponse = OasParameter[];
 
 const toOasParameterList = (result: unknown): OasParameterResponse => {
   if (Array.isArray(result)) {
-    return result as OasParameterResponse
+    return result as OasParameterResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as OasParameterResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as OasParameterResponse) : [];
+};
 
 export const OasParameterService = createApi({
-  reducerPath: 'OasParameter', // This should remain unique
+  reducerPath: "OasParameter", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['OasParameter'],
+  tagTypes: ["OasParameter"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getOasParametersPaged: build.query<OasParameterResponse, { page: number; size?: number; example?: Partial<OasParameter> }>({
+    getOasParametersPaged: build.query<
+      OasParameterResponse,
+      { page: number; size?: number; example?: Partial<OasParameter> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `OasParameter?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `OasParameter?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toOasParameterList(result)
+        const rows = toOasParameterList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'OasParameter' as const, id })),
-          { type: 'OasParameter', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "OasParameter" as const, id })),
+          { type: "OasParameter", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOasParameters: build.query<OasParameterResponse, { example?: Partial<OasParameter> } | void>({
+    getOasParameters: build.query<
+      OasParameterResponse,
+      { example?: Partial<OasParameter> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const OasParameterService = createApi({
         return `OasParameter`;
       },
       providesTags: (result) => {
-        const rows = toOasParameterList(result)
+        const rows = toOasParameterList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'OasParameter' as const, id })),
-          { type: 'OasParameter', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "OasParameter" as const, id })),
+          { type: "OasParameter", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,73 +87,89 @@ export const OasParameterService = createApi({
     addOasParameter: build.mutation<OasParameter, Partial<OasParameter>>({
       query: (body) => ({
         url: `OasParameter`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'OasParameter', id: 'LIST' }],
+      invalidatesTags: [{ type: "OasParameter", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getOasParameter: build.query<OasParameter, string>({
       query: (id) => `OasParameter/${id}`,
-      providesTags: (result, error, id) => [{ type: 'OasParameter', id }],
+      providesTags: (result, error, id) => [{ type: "OasParameter", id }],
     }),
 
     // 5) Update
-    updateOasParameter: build.mutation<void, Pick<OasParameter, 'id'> & Partial<OasParameter>>({
+    updateOasParameter: build.mutation<
+      void,
+      Pick<OasParameter, "id"> & Partial<OasParameter>
+    >({
       query: ({ id, ...patch }) => ({
         url: `OasParameter/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            OasParameterService.util.updateQueryData('getOasParameter', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            OasParameterService.util.updateQueryData(
+              "getOasParameter",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<OasParameter, 'id'>) => [
-        { type: 'OasParameter', id },
-        { type: 'OasParameter', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<OasParameter, "id">) => [
+        { type: "OasParameter", id },
+        { type: "OasParameter", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteOasParameter: build.mutation<{ success: boolean; id: string }, number>({
+    deleteOasParameter: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `OasParameter/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'OasParameter', id }],
+      invalidatesTags: (result, error, id) => [{ type: "OasParameter", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteOasParameterCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteOasParameterCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `OasParameter/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'OasParameter', id }, { type: 'OasParameter', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "OasParameter", id },
+        { type: "OasParameter", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetOasParametersPagedQuery`
 export const {
-  useGetOasParametersPagedQuery,     // immediate fetch
+  useGetOasParametersPagedQuery, // immediate fetch
   useLazyGetOasParametersPagedQuery, // lazy fetch
   useGetOasParameterQuery,
   useGetOasParametersQuery,
@@ -150,4 +177,4 @@ export const {
   useUpdateOasParameterMutation,
   useDeleteOasParameterMutation,
   useDeleteOasParameterCascadeMutation,
-} = OasParameterService
+} = OasParameterService;

@@ -26,16 +26,9 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
-import {
-
-
-    TrustKey,
-    TrustKeyFromJSON,
-    TrustKeyToJSON,
-} from './';
-
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { TrustKey, TrustKeyFromJSON, TrustKeyToJSON } from "./";
 
 // thorapi
 
@@ -44,192 +37,220 @@ import {
  * @export
  * @interface TrustKeyVersion
  */
-export type TrustKeyVersion  = DataObject & {
-    /**
-     * 
-     * @type {TrustKey}
-     * @memberof TrustKeyVersion
-     */
-    trustKey?: TrustKey;
-    /**
-     * 
-     * @type {number}
-     * @memberof TrustKeyVersion
-     */
-    versionNumber?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustKeyVersion
-     */
-    keyHash?: string;
-    /**
-     * Public verification material only.
-     * @type {string}
-     * @memberof TrustKeyVersion
-     */
-    publicKeyMaterial?: string;
-    /**
-     * Wrapped DEK or encrypted private material. Never raw plaintext key material.
-     * @type {string}
-     * @memberof TrustKeyVersion
-     */
-    wrappedKeyMaterial?: string;
-    /**
-     * External KEK, HSM, Vault, Keychain, cloud KMS, password service, or Trust KMS key reference.
-     * @type {string}
-     * @memberof TrustKeyVersion
-     */
-    wrappingKeyRef?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustKeyVersion
-     */
-    providerKeyRef?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustKeyVersion
-     */
-    algorithm?: TrustKeyVersionAlgorithmEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustKeyVersion
-     */
-    versionStatus?: TrustKeyVersionVersionStatusEnum;
-    /**
-     * 
-     * @type {Date}
-     * @memberof TrustKeyVersion
-     */
-    notBefore?: Date;
-    /**
-     * 
-     * @type {Date}
-     * @memberof TrustKeyVersion
-     */
-    notAfter?: Date;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustKeyVersion
-     */
-    ownerId?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof TrustKeyVersion
-     */
-    readonly id?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof TrustKeyVersion
-     */
-    readonly createdDate?: Date;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof TrustKeyVersion
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof TrustKeyVersion
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof TrustKeyVersion
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof TrustKeyVersion
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof TrustKeyVersion
-     */
-    trashed?: boolean;
-}
+export type TrustKeyVersion = DataObject & {
+  /**
+   *
+   * @type {TrustKey}
+   * @memberof TrustKeyVersion
+   */
+  trustKey?: TrustKey;
+  /**
+   *
+   * @type {number}
+   * @memberof TrustKeyVersion
+   */
+  versionNumber?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustKeyVersion
+   */
+  keyHash?: string;
+  /**
+   * Public verification material only.
+   * @type {string}
+   * @memberof TrustKeyVersion
+   */
+  publicKeyMaterial?: string;
+  /**
+   * Wrapped DEK or encrypted private material. Never raw plaintext key material.
+   * @type {string}
+   * @memberof TrustKeyVersion
+   */
+  wrappedKeyMaterial?: string;
+  /**
+   * External KEK, HSM, Vault, Keychain, cloud KMS, password service, or Trust KMS key reference.
+   * @type {string}
+   * @memberof TrustKeyVersion
+   */
+  wrappingKeyRef?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustKeyVersion
+   */
+  providerKeyRef?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustKeyVersion
+   */
+  algorithm?: TrustKeyVersionAlgorithmEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustKeyVersion
+   */
+  versionStatus?: TrustKeyVersionVersionStatusEnum;
+  /**
+   *
+   * @type {Date}
+   * @memberof TrustKeyVersion
+   */
+  notBefore?: Date;
+  /**
+   *
+   * @type {Date}
+   * @memberof TrustKeyVersion
+   */
+  notAfter?: Date;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustKeyVersion
+   */
+  ownerId?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof TrustKeyVersion
+   */
+  readonly id?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof TrustKeyVersion
+   */
+  readonly createdDate?: Date;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof TrustKeyVersion
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof TrustKeyVersion
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof TrustKeyVersion
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof TrustKeyVersion
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof TrustKeyVersion
+   */
+  trashed?: boolean;
+};
 
 export function TrustKeyVersionFromJSON(json: any): TrustKeyVersion {
-    return {
-        ...DataObjectFromJSON(json),
-        'trustKey': !exists(json, 'trustKey') ? undefined : TrustKeyFromJSON(json['trustKey']),
-        'versionNumber': !exists(json, 'versionNumber') ? undefined : json['versionNumber'],
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'publicKeyMaterial': !exists(json, 'publicKeyMaterial') ? undefined : json['publicKeyMaterial'],
-        'wrappedKeyMaterial': !exists(json, 'wrappedKeyMaterial') ? undefined : json['wrappedKeyMaterial'],
-        'wrappingKeyRef': !exists(json, 'wrappingKeyRef') ? undefined : json['wrappingKeyRef'],
-        'providerKeyRef': !exists(json, 'providerKeyRef') ? undefined : json['providerKeyRef'],
-        'algorithm': !exists(json, 'algorithm') ? undefined : json['algorithm'],
-        'versionStatus': !exists(json, 'versionStatus') ? undefined : json['versionStatus'],
-        'notBefore': !exists(json, 'notBefore') ? undefined : new Date(json['notBefore']),
-        'notAfter': !exists(json, 'notAfter') ? undefined : new Date(json['notAfter']),
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    trustKey: !exists(json, "trustKey")
+      ? undefined
+      : TrustKeyFromJSON(json["trustKey"]),
+    versionNumber: !exists(json, "versionNumber")
+      ? undefined
+      : json["versionNumber"],
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    publicKeyMaterial: !exists(json, "publicKeyMaterial")
+      ? undefined
+      : json["publicKeyMaterial"],
+    wrappedKeyMaterial: !exists(json, "wrappedKeyMaterial")
+      ? undefined
+      : json["wrappedKeyMaterial"],
+    wrappingKeyRef: !exists(json, "wrappingKeyRef")
+      ? undefined
+      : json["wrappingKeyRef"],
+    providerKeyRef: !exists(json, "providerKeyRef")
+      ? undefined
+      : json["providerKeyRef"],
+    algorithm: !exists(json, "algorithm") ? undefined : json["algorithm"],
+    versionStatus: !exists(json, "versionStatus")
+      ? undefined
+      : json["versionStatus"],
+    notBefore: !exists(json, "notBefore")
+      ? undefined
+      : new Date(json["notBefore"]),
+    notAfter: !exists(json, "notAfter")
+      ? undefined
+      : new Date(json["notAfter"]),
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function TrustKeyVersionToJSON(value?: TrustKeyVersion): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'trustKey': TrustKeyToJSON(value.trustKey),
-        'versionNumber': value.versionNumber,
-        'keyHash': value.keyHash,
-        'publicKeyMaterial': value.publicKeyMaterial,
-        'wrappedKeyMaterial': value.wrappedKeyMaterial,
-        'wrappingKeyRef': value.wrappingKeyRef,
-        'providerKeyRef': value.providerKeyRef,
-        'algorithm': value.algorithm,
-        'versionStatus': value.versionStatus,
-        'notBefore': value.notBefore === undefined ? undefined : value.notBefore.toISOString(),
-        'notAfter': value.notAfter === undefined ? undefined : value.notAfter.toISOString(),
-        'ownerId': value.ownerId,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    trustKey: TrustKeyToJSON(value.trustKey),
+    versionNumber: value.versionNumber,
+    keyHash: value.keyHash,
+    publicKeyMaterial: value.publicKeyMaterial,
+    wrappedKeyMaterial: value.wrappedKeyMaterial,
+    wrappingKeyRef: value.wrappingKeyRef,
+    providerKeyRef: value.providerKeyRef,
+    algorithm: value.algorithm,
+    versionStatus: value.versionStatus,
+    notBefore:
+      value.notBefore === undefined ? undefined : value.notBefore.toISOString(),
+    notAfter:
+      value.notAfter === undefined ? undefined : value.notAfter.toISOString(),
+    ownerId: value.ownerId,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum TrustKeyVersionAlgorithmEnum {
-    AES256GCM = 'aes_256_gcm',
-    XCHACHA20POLY1305 = 'xchacha20_poly1305',
-    ED25519 = 'ed25519',
-    ECDSAP256 = 'ecdsa_p256',
-    RSAOAEP3072 = 'rsa_oaep_3072'
+  AES256GCM = "aes_256_gcm",
+  XCHACHA20POLY1305 = "xchacha20_poly1305",
+  ED25519 = "ed25519",
+  ECDSAP256 = "ecdsa_p256",
+  RSAOAEP3072 = "rsa_oaep_3072",
 }
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum TrustKeyVersionVersionStatusEnum {
-    PENDINGACTIVATION = 'pending_activation',
-    ACTIVE = 'active',
-    DECRYPTONLY = 'decrypt_only',
-    RETIRED = 'retired',
-    DESTROYSCHEDULED = 'destroy_scheduled',
-    DESTROYED = 'destroyed'
+  PENDINGACTIVATION = "pending_activation",
+  ACTIVE = "active",
+  DECRYPTONLY = "decrypt_only",
+  RETIRED = "retired",
+  DESTROYSCHEDULED = "destroy_scheduled",
+  DESTROYED = "destroyed",
 }
-
-

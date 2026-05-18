@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { CircuitBreakerConfig } from '@thorapi/model/CircuitBreakerConfig';
+import { CircuitBreakerConfig } from "@thorapi/model/CircuitBreakerConfig";
 
 const CircuitBreakerConfigSlice = createSlice({
   name: "CircuitBreakerConfigs",
@@ -27,20 +27,25 @@ const CircuitBreakerConfigSlice = createSlice({
     },
 
     CircuitBreakerConfigValueToggled(state, action) {
-      console.log("CircuitBreakerConfig TOGGLE")
-      console.warn(JSON.stringify(action))
-      const CircuitBreakerConfig:CircuitBreakerConfig = state.find((CircuitBreakerConfig) => CircuitBreakerConfig.id === action.payload.CircuitBreakerConfigId);
+      console.log("CircuitBreakerConfig TOGGLE");
+      console.warn(JSON.stringify(action));
+      const CircuitBreakerConfig: CircuitBreakerConfig = state.find(
+        (CircuitBreakerConfig) =>
+          CircuitBreakerConfig.id === action.payload.CircuitBreakerConfigId,
+      );
       if (CircuitBreakerConfig) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     CircuitBreakerConfigpropertySet(state, action) {
-      const CircuitBreakerConfig = state.find((CircuitBreakerConfig) => CircuitBreakerConfig.id === action.payload.CircuitBreakerConfigId);
+      const CircuitBreakerConfig = state.find(
+        (CircuitBreakerConfig) =>
+          CircuitBreakerConfig.id === action.payload.CircuitBreakerConfigId,
+      );
       if (CircuitBreakerConfig) {
-      //  CircuitBreakerConfig[action.property] = action.payload[action.property];
+        //  CircuitBreakerConfig[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const CircuitBreakerConfigSlice = createSlice({
 export const {
   CircuitBreakerConfigAdded,
   CircuitBreakerConfigValueToggled,
-  CircuitBreakerConfigpropertySet
+  CircuitBreakerConfigpropertySet,
 } = CircuitBreakerConfigSlice.actions;
 export default CircuitBreakerConfigSlice.reducer;

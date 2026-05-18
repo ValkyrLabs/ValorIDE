@@ -161,7 +161,8 @@ const SystemAlerts: React.FC = () => {
       title: isInsufficientCredits ? "Insufficient Credits" : "API Error",
       message: isInsufficientCredits
         ? "You don't have enough credits to complete this request. Please add credits to continue."
-        : apiError.message || "ValorIDE encountered an error processing your request.",
+        : apiError.message ||
+          "ValorIDE encountered an error processing your request.",
       timestamp: Date.now(),
     };
 
@@ -293,29 +294,37 @@ const SystemAlerts: React.FC = () => {
     typeof balanceData?.currentBalance === "number" &&
     balanceData.currentBalance <= budgetAlerts.criticalThreshold;
 
-  const hasVisibleAlerts =
-    activeAlerts.length > 0 || shouldShowBuyCreditsModal;
+  const hasVisibleAlerts = activeAlerts.length > 0 || shouldShowBuyCreditsModal;
   if (!hasVisibleAlerts) return null;
 
   const alertBg = (severity: AlertSeverity) => {
     switch (severity) {
-      case "danger": return "var(--vscode-inputValidation-errorBackground, #5a1d1d)";
-      case "info": return "var(--vscode-inputValidation-infoBackground, #1e3a5f)";
-      default: return "var(--vscode-inputValidation-warningBackground, #352a05)";
+      case "danger":
+        return "var(--vscode-inputValidation-errorBackground, #5a1d1d)";
+      case "info":
+        return "var(--vscode-inputValidation-infoBackground, #1e3a5f)";
+      default:
+        return "var(--vscode-inputValidation-warningBackground, #352a05)";
     }
   };
   const alertFg = (severity: AlertSeverity) => {
     switch (severity) {
-      case "danger": return "var(--vscode-inputValidation-errorForeground, #f48771)";
-      case "info": return "var(--vscode-notificationsInfoIcon-foreground, #75beff)";
-      default: return "var(--vscode-inputValidation-warningForeground, #cca700)";
+      case "danger":
+        return "var(--vscode-inputValidation-errorForeground, #f48771)";
+      case "info":
+        return "var(--vscode-notificationsInfoIcon-foreground, #75beff)";
+      default:
+        return "var(--vscode-inputValidation-warningForeground, #cca700)";
     }
   };
   const alertBorder = (severity: AlertSeverity) => {
     switch (severity) {
-      case "danger": return "1px solid var(--vscode-inputValidation-errorBorder, #f48771)";
-      case "info": return "1px solid var(--vscode-notificationsInfoIcon-foreground, #3794ff)";
-      default: return "1px solid var(--vscode-inputValidation-warningBorder, #cca700)";
+      case "danger":
+        return "1px solid var(--vscode-inputValidation-errorBorder, #f48771)";
+      case "info":
+        return "1px solid var(--vscode-notificationsInfoIcon-foreground, #3794ff)";
+      default:
+        return "1px solid var(--vscode-inputValidation-warningBorder, #cca700)";
     }
   };
 
@@ -359,11 +368,15 @@ const SystemAlerts: React.FC = () => {
               style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}
             >
               <div style={{ marginTop: "2px" }}>
-                {alert.type === "budget"
-                  ? alert.severity === "info"
-                    ? <FaExclamationTriangle size={16} />
-                    : <FaDollarSign size={16} />
-                  : <FaSadTear size={16} />}
+                {alert.type === "budget" ? (
+                  alert.severity === "info" ? (
+                    <FaExclamationTriangle size={16} />
+                  ) : (
+                    <FaDollarSign size={16} />
+                  )
+                ) : (
+                  <FaSadTear size={16} />
+                )}
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 600, marginBottom: "4px" }}>
@@ -382,8 +395,13 @@ const SystemAlerts: React.FC = () => {
                       });
 
                       // If there's no VS Code webview API (dev server / browser), open in a new tab
-                      if (typeof (window as any)?.acquireVsCodeApi !== "function") {
-                        window.open("https://valkyrlabs.com/buy-credits", "_blank");
+                      if (
+                        typeof (window as any)?.acquireVsCodeApi !== "function"
+                      ) {
+                        window.open(
+                          "https://valkyrlabs.com/buy-credits",
+                          "_blank",
+                        );
                       }
                     }}
                     style={{

@@ -26,16 +26,9 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
-import {
-
-
-    Principal,
-    PrincipalFromJSON,
-    PrincipalToJSON,
-} from './';
-
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { Principal, PrincipalFromJSON, PrincipalToJSON } from "./";
 
 // thorapi
 
@@ -44,140 +37,153 @@ import {
  * @export
  * @interface PasswordResetToken
  */
-export type PasswordResetToken  = DataObject & {
-    /**
-     * Secure token hash (SHA-256 hashed for DB storage)
-     * @type {string}
-     * @memberof PasswordResetToken
-     */
-    token: string;
-    /**
-     * 
-     * @type {Principal}
-     * @memberof PasswordResetToken
-     */
-    principal?: Principal;
-    /**
-     * Hash of the reset token (for lookup)
-     * @type {string}
-     * @memberof PasswordResetToken
-     */
-    readonly tokenHash?: string;
-    /**
-     * When this token expires (typically 24 hours)
-     * @type {Date}
-     * @memberof PasswordResetToken
-     */
-    expiresAt?: Date;
-    /**
-     * When the token was used to reset password
-     * @type {Date}
-     * @memberof PasswordResetToken
-     */
-    readonly usedAt?: Date;
-    /**
-     * IP address of the requester (for security audit)
-     * @type {string}
-     * @memberof PasswordResetToken
-     */
-    ipAddress?: string;
-    /**
-     * User agent string (for security audit)
-     * @type {string}
-     * @memberof PasswordResetToken
-     */
-    userAgent?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof PasswordResetToken
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof PasswordResetToken
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof PasswordResetToken
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof PasswordResetToken
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof PasswordResetToken
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof PasswordResetToken
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof PasswordResetToken
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof PasswordResetToken
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof PasswordResetToken
-     */
-    trashed?: boolean;
-}
+export type PasswordResetToken = DataObject & {
+  /**
+   * Secure token hash (SHA-256 hashed for DB storage)
+   * @type {string}
+   * @memberof PasswordResetToken
+   */
+  token: string;
+  /**
+   *
+   * @type {Principal}
+   * @memberof PasswordResetToken
+   */
+  principal?: Principal;
+  /**
+   * Hash of the reset token (for lookup)
+   * @type {string}
+   * @memberof PasswordResetToken
+   */
+  readonly tokenHash?: string;
+  /**
+   * When this token expires (typically 24 hours)
+   * @type {Date}
+   * @memberof PasswordResetToken
+   */
+  expiresAt?: Date;
+  /**
+   * When the token was used to reset password
+   * @type {Date}
+   * @memberof PasswordResetToken
+   */
+  readonly usedAt?: Date;
+  /**
+   * IP address of the requester (for security audit)
+   * @type {string}
+   * @memberof PasswordResetToken
+   */
+  ipAddress?: string;
+  /**
+   * User agent string (for security audit)
+   * @type {string}
+   * @memberof PasswordResetToken
+   */
+  userAgent?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof PasswordResetToken
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof PasswordResetToken
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof PasswordResetToken
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof PasswordResetToken
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof PasswordResetToken
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof PasswordResetToken
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof PasswordResetToken
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof PasswordResetToken
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof PasswordResetToken
+   */
+  trashed?: boolean;
+};
 
 export function PasswordResetTokenFromJSON(json: any): PasswordResetToken {
-    return {
-        ...DataObjectFromJSON(json),
-        'token': json['token'],
-        'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
-        'tokenHash': !exists(json, 'tokenHash') ? undefined : json['tokenHash'],
-        'expiresAt': !exists(json, 'expiresAt') ? undefined : new Date(json['expiresAt']),
-        'usedAt': !exists(json, 'usedAt') ? undefined : new Date(json['usedAt']),
-        'ipAddress': !exists(json, 'ipAddress') ? undefined : json['ipAddress'],
-        'userAgent': !exists(json, 'userAgent') ? undefined : json['userAgent'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    token: json["token"],
+    principal: !exists(json, "principal")
+      ? undefined
+      : PrincipalFromJSON(json["principal"]),
+    tokenHash: !exists(json, "tokenHash") ? undefined : json["tokenHash"],
+    expiresAt: !exists(json, "expiresAt")
+      ? undefined
+      : new Date(json["expiresAt"]),
+    usedAt: !exists(json, "usedAt") ? undefined : new Date(json["usedAt"]),
+    ipAddress: !exists(json, "ipAddress") ? undefined : json["ipAddress"],
+    userAgent: !exists(json, "userAgent") ? undefined : json["userAgent"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function PasswordResetTokenToJSON(value?: PasswordResetToken): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'token': value.token,
-        'principal': PrincipalToJSON(value.principal),
-        'expiresAt': value.expiresAt === undefined ? undefined : value.expiresAt.toISOString(),
-        'ipAddress': value.ipAddress,
-        'userAgent': value.userAgent,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    token: value.token,
+    principal: PrincipalToJSON(value.principal),
+    expiresAt:
+      value.expiresAt === undefined ? undefined : value.expiresAt.toISOString(),
+    ipAddress: value.ipAddress,
+    userAgent: value.userAgent,
+    trashed: value.trashed,
+  };
 }
-
-

@@ -81,8 +81,8 @@ const Thumbnails = ({ images, style, setImages, onHeightChange }) => {
               }),
           ],
         },
-        index
-      )
+        index,
+      ),
     ),
   });
 };

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ExecModulePayloadConfig } from '@thorapi/model/ExecModulePayloadConfig';
+import { ExecModulePayloadConfig } from "@thorapi/model/ExecModulePayloadConfig";
 
 const ExecModulePayloadConfigSlice = createSlice({
   name: "ExecModulePayloadConfigs",
@@ -27,20 +27,27 @@ const ExecModulePayloadConfigSlice = createSlice({
     },
 
     ExecModulePayloadConfigValueToggled(state, action) {
-      console.log("ExecModulePayloadConfig TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ExecModulePayloadConfig:ExecModulePayloadConfig = state.find((ExecModulePayloadConfig) => ExecModulePayloadConfig.id === action.payload.ExecModulePayloadConfigId);
+      console.log("ExecModulePayloadConfig TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ExecModulePayloadConfig: ExecModulePayloadConfig = state.find(
+        (ExecModulePayloadConfig) =>
+          ExecModulePayloadConfig.id ===
+          action.payload.ExecModulePayloadConfigId,
+      );
       if (ExecModulePayloadConfig) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ExecModulePayloadConfigpropertySet(state, action) {
-      const ExecModulePayloadConfig = state.find((ExecModulePayloadConfig) => ExecModulePayloadConfig.id === action.payload.ExecModulePayloadConfigId);
+      const ExecModulePayloadConfig = state.find(
+        (ExecModulePayloadConfig) =>
+          ExecModulePayloadConfig.id ===
+          action.payload.ExecModulePayloadConfigId,
+      );
       if (ExecModulePayloadConfig) {
-      //  ExecModulePayloadConfig[action.property] = action.payload[action.property];
+        //  ExecModulePayloadConfig[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const ExecModulePayloadConfigSlice = createSlice({
 export const {
   ExecModulePayloadConfigAdded,
   ExecModulePayloadConfigValueToggled,
-  ExecModulePayloadConfigpropertySet
+  ExecModulePayloadConfigpropertySet,
 } = ExecModulePayloadConfigSlice.actions;
 export default ExecModulePayloadConfigSlice.reducer;

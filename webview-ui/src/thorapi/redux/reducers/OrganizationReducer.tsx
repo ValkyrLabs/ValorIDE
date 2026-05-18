@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Organization } from '@thorapi/model/Organization';
+import { Organization } from "@thorapi/model/Organization";
 
 const OrganizationSlice = createSlice({
   name: "Organizations",
@@ -27,20 +27,23 @@ const OrganizationSlice = createSlice({
     },
 
     OrganizationValueToggled(state, action) {
-      console.log("Organization TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Organization:Organization = state.find((Organization) => Organization.id === action.payload.OrganizationId);
+      console.log("Organization TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Organization: Organization = state.find(
+        (Organization) => Organization.id === action.payload.OrganizationId,
+      );
       if (Organization) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     OrganizationpropertySet(state, action) {
-      const Organization = state.find((Organization) => Organization.id === action.payload.OrganizationId);
+      const Organization = state.find(
+        (Organization) => Organization.id === action.payload.OrganizationId,
+      );
       if (Organization) {
-      //  Organization[action.property] = action.payload[action.property];
+        //  Organization[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const OrganizationSlice = createSlice({
 export const {
   OrganizationAdded,
   OrganizationValueToggled,
-  OrganizationpropertySet
+  OrganizationpropertySet,
 } = OrganizationSlice.actions;
 export default OrganizationSlice.reducer;

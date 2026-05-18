@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { AgentBillingCharge } from '@thorapi/model/AgentBillingCharge'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { AgentBillingCharge } from "@thorapi/model/AgentBillingCharge";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type AgentBillingChargeResponse = AgentBillingCharge[]
+type AgentBillingChargeResponse = AgentBillingCharge[];
 
-const toAgentBillingChargeList = (result: unknown): AgentBillingChargeResponse => {
+const toAgentBillingChargeList = (
+  result: unknown,
+): AgentBillingChargeResponse => {
   if (Array.isArray(result)) {
-    return result as AgentBillingChargeResponse
+    return result as AgentBillingChargeResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as AgentBillingChargeResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as AgentBillingChargeResponse)
+    : [];
+};
 
 export const AgentBillingChargeService = createApi({
-  reducerPath: 'AgentBillingCharge', // This should remain unique
+  reducerPath: "AgentBillingCharge", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['AgentBillingCharge'],
+  tagTypes: ["AgentBillingCharge"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getAgentBillingChargesPaged: build.query<AgentBillingChargeResponse, { page: number; size?: number; example?: Partial<AgentBillingCharge> }>({
+    getAgentBillingChargesPaged: build.query<
+      AgentBillingChargeResponse,
+      { page: number; size?: number; example?: Partial<AgentBillingCharge> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `AgentBillingCharge?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `AgentBillingCharge?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toAgentBillingChargeList(result)
+        const rows = toAgentBillingChargeList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'AgentBillingCharge' as const, id })),
-          { type: 'AgentBillingCharge', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "AgentBillingCharge" as const, id })),
+          { type: "AgentBillingCharge", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getAgentBillingCharges: build.query<AgentBillingChargeResponse, { example?: Partial<AgentBillingCharge> } | void>({
+    getAgentBillingCharges: build.query<
+      AgentBillingChargeResponse,
+      { example?: Partial<AgentBillingCharge> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,112 @@ export const AgentBillingChargeService = createApi({
         return `AgentBillingCharge`;
       },
       providesTags: (result) => {
-        const rows = toAgentBillingChargeList(result)
+        const rows = toAgentBillingChargeList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'AgentBillingCharge' as const, id })),
-          { type: 'AgentBillingCharge', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "AgentBillingCharge" as const, id })),
+          { type: "AgentBillingCharge", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addAgentBillingCharge: build.mutation<AgentBillingCharge, Partial<AgentBillingCharge>>({
+    addAgentBillingCharge: build.mutation<
+      AgentBillingCharge,
+      Partial<AgentBillingCharge>
+    >({
       query: (body) => ({
         url: `AgentBillingCharge`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'AgentBillingCharge', id: 'LIST' }],
+      invalidatesTags: [{ type: "AgentBillingCharge", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getAgentBillingCharge: build.query<AgentBillingCharge, string>({
       query: (id) => `AgentBillingCharge/${id}`,
-      providesTags: (result, error, id) => [{ type: 'AgentBillingCharge', id }],
+      providesTags: (result, error, id) => [{ type: "AgentBillingCharge", id }],
     }),
 
     // 5) Update
-    updateAgentBillingCharge: build.mutation<void, Pick<AgentBillingCharge, 'id'> & Partial<AgentBillingCharge>>({
+    updateAgentBillingCharge: build.mutation<
+      void,
+      Pick<AgentBillingCharge, "id"> & Partial<AgentBillingCharge>
+    >({
       query: ({ id, ...patch }) => ({
         url: `AgentBillingCharge/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            AgentBillingChargeService.util.updateQueryData('getAgentBillingCharge', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            AgentBillingChargeService.util.updateQueryData(
+              "getAgentBillingCharge",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<AgentBillingCharge, 'id'>) => [
-        { type: 'AgentBillingCharge', id },
-        { type: 'AgentBillingCharge', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<AgentBillingCharge, "id">,
+      ) => [
+        { type: "AgentBillingCharge", id },
+        { type: "AgentBillingCharge", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteAgentBillingCharge: build.mutation<{ success: boolean; id: string }, number>({
+    deleteAgentBillingCharge: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `AgentBillingCharge/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'AgentBillingCharge', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "AgentBillingCharge", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteAgentBillingChargeCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteAgentBillingChargeCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `AgentBillingCharge/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'AgentBillingCharge', id }, { type: 'AgentBillingCharge', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "AgentBillingCharge", id },
+        { type: "AgentBillingCharge", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetAgentBillingChargesPagedQuery`
 export const {
-  useGetAgentBillingChargesPagedQuery,     // immediate fetch
+  useGetAgentBillingChargesPagedQuery, // immediate fetch
   useLazyGetAgentBillingChargesPagedQuery, // lazy fetch
   useGetAgentBillingChargeQuery,
   useGetAgentBillingChargesQuery,
@@ -150,4 +190,4 @@ export const {
   useUpdateAgentBillingChargeMutation,
   useDeleteAgentBillingChargeMutation,
   useDeleteAgentBillingChargeCascadeMutation,
-} = AgentBillingChargeService
+} = AgentBillingChargeService;

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasParameter } from '@thorapi/model/OasParameter';
+import { OasParameter } from "@thorapi/model/OasParameter";
 
 const OasParameterSlice = createSlice({
   name: "OasParameters",
@@ -27,20 +27,23 @@ const OasParameterSlice = createSlice({
     },
 
     OasParameterValueToggled(state, action) {
-      console.log("OasParameter TOGGLE")
-      console.warn(JSON.stringify(action))
-      const OasParameter:OasParameter = state.find((OasParameter) => OasParameter.id === action.payload.OasParameterId);
+      console.log("OasParameter TOGGLE");
+      console.warn(JSON.stringify(action));
+      const OasParameter: OasParameter = state.find(
+        (OasParameter) => OasParameter.id === action.payload.OasParameterId,
+      );
       if (OasParameter) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     OasParameterpropertySet(state, action) {
-      const OasParameter = state.find((OasParameter) => OasParameter.id === action.payload.OasParameterId);
+      const OasParameter = state.find(
+        (OasParameter) => OasParameter.id === action.payload.OasParameterId,
+      );
       if (OasParameter) {
-      //  OasParameter[action.property] = action.payload[action.property];
+        //  OasParameter[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const OasParameterSlice = createSlice({
 export const {
   OasParameterAdded,
   OasParameterValueToggled,
-  OasParameterpropertySet
+  OasParameterpropertySet,
 } = OasParameterSlice.actions;
 export default OasParameterSlice.reducer;

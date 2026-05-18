@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  FileUploadSession,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddFileUploadSessionMutation } from '../../services/FileUploadSessionService';
+import { FileUploadSession } from "@thorapi/model";
+
+import { useAddFileUploadSessionMutation } from "../../services/FileUploadSessionService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,38 +71,46 @@ Tracks multipart upload state until completion. Use when the client needs multip
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        uploadId: Yup.string().required("uploadId is required."),
-        storageDriverId: Yup.string().required("storageDriverId is required."),
-        storageKey: Yup.string().required("storageKey is required."),
-        expiresAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).required("expiresAt is required.").typeError("expiresAt must be a valid date"),
-        completedAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("completedAt must be a valid date"),
-        partSizeBytes: asNumber(Yup.number().integer().typeError("partSizeBytes must be a number")),
-        metadata: Yup.string(),
-        trashed: Yup.boolean(),
+  uploadId: Yup.string().required("uploadId is required."),
+  storageDriverId: Yup.string().required("storageDriverId is required."),
+  storageKey: Yup.string().required("storageKey is required."),
+  expiresAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .required("expiresAt is required.")
+    .typeError("expiresAt must be a valid date"),
+  completedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("completedAt must be a valid date"),
+  partSizeBytes: asNumber(
+    Yup.number().integer().typeError("partSizeBytes must be a number"),
+  ),
+  metadata: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const FileUploadSessionForm: React.FC = () => {
-  const [addFileUploadSession, addFileUploadSessionResult] = useAddFileUploadSessionMutation();
+  const [addFileUploadSession, addFileUploadSessionResult] =
+    useAddFileUploadSessionMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -106,12 +120,18 @@ const FileUploadSessionForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -119,14 +139,14 @@ const FileUploadSessionForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<FileUploadSession> = {
-          uploadId: '',
-          storageDriverId: '',
-          storageKey: '',
-          expiresAt: new Date(),
-          completedAt: new Date(),
-          partSizeBytes: 0,
-          metadata: '',
-          trashed: false,
+    uploadId: "",
+    storageDriverId: "",
+    storageKey: "",
+    expiresAt: new Date(),
+    completedAt: new Date(),
+    partSizeBytes: 0,
+    metadata: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -141,11 +161,14 @@ const FileUploadSessionForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new FileUploadSession:', grants);
+    console.log("Permissions saved for new FileUploadSession:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<FileUploadSession>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<FileUploadSession>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -156,7 +179,7 @@ const FileUploadSessionForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `FileUploadSession created successfully! Would you like to set permissions for this object?`
+          `FileUploadSession created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -164,8 +187,8 @@ const FileUploadSessionForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create FileUploadSession:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create FileUploadSession:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -186,44 +209,37 @@ const FileUploadSessionForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addFileUploadSessionResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New FileUploadSession
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    FileUploadSession
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="uploadId" className="nice-form-control">
                       <b>
                         Upload Id:
-                        {touched.uploadId &&
-                         !errors.uploadId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.uploadId && !errors.uploadId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="uploadId"
-                            value={values?.uploadId}
-                            placeholder="Upload Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="uploadId"
+                        value={values?.uploadId}
+                        placeholder="Upload Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -232,31 +248,27 @@ const FileUploadSessionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="storageDriverId" className="nice-form-control">
+                    <label
+                      htmlFor="storageDriverId"
+                      className="nice-form-control"
+                    >
                       <b>
                         Storage Driver Id:
-                        {touched.storageDriverId &&
-                         !errors.storageDriverId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.storageDriverId && !errors.storageDriverId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="storageDriverId"
-                            value={values?.storageDriverId}
-                            placeholder="Storage Driver Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="storageDriverId"
+                        value={values?.storageDriverId}
+                        placeholder="Storage Driver Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -268,28 +280,21 @@ const FileUploadSessionForm: React.FC = () => {
                     <label htmlFor="storageKey" className="nice-form-control">
                       <b>
                         Storage Key:
-                        {touched.storageKey &&
-                         !errors.storageKey && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.storageKey && !errors.storageKey && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="storageKey"
-                            value={values?.storageKey}
-                            placeholder="Storage Key"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="storageKey"
+                        value={values?.storageKey}
+                        placeholder="Storage Key"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -301,38 +306,38 @@ const FileUploadSessionForm: React.FC = () => {
                     <label htmlFor="expiresAt" className="nice-form-control">
                       <b>
                         Expires At:
-                        {touched.expiresAt &&
-                         !errors.expiresAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.expiresAt && !errors.expiresAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="expiresAt"
-                            type="datetime-local"
-                            value={values.expiresAt ? 
-                              new Date(values.expiresAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('expiresAt', true);
-                              const v = e.target.value;
-                              setFieldValue('expiresAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.expiresAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="expiresAt"
+                        type="datetime-local"
+                        value={
+                          values.expiresAt
+                            ? new Date(values.expiresAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("expiresAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "expiresAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.expiresAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -344,38 +349,38 @@ const FileUploadSessionForm: React.FC = () => {
                     <label htmlFor="completedAt" className="nice-form-control">
                       <b>
                         Completed At:
-                        {touched.completedAt &&
-                         !errors.completedAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.completedAt && !errors.completedAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="completedAt"
-                            type="datetime-local"
-                            value={values.completedAt ? 
-                              new Date(values.completedAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('completedAt', true);
-                              const v = e.target.value;
-                              setFieldValue('completedAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.completedAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="completedAt"
+                        type="datetime-local"
+                        value={
+                          values.completedAt
+                            ? new Date(values.completedAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("completedAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "completedAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.completedAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -384,39 +389,38 @@ const FileUploadSessionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="partSizeBytes" className="nice-form-control">
+                    <label
+                      htmlFor="partSizeBytes"
+                      className="nice-form-control"
+                    >
                       <b>
                         Part Size Bytes:
-                        {touched.partSizeBytes &&
-                         !errors.partSizeBytes && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.partSizeBytes && !errors.partSizeBytes && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-                          {/* LONG FIELD */}
-                          <Field
-                            name="partSizeBytes"
-                            type="number"
-                            value={values.partSizeBytes || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('partSizeBytes', true);
-                              const v = e.target.value;
-                              setFieldValue('partSizeBytes', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.partSizeBytes
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
+                      {/* LONG FIELD */}
+                      <Field
+                        name="partSizeBytes"
+                        type="number"
+                        value={values.partSizeBytes || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("partSizeBytes", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "partSizeBytes",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.partSizeBytes
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -428,28 +432,21 @@ const FileUploadSessionForm: React.FC = () => {
                     <label htmlFor="metadata" className="nice-form-control">
                       <b>
                         Metadata:
-                        {touched.metadata &&
-                         !errors.metadata && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.metadata && !errors.metadata && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="metadata"
-                            value={values?.metadata}
-                            placeholder="Metadata"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="metadata"
+                        value={values?.metadata}
+                        placeholder="Metadata"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -461,32 +458,25 @@ const FileUploadSessionForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -496,45 +486,60 @@ const FileUploadSessionForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New FileUploadSession
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New FileUploadSession
+                    </CoolButton>
 
-                  {(addFileUploadSessionResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addFileUploadSessionResult as any).error ? (addFileUploadSessionResult as any).error.data : (addFileUploadSessionResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addFileUploadSessionResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addFileUploadSessionResult as any).error
+                              ? (addFileUploadSessionResult as any).error.data
+                              : (addFileUploadSessionResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addFileUploadSessionResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addFileUploadSessionResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addFileUploadSessionResult: {JSON.stringify(addFileUploadSessionResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addFileUploadSessionResult:{" "}
+                    {JSON.stringify(addFileUploadSessionResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -554,8 +559,5 @@ const FileUploadSessionForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default FileUploadSessionForm;
-

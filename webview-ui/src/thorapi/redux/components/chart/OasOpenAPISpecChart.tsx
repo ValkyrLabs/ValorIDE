@@ -19,20 +19,32 @@ Description: OasOpenAPISpec
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, OasOpenAPISpec } from '@thorapi/model';
-import { useGetOasOpenAPISpecsQuery, useAddOasOpenAPISpecMutation, useUpdateOasOpenAPISpecMutation } from '../../services/OasOpenAPISpecService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, OasOpenAPISpec } from "@thorapi/model";
+import {
+  useGetOasOpenAPISpecsQuery,
+  useAddOasOpenAPISpecMutation,
+  useUpdateOasOpenAPISpecMutation,
+} from "../../services/OasOpenAPISpecService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const OasOpenAPISpecChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetOasOpenAPISpecsQuery();
 
   const [data, setData] = useState<OasOpenAPISpec[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<OasOpenAPISpec>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const OasOpenAPISpecChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const OasOpenAPISpecChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((oasopenapispec: DataObject) => [oasopenapispec])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((oasopenapispec: DataObject) => [oasopenapispec])}
+        />
+      )}
     </>
   );
 };

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ExecModuleObservabilityConfig } from '@thorapi/model/ExecModuleObservabilityConfig';
+import { ExecModuleObservabilityConfig } from "@thorapi/model/ExecModuleObservabilityConfig";
 
 const ExecModuleObservabilityConfigSlice = createSlice({
   name: "ExecModuleObservabilityConfigs",
@@ -27,20 +27,28 @@ const ExecModuleObservabilityConfigSlice = createSlice({
     },
 
     ExecModuleObservabilityConfigValueToggled(state, action) {
-      console.log("ExecModuleObservabilityConfig TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ExecModuleObservabilityConfig:ExecModuleObservabilityConfig = state.find((ExecModuleObservabilityConfig) => ExecModuleObservabilityConfig.id === action.payload.ExecModuleObservabilityConfigId);
+      console.log("ExecModuleObservabilityConfig TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ExecModuleObservabilityConfig: ExecModuleObservabilityConfig =
+        state.find(
+          (ExecModuleObservabilityConfig) =>
+            ExecModuleObservabilityConfig.id ===
+            action.payload.ExecModuleObservabilityConfigId,
+        );
       if (ExecModuleObservabilityConfig) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ExecModuleObservabilityConfigpropertySet(state, action) {
-      const ExecModuleObservabilityConfig = state.find((ExecModuleObservabilityConfig) => ExecModuleObservabilityConfig.id === action.payload.ExecModuleObservabilityConfigId);
+      const ExecModuleObservabilityConfig = state.find(
+        (ExecModuleObservabilityConfig) =>
+          ExecModuleObservabilityConfig.id ===
+          action.payload.ExecModuleObservabilityConfigId,
+      );
       if (ExecModuleObservabilityConfig) {
-      //  ExecModuleObservabilityConfig[action.property] = action.payload[action.property];
+        //  ExecModuleObservabilityConfig[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +57,6 @@ const ExecModuleObservabilityConfigSlice = createSlice({
 export const {
   ExecModuleObservabilityConfigAdded,
   ExecModuleObservabilityConfigValueToggled,
-  ExecModuleObservabilityConfigpropertySet
+  ExecModuleObservabilityConfigpropertySet,
 } = ExecModuleObservabilityConfigSlice.actions;
 export default ExecModuleObservabilityConfigSlice.reducer;

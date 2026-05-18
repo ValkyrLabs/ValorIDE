@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,172 +36,184 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface ContentMediaLink
  */
-export type ContentMediaLink  = DataObject & {
-    /**
-     * used when linked to an Application
-     * @type {string}
-     * @memberof ContentMediaLink
-     */
-    applicationId?: string;
-    /**
-     * used when linked to ContentData
-     * @type {string}
-     * @memberof ContentMediaLink
-     */
-    contentDataId?: string;
-    /**
-     * Specialized usage role for the media object, including article presentation roles such as header/hero/cover.
-     * @type {string}
-     * @memberof ContentMediaLink
-     */
-    contentUse?: ContentMediaLinkContentUseEnum;
-    /**
-     * content type of the media object
-     * @type {string}
-     * @memberof ContentMediaLink
-     */
-    contentType?: ContentMediaLinkContentTypeEnum;
-    /**
-     * url to the media object
-     * @type {string}
-     * @memberof ContentMediaLink
-     */
-    mediaUrl?: string;
-    /**
-     * path to a file
-     * @type {string}
-     * @memberof ContentMediaLink
-     */
-    fileName?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof ContentMediaLink
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof ContentMediaLink
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof ContentMediaLink
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof ContentMediaLink
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof ContentMediaLink
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof ContentMediaLink
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof ContentMediaLink
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof ContentMediaLink
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof ContentMediaLink
-     */
-    trashed?: boolean;
-}
+export type ContentMediaLink = DataObject & {
+  /**
+   * used when linked to an Application
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  applicationId?: string;
+  /**
+   * used when linked to ContentData
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  contentDataId?: string;
+  /**
+   * Specialized usage role for the media object, including article presentation roles such as header/hero/cover.
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  contentUse?: ContentMediaLinkContentUseEnum;
+  /**
+   * content type of the media object
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  contentType?: ContentMediaLinkContentTypeEnum;
+  /**
+   * url to the media object
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  mediaUrl?: string;
+  /**
+   * path to a file
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  fileName?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof ContentMediaLink
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof ContentMediaLink
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof ContentMediaLink
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof ContentMediaLink
+   */
+  trashed?: boolean;
+};
 
 export function ContentMediaLinkFromJSON(json: any): ContentMediaLink {
-    return {
-        ...DataObjectFromJSON(json),
-        'applicationId': !exists(json, 'applicationId') ? undefined : json['applicationId'],
-        'contentDataId': !exists(json, 'contentDataId') ? undefined : json['contentDataId'],
-        'contentUse': !exists(json, 'contentUse') ? undefined : json['contentUse'],
-        'contentType': !exists(json, 'contentType') ? undefined : json['contentType'],
-        'mediaUrl': !exists(json, 'mediaUrl') ? undefined : json['mediaUrl'],
-        'fileName': !exists(json, 'fileName') ? undefined : json['fileName'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    applicationId: !exists(json, "applicationId")
+      ? undefined
+      : json["applicationId"],
+    contentDataId: !exists(json, "contentDataId")
+      ? undefined
+      : json["contentDataId"],
+    contentUse: !exists(json, "contentUse") ? undefined : json["contentUse"],
+    contentType: !exists(json, "contentType") ? undefined : json["contentType"],
+    mediaUrl: !exists(json, "mediaUrl") ? undefined : json["mediaUrl"],
+    fileName: !exists(json, "fileName") ? undefined : json["fileName"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function ContentMediaLinkToJSON(value?: ContentMediaLink): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'applicationId': value.applicationId,
-        'contentDataId': value.contentDataId,
-        'contentUse': value.contentUse,
-        'contentType': value.contentType,
-        'mediaUrl': value.mediaUrl,
-        'fileName': value.fileName,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    applicationId: value.applicationId,
+    contentDataId: value.contentDataId,
+    contentUse: value.contentUse,
+    contentType: value.contentType,
+    mediaUrl: value.mediaUrl,
+    fileName: value.fileName,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum ContentMediaLinkContentUseEnum {
-    NONE = 'none',
-    SCREENSHOT = 'screenshot',
-    SELFIE = 'selfie',
-    PORTRAIT = 'portrait',
-    BANNER = 'banner',
-    HERO = 'hero',
-    HEADER = 'header',
-    COVER = 'cover',
-    PROMOTIONAL = 'promotional',
-    INFORMATIONAL = 'informational',
-    ENTERTAINMENT = 'entertainment',
-    PRODUCT = 'product',
-    SUPPORT = 'support',
-    TRAINING = 'training'
+  NONE = "none",
+  SCREENSHOT = "screenshot",
+  SELFIE = "selfie",
+  PORTRAIT = "portrait",
+  BANNER = "banner",
+  HERO = "hero",
+  HEADER = "header",
+  COVER = "cover",
+  PROMOTIONAL = "promotional",
+  INFORMATIONAL = "informational",
+  ENTERTAINMENT = "entertainment",
+  PRODUCT = "product",
+  SUPPORT = "support",
+  TRAINING = "training",
 }
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum ContentMediaLinkContentTypeEnum {
-    IMAGE = 'image',
-    ICON = 'icon',
-    VIDEO = 'video',
-    AUDIO = 'audio',
-    TEXT = 'text',
-    JSON = 'json',
-    YAML = 'yaml',
-    XML = 'xml',
-    MARKDOWN = 'markdown',
-    SPREADSHEET = 'spreadsheet',
-    PDF = 'pdf'
+  IMAGE = "image",
+  ICON = "icon",
+  VIDEO = "video",
+  AUDIO = "audio",
+  TEXT = "text",
+  JSON = "json",
+  YAML = "yaml",
+  XML = "xml",
+  MARKDOWN = "markdown",
+  SPREADSHEET = "spreadsheet",
+  PDF = "pdf",
 }
-
-

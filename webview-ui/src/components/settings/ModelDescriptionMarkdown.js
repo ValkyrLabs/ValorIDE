@@ -124,9 +124,9 @@ export const ModelDescriptionMarkdown = memo(
           ],
         }),
       },
-      key
+      key,
     );
-  }
+  },
 );
 export default ModelDescriptionMarkdown;
 //# sourceMappingURL=ModelDescriptionMarkdown.js.map

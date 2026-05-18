@@ -19,20 +19,35 @@ Description: AppendTrustEventRequest
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, AppendTrustEventRequest } from '@thorapi/model';
-import { useGetAppendTrustEventRequestsQuery, useAddAppendTrustEventRequestMutation, useUpdateAppendTrustEventRequestMutation } from '../../services/AppendTrustEventRequestService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, AppendTrustEventRequest } from "@thorapi/model";
+import {
+  useGetAppendTrustEventRequestsQuery,
+  useAddAppendTrustEventRequestMutation,
+  useUpdateAppendTrustEventRequestMutation,
+} from "../../services/AppendTrustEventRequestService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const AppendTrustEventRequestChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetAppendTrustEventRequestsQuery();
+  const { data: initialData = [], isLoading } =
+    useGetAppendTrustEventRequestsQuery();
 
   const [data, setData] = useState<AppendTrustEventRequest[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<AppendTrustEventRequest>>({});
-  
+  const [chartData, setChartData] = useState<Partial<AppendTrustEventRequest>>(
+    {},
+  );
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +65,9 @@ const AppendTrustEventRequestChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +75,15 @@ const AppendTrustEventRequestChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((appendtrusteventrequest: DataObject) => [appendtrusteventrequest])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((appendtrusteventrequest: DataObject) => [
+            appendtrusteventrequest,
+          ])}
+        />
+      )}
     </>
   );
 };

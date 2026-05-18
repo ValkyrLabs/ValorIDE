@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { InitUploadRequest } from '@thorapi/model/InitUploadRequest'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { InitUploadRequest } from "@thorapi/model/InitUploadRequest";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type InitUploadRequestResponse = InitUploadRequest[]
+type InitUploadRequestResponse = InitUploadRequest[];
 
-const toInitUploadRequestList = (result: unknown): InitUploadRequestResponse => {
+const toInitUploadRequestList = (
+  result: unknown,
+): InitUploadRequestResponse => {
   if (Array.isArray(result)) {
-    return result as InitUploadRequestResponse
+    return result as InitUploadRequestResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as InitUploadRequestResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as InitUploadRequestResponse)
+    : [];
+};
 
 export const InitUploadRequestService = createApi({
-  reducerPath: 'InitUploadRequest', // This should remain unique
+  reducerPath: "InitUploadRequest", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['InitUploadRequest'],
+  tagTypes: ["InitUploadRequest"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getInitUploadRequestsPaged: build.query<InitUploadRequestResponse, { page: number; size?: number; example?: Partial<InitUploadRequest> }>({
+    getInitUploadRequestsPaged: build.query<
+      InitUploadRequestResponse,
+      { page: number; size?: number; example?: Partial<InitUploadRequest> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `InitUploadRequest?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `InitUploadRequest?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toInitUploadRequestList(result)
+        const rows = toInitUploadRequestList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'InitUploadRequest' as const, id })),
-          { type: 'InitUploadRequest', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "InitUploadRequest" as const, id })),
+          { type: "InitUploadRequest", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getInitUploadRequests: build.query<InitUploadRequestResponse, { example?: Partial<InitUploadRequest> } | void>({
+    getInitUploadRequests: build.query<
+      InitUploadRequestResponse,
+      { example?: Partial<InitUploadRequest> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,112 @@ export const InitUploadRequestService = createApi({
         return `InitUploadRequest`;
       },
       providesTags: (result) => {
-        const rows = toInitUploadRequestList(result)
+        const rows = toInitUploadRequestList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'InitUploadRequest' as const, id })),
-          { type: 'InitUploadRequest', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "InitUploadRequest" as const, id })),
+          { type: "InitUploadRequest", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addInitUploadRequest: build.mutation<InitUploadRequest, Partial<InitUploadRequest>>({
+    addInitUploadRequest: build.mutation<
+      InitUploadRequest,
+      Partial<InitUploadRequest>
+    >({
       query: (body) => ({
         url: `InitUploadRequest`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'InitUploadRequest', id: 'LIST' }],
+      invalidatesTags: [{ type: "InitUploadRequest", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getInitUploadRequest: build.query<InitUploadRequest, string>({
       query: (id) => `InitUploadRequest/${id}`,
-      providesTags: (result, error, id) => [{ type: 'InitUploadRequest', id }],
+      providesTags: (result, error, id) => [{ type: "InitUploadRequest", id }],
     }),
 
     // 5) Update
-    updateInitUploadRequest: build.mutation<void, Pick<InitUploadRequest, 'id'> & Partial<InitUploadRequest>>({
+    updateInitUploadRequest: build.mutation<
+      void,
+      Pick<InitUploadRequest, "id"> & Partial<InitUploadRequest>
+    >({
       query: ({ id, ...patch }) => ({
         url: `InitUploadRequest/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            InitUploadRequestService.util.updateQueryData('getInitUploadRequest', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            InitUploadRequestService.util.updateQueryData(
+              "getInitUploadRequest",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<InitUploadRequest, 'id'>) => [
-        { type: 'InitUploadRequest', id },
-        { type: 'InitUploadRequest', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<InitUploadRequest, "id">,
+      ) => [
+        { type: "InitUploadRequest", id },
+        { type: "InitUploadRequest", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteInitUploadRequest: build.mutation<{ success: boolean; id: string }, number>({
+    deleteInitUploadRequest: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `InitUploadRequest/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'InitUploadRequest', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "InitUploadRequest", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteInitUploadRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteInitUploadRequestCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `InitUploadRequest/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'InitUploadRequest', id }, { type: 'InitUploadRequest', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "InitUploadRequest", id },
+        { type: "InitUploadRequest", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetInitUploadRequestsPagedQuery`
 export const {
-  useGetInitUploadRequestsPagedQuery,     // immediate fetch
+  useGetInitUploadRequestsPagedQuery, // immediate fetch
   useLazyGetInitUploadRequestsPagedQuery, // lazy fetch
   useGetInitUploadRequestQuery,
   useGetInitUploadRequestsQuery,
@@ -150,4 +190,4 @@ export const {
   useUpdateInitUploadRequestMutation,
   useDeleteInitUploadRequestMutation,
   useDeleteInitUploadRequestCascadeMutation,
-} = InitUploadRequestService
+} = InitUploadRequestService;

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { UpdateFileRequest } from '@thorapi/model/UpdateFileRequest';
+import { UpdateFileRequest } from "@thorapi/model/UpdateFileRequest";
 
 const UpdateFileRequestSlice = createSlice({
   name: "UpdateFileRequests",
@@ -27,20 +27,25 @@ const UpdateFileRequestSlice = createSlice({
     },
 
     UpdateFileRequestValueToggled(state, action) {
-      console.log("UpdateFileRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const UpdateFileRequest:UpdateFileRequest = state.find((UpdateFileRequest) => UpdateFileRequest.id === action.payload.UpdateFileRequestId);
+      console.log("UpdateFileRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const UpdateFileRequest: UpdateFileRequest = state.find(
+        (UpdateFileRequest) =>
+          UpdateFileRequest.id === action.payload.UpdateFileRequestId,
+      );
       if (UpdateFileRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     UpdateFileRequestpropertySet(state, action) {
-      const UpdateFileRequest = state.find((UpdateFileRequest) => UpdateFileRequest.id === action.payload.UpdateFileRequestId);
+      const UpdateFileRequest = state.find(
+        (UpdateFileRequest) =>
+          UpdateFileRequest.id === action.payload.UpdateFileRequestId,
+      );
       if (UpdateFileRequest) {
-      //  UpdateFileRequest[action.property] = action.payload[action.property];
+        //  UpdateFileRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const UpdateFileRequestSlice = createSlice({
 export const {
   UpdateFileRequestAdded,
   UpdateFileRequestValueToggled,
-  UpdateFileRequestpropertySet
+  UpdateFileRequestpropertySet,
 } = UpdateFileRequestSlice.actions;
 export default UpdateFileRequestSlice.reducer;

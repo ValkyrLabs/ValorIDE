@@ -26,16 +26,9 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
-import {
-
-
-    SalesOrder,
-    SalesOrderFromJSON,
-    SalesOrderToJSON,
-} from './';
-
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { SalesOrder, SalesOrderFromJSON, SalesOrderToJSON } from "./";
 
 // thorapi
 
@@ -44,146 +37,162 @@ import {
  * @export
  * @interface Invoice
  */
-export type Invoice  = DataObject & {
-    /**
-     * Owning customer account
-     * @type {string}
-     * @memberof Invoice
-     */
-    customerId?: string;
-    /**
-     * 
-     * @type {SalesOrder}
-     * @memberof Invoice
-     */
-    salesOrder?: SalesOrder;
-    /**
-     * 
-     * @type {Date}
-     * @memberof Invoice
-     */
-    invoiceDate?: Date;
-    /**
-     * 
-     * @type {Date}
-     * @memberof Invoice
-     */
-    dueDate?: Date;
-    /**
-     * 
-     * @type {number}
-     * @memberof Invoice
-     */
-    amount?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Invoice
-     */
-    status?: InvoiceStatusEnum;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof Invoice
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof Invoice
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof Invoice
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof Invoice
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof Invoice
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof Invoice
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof Invoice
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof Invoice
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof Invoice
-     */
-    trashed?: boolean;
-}
+export type Invoice = DataObject & {
+  /**
+   * Owning customer account
+   * @type {string}
+   * @memberof Invoice
+   */
+  customerId?: string;
+  /**
+   *
+   * @type {SalesOrder}
+   * @memberof Invoice
+   */
+  salesOrder?: SalesOrder;
+  /**
+   *
+   * @type {Date}
+   * @memberof Invoice
+   */
+  invoiceDate?: Date;
+  /**
+   *
+   * @type {Date}
+   * @memberof Invoice
+   */
+  dueDate?: Date;
+  /**
+   *
+   * @type {number}
+   * @memberof Invoice
+   */
+  amount?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof Invoice
+   */
+  status?: InvoiceStatusEnum;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof Invoice
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof Invoice
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof Invoice
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof Invoice
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof Invoice
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof Invoice
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof Invoice
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof Invoice
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof Invoice
+   */
+  trashed?: boolean;
+};
 
 export function InvoiceFromJSON(json: any): Invoice {
-    return {
-        ...DataObjectFromJSON(json),
-        'customerId': !exists(json, 'customerId') ? undefined : json['customerId'],
-        'salesOrder': !exists(json, 'salesOrder') ? undefined : SalesOrderFromJSON(json['salesOrder']),
-        'invoiceDate': !exists(json, 'invoiceDate') ? undefined : new Date(json['invoiceDate']),
-        'dueDate': !exists(json, 'dueDate') ? undefined : new Date(json['dueDate']),
-        'amount': !exists(json, 'amount') ? undefined : json['amount'],
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    customerId: !exists(json, "customerId") ? undefined : json["customerId"],
+    salesOrder: !exists(json, "salesOrder")
+      ? undefined
+      : SalesOrderFromJSON(json["salesOrder"]),
+    invoiceDate: !exists(json, "invoiceDate")
+      ? undefined
+      : new Date(json["invoiceDate"]),
+    dueDate: !exists(json, "dueDate") ? undefined : new Date(json["dueDate"]),
+    amount: !exists(json, "amount") ? undefined : json["amount"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function InvoiceToJSON(value?: Invoice): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'customerId': value.customerId,
-        'salesOrder': SalesOrderToJSON(value.salesOrder),
-        'invoiceDate': value.invoiceDate === undefined ? undefined : value.invoiceDate.toISOString(),
-        'dueDate': value.dueDate === undefined ? undefined : value.dueDate.toISOString(),
-        'amount': value.amount,
-        'status': value.status,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    customerId: value.customerId,
+    salesOrder: SalesOrderToJSON(value.salesOrder),
+    invoiceDate:
+      value.invoiceDate === undefined
+        ? undefined
+        : value.invoiceDate.toISOString(),
+    dueDate:
+      value.dueDate === undefined ? undefined : value.dueDate.toISOString(),
+    amount: value.amount,
+    status: value.status,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum InvoiceStatusEnum {
-    DRAFT = 'draft',
-    SENT = 'sent',
-    PAID = 'paid',
-    OVERDUE = 'overdue',
-    CANCELED = 'canceled'
+  DRAFT = "draft",
+  SENT = "sent",
+  PAID = "paid",
+  OVERDUE = "overdue",
+  CANCELED = "canceled",
 }
-
-

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { TrustPolicyBinding } from '@thorapi/model/TrustPolicyBinding';
+import { TrustPolicyBinding } from "@thorapi/model/TrustPolicyBinding";
 
 const TrustPolicyBindingSlice = createSlice({
   name: "TrustPolicyBindings",
@@ -27,20 +27,25 @@ const TrustPolicyBindingSlice = createSlice({
     },
 
     TrustPolicyBindingValueToggled(state, action) {
-      console.log("TrustPolicyBinding TOGGLE")
-      console.warn(JSON.stringify(action))
-      const TrustPolicyBinding:TrustPolicyBinding = state.find((TrustPolicyBinding) => TrustPolicyBinding.id === action.payload.TrustPolicyBindingId);
+      console.log("TrustPolicyBinding TOGGLE");
+      console.warn(JSON.stringify(action));
+      const TrustPolicyBinding: TrustPolicyBinding = state.find(
+        (TrustPolicyBinding) =>
+          TrustPolicyBinding.id === action.payload.TrustPolicyBindingId,
+      );
       if (TrustPolicyBinding) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     TrustPolicyBindingpropertySet(state, action) {
-      const TrustPolicyBinding = state.find((TrustPolicyBinding) => TrustPolicyBinding.id === action.payload.TrustPolicyBindingId);
+      const TrustPolicyBinding = state.find(
+        (TrustPolicyBinding) =>
+          TrustPolicyBinding.id === action.payload.TrustPolicyBindingId,
+      );
       if (TrustPolicyBinding) {
-      //  TrustPolicyBinding[action.property] = action.payload[action.property];
+        //  TrustPolicyBinding[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const TrustPolicyBindingSlice = createSlice({
 export const {
   TrustPolicyBindingAdded,
   TrustPolicyBindingValueToggled,
-  TrustPolicyBindingpropertySet
+  TrustPolicyBindingpropertySet,
 } = TrustPolicyBindingSlice.actions;
 export default TrustPolicyBindingSlice.reducer;

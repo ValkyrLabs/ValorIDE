@@ -13,32 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  SpaceMember,
-  SpaceMemberRoleEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddSpaceMemberMutation } from '../../services/SpaceMemberService';
+import { SpaceMember, SpaceMemberRoleEnum } from "@thorapi/model";
+
+import { useAddSpaceMemberMutation } from "../../services/SpaceMemberService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -62,41 +67,40 @@ Membership record linking a principal to a space with a specific role.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const RoleValidation = () => {
-  return [
-    'viewer',
-    'contributor',
-    'admin',
-    'owner',
-  ];
+  return ["viewer", "contributor", "admin", "owner"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-      role: Yup.mixed()
-        .oneOf(RoleValidation(), "Invalid value for role")
-        .required("role is required."),
-        invitedAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("invitedAt must be a valid date"),
-        acceptedAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("acceptedAt must be a valid date"),
-        trashed: Yup.boolean(),
+  role: Yup.mixed()
+    .oneOf(RoleValidation(), "Invalid value for role")
+    .required("role is required."),
+  invitedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("invitedAt must be a valid date"),
+  acceptedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("acceptedAt must be a valid date"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -113,12 +117,18 @@ const SpaceMemberForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -126,10 +136,10 @@ const SpaceMemberForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<SpaceMember> = {
-        role: undefined,
-          invitedAt: new Date(),
-          acceptedAt: new Date(),
-          trashed: false,
+    role: undefined,
+    invitedAt: new Date(),
+    acceptedAt: new Date(),
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -144,11 +154,14 @@ const SpaceMemberForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new SpaceMember:', grants);
+    console.log("Permissions saved for new SpaceMember:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<SpaceMember>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<SpaceMember>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -159,7 +172,7 @@ const SpaceMemberForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `SpaceMember created successfully! Would you like to set permissions for this object?`
+          `SpaceMember created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -167,8 +180,8 @@ const SpaceMemberForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create SpaceMember:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create SpaceMember:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -189,46 +202,45 @@ const SpaceMemberForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addSpaceMemberResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New SpaceMember
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New SpaceMember
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="role" className="nice-form-control">
                       <b>
                         Role:
-                        {touched.role &&
-                         !errors.role && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.role && !errors.role && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="role"
-                          value={values.role || ''}
-                          className={
-                            errors.role
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('role', true);
-                            setFieldValue('role', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Role" />
-                          <RoleLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="role"
+                        value={values.role || ""}
+                        className={
+                          errors.role
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("role", true);
+                          setFieldValue("role", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Role" />
+                        <RoleLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -240,38 +252,38 @@ const SpaceMemberForm: React.FC = () => {
                     <label htmlFor="invitedAt" className="nice-form-control">
                       <b>
                         Invited At:
-                        {touched.invitedAt &&
-                         !errors.invitedAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.invitedAt && !errors.invitedAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="invitedAt"
-                            type="datetime-local"
-                            value={values.invitedAt ? 
-                              new Date(values.invitedAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('invitedAt', true);
-                              const v = e.target.value;
-                              setFieldValue('invitedAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.invitedAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="invitedAt"
+                        type="datetime-local"
+                        value={
+                          values.invitedAt
+                            ? new Date(values.invitedAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("invitedAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "invitedAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.invitedAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -283,38 +295,38 @@ const SpaceMemberForm: React.FC = () => {
                     <label htmlFor="acceptedAt" className="nice-form-control">
                       <b>
                         Accepted At:
-                        {touched.acceptedAt &&
-                         !errors.acceptedAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.acceptedAt && !errors.acceptedAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="acceptedAt"
-                            type="datetime-local"
-                            value={values.acceptedAt ? 
-                              new Date(values.acceptedAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('acceptedAt', true);
-                              const v = e.target.value;
-                              setFieldValue('acceptedAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.acceptedAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="acceptedAt"
+                        type="datetime-local"
+                        value={
+                          values.acceptedAt
+                            ? new Date(values.acceptedAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("acceptedAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "acceptedAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.acceptedAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -326,32 +338,25 @@ const SpaceMemberForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -361,45 +366,58 @@ const SpaceMemberForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New SpaceMember
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New SpaceMember
+                    </CoolButton>
 
-                  {(addSpaceMemberResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addSpaceMemberResult as any).error ? (addSpaceMemberResult as any).error.data : (addSpaceMemberResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addSpaceMemberResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addSpaceMemberResult as any).error
+                              ? (addSpaceMemberResult as any).error.data
+                              : (addSpaceMemberResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addSpaceMemberResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addSpaceMemberResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addSpaceMemberResult: {JSON.stringify(addSpaceMemberResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addSpaceMemberResult: {JSON.stringify(addSpaceMemberResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -431,16 +449,13 @@ kebabcase role-lookup
 const RoleLookup = () => {
   return (
     <>
-      <option value='viewer' label="Viewer" />
-      <option value='contributor' label="Contributor" />
-      <option value='admin' label="Admin" />
-      <option value='owner' label="Owner" />
+      <option value="viewer" label="Viewer" />
+      <option value="contributor" label="Contributor" />
+      <option value="admin" label="Admin" />
+      <option value="owner" label="Owner" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default SpaceMemberForm;
-

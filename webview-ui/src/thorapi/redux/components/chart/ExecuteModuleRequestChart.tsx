@@ -19,20 +19,33 @@ Description: ExecuteModuleRequest
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, ExecuteModuleRequest } from '@thorapi/model';
-import { useGetExecuteModuleRequestsQuery, useAddExecuteModuleRequestMutation, useUpdateExecuteModuleRequestMutation } from '../../services/ExecuteModuleRequestService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, ExecuteModuleRequest } from "@thorapi/model";
+import {
+  useGetExecuteModuleRequestsQuery,
+  useAddExecuteModuleRequestMutation,
+  useUpdateExecuteModuleRequestMutation,
+} from "../../services/ExecuteModuleRequestService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const ExecuteModuleRequestChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetExecuteModuleRequestsQuery();
+  const { data: initialData = [], isLoading } =
+    useGetExecuteModuleRequestsQuery();
 
   const [data, setData] = useState<ExecuteModuleRequest[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<ExecuteModuleRequest>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +63,9 @@ const ExecuteModuleRequestChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +73,15 @@ const ExecuteModuleRequestChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((executemodulerequest: DataObject) => [executemodulerequest])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((executemodulerequest: DataObject) => [
+            executemodulerequest,
+          ])}
+        />
+      )}
     </>
   );
 };

@@ -26,72 +26,74 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
-import {
-
-
-    BuildArtifact,
-    BuildArtifactFromJSON,
-    BuildArtifactToJSON,
-} from './';
-
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { BuildArtifact, BuildArtifactFromJSON, BuildArtifactToJSON } from "./";
 
 // thorapi
 
 /**
- * 
+ *
  * @export
  * @interface ListDeployableApplications200ResponseInner
  */
-export type ListDeployableApplications200ResponseInner  = DataObject & {
-    /**
-     * 
-     * @type {string}
-     * @memberof ListDeployableApplications200ResponseInner
-     */
-    applicationId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ListDeployableApplications200ResponseInner
-     */
-    name?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ListDeployableApplications200ResponseInner
-     */
-    description?: string;
-    /**
-     * 
-     * @type {Array<BuildArtifact>}
-     * @memberof ListDeployableApplications200ResponseInner
-     */
-    buildArtifacts?: Array<BuildArtifact>;
+export type ListDeployableApplications200ResponseInner = DataObject & {
+  /**
+   *
+   * @type {string}
+   * @memberof ListDeployableApplications200ResponseInner
+   */
+  applicationId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ListDeployableApplications200ResponseInner
+   */
+  name?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ListDeployableApplications200ResponseInner
+   */
+  description?: string;
+  /**
+   *
+   * @type {Array<BuildArtifact>}
+   * @memberof ListDeployableApplications200ResponseInner
+   */
+  buildArtifacts?: Array<BuildArtifact>;
+};
+
+export function ListDeployableApplications200ResponseInnerFromJSON(
+  json: any,
+): ListDeployableApplications200ResponseInner {
+  return {
+    ...DataObjectFromJSON(json),
+    applicationId: !exists(json, "applicationId")
+      ? undefined
+      : json["applicationId"],
+    name: !exists(json, "name") ? undefined : json["name"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    buildArtifacts: !exists(json, "buildArtifacts")
+      ? undefined
+      : (json["buildArtifacts"] as Array<any>).map(BuildArtifactFromJSON),
+  };
 }
 
-export function ListDeployableApplications200ResponseInnerFromJSON(json: any): ListDeployableApplications200ResponseInner {
-    return {
-        ...DataObjectFromJSON(json),
-        'applicationId': !exists(json, 'applicationId') ? undefined : json['applicationId'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'buildArtifacts': !exists(json, 'buildArtifacts') ? undefined : (json['buildArtifacts'] as Array<any>).map(BuildArtifactFromJSON),
-    };
+export function ListDeployableApplications200ResponseInnerToJSON(
+  value?: ListDeployableApplications200ResponseInner,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    applicationId: value.applicationId,
+    name: value.name,
+    description: value.description,
+    buildArtifacts:
+      value.buildArtifacts === undefined
+        ? undefined
+        : (value.buildArtifacts as Array<any>).map(BuildArtifactToJSON),
+  };
 }
-
-export function ListDeployableApplications200ResponseInnerToJSON(value?: ListDeployableApplications200ResponseInner): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'applicationId': value.applicationId,
-        'name': value.name,
-        'description': value.description,
-        'buildArtifacts': value.buildArtifacts === undefined ? undefined : (value.buildArtifacts as Array<any>).map(BuildArtifactToJSON),
-    };
-}
-
-

@@ -17,95 +17,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // SubscriberList
 
-export const FETCH_SUBSCRIBERLIST_REQUEST = 'FETCH_SUBSCRIBERLIST_REQUEST';
-export const FETCH_SUBSCRIBERLIST_SUCCESS = 'FETCH_SUBSCRIBERLIST_SUCCESS';
-export const FETCH_SUBSCRIBERLIST_FAILURE = 'FETCH_SUBSCRIBERLIST_FAILURE';
+export const FETCH_SUBSCRIBERLIST_REQUEST = "FETCH_SUBSCRIBERLIST_REQUEST";
+export const FETCH_SUBSCRIBERLIST_SUCCESS = "FETCH_SUBSCRIBERLIST_SUCCESS";
+export const FETCH_SUBSCRIBERLIST_FAILURE = "FETCH_SUBSCRIBERLIST_FAILURE";
 
-export const ADD_SUBSCRIBERLIST_REQUEST = 'ADD_SUBSCRIBERLIST_REQUEST';
-export const ADD_SUBSCRIBERLIST_SUCCESS = 'ADD_SUBSCRIBERLIST_SUCCESS';
-export const ADD_SUBSCRIBERLIST_FAILURE = 'ADD_SUBSCRIBERLIST_FAILURE';
+export const ADD_SUBSCRIBERLIST_REQUEST = "ADD_SUBSCRIBERLIST_REQUEST";
+export const ADD_SUBSCRIBERLIST_SUCCESS = "ADD_SUBSCRIBERLIST_SUCCESS";
+export const ADD_SUBSCRIBERLIST_FAILURE = "ADD_SUBSCRIBERLIST_FAILURE";
 
-export const UPDATE_SUBSCRIBERLIST_REQUEST = 'UPDATE_SUBSCRIBERLIST_REQUEST';
-export const UPDATE_SUBSCRIBERLIST_SUCCESS = 'UPDATE_SUBSCRIBERLIST_SUCCESS';
-export const UPDATE_SUBSCRIBERLIST_FAILURE = 'UPDATE_SUBSCRIBERLIST_FAILURE';
+export const UPDATE_SUBSCRIBERLIST_REQUEST = "UPDATE_SUBSCRIBERLIST_REQUEST";
+export const UPDATE_SUBSCRIBERLIST_SUCCESS = "UPDATE_SUBSCRIBERLIST_SUCCESS";
+export const UPDATE_SUBSCRIBERLIST_FAILURE = "UPDATE_SUBSCRIBERLIST_FAILURE";
 
-export const DELETE_SUBSCRIBERLIST_REQUEST = 'DELETE_SUBSCRIBERLIST_REQUEST';
-export const DELETE_SUBSCRIBERLIST_SUCCESS = 'DELETE_SUBSCRIBERLIST_SUCCESS';
-export const DELETE_SUBSCRIBERLIST_FAILURE = 'DELETE_SUBSCRIBERLIST_FAILURE';
+export const DELETE_SUBSCRIBERLIST_REQUEST = "DELETE_SUBSCRIBERLIST_REQUEST";
+export const DELETE_SUBSCRIBERLIST_SUCCESS = "DELETE_SUBSCRIBERLIST_SUCCESS";
+export const DELETE_SUBSCRIBERLIST_FAILURE = "DELETE_SUBSCRIBERLIST_FAILURE";
 
-export const LIST_SUBSCRIBERLIST_REQUEST = 'LIST_SUBSCRIBERLIST_REQUEST';
-export const LIST_SUBSCRIBERLIST_SUCCESS = 'LIST_SUBSCRIBERLIST_SUCCESS';
-export const LIST_SUBSCRIBERLIST_FAILURE = 'LIST_SUBSCRIBERLIST_FAILURE';
+export const LIST_SUBSCRIBERLIST_REQUEST = "LIST_SUBSCRIBERLIST_REQUEST";
+export const LIST_SUBSCRIBERLIST_SUCCESS = "LIST_SUBSCRIBERLIST_SUCCESS";
+export const LIST_SUBSCRIBERLIST_FAILURE = "LIST_SUBSCRIBERLIST_FAILURE";
 
 export const addSubscriberListRequest = () => ({
-    type: ADD_SUBSCRIBERLIST_REQUEST,
+  type: ADD_SUBSCRIBERLIST_REQUEST,
 });
 
 export const addSubscriberListSuccess = (SubscriberLists: any) => ({
-    type: ADD_SUBSCRIBERLIST_SUCCESS,
-    payload: SubscriberLists,
+  type: ADD_SUBSCRIBERLIST_SUCCESS,
+  payload: SubscriberLists,
 });
 
 export const addSubscriberListFailure = (error: Error) => ({
-    type: ADD_SUBSCRIBERLIST_FAILURE,
-    payload: error,
+  type: ADD_SUBSCRIBERLIST_FAILURE,
+  payload: error,
 });
 
-
 export const fetchSubscriberListRequest = () => ({
-    type: FETCH_SUBSCRIBERLIST_REQUEST,
+  type: FETCH_SUBSCRIBERLIST_REQUEST,
 });
 
 export const fetchSubscriberListSuccess = (SubscriberLists: any) => ({
-    type: FETCH_SUBSCRIBERLIST_SUCCESS,
-    payload: SubscriberLists,
+  type: FETCH_SUBSCRIBERLIST_SUCCESS,
+  payload: SubscriberLists,
 });
 
 export const fetchSubscriberListFailure = (error: Error) => ({
-    type: FETCH_SUBSCRIBERLIST_FAILURE,
-    payload: error,
+  type: FETCH_SUBSCRIBERLIST_FAILURE,
+  payload: error,
 });
 
 export const listSubscriberListRequest = () => ({
-    type: LIST_SUBSCRIBERLIST_REQUEST,
+  type: LIST_SUBSCRIBERLIST_REQUEST,
 });
 
 export const listSubscriberListSuccess = (SubscriberLists: any) => ({
-    type: LIST_SUBSCRIBERLIST_SUCCESS,
-    payload: SubscriberLists,
+  type: LIST_SUBSCRIBERLIST_SUCCESS,
+  payload: SubscriberLists,
 });
 
 export const listSubscriberListFailure = (error: Error) => ({
-    type: LIST_SUBSCRIBERLIST_FAILURE,
-    payload: error,
+  type: LIST_SUBSCRIBERLIST_FAILURE,
+  payload: error,
 });
 
 export const updateSubscriberListRequest = (SubscriberList: any) => ({
-    type: UPDATE_SUBSCRIBERLIST_REQUEST,
-    payload: SubscriberList,
+  type: UPDATE_SUBSCRIBERLIST_REQUEST,
+  payload: SubscriberList,
 });
 
 export const updateSubscriberListSuccess = (SubscriberList: any) => ({
-    type: UPDATE_SUBSCRIBERLIST_SUCCESS,
-    payload: SubscriberList,
+  type: UPDATE_SUBSCRIBERLIST_SUCCESS,
+  payload: SubscriberList,
 });
 
 export const updateSubscriberListFailure = (error: Error) => ({
-    type: UPDATE_SUBSCRIBERLIST_FAILURE,
-    payload: error,
+  type: UPDATE_SUBSCRIBERLIST_FAILURE,
+  payload: error,
 });
 
 export const deleteSubscriberListRequest = (SubscriberList: any) => ({
-    type: DELETE_SUBSCRIBERLIST_REQUEST,
-    payload: SubscriberList,
+  type: DELETE_SUBSCRIBERLIST_REQUEST,
+  payload: SubscriberList,
 });
 
 export const deleteSubscriberListSuccess = (SubscriberList: any) => ({
-    type: DELETE_SUBSCRIBERLIST_SUCCESS,
-    payload: SubscriberList,
+  type: DELETE_SUBSCRIBERLIST_SUCCESS,
+  payload: SubscriberList,
 });
 
 export const deleteSubscriberListFailure = (error: Error) => ({
-    type: DELETE_SUBSCRIBERLIST_FAILURE,
-    payload: error,
+  type: DELETE_SUBSCRIBERLIST_FAILURE,
+  payload: error,
 });

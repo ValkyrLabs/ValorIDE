@@ -17,34 +17,34 @@ Template file: typescript-redux-query/defaultForm.mustache
 // Generic form for displaying tabular data
 // Props: columns (array of { key, label }), data (array of objects)
 const DefaultForm = ({ columns, data }) => {
-    return (
-        <form className="default-form">
-            <thead>
-                <tr>
-                    {columns.map((col) => (
-                        <th key={col.key}>{col.label}</th>
-                    ))}
-                </tr>
-            </thead>
-            <tbody>
-                {data && data.length > 0 ? (
-                    data.map((row, idx) => (
-                        <tr key={idx}>
-                            {columns.map((col) => (
-                                <td key={col.key}>{row[col.key]}</td>
-                            ))}
-                        </tr>
-                    ))
-                ) : (
-                    <tr>
-                        <td colSpan={columns.length} style={ { textAlign: "center" } }>
-                            No data available
-                        </td>
-                    </tr>
-                )}
-            </tbody>
-        </form>
-    );
+  return (
+    <form className="default-form">
+      <thead>
+        <tr>
+          {columns.map((col) => (
+            <th key={col.key}>{col.label}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {data && data.length > 0 ? (
+          data.map((row, idx) => (
+            <tr key={idx}>
+              {columns.map((col) => (
+                <td key={col.key}>{row[col.key]}</td>
+              ))}
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan={columns.length} style={{ textAlign: "center" }}>
+              No data available
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </form>
+  );
 };
 
 export default DefaultForm;

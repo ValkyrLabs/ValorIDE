@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,126 +36,134 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface InitUploadRequest
  */
-export type InitUploadRequest  = DataObject & {
-    /**
-     * 
-     * @type {string}
-     * @memberof InitUploadRequest
-     */
-    filename?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof InitUploadRequest
-     */
-    mimeType?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof InitUploadRequest
-     */
-    sizeBytes?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof InitUploadRequest
-     */
-    spaceId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof InitUploadRequest
-     */
-    metadata?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof InitUploadRequest
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof InitUploadRequest
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof InitUploadRequest
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof InitUploadRequest
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof InitUploadRequest
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof InitUploadRequest
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof InitUploadRequest
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof InitUploadRequest
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof InitUploadRequest
-     */
-    trashed?: boolean;
-}
+export type InitUploadRequest = DataObject & {
+  /**
+   *
+   * @type {string}
+   * @memberof InitUploadRequest
+   */
+  filename?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof InitUploadRequest
+   */
+  mimeType?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof InitUploadRequest
+   */
+  sizeBytes?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof InitUploadRequest
+   */
+  spaceId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof InitUploadRequest
+   */
+  metadata?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof InitUploadRequest
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof InitUploadRequest
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof InitUploadRequest
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof InitUploadRequest
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof InitUploadRequest
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof InitUploadRequest
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof InitUploadRequest
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof InitUploadRequest
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof InitUploadRequest
+   */
+  trashed?: boolean;
+};
 
 export function InitUploadRequestFromJSON(json: any): InitUploadRequest {
-    return {
-        ...DataObjectFromJSON(json),
-        'filename': !exists(json, 'filename') ? undefined : json['filename'],
-        'mimeType': !exists(json, 'mimeType') ? undefined : json['mimeType'],
-        'sizeBytes': !exists(json, 'sizeBytes') ? undefined : json['sizeBytes'],
-        'spaceId': !exists(json, 'spaceId') ? undefined : json['spaceId'],
-        'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    filename: !exists(json, "filename") ? undefined : json["filename"],
+    mimeType: !exists(json, "mimeType") ? undefined : json["mimeType"],
+    sizeBytes: !exists(json, "sizeBytes") ? undefined : json["sizeBytes"],
+    spaceId: !exists(json, "spaceId") ? undefined : json["spaceId"],
+    metadata: !exists(json, "metadata") ? undefined : json["metadata"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function InitUploadRequestToJSON(value?: InitUploadRequest): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'filename': value.filename,
-        'mimeType': value.mimeType,
-        'sizeBytes': value.sizeBytes,
-        'spaceId': value.spaceId,
-        'metadata': value.metadata,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    filename: value.filename,
+    mimeType: value.mimeType,
+    sizeBytes: value.sizeBytes,
+    spaceId: value.spaceId,
+    metadata: value.metadata,
+    trashed: value.trashed,
+  };
 }
-
-

@@ -26,19 +26,16 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    FileRecord,
-    FileRecordFromJSON,
-    FileRecordToJSON,
-    Principal,
-    PrincipalFromJSON,
-    PrincipalToJSON,
-} from './';
-
+  FileRecord,
+  FileRecordFromJSON,
+  FileRecordToJSON,
+  Principal,
+  PrincipalFromJSON,
+  PrincipalToJSON,
+} from "./";
 
 // thorapi
 
@@ -47,158 +44,175 @@ import {
  * @export
  * @interface FileUploadSession
  */
-export type FileUploadSession  = DataObject & {
-    /**
-     * Unique upload identifier provided by the storage backend.
-     * @type {string}
-     * @memberof FileUploadSession
-     */
-    uploadId: string;
-    /**
-     * Storage driver identifier used for this upload session.
-     * @type {string}
-     * @memberof FileUploadSession
-     */
-    storageDriverId: string;
-    /**
-     * Storage key that will store the uploaded object.
-     * @type {string}
-     * @memberof FileUploadSession
-     */
-    storageKey: string;
-    /**
-     * When the upload session expires.
-     * @type {Date}
-     * @memberof FileUploadSession
-     */
-    expiresAt: Date;
-    /**
-     * 
-     * @type {FileRecord}
-     * @memberof FileUploadSession
-     */
-    file?: FileRecord;
-    /**
-     * 
-     * @type {Principal}
-     * @memberof FileUploadSession
-     */
-    initiatedBy?: Principal;
-    /**
-     * When the upload completed successfully.
-     * @type {Date}
-     * @memberof FileUploadSession
-     */
-    completedAt?: Date;
-    /**
-     * Multipart chunk size in bytes.
-     * @type {number}
-     * @memberof FileUploadSession
-     */
-    partSizeBytes?: number;
-    /**
-     * Additional metadata persisted with the session.
-     * @type {string}
-     * @memberof FileUploadSession
-     */
-    metadata?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof FileUploadSession
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof FileUploadSession
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof FileUploadSession
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof FileUploadSession
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof FileUploadSession
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof FileUploadSession
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof FileUploadSession
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof FileUploadSession
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof FileUploadSession
-     */
-    trashed?: boolean;
-}
+export type FileUploadSession = DataObject & {
+  /**
+   * Unique upload identifier provided by the storage backend.
+   * @type {string}
+   * @memberof FileUploadSession
+   */
+  uploadId: string;
+  /**
+   * Storage driver identifier used for this upload session.
+   * @type {string}
+   * @memberof FileUploadSession
+   */
+  storageDriverId: string;
+  /**
+   * Storage key that will store the uploaded object.
+   * @type {string}
+   * @memberof FileUploadSession
+   */
+  storageKey: string;
+  /**
+   * When the upload session expires.
+   * @type {Date}
+   * @memberof FileUploadSession
+   */
+  expiresAt: Date;
+  /**
+   *
+   * @type {FileRecord}
+   * @memberof FileUploadSession
+   */
+  file?: FileRecord;
+  /**
+   *
+   * @type {Principal}
+   * @memberof FileUploadSession
+   */
+  initiatedBy?: Principal;
+  /**
+   * When the upload completed successfully.
+   * @type {Date}
+   * @memberof FileUploadSession
+   */
+  completedAt?: Date;
+  /**
+   * Multipart chunk size in bytes.
+   * @type {number}
+   * @memberof FileUploadSession
+   */
+  partSizeBytes?: number;
+  /**
+   * Additional metadata persisted with the session.
+   * @type {string}
+   * @memberof FileUploadSession
+   */
+  metadata?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof FileUploadSession
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof FileUploadSession
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof FileUploadSession
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof FileUploadSession
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof FileUploadSession
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof FileUploadSession
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof FileUploadSession
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof FileUploadSession
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof FileUploadSession
+   */
+  trashed?: boolean;
+};
 
 export function FileUploadSessionFromJSON(json: any): FileUploadSession {
-    return {
-        ...DataObjectFromJSON(json),
-        'uploadId': json['uploadId'],
-        'storageDriverId': json['storageDriverId'],
-        'storageKey': json['storageKey'],
-        'expiresAt': new Date(json['expiresAt']),
-        'file': !exists(json, 'file') ? undefined : FileRecordFromJSON(json['file']),
-        'initiatedBy': !exists(json, 'initiatedBy') ? undefined : PrincipalFromJSON(json['initiatedBy']),
-        'completedAt': !exists(json, 'completedAt') ? undefined : new Date(json['completedAt']),
-        'partSizeBytes': !exists(json, 'partSizeBytes') ? undefined : json['partSizeBytes'],
-        'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    uploadId: json["uploadId"],
+    storageDriverId: json["storageDriverId"],
+    storageKey: json["storageKey"],
+    expiresAt: new Date(json["expiresAt"]),
+    file: !exists(json, "file") ? undefined : FileRecordFromJSON(json["file"]),
+    initiatedBy: !exists(json, "initiatedBy")
+      ? undefined
+      : PrincipalFromJSON(json["initiatedBy"]),
+    completedAt: !exists(json, "completedAt")
+      ? undefined
+      : new Date(json["completedAt"]),
+    partSizeBytes: !exists(json, "partSizeBytes")
+      ? undefined
+      : json["partSizeBytes"],
+    metadata: !exists(json, "metadata") ? undefined : json["metadata"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function FileUploadSessionToJSON(value?: FileUploadSession): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'uploadId': value.uploadId,
-        'storageDriverId': value.storageDriverId,
-        'storageKey': value.storageKey,
-        'expiresAt': value.expiresAt.toISOString(),
-        'file': FileRecordToJSON(value.file),
-        'initiatedBy': PrincipalToJSON(value.initiatedBy),
-        'completedAt': value.completedAt === undefined ? undefined : value.completedAt.toISOString(),
-        'partSizeBytes': value.partSizeBytes,
-        'metadata': value.metadata,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    uploadId: value.uploadId,
+    storageDriverId: value.storageDriverId,
+    storageKey: value.storageKey,
+    expiresAt: value.expiresAt.toISOString(),
+    file: FileRecordToJSON(value.file),
+    initiatedBy: PrincipalToJSON(value.initiatedBy),
+    completedAt:
+      value.completedAt === undefined
+        ? undefined
+        : value.completedAt.toISOString(),
+    partSizeBytes: value.partSizeBytes,
+    metadata: value.metadata,
+    trashed: value.trashed,
+  };
 }
-
-

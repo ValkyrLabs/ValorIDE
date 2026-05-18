@@ -26,128 +26,140 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
 /**
- * 
+ *
  * @export
  * @interface WorkflowGraphValidationError
  */
-export type WorkflowGraphValidationError  = DataObject & {
-    /**
-     * 
-     * @type {string}
-     * @memberof WorkflowGraphValidationError
-     */
-    type?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof WorkflowGraphValidationError
-     */
-    nodeId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof WorkflowGraphValidationError
-     */
-    edgeId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof WorkflowGraphValidationError
-     */
-    message?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof WorkflowGraphValidationError
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof WorkflowGraphValidationError
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof WorkflowGraphValidationError
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof WorkflowGraphValidationError
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof WorkflowGraphValidationError
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof WorkflowGraphValidationError
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof WorkflowGraphValidationError
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof WorkflowGraphValidationError
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof WorkflowGraphValidationError
-     */
-    trashed?: boolean;
+export type WorkflowGraphValidationError = DataObject & {
+  /**
+   *
+   * @type {string}
+   * @memberof WorkflowGraphValidationError
+   */
+  type?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof WorkflowGraphValidationError
+   */
+  nodeId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof WorkflowGraphValidationError
+   */
+  edgeId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof WorkflowGraphValidationError
+   */
+  message?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof WorkflowGraphValidationError
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof WorkflowGraphValidationError
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof WorkflowGraphValidationError
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof WorkflowGraphValidationError
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof WorkflowGraphValidationError
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof WorkflowGraphValidationError
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof WorkflowGraphValidationError
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof WorkflowGraphValidationError
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof WorkflowGraphValidationError
+   */
+  trashed?: boolean;
+};
+
+export function WorkflowGraphValidationErrorFromJSON(
+  json: any,
+): WorkflowGraphValidationError {
+  return {
+    ...DataObjectFromJSON(json),
+    type: !exists(json, "type") ? undefined : json["type"],
+    nodeId: !exists(json, "nodeId") ? undefined : json["nodeId"],
+    edgeId: !exists(json, "edgeId") ? undefined : json["edgeId"],
+    message: !exists(json, "message") ? undefined : json["message"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
-export function WorkflowGraphValidationErrorFromJSON(json: any): WorkflowGraphValidationError {
-    return {
-        ...DataObjectFromJSON(json),
-        'type': !exists(json, 'type') ? undefined : json['type'],
-        'nodeId': !exists(json, 'nodeId') ? undefined : json['nodeId'],
-        'edgeId': !exists(json, 'edgeId') ? undefined : json['edgeId'],
-        'message': !exists(json, 'message') ? undefined : json['message'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+export function WorkflowGraphValidationErrorToJSON(
+  value?: WorkflowGraphValidationError,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    type: value.type,
+    nodeId: value.nodeId,
+    edgeId: value.edgeId,
+    message: value.message,
+    trashed: value.trashed,
+  };
 }
-
-export function WorkflowGraphValidationErrorToJSON(value?: WorkflowGraphValidationError): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'type': value.type,
-        'nodeId': value.nodeId,
-        'edgeId': value.edgeId,
-        'message': value.message,
-        'trashed': value.trashed,
-    };
-}
-
-

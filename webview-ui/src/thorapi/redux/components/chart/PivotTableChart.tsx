@@ -19,20 +19,32 @@ Description: PivotTable
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, PivotTable } from '@thorapi/model';
-import { useGetPivotTablesQuery, useAddPivotTableMutation, useUpdatePivotTableMutation } from '../../services/PivotTableService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, PivotTable } from "@thorapi/model";
+import {
+  useGetPivotTablesQuery,
+  useAddPivotTableMutation,
+  useUpdatePivotTableMutation,
+} from "../../services/PivotTableService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const PivotTableChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetPivotTablesQuery();
 
   const [data, setData] = useState<PivotTable[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<PivotTable>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const PivotTableChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const PivotTableChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((pivottable: DataObject) => [pivottable])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((pivottable: DataObject) => [pivottable])}
+        />
+      )}
     </>
   );
 };

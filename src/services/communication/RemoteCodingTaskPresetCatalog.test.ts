@@ -32,7 +32,11 @@ describe("RemoteCodingTaskPresetCatalog", () => {
 
     const listed = catalog.listSavedPresets("team", "core-platform");
     expect(listed).toHaveLength(1);
-    expect(catalog.renderTaskFromPreset("team-bugfix")).toContain("account sync");
-    expect(catalog.renderTaskFromPreset("team-bugfix")).toContain("release notes");
+    expect(catalog.renderTaskFromPreset("team-bugfix")).toContain(
+      "account sync",
+    );
+    expect(catalog.renderTaskFromPreset("team-bugfix")).toContain(
+      "release notes",
+    );
   });
 });

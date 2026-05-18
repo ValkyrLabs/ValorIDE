@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { TrustKeyRotation } from '@thorapi/model/TrustKeyRotation';
+import { TrustKeyRotation } from "@thorapi/model/TrustKeyRotation";
 
 const TrustKeyRotationSlice = createSlice({
   name: "TrustKeyRotations",
@@ -27,20 +27,25 @@ const TrustKeyRotationSlice = createSlice({
     },
 
     TrustKeyRotationValueToggled(state, action) {
-      console.log("TrustKeyRotation TOGGLE")
-      console.warn(JSON.stringify(action))
-      const TrustKeyRotation:TrustKeyRotation = state.find((TrustKeyRotation) => TrustKeyRotation.id === action.payload.TrustKeyRotationId);
+      console.log("TrustKeyRotation TOGGLE");
+      console.warn(JSON.stringify(action));
+      const TrustKeyRotation: TrustKeyRotation = state.find(
+        (TrustKeyRotation) =>
+          TrustKeyRotation.id === action.payload.TrustKeyRotationId,
+      );
       if (TrustKeyRotation) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     TrustKeyRotationpropertySet(state, action) {
-      const TrustKeyRotation = state.find((TrustKeyRotation) => TrustKeyRotation.id === action.payload.TrustKeyRotationId);
+      const TrustKeyRotation = state.find(
+        (TrustKeyRotation) =>
+          TrustKeyRotation.id === action.payload.TrustKeyRotationId,
+      );
       if (TrustKeyRotation) {
-      //  TrustKeyRotation[action.property] = action.payload[action.property];
+        //  TrustKeyRotation[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const TrustKeyRotationSlice = createSlice({
 export const {
   TrustKeyRotationAdded,
   TrustKeyRotationValueToggled,
-  TrustKeyRotationpropertySet
+  TrustKeyRotationpropertySet,
 } = TrustKeyRotationSlice.actions;
 export default TrustKeyRotationSlice.reducer;

@@ -1,4 +1,10 @@
-export type RemoteCodingSessionStatus = "queued" | "running" | "completed" | "cancelled" | "timed_out" | "failed";
+export type RemoteCodingSessionStatus =
+  | "queued"
+  | "running"
+  | "completed"
+  | "cancelled"
+  | "timed_out"
+  | "failed";
 
 export interface RemoteCodingSession {
   id: string;
@@ -44,15 +50,23 @@ export class RemoteCodingSessionRegistry {
       heartbeatAt: now,
       status: "running",
       logs: [],
-      artifacts: []
+      artifacts: [],
     };
 
     this.sessions.set(input.id, session);
-    return { ...session, logs: [...session.logs], artifacts: [...session.artifacts] };
+    return {
+      ...session,
+      logs: [...session.logs],
+      artifacts: [...session.artifacts],
+    };
   }
 
   list(): RemoteCodingSession[] {
-    return Array.from(this.sessions.values()).map(s => ({ ...s, logs: [...s.logs], artifacts: [...s.artifacts] }));
+    return Array.from(this.sessions.values()).map((s) => ({
+      ...s,
+      logs: [...s.logs],
+      artifacts: [...s.artifacts],
+    }));
   }
 
   get(sessionId: string): RemoteCodingSession | undefined {
@@ -73,21 +87,36 @@ export class RemoteCodingSessionRegistry {
     return this.snapshot(s);
   }
 
-  appendLog(sessionId: string, log: string, now: number = Date.now()): RemoteCodingSession {
+  appendLog(
+    sessionId: string,
+    log: string,
+    now: number = Date.now(),
+  ): RemoteCodingSession {
     const s = this.requireSession(sessionId);
     s.logs.push(log);
     s.updatedAt = now;
     return this.snapshot(s);
   }
 
-  addArtifact(sessionId: string, artifact: string, now: number = Date.now()): RemoteCodingSession {
+  addArtifact(
+    sessionId: string,
+    artifact: string,
+    now: number = Date.now(),
+  ): RemoteCodingSession {
     const s = this.requireSession(sessionId);
     s.artifacts.push(artifact);
     s.updatedAt = now;
     return this.snapshot(s);
   }
 
-  stop(sessionId: string, status: Extract<RemoteCodingSessionStatus, "completed" | "failed"> = "completed", now: number = Date.now()): RemoteCodingSession {
+  stop(
+    sessionId: string,
+    status: Extract<
+      RemoteCodingSessionStatus,
+      "completed" | "failed"
+    > = "completed",
+    now: number = Date.now(),
+  ): RemoteCodingSession {
     const s = this.requireSession(sessionId);
     s.status = status;
     s.endedAt = now;
@@ -95,7 +124,11 @@ export class RemoteCodingSessionRegistry {
     return this.snapshot(s);
   }
 
-  cancel(sessionId: string, reason: string = "user_cancelled", now: number = Date.now()): RemoteCodingSession {
+  cancel(
+    sessionId: string,
+    reason: string = "user_cancelled",
+    now: number = Date.now(),
+  ): RemoteCodingSession {
     const s = this.requireSession(sessionId);
     s.status = "cancelled";
     s.cancelReason = reason;
@@ -135,6 +168,10 @@ export class RemoteCodingSessionRegistry {
   }
 
   private snapshot(session: RemoteCodingSession): RemoteCodingSession {
-    return { ...session, logs: [...session.logs], artifacts: [...session.artifacts] };
+    return {
+      ...session,
+      logs: [...session.logs],
+      artifacts: [...session.artifacts],
+    };
   }
 }

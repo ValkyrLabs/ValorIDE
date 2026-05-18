@@ -13,47 +13,69 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { CompleteTrustExecutionResponse } from '@thorapi/model/CompleteTrustExecutionResponse'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { CompleteTrustExecutionResponse } from "@thorapi/model/CompleteTrustExecutionResponse";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type CompleteTrustExecutionResponseResponse = CompleteTrustExecutionResponse[]
+type CompleteTrustExecutionResponseResponse = CompleteTrustExecutionResponse[];
 
-const toCompleteTrustExecutionResponseList = (result: unknown): CompleteTrustExecutionResponseResponse => {
+const toCompleteTrustExecutionResponseList = (
+  result: unknown,
+): CompleteTrustExecutionResponseResponse => {
   if (Array.isArray(result)) {
-    return result as CompleteTrustExecutionResponseResponse
+    return result as CompleteTrustExecutionResponseResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as CompleteTrustExecutionResponseResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as CompleteTrustExecutionResponseResponse)
+    : [];
+};
 
 export const CompleteTrustExecutionResponseService = createApi({
-  reducerPath: 'CompleteTrustExecutionResponse', // This should remain unique
+  reducerPath: "CompleteTrustExecutionResponse", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['CompleteTrustExecutionResponse'],
+  tagTypes: ["CompleteTrustExecutionResponse"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getCompleteTrustExecutionResponsesPaged: build.query<CompleteTrustExecutionResponseResponse, { page: number; size?: number; example?: Partial<CompleteTrustExecutionResponse> }>({
+    getCompleteTrustExecutionResponsesPaged: build.query<
+      CompleteTrustExecutionResponseResponse,
+      {
+        page: number;
+        size?: number;
+        example?: Partial<CompleteTrustExecutionResponse>;
+      }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `CompleteTrustExecutionResponse?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `CompleteTrustExecutionResponse?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toCompleteTrustExecutionResponseList(result)
+        const rows = toCompleteTrustExecutionResponseList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'CompleteTrustExecutionResponse' as const, id })),
-          { type: 'CompleteTrustExecutionResponse', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({
+              type: "CompleteTrustExecutionResponse" as const,
+              id,
+            })),
+          { type: "CompleteTrustExecutionResponse", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getCompleteTrustExecutionResponses: build.query<CompleteTrustExecutionResponseResponse, { example?: Partial<CompleteTrustExecutionResponse> } | void>({
+    getCompleteTrustExecutionResponses: build.query<
+      CompleteTrustExecutionResponseResponse,
+      { example?: Partial<CompleteTrustExecutionResponse> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +84,121 @@ export const CompleteTrustExecutionResponseService = createApi({
         return `CompleteTrustExecutionResponse`;
       },
       providesTags: (result) => {
-        const rows = toCompleteTrustExecutionResponseList(result)
+        const rows = toCompleteTrustExecutionResponseList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'CompleteTrustExecutionResponse' as const, id })),
-          { type: 'CompleteTrustExecutionResponse', id: 'LIST' },
-        ]
+            .map(({ id }) => ({
+              type: "CompleteTrustExecutionResponse" as const,
+              id,
+            })),
+          { type: "CompleteTrustExecutionResponse", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addCompleteTrustExecutionResponse: build.mutation<CompleteTrustExecutionResponse, Partial<CompleteTrustExecutionResponse>>({
+    addCompleteTrustExecutionResponse: build.mutation<
+      CompleteTrustExecutionResponse,
+      Partial<CompleteTrustExecutionResponse>
+    >({
       query: (body) => ({
         url: `CompleteTrustExecutionResponse`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'CompleteTrustExecutionResponse', id: 'LIST' }],
+      invalidatesTags: [{ type: "CompleteTrustExecutionResponse", id: "LIST" }],
     }),
 
     // 4) Get single by ID
-    getCompleteTrustExecutionResponse: build.query<CompleteTrustExecutionResponse, string>({
+    getCompleteTrustExecutionResponse: build.query<
+      CompleteTrustExecutionResponse,
+      string
+    >({
       query: (id) => `CompleteTrustExecutionResponse/${id}`,
-      providesTags: (result, error, id) => [{ type: 'CompleteTrustExecutionResponse', id }],
+      providesTags: (result, error, id) => [
+        { type: "CompleteTrustExecutionResponse", id },
+      ],
     }),
 
     // 5) Update
-    updateCompleteTrustExecutionResponse: build.mutation<void, Pick<CompleteTrustExecutionResponse, 'id'> & Partial<CompleteTrustExecutionResponse>>({
+    updateCompleteTrustExecutionResponse: build.mutation<
+      void,
+      Pick<CompleteTrustExecutionResponse, "id"> &
+        Partial<CompleteTrustExecutionResponse>
+    >({
       query: ({ id, ...patch }) => ({
         url: `CompleteTrustExecutionResponse/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            CompleteTrustExecutionResponseService.util.updateQueryData('getCompleteTrustExecutionResponse', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            CompleteTrustExecutionResponseService.util.updateQueryData(
+              "getCompleteTrustExecutionResponse",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<CompleteTrustExecutionResponse, 'id'>) => [
-        { type: 'CompleteTrustExecutionResponse', id },
-        { type: 'CompleteTrustExecutionResponse', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<CompleteTrustExecutionResponse, "id">,
+      ) => [
+        { type: "CompleteTrustExecutionResponse", id },
+        { type: "CompleteTrustExecutionResponse", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteCompleteTrustExecutionResponse: build.mutation<{ success: boolean; id: string }, number>({
+    deleteCompleteTrustExecutionResponse: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `CompleteTrustExecutionResponse/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'CompleteTrustExecutionResponse', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "CompleteTrustExecutionResponse", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteCompleteTrustExecutionResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteCompleteTrustExecutionResponseCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `CompleteTrustExecutionResponse/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'CompleteTrustExecutionResponse', id }, { type: 'CompleteTrustExecutionResponse', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "CompleteTrustExecutionResponse", id },
+        { type: "CompleteTrustExecutionResponse", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetCompleteTrustExecutionResponsesPagedQuery`
 export const {
-  useGetCompleteTrustExecutionResponsesPagedQuery,     // immediate fetch
+  useGetCompleteTrustExecutionResponsesPagedQuery, // immediate fetch
   useLazyGetCompleteTrustExecutionResponsesPagedQuery, // lazy fetch
   useGetCompleteTrustExecutionResponseQuery,
   useGetCompleteTrustExecutionResponsesQuery,
@@ -150,4 +206,4 @@ export const {
   useUpdateCompleteTrustExecutionResponseMutation,
   useDeleteCompleteTrustExecutionResponseMutation,
   useDeleteCompleteTrustExecutionResponseCascadeMutation,
-} = CompleteTrustExecutionResponseService
+} = CompleteTrustExecutionResponseService;

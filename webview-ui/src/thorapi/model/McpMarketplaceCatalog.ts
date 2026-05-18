@@ -26,120 +26,134 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    McpMarketplaceItem,
-    McpMarketplaceItemFromJSON,
-    McpMarketplaceItemToJSON,
-} from './';
-
+  McpMarketplaceItem,
+  McpMarketplaceItemFromJSON,
+  McpMarketplaceItemToJSON,
+} from "./";
 
 // thorapi
 
 /**
- * 
+ *
  * @export
  * @interface McpMarketplaceCatalog
  */
-export type McpMarketplaceCatalog  = DataObject & {
-    /**
-     * the name of this catalog
-     * @type {string}
-     * @memberof McpMarketplaceCatalog
-     */
-    name?: string;
-    /**
-     * 
-     * @type {Array<McpMarketplaceItem>}
-     * @memberof McpMarketplaceCatalog
-     */
-    items?: Array<McpMarketplaceItem>;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof McpMarketplaceCatalog
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof McpMarketplaceCatalog
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof McpMarketplaceCatalog
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof McpMarketplaceCatalog
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof McpMarketplaceCatalog
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof McpMarketplaceCatalog
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof McpMarketplaceCatalog
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof McpMarketplaceCatalog
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof McpMarketplaceCatalog
-     */
-    trashed?: boolean;
+export type McpMarketplaceCatalog = DataObject & {
+  /**
+   * the name of this catalog
+   * @type {string}
+   * @memberof McpMarketplaceCatalog
+   */
+  name?: string;
+  /**
+   *
+   * @type {Array<McpMarketplaceItem>}
+   * @memberof McpMarketplaceCatalog
+   */
+  items?: Array<McpMarketplaceItem>;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof McpMarketplaceCatalog
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof McpMarketplaceCatalog
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof McpMarketplaceCatalog
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof McpMarketplaceCatalog
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof McpMarketplaceCatalog
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof McpMarketplaceCatalog
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof McpMarketplaceCatalog
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof McpMarketplaceCatalog
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof McpMarketplaceCatalog
+   */
+  trashed?: boolean;
+};
+
+export function McpMarketplaceCatalogFromJSON(
+  json: any,
+): McpMarketplaceCatalog {
+  return {
+    ...DataObjectFromJSON(json),
+    name: !exists(json, "name") ? undefined : json["name"],
+    items: !exists(json, "items")
+      ? undefined
+      : (json["items"] as Array<any>).map(McpMarketplaceItemFromJSON),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
-export function McpMarketplaceCatalogFromJSON(json: any): McpMarketplaceCatalog {
-    return {
-        ...DataObjectFromJSON(json),
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'items': !exists(json, 'items') ? undefined : (json['items'] as Array<any>).map(McpMarketplaceItemFromJSON),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+export function McpMarketplaceCatalogToJSON(
+  value?: McpMarketplaceCatalog,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    items:
+      value.items === undefined
+        ? undefined
+        : (value.items as Array<any>).map(McpMarketplaceItemToJSON),
+    trashed: value.trashed,
+  };
 }
-
-export function McpMarketplaceCatalogToJSON(value?: McpMarketplaceCatalog): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'name': value.name,
-        'items': value.items === undefined ? undefined : (value.items as Array<any>).map(McpMarketplaceItemToJSON),
-        'trashed': value.trashed,
-    };
-}
-
-

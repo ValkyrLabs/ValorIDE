@@ -13,34 +13,42 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   LlmDetails,
   LlmDetailsRoleEnum,
   LlmDetailsProviderEnum,
   LlmDetailsApiTypeEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddLlmDetailsMutation } from '../../services/LlmDetailsService';
+import { useAddLlmDetailsMutation } from "../../services/LlmDetailsService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -64,73 +72,66 @@ Details about a Language Learning Model (LLM) including capabilities and configu
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const RoleValidation = () => {
-  return [
-    'user',
-    'assistant',
-  ];
+  return ["user", "assistant"];
 };
 const ProviderValidation = () => {
   return [
-    'valkyrai',
-    'openai',
-    'ollama',
-    'phi',
-    'gemma',
-    'mistral',
-    'claude',
-    'grok',
-    'gemini',
-    'moonshot',
-    'deepseek',
-    'other',
-    'chatgpt_pass_through',
+    "valkyrai",
+    "openai",
+    "ollama",
+    "phi",
+    "gemma",
+    "mistral",
+    "claude",
+    "grok",
+    "gemini",
+    "moonshot",
+    "deepseek",
+    "other",
+    "chatgpt_pass_through",
   ];
 };
 const ApiTypeValidation = () => {
-  return [
-    'openai',
-    'ollama',
-    'anthropic',
-    'grok',
-    'gemini',
-    'other',
-  ];
+  return ["openai", "ollama", "anthropic", "grok", "gemini", "other"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        name: Yup.string(),
-        version: Yup.string(),
-        notes: Yup.string(),
-      role: Yup.mixed()
-        .oneOf(RoleValidation(), "Invalid value for role")
-        ,
-      provider: Yup.mixed()
-        .oneOf(ProviderValidation(), "Invalid value for provider")
-        ,
-      apiType: Yup.mixed()
-        .oneOf(ApiTypeValidation(), "Invalid value for apiType")
-        ,
-        initialPrompt: Yup.string(),
-        credential: Yup.string(),
-        credentialPassword: Yup.string(),
-        temperature: asNumber(Yup.number().typeError("temperature must be a number")),
-        contextWindow: asNumber(Yup.number().integer().typeError("contextWindow must be a number")),
-        maxTokens: asNumber(Yup.number().integer().typeError("maxTokens must be a number")),
-        supportsImages: Yup.boolean(),
-        supportsPromptCache: Yup.boolean(),
-        inputPrice: asNumber(Yup.number().typeError("inputPrice must be a number")),
-        outputPrice: asNumber(Yup.number().typeError("outputPrice must be a number")),
-        description: Yup.string(),
-        url: Yup.string(),
-        requestParameters: Yup.string(),
-        metaData: Yup.string(),
-        trashed: Yup.boolean(),
+  name: Yup.string(),
+  version: Yup.string(),
+  notes: Yup.string(),
+  role: Yup.mixed().oneOf(RoleValidation(), "Invalid value for role"),
+  provider: Yup.mixed().oneOf(
+    ProviderValidation(),
+    "Invalid value for provider",
+  ),
+  apiType: Yup.mixed().oneOf(ApiTypeValidation(), "Invalid value for apiType"),
+  initialPrompt: Yup.string(),
+  credential: Yup.string(),
+  credentialPassword: Yup.string(),
+  temperature: asNumber(Yup.number().typeError("temperature must be a number")),
+  contextWindow: asNumber(
+    Yup.number().integer().typeError("contextWindow must be a number"),
+  ),
+  maxTokens: asNumber(
+    Yup.number().integer().typeError("maxTokens must be a number"),
+  ),
+  supportsImages: Yup.boolean(),
+  supportsPromptCache: Yup.boolean(),
+  inputPrice: asNumber(Yup.number().typeError("inputPrice must be a number")),
+  outputPrice: asNumber(Yup.number().typeError("outputPrice must be a number")),
+  description: Yup.string(),
+  url: Yup.string(),
+  requestParameters: Yup.string(),
+  metaData: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -147,12 +148,18 @@ const LlmDetailsForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -160,27 +167,27 @@ const LlmDetailsForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<LlmDetails> = {
-          name: '',
-          version: '',
-          notes: '',
-        role: undefined,
-        provider: undefined,
-        apiType: undefined,
-          initialPrompt: '',
-          credential: '',
-          credentialPassword: '',
-          temperature: 0,
-          contextWindow: 0,
-          maxTokens: 0,
-          supportsImages: false,
-          supportsPromptCache: false,
-          inputPrice: 0,
-          outputPrice: 0,
-          description: '',
-          url: '',
-          requestParameters: '',
-          metaData: '',
-          trashed: false,
+    name: "",
+    version: "",
+    notes: "",
+    role: undefined,
+    provider: undefined,
+    apiType: undefined,
+    initialPrompt: "",
+    credential: "",
+    credentialPassword: "",
+    temperature: 0,
+    contextWindow: 0,
+    maxTokens: 0,
+    supportsImages: false,
+    supportsPromptCache: false,
+    inputPrice: 0,
+    outputPrice: 0,
+    description: "",
+    url: "",
+    requestParameters: "",
+    metaData: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -195,11 +202,14 @@ const LlmDetailsForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new LlmDetails:', grants);
+    console.log("Permissions saved for new LlmDetails:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<LlmDetails>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<LlmDetails>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -210,7 +220,7 @@ const LlmDetailsForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `LlmDetails created successfully! Would you like to set permissions for this object?`
+          `LlmDetails created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -218,8 +228,8 @@ const LlmDetailsForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create LlmDetails:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create LlmDetails:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -240,44 +250,36 @@ const LlmDetailsForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addLlmDetailsResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New LlmDetails
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New LlmDetails
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.name && !errors.name && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="name"
+                        value={values?.name}
+                        placeholder="Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -289,28 +291,21 @@ const LlmDetailsForm: React.FC = () => {
                     <label htmlFor="version" className="nice-form-control">
                       <b>
                         Version:
-                        {touched.version &&
-                         !errors.version && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.version && !errors.version && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="version"
-                            value={values?.version}
-                            placeholder="Version"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="version"
+                        value={values?.version}
+                        placeholder="Version"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -322,28 +317,21 @@ const LlmDetailsForm: React.FC = () => {
                     <label htmlFor="notes" className="nice-form-control">
                       <b>
                         Notes:
-                        {touched.notes &&
-                         !errors.notes && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.notes && !errors.notes && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="notes"
-                            value={values?.notes}
-                            placeholder="Notes"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="notes"
+                        value={values?.notes}
+                        placeholder="Notes"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -355,30 +343,30 @@ const LlmDetailsForm: React.FC = () => {
                     <label htmlFor="role" className="nice-form-control">
                       <b>
                         Role:
-                        {touched.role &&
-                         !errors.role && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.role && !errors.role && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="role"
-                          value={values.role || ''}
-                          className={
-                            errors.role
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('role', true);
-                            setFieldValue('role', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Role" />
-                          <RoleLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="role"
+                        value={values.role || ""}
+                        className={
+                          errors.role
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("role", true);
+                          setFieldValue("role", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Role" />
+                        <RoleLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -390,30 +378,33 @@ const LlmDetailsForm: React.FC = () => {
                     <label htmlFor="provider" className="nice-form-control">
                       <b>
                         Provider:
-                        {touched.provider &&
-                         !errors.provider && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.provider && !errors.provider && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="provider"
-                          value={values.provider || ''}
-                          className={
-                            errors.provider
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('provider', true);
-                            setFieldValue('provider', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Provider" />
-                          <ProviderLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="provider"
+                        value={values.provider || ""}
+                        className={
+                          errors.provider
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("provider", true);
+                          setFieldValue(
+                            "provider",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Provider" />
+                        <ProviderLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -425,30 +416,30 @@ const LlmDetailsForm: React.FC = () => {
                     <label htmlFor="apiType" className="nice-form-control">
                       <b>
                         Api Type:
-                        {touched.apiType &&
-                         !errors.apiType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.apiType && !errors.apiType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="apiType"
-                          value={values.apiType || ''}
-                          className={
-                            errors.apiType
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('apiType', true);
-                            setFieldValue('apiType', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Api Type" />
-                          <ApiTypeLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="apiType"
+                        value={values.apiType || ""}
+                        className={
+                          errors.apiType
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("apiType", true);
+                          setFieldValue("apiType", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Api Type" />
+                        <ApiTypeLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -457,31 +448,27 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="initialPrompt" className="nice-form-control">
+                    <label
+                      htmlFor="initialPrompt"
+                      className="nice-form-control"
+                    >
                       <b>
                         Initial Prompt:
-                        {touched.initialPrompt &&
-                         !errors.initialPrompt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.initialPrompt && !errors.initialPrompt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="initialPrompt"
-                            value={values?.initialPrompt}
-                            placeholder="Initial Prompt"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="initialPrompt"
+                        value={values?.initialPrompt}
+                        placeholder="Initial Prompt"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -493,28 +480,21 @@ const LlmDetailsForm: React.FC = () => {
                     <label htmlFor="credential" className="nice-form-control">
                       <b>
                         Credential:
-                        {touched.credential &&
-                         !errors.credential && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.credential && !errors.credential && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="credential"
-                            value={values?.credential}
-                            placeholder="Credential"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="credential"
+                        value={values?.credential}
+                        placeholder="Credential"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -523,31 +503,28 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="credentialPassword" className="nice-form-control">
+                    <label
+                      htmlFor="credentialPassword"
+                      className="nice-form-control"
+                    >
                       <b>
                         Credential Password:
                         {touched.credentialPassword &&
-                         !errors.credentialPassword && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.credentialPassword && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="credentialPassword"
-                            value={values?.credentialPassword}
-                            placeholder="Credential Password"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="credentialPassword"
+                        value={values?.credentialPassword}
+                        placeholder="Credential Password"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -559,37 +536,33 @@ const LlmDetailsForm: React.FC = () => {
                     <label htmlFor="temperature" className="nice-form-control">
                       <b>
                         Temperature:
-                        {touched.temperature &&
-                         !errors.temperature && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.temperature && !errors.temperature && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-                          {/* FLOAT FIELD */}
-                          <Field
-                            name="temperature"
-                            type="number"
-                            step="any"
-                            value={values.temperature || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('temperature', true);
-                              const v = e.target.value;
-                              setFieldValue('temperature', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.temperature
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
+                      {/* FLOAT FIELD */}
+                      <Field
+                        name="temperature"
+                        type="number"
+                        step="any"
+                        value={values.temperature || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("temperature", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "temperature",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.temperature
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -598,39 +571,38 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="contextWindow" className="nice-form-control">
+                    <label
+                      htmlFor="contextWindow"
+                      className="nice-form-control"
+                    >
                       <b>
                         Context Window:
-                        {touched.contextWindow &&
-                         !errors.contextWindow && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.contextWindow && !errors.contextWindow && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="contextWindow"
-                            type="number"
-                            value={values.contextWindow || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('contextWindow', true);
-                              const v = e.target.value;
-                              setFieldValue('contextWindow', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.contextWindow
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="contextWindow"
+                        type="number"
+                        value={values.contextWindow || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("contextWindow", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "contextWindow",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.contextWindow
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -642,36 +614,32 @@ const LlmDetailsForm: React.FC = () => {
                     <label htmlFor="maxTokens" className="nice-form-control">
                       <b>
                         Max Tokens:
-                        {touched.maxTokens &&
-                         !errors.maxTokens && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.maxTokens && !errors.maxTokens && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="maxTokens"
-                            type="number"
-                            value={values.maxTokens || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('maxTokens', true);
-                              const v = e.target.value;
-                              setFieldValue('maxTokens', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.maxTokens
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="maxTokens"
+                        type="number"
+                        value={values.maxTokens || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("maxTokens", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "maxTokens",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.maxTokens
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -680,35 +648,31 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="supportsImages" className="nice-form-control">
+                    <label
+                      htmlFor="supportsImages"
+                      className="nice-form-control"
+                    >
                       <b>
                         Supports Images:
-                        {touched.supportsImages &&
-                         !errors.supportsImages && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.supportsImages && !errors.supportsImages && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="supportsImages"
-                            name="supportsImages"
-                            checked={values.supportsImages || false}
-                            onChange={(e) => {
-                              setFieldTouched('supportsImages', true);
-                              setFieldValue('supportsImages', e.target.checked);
-                            }}
-                            isInvalid={!!errors.supportsImages}
-                            className={errors.supportsImages ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="supportsImages"
+                        name="supportsImages"
+                        checked={values.supportsImages || false}
+                        onChange={(e) => {
+                          setFieldTouched("supportsImages", true);
+                          setFieldValue("supportsImages", e.target.checked);
+                        }}
+                        isInvalid={!!errors.supportsImages}
+                        className={errors.supportsImages ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -717,35 +681,35 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="supportsPromptCache" className="nice-form-control">
+                    <label
+                      htmlFor="supportsPromptCache"
+                      className="nice-form-control"
+                    >
                       <b>
                         Supports Prompt Cache:
                         {touched.supportsPromptCache &&
-                         !errors.supportsPromptCache && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.supportsPromptCache && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="supportsPromptCache"
-                            name="supportsPromptCache"
-                            checked={values.supportsPromptCache || false}
-                            onChange={(e) => {
-                              setFieldTouched('supportsPromptCache', true);
-                              setFieldValue('supportsPromptCache', e.target.checked);
-                            }}
-                            isInvalid={!!errors.supportsPromptCache}
-                            className={errors.supportsPromptCache ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="supportsPromptCache"
+                        name="supportsPromptCache"
+                        checked={values.supportsPromptCache || false}
+                        onChange={(e) => {
+                          setFieldTouched("supportsPromptCache", true);
+                          setFieldValue(
+                            "supportsPromptCache",
+                            e.target.checked,
+                          );
+                        }}
+                        isInvalid={!!errors.supportsPromptCache}
+                        className={errors.supportsPromptCache ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -757,37 +721,33 @@ const LlmDetailsForm: React.FC = () => {
                     <label htmlFor="inputPrice" className="nice-form-control">
                       <b>
                         Input Price:
-                        {touched.inputPrice &&
-                         !errors.inputPrice && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.inputPrice && !errors.inputPrice && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-                          {/* FLOAT FIELD */}
-                          <Field
-                            name="inputPrice"
-                            type="number"
-                            step="any"
-                            value={values.inputPrice || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('inputPrice', true);
-                              const v = e.target.value;
-                              setFieldValue('inputPrice', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.inputPrice
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
+                      {/* FLOAT FIELD */}
+                      <Field
+                        name="inputPrice"
+                        type="number"
+                        step="any"
+                        value={values.inputPrice || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("inputPrice", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "inputPrice",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.inputPrice
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -799,37 +759,33 @@ const LlmDetailsForm: React.FC = () => {
                     <label htmlFor="outputPrice" className="nice-form-control">
                       <b>
                         Output Price:
-                        {touched.outputPrice &&
-                         !errors.outputPrice && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.outputPrice && !errors.outputPrice && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-                          {/* FLOAT FIELD */}
-                          <Field
-                            name="outputPrice"
-                            type="number"
-                            step="any"
-                            value={values.outputPrice || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('outputPrice', true);
-                              const v = e.target.value;
-                              setFieldValue('outputPrice', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.outputPrice
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
+                      {/* FLOAT FIELD */}
+                      <Field
+                        name="outputPrice"
+                        type="number"
+                        step="any"
+                        value={values.outputPrice || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("outputPrice", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "outputPrice",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.outputPrice
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -841,28 +797,21 @@ const LlmDetailsForm: React.FC = () => {
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
-                        {touched.description &&
-                         !errors.description && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.description && !errors.description && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="description"
-                            value={values?.description}
-                            placeholder="Description"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="description"
+                        value={values?.description}
+                        placeholder="Description"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -874,28 +823,21 @@ const LlmDetailsForm: React.FC = () => {
                     <label htmlFor="url" className="nice-form-control">
                       <b>
                         Url:
-                        {touched.url &&
-                         !errors.url && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.url && !errors.url && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="url"
-                            value={values?.url}
-                            placeholder="Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="url"
+                        value={values?.url}
+                        placeholder="Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -904,31 +846,28 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="requestParameters" className="nice-form-control">
+                    <label
+                      htmlFor="requestParameters"
+                      className="nice-form-control"
+                    >
                       <b>
                         Request Parameters:
                         {touched.requestParameters &&
-                         !errors.requestParameters && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.requestParameters && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="requestParameters"
-                            value={values?.requestParameters}
-                            placeholder="Request Parameters"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="requestParameters"
+                        value={values?.requestParameters}
+                        placeholder="Request Parameters"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -940,28 +879,21 @@ const LlmDetailsForm: React.FC = () => {
                     <label htmlFor="metaData" className="nice-form-control">
                       <b>
                         Meta Data:
-                        {touched.metaData &&
-                         !errors.metaData && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.metaData && !errors.metaData && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="metaData"
-                            value={values?.metaData}
-                            placeholder="Meta Data"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="metaData"
+                        value={values?.metaData}
+                        placeholder="Meta Data"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -973,32 +905,25 @@ const LlmDetailsForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1008,45 +933,58 @@ const LlmDetailsForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New LlmDetails
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New LlmDetails
+                    </CoolButton>
 
-                  {(addLlmDetailsResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addLlmDetailsResult as any).error ? (addLlmDetailsResult as any).error.data : (addLlmDetailsResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addLlmDetailsResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addLlmDetailsResult as any).error
+                              ? (addLlmDetailsResult as any).error.data
+                              : (addLlmDetailsResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addLlmDetailsResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addLlmDetailsResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addLlmDetailsResult: {JSON.stringify(addLlmDetailsResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addLlmDetailsResult: {JSON.stringify(addLlmDetailsResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -1078,8 +1016,8 @@ kebabcase role-lookup
 const RoleLookup = () => {
   return (
     <>
-      <option value='user' label="User" />
-      <option value='assistant' label="Assistant" />
+      <option value="user" label="User" />
+      <option value="assistant" label="Assistant" />
     </>
   );
 };
@@ -1096,19 +1034,19 @@ kebabcase provider-lookup
 const ProviderLookup = () => {
   return (
     <>
-      <option value='valkyrai' label="Valkyrai" />
-      <option value='openai' label="Openai" />
-      <option value='ollama' label="Ollama" />
-      <option value='phi' label="Phi" />
-      <option value='gemma' label="Gemma" />
-      <option value='mistral' label="Mistral" />
-      <option value='claude' label="Claude" />
-      <option value='grok' label="Grok" />
-      <option value='gemini' label="Gemini" />
-      <option value='moonshot' label="Moonshot" />
-      <option value='deepseek' label="Deepseek" />
-      <option value='other' label="Other" />
-      <option value='chatgpt_pass_through' label="Chatgpt Pass Through" />
+      <option value="valkyrai" label="Valkyrai" />
+      <option value="openai" label="Openai" />
+      <option value="ollama" label="Ollama" />
+      <option value="phi" label="Phi" />
+      <option value="gemma" label="Gemma" />
+      <option value="mistral" label="Mistral" />
+      <option value="claude" label="Claude" />
+      <option value="grok" label="Grok" />
+      <option value="gemini" label="Gemini" />
+      <option value="moonshot" label="Moonshot" />
+      <option value="deepseek" label="Deepseek" />
+      <option value="other" label="Other" />
+      <option value="chatgpt_pass_through" label="Chatgpt Pass Through" />
     </>
   );
 };
@@ -1125,18 +1063,15 @@ kebabcase api-type-lookup
 const ApiTypeLookup = () => {
   return (
     <>
-      <option value='openai' label="Openai" />
-      <option value='ollama' label="Ollama" />
-      <option value='anthropic' label="Anthropic" />
-      <option value='grok' label="Grok" />
-      <option value='gemini' label="Gemini" />
-      <option value='other' label="Other" />
+      <option value="openai" label="Openai" />
+      <option value="ollama" label="Ollama" />
+      <option value="anthropic" label="Anthropic" />
+      <option value="grok" label="Grok" />
+      <option value="gemini" label="Gemini" />
+      <option value="other" label="Other" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default LlmDetailsForm;
-

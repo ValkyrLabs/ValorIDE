@@ -8,7 +8,7 @@ const RuleRow = ({ rulePath, enabled, isGlobal, toggleRule }) => {
   const username = rulePath.split("/").pop() || rulePath;
   const handleEditClick = () => {
     FileServiceClient.openFile({ value: rulePath }).catch((err) =>
-      console.error("Failed to open file:", err)
+      console.error("Failed to open file:", err),
     );
   };
   const handleDeleteClick = () => {

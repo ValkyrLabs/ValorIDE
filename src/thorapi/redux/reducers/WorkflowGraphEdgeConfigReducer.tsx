@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { WorkflowGraphEdgeConfig } from '@thorapi/model/WorkflowGraphEdgeConfig';
+import { WorkflowGraphEdgeConfig } from "@thorapi/model/WorkflowGraphEdgeConfig";
 
 const WorkflowGraphEdgeConfigSlice = createSlice({
   name: "WorkflowGraphEdgeConfigs",
@@ -27,20 +27,27 @@ const WorkflowGraphEdgeConfigSlice = createSlice({
     },
 
     WorkflowGraphEdgeConfigValueToggled(state, action) {
-      console.log("WorkflowGraphEdgeConfig TOGGLE")
-      console.warn(JSON.stringify(action))
-      const WorkflowGraphEdgeConfig:WorkflowGraphEdgeConfig = state.find((WorkflowGraphEdgeConfig) => WorkflowGraphEdgeConfig.id === action.payload.WorkflowGraphEdgeConfigId);
+      console.log("WorkflowGraphEdgeConfig TOGGLE");
+      console.warn(JSON.stringify(action));
+      const WorkflowGraphEdgeConfig: WorkflowGraphEdgeConfig = state.find(
+        (WorkflowGraphEdgeConfig) =>
+          WorkflowGraphEdgeConfig.id ===
+          action.payload.WorkflowGraphEdgeConfigId,
+      );
       if (WorkflowGraphEdgeConfig) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     WorkflowGraphEdgeConfigpropertySet(state, action) {
-      const WorkflowGraphEdgeConfig = state.find((WorkflowGraphEdgeConfig) => WorkflowGraphEdgeConfig.id === action.payload.WorkflowGraphEdgeConfigId);
+      const WorkflowGraphEdgeConfig = state.find(
+        (WorkflowGraphEdgeConfig) =>
+          WorkflowGraphEdgeConfig.id ===
+          action.payload.WorkflowGraphEdgeConfigId,
+      );
       if (WorkflowGraphEdgeConfig) {
-      //  WorkflowGraphEdgeConfig[action.property] = action.payload[action.property];
+        //  WorkflowGraphEdgeConfig[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const WorkflowGraphEdgeConfigSlice = createSlice({
 export const {
   WorkflowGraphEdgeConfigAdded,
   WorkflowGraphEdgeConfigValueToggled,
-  WorkflowGraphEdgeConfigpropertySet
+  WorkflowGraphEdgeConfigpropertySet,
 } = WorkflowGraphEdgeConfigSlice.actions;
 export default WorkflowGraphEdgeConfigSlice.reducer;

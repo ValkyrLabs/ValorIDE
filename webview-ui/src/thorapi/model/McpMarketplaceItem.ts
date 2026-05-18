@@ -26,240 +26,267 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    McpMarketplaceItemTag,
-    McpMarketplaceItemTagFromJSON,
-    McpMarketplaceItemTagToJSON,
-} from './';
-
+  McpMarketplaceItemTag,
+  McpMarketplaceItemTagFromJSON,
+  McpMarketplaceItemTagToJSON,
+} from "./";
 
 // thorapi
 
 /**
- * 
+ *
  * @export
  * @interface McpMarketplaceItem
  */
-export type McpMarketplaceItem  = DataObject & {
-    /**
-     * 
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    mcpMarketplaceCatalogId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    mcpServerId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    githubUrl?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    name?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    author?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    description?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    codiconIcon?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    logoUrl?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    category?: string;
-    /**
-     * 
-     * @type {Array<McpMarketplaceItemTag>}
-     * @memberof McpMarketplaceItem
-     */
-    tags?: Array<McpMarketplaceItemTag>;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof McpMarketplaceItem
-     */
-    requiresApiKey?: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    readmeContent?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    llmsInstallationContent?: string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof McpMarketplaceItem
-     */
-    isRecommended?: boolean;
-    /**
-     * 
-     * @type {number}
-     * @memberof McpMarketplaceItem
-     */
-    githubStars?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof McpMarketplaceItem
-     */
-    downloadCount?: number;
-    /**
-     * 
-     * @type {Date}
-     * @memberof McpMarketplaceItem
-     */
-    lastGithubSync?: Date;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof McpMarketplaceItem
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof McpMarketplaceItem
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof McpMarketplaceItem
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof McpMarketplaceItem
-     */
-    trashed?: boolean;
-}
+export type McpMarketplaceItem = DataObject & {
+  /**
+   *
+   * @type {string}
+   * @memberof McpMarketplaceItem
+   */
+  mcpMarketplaceCatalogId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpMarketplaceItem
+   */
+  mcpServerId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpMarketplaceItem
+   */
+  githubUrl?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpMarketplaceItem
+   */
+  name?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpMarketplaceItem
+   */
+  author?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpMarketplaceItem
+   */
+  description?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpMarketplaceItem
+   */
+  codiconIcon?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpMarketplaceItem
+   */
+  logoUrl?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpMarketplaceItem
+   */
+  category?: string;
+  /**
+   *
+   * @type {Array<McpMarketplaceItemTag>}
+   * @memberof McpMarketplaceItem
+   */
+  tags?: Array<McpMarketplaceItemTag>;
+  /**
+   *
+   * @type {boolean}
+   * @memberof McpMarketplaceItem
+   */
+  requiresApiKey?: boolean;
+  /**
+   *
+   * @type {string}
+   * @memberof McpMarketplaceItem
+   */
+  readmeContent?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpMarketplaceItem
+   */
+  llmsInstallationContent?: string;
+  /**
+   *
+   * @type {boolean}
+   * @memberof McpMarketplaceItem
+   */
+  isRecommended?: boolean;
+  /**
+   *
+   * @type {number}
+   * @memberof McpMarketplaceItem
+   */
+  githubStars?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof McpMarketplaceItem
+   */
+  downloadCount?: number;
+  /**
+   *
+   * @type {Date}
+   * @memberof McpMarketplaceItem
+   */
+  lastGithubSync?: Date;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof McpMarketplaceItem
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof McpMarketplaceItem
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof McpMarketplaceItem
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof McpMarketplaceItem
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof McpMarketplaceItem
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof McpMarketplaceItem
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof McpMarketplaceItem
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof McpMarketplaceItem
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof McpMarketplaceItem
+   */
+  trashed?: boolean;
+};
 
 export function McpMarketplaceItemFromJSON(json: any): McpMarketplaceItem {
-    return {
-        ...DataObjectFromJSON(json),
-        'mcpMarketplaceCatalogId': !exists(json, 'mcpMarketplaceCatalogId') ? undefined : json['mcpMarketplaceCatalogId'],
-        'mcpServerId': !exists(json, 'mcpServerId') ? undefined : json['mcpServerId'],
-        'githubUrl': !exists(json, 'githubUrl') ? undefined : json['githubUrl'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'author': !exists(json, 'author') ? undefined : json['author'],
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'codiconIcon': !exists(json, 'codiconIcon') ? undefined : json['codiconIcon'],
-        'logoUrl': !exists(json, 'logoUrl') ? undefined : json['logoUrl'],
-        'category': !exists(json, 'category') ? undefined : json['category'],
-        'tags': !exists(json, 'tags') ? undefined : (json['tags'] as Array<any>).map(McpMarketplaceItemTagFromJSON),
-        'requiresApiKey': !exists(json, 'requiresApiKey') ? undefined : json['requiresApiKey'],
-        'readmeContent': !exists(json, 'readmeContent') ? undefined : json['readmeContent'],
-        'llmsInstallationContent': !exists(json, 'llmsInstallationContent') ? undefined : json['llmsInstallationContent'],
-        'isRecommended': !exists(json, 'isRecommended') ? undefined : json['isRecommended'],
-        'githubStars': !exists(json, 'githubStars') ? undefined : json['githubStars'],
-        'downloadCount': !exists(json, 'downloadCount') ? undefined : json['downloadCount'],
-        'lastGithubSync': !exists(json, 'lastGithubSync') ? undefined : new Date(json['lastGithubSync']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    mcpMarketplaceCatalogId: !exists(json, "mcpMarketplaceCatalogId")
+      ? undefined
+      : json["mcpMarketplaceCatalogId"],
+    mcpServerId: !exists(json, "mcpServerId") ? undefined : json["mcpServerId"],
+    githubUrl: !exists(json, "githubUrl") ? undefined : json["githubUrl"],
+    name: !exists(json, "name") ? undefined : json["name"],
+    author: !exists(json, "author") ? undefined : json["author"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    codiconIcon: !exists(json, "codiconIcon") ? undefined : json["codiconIcon"],
+    logoUrl: !exists(json, "logoUrl") ? undefined : json["logoUrl"],
+    category: !exists(json, "category") ? undefined : json["category"],
+    tags: !exists(json, "tags")
+      ? undefined
+      : (json["tags"] as Array<any>).map(McpMarketplaceItemTagFromJSON),
+    requiresApiKey: !exists(json, "requiresApiKey")
+      ? undefined
+      : json["requiresApiKey"],
+    readmeContent: !exists(json, "readmeContent")
+      ? undefined
+      : json["readmeContent"],
+    llmsInstallationContent: !exists(json, "llmsInstallationContent")
+      ? undefined
+      : json["llmsInstallationContent"],
+    isRecommended: !exists(json, "isRecommended")
+      ? undefined
+      : json["isRecommended"],
+    githubStars: !exists(json, "githubStars") ? undefined : json["githubStars"],
+    downloadCount: !exists(json, "downloadCount")
+      ? undefined
+      : json["downloadCount"],
+    lastGithubSync: !exists(json, "lastGithubSync")
+      ? undefined
+      : new Date(json["lastGithubSync"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function McpMarketplaceItemToJSON(value?: McpMarketplaceItem): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'mcpMarketplaceCatalogId': value.mcpMarketplaceCatalogId,
-        'mcpServerId': value.mcpServerId,
-        'githubUrl': value.githubUrl,
-        'name': value.name,
-        'author': value.author,
-        'description': value.description,
-        'codiconIcon': value.codiconIcon,
-        'logoUrl': value.logoUrl,
-        'category': value.category,
-        'tags': value.tags === undefined ? undefined : (value.tags as Array<any>).map(McpMarketplaceItemTagToJSON),
-        'requiresApiKey': value.requiresApiKey,
-        'readmeContent': value.readmeContent,
-        'llmsInstallationContent': value.llmsInstallationContent,
-        'isRecommended': value.isRecommended,
-        'githubStars': value.githubStars,
-        'downloadCount': value.downloadCount,
-        'lastGithubSync': value.lastGithubSync === undefined ? undefined : value.lastGithubSync.toISOString(),
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    mcpMarketplaceCatalogId: value.mcpMarketplaceCatalogId,
+    mcpServerId: value.mcpServerId,
+    githubUrl: value.githubUrl,
+    name: value.name,
+    author: value.author,
+    description: value.description,
+    codiconIcon: value.codiconIcon,
+    logoUrl: value.logoUrl,
+    category: value.category,
+    tags:
+      value.tags === undefined
+        ? undefined
+        : (value.tags as Array<any>).map(McpMarketplaceItemTagToJSON),
+    requiresApiKey: value.requiresApiKey,
+    readmeContent: value.readmeContent,
+    llmsInstallationContent: value.llmsInstallationContent,
+    isRecommended: value.isRecommended,
+    githubStars: value.githubStars,
+    downloadCount: value.downloadCount,
+    lastGithubSync:
+      value.lastGithubSync === undefined
+        ? undefined
+        : value.lastGithubSync.toISOString(),
+    trashed: value.trashed,
+  };
 }
-
-

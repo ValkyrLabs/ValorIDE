@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,137 +36,145 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface McpServiceResponse
  */
-export type McpServiceResponse  = DataObject & {
-    /**
-     * ID of the registered service
-     * @type {string}
-     * @memberof McpServiceResponse
-     */
-    serviceId?: string;
-    /**
-     * Service slug
-     * @type {string}
-     * @memberof McpServiceResponse
-     */
-    slug?: string;
-    /**
-     * Publication status
-     * @type {string}
-     * @memberof McpServiceResponse
-     */
-    status?: McpServiceResponseStatusEnum;
-    /**
-     * URL to fetch service manifest
-     * @type {string}
-     * @memberof McpServiceResponse
-     */
-    manifestUrl?: string;
-    /**
-     * Status message or error details
-     * @type {string}
-     * @memberof McpServiceResponse
-     */
-    message?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof McpServiceResponse
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof McpServiceResponse
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof McpServiceResponse
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof McpServiceResponse
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof McpServiceResponse
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof McpServiceResponse
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof McpServiceResponse
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof McpServiceResponse
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof McpServiceResponse
-     */
-    trashed?: boolean;
-}
+export type McpServiceResponse = DataObject & {
+  /**
+   * ID of the registered service
+   * @type {string}
+   * @memberof McpServiceResponse
+   */
+  serviceId?: string;
+  /**
+   * Service slug
+   * @type {string}
+   * @memberof McpServiceResponse
+   */
+  slug?: string;
+  /**
+   * Publication status
+   * @type {string}
+   * @memberof McpServiceResponse
+   */
+  status?: McpServiceResponseStatusEnum;
+  /**
+   * URL to fetch service manifest
+   * @type {string}
+   * @memberof McpServiceResponse
+   */
+  manifestUrl?: string;
+  /**
+   * Status message or error details
+   * @type {string}
+   * @memberof McpServiceResponse
+   */
+  message?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof McpServiceResponse
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof McpServiceResponse
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof McpServiceResponse
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof McpServiceResponse
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof McpServiceResponse
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof McpServiceResponse
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof McpServiceResponse
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof McpServiceResponse
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof McpServiceResponse
+   */
+  trashed?: boolean;
+};
 
 export function McpServiceResponseFromJSON(json: any): McpServiceResponse {
-    return {
-        ...DataObjectFromJSON(json),
-        'serviceId': !exists(json, 'serviceId') ? undefined : json['serviceId'],
-        'slug': !exists(json, 'slug') ? undefined : json['slug'],
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'manifestUrl': !exists(json, 'manifestUrl') ? undefined : json['manifestUrl'],
-        'message': !exists(json, 'message') ? undefined : json['message'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    serviceId: !exists(json, "serviceId") ? undefined : json["serviceId"],
+    slug: !exists(json, "slug") ? undefined : json["slug"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    manifestUrl: !exists(json, "manifestUrl") ? undefined : json["manifestUrl"],
+    message: !exists(json, "message") ? undefined : json["message"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function McpServiceResponseToJSON(value?: McpServiceResponse): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'serviceId': value.serviceId,
-        'slug': value.slug,
-        'status': value.status,
-        'manifestUrl': value.manifestUrl,
-        'message': value.message,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    serviceId: value.serviceId,
+    slug: value.slug,
+    status: value.status,
+    manifestUrl: value.manifestUrl,
+    message: value.message,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum McpServiceResponseStatusEnum {
-    PUBLISHED = 'published',
-    PENDINGAPPROVAL = 'pending_approval',
-    DRAFT = 'draft',
-    FAILED = 'failed'
+  PUBLISHED = "published",
+  PENDINGAPPROVAL = "pending_approval",
+  DRAFT = "draft",
+  FAILED = "failed",
 }
-
-

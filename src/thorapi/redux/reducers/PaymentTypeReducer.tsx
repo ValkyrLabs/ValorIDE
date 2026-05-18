@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { PaymentType } from '@thorapi/model/PaymentType';
+import { PaymentType } from "@thorapi/model/PaymentType";
 
 const PaymentTypeSlice = createSlice({
   name: "PaymentTypes",
@@ -27,20 +27,23 @@ const PaymentTypeSlice = createSlice({
     },
 
     PaymentTypeValueToggled(state, action) {
-      console.log("PaymentType TOGGLE")
-      console.warn(JSON.stringify(action))
-      const PaymentType:PaymentType = state.find((PaymentType) => PaymentType.id === action.payload.PaymentTypeId);
+      console.log("PaymentType TOGGLE");
+      console.warn(JSON.stringify(action));
+      const PaymentType: PaymentType = state.find(
+        (PaymentType) => PaymentType.id === action.payload.PaymentTypeId,
+      );
       if (PaymentType) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     PaymentTypepropertySet(state, action) {
-      const PaymentType = state.find((PaymentType) => PaymentType.id === action.payload.PaymentTypeId);
+      const PaymentType = state.find(
+        (PaymentType) => PaymentType.id === action.payload.PaymentTypeId,
+      );
       if (PaymentType) {
-      //  PaymentType[action.property] = action.payload[action.property];
+        //  PaymentType[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const PaymentTypeSlice = createSlice({
 export const {
   PaymentTypeAdded,
   PaymentTypeValueToggled,
-  PaymentTypepropertySet
+  PaymentTypepropertySet,
 } = PaymentTypeSlice.actions;
 export default PaymentTypeSlice.reducer;

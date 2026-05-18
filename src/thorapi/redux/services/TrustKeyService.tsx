@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { TrustKey } from '@thorapi/model/TrustKey'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { TrustKey } from "@thorapi/model/TrustKey";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type TrustKeyResponse = TrustKey[]
+type TrustKeyResponse = TrustKey[];
 
 const toTrustKeyList = (result: unknown): TrustKeyResponse => {
   if (Array.isArray(result)) {
-    return result as TrustKeyResponse
+    return result as TrustKeyResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as TrustKeyResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as TrustKeyResponse) : [];
+};
 
 export const TrustKeyService = createApi({
-  reducerPath: 'TrustKey', // This should remain unique
+  reducerPath: "TrustKey", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['TrustKey'],
+  tagTypes: ["TrustKey"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getTrustKeysPaged: build.query<TrustKeyResponse, { page: number; size?: number; example?: Partial<TrustKey> }>({
+    getTrustKeysPaged: build.query<
+      TrustKeyResponse,
+      { page: number; size?: number; example?: Partial<TrustKey> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `TrustKey?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `TrustKey?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toTrustKeyList(result)
+        const rows = toTrustKeyList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'TrustKey' as const, id })),
-          { type: 'TrustKey', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "TrustKey" as const, id })),
+          { type: "TrustKey", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getTrustKeys: build.query<TrustKeyResponse, { example?: Partial<TrustKey> } | void>({
+    getTrustKeys: build.query<
+      TrustKeyResponse,
+      { example?: Partial<TrustKey> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const TrustKeyService = createApi({
         return `TrustKey`;
       },
       providesTags: (result) => {
-        const rows = toTrustKeyList(result)
+        const rows = toTrustKeyList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'TrustKey' as const, id })),
-          { type: 'TrustKey', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "TrustKey" as const, id })),
+          { type: "TrustKey", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,42 +87,45 @@ export const TrustKeyService = createApi({
     addTrustKey: build.mutation<TrustKey, Partial<TrustKey>>({
       query: (body) => ({
         url: `TrustKey`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'TrustKey', id: 'LIST' }],
+      invalidatesTags: [{ type: "TrustKey", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getTrustKey: build.query<TrustKey, string>({
       query: (id) => `TrustKey/${id}`,
-      providesTags: (result, error, id) => [{ type: 'TrustKey', id }],
+      providesTags: (result, error, id) => [{ type: "TrustKey", id }],
     }),
 
     // 5) Update
-    updateTrustKey: build.mutation<void, Pick<TrustKey, 'id'> & Partial<TrustKey>>({
+    updateTrustKey: build.mutation<
+      void,
+      Pick<TrustKey, "id"> & Partial<TrustKey>
+    >({
       query: ({ id, ...patch }) => ({
         url: `TrustKey/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            TrustKeyService.util.updateQueryData('getTrustKey', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            TrustKeyService.util.updateQueryData("getTrustKey", id, (draft) => {
+              Object.assign(draft, patch);
+            }),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<TrustKey, 'id'>) => [
-        { type: 'TrustKey', id },
-        { type: 'TrustKey', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<TrustKey, "id">) => [
+        { type: "TrustKey", id },
+        { type: "TrustKey", id: "LIST" },
       ],
     }),
 
@@ -120,29 +134,35 @@ export const TrustKeyService = createApi({
       query(id) {
         return {
           url: `TrustKey/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'TrustKey', id }],
+      invalidatesTags: (result, error, id) => [{ type: "TrustKey", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteTrustKeyCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteTrustKeyCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `TrustKey/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'TrustKey', id }, { type: 'TrustKey', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "TrustKey", id },
+        { type: "TrustKey", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetTrustKeysPagedQuery`
 export const {
-  useGetTrustKeysPagedQuery,     // immediate fetch
+  useGetTrustKeysPagedQuery, // immediate fetch
   useLazyGetTrustKeysPagedQuery, // lazy fetch
   useGetTrustKeyQuery,
   useGetTrustKeysQuery,
@@ -150,4 +170,4 @@ export const {
   useUpdateTrustKeyMutation,
   useDeleteTrustKeyMutation,
   useDeleteTrustKeyCascadeMutation,
-} = TrustKeyService
+} = TrustKeyService;

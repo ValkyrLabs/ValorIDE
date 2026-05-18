@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ExecModuleAuthConfig } from '@thorapi/model/ExecModuleAuthConfig';
+import { ExecModuleAuthConfig } from "@thorapi/model/ExecModuleAuthConfig";
 
 const ExecModuleAuthConfigSlice = createSlice({
   name: "ExecModuleAuthConfigs",
@@ -27,20 +27,25 @@ const ExecModuleAuthConfigSlice = createSlice({
     },
 
     ExecModuleAuthConfigValueToggled(state, action) {
-      console.log("ExecModuleAuthConfig TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ExecModuleAuthConfig:ExecModuleAuthConfig = state.find((ExecModuleAuthConfig) => ExecModuleAuthConfig.id === action.payload.ExecModuleAuthConfigId);
+      console.log("ExecModuleAuthConfig TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ExecModuleAuthConfig: ExecModuleAuthConfig = state.find(
+        (ExecModuleAuthConfig) =>
+          ExecModuleAuthConfig.id === action.payload.ExecModuleAuthConfigId,
+      );
       if (ExecModuleAuthConfig) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ExecModuleAuthConfigpropertySet(state, action) {
-      const ExecModuleAuthConfig = state.find((ExecModuleAuthConfig) => ExecModuleAuthConfig.id === action.payload.ExecModuleAuthConfigId);
+      const ExecModuleAuthConfig = state.find(
+        (ExecModuleAuthConfig) =>
+          ExecModuleAuthConfig.id === action.payload.ExecModuleAuthConfigId,
+      );
       if (ExecModuleAuthConfig) {
-      //  ExecModuleAuthConfig[action.property] = action.payload[action.property];
+        //  ExecModuleAuthConfig[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const ExecModuleAuthConfigSlice = createSlice({
 export const {
   ExecModuleAuthConfigAdded,
   ExecModuleAuthConfigValueToggled,
-  ExecModuleAuthConfigpropertySet
+  ExecModuleAuthConfigpropertySet,
 } = ExecModuleAuthConfigSlice.actions;
 export default ExecModuleAuthConfigSlice.reducer;

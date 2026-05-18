@@ -19,20 +19,32 @@ Description: McpContent
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, McpContent } from '@thorapi/model';
-import { useGetMcpContentsQuery, useAddMcpContentMutation, useUpdateMcpContentMutation } from '../../services/McpContentService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, McpContent } from "@thorapi/model";
+import {
+  useGetMcpContentsQuery,
+  useAddMcpContentMutation,
+  useUpdateMcpContentMutation,
+} from "../../services/McpContentService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const McpContentChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetMcpContentsQuery();
 
   const [data, setData] = useState<McpContent[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<McpContent>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const McpContentChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const McpContentChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((mcpcontent: DataObject) => [mcpcontent])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((mcpcontent: DataObject) => [mcpcontent])}
+        />
+      )}
     </>
   );
 };

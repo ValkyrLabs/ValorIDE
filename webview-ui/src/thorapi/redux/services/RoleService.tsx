@@ -13,42 +13,50 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { Role } from '@thorapi/model/Role'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { Role } from "@thorapi/model/Role";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type RoleResponse = Role[]
+type RoleResponse = Role[];
 
 const toRoleList = (result: unknown): RoleResponse => {
   if (Array.isArray(result)) {
-    return result as RoleResponse
+    return result as RoleResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as RoleResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as RoleResponse) : [];
+};
 
 export const RoleService = createApi({
-  reducerPath: 'Role', // This should remain unique
+  reducerPath: "Role", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['Role'],
+  tagTypes: ["Role"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getRolesPaged: build.query<RoleResponse, { page: number; size?: number; example?: Partial<Role> }>({
+    getRolesPaged: build.query<
+      RoleResponse,
+      { page: number; size?: number; example?: Partial<Role> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Role?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Role?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toRoleList(result)
+        const rows = toRoleList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'Role' as const, id })),
-          { type: 'Role', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "Role" as const, id })),
+          { type: "Role", id: `PAGE_${page}` },
+        ];
       },
     }),
 
@@ -62,13 +70,13 @@ export const RoleService = createApi({
         return `Role`;
       },
       providesTags: (result) => {
-        const rows = toRoleList(result)
+        const rows = toRoleList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'Role' as const, id })),
-          { type: 'Role', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "Role" as const, id })),
+          { type: "Role", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,42 +84,42 @@ export const RoleService = createApi({
     addRole: build.mutation<Role, Partial<Role>>({
       query: (body) => ({
         url: `Role`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'Role', id: 'LIST' }],
+      invalidatesTags: [{ type: "Role", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getRole: build.query<Role, string>({
       query: (id) => `Role/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Role', id }],
+      providesTags: (result, error, id) => [{ type: "Role", id }],
     }),
 
     // 5) Update
-    updateRole: build.mutation<void, Pick<Role, 'id'> & Partial<Role>>({
+    updateRole: build.mutation<void, Pick<Role, "id"> & Partial<Role>>({
       query: ({ id, ...patch }) => ({
         url: `Role/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            RoleService.util.updateQueryData('getRole', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            RoleService.util.updateQueryData("getRole", id, (draft) => {
+              Object.assign(draft, patch);
+            }),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<Role, 'id'>) => [
-        { type: 'Role', id },
-        { type: 'Role', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<Role, "id">) => [
+        { type: "Role", id },
+        { type: "Role", id: "LIST" },
       ],
     }),
 
@@ -120,29 +128,35 @@ export const RoleService = createApi({
       query(id) {
         return {
           url: `Role/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'Role', id }],
+      invalidatesTags: (result, error, id) => [{ type: "Role", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteRoleCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteRoleCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `Role/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Role', id }, { type: 'Role', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Role", id },
+        { type: "Role", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetRolesPagedQuery`
 export const {
-  useGetRolesPagedQuery,     // immediate fetch
+  useGetRolesPagedQuery, // immediate fetch
   useLazyGetRolesPagedQuery, // lazy fetch
   useGetRoleQuery,
   useGetRolesQuery,
@@ -150,4 +164,4 @@ export const {
   useUpdateRoleMutation,
   useDeleteRoleMutation,
   useDeleteRoleCascadeMutation,
-} = RoleService
+} = RoleService;

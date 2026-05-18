@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_MCPRESOURCETEMPLATE_REQUEST,
-    FETCH_MCPRESOURCETEMPLATE_REQUEST,
-    LIST_MCPRESOURCETEMPLATE_REQUEST,
-    UPDATE_MCPRESOURCETEMPLATE_REQUEST,
-    DELETE_MCPRESOURCETEMPLATE_REQUEST,
-
-    addMcpResourceTemplateFailure,
-    addMcpResourceTemplateSuccess,
-
-    fetchMcpResourceTemplateFailure,
-    fetchMcpResourceTemplateSuccess,
-    
-    listMcpResourceTemplateFailure,
-    listMcpResourceTemplateSuccess,
-
-    updateMcpResourceTemplateFailure,
-    updateMcpResourceTemplateSuccess,
-    
-    deleteMcpResourceTemplateFailure,
-    deleteMcpResourceTemplateSuccess,
-    
-} from '../actions/McpResourceTemplateApiAction';
+  ADD_MCPRESOURCETEMPLATE_REQUEST,
+  FETCH_MCPRESOURCETEMPLATE_REQUEST,
+  LIST_MCPRESOURCETEMPLATE_REQUEST,
+  UPDATE_MCPRESOURCETEMPLATE_REQUEST,
+  DELETE_MCPRESOURCETEMPLATE_REQUEST,
+  addMcpResourceTemplateFailure,
+  addMcpResourceTemplateSuccess,
+  fetchMcpResourceTemplateFailure,
+  fetchMcpResourceTemplateSuccess,
+  listMcpResourceTemplateFailure,
+  listMcpResourceTemplateSuccess,
+  updateMcpResourceTemplateFailure,
+  updateMcpResourceTemplateSuccess,
+  deleteMcpResourceTemplateFailure,
+  deleteMcpResourceTemplateSuccess,
+} from "../actions/McpResourceTemplateApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: McpResourceTemplate
 */
 
-
-
-export const McpResourceTemplateMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("McpResourceTemplate MIDDLEWARE: " + JSON.stringify(action) )
+export const McpResourceTemplateMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("McpResourceTemplate MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

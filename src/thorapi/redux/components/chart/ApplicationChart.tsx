@@ -19,20 +19,32 @@ Description: Application
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, Application } from '@thorapi/model';
-import { useGetApplicationsQuery, useAddApplicationMutation, useUpdateApplicationMutation } from '../../services/ApplicationService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, Application } from "@thorapi/model";
+import {
+  useGetApplicationsQuery,
+  useAddApplicationMutation,
+  useUpdateApplicationMutation,
+} from "../../services/ApplicationService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const ApplicationChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetApplicationsQuery();
 
   const [data, setData] = useState<Application[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<Application>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const ApplicationChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const ApplicationChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((application: DataObject) => [application])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((application: DataObject) => [application])}
+        />
+      )}
     </>
   );
 };

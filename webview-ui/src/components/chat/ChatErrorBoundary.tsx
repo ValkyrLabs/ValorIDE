@@ -61,7 +61,7 @@ export class ChatErrorBoundary extends React.Component<
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
-        }).catch(() => { });
+        }).catch(() => {});
       }
     } catch (e) {
       console.error("Failed to capture chat error details", e);

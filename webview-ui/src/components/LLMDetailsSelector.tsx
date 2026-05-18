@@ -94,7 +94,10 @@ export const LLMDetailsSelector: React.FC<LLMDetailsSelectorProps> = ({
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -106,11 +109,11 @@ export const LLMDetailsSelector: React.FC<LLMDetailsSelectorProps> = ({
   const { publicDetails, userDetails, filteredDetails } = useMemo(() => {
     const all = taskIntent
       ? llmDetails.filter(
-        (d) =>
-          d.tags?.includes(taskIntent) ||
-          d.tags?.includes("all") ||
-          !d.tags?.length,
-      )
+          (d) =>
+            d.tags?.includes(taskIntent) ||
+            d.tags?.includes("all") ||
+            !d.tags?.length,
+        )
       : llmDetails;
 
     const userDetails = all.filter(
@@ -145,7 +148,10 @@ export const LLMDetailsSelector: React.FC<LLMDetailsSelectorProps> = ({
         aria-current={isSelected ? "true" : undefined}
         tabIndex={isDisabled ? -1 : 0}
         onClick={() => !isDisabled && handleSelect(llm.id)}
-        onKeyDown={(e) => { if (!isDisabled && (e.key === "Enter" || e.key === " ")) handleSelect(llm.id); }}
+        onKeyDown={(e) => {
+          if (!isDisabled && (e.key === "Enter" || e.key === " "))
+            handleSelect(llm.id);
+        }}
         style={{
           padding: "7px 10px",
           cursor: isDisabled ? "default" : "pointer",
@@ -171,18 +177,34 @@ export const LLMDetailsSelector: React.FC<LLMDetailsSelectorProps> = ({
         }}
         onMouseLeave={(e) => {
           if (!isSelected) {
-            (e.currentTarget as HTMLDivElement).style.background = "transparent";
+            (e.currentTarget as HTMLDivElement).style.background =
+              "transparent";
           }
         }}
       >
         <span style={{ opacity: 0.6, flexShrink: 0 }}>
           {isUser ? <FaLock size={10} /> : <FaGlobe size={10} />}
         </span>
-        <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+        <span
+          style={{
+            flex: 1,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
           {llm.name}
         </span>
         {llm.ratingScore != null && (
-          <span style={{ opacity: 0.7, display: "flex", alignItems: "center", gap: 2, flexShrink: 0 }}>
+          <span
+            style={{
+              opacity: 0.7,
+              display: "flex",
+              alignItems: "center",
+              gap: 2,
+              flexShrink: 0,
+            }}
+          >
             <FaStar size={9} color="#cca700" />
             {llm.ratingScore.toFixed(1)}
           </span>
@@ -213,7 +235,10 @@ export const LLMDetailsSelector: React.FC<LLMDetailsSelectorProps> = ({
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         onClick={() => !isDisabled && setIsOpen((o) => !o)}
-        onKeyDown={(e) => { if (!isDisabled && (e.key === "Enter" || e.key === " ")) setIsOpen((o) => !o); }}
+        onKeyDown={(e) => {
+          if (!isDisabled && (e.key === "Enter" || e.key === " "))
+            setIsOpen((o) => !o);
+        }}
         style={{
           display: "flex",
           alignItems: "center",
@@ -235,7 +260,14 @@ export const LLMDetailsSelector: React.FC<LLMDetailsSelectorProps> = ({
           <>
             {selectedDetail ? (
               <>
-                <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <span
+                  style={{
+                    flex: 1,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
                   {selectedDetail.name}
                 </span>
                 <span
@@ -253,7 +285,9 @@ export const LLMDetailsSelector: React.FC<LLMDetailsSelectorProps> = ({
               </>
             ) : (
               <span style={{ opacity: 0.6, flex: 1 }}>
-                {error ? "Failed to load — retry below" : "-- Choose a prompt --"}
+                {error
+                  ? "Failed to load — retry below"
+                  : "-- Choose a prompt --"}
               </span>
             )}
           </>
@@ -261,11 +295,18 @@ export const LLMDetailsSelector: React.FC<LLMDetailsSelectorProps> = ({
         <VSCodeButton
           appearance="icon"
           title="Refresh available prompts"
-          onClick={(e: any) => { e.stopPropagation(); fetchLlmDetails(); }}
+          onClick={(e: any) => {
+            e.stopPropagation();
+            fetchLlmDetails();
+          }}
           disabled={disabled || isLoading}
           style={{ marginLeft: "auto" }}
         >
-          {isLoading ? <VSCodeProgressRing style={{ width: 12, height: 12 }} /> : <VscRefresh />}
+          {isLoading ? (
+            <VSCodeProgressRing style={{ width: 12, height: 12 }} />
+          ) : (
+            <VscRefresh />
+          )}
         </VSCodeButton>
         <VscChevronDown
           style={{
@@ -330,7 +371,10 @@ export const LLMDetailsSelector: React.FC<LLMDetailsSelectorProps> = ({
                   display: "flex",
                   alignItems: "center",
                   gap: 5,
-                  borderTop: userDetails.length > 0 ? "1px solid var(--vscode-panel-border)" : undefined,
+                  borderTop:
+                    userDetails.length > 0
+                      ? "1px solid var(--vscode-panel-border)"
+                      : undefined,
                   borderBottom: "1px solid var(--vscode-panel-border)",
                 }}
               >
@@ -340,7 +384,14 @@ export const LLMDetailsSelector: React.FC<LLMDetailsSelectorProps> = ({
             </>
           )}
           {filteredDetails.length === 0 && (
-            <div style={{ padding: "12px 10px", opacity: 0.5, fontSize: 12, textAlign: "center" }}>
+            <div
+              style={{
+                padding: "12px 10px",
+                opacity: 0.5,
+                fontSize: 12,
+                textAlign: "center",
+              }}
+            >
               No prompts available
             </div>
           )}
@@ -353,8 +404,10 @@ export const LLMDetailsSelector: React.FC<LLMDetailsSelectorProps> = ({
             marginTop: 4,
             fontSize: 11,
             color: "var(--vscode-inputValidation-errorForeground, #f48771)",
-            background: "var(--vscode-inputValidation-errorBackground, #5a1d1d)",
-            border: "1px solid var(--vscode-inputValidation-errorBorder, #f48771)",
+            background:
+              "var(--vscode-inputValidation-errorBackground, #5a1d1d)",
+            border:
+              "1px solid var(--vscode-inputValidation-errorBorder, #f48771)",
             borderRadius: 3,
             padding: "4px 8px",
           }}
@@ -375,38 +428,56 @@ export const LLMDetailsSelector: React.FC<LLMDetailsSelectorProps> = ({
             fontSize: 11,
           }}
         >
-          <div style={{ fontWeight: 600, marginBottom: 2 }}>{selectedDetail.name}</div>
+          <div style={{ fontWeight: 600, marginBottom: 2 }}>
+            {selectedDetail.name}
+          </div>
           {selectedDetail.description && (
             <div style={{ opacity: 0.7, marginBottom: 4, lineHeight: 1.4 }}>
               {selectedDetail.description}
             </div>
           )}
-          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
+          <div
+            style={{
+              display: "flex",
+              gap: 6,
+              flexWrap: "wrap",
+              alignItems: "center",
+            }}
+          >
             <StatusBadge
               label="Mode"
               value={selectedDetail.promptType ?? "SYSTEM"}
               kind={selectedDetail.promptType === "SYSTEM" ? "warn" : "ok"}
             />
             {selectedDetail.ratingScore != null && (
-              <span style={{ display: "flex", alignItems: "center", gap: 3, opacity: 0.8 }}>
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 3,
+                  opacity: 0.8,
+                }}
+              >
                 <FaStar size={10} color="#cca700" />
                 {selectedDetail.ratingScore.toFixed(1)}/5
               </span>
             )}
-            {selectedDetail.tags?.filter((t) => t !== "user" && t !== "private" && t !== "all").map((tag) => (
-              <span
-                key={tag}
-                style={{
-                  fontSize: 10,
-                  background: "var(--vscode-badge-background)",
-                  color: "var(--vscode-badge-foreground)",
-                  padding: "1px 5px",
-                  borderRadius: 3,
-                }}
-              >
-                {tag}
-              </span>
-            ))}
+            {selectedDetail.tags
+              ?.filter((t) => t !== "user" && t !== "private" && t !== "all")
+              .map((tag) => (
+                <span
+                  key={tag}
+                  style={{
+                    fontSize: 10,
+                    background: "var(--vscode-badge-background)",
+                    color: "var(--vscode-badge-foreground)",
+                    padding: "1px 5px",
+                    borderRadius: 3,
+                  }}
+                >
+                  {tag}
+                </span>
+              ))}
           </div>
           {selectedDetail.initialPrompt && (
             <pre
@@ -414,7 +485,8 @@ export const LLMDetailsSelector: React.FC<LLMDetailsSelectorProps> = ({
                 marginTop: 6,
                 padding: "4px 6px",
                 fontSize: 10,
-                background: "var(--vscode-textBlockQuote-background, rgba(0,0,0,0.2))",
+                background:
+                  "var(--vscode-textBlockQuote-background, rgba(0,0,0,0.2))",
                 borderRadius: 3,
                 whiteSpace: "pre-wrap",
                 wordBreak: "break-word",

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ProductFunnelWizard } from '@thorapi/model/ProductFunnelWizard';
+import { ProductFunnelWizard } from "@thorapi/model/ProductFunnelWizard";
 
 const ProductFunnelWizardSlice = createSlice({
   name: "ProductFunnelWizards",
@@ -27,20 +27,25 @@ const ProductFunnelWizardSlice = createSlice({
     },
 
     ProductFunnelWizardValueToggled(state, action) {
-      console.log("ProductFunnelWizard TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ProductFunnelWizard:ProductFunnelWizard = state.find((ProductFunnelWizard) => ProductFunnelWizard.id === action.payload.ProductFunnelWizardId);
+      console.log("ProductFunnelWizard TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ProductFunnelWizard: ProductFunnelWizard = state.find(
+        (ProductFunnelWizard) =>
+          ProductFunnelWizard.id === action.payload.ProductFunnelWizardId,
+      );
       if (ProductFunnelWizard) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ProductFunnelWizardpropertySet(state, action) {
-      const ProductFunnelWizard = state.find((ProductFunnelWizard) => ProductFunnelWizard.id === action.payload.ProductFunnelWizardId);
+      const ProductFunnelWizard = state.find(
+        (ProductFunnelWizard) =>
+          ProductFunnelWizard.id === action.payload.ProductFunnelWizardId,
+      );
       if (ProductFunnelWizard) {
-      //  ProductFunnelWizard[action.property] = action.payload[action.property];
+        //  ProductFunnelWizard[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const ProductFunnelWizardSlice = createSlice({
 export const {
   ProductFunnelWizardAdded,
   ProductFunnelWizardValueToggled,
-  ProductFunnelWizardpropertySet
+  ProductFunnelWizardpropertySet,
 } = ProductFunnelWizardSlice.actions;
 export default ProductFunnelWizardSlice.reducer;

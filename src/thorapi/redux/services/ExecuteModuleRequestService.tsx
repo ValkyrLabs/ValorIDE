@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { ExecuteModuleRequest } from '@thorapi/model/ExecuteModuleRequest'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { ExecuteModuleRequest } from "@thorapi/model/ExecuteModuleRequest";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type ExecuteModuleRequestResponse = ExecuteModuleRequest[]
+type ExecuteModuleRequestResponse = ExecuteModuleRequest[];
 
-const toExecuteModuleRequestList = (result: unknown): ExecuteModuleRequestResponse => {
+const toExecuteModuleRequestList = (
+  result: unknown,
+): ExecuteModuleRequestResponse => {
   if (Array.isArray(result)) {
-    return result as ExecuteModuleRequestResponse
+    return result as ExecuteModuleRequestResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as ExecuteModuleRequestResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as ExecuteModuleRequestResponse)
+    : [];
+};
 
 export const ExecuteModuleRequestService = createApi({
-  reducerPath: 'ExecuteModuleRequest', // This should remain unique
+  reducerPath: "ExecuteModuleRequest", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['ExecuteModuleRequest'],
+  tagTypes: ["ExecuteModuleRequest"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getExecuteModuleRequestsPaged: build.query<ExecuteModuleRequestResponse, { page: number; size?: number; example?: Partial<ExecuteModuleRequest> }>({
+    getExecuteModuleRequestsPaged: build.query<
+      ExecuteModuleRequestResponse,
+      { page: number; size?: number; example?: Partial<ExecuteModuleRequest> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ExecuteModuleRequest?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ExecuteModuleRequest?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toExecuteModuleRequestList(result)
+        const rows = toExecuteModuleRequestList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ExecuteModuleRequest' as const, id })),
-          { type: 'ExecuteModuleRequest', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "ExecuteModuleRequest" as const, id })),
+          { type: "ExecuteModuleRequest", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getExecuteModuleRequests: build.query<ExecuteModuleRequestResponse, { example?: Partial<ExecuteModuleRequest> } | void>({
+    getExecuteModuleRequests: build.query<
+      ExecuteModuleRequestResponse,
+      { example?: Partial<ExecuteModuleRequest> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,114 @@ export const ExecuteModuleRequestService = createApi({
         return `ExecuteModuleRequest`;
       },
       providesTags: (result) => {
-        const rows = toExecuteModuleRequestList(result)
+        const rows = toExecuteModuleRequestList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ExecuteModuleRequest' as const, id })),
-          { type: 'ExecuteModuleRequest', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "ExecuteModuleRequest" as const, id })),
+          { type: "ExecuteModuleRequest", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addExecuteModuleRequest: build.mutation<ExecuteModuleRequest, Partial<ExecuteModuleRequest>>({
+    addExecuteModuleRequest: build.mutation<
+      ExecuteModuleRequest,
+      Partial<ExecuteModuleRequest>
+    >({
       query: (body) => ({
         url: `ExecuteModuleRequest`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'ExecuteModuleRequest', id: 'LIST' }],
+      invalidatesTags: [{ type: "ExecuteModuleRequest", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getExecuteModuleRequest: build.query<ExecuteModuleRequest, string>({
       query: (id) => `ExecuteModuleRequest/${id}`,
-      providesTags: (result, error, id) => [{ type: 'ExecuteModuleRequest', id }],
+      providesTags: (result, error, id) => [
+        { type: "ExecuteModuleRequest", id },
+      ],
     }),
 
     // 5) Update
-    updateExecuteModuleRequest: build.mutation<void, Pick<ExecuteModuleRequest, 'id'> & Partial<ExecuteModuleRequest>>({
+    updateExecuteModuleRequest: build.mutation<
+      void,
+      Pick<ExecuteModuleRequest, "id"> & Partial<ExecuteModuleRequest>
+    >({
       query: ({ id, ...patch }) => ({
         url: `ExecuteModuleRequest/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            ExecuteModuleRequestService.util.updateQueryData('getExecuteModuleRequest', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            ExecuteModuleRequestService.util.updateQueryData(
+              "getExecuteModuleRequest",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<ExecuteModuleRequest, 'id'>) => [
-        { type: 'ExecuteModuleRequest', id },
-        { type: 'ExecuteModuleRequest', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<ExecuteModuleRequest, "id">,
+      ) => [
+        { type: "ExecuteModuleRequest", id },
+        { type: "ExecuteModuleRequest", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteExecuteModuleRequest: build.mutation<{ success: boolean; id: string }, number>({
+    deleteExecuteModuleRequest: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `ExecuteModuleRequest/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'ExecuteModuleRequest', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "ExecuteModuleRequest", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteExecuteModuleRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteExecuteModuleRequestCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `ExecuteModuleRequest/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ExecuteModuleRequest', id }, { type: 'ExecuteModuleRequest', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "ExecuteModuleRequest", id },
+        { type: "ExecuteModuleRequest", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetExecuteModuleRequestsPagedQuery`
 export const {
-  useGetExecuteModuleRequestsPagedQuery,     // immediate fetch
+  useGetExecuteModuleRequestsPagedQuery, // immediate fetch
   useLazyGetExecuteModuleRequestsPagedQuery, // lazy fetch
   useGetExecuteModuleRequestQuery,
   useGetExecuteModuleRequestsQuery,
@@ -150,4 +192,4 @@ export const {
   useUpdateExecuteModuleRequestMutation,
   useDeleteExecuteModuleRequestMutation,
   useDeleteExecuteModuleRequestCascadeMutation,
-} = ExecuteModuleRequestService
+} = ExecuteModuleRequestService;

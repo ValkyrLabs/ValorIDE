@@ -19,20 +19,32 @@ Description: FileRecord
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, FileRecord } from '@thorapi/model';
-import { useGetFileRecordsQuery, useAddFileRecordMutation, useUpdateFileRecordMutation } from '../../services/FileRecordService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, FileRecord } from "@thorapi/model";
+import {
+  useGetFileRecordsQuery,
+  useAddFileRecordMutation,
+  useUpdateFileRecordMutation,
+} from "../../services/FileRecordService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const FileRecordChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetFileRecordsQuery();
 
   const [data, setData] = useState<FileRecord[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<FileRecord>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const FileRecordChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const FileRecordChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((filerecord: DataObject) => [filerecord])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((filerecord: DataObject) => [filerecord])}
+        />
+      )}
     </>
   );
 };

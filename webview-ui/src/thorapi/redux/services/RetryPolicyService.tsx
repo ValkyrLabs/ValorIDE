@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { RetryPolicy } from '@thorapi/model/RetryPolicy'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { RetryPolicy } from "@thorapi/model/RetryPolicy";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type RetryPolicyResponse = RetryPolicy[]
+type RetryPolicyResponse = RetryPolicy[];
 
 const toRetryPolicyList = (result: unknown): RetryPolicyResponse => {
   if (Array.isArray(result)) {
-    return result as RetryPolicyResponse
+    return result as RetryPolicyResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as RetryPolicyResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as RetryPolicyResponse) : [];
+};
 
 export const RetryPolicyService = createApi({
-  reducerPath: 'RetryPolicy', // This should remain unique
+  reducerPath: "RetryPolicy", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['RetryPolicy'],
+  tagTypes: ["RetryPolicy"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getRetryPolicysPaged: build.query<RetryPolicyResponse, { page: number; size?: number; example?: Partial<RetryPolicy> }>({
+    getRetryPolicysPaged: build.query<
+      RetryPolicyResponse,
+      { page: number; size?: number; example?: Partial<RetryPolicy> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `RetryPolicy?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `RetryPolicy?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toRetryPolicyList(result)
+        const rows = toRetryPolicyList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'RetryPolicy' as const, id })),
-          { type: 'RetryPolicy', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "RetryPolicy" as const, id })),
+          { type: "RetryPolicy", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getRetryPolicys: build.query<RetryPolicyResponse, { example?: Partial<RetryPolicy> } | void>({
+    getRetryPolicys: build.query<
+      RetryPolicyResponse,
+      { example?: Partial<RetryPolicy> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const RetryPolicyService = createApi({
         return `RetryPolicy`;
       },
       providesTags: (result) => {
-        const rows = toRetryPolicyList(result)
+        const rows = toRetryPolicyList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'RetryPolicy' as const, id })),
-          { type: 'RetryPolicy', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "RetryPolicy" as const, id })),
+          { type: "RetryPolicy", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,73 +87,88 @@ export const RetryPolicyService = createApi({
     addRetryPolicy: build.mutation<RetryPolicy, Partial<RetryPolicy>>({
       query: (body) => ({
         url: `RetryPolicy`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'RetryPolicy', id: 'LIST' }],
+      invalidatesTags: [{ type: "RetryPolicy", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getRetryPolicy: build.query<RetryPolicy, string>({
       query: (id) => `RetryPolicy/${id}`,
-      providesTags: (result, error, id) => [{ type: 'RetryPolicy', id }],
+      providesTags: (result, error, id) => [{ type: "RetryPolicy", id }],
     }),
 
     // 5) Update
-    updateRetryPolicy: build.mutation<void, Pick<RetryPolicy, 'id'> & Partial<RetryPolicy>>({
+    updateRetryPolicy: build.mutation<
+      void,
+      Pick<RetryPolicy, "id"> & Partial<RetryPolicy>
+    >({
       query: ({ id, ...patch }) => ({
         url: `RetryPolicy/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            RetryPolicyService.util.updateQueryData('getRetryPolicy', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            RetryPolicyService.util.updateQueryData(
+              "getRetryPolicy",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<RetryPolicy, 'id'>) => [
-        { type: 'RetryPolicy', id },
-        { type: 'RetryPolicy', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<RetryPolicy, "id">) => [
+        { type: "RetryPolicy", id },
+        { type: "RetryPolicy", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteRetryPolicy: build.mutation<{ success: boolean; id: string }, number>({
-      query(id) {
-        return {
-          url: `RetryPolicy/${id}`,
-          method: 'DELETE',
-        }
+    deleteRetryPolicy: build.mutation<{ success: boolean; id: string }, number>(
+      {
+        query(id) {
+          return {
+            url: `RetryPolicy/${id}`,
+            method: "DELETE",
+          };
+        },
+        invalidatesTags: (result, error, id) => [{ type: "RetryPolicy", id }],
       },
-      invalidatesTags: (result, error, id) => [{ type: 'RetryPolicy', id }],
-    }),
+    ),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteRetryPolicyCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteRetryPolicyCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `RetryPolicy/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'RetryPolicy', id }, { type: 'RetryPolicy', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "RetryPolicy", id },
+        { type: "RetryPolicy", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetRetryPolicysPagedQuery`
 export const {
-  useGetRetryPolicysPagedQuery,     // immediate fetch
+  useGetRetryPolicysPagedQuery, // immediate fetch
   useLazyGetRetryPolicysPagedQuery, // lazy fetch
   useGetRetryPolicyQuery,
   useGetRetryPolicysQuery,
@@ -150,4 +176,4 @@ export const {
   useUpdateRetryPolicyMutation,
   useDeleteRetryPolicyMutation,
   useDeleteRetryPolicyCascadeMutation,
-} = RetryPolicyService
+} = RetryPolicyService;

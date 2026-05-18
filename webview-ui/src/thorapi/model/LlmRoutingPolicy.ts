@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,183 +36,199 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface LlmRoutingPolicy
  */
-export type LlmRoutingPolicy  = DataObject & {
-    /**
-     * Routing behavior for model requests.
-     * @type {string}
-     * @memberof LlmRoutingPolicy
-     */
-    strategy?: LlmRoutingPolicyStrategyEnum;
-    /**
-     * Primary provider to use for requests.
-     * @type {string}
-     * @memberof LlmRoutingPolicy
-     */
-    primaryProvider?: LlmRoutingPolicyPrimaryProviderEnum;
-    /**
-     * Ordered fallback providers used when primary requests fail.
-     * @type {Array<string>}
-     * @memberof LlmRoutingPolicy
-     */
-    fallbackProviders?: Array<LlmRoutingPolicyFallbackProvidersEnum>;
-    /**
-     * Explicit provider allow-list enforced by policy controls.
-     * @type {Array<string>}
-     * @memberof LlmRoutingPolicy
-     */
-    allowedProviders?: Array<LlmRoutingPolicyAllowedProvidersEnum>;
-    /**
-     * Maximum number of provider fallback attempts per request.
-     * @type {number}
-     * @memberof LlmRoutingPolicy
-     */
-    maxFallbackAttempts?: number;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof LlmRoutingPolicy
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof LlmRoutingPolicy
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof LlmRoutingPolicy
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof LlmRoutingPolicy
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof LlmRoutingPolicy
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof LlmRoutingPolicy
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof LlmRoutingPolicy
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof LlmRoutingPolicy
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof LlmRoutingPolicy
-     */
-    trashed?: boolean;
-}
+export type LlmRoutingPolicy = DataObject & {
+  /**
+   * Routing behavior for model requests.
+   * @type {string}
+   * @memberof LlmRoutingPolicy
+   */
+  strategy?: LlmRoutingPolicyStrategyEnum;
+  /**
+   * Primary provider to use for requests.
+   * @type {string}
+   * @memberof LlmRoutingPolicy
+   */
+  primaryProvider?: LlmRoutingPolicyPrimaryProviderEnum;
+  /**
+   * Ordered fallback providers used when primary requests fail.
+   * @type {Array<string>}
+   * @memberof LlmRoutingPolicy
+   */
+  fallbackProviders?: Array<LlmRoutingPolicyFallbackProvidersEnum>;
+  /**
+   * Explicit provider allow-list enforced by policy controls.
+   * @type {Array<string>}
+   * @memberof LlmRoutingPolicy
+   */
+  allowedProviders?: Array<LlmRoutingPolicyAllowedProvidersEnum>;
+  /**
+   * Maximum number of provider fallback attempts per request.
+   * @type {number}
+   * @memberof LlmRoutingPolicy
+   */
+  maxFallbackAttempts?: number;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof LlmRoutingPolicy
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof LlmRoutingPolicy
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof LlmRoutingPolicy
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof LlmRoutingPolicy
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof LlmRoutingPolicy
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof LlmRoutingPolicy
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof LlmRoutingPolicy
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof LlmRoutingPolicy
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof LlmRoutingPolicy
+   */
+  trashed?: boolean;
+};
 
 export function LlmRoutingPolicyFromJSON(json: any): LlmRoutingPolicy {
-    return {
-        ...DataObjectFromJSON(json),
-        'strategy': !exists(json, 'strategy') ? undefined : json['strategy'],
-        'primaryProvider': !exists(json, 'primaryProvider') ? undefined : json['primaryProvider'],
-        'fallbackProviders': !exists(json, 'fallbackProviders') ? undefined : json['fallbackProviders'],
-        'allowedProviders': !exists(json, 'allowedProviders') ? undefined : json['allowedProviders'],
-        'maxFallbackAttempts': !exists(json, 'maxFallbackAttempts') ? undefined : json['maxFallbackAttempts'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    strategy: !exists(json, "strategy") ? undefined : json["strategy"],
+    primaryProvider: !exists(json, "primaryProvider")
+      ? undefined
+      : json["primaryProvider"],
+    fallbackProviders: !exists(json, "fallbackProviders")
+      ? undefined
+      : json["fallbackProviders"],
+    allowedProviders: !exists(json, "allowedProviders")
+      ? undefined
+      : json["allowedProviders"],
+    maxFallbackAttempts: !exists(json, "maxFallbackAttempts")
+      ? undefined
+      : json["maxFallbackAttempts"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function LlmRoutingPolicyToJSON(value?: LlmRoutingPolicy): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'strategy': value.strategy,
-        'primaryProvider': value.primaryProvider,
-        'fallbackProviders': value.fallbackProviders,
-        'allowedProviders': value.allowedProviders,
-        'maxFallbackAttempts': value.maxFallbackAttempts,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    strategy: value.strategy,
+    primaryProvider: value.primaryProvider,
+    fallbackProviders: value.fallbackProviders,
+    allowedProviders: value.allowedProviders,
+    maxFallbackAttempts: value.maxFallbackAttempts,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum LlmRoutingPolicyStrategyEnum {
-    SINGLEPROVIDER = 'single_provider',
-    FALLBACKCHAIN = 'fallback_chain'
+  SINGLEPROVIDER = "single_provider",
+  FALLBACKCHAIN = "fallback_chain",
 }
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum LlmRoutingPolicyPrimaryProviderEnum {
-    VALKYRAI = 'valkyrai',
-    OPENAI = 'openai',
-    LLAMA = 'llama',
-    PHI = 'phi',
-    GEMMA = 'gemma',
-    MISTRAL = 'mistral',
-    CLAUDE = 'claude',
-    GEMINI = 'gemini',
-    OTHER = 'other',
-    CHATGPTPASSTHROUGH = 'chatgpt_pass_through'
+  VALKYRAI = "valkyrai",
+  OPENAI = "openai",
+  LLAMA = "llama",
+  PHI = "phi",
+  GEMMA = "gemma",
+  MISTRAL = "mistral",
+  CLAUDE = "claude",
+  GEMINI = "gemini",
+  OTHER = "other",
+  CHATGPTPASSTHROUGH = "chatgpt_pass_through",
 }
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum LlmRoutingPolicyFallbackProvidersEnum {
-    VALKYRAI = 'valkyrai',
-    OPENAI = 'openai',
-    LLAMA = 'llama',
-    PHI = 'phi',
-    GEMMA = 'gemma',
-    MISTRAL = 'mistral',
-    CLAUDE = 'claude',
-    GEMINI = 'gemini',
-    OTHER = 'other',
-    CHATGPTPASSTHROUGH = 'chatgpt_pass_through'
+  VALKYRAI = "valkyrai",
+  OPENAI = "openai",
+  LLAMA = "llama",
+  PHI = "phi",
+  GEMMA = "gemma",
+  MISTRAL = "mistral",
+  CLAUDE = "claude",
+  GEMINI = "gemini",
+  OTHER = "other",
+  CHATGPTPASSTHROUGH = "chatgpt_pass_through",
 }
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum LlmRoutingPolicyAllowedProvidersEnum {
-    VALKYRAI = 'valkyrai',
-    OPENAI = 'openai',
-    LLAMA = 'llama',
-    PHI = 'phi',
-    GEMMA = 'gemma',
-    MISTRAL = 'mistral',
-    CLAUDE = 'claude',
-    GEMINI = 'gemini',
-    OTHER = 'other',
-    CHATGPTPASSTHROUGH = 'chatgpt_pass_through'
+  VALKYRAI = "valkyrai",
+  OPENAI = "openai",
+  LLAMA = "llama",
+  PHI = "phi",
+  GEMMA = "gemma",
+  MISTRAL = "mistral",
+  CLAUDE = "claude",
+  GEMINI = "gemini",
+  OTHER = "other",
+  CHATGPTPASSTHROUGH = "chatgpt_pass_through",
 }
-
-

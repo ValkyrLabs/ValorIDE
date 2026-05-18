@@ -13,42 +13,50 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { Run } from '@thorapi/model/Run'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { Run } from "@thorapi/model/Run";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type RunResponse = Run[]
+type RunResponse = Run[];
 
 const toRunList = (result: unknown): RunResponse => {
   if (Array.isArray(result)) {
-    return result as RunResponse
+    return result as RunResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as RunResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as RunResponse) : [];
+};
 
 export const RunService = createApi({
-  reducerPath: 'Run', // This should remain unique
+  reducerPath: "Run", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['Run'],
+  tagTypes: ["Run"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getRunsPaged: build.query<RunResponse, { page: number; size?: number; example?: Partial<Run> }>({
+    getRunsPaged: build.query<
+      RunResponse,
+      { page: number; size?: number; example?: Partial<Run> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Run?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Run?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toRunList(result)
+        const rows = toRunList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'Run' as const, id })),
-          { type: 'Run', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "Run" as const, id })),
+          { type: "Run", id: `PAGE_${page}` },
+        ];
       },
     }),
 
@@ -62,13 +70,13 @@ export const RunService = createApi({
         return `Run`;
       },
       providesTags: (result) => {
-        const rows = toRunList(result)
+        const rows = toRunList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'Run' as const, id })),
-          { type: 'Run', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "Run" as const, id })),
+          { type: "Run", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,42 +84,42 @@ export const RunService = createApi({
     addRun: build.mutation<Run, Partial<Run>>({
       query: (body) => ({
         url: `Run`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'Run', id: 'LIST' }],
+      invalidatesTags: [{ type: "Run", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getRun: build.query<Run, string>({
       query: (id) => `Run/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Run', id }],
+      providesTags: (result, error, id) => [{ type: "Run", id }],
     }),
 
     // 5) Update
-    updateRun: build.mutation<void, Pick<Run, 'id'> & Partial<Run>>({
+    updateRun: build.mutation<void, Pick<Run, "id"> & Partial<Run>>({
       query: ({ id, ...patch }) => ({
         url: `Run/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            RunService.util.updateQueryData('getRun', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            RunService.util.updateQueryData("getRun", id, (draft) => {
+              Object.assign(draft, patch);
+            }),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<Run, 'id'>) => [
-        { type: 'Run', id },
-        { type: 'Run', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<Run, "id">) => [
+        { type: "Run", id },
+        { type: "Run", id: "LIST" },
       ],
     }),
 
@@ -120,29 +128,35 @@ export const RunService = createApi({
       query(id) {
         return {
           url: `Run/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'Run', id }],
+      invalidatesTags: (result, error, id) => [{ type: "Run", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteRunCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteRunCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `Run/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Run', id }, { type: 'Run', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Run", id },
+        { type: "Run", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetRunsPagedQuery`
 export const {
-  useGetRunsPagedQuery,     // immediate fetch
+  useGetRunsPagedQuery, // immediate fetch
   useLazyGetRunsPagedQuery, // lazy fetch
   useGetRunQuery,
   useGetRunsQuery,
@@ -150,4 +164,4 @@ export const {
   useUpdateRunMutation,
   useDeleteRunMutation,
   useDeleteRunCascadeMutation,
-} = RunService
+} = RunService;

@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { Depend } from '@thorapi/model/Depend'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { Depend } from "@thorapi/model/Depend";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type DependResponse = Depend[]
+type DependResponse = Depend[];
 
 const toDependList = (result: unknown): DependResponse => {
   if (Array.isArray(result)) {
-    return result as DependResponse
+    return result as DependResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as DependResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as DependResponse) : [];
+};
 
 export const DependService = createApi({
-  reducerPath: 'Depend', // This should remain unique
+  reducerPath: "Depend", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['Depend'],
+  tagTypes: ["Depend"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getDependsPaged: build.query<DependResponse, { page: number; size?: number; example?: Partial<Depend> }>({
+    getDependsPaged: build.query<
+      DependResponse,
+      { page: number; size?: number; example?: Partial<Depend> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Depend?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Depend?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toDependList(result)
+        const rows = toDependList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'Depend' as const, id })),
-          { type: 'Depend', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "Depend" as const, id })),
+          { type: "Depend", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getDepends: build.query<DependResponse, { example?: Partial<Depend> } | void>({
+    getDepends: build.query<
+      DependResponse,
+      { example?: Partial<Depend> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const DependService = createApi({
         return `Depend`;
       },
       providesTags: (result) => {
-        const rows = toDependList(result)
+        const rows = toDependList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'Depend' as const, id })),
-          { type: 'Depend', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "Depend" as const, id })),
+          { type: "Depend", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,42 +87,42 @@ export const DependService = createApi({
     addDepend: build.mutation<Depend, Partial<Depend>>({
       query: (body) => ({
         url: `Depend`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'Depend', id: 'LIST' }],
+      invalidatesTags: [{ type: "Depend", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getDepend: build.query<Depend, string>({
       query: (id) => `Depend/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Depend', id }],
+      providesTags: (result, error, id) => [{ type: "Depend", id }],
     }),
 
     // 5) Update
-    updateDepend: build.mutation<void, Pick<Depend, 'id'> & Partial<Depend>>({
+    updateDepend: build.mutation<void, Pick<Depend, "id"> & Partial<Depend>>({
       query: ({ id, ...patch }) => ({
         url: `Depend/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            DependService.util.updateQueryData('getDepend', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            DependService.util.updateQueryData("getDepend", id, (draft) => {
+              Object.assign(draft, patch);
+            }),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<Depend, 'id'>) => [
-        { type: 'Depend', id },
-        { type: 'Depend', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<Depend, "id">) => [
+        { type: "Depend", id },
+        { type: "Depend", id: "LIST" },
       ],
     }),
 
@@ -120,29 +131,35 @@ export const DependService = createApi({
       query(id) {
         return {
           url: `Depend/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'Depend', id }],
+      invalidatesTags: (result, error, id) => [{ type: "Depend", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteDependCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteDependCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `Depend/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Depend', id }, { type: 'Depend', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Depend", id },
+        { type: "Depend", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetDependsPagedQuery`
 export const {
-  useGetDependsPagedQuery,     // immediate fetch
+  useGetDependsPagedQuery, // immediate fetch
   useLazyGetDependsPagedQuery, // lazy fetch
   useGetDependQuery,
   useGetDependsQuery,
@@ -150,4 +167,4 @@ export const {
   useUpdateDependMutation,
   useDeleteDependMutation,
   useDeleteDependCascadeMutation,
-} = DependService
+} = DependService;

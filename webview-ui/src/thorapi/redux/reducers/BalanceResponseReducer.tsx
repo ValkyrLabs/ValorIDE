@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { BalanceResponse } from '@thorapi/model/BalanceResponse';
+import { BalanceResponse } from "@thorapi/model/BalanceResponse";
 
 const BalanceResponseSlice = createSlice({
   name: "BalanceResponses",
@@ -27,20 +27,25 @@ const BalanceResponseSlice = createSlice({
     },
 
     BalanceResponseValueToggled(state, action) {
-      console.log("BalanceResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const BalanceResponse:BalanceResponse = state.find((BalanceResponse) => BalanceResponse.id === action.payload.BalanceResponseId);
+      console.log("BalanceResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const BalanceResponse: BalanceResponse = state.find(
+        (BalanceResponse) =>
+          BalanceResponse.id === action.payload.BalanceResponseId,
+      );
       if (BalanceResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     BalanceResponsepropertySet(state, action) {
-      const BalanceResponse = state.find((BalanceResponse) => BalanceResponse.id === action.payload.BalanceResponseId);
+      const BalanceResponse = state.find(
+        (BalanceResponse) =>
+          BalanceResponse.id === action.payload.BalanceResponseId,
+      );
       if (BalanceResponse) {
-      //  BalanceResponse[action.property] = action.payload[action.property];
+        //  BalanceResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const BalanceResponseSlice = createSlice({
 export const {
   BalanceResponseAdded,
   BalanceResponseValueToggled,
-  BalanceResponsepropertySet
+  BalanceResponsepropertySet,
 } = BalanceResponseSlice.actions;
 export default BalanceResponseSlice.reducer;

@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,169 +36,187 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface WizardStatusResponse
  */
-export type WizardStatusResponse  = DataObject & {
-    /**
-     * Wizard session identifier
-     * @type {string}
-     * @memberof WizardStatusResponse
-     */
-    wizardId?: string;
-    /**
-     * Current wizard status
-     * @type {string}
-     * @memberof WizardStatusResponse
-     */
-    status?: WizardStatusResponseStatusEnum;
-    /**
-     * Completion percentage
-     * @type {number}
-     * @memberof WizardStatusResponse
-     */
-    progress?: number;
-    /**
-     * Description of current generation step
-     * @type {string}
-     * @memberof WizardStatusResponse
-     */
-    currentStep?: string;
-    /**
-     * Error message if status is FAILED
-     * @type {string}
-     * @memberof WizardStatusResponse
-     */
-    errorMessage?: string;
-    /**
-     * JSON string containing generated assets metadata (prdGenerated, landingPageSectionsCount, adVariantsCount, emailSequenceCount)
-     * @type {string}
-     * @memberof WizardStatusResponse
-     */
-    generatedAssets?: string;
-    /**
-     * Generated content data ID
-     * @type {string}
-     * @memberof WizardStatusResponse
-     */
-    contentDataId?: string;
-    /**
-     * Generated landing page ID
-     * @type {string}
-     * @memberof WizardStatusResponse
-     */
-    landingPageId?: string;
-    /**
-     * URL path to the landing page
-     * @type {string}
-     * @memberof WizardStatusResponse
-     */
-    landingPageUrl?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof WizardStatusResponse
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof WizardStatusResponse
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof WizardStatusResponse
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof WizardStatusResponse
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof WizardStatusResponse
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof WizardStatusResponse
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof WizardStatusResponse
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof WizardStatusResponse
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof WizardStatusResponse
-     */
-    trashed?: boolean;
-}
+export type WizardStatusResponse = DataObject & {
+  /**
+   * Wizard session identifier
+   * @type {string}
+   * @memberof WizardStatusResponse
+   */
+  wizardId?: string;
+  /**
+   * Current wizard status
+   * @type {string}
+   * @memberof WizardStatusResponse
+   */
+  status?: WizardStatusResponseStatusEnum;
+  /**
+   * Completion percentage
+   * @type {number}
+   * @memberof WizardStatusResponse
+   */
+  progress?: number;
+  /**
+   * Description of current generation step
+   * @type {string}
+   * @memberof WizardStatusResponse
+   */
+  currentStep?: string;
+  /**
+   * Error message if status is FAILED
+   * @type {string}
+   * @memberof WizardStatusResponse
+   */
+  errorMessage?: string;
+  /**
+   * JSON string containing generated assets metadata (prdGenerated, landingPageSectionsCount, adVariantsCount, emailSequenceCount)
+   * @type {string}
+   * @memberof WizardStatusResponse
+   */
+  generatedAssets?: string;
+  /**
+   * Generated content data ID
+   * @type {string}
+   * @memberof WizardStatusResponse
+   */
+  contentDataId?: string;
+  /**
+   * Generated landing page ID
+   * @type {string}
+   * @memberof WizardStatusResponse
+   */
+  landingPageId?: string;
+  /**
+   * URL path to the landing page
+   * @type {string}
+   * @memberof WizardStatusResponse
+   */
+  landingPageUrl?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof WizardStatusResponse
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof WizardStatusResponse
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof WizardStatusResponse
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof WizardStatusResponse
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof WizardStatusResponse
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof WizardStatusResponse
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof WizardStatusResponse
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof WizardStatusResponse
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof WizardStatusResponse
+   */
+  trashed?: boolean;
+};
 
 export function WizardStatusResponseFromJSON(json: any): WizardStatusResponse {
-    return {
-        ...DataObjectFromJSON(json),
-        'wizardId': !exists(json, 'wizardId') ? undefined : json['wizardId'],
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'progress': !exists(json, 'progress') ? undefined : json['progress'],
-        'currentStep': !exists(json, 'currentStep') ? undefined : json['currentStep'],
-        'errorMessage': !exists(json, 'errorMessage') ? undefined : json['errorMessage'],
-        'generatedAssets': !exists(json, 'generatedAssets') ? undefined : json['generatedAssets'],
-        'contentDataId': !exists(json, 'contentDataId') ? undefined : json['contentDataId'],
-        'landingPageId': !exists(json, 'landingPageId') ? undefined : json['landingPageId'],
-        'landingPageUrl': !exists(json, 'landingPageUrl') ? undefined : json['landingPageUrl'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    wizardId: !exists(json, "wizardId") ? undefined : json["wizardId"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    progress: !exists(json, "progress") ? undefined : json["progress"],
+    currentStep: !exists(json, "currentStep") ? undefined : json["currentStep"],
+    errorMessage: !exists(json, "errorMessage")
+      ? undefined
+      : json["errorMessage"],
+    generatedAssets: !exists(json, "generatedAssets")
+      ? undefined
+      : json["generatedAssets"],
+    contentDataId: !exists(json, "contentDataId")
+      ? undefined
+      : json["contentDataId"],
+    landingPageId: !exists(json, "landingPageId")
+      ? undefined
+      : json["landingPageId"],
+    landingPageUrl: !exists(json, "landingPageUrl")
+      ? undefined
+      : json["landingPageUrl"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function WizardStatusResponseToJSON(value?: WizardStatusResponse): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'wizardId': value.wizardId,
-        'status': value.status,
-        'progress': value.progress,
-        'currentStep': value.currentStep,
-        'errorMessage': value.errorMessage,
-        'generatedAssets': value.generatedAssets,
-        'contentDataId': value.contentDataId,
-        'landingPageId': value.landingPageId,
-        'landingPageUrl': value.landingPageUrl,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    wizardId: value.wizardId,
+    status: value.status,
+    progress: value.progress,
+    currentStep: value.currentStep,
+    errorMessage: value.errorMessage,
+    generatedAssets: value.generatedAssets,
+    contentDataId: value.contentDataId,
+    landingPageId: value.landingPageId,
+    landingPageUrl: value.landingPageUrl,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum WizardStatusResponseStatusEnum {
-    STARTED = 'started',
-    GENERATING = 'generating',
-    COMPLETED = 'completed',
-    FAILED = 'failed'
+  STARTED = "started",
+  GENERATING = "generating",
+  COMPLETED = "completed",
+  FAILED = "failed",
 }
-
-

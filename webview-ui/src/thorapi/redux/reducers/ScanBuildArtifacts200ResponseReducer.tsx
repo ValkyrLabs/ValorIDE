@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ScanBuildArtifacts200Response } from '@thorapi/model/ScanBuildArtifacts200Response';
+import { ScanBuildArtifacts200Response } from "@thorapi/model/ScanBuildArtifacts200Response";
 
 const ScanBuildArtifacts200ResponseSlice = createSlice({
   name: "ScanBuildArtifacts200Responses",
@@ -27,20 +27,28 @@ const ScanBuildArtifacts200ResponseSlice = createSlice({
     },
 
     ScanBuildArtifacts200ResponseValueToggled(state, action) {
-      console.log("ScanBuildArtifacts200Response TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ScanBuildArtifacts200Response:ScanBuildArtifacts200Response = state.find((ScanBuildArtifacts200Response) => ScanBuildArtifacts200Response.id === action.payload.ScanBuildArtifacts200ResponseId);
+      console.log("ScanBuildArtifacts200Response TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ScanBuildArtifacts200Response: ScanBuildArtifacts200Response =
+        state.find(
+          (ScanBuildArtifacts200Response) =>
+            ScanBuildArtifacts200Response.id ===
+            action.payload.ScanBuildArtifacts200ResponseId,
+        );
       if (ScanBuildArtifacts200Response) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ScanBuildArtifacts200ResponsepropertySet(state, action) {
-      const ScanBuildArtifacts200Response = state.find((ScanBuildArtifacts200Response) => ScanBuildArtifacts200Response.id === action.payload.ScanBuildArtifacts200ResponseId);
+      const ScanBuildArtifacts200Response = state.find(
+        (ScanBuildArtifacts200Response) =>
+          ScanBuildArtifacts200Response.id ===
+          action.payload.ScanBuildArtifacts200ResponseId,
+      );
       if (ScanBuildArtifacts200Response) {
-      //  ScanBuildArtifacts200Response[action.property] = action.payload[action.property];
+        //  ScanBuildArtifacts200Response[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +57,6 @@ const ScanBuildArtifacts200ResponseSlice = createSlice({
 export const {
   ScanBuildArtifacts200ResponseAdded,
   ScanBuildArtifacts200ResponseValueToggled,
-  ScanBuildArtifacts200ResponsepropertySet
+  ScanBuildArtifacts200ResponsepropertySet,
 } = ScanBuildArtifacts200ResponseSlice.actions;
 export default ScanBuildArtifacts200ResponseSlice.reducer;

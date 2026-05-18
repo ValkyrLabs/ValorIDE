@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { StartTrustExecutionResponse } from '@thorapi/model/StartTrustExecutionResponse';
+import { StartTrustExecutionResponse } from "@thorapi/model/StartTrustExecutionResponse";
 
 const StartTrustExecutionResponseSlice = createSlice({
   name: "StartTrustExecutionResponses",
@@ -27,20 +27,28 @@ const StartTrustExecutionResponseSlice = createSlice({
     },
 
     StartTrustExecutionResponseValueToggled(state, action) {
-      console.log("StartTrustExecutionResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const StartTrustExecutionResponse:StartTrustExecutionResponse = state.find((StartTrustExecutionResponse) => StartTrustExecutionResponse.id === action.payload.StartTrustExecutionResponseId);
+      console.log("StartTrustExecutionResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const StartTrustExecutionResponse: StartTrustExecutionResponse =
+        state.find(
+          (StartTrustExecutionResponse) =>
+            StartTrustExecutionResponse.id ===
+            action.payload.StartTrustExecutionResponseId,
+        );
       if (StartTrustExecutionResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     StartTrustExecutionResponsepropertySet(state, action) {
-      const StartTrustExecutionResponse = state.find((StartTrustExecutionResponse) => StartTrustExecutionResponse.id === action.payload.StartTrustExecutionResponseId);
+      const StartTrustExecutionResponse = state.find(
+        (StartTrustExecutionResponse) =>
+          StartTrustExecutionResponse.id ===
+          action.payload.StartTrustExecutionResponseId,
+      );
       if (StartTrustExecutionResponse) {
-      //  StartTrustExecutionResponse[action.property] = action.payload[action.property];
+        //  StartTrustExecutionResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +57,6 @@ const StartTrustExecutionResponseSlice = createSlice({
 export const {
   StartTrustExecutionResponseAdded,
   StartTrustExecutionResponseValueToggled,
-  StartTrustExecutionResponsepropertySet
+  StartTrustExecutionResponsepropertySet,
 } = StartTrustExecutionResponseSlice.actions;
 export default StartTrustExecutionResponseSlice.reducer;

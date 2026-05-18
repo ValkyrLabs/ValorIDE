@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ExecModuleAudienceConfig } from '@thorapi/model/ExecModuleAudienceConfig';
+import { ExecModuleAudienceConfig } from "@thorapi/model/ExecModuleAudienceConfig";
 
 const ExecModuleAudienceConfigSlice = createSlice({
   name: "ExecModuleAudienceConfigs",
@@ -27,20 +27,27 @@ const ExecModuleAudienceConfigSlice = createSlice({
     },
 
     ExecModuleAudienceConfigValueToggled(state, action) {
-      console.log("ExecModuleAudienceConfig TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ExecModuleAudienceConfig:ExecModuleAudienceConfig = state.find((ExecModuleAudienceConfig) => ExecModuleAudienceConfig.id === action.payload.ExecModuleAudienceConfigId);
+      console.log("ExecModuleAudienceConfig TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ExecModuleAudienceConfig: ExecModuleAudienceConfig = state.find(
+        (ExecModuleAudienceConfig) =>
+          ExecModuleAudienceConfig.id ===
+          action.payload.ExecModuleAudienceConfigId,
+      );
       if (ExecModuleAudienceConfig) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ExecModuleAudienceConfigpropertySet(state, action) {
-      const ExecModuleAudienceConfig = state.find((ExecModuleAudienceConfig) => ExecModuleAudienceConfig.id === action.payload.ExecModuleAudienceConfigId);
+      const ExecModuleAudienceConfig = state.find(
+        (ExecModuleAudienceConfig) =>
+          ExecModuleAudienceConfig.id ===
+          action.payload.ExecModuleAudienceConfigId,
+      );
       if (ExecModuleAudienceConfig) {
-      //  ExecModuleAudienceConfig[action.property] = action.payload[action.property];
+        //  ExecModuleAudienceConfig[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const ExecModuleAudienceConfigSlice = createSlice({
 export const {
   ExecModuleAudienceConfigAdded,
   ExecModuleAudienceConfigValueToggled,
-  ExecModuleAudienceConfigpropertySet
+  ExecModuleAudienceConfigpropertySet,
 } = ExecModuleAudienceConfigSlice.actions;
 export default ExecModuleAudienceConfigSlice.reducer;

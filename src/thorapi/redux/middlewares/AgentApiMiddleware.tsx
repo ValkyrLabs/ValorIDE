@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_AGENT_REQUEST,
-    FETCH_AGENT_REQUEST,
-    LIST_AGENT_REQUEST,
-    UPDATE_AGENT_REQUEST,
-    DELETE_AGENT_REQUEST,
-
-    addAgentFailure,
-    addAgentSuccess,
-
-    fetchAgentFailure,
-    fetchAgentSuccess,
-    
-    listAgentFailure,
-    listAgentSuccess,
-
-    updateAgentFailure,
-    updateAgentSuccess,
-    
-    deleteAgentFailure,
-    deleteAgentSuccess,
-    
-} from '../actions/AgentApiAction';
+  ADD_AGENT_REQUEST,
+  FETCH_AGENT_REQUEST,
+  LIST_AGENT_REQUEST,
+  UPDATE_AGENT_REQUEST,
+  DELETE_AGENT_REQUEST,
+  addAgentFailure,
+  addAgentSuccess,
+  fetchAgentFailure,
+  fetchAgentSuccess,
+  listAgentFailure,
+  listAgentSuccess,
+  updateAgentFailure,
+  updateAgentSuccess,
+  deleteAgentFailure,
+  deleteAgentSuccess,
+} from "../actions/AgentApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Agent
 */
 
-
-
-export const AgentMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("Agent MIDDLEWARE: " + JSON.stringify(action) )
+export const AgentMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Agent MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

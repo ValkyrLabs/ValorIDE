@@ -19,20 +19,32 @@ Description: Swarm
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, Swarm } from '@thorapi/model';
-import { useGetSwarmsQuery, useAddSwarmMutation, useUpdateSwarmMutation } from '../../services/SwarmService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, Swarm } from "@thorapi/model";
+import {
+  useGetSwarmsQuery,
+  useAddSwarmMutation,
+  useUpdateSwarmMutation,
+} from "../../services/SwarmService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const SwarmChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetSwarmsQuery();
 
   const [data, setData] = useState<Swarm[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<Swarm>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const SwarmChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,11 @@ const SwarmChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((swarm: DataObject) => [swarm])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart data={data.flatMap((swarm: DataObject) => [swarm])} />
+      )}
     </>
   );
 };

@@ -13,47 +13,69 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { ExecModuleObservabilityConfig } from '@thorapi/model/ExecModuleObservabilityConfig'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { ExecModuleObservabilityConfig } from "@thorapi/model/ExecModuleObservabilityConfig";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type ExecModuleObservabilityConfigResponse = ExecModuleObservabilityConfig[]
+type ExecModuleObservabilityConfigResponse = ExecModuleObservabilityConfig[];
 
-const toExecModuleObservabilityConfigList = (result: unknown): ExecModuleObservabilityConfigResponse => {
+const toExecModuleObservabilityConfigList = (
+  result: unknown,
+): ExecModuleObservabilityConfigResponse => {
   if (Array.isArray(result)) {
-    return result as ExecModuleObservabilityConfigResponse
+    return result as ExecModuleObservabilityConfigResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as ExecModuleObservabilityConfigResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as ExecModuleObservabilityConfigResponse)
+    : [];
+};
 
 export const ExecModuleObservabilityConfigService = createApi({
-  reducerPath: 'ExecModuleObservabilityConfig', // This should remain unique
+  reducerPath: "ExecModuleObservabilityConfig", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['ExecModuleObservabilityConfig'],
+  tagTypes: ["ExecModuleObservabilityConfig"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getExecModuleObservabilityConfigsPaged: build.query<ExecModuleObservabilityConfigResponse, { page: number; size?: number; example?: Partial<ExecModuleObservabilityConfig> }>({
+    getExecModuleObservabilityConfigsPaged: build.query<
+      ExecModuleObservabilityConfigResponse,
+      {
+        page: number;
+        size?: number;
+        example?: Partial<ExecModuleObservabilityConfig>;
+      }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ExecModuleObservabilityConfig?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ExecModuleObservabilityConfig?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toExecModuleObservabilityConfigList(result)
+        const rows = toExecModuleObservabilityConfigList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ExecModuleObservabilityConfig' as const, id })),
-          { type: 'ExecModuleObservabilityConfig', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({
+              type: "ExecModuleObservabilityConfig" as const,
+              id,
+            })),
+          { type: "ExecModuleObservabilityConfig", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getExecModuleObservabilityConfigs: build.query<ExecModuleObservabilityConfigResponse, { example?: Partial<ExecModuleObservabilityConfig> } | void>({
+    getExecModuleObservabilityConfigs: build.query<
+      ExecModuleObservabilityConfigResponse,
+      { example?: Partial<ExecModuleObservabilityConfig> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +84,121 @@ export const ExecModuleObservabilityConfigService = createApi({
         return `ExecModuleObservabilityConfig`;
       },
       providesTags: (result) => {
-        const rows = toExecModuleObservabilityConfigList(result)
+        const rows = toExecModuleObservabilityConfigList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ExecModuleObservabilityConfig' as const, id })),
-          { type: 'ExecModuleObservabilityConfig', id: 'LIST' },
-        ]
+            .map(({ id }) => ({
+              type: "ExecModuleObservabilityConfig" as const,
+              id,
+            })),
+          { type: "ExecModuleObservabilityConfig", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addExecModuleObservabilityConfig: build.mutation<ExecModuleObservabilityConfig, Partial<ExecModuleObservabilityConfig>>({
+    addExecModuleObservabilityConfig: build.mutation<
+      ExecModuleObservabilityConfig,
+      Partial<ExecModuleObservabilityConfig>
+    >({
       query: (body) => ({
         url: `ExecModuleObservabilityConfig`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'ExecModuleObservabilityConfig', id: 'LIST' }],
+      invalidatesTags: [{ type: "ExecModuleObservabilityConfig", id: "LIST" }],
     }),
 
     // 4) Get single by ID
-    getExecModuleObservabilityConfig: build.query<ExecModuleObservabilityConfig, string>({
+    getExecModuleObservabilityConfig: build.query<
+      ExecModuleObservabilityConfig,
+      string
+    >({
       query: (id) => `ExecModuleObservabilityConfig/${id}`,
-      providesTags: (result, error, id) => [{ type: 'ExecModuleObservabilityConfig', id }],
+      providesTags: (result, error, id) => [
+        { type: "ExecModuleObservabilityConfig", id },
+      ],
     }),
 
     // 5) Update
-    updateExecModuleObservabilityConfig: build.mutation<void, Pick<ExecModuleObservabilityConfig, 'id'> & Partial<ExecModuleObservabilityConfig>>({
+    updateExecModuleObservabilityConfig: build.mutation<
+      void,
+      Pick<ExecModuleObservabilityConfig, "id"> &
+        Partial<ExecModuleObservabilityConfig>
+    >({
       query: ({ id, ...patch }) => ({
         url: `ExecModuleObservabilityConfig/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            ExecModuleObservabilityConfigService.util.updateQueryData('getExecModuleObservabilityConfig', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            ExecModuleObservabilityConfigService.util.updateQueryData(
+              "getExecModuleObservabilityConfig",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<ExecModuleObservabilityConfig, 'id'>) => [
-        { type: 'ExecModuleObservabilityConfig', id },
-        { type: 'ExecModuleObservabilityConfig', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<ExecModuleObservabilityConfig, "id">,
+      ) => [
+        { type: "ExecModuleObservabilityConfig", id },
+        { type: "ExecModuleObservabilityConfig", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteExecModuleObservabilityConfig: build.mutation<{ success: boolean; id: string }, number>({
+    deleteExecModuleObservabilityConfig: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `ExecModuleObservabilityConfig/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'ExecModuleObservabilityConfig', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "ExecModuleObservabilityConfig", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteExecModuleObservabilityConfigCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteExecModuleObservabilityConfigCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `ExecModuleObservabilityConfig/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ExecModuleObservabilityConfig', id }, { type: 'ExecModuleObservabilityConfig', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "ExecModuleObservabilityConfig", id },
+        { type: "ExecModuleObservabilityConfig", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetExecModuleObservabilityConfigsPagedQuery`
 export const {
-  useGetExecModuleObservabilityConfigsPagedQuery,     // immediate fetch
+  useGetExecModuleObservabilityConfigsPagedQuery, // immediate fetch
   useLazyGetExecModuleObservabilityConfigsPagedQuery, // lazy fetch
   useGetExecModuleObservabilityConfigQuery,
   useGetExecModuleObservabilityConfigsQuery,
@@ -150,4 +206,4 @@ export const {
   useUpdateExecModuleObservabilityConfigMutation,
   useDeleteExecModuleObservabilityConfigMutation,
   useDeleteExecModuleObservabilityConfigCascadeMutation,
-} = ExecModuleObservabilityConfigService
+} = ExecModuleObservabilityConfigService;

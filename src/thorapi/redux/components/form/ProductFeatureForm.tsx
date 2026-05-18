@@ -13,25 +13,33 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   ProductFeature,
@@ -39,9 +47,9 @@ import {
   ProductFeatureFeatureScopeEnum,
   ProductFeatureValueTypeEnum,
   ProductFeaturePlanTierEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddProductFeatureMutation } from '../../services/ProductFeatureService';
+import { useAddProductFeatureMutation } from "../../services/ProductFeatureService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,75 +73,58 @@ a feature of a product
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const TypeValidation = () => {
-  return [
-    'percentage',
-    'fixed',
-  ];
+  return ["percentage", "fixed"];
 };
 const FeatureScopeValidation = () => {
-  return [
-    'platform',
-    'organization',
-    'application',
-    'agent',
-    'billing',
-    'ux',
-  ];
+  return ["platform", "organization", "application", "agent", "billing", "ux"];
 };
 const ValueTypeValidation = () => {
-  return [
-    'number',
-    'boolean',
-    'string',
-  ];
+  return ["number", "boolean", "string"];
 };
 const PlanTierValidation = () => {
-  return [
-    'free',
-    'solo',
-    'pro',
-    'team',
-    'reseller',
-    'enterprise',
-  ];
+  return ["free", "solo", "pro", "team", "reseller", "enterprise"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        productId: Yup.string(),
-        price: asNumber(Yup.number().typeError("price must be a number")),
-      type: Yup.mixed()
-        .oneOf(TypeValidation(), "Invalid value for type")
-        ,
-        name: Yup.string(),
-        description: Yup.string(),
-        featureKey: Yup.string(),
-      featureScope: Yup.mixed()
-        .oneOf(FeatureScopeValidation(), "Invalid value for featureScope")
-        ,
-      valueType: Yup.mixed()
-        .oneOf(ValueTypeValidation(), "Invalid value for valueType")
-        ,
-        limitValue: asNumber(Yup.number().typeError("limitValue must be a number")),
-        booleanValue: Yup.boolean(),
-        stringValue: Yup.string(),
-        enabled: Yup.boolean(),
-      planTier: Yup.mixed()
-        .oneOf(PlanTierValidation(), "Invalid value for planTier")
-        ,
-        trashed: Yup.boolean(),
+  productId: Yup.string(),
+  price: asNumber(Yup.number().typeError("price must be a number")),
+  type: Yup.mixed().oneOf(TypeValidation(), "Invalid value for type"),
+  name: Yup.string(),
+  description: Yup.string(),
+  featureKey: Yup.string(),
+  featureScope: Yup.mixed().oneOf(
+    FeatureScopeValidation(),
+    "Invalid value for featureScope",
+  ),
+  valueType: Yup.mixed().oneOf(
+    ValueTypeValidation(),
+    "Invalid value for valueType",
+  ),
+  limitValue: asNumber(Yup.number().typeError("limitValue must be a number")),
+  booleanValue: Yup.boolean(),
+  stringValue: Yup.string(),
+  enabled: Yup.boolean(),
+  planTier: Yup.mixed().oneOf(
+    PlanTierValidation(),
+    "Invalid value for planTier",
+  ),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ProductFeatureForm: React.FC = () => {
-  const [addProductFeature, addProductFeatureResult] = useAddProductFeatureMutation();
+  const [addProductFeature, addProductFeatureResult] =
+    useAddProductFeatureMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -143,12 +134,18 @@ const ProductFeatureForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -156,20 +153,20 @@ const ProductFeatureForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ProductFeature> = {
-          productId: '',
-          price: 0,
-        type: undefined,
-          name: '',
-          description: '',
-          featureKey: '',
-        featureScope: undefined,
-        valueType: undefined,
-          limitValue: 0,
-          booleanValue: false,
-          stringValue: '',
-          enabled: false,
-        planTier: undefined,
-          trashed: false,
+    productId: "",
+    price: 0,
+    type: undefined,
+    name: "",
+    description: "",
+    featureKey: "",
+    featureScope: undefined,
+    valueType: undefined,
+    limitValue: 0,
+    booleanValue: false,
+    stringValue: "",
+    enabled: false,
+    planTier: undefined,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -184,11 +181,14 @@ const ProductFeatureForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new ProductFeature:', grants);
+    console.log("Permissions saved for new ProductFeature:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ProductFeature>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<ProductFeature>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -199,7 +199,7 @@ const ProductFeatureForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ProductFeature created successfully! Would you like to set permissions for this object?`
+          `ProductFeature created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -207,8 +207,8 @@ const ProductFeatureForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create ProductFeature:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create ProductFeature:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -229,44 +229,36 @@ const ProductFeatureForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addProductFeatureResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New ProductFeature
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New ProductFeature
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="productId" className="nice-form-control">
                       <b>
                         Product Id:
-                        {touched.productId &&
-                         !errors.productId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.productId && !errors.productId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="productId"
-                            value={values?.productId}
-                            placeholder="Product Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="productId"
+                        value={values?.productId}
+                        placeholder="Product Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -278,37 +270,33 @@ const ProductFeatureForm: React.FC = () => {
                     <label htmlFor="price" className="nice-form-control">
                       <b>
                         Price:
-                        {touched.price &&
-                         !errors.price && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.price && !errors.price && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="price"
-                            type="number"
-                            step="any"
-                            value={values.price || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('price', true);
-                              const v = e.target.value;
-                              setFieldValue('price', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.price
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="price"
+                        type="number"
+                        step="any"
+                        value={values.price || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("price", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "price",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.price
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -320,30 +308,30 @@ const ProductFeatureForm: React.FC = () => {
                     <label htmlFor="type" className="nice-form-control">
                       <b>
                         Type:
-                        {touched.type &&
-                         !errors.type && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.type && !errors.type && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="type"
-                          value={values.type || ''}
-                          className={
-                            errors.type
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('type', true);
-                            setFieldValue('type', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Type" />
-                          <TypeLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="type"
+                        value={values.type || ""}
+                        className={
+                          errors.type
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("type", true);
+                          setFieldValue("type", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Type" />
+                        <TypeLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -355,28 +343,21 @@ const ProductFeatureForm: React.FC = () => {
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.name && !errors.name && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="name"
+                        value={values?.name}
+                        placeholder="Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -388,28 +369,21 @@ const ProductFeatureForm: React.FC = () => {
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
-                        {touched.description &&
-                         !errors.description && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.description && !errors.description && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="description"
-                            value={values?.description}
-                            placeholder="Description"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="description"
+                        value={values?.description}
+                        placeholder="Description"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -421,28 +395,21 @@ const ProductFeatureForm: React.FC = () => {
                     <label htmlFor="featureKey" className="nice-form-control">
                       <b>
                         Feature Key:
-                        {touched.featureKey &&
-                         !errors.featureKey && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.featureKey && !errors.featureKey && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="featureKey"
-                            value={values?.featureKey}
-                            placeholder="Feature Key"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="featureKey"
+                        value={values?.featureKey}
+                        placeholder="Feature Key"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -454,30 +421,33 @@ const ProductFeatureForm: React.FC = () => {
                     <label htmlFor="featureScope" className="nice-form-control">
                       <b>
                         Feature Scope:
-                        {touched.featureScope &&
-                         !errors.featureScope && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.featureScope && !errors.featureScope && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="featureScope"
-                          value={values.featureScope || ''}
-                          className={
-                            errors.featureScope
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('featureScope', true);
-                            setFieldValue('featureScope', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Feature Scope" />
-                          <FeatureScopeLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="featureScope"
+                        value={values.featureScope || ""}
+                        className={
+                          errors.featureScope
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("featureScope", true);
+                          setFieldValue(
+                            "featureScope",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Feature Scope" />
+                        <FeatureScopeLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -489,30 +459,33 @@ const ProductFeatureForm: React.FC = () => {
                     <label htmlFor="valueType" className="nice-form-control">
                       <b>
                         Value Type:
-                        {touched.valueType &&
-                         !errors.valueType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.valueType && !errors.valueType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="valueType"
-                          value={values.valueType || ''}
-                          className={
-                            errors.valueType
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('valueType', true);
-                            setFieldValue('valueType', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Value Type" />
-                          <ValueTypeLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="valueType"
+                        value={values.valueType || ""}
+                        className={
+                          errors.valueType
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("valueType", true);
+                          setFieldValue(
+                            "valueType",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Value Type" />
+                        <ValueTypeLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -524,37 +497,33 @@ const ProductFeatureForm: React.FC = () => {
                     <label htmlFor="limitValue" className="nice-form-control">
                       <b>
                         Limit Value:
-                        {touched.limitValue &&
-                         !errors.limitValue && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.limitValue && !errors.limitValue && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="limitValue"
-                            type="number"
-                            step="any"
-                            value={values.limitValue || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('limitValue', true);
-                              const v = e.target.value;
-                              setFieldValue('limitValue', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.limitValue
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="limitValue"
+                        type="number"
+                        step="any"
+                        value={values.limitValue || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("limitValue", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "limitValue",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.limitValue
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -566,32 +535,25 @@ const ProductFeatureForm: React.FC = () => {
                     <label htmlFor="booleanValue" className="nice-form-control">
                       <b>
                         Boolean Value:
-                        {touched.booleanValue &&
-                         !errors.booleanValue && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.booleanValue && !errors.booleanValue && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="booleanValue"
-                            name="booleanValue"
-                            checked={values.booleanValue || false}
-                            onChange={(e) => {
-                              setFieldTouched('booleanValue', true);
-                              setFieldValue('booleanValue', e.target.checked);
-                            }}
-                            isInvalid={!!errors.booleanValue}
-                            className={errors.booleanValue ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="booleanValue"
+                        name="booleanValue"
+                        checked={values.booleanValue || false}
+                        onChange={(e) => {
+                          setFieldTouched("booleanValue", true);
+                          setFieldValue("booleanValue", e.target.checked);
+                        }}
+                        isInvalid={!!errors.booleanValue}
+                        className={errors.booleanValue ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -603,28 +565,21 @@ const ProductFeatureForm: React.FC = () => {
                     <label htmlFor="stringValue" className="nice-form-control">
                       <b>
                         String Value:
-                        {touched.stringValue &&
-                         !errors.stringValue && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.stringValue && !errors.stringValue && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="stringValue"
-                            value={values?.stringValue}
-                            placeholder="String Value"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="stringValue"
+                        value={values?.stringValue}
+                        placeholder="String Value"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -636,32 +591,25 @@ const ProductFeatureForm: React.FC = () => {
                     <label htmlFor="enabled" className="nice-form-control">
                       <b>
                         Enabled:
-                        {touched.enabled &&
-                         !errors.enabled && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.enabled && !errors.enabled && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="enabled"
-                            name="enabled"
-                            checked={values.enabled || false}
-                            onChange={(e) => {
-                              setFieldTouched('enabled', true);
-                              setFieldValue('enabled', e.target.checked);
-                            }}
-                            isInvalid={!!errors.enabled}
-                            className={errors.enabled ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="enabled"
+                        name="enabled"
+                        checked={values.enabled || false}
+                        onChange={(e) => {
+                          setFieldTouched("enabled", true);
+                          setFieldValue("enabled", e.target.checked);
+                        }}
+                        isInvalid={!!errors.enabled}
+                        className={errors.enabled ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -673,30 +621,33 @@ const ProductFeatureForm: React.FC = () => {
                     <label htmlFor="planTier" className="nice-form-control">
                       <b>
                         Plan Tier:
-                        {touched.planTier &&
-                         !errors.planTier && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.planTier && !errors.planTier && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="planTier"
-                          value={values.planTier || ''}
-                          className={
-                            errors.planTier
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('planTier', true);
-                            setFieldValue('planTier', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Plan Tier" />
-                          <PlanTierLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="planTier"
+                        value={values.planTier || ""}
+                        className={
+                          errors.planTier
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("planTier", true);
+                          setFieldValue(
+                            "planTier",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Plan Tier" />
+                        <PlanTierLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -708,32 +659,25 @@ const ProductFeatureForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -743,45 +687,59 @@ const ProductFeatureForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New ProductFeature
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New ProductFeature
+                    </CoolButton>
 
-                  {(addProductFeatureResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addProductFeatureResult as any).error ? (addProductFeatureResult as any).error.data : (addProductFeatureResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addProductFeatureResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addProductFeatureResult as any).error
+                              ? (addProductFeatureResult as any).error.data
+                              : (addProductFeatureResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addProductFeatureResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addProductFeatureResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addProductFeatureResult: {JSON.stringify(addProductFeatureResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addProductFeatureResult:{" "}
+                    {JSON.stringify(addProductFeatureResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -813,8 +771,8 @@ kebabcase type-lookup
 const TypeLookup = () => {
   return (
     <>
-      <option value='percentage' label="Percentage" />
-      <option value='fixed' label="Fixed" />
+      <option value="percentage" label="Percentage" />
+      <option value="fixed" label="Fixed" />
     </>
   );
 };
@@ -831,12 +789,12 @@ kebabcase feature-scope-lookup
 const FeatureScopeLookup = () => {
   return (
     <>
-      <option value='platform' label="Platform" />
-      <option value='organization' label="Organization" />
-      <option value='application' label="Application" />
-      <option value='agent' label="Agent" />
-      <option value='billing' label="Billing" />
-      <option value='ux' label="Ux" />
+      <option value="platform" label="Platform" />
+      <option value="organization" label="Organization" />
+      <option value="application" label="Application" />
+      <option value="agent" label="Agent" />
+      <option value="billing" label="Billing" />
+      <option value="ux" label="Ux" />
     </>
   );
 };
@@ -853,9 +811,9 @@ kebabcase value-type-lookup
 const ValueTypeLookup = () => {
   return (
     <>
-      <option value='number' label="Number" />
-      <option value='boolean' label="Boolean" />
-      <option value='string' label="String" />
+      <option value="number" label="Number" />
+      <option value="boolean" label="Boolean" />
+      <option value="string" label="String" />
     </>
   );
 };
@@ -872,18 +830,15 @@ kebabcase plan-tier-lookup
 const PlanTierLookup = () => {
   return (
     <>
-      <option value='free' label="Free" />
-      <option value='solo' label="Solo" />
-      <option value='pro' label="Pro" />
-      <option value='team' label="Team" />
-      <option value='reseller' label="Reseller" />
-      <option value='enterprise' label="Enterprise" />
+      <option value="free" label="Free" />
+      <option value="solo" label="Solo" />
+      <option value="pro" label="Pro" />
+      <option value="team" label="Team" />
+      <option value="reseller" label="Reseller" />
+      <option value="enterprise" label="Enterprise" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default ProductFeatureForm;
-

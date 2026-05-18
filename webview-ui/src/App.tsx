@@ -77,9 +77,16 @@ const AppContent = () => {
   // Server Console is now rendered as a tab in the Account view
   const [showAnnouncement, setShowAnnouncement] = useState(false);
   const [mcpTab, setMcpTab] = useState<McpViewTab | undefined>(undefined);
-  const [serverConsoleNeedsAttention, setServerConsoleNeedsAttention] = useState(false);
+  const [serverConsoleNeedsAttention, setServerConsoleNeedsAttention] =
+    useState(false);
   const [accountInitialActiveTab, setAccountInitialActiveTab] = useState<
-    "login" | "account" | "applications" | "generatedFiles" | "userPreferences" | "serverConsole" | undefined
+    | "login"
+    | "account"
+    | "applications"
+    | "generatedFiles"
+    | "userPreferences"
+    | "serverConsole"
+    | undefined
   >(undefined);
   // Always show file explorer by default
   const [showFileExplorer, setShowFileExplorer] = useState(true);
@@ -349,9 +356,13 @@ const AppContent = () => {
             <AccountView
               onDone={() => setShowAccount(false)}
               serverConsoleNeedsAttention={serverConsoleNeedsAttention}
-              onClearServerConsoleNeedsAttention={() => setServerConsoleNeedsAttention(false)}
+              onClearServerConsoleNeedsAttention={() =>
+                setServerConsoleNeedsAttention(false)
+              }
               initialActiveTab={accountInitialActiveTab}
-              onConsumeInitialActiveTab={() => setAccountInitialActiveTab(undefined)}
+              onConsumeInitialActiveTab={() =>
+                setAccountInitialActiveTab(undefined)
+              }
             />
           )}
           {showGeneratedFiles && <GeneratedFilesView />}

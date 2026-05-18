@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SubscriberList } from '@thorapi/model/SubscriberList';
+import { SubscriberList } from "@thorapi/model/SubscriberList";
 
 const SubscriberListSlice = createSlice({
   name: "SubscriberLists",
@@ -27,20 +27,25 @@ const SubscriberListSlice = createSlice({
     },
 
     SubscriberListValueToggled(state, action) {
-      console.log("SubscriberList TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SubscriberList:SubscriberList = state.find((SubscriberList) => SubscriberList.id === action.payload.SubscriberListId);
+      console.log("SubscriberList TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SubscriberList: SubscriberList = state.find(
+        (SubscriberList) =>
+          SubscriberList.id === action.payload.SubscriberListId,
+      );
       if (SubscriberList) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SubscriberListpropertySet(state, action) {
-      const SubscriberList = state.find((SubscriberList) => SubscriberList.id === action.payload.SubscriberListId);
+      const SubscriberList = state.find(
+        (SubscriberList) =>
+          SubscriberList.id === action.payload.SubscriberListId,
+      );
       if (SubscriberList) {
-      //  SubscriberList[action.property] = action.payload[action.property];
+        //  SubscriberList[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const SubscriberListSlice = createSlice({
 export const {
   SubscriberListAdded,
   SubscriberListValueToggled,
-  SubscriberListpropertySet
+  SubscriberListpropertySet,
 } = SubscriberListSlice.actions;
 export default SubscriberListSlice.reducer;

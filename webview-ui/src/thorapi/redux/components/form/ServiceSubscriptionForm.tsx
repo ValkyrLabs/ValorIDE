@@ -13,33 +13,41 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   ServiceSubscription,
   ServiceSubscriptionSubscriptionTypeEnum,
   ServiceSubscriptionStatusEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddServiceSubscriptionMutation } from '../../services/ServiceSubscriptionService';
+import { useAddServiceSubscriptionMutation } from "../../services/ServiceSubscriptionService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -63,50 +71,50 @@ Consumer subscription to a monetized MCP service.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const SubscriptionTypeValidation = () => {
-  return [
-    'MONTHLY',
-    'YEARLY',
-    'PAY_AS_YOU_GO',
-  ];
+  return ["MONTHLY", "YEARLY", "PAY_AS_YOU_GO"];
 };
 const StatusValidation = () => {
-  return [
-    'ACTIVE',
-    'CANCELLED',
-  ];
+  return ["ACTIVE", "CANCELLED"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-      subscriptionType: Yup.mixed()
-        .oneOf(SubscriptionTypeValidation(), "Invalid value for subscriptionType")
-        ,
-        creditsIncluded: asNumber(Yup.number().typeError("creditsIncluded must be a number")),
-        monthlyLimit: asNumber(Yup.number().integer().typeError("monthlyLimit must be a number")),
-        renewalDate: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("renewalDate must be a valid date"),
-      status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        ,
-        trashed: Yup.boolean(),
+  subscriptionType: Yup.mixed().oneOf(
+    SubscriptionTypeValidation(),
+    "Invalid value for subscriptionType",
+  ),
+  creditsIncluded: asNumber(
+    Yup.number().typeError("creditsIncluded must be a number"),
+  ),
+  monthlyLimit: asNumber(
+    Yup.number().integer().typeError("monthlyLimit must be a number"),
+  ),
+  renewalDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("renewalDate must be a valid date"),
+  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ServiceSubscriptionForm: React.FC = () => {
-  const [addServiceSubscription, addServiceSubscriptionResult] = useAddServiceSubscriptionMutation();
+  const [addServiceSubscription, addServiceSubscriptionResult] =
+    useAddServiceSubscriptionMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -116,12 +124,18 @@ const ServiceSubscriptionForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -129,12 +143,12 @@ const ServiceSubscriptionForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ServiceSubscription> = {
-        subscriptionType: undefined,
-          creditsIncluded: 0,
-          monthlyLimit: 0,
-          renewalDate: new Date(),
-        status: undefined,
-          trashed: false,
+    subscriptionType: undefined,
+    creditsIncluded: 0,
+    monthlyLimit: 0,
+    renewalDate: new Date(),
+    status: undefined,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -149,11 +163,14 @@ const ServiceSubscriptionForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new ServiceSubscription:', grants);
+    console.log("Permissions saved for new ServiceSubscription:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ServiceSubscription>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<ServiceSubscription>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -164,7 +181,7 @@ const ServiceSubscriptionForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ServiceSubscription created successfully! Would you like to set permissions for this object?`
+          `ServiceSubscription created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -172,8 +189,8 @@ const ServiceSubscriptionForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create ServiceSubscription:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create ServiceSubscription:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -194,46 +211,54 @@ const ServiceSubscriptionForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addServiceSubscriptionResult.isLoading;
+          const isSaving =
+            isSubmitting || addServiceSubscriptionResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New ServiceSubscription
-                </Accordion.Header>
-                <Accordion.Body>
-                    <label htmlFor="subscriptionType" className="nice-form-control">
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    ServiceSubscription
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <label
+                      htmlFor="subscriptionType"
+                      className="nice-form-control"
+                    >
                       <b>
                         Subscription Type:
                         {touched.subscriptionType &&
-                         !errors.subscriptionType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.subscriptionType && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="subscriptionType"
-                          value={values.subscriptionType || ''}
-                          className={
-                            errors.subscriptionType
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('subscriptionType', true);
-                            setFieldValue('subscriptionType', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Subscription Type" />
-                          <SubscriptionTypeLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="subscriptionType"
+                        value={values.subscriptionType || ""}
+                        className={
+                          errors.subscriptionType
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("subscriptionType", true);
+                          setFieldValue(
+                            "subscriptionType",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Subscription Type" />
+                        <SubscriptionTypeLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -242,40 +267,39 @@ const ServiceSubscriptionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="creditsIncluded" className="nice-form-control">
+                    <label
+                      htmlFor="creditsIncluded"
+                      className="nice-form-control"
+                    >
                       <b>
                         Credits Included:
-                        {touched.creditsIncluded &&
-                         !errors.creditsIncluded && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.creditsIncluded && !errors.creditsIncluded && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="creditsIncluded"
-                            type="number"
-                            step="any"
-                            value={values.creditsIncluded || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('creditsIncluded', true);
-                              const v = e.target.value;
-                              setFieldValue('creditsIncluded', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.creditsIncluded
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="creditsIncluded"
+                        type="number"
+                        step="any"
+                        value={values.creditsIncluded || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("creditsIncluded", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "creditsIncluded",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.creditsIncluded
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -287,36 +311,32 @@ const ServiceSubscriptionForm: React.FC = () => {
                     <label htmlFor="monthlyLimit" className="nice-form-control">
                       <b>
                         Monthly Limit:
-                        {touched.monthlyLimit &&
-                         !errors.monthlyLimit && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.monthlyLimit && !errors.monthlyLimit && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="monthlyLimit"
-                            type="number"
-                            value={values.monthlyLimit || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('monthlyLimit', true);
-                              const v = e.target.value;
-                              setFieldValue('monthlyLimit', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.monthlyLimit
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="monthlyLimit"
+                        type="number"
+                        value={values.monthlyLimit || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("monthlyLimit", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "monthlyLimit",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.monthlyLimit
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -328,38 +348,38 @@ const ServiceSubscriptionForm: React.FC = () => {
                     <label htmlFor="renewalDate" className="nice-form-control">
                       <b>
                         Renewal Date:
-                        {touched.renewalDate &&
-                         !errors.renewalDate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.renewalDate && !errors.renewalDate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="renewalDate"
-                            type="datetime-local"
-                            value={values.renewalDate ? 
-                              new Date(values.renewalDate).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('renewalDate', true);
-                              const v = e.target.value;
-                              setFieldValue('renewalDate', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.renewalDate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="renewalDate"
+                        type="datetime-local"
+                        value={
+                          values.renewalDate
+                            ? new Date(values.renewalDate)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("renewalDate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "renewalDate",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.renewalDate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -371,30 +391,30 @@ const ServiceSubscriptionForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="status"
-                          value={values.status || ''}
-                          className={
-                            errors.status
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Status" />
-                          <StatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="status"
+                        value={values.status || ""}
+                        className={
+                          errors.status
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("status", true);
+                          setFieldValue("status", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Status" />
+                        <StatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -406,32 +426,25 @@ const ServiceSubscriptionForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -441,45 +454,61 @@ const ServiceSubscriptionForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New ServiceSubscription
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New ServiceSubscription
+                    </CoolButton>
 
-                  {(addServiceSubscriptionResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addServiceSubscriptionResult as any).error ? (addServiceSubscriptionResult as any).error.data : (addServiceSubscriptionResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addServiceSubscriptionResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addServiceSubscriptionResult as any).error
+                              ? (addServiceSubscriptionResult as any).error.data
+                              : (addServiceSubscriptionResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addServiceSubscriptionResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addServiceSubscriptionResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addServiceSubscriptionResult: {JSON.stringify(addServiceSubscriptionResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addServiceSubscriptionResult:{" "}
+                    {JSON.stringify(addServiceSubscriptionResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -511,9 +540,9 @@ kebabcase subscription-type-lookup
 const SubscriptionTypeLookup = () => {
   return (
     <>
-      <option value='MONTHLY' label="MONTHLY" />
-      <option value='YEARLY' label="YEARLY" />
-      <option value='PAY_AS_YOU_GO' label="PAY _ AS _ YOU _ GO" />
+      <option value="MONTHLY" label="MONTHLY" />
+      <option value="YEARLY" label="YEARLY" />
+      <option value="PAY_AS_YOU_GO" label="PAY _ AS _ YOU _ GO" />
     </>
   );
 };
@@ -530,14 +559,11 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value='ACTIVE' label="Active" />
-      <option value='CANCELLED' label="Cancelled" />
+      <option value="ACTIVE" label="Active" />
+      <option value="CANCELLED" label="Cancelled" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default ServiceSubscriptionForm;
-

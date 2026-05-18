@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { GrayMatter } from '@thorapi/model/GrayMatter'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { GrayMatter } from "@thorapi/model/GrayMatter";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type GrayMatterResponse = GrayMatter[]
+type GrayMatterResponse = GrayMatter[];
 
 const toGrayMatterList = (result: unknown): GrayMatterResponse => {
   if (Array.isArray(result)) {
-    return result as GrayMatterResponse
+    return result as GrayMatterResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as GrayMatterResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as GrayMatterResponse) : [];
+};
 
 export const GrayMatterService = createApi({
-  reducerPath: 'GrayMatter', // This should remain unique
+  reducerPath: "GrayMatter", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['GrayMatter'],
+  tagTypes: ["GrayMatter"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getGrayMattersPaged: build.query<GrayMatterResponse, { page: number; size?: number; example?: Partial<GrayMatter> }>({
+    getGrayMattersPaged: build.query<
+      GrayMatterResponse,
+      { page: number; size?: number; example?: Partial<GrayMatter> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `GrayMatter?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `GrayMatter?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toGrayMatterList(result)
+        const rows = toGrayMatterList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'GrayMatter' as const, id })),
-          { type: 'GrayMatter', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "GrayMatter" as const, id })),
+          { type: "GrayMatter", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getGrayMatters: build.query<GrayMatterResponse, { example?: Partial<GrayMatter> } | void>({
+    getGrayMatters: build.query<
+      GrayMatterResponse,
+      { example?: Partial<GrayMatter> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const GrayMatterService = createApi({
         return `GrayMatter`;
       },
       providesTags: (result) => {
-        const rows = toGrayMatterList(result)
+        const rows = toGrayMatterList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'GrayMatter' as const, id })),
-          { type: 'GrayMatter', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "GrayMatter" as const, id })),
+          { type: "GrayMatter", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,42 +87,49 @@ export const GrayMatterService = createApi({
     addGrayMatter: build.mutation<GrayMatter, Partial<GrayMatter>>({
       query: (body) => ({
         url: `GrayMatter`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'GrayMatter', id: 'LIST' }],
+      invalidatesTags: [{ type: "GrayMatter", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getGrayMatter: build.query<GrayMatter, string>({
       query: (id) => `GrayMatter/${id}`,
-      providesTags: (result, error, id) => [{ type: 'GrayMatter', id }],
+      providesTags: (result, error, id) => [{ type: "GrayMatter", id }],
     }),
 
     // 5) Update
-    updateGrayMatter: build.mutation<void, Pick<GrayMatter, 'id'> & Partial<GrayMatter>>({
+    updateGrayMatter: build.mutation<
+      void,
+      Pick<GrayMatter, "id"> & Partial<GrayMatter>
+    >({
       query: ({ id, ...patch }) => ({
         url: `GrayMatter/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            GrayMatterService.util.updateQueryData('getGrayMatter', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            GrayMatterService.util.updateQueryData(
+              "getGrayMatter",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<GrayMatter, 'id'>) => [
-        { type: 'GrayMatter', id },
-        { type: 'GrayMatter', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<GrayMatter, "id">) => [
+        { type: "GrayMatter", id },
+        { type: "GrayMatter", id: "LIST" },
       ],
     }),
 
@@ -120,29 +138,35 @@ export const GrayMatterService = createApi({
       query(id) {
         return {
           url: `GrayMatter/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'GrayMatter', id }],
+      invalidatesTags: (result, error, id) => [{ type: "GrayMatter", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteGrayMatterCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteGrayMatterCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `GrayMatter/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'GrayMatter', id }, { type: 'GrayMatter', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "GrayMatter", id },
+        { type: "GrayMatter", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetGrayMattersPagedQuery`
 export const {
-  useGetGrayMattersPagedQuery,     // immediate fetch
+  useGetGrayMattersPagedQuery, // immediate fetch
   useLazyGetGrayMattersPagedQuery, // lazy fetch
   useGetGrayMatterQuery,
   useGetGrayMattersQuery,
@@ -150,4 +174,4 @@ export const {
   useUpdateGrayMatterMutation,
   useDeleteGrayMatterMutation,
   useDeleteGrayMatterCascadeMutation,
-} = GrayMatterService
+} = GrayMatterService;

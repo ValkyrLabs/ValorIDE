@@ -30,7 +30,7 @@ const AddRemoteServerForm = ({
         isSubmitting &&
         submittedValues.current &&
         message.addRemoteServerResult?.serverName ===
-        submittedValues.current.name
+          submittedValues.current.name
       ) {
         if (message.addRemoteServerResult.success) {
           // Handle success

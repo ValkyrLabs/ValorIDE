@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ExecModuleIOConfig } from '@thorapi/model/ExecModuleIOConfig';
+import { ExecModuleIOConfig } from "@thorapi/model/ExecModuleIOConfig";
 
 const ExecModuleIOConfigSlice = createSlice({
   name: "ExecModuleIOConfigs",
@@ -27,20 +27,25 @@ const ExecModuleIOConfigSlice = createSlice({
     },
 
     ExecModuleIOConfigValueToggled(state, action) {
-      console.log("ExecModuleIOConfig TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ExecModuleIOConfig:ExecModuleIOConfig = state.find((ExecModuleIOConfig) => ExecModuleIOConfig.id === action.payload.ExecModuleIOConfigId);
+      console.log("ExecModuleIOConfig TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ExecModuleIOConfig: ExecModuleIOConfig = state.find(
+        (ExecModuleIOConfig) =>
+          ExecModuleIOConfig.id === action.payload.ExecModuleIOConfigId,
+      );
       if (ExecModuleIOConfig) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ExecModuleIOConfigpropertySet(state, action) {
-      const ExecModuleIOConfig = state.find((ExecModuleIOConfig) => ExecModuleIOConfig.id === action.payload.ExecModuleIOConfigId);
+      const ExecModuleIOConfig = state.find(
+        (ExecModuleIOConfig) =>
+          ExecModuleIOConfig.id === action.payload.ExecModuleIOConfigId,
+      );
       if (ExecModuleIOConfig) {
-      //  ExecModuleIOConfig[action.property] = action.payload[action.property];
+        //  ExecModuleIOConfig[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const ExecModuleIOConfigSlice = createSlice({
 export const {
   ExecModuleIOConfigAdded,
   ExecModuleIOConfigValueToggled,
-  ExecModuleIOConfigpropertySet
+  ExecModuleIOConfigpropertySet,
 } = ExecModuleIOConfigSlice.actions;
 export default ExecModuleIOConfigSlice.reducer;

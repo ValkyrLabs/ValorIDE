@@ -173,8 +173,8 @@ const OpenRouterModelPicker: React.FC<OpenRouterModelPickerProps> = ({
     // Then get search results for non-favorited models
     const searchResults = searchTerm
       ? highlight(fuse.search(searchTerm), "model-item-highlight").filter(
-        (item) => !favoritedModelIds.includes(item.id),
-      )
+          (item) => !favoritedModelIds.includes(item.id),
+        )
       : searchableItems.filter((item) => !favoritedModelIds.includes(item.id));
 
     // Combine favorited models with search results

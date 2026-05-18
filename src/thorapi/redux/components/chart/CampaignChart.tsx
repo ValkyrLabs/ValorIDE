@@ -19,20 +19,32 @@ Description: Campaign
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, Campaign } from '@thorapi/model';
-import { useGetCampaignsQuery, useAddCampaignMutation, useUpdateCampaignMutation } from '../../services/CampaignService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, Campaign } from "@thorapi/model";
+import {
+  useGetCampaignsQuery,
+  useAddCampaignMutation,
+  useUpdateCampaignMutation,
+} from "../../services/CampaignService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const CampaignChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetCampaignsQuery();
 
   const [data, setData] = useState<Campaign[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<Campaign>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const CampaignChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const CampaignChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((campaign: DataObject) => [campaign])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((campaign: DataObject) => [campaign])}
+        />
+      )}
     </>
   );
 };

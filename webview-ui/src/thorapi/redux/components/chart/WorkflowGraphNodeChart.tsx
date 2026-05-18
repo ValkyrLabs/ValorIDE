@@ -19,20 +19,32 @@ Description: WorkflowGraphNode
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, WorkflowGraphNode } from '@thorapi/model';
-import { useGetWorkflowGraphNodesQuery, useAddWorkflowGraphNodeMutation, useUpdateWorkflowGraphNodeMutation } from '../../services/WorkflowGraphNodeService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, WorkflowGraphNode } from "@thorapi/model";
+import {
+  useGetWorkflowGraphNodesQuery,
+  useAddWorkflowGraphNodeMutation,
+  useUpdateWorkflowGraphNodeMutation,
+} from "../../services/WorkflowGraphNodeService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const WorkflowGraphNodeChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetWorkflowGraphNodesQuery();
 
   const [data, setData] = useState<WorkflowGraphNode[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<WorkflowGraphNode>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const WorkflowGraphNodeChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,15 @@ const WorkflowGraphNodeChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((workflowgraphnode: DataObject) => [workflowgraphnode])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((workflowgraphnode: DataObject) => [
+            workflowgraphnode,
+          ])}
+        />
+      )}
     </>
   );
 };

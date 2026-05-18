@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  McpMarketplaceItem,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddMcpMarketplaceItemMutation } from '../../services/McpMarketplaceItemService';
+import { McpMarketplaceItem } from "@thorapi/model";
+
+import { useAddMcpMarketplaceItemMutation } from "../../services/McpMarketplaceItemService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,40 +71,48 @@ McpMarketplaceItem
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        mcpMarketplaceCatalogId: Yup.string(),
-        mcpServerId: Yup.string(),
-        githubUrl: Yup.string(),
-        name: Yup.string(),
-        author: Yup.string(),
-        description: Yup.string(),
-        codiconIcon: Yup.string(),
-        logoUrl: Yup.string(),
-        category: Yup.string(),
-        requiresApiKey: Yup.boolean(),
-        readmeContent: Yup.string(),
-        llmsInstallationContent: Yup.string(),
-        isRecommended: Yup.boolean(),
-        githubStars: asNumber(Yup.number().integer().typeError("githubStars must be a number")),
-        downloadCount: asNumber(Yup.number().integer().typeError("downloadCount must be a number")),
-        lastGithubSync: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("lastGithubSync must be a valid date"),
-        trashed: Yup.boolean(),
+  mcpMarketplaceCatalogId: Yup.string(),
+  mcpServerId: Yup.string(),
+  githubUrl: Yup.string(),
+  name: Yup.string(),
+  author: Yup.string(),
+  description: Yup.string(),
+  codiconIcon: Yup.string(),
+  logoUrl: Yup.string(),
+  category: Yup.string(),
+  requiresApiKey: Yup.boolean(),
+  readmeContent: Yup.string(),
+  llmsInstallationContent: Yup.string(),
+  isRecommended: Yup.boolean(),
+  githubStars: asNumber(
+    Yup.number().integer().typeError("githubStars must be a number"),
+  ),
+  downloadCount: asNumber(
+    Yup.number().integer().typeError("downloadCount must be a number"),
+  ),
+  lastGithubSync: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("lastGithubSync must be a valid date"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const McpMarketplaceItemForm: React.FC = () => {
-  const [addMcpMarketplaceItem, addMcpMarketplaceItemResult] = useAddMcpMarketplaceItemMutation();
+  const [addMcpMarketplaceItem, addMcpMarketplaceItemResult] =
+    useAddMcpMarketplaceItemMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -108,12 +122,18 @@ const McpMarketplaceItemForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -121,23 +141,23 @@ const McpMarketplaceItemForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<McpMarketplaceItem> = {
-          mcpMarketplaceCatalogId: '',
-          mcpServerId: '',
-          githubUrl: '',
-          name: '',
-          author: '',
-          description: '',
-          codiconIcon: '',
-          logoUrl: '',
-          category: '',
-          requiresApiKey: false,
-          readmeContent: '',
-          llmsInstallationContent: '',
-          isRecommended: false,
-          githubStars: 0,
-          downloadCount: 0,
-          lastGithubSync: new Date(),
-          trashed: false,
+    mcpMarketplaceCatalogId: "",
+    mcpServerId: "",
+    githubUrl: "",
+    name: "",
+    author: "",
+    description: "",
+    codiconIcon: "",
+    logoUrl: "",
+    category: "",
+    requiresApiKey: false,
+    readmeContent: "",
+    llmsInstallationContent: "",
+    isRecommended: false,
+    githubStars: 0,
+    downloadCount: 0,
+    lastGithubSync: new Date(),
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -152,11 +172,14 @@ const McpMarketplaceItemForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new McpMarketplaceItem:', grants);
+    console.log("Permissions saved for new McpMarketplaceItem:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<McpMarketplaceItem>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<McpMarketplaceItem>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -167,7 +190,7 @@ const McpMarketplaceItemForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `McpMarketplaceItem created successfully! Would you like to set permissions for this object?`
+          `McpMarketplaceItem created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -175,8 +198,8 @@ const McpMarketplaceItemForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create McpMarketplaceItem:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create McpMarketplaceItem:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -197,44 +220,42 @@ const McpMarketplaceItemForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addMcpMarketplaceItemResult.isLoading;
+          const isSaving =
+            isSubmitting || addMcpMarketplaceItemResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New McpMarketplaceItem
-                </Accordion.Header>
-                <Accordion.Body>
-                    <label htmlFor="mcpMarketplaceCatalogId" className="nice-form-control">
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    McpMarketplaceItem
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <label
+                      htmlFor="mcpMarketplaceCatalogId"
+                      className="nice-form-control"
+                    >
                       <b>
                         Mcp Marketplace Catalog Id:
                         {touched.mcpMarketplaceCatalogId &&
-                         !errors.mcpMarketplaceCatalogId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.mcpMarketplaceCatalogId && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="mcpMarketplaceCatalogId"
-                            value={values?.mcpMarketplaceCatalogId}
-                            placeholder="Mcp Marketplace Catalog Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="mcpMarketplaceCatalogId"
+                        value={values?.mcpMarketplaceCatalogId}
+                        placeholder="Mcp Marketplace Catalog Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -246,28 +267,21 @@ const McpMarketplaceItemForm: React.FC = () => {
                     <label htmlFor="mcpServerId" className="nice-form-control">
                       <b>
                         Mcp Server Id:
-                        {touched.mcpServerId &&
-                         !errors.mcpServerId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.mcpServerId && !errors.mcpServerId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="mcpServerId"
-                            value={values?.mcpServerId}
-                            placeholder="Mcp Server Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="mcpServerId"
+                        value={values?.mcpServerId}
+                        placeholder="Mcp Server Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -279,28 +293,21 @@ const McpMarketplaceItemForm: React.FC = () => {
                     <label htmlFor="githubUrl" className="nice-form-control">
                       <b>
                         Github Url:
-                        {touched.githubUrl &&
-                         !errors.githubUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.githubUrl && !errors.githubUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="githubUrl"
-                            value={values?.githubUrl}
-                            placeholder="Github Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="githubUrl"
+                        value={values?.githubUrl}
+                        placeholder="Github Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -312,28 +319,21 @@ const McpMarketplaceItemForm: React.FC = () => {
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.name && !errors.name && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="name"
+                        value={values?.name}
+                        placeholder="Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -345,28 +345,21 @@ const McpMarketplaceItemForm: React.FC = () => {
                     <label htmlFor="author" className="nice-form-control">
                       <b>
                         Author:
-                        {touched.author &&
-                         !errors.author && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.author && !errors.author && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="author"
-                            value={values?.author}
-                            placeholder="Author"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="author"
+                        value={values?.author}
+                        placeholder="Author"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -378,28 +371,21 @@ const McpMarketplaceItemForm: React.FC = () => {
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
-                        {touched.description &&
-                         !errors.description && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.description && !errors.description && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="description"
-                            value={values?.description}
-                            placeholder="Description"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="description"
+                        value={values?.description}
+                        placeholder="Description"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -411,28 +397,21 @@ const McpMarketplaceItemForm: React.FC = () => {
                     <label htmlFor="codiconIcon" className="nice-form-control">
                       <b>
                         Codicon Icon:
-                        {touched.codiconIcon &&
-                         !errors.codiconIcon && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.codiconIcon && !errors.codiconIcon && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="codiconIcon"
-                            value={values?.codiconIcon}
-                            placeholder="Codicon Icon"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="codiconIcon"
+                        value={values?.codiconIcon}
+                        placeholder="Codicon Icon"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -444,28 +423,21 @@ const McpMarketplaceItemForm: React.FC = () => {
                     <label htmlFor="logoUrl" className="nice-form-control">
                       <b>
                         Logo Url:
-                        {touched.logoUrl &&
-                         !errors.logoUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.logoUrl && !errors.logoUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="logoUrl"
-                            value={values?.logoUrl}
-                            placeholder="Logo Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="logoUrl"
+                        value={values?.logoUrl}
+                        placeholder="Logo Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -477,28 +449,21 @@ const McpMarketplaceItemForm: React.FC = () => {
                     <label htmlFor="category" className="nice-form-control">
                       <b>
                         Category:
-                        {touched.category &&
-                         !errors.category && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.category && !errors.category && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="category"
-                            value={values?.category}
-                            placeholder="Category"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="category"
+                        value={values?.category}
+                        placeholder="Category"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -507,35 +472,31 @@ const McpMarketplaceItemForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="requiresApiKey" className="nice-form-control">
+                    <label
+                      htmlFor="requiresApiKey"
+                      className="nice-form-control"
+                    >
                       <b>
                         Requires Api Key:
-                        {touched.requiresApiKey &&
-                         !errors.requiresApiKey && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.requiresApiKey && !errors.requiresApiKey && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="requiresApiKey"
-                            name="requiresApiKey"
-                            checked={values.requiresApiKey || false}
-                            onChange={(e) => {
-                              setFieldTouched('requiresApiKey', true);
-                              setFieldValue('requiresApiKey', e.target.checked);
-                            }}
-                            isInvalid={!!errors.requiresApiKey}
-                            className={errors.requiresApiKey ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="requiresApiKey"
+                        name="requiresApiKey"
+                        checked={values.requiresApiKey || false}
+                        onChange={(e) => {
+                          setFieldTouched("requiresApiKey", true);
+                          setFieldValue("requiresApiKey", e.target.checked);
+                        }}
+                        isInvalid={!!errors.requiresApiKey}
+                        className={errors.requiresApiKey ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -544,31 +505,27 @@ const McpMarketplaceItemForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="readmeContent" className="nice-form-control">
+                    <label
+                      htmlFor="readmeContent"
+                      className="nice-form-control"
+                    >
                       <b>
                         Readme Content:
-                        {touched.readmeContent &&
-                         !errors.readmeContent && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.readmeContent && !errors.readmeContent && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="readmeContent"
-                            value={values?.readmeContent}
-                            placeholder="Readme Content"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="readmeContent"
+                        value={values?.readmeContent}
+                        placeholder="Readme Content"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -577,31 +534,28 @@ const McpMarketplaceItemForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="llmsInstallationContent" className="nice-form-control">
+                    <label
+                      htmlFor="llmsInstallationContent"
+                      className="nice-form-control"
+                    >
                       <b>
                         Llms Installation Content:
                         {touched.llmsInstallationContent &&
-                         !errors.llmsInstallationContent && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.llmsInstallationContent && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="llmsInstallationContent"
-                            value={values?.llmsInstallationContent}
-                            placeholder="Llms Installation Content"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="llmsInstallationContent"
+                        value={values?.llmsInstallationContent}
+                        placeholder="Llms Installation Content"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -610,35 +564,31 @@ const McpMarketplaceItemForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="isRecommended" className="nice-form-control">
+                    <label
+                      htmlFor="isRecommended"
+                      className="nice-form-control"
+                    >
                       <b>
                         Is Recommended:
-                        {touched.isRecommended &&
-                         !errors.isRecommended && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.isRecommended && !errors.isRecommended && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="isRecommended"
-                            name="isRecommended"
-                            checked={values.isRecommended || false}
-                            onChange={(e) => {
-                              setFieldTouched('isRecommended', true);
-                              setFieldValue('isRecommended', e.target.checked);
-                            }}
-                            isInvalid={!!errors.isRecommended}
-                            className={errors.isRecommended ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="isRecommended"
+                        name="isRecommended"
+                        checked={values.isRecommended || false}
+                        onChange={(e) => {
+                          setFieldTouched("isRecommended", true);
+                          setFieldValue("isRecommended", e.target.checked);
+                        }}
+                        isInvalid={!!errors.isRecommended}
+                        className={errors.isRecommended ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -650,36 +600,32 @@ const McpMarketplaceItemForm: React.FC = () => {
                     <label htmlFor="githubStars" className="nice-form-control">
                       <b>
                         Github Stars:
-                        {touched.githubStars &&
-                         !errors.githubStars && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.githubStars && !errors.githubStars && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="githubStars"
-                            type="number"
-                            value={values.githubStars || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('githubStars', true);
-                              const v = e.target.value;
-                              setFieldValue('githubStars', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.githubStars
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="githubStars"
+                        type="number"
+                        value={values.githubStars || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("githubStars", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "githubStars",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.githubStars
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -688,39 +634,38 @@ const McpMarketplaceItemForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="downloadCount" className="nice-form-control">
+                    <label
+                      htmlFor="downloadCount"
+                      className="nice-form-control"
+                    >
                       <b>
                         Download Count:
-                        {touched.downloadCount &&
-                         !errors.downloadCount && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.downloadCount && !errors.downloadCount && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="downloadCount"
-                            type="number"
-                            value={values.downloadCount || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('downloadCount', true);
-                              const v = e.target.value;
-                              setFieldValue('downloadCount', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.downloadCount
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="downloadCount"
+                        type="number"
+                        value={values.downloadCount || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("downloadCount", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "downloadCount",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.downloadCount
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -729,41 +674,44 @@ const McpMarketplaceItemForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="lastGithubSync" className="nice-form-control">
+                    <label
+                      htmlFor="lastGithubSync"
+                      className="nice-form-control"
+                    >
                       <b>
                         Last Github Sync:
-                        {touched.lastGithubSync &&
-                         !errors.lastGithubSync && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.lastGithubSync && !errors.lastGithubSync && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="lastGithubSync"
-                            type="datetime-local"
-                            value={values.lastGithubSync ? 
-                              new Date(values.lastGithubSync).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('lastGithubSync', true);
-                              const v = e.target.value;
-                              setFieldValue('lastGithubSync', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.lastGithubSync
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="lastGithubSync"
+                        type="datetime-local"
+                        value={
+                          values.lastGithubSync
+                            ? new Date(values.lastGithubSync)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("lastGithubSync", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "lastGithubSync",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.lastGithubSync
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -775,32 +723,25 @@ const McpMarketplaceItemForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -810,45 +751,60 @@ const McpMarketplaceItemForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New McpMarketplaceItem
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New McpMarketplaceItem
+                    </CoolButton>
 
-                  {(addMcpMarketplaceItemResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addMcpMarketplaceItemResult as any).error ? (addMcpMarketplaceItemResult as any).error.data : (addMcpMarketplaceItemResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addMcpMarketplaceItemResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addMcpMarketplaceItemResult as any).error
+                              ? (addMcpMarketplaceItemResult as any).error.data
+                              : (addMcpMarketplaceItemResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addMcpMarketplaceItemResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addMcpMarketplaceItemResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addMcpMarketplaceItemResult: {JSON.stringify(addMcpMarketplaceItemResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addMcpMarketplaceItemResult:{" "}
+                    {JSON.stringify(addMcpMarketplaceItemResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -868,8 +824,5 @@ const McpMarketplaceItemForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default McpMarketplaceItemForm;
-

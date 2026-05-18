@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpTransportConfig } from '@thorapi/model/McpTransportConfig';
+import { McpTransportConfig } from "@thorapi/model/McpTransportConfig";
 
 const McpTransportConfigSlice = createSlice({
   name: "McpTransportConfigs",
@@ -27,20 +27,25 @@ const McpTransportConfigSlice = createSlice({
     },
 
     McpTransportConfigValueToggled(state, action) {
-      console.log("McpTransportConfig TOGGLE")
-      console.warn(JSON.stringify(action))
-      const McpTransportConfig:McpTransportConfig = state.find((McpTransportConfig) => McpTransportConfig.id === action.payload.McpTransportConfigId);
+      console.log("McpTransportConfig TOGGLE");
+      console.warn(JSON.stringify(action));
+      const McpTransportConfig: McpTransportConfig = state.find(
+        (McpTransportConfig) =>
+          McpTransportConfig.id === action.payload.McpTransportConfigId,
+      );
       if (McpTransportConfig) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     McpTransportConfigpropertySet(state, action) {
-      const McpTransportConfig = state.find((McpTransportConfig) => McpTransportConfig.id === action.payload.McpTransportConfigId);
+      const McpTransportConfig = state.find(
+        (McpTransportConfig) =>
+          McpTransportConfig.id === action.payload.McpTransportConfigId,
+      );
       if (McpTransportConfig) {
-      //  McpTransportConfig[action.property] = action.payload[action.property];
+        //  McpTransportConfig[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const McpTransportConfigSlice = createSlice({
 export const {
   McpTransportConfigAdded,
   McpTransportConfigValueToggled,
-  McpTransportConfigpropertySet
+  McpTransportConfigpropertySet,
 } = McpTransportConfigSlice.actions;
 export default McpTransportConfigSlice.reducer;

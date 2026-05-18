@@ -33,7 +33,7 @@ async function main() {
   const [, , mapPath, line, column] = process.argv;
   if (!mapPath || !line || !column) {
     console.error(
-      "Usage: node map_source.js <path/to/index.js.map> <line> <column>"
+      "Usage: node map_source.js <path/to/index.js.map> <line> <column>",
     );
     process.exit(2);
   }

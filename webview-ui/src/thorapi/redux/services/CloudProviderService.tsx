@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { CloudProvider } from '@thorapi/model/CloudProvider'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { CloudProvider } from "@thorapi/model/CloudProvider";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type CloudProviderResponse = CloudProvider[]
+type CloudProviderResponse = CloudProvider[];
 
 const toCloudProviderList = (result: unknown): CloudProviderResponse => {
   if (Array.isArray(result)) {
-    return result as CloudProviderResponse
+    return result as CloudProviderResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as CloudProviderResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as CloudProviderResponse) : [];
+};
 
 export const CloudProviderService = createApi({
-  reducerPath: 'CloudProvider', // This should remain unique
+  reducerPath: "CloudProvider", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['CloudProvider'],
+  tagTypes: ["CloudProvider"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getCloudProvidersPaged: build.query<CloudProviderResponse, { page: number; size?: number; example?: Partial<CloudProvider> }>({
+    getCloudProvidersPaged: build.query<
+      CloudProviderResponse,
+      { page: number; size?: number; example?: Partial<CloudProvider> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `CloudProvider?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `CloudProvider?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toCloudProviderList(result)
+        const rows = toCloudProviderList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'CloudProvider' as const, id })),
-          { type: 'CloudProvider', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "CloudProvider" as const, id })),
+          { type: "CloudProvider", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getCloudProviders: build.query<CloudProviderResponse, { example?: Partial<CloudProvider> } | void>({
+    getCloudProviders: build.query<
+      CloudProviderResponse,
+      { example?: Partial<CloudProvider> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const CloudProviderService = createApi({
         return `CloudProvider`;
       },
       providesTags: (result) => {
-        const rows = toCloudProviderList(result)
+        const rows = toCloudProviderList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'CloudProvider' as const, id })),
-          { type: 'CloudProvider', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "CloudProvider" as const, id })),
+          { type: "CloudProvider", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,73 +87,89 @@ export const CloudProviderService = createApi({
     addCloudProvider: build.mutation<CloudProvider, Partial<CloudProvider>>({
       query: (body) => ({
         url: `CloudProvider`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'CloudProvider', id: 'LIST' }],
+      invalidatesTags: [{ type: "CloudProvider", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getCloudProvider: build.query<CloudProvider, string>({
       query: (id) => `CloudProvider/${id}`,
-      providesTags: (result, error, id) => [{ type: 'CloudProvider', id }],
+      providesTags: (result, error, id) => [{ type: "CloudProvider", id }],
     }),
 
     // 5) Update
-    updateCloudProvider: build.mutation<void, Pick<CloudProvider, 'id'> & Partial<CloudProvider>>({
+    updateCloudProvider: build.mutation<
+      void,
+      Pick<CloudProvider, "id"> & Partial<CloudProvider>
+    >({
       query: ({ id, ...patch }) => ({
         url: `CloudProvider/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            CloudProviderService.util.updateQueryData('getCloudProvider', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            CloudProviderService.util.updateQueryData(
+              "getCloudProvider",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<CloudProvider, 'id'>) => [
-        { type: 'CloudProvider', id },
-        { type: 'CloudProvider', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<CloudProvider, "id">) => [
+        { type: "CloudProvider", id },
+        { type: "CloudProvider", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteCloudProvider: build.mutation<{ success: boolean; id: string }, number>({
+    deleteCloudProvider: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `CloudProvider/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'CloudProvider', id }],
+      invalidatesTags: (result, error, id) => [{ type: "CloudProvider", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteCloudProviderCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteCloudProviderCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `CloudProvider/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'CloudProvider', id }, { type: 'CloudProvider', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "CloudProvider", id },
+        { type: "CloudProvider", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetCloudProvidersPagedQuery`
 export const {
-  useGetCloudProvidersPagedQuery,     // immediate fetch
+  useGetCloudProvidersPagedQuery, // immediate fetch
   useLazyGetCloudProvidersPagedQuery, // lazy fetch
   useGetCloudProviderQuery,
   useGetCloudProvidersQuery,
@@ -150,4 +177,4 @@ export const {
   useUpdateCloudProviderMutation,
   useDeleteCloudProviderMutation,
   useDeleteCloudProviderCascadeMutation,
-} = CloudProviderService
+} = CloudProviderService;

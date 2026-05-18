@@ -19,20 +19,32 @@ Description: WorkflowExecution
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, WorkflowExecution } from '@thorapi/model';
-import { useGetWorkflowExecutionsQuery, useAddWorkflowExecutionMutation, useUpdateWorkflowExecutionMutation } from '../../services/WorkflowExecutionService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, WorkflowExecution } from "@thorapi/model";
+import {
+  useGetWorkflowExecutionsQuery,
+  useAddWorkflowExecutionMutation,
+  useUpdateWorkflowExecutionMutation,
+} from "../../services/WorkflowExecutionService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const WorkflowExecutionChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetWorkflowExecutionsQuery();
 
   const [data, setData] = useState<WorkflowExecution[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<WorkflowExecution>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const WorkflowExecutionChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,15 @@ const WorkflowExecutionChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((workflowexecution: DataObject) => [workflowexecution])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((workflowexecution: DataObject) => [
+            workflowexecution,
+          ])}
+        />
+      )}
     </>
   );
 };

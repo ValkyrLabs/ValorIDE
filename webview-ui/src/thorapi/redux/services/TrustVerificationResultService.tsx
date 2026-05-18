@@ -13,47 +13,69 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { TrustVerificationResult } from '@thorapi/model/TrustVerificationResult'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { TrustVerificationResult } from "@thorapi/model/TrustVerificationResult";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type TrustVerificationResultResponse = TrustVerificationResult[]
+type TrustVerificationResultResponse = TrustVerificationResult[];
 
-const toTrustVerificationResultList = (result: unknown): TrustVerificationResultResponse => {
+const toTrustVerificationResultList = (
+  result: unknown,
+): TrustVerificationResultResponse => {
   if (Array.isArray(result)) {
-    return result as TrustVerificationResultResponse
+    return result as TrustVerificationResultResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as TrustVerificationResultResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as TrustVerificationResultResponse)
+    : [];
+};
 
 export const TrustVerificationResultService = createApi({
-  reducerPath: 'TrustVerificationResult', // This should remain unique
+  reducerPath: "TrustVerificationResult", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['TrustVerificationResult'],
+  tagTypes: ["TrustVerificationResult"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getTrustVerificationResultsPaged: build.query<TrustVerificationResultResponse, { page: number; size?: number; example?: Partial<TrustVerificationResult> }>({
+    getTrustVerificationResultsPaged: build.query<
+      TrustVerificationResultResponse,
+      {
+        page: number;
+        size?: number;
+        example?: Partial<TrustVerificationResult>;
+      }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `TrustVerificationResult?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `TrustVerificationResult?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toTrustVerificationResultList(result)
+        const rows = toTrustVerificationResultList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'TrustVerificationResult' as const, id })),
-          { type: 'TrustVerificationResult', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({
+              type: "TrustVerificationResult" as const,
+              id,
+            })),
+          { type: "TrustVerificationResult", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getTrustVerificationResults: build.query<TrustVerificationResultResponse, { example?: Partial<TrustVerificationResult> } | void>({
+    getTrustVerificationResults: build.query<
+      TrustVerificationResultResponse,
+      { example?: Partial<TrustVerificationResult> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +84,117 @@ export const TrustVerificationResultService = createApi({
         return `TrustVerificationResult`;
       },
       providesTags: (result) => {
-        const rows = toTrustVerificationResultList(result)
+        const rows = toTrustVerificationResultList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'TrustVerificationResult' as const, id })),
-          { type: 'TrustVerificationResult', id: 'LIST' },
-        ]
+            .map(({ id }) => ({
+              type: "TrustVerificationResult" as const,
+              id,
+            })),
+          { type: "TrustVerificationResult", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addTrustVerificationResult: build.mutation<TrustVerificationResult, Partial<TrustVerificationResult>>({
+    addTrustVerificationResult: build.mutation<
+      TrustVerificationResult,
+      Partial<TrustVerificationResult>
+    >({
       query: (body) => ({
         url: `TrustVerificationResult`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'TrustVerificationResult', id: 'LIST' }],
+      invalidatesTags: [{ type: "TrustVerificationResult", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getTrustVerificationResult: build.query<TrustVerificationResult, string>({
       query: (id) => `TrustVerificationResult/${id}`,
-      providesTags: (result, error, id) => [{ type: 'TrustVerificationResult', id }],
+      providesTags: (result, error, id) => [
+        { type: "TrustVerificationResult", id },
+      ],
     }),
 
     // 5) Update
-    updateTrustVerificationResult: build.mutation<void, Pick<TrustVerificationResult, 'id'> & Partial<TrustVerificationResult>>({
+    updateTrustVerificationResult: build.mutation<
+      void,
+      Pick<TrustVerificationResult, "id"> & Partial<TrustVerificationResult>
+    >({
       query: ({ id, ...patch }) => ({
         url: `TrustVerificationResult/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            TrustVerificationResultService.util.updateQueryData('getTrustVerificationResult', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            TrustVerificationResultService.util.updateQueryData(
+              "getTrustVerificationResult",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<TrustVerificationResult, 'id'>) => [
-        { type: 'TrustVerificationResult', id },
-        { type: 'TrustVerificationResult', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<TrustVerificationResult, "id">,
+      ) => [
+        { type: "TrustVerificationResult", id },
+        { type: "TrustVerificationResult", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteTrustVerificationResult: build.mutation<{ success: boolean; id: string }, number>({
+    deleteTrustVerificationResult: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `TrustVerificationResult/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'TrustVerificationResult', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "TrustVerificationResult", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteTrustVerificationResultCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteTrustVerificationResultCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `TrustVerificationResult/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'TrustVerificationResult', id }, { type: 'TrustVerificationResult', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "TrustVerificationResult", id },
+        { type: "TrustVerificationResult", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetTrustVerificationResultsPagedQuery`
 export const {
-  useGetTrustVerificationResultsPagedQuery,     // immediate fetch
+  useGetTrustVerificationResultsPagedQuery, // immediate fetch
   useLazyGetTrustVerificationResultsPagedQuery, // lazy fetch
   useGetTrustVerificationResultQuery,
   useGetTrustVerificationResultsQuery,
@@ -150,4 +202,4 @@ export const {
   useUpdateTrustVerificationResultMutation,
   useDeleteTrustVerificationResultMutation,
   useDeleteTrustVerificationResultCascadeMutation,
-} = TrustVerificationResultService
+} = TrustVerificationResultService;

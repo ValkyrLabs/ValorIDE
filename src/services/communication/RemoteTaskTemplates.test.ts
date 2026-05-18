@@ -33,7 +33,7 @@ describe("RemoteTaskTemplateCatalog", () => {
         issue: "#14",
         target: "remote task launcher",
       },
-      ["https://example.com/runs/1", "https://example.com/pr/22"]
+      ["https://example.com/runs/1", "https://example.com/pr/22"],
     );
 
     expect(summary.title).toBe("Bugfix");

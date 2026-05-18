@@ -19,20 +19,32 @@ Description: Principal
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, Principal } from '@thorapi/model';
-import { useGetPrincipalsQuery, useAddPrincipalMutation, useUpdatePrincipalMutation } from '../../services/PrincipalService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, Principal } from "@thorapi/model";
+import {
+  useGetPrincipalsQuery,
+  useAddPrincipalMutation,
+  useUpdatePrincipalMutation,
+} from "../../services/PrincipalService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const PrincipalChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetPrincipalsQuery();
 
   const [data, setData] = useState<Principal[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<Principal>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const PrincipalChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const PrincipalChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((principal: DataObject) => [principal])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((principal: DataObject) => [principal])}
+        />
+      )}
     </>
   );
 };

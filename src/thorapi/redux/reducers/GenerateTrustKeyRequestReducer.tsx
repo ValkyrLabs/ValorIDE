@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { GenerateTrustKeyRequest } from '@thorapi/model/GenerateTrustKeyRequest';
+import { GenerateTrustKeyRequest } from "@thorapi/model/GenerateTrustKeyRequest";
 
 const GenerateTrustKeyRequestSlice = createSlice({
   name: "GenerateTrustKeyRequests",
@@ -27,20 +27,27 @@ const GenerateTrustKeyRequestSlice = createSlice({
     },
 
     GenerateTrustKeyRequestValueToggled(state, action) {
-      console.log("GenerateTrustKeyRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const GenerateTrustKeyRequest:GenerateTrustKeyRequest = state.find((GenerateTrustKeyRequest) => GenerateTrustKeyRequest.id === action.payload.GenerateTrustKeyRequestId);
+      console.log("GenerateTrustKeyRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const GenerateTrustKeyRequest: GenerateTrustKeyRequest = state.find(
+        (GenerateTrustKeyRequest) =>
+          GenerateTrustKeyRequest.id ===
+          action.payload.GenerateTrustKeyRequestId,
+      );
       if (GenerateTrustKeyRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     GenerateTrustKeyRequestpropertySet(state, action) {
-      const GenerateTrustKeyRequest = state.find((GenerateTrustKeyRequest) => GenerateTrustKeyRequest.id === action.payload.GenerateTrustKeyRequestId);
+      const GenerateTrustKeyRequest = state.find(
+        (GenerateTrustKeyRequest) =>
+          GenerateTrustKeyRequest.id ===
+          action.payload.GenerateTrustKeyRequestId,
+      );
       if (GenerateTrustKeyRequest) {
-      //  GenerateTrustKeyRequest[action.property] = action.payload[action.property];
+        //  GenerateTrustKeyRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const GenerateTrustKeyRequestSlice = createSlice({
 export const {
   GenerateTrustKeyRequestAdded,
   GenerateTrustKeyRequestValueToggled,
-  GenerateTrustKeyRequestpropertySet
+  GenerateTrustKeyRequestpropertySet,
 } = GenerateTrustKeyRequestSlice.actions;
 export default GenerateTrustKeyRequestSlice.reducer;

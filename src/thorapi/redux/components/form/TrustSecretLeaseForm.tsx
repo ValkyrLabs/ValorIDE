@@ -13,33 +13,41 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   TrustSecretLease,
   TrustSecretLeaseLeasePurposeEnum,
   TrustSecretLeaseLeaseStatusEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddTrustSecretLeaseMutation } from '../../services/TrustSecretLeaseService';
+import { useAddTrustSecretLeaseMutation } from "../../services/TrustSecretLeaseService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -63,58 +71,51 @@ Short-lived authorization to use a key version for one scoped cryptographic oper
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const LeasePurposeValidation = () => {
-  return [
-    'ENCRYPT',
-    'DECRYPT',
-    'SIGN',
-    'VERIFY',
-    'WRAP',
-    'UNWRAP',
-    'REWRAP',
-  ];
+  return ["ENCRYPT", "DECRYPT", "SIGN", "VERIFY", "WRAP", "UNWRAP", "REWRAP"];
 };
 const LeaseStatusValidation = () => {
-  return [
-    'ISSUED',
-    'USED',
-    'EXPIRED',
-    'REVOKED',
-  ];
+  return ["ISSUED", "USED", "EXPIRED", "REVOKED"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-      leasePurpose: Yup.mixed()
-        .oneOf(LeasePurposeValidation(), "Invalid value for leasePurpose")
-        ,
-        actorId: Yup.string(),
-        serviceAccountId: Yup.string(),
-        expiresAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("expiresAt must be a valid date"),
-      leaseStatus: Yup.mixed()
-        .oneOf(LeaseStatusValidation(), "Invalid value for leaseStatus")
-        ,
-        requestHash: Yup.string(),
-        ownerId: Yup.string(),
-        trashed: Yup.boolean(),
+  leasePurpose: Yup.mixed().oneOf(
+    LeasePurposeValidation(),
+    "Invalid value for leasePurpose",
+  ),
+  actorId: Yup.string(),
+  serviceAccountId: Yup.string(),
+  expiresAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("expiresAt must be a valid date"),
+  leaseStatus: Yup.mixed().oneOf(
+    LeaseStatusValidation(),
+    "Invalid value for leaseStatus",
+  ),
+  requestHash: Yup.string(),
+  ownerId: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const TrustSecretLeaseForm: React.FC = () => {
-  const [addTrustSecretLease, addTrustSecretLeaseResult] = useAddTrustSecretLeaseMutation();
+  const [addTrustSecretLease, addTrustSecretLeaseResult] =
+    useAddTrustSecretLeaseMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -124,12 +125,18 @@ const TrustSecretLeaseForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -137,14 +144,14 @@ const TrustSecretLeaseForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<TrustSecretLease> = {
-        leasePurpose: undefined,
-          actorId: '',
-          serviceAccountId: '',
-          expiresAt: new Date(),
-        leaseStatus: undefined,
-          requestHash: '',
-          ownerId: '',
-          trashed: false,
+    leasePurpose: undefined,
+    actorId: "",
+    serviceAccountId: "",
+    expiresAt: new Date(),
+    leaseStatus: undefined,
+    requestHash: "",
+    ownerId: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -159,11 +166,14 @@ const TrustSecretLeaseForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new TrustSecretLease:', grants);
+    console.log("Permissions saved for new TrustSecretLease:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<TrustSecretLease>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<TrustSecretLease>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -174,7 +184,7 @@ const TrustSecretLeaseForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `TrustSecretLease created successfully! Would you like to set permissions for this object?`
+          `TrustSecretLease created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -182,8 +192,8 @@ const TrustSecretLeaseForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create TrustSecretLease:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create TrustSecretLease:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -204,46 +214,49 @@ const TrustSecretLeaseForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addTrustSecretLeaseResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New TrustSecretLease
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    TrustSecretLease
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="leasePurpose" className="nice-form-control">
                       <b>
                         Lease Purpose:
-                        {touched.leasePurpose &&
-                         !errors.leasePurpose && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.leasePurpose && !errors.leasePurpose && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="leasePurpose"
-                          value={values.leasePurpose || ''}
-                          className={
-                            errors.leasePurpose
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('leasePurpose', true);
-                            setFieldValue('leasePurpose', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Lease Purpose" />
-                          <LeasePurposeLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="leasePurpose"
+                        value={values.leasePurpose || ""}
+                        className={
+                          errors.leasePurpose
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("leasePurpose", true);
+                          setFieldValue(
+                            "leasePurpose",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Lease Purpose" />
+                        <LeasePurposeLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -255,28 +268,21 @@ const TrustSecretLeaseForm: React.FC = () => {
                     <label htmlFor="actorId" className="nice-form-control">
                       <b>
                         Actor Id:
-                        {touched.actorId &&
-                         !errors.actorId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.actorId && !errors.actorId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="actorId"
-                            value={values?.actorId}
-                            placeholder="Actor Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="actorId"
+                        value={values?.actorId}
+                        placeholder="Actor Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -285,31 +291,28 @@ const TrustSecretLeaseForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="serviceAccountId" className="nice-form-control">
+                    <label
+                      htmlFor="serviceAccountId"
+                      className="nice-form-control"
+                    >
                       <b>
                         Service Account Id:
                         {touched.serviceAccountId &&
-                         !errors.serviceAccountId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.serviceAccountId && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="serviceAccountId"
-                            value={values?.serviceAccountId}
-                            placeholder="Service Account Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="serviceAccountId"
+                        value={values?.serviceAccountId}
+                        placeholder="Service Account Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -321,38 +324,38 @@ const TrustSecretLeaseForm: React.FC = () => {
                     <label htmlFor="expiresAt" className="nice-form-control">
                       <b>
                         Expires At:
-                        {touched.expiresAt &&
-                         !errors.expiresAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.expiresAt && !errors.expiresAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="expiresAt"
-                            type="datetime-local"
-                            value={values.expiresAt ? 
-                              new Date(values.expiresAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('expiresAt', true);
-                              const v = e.target.value;
-                              setFieldValue('expiresAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.expiresAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="expiresAt"
+                        type="datetime-local"
+                        value={
+                          values.expiresAt
+                            ? new Date(values.expiresAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("expiresAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "expiresAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.expiresAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -364,30 +367,33 @@ const TrustSecretLeaseForm: React.FC = () => {
                     <label htmlFor="leaseStatus" className="nice-form-control">
                       <b>
                         Lease Status:
-                        {touched.leaseStatus &&
-                         !errors.leaseStatus && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.leaseStatus && !errors.leaseStatus && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="leaseStatus"
-                          value={values.leaseStatus || ''}
-                          className={
-                            errors.leaseStatus
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('leaseStatus', true);
-                            setFieldValue('leaseStatus', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Lease Status" />
-                          <LeaseStatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="leaseStatus"
+                        value={values.leaseStatus || ""}
+                        className={
+                          errors.leaseStatus
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("leaseStatus", true);
+                          setFieldValue(
+                            "leaseStatus",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Lease Status" />
+                        <LeaseStatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -399,28 +405,21 @@ const TrustSecretLeaseForm: React.FC = () => {
                     <label htmlFor="requestHash" className="nice-form-control">
                       <b>
                         Request Hash:
-                        {touched.requestHash &&
-                         !errors.requestHash && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.requestHash && !errors.requestHash && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="requestHash"
-                            value={values?.requestHash}
-                            placeholder="Request Hash"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="requestHash"
+                        value={values?.requestHash}
+                        placeholder="Request Hash"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -432,28 +431,21 @@ const TrustSecretLeaseForm: React.FC = () => {
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
-                        {touched.ownerId &&
-                         !errors.ownerId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.ownerId && !errors.ownerId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="ownerId"
-                            value={values?.ownerId}
-                            placeholder="Owner Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="ownerId"
+                        value={values?.ownerId}
+                        placeholder="Owner Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -465,32 +457,25 @@ const TrustSecretLeaseForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -500,45 +485,60 @@ const TrustSecretLeaseForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New TrustSecretLease
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New TrustSecretLease
+                    </CoolButton>
 
-                  {(addTrustSecretLeaseResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addTrustSecretLeaseResult as any).error ? (addTrustSecretLeaseResult as any).error.data : (addTrustSecretLeaseResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addTrustSecretLeaseResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addTrustSecretLeaseResult as any).error
+                              ? (addTrustSecretLeaseResult as any).error.data
+                              : (addTrustSecretLeaseResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addTrustSecretLeaseResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addTrustSecretLeaseResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addTrustSecretLeaseResult: {JSON.stringify(addTrustSecretLeaseResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addTrustSecretLeaseResult:{" "}
+                    {JSON.stringify(addTrustSecretLeaseResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -570,13 +570,13 @@ kebabcase lease-purpose-lookup
 const LeasePurposeLookup = () => {
   return (
     <>
-      <option value='ENCRYPT' label="Encrypt" />
-      <option value='DECRYPT' label="Decrypt" />
-      <option value='SIGN' label="Sign" />
-      <option value='VERIFY' label="Verify" />
-      <option value='WRAP' label="Wrap" />
-      <option value='UNWRAP' label="Unwrap" />
-      <option value='REWRAP' label="Rewrap" />
+      <option value="ENCRYPT" label="Encrypt" />
+      <option value="DECRYPT" label="Decrypt" />
+      <option value="SIGN" label="Sign" />
+      <option value="VERIFY" label="Verify" />
+      <option value="WRAP" label="Wrap" />
+      <option value="UNWRAP" label="Unwrap" />
+      <option value="REWRAP" label="Rewrap" />
     </>
   );
 };
@@ -593,16 +593,13 @@ kebabcase lease-status-lookup
 const LeaseStatusLookup = () => {
   return (
     <>
-      <option value='ISSUED' label="Issued" />
-      <option value='USED' label="Used" />
-      <option value='EXPIRED' label="Expired" />
-      <option value='REVOKED' label="Revoked" />
+      <option value="ISSUED" label="Issued" />
+      <option value="USED" label="Used" />
+      <option value="EXPIRED" label="Expired" />
+      <option value="REVOKED" label="Revoked" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default TrustSecretLeaseForm;
-

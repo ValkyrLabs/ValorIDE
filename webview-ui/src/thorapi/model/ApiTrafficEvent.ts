@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,142 +36,155 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface ApiTrafficEvent
  */
-export type ApiTrafficEvent  = DataObject & {
-    /**
-     * HTTP method used by the request.
-     * @type {string}
-     * @memberof ApiTrafficEvent
-     */
-    method?: string;
-    /**
-     * Normalized request path.
-     * @type {string}
-     * @memberof ApiTrafficEvent
-     */
-    path?: string;
-    /**
-     * HTTP status returned to the client.
-     * @type {number}
-     * @memberof ApiTrafficEvent
-     */
-    status?: number;
-    /**
-     * Request latency in milliseconds.
-     * @type {number}
-     * @memberof ApiTrafficEvent
-     */
-    durationMs?: number;
-    /**
-     * Resolved customer/account identity for the request (or unknown).
-     * @type {string}
-     * @memberof ApiTrafficEvent
-     */
-    customerId?: string;
-    /**
-     * Resolved organization/tenant identity for the request (or unknown).
-     * @type {string}
-     * @memberof ApiTrafficEvent
-     */
-    organizationId?: string;
-    /**
-     * Timestamp when the request completed.
-     * @type {Date}
-     * @memberof ApiTrafficEvent
-     */
-    timestamp?: Date;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof ApiTrafficEvent
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof ApiTrafficEvent
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof ApiTrafficEvent
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof ApiTrafficEvent
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof ApiTrafficEvent
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof ApiTrafficEvent
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof ApiTrafficEvent
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof ApiTrafficEvent
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof ApiTrafficEvent
-     */
-    trashed?: boolean;
-}
+export type ApiTrafficEvent = DataObject & {
+  /**
+   * HTTP method used by the request.
+   * @type {string}
+   * @memberof ApiTrafficEvent
+   */
+  method?: string;
+  /**
+   * Normalized request path.
+   * @type {string}
+   * @memberof ApiTrafficEvent
+   */
+  path?: string;
+  /**
+   * HTTP status returned to the client.
+   * @type {number}
+   * @memberof ApiTrafficEvent
+   */
+  status?: number;
+  /**
+   * Request latency in milliseconds.
+   * @type {number}
+   * @memberof ApiTrafficEvent
+   */
+  durationMs?: number;
+  /**
+   * Resolved customer/account identity for the request (or unknown).
+   * @type {string}
+   * @memberof ApiTrafficEvent
+   */
+  customerId?: string;
+  /**
+   * Resolved organization/tenant identity for the request (or unknown).
+   * @type {string}
+   * @memberof ApiTrafficEvent
+   */
+  organizationId?: string;
+  /**
+   * Timestamp when the request completed.
+   * @type {Date}
+   * @memberof ApiTrafficEvent
+   */
+  timestamp?: Date;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof ApiTrafficEvent
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof ApiTrafficEvent
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof ApiTrafficEvent
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof ApiTrafficEvent
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof ApiTrafficEvent
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof ApiTrafficEvent
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof ApiTrafficEvent
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof ApiTrafficEvent
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof ApiTrafficEvent
+   */
+  trashed?: boolean;
+};
 
 export function ApiTrafficEventFromJSON(json: any): ApiTrafficEvent {
-    return {
-        ...DataObjectFromJSON(json),
-        'method': !exists(json, 'method') ? undefined : json['method'],
-        'path': !exists(json, 'path') ? undefined : json['path'],
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'durationMs': !exists(json, 'durationMs') ? undefined : json['durationMs'],
-        'customerId': !exists(json, 'customerId') ? undefined : json['customerId'],
-        'organizationId': !exists(json, 'organizationId') ? undefined : json['organizationId'],
-        'timestamp': !exists(json, 'timestamp') ? undefined : new Date(json['timestamp']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    method: !exists(json, "method") ? undefined : json["method"],
+    path: !exists(json, "path") ? undefined : json["path"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    durationMs: !exists(json, "durationMs") ? undefined : json["durationMs"],
+    customerId: !exists(json, "customerId") ? undefined : json["customerId"],
+    organizationId: !exists(json, "organizationId")
+      ? undefined
+      : json["organizationId"],
+    timestamp: !exists(json, "timestamp")
+      ? undefined
+      : new Date(json["timestamp"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function ApiTrafficEventToJSON(value?: ApiTrafficEvent): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'method': value.method,
-        'path': value.path,
-        'status': value.status,
-        'durationMs': value.durationMs,
-        'customerId': value.customerId,
-        'organizationId': value.organizationId,
-        'timestamp': value.timestamp === undefined ? undefined : value.timestamp.toISOString(),
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    method: value.method,
+    path: value.path,
+    status: value.status,
+    durationMs: value.durationMs,
+    customerId: value.customerId,
+    organizationId: value.organizationId,
+    timestamp:
+      value.timestamp === undefined ? undefined : value.timestamp.toISOString(),
+    trashed: value.trashed,
+  };
 }
-
-

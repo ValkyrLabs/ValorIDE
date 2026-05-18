@@ -26,112 +26,123 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    TrustVerificationResult,
-    TrustVerificationResultFromJSON,
-    TrustVerificationResultToJSON,
-} from './';
-
+  TrustVerificationResult,
+  TrustVerificationResultFromJSON,
+  TrustVerificationResultToJSON,
+} from "./";
 
 // thorapi
 
 /**
- * 
+ *
  * @export
  * @interface VerifyTrustProofResponse
  */
-export type VerifyTrustProofResponse  = DataObject & {
-    /**
-     * 
-     * @type {TrustVerificationResult}
-     * @memberof VerifyTrustProofResponse
-     */
-    verificationResult?: TrustVerificationResult;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof VerifyTrustProofResponse
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof VerifyTrustProofResponse
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof VerifyTrustProofResponse
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof VerifyTrustProofResponse
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof VerifyTrustProofResponse
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof VerifyTrustProofResponse
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof VerifyTrustProofResponse
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof VerifyTrustProofResponse
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof VerifyTrustProofResponse
-     */
-    trashed?: boolean;
+export type VerifyTrustProofResponse = DataObject & {
+  /**
+   *
+   * @type {TrustVerificationResult}
+   * @memberof VerifyTrustProofResponse
+   */
+  verificationResult?: TrustVerificationResult;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof VerifyTrustProofResponse
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof VerifyTrustProofResponse
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof VerifyTrustProofResponse
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof VerifyTrustProofResponse
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof VerifyTrustProofResponse
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof VerifyTrustProofResponse
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof VerifyTrustProofResponse
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof VerifyTrustProofResponse
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof VerifyTrustProofResponse
+   */
+  trashed?: boolean;
+};
+
+export function VerifyTrustProofResponseFromJSON(
+  json: any,
+): VerifyTrustProofResponse {
+  return {
+    ...DataObjectFromJSON(json),
+    verificationResult: !exists(json, "verificationResult")
+      ? undefined
+      : TrustVerificationResultFromJSON(json["verificationResult"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
-export function VerifyTrustProofResponseFromJSON(json: any): VerifyTrustProofResponse {
-    return {
-        ...DataObjectFromJSON(json),
-        'verificationResult': !exists(json, 'verificationResult') ? undefined : TrustVerificationResultFromJSON(json['verificationResult']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+export function VerifyTrustProofResponseToJSON(
+  value?: VerifyTrustProofResponse,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    verificationResult: TrustVerificationResultToJSON(value.verificationResult),
+    trashed: value.trashed,
+  };
 }
-
-export function VerifyTrustProofResponseToJSON(value?: VerifyTrustProofResponse): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'verificationResult': TrustVerificationResultToJSON(value.verificationResult),
-        'trashed': value.trashed,
-    };
-}
-
-

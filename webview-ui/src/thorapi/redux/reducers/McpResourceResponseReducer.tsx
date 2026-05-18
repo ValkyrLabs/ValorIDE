@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpResourceResponse } from '@thorapi/model/McpResourceResponse';
+import { McpResourceResponse } from "@thorapi/model/McpResourceResponse";
 
 const McpResourceResponseSlice = createSlice({
   name: "McpResourceResponses",
@@ -27,20 +27,25 @@ const McpResourceResponseSlice = createSlice({
     },
 
     McpResourceResponseValueToggled(state, action) {
-      console.log("McpResourceResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const McpResourceResponse:McpResourceResponse = state.find((McpResourceResponse) => McpResourceResponse.id === action.payload.McpResourceResponseId);
+      console.log("McpResourceResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const McpResourceResponse: McpResourceResponse = state.find(
+        (McpResourceResponse) =>
+          McpResourceResponse.id === action.payload.McpResourceResponseId,
+      );
       if (McpResourceResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     McpResourceResponsepropertySet(state, action) {
-      const McpResourceResponse = state.find((McpResourceResponse) => McpResourceResponse.id === action.payload.McpResourceResponseId);
+      const McpResourceResponse = state.find(
+        (McpResourceResponse) =>
+          McpResourceResponse.id === action.payload.McpResourceResponseId,
+      );
       if (McpResourceResponse) {
-      //  McpResourceResponse[action.property] = action.payload[action.property];
+        //  McpResourceResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const McpResourceResponseSlice = createSlice({
 export const {
   McpResourceResponseAdded,
   McpResourceResponseValueToggled,
-  McpResourceResponsepropertySet
+  McpResourceResponsepropertySet,
 } = McpResourceResponseSlice.actions;
 export default McpResourceResponseSlice.reducer;

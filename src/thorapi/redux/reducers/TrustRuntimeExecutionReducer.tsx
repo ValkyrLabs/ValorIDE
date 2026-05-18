@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { TrustRuntimeExecution } from '@thorapi/model/TrustRuntimeExecution';
+import { TrustRuntimeExecution } from "@thorapi/model/TrustRuntimeExecution";
 
 const TrustRuntimeExecutionSlice = createSlice({
   name: "TrustRuntimeExecutions",
@@ -27,20 +27,25 @@ const TrustRuntimeExecutionSlice = createSlice({
     },
 
     TrustRuntimeExecutionValueToggled(state, action) {
-      console.log("TrustRuntimeExecution TOGGLE")
-      console.warn(JSON.stringify(action))
-      const TrustRuntimeExecution:TrustRuntimeExecution = state.find((TrustRuntimeExecution) => TrustRuntimeExecution.id === action.payload.TrustRuntimeExecutionId);
+      console.log("TrustRuntimeExecution TOGGLE");
+      console.warn(JSON.stringify(action));
+      const TrustRuntimeExecution: TrustRuntimeExecution = state.find(
+        (TrustRuntimeExecution) =>
+          TrustRuntimeExecution.id === action.payload.TrustRuntimeExecutionId,
+      );
       if (TrustRuntimeExecution) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     TrustRuntimeExecutionpropertySet(state, action) {
-      const TrustRuntimeExecution = state.find((TrustRuntimeExecution) => TrustRuntimeExecution.id === action.payload.TrustRuntimeExecutionId);
+      const TrustRuntimeExecution = state.find(
+        (TrustRuntimeExecution) =>
+          TrustRuntimeExecution.id === action.payload.TrustRuntimeExecutionId,
+      );
       if (TrustRuntimeExecution) {
-      //  TrustRuntimeExecution[action.property] = action.payload[action.property];
+        //  TrustRuntimeExecution[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const TrustRuntimeExecutionSlice = createSlice({
 export const {
   TrustRuntimeExecutionAdded,
   TrustRuntimeExecutionValueToggled,
-  TrustRuntimeExecutionpropertySet
+  TrustRuntimeExecutionpropertySet,
 } = TrustRuntimeExecutionSlice.actions;
 export default TrustRuntimeExecutionSlice.reducer;

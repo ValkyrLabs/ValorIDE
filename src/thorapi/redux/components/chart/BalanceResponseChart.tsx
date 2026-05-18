@@ -19,20 +19,32 @@ Description: BalanceResponse
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, BalanceResponse } from '@thorapi/model';
-import { useGetBalanceResponsesQuery, useAddBalanceResponseMutation, useUpdateBalanceResponseMutation } from '../../services/BalanceResponseService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, BalanceResponse } from "@thorapi/model";
+import {
+  useGetBalanceResponsesQuery,
+  useAddBalanceResponseMutation,
+  useUpdateBalanceResponseMutation,
+} from "../../services/BalanceResponseService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const BalanceResponseChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetBalanceResponsesQuery();
 
   const [data, setData] = useState<BalanceResponse[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<BalanceResponse>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const BalanceResponseChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,15 @@ const BalanceResponseChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((balanceresponse: DataObject) => [balanceresponse])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((balanceresponse: DataObject) => [
+            balanceresponse,
+          ])}
+        />
+      )}
     </>
   );
 };

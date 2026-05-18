@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_WEBSOCKETMESSAGE_REQUEST,
-    FETCH_WEBSOCKETMESSAGE_REQUEST,
-    LIST_WEBSOCKETMESSAGE_REQUEST,
-    UPDATE_WEBSOCKETMESSAGE_REQUEST,
-    DELETE_WEBSOCKETMESSAGE_REQUEST,
-
-    addWebsocketMessageFailure,
-    addWebsocketMessageSuccess,
-
-    fetchWebsocketMessageFailure,
-    fetchWebsocketMessageSuccess,
-    
-    listWebsocketMessageFailure,
-    listWebsocketMessageSuccess,
-
-    updateWebsocketMessageFailure,
-    updateWebsocketMessageSuccess,
-    
-    deleteWebsocketMessageFailure,
-    deleteWebsocketMessageSuccess,
-    
-} from '../actions/WebsocketMessageApiAction';
+  ADD_WEBSOCKETMESSAGE_REQUEST,
+  FETCH_WEBSOCKETMESSAGE_REQUEST,
+  LIST_WEBSOCKETMESSAGE_REQUEST,
+  UPDATE_WEBSOCKETMESSAGE_REQUEST,
+  DELETE_WEBSOCKETMESSAGE_REQUEST,
+  addWebsocketMessageFailure,
+  addWebsocketMessageSuccess,
+  fetchWebsocketMessageFailure,
+  fetchWebsocketMessageSuccess,
+  listWebsocketMessageFailure,
+  listWebsocketMessageSuccess,
+  updateWebsocketMessageFailure,
+  updateWebsocketMessageSuccess,
+  deleteWebsocketMessageFailure,
+  deleteWebsocketMessageSuccess,
+} from "../actions/WebsocketMessageApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: WebsocketMessage
 */
 
-
-
-export const WebsocketMessageMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("WebsocketMessage MIDDLEWARE: " + JSON.stringify(action) )
+export const WebsocketMessageMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("WebsocketMessage MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

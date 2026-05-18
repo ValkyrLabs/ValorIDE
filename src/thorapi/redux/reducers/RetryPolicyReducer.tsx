@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { RetryPolicy } from '@thorapi/model/RetryPolicy';
+import { RetryPolicy } from "@thorapi/model/RetryPolicy";
 
 const RetryPolicySlice = createSlice({
   name: "RetryPolicys",
@@ -27,20 +27,23 @@ const RetryPolicySlice = createSlice({
     },
 
     RetryPolicyValueToggled(state, action) {
-      console.log("RetryPolicy TOGGLE")
-      console.warn(JSON.stringify(action))
-      const RetryPolicy:RetryPolicy = state.find((RetryPolicy) => RetryPolicy.id === action.payload.RetryPolicyId);
+      console.log("RetryPolicy TOGGLE");
+      console.warn(JSON.stringify(action));
+      const RetryPolicy: RetryPolicy = state.find(
+        (RetryPolicy) => RetryPolicy.id === action.payload.RetryPolicyId,
+      );
       if (RetryPolicy) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     RetryPolicypropertySet(state, action) {
-      const RetryPolicy = state.find((RetryPolicy) => RetryPolicy.id === action.payload.RetryPolicyId);
+      const RetryPolicy = state.find(
+        (RetryPolicy) => RetryPolicy.id === action.payload.RetryPolicyId,
+      );
       if (RetryPolicy) {
-      //  RetryPolicy[action.property] = action.payload[action.property];
+        //  RetryPolicy[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const RetryPolicySlice = createSlice({
 export const {
   RetryPolicyAdded,
   RetryPolicyValueToggled,
-  RetryPolicypropertySet
+  RetryPolicypropertySet,
 } = RetryPolicySlice.actions;
 export default RetryPolicySlice.reducer;

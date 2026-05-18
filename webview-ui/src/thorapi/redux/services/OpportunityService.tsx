@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { Opportunity } from '@thorapi/model/Opportunity'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { Opportunity } from "@thorapi/model/Opportunity";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type OpportunityResponse = Opportunity[]
+type OpportunityResponse = Opportunity[];
 
 const toOpportunityList = (result: unknown): OpportunityResponse => {
   if (Array.isArray(result)) {
-    return result as OpportunityResponse
+    return result as OpportunityResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as OpportunityResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as OpportunityResponse) : [];
+};
 
 export const OpportunityService = createApi({
-  reducerPath: 'Opportunity', // This should remain unique
+  reducerPath: "Opportunity", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['Opportunity'],
+  tagTypes: ["Opportunity"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getOpportunitysPaged: build.query<OpportunityResponse, { page: number; size?: number; example?: Partial<Opportunity> }>({
+    getOpportunitysPaged: build.query<
+      OpportunityResponse,
+      { page: number; size?: number; example?: Partial<Opportunity> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Opportunity?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Opportunity?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toOpportunityList(result)
+        const rows = toOpportunityList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'Opportunity' as const, id })),
-          { type: 'Opportunity', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "Opportunity" as const, id })),
+          { type: "Opportunity", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOpportunitys: build.query<OpportunityResponse, { example?: Partial<Opportunity> } | void>({
+    getOpportunitys: build.query<
+      OpportunityResponse,
+      { example?: Partial<Opportunity> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const OpportunityService = createApi({
         return `Opportunity`;
       },
       providesTags: (result) => {
-        const rows = toOpportunityList(result)
+        const rows = toOpportunityList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'Opportunity' as const, id })),
-          { type: 'Opportunity', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "Opportunity" as const, id })),
+          { type: "Opportunity", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,73 +87,88 @@ export const OpportunityService = createApi({
     addOpportunity: build.mutation<Opportunity, Partial<Opportunity>>({
       query: (body) => ({
         url: `Opportunity`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'Opportunity', id: 'LIST' }],
+      invalidatesTags: [{ type: "Opportunity", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getOpportunity: build.query<Opportunity, string>({
       query: (id) => `Opportunity/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Opportunity', id }],
+      providesTags: (result, error, id) => [{ type: "Opportunity", id }],
     }),
 
     // 5) Update
-    updateOpportunity: build.mutation<void, Pick<Opportunity, 'id'> & Partial<Opportunity>>({
+    updateOpportunity: build.mutation<
+      void,
+      Pick<Opportunity, "id"> & Partial<Opportunity>
+    >({
       query: ({ id, ...patch }) => ({
         url: `Opportunity/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            OpportunityService.util.updateQueryData('getOpportunity', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            OpportunityService.util.updateQueryData(
+              "getOpportunity",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<Opportunity, 'id'>) => [
-        { type: 'Opportunity', id },
-        { type: 'Opportunity', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<Opportunity, "id">) => [
+        { type: "Opportunity", id },
+        { type: "Opportunity", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteOpportunity: build.mutation<{ success: boolean; id: string }, number>({
-      query(id) {
-        return {
-          url: `Opportunity/${id}`,
-          method: 'DELETE',
-        }
+    deleteOpportunity: build.mutation<{ success: boolean; id: string }, number>(
+      {
+        query(id) {
+          return {
+            url: `Opportunity/${id}`,
+            method: "DELETE",
+          };
+        },
+        invalidatesTags: (result, error, id) => [{ type: "Opportunity", id }],
       },
-      invalidatesTags: (result, error, id) => [{ type: 'Opportunity', id }],
-    }),
+    ),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteOpportunityCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteOpportunityCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `Opportunity/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Opportunity', id }, { type: 'Opportunity', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Opportunity", id },
+        { type: "Opportunity", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetOpportunitysPagedQuery`
 export const {
-  useGetOpportunitysPagedQuery,     // immediate fetch
+  useGetOpportunitysPagedQuery, // immediate fetch
   useLazyGetOpportunitysPagedQuery, // lazy fetch
   useGetOpportunityQuery,
   useGetOpportunitysQuery,
@@ -150,4 +176,4 @@ export const {
   useUpdateOpportunityMutation,
   useDeleteOpportunityMutation,
   useDeleteOpportunityCascadeMutation,
-} = OpportunityService
+} = OpportunityService;

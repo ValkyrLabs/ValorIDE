@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ScanBuildArtifactsRequest } from '@thorapi/model/ScanBuildArtifactsRequest';
+import { ScanBuildArtifactsRequest } from "@thorapi/model/ScanBuildArtifactsRequest";
 
 const ScanBuildArtifactsRequestSlice = createSlice({
   name: "ScanBuildArtifactsRequests",
@@ -27,20 +27,27 @@ const ScanBuildArtifactsRequestSlice = createSlice({
     },
 
     ScanBuildArtifactsRequestValueToggled(state, action) {
-      console.log("ScanBuildArtifactsRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ScanBuildArtifactsRequest:ScanBuildArtifactsRequest = state.find((ScanBuildArtifactsRequest) => ScanBuildArtifactsRequest.id === action.payload.ScanBuildArtifactsRequestId);
+      console.log("ScanBuildArtifactsRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ScanBuildArtifactsRequest: ScanBuildArtifactsRequest = state.find(
+        (ScanBuildArtifactsRequest) =>
+          ScanBuildArtifactsRequest.id ===
+          action.payload.ScanBuildArtifactsRequestId,
+      );
       if (ScanBuildArtifactsRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ScanBuildArtifactsRequestpropertySet(state, action) {
-      const ScanBuildArtifactsRequest = state.find((ScanBuildArtifactsRequest) => ScanBuildArtifactsRequest.id === action.payload.ScanBuildArtifactsRequestId);
+      const ScanBuildArtifactsRequest = state.find(
+        (ScanBuildArtifactsRequest) =>
+          ScanBuildArtifactsRequest.id ===
+          action.payload.ScanBuildArtifactsRequestId,
+      );
       if (ScanBuildArtifactsRequest) {
-      //  ScanBuildArtifactsRequest[action.property] = action.payload[action.property];
+        //  ScanBuildArtifactsRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const ScanBuildArtifactsRequestSlice = createSlice({
 export const {
   ScanBuildArtifactsRequestAdded,
   ScanBuildArtifactsRequestValueToggled,
-  ScanBuildArtifactsRequestpropertySet
+  ScanBuildArtifactsRequestpropertySet,
 } = ScanBuildArtifactsRequestSlice.actions;
 export default ScanBuildArtifactsRequestSlice.reducer;

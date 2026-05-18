@@ -19,20 +19,32 @@ Description: ConsultingProfile
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, ConsultingProfile } from '@thorapi/model';
-import { useGetConsultingProfilesQuery, useAddConsultingProfileMutation, useUpdateConsultingProfileMutation } from '../../services/ConsultingProfileService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, ConsultingProfile } from "@thorapi/model";
+import {
+  useGetConsultingProfilesQuery,
+  useAddConsultingProfileMutation,
+  useUpdateConsultingProfileMutation,
+} from "../../services/ConsultingProfileService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const ConsultingProfileChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetConsultingProfilesQuery();
 
   const [data, setData] = useState<ConsultingProfile[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<ConsultingProfile>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const ConsultingProfileChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,15 @@ const ConsultingProfileChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((consultingprofile: DataObject) => [consultingprofile])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((consultingprofile: DataObject) => [
+            consultingprofile,
+          ])}
+        />
+      )}
     </>
   );
 };

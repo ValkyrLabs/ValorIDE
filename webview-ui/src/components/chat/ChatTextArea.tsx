@@ -35,7 +35,10 @@ import {
   validateSlashCommand,
 } from "@thorapi/utils/slash-commands";
 import { useMetaKeyDetection, useShortcut } from "@thorapi/utils/hooks";
-import { validateApiConfiguration, validateModelId } from "@thorapi/utils/validate";
+import {
+  validateApiConfiguration,
+  validateModelId,
+} from "@thorapi/utils/validate";
 import { vscode } from "@thorapi/utils/vscode";
 import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
 import Thumbnails from "@thorapi/components/common/Thumbnails";
@@ -85,9 +88,9 @@ const SwitchOption = styled.div<{ isActive: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-    !props.isActive
-      ? "var(--vscode-toolbar-hoverBackground)"
-      : "transparent"};
+      !props.isActive
+        ? "var(--vscode-toolbar-hoverBackground)"
+        : "transparent"};
   }
 `;
 
@@ -217,18 +220,18 @@ const ModelDisplayButton = styled.a<{ isActive?: boolean; disabled?: boolean }>`
   &:hover,
   &:focus {
     color: ${(props) =>
-    props.disabled
-      ? "var(--vscode-descriptionForeground)"
-      : "var(--vscode-foreground)"};
+      props.disabled
+        ? "var(--vscode-descriptionForeground)"
+        : "var(--vscode-foreground)"};
     text-decoration: ${(props) => (props.disabled ? "none" : "underline")};
     outline: none;
   }
 
   &:active {
     color: ${(props) =>
-    props.disabled
-      ? "var(--vscode-descriptionForeground)"
-      : "var(--vscode-foreground)"};
+      props.disabled
+        ? "var(--vscode-descriptionForeground)"
+        : "var(--vscode-foreground)"};
     text-decoration: ${(props) => (props.disabled ? "none" : "underline")};
     outline: none;
   }
@@ -1656,7 +1659,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
                     // Ensure images clear immediately after sending
                     try {
                       setSelectedImages([]);
-                    } catch { }
+                    } catch {}
                   }
                 }}
               >

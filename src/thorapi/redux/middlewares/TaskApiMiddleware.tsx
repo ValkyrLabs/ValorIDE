@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_TASK_REQUEST,
-    FETCH_TASK_REQUEST,
-    LIST_TASK_REQUEST,
-    UPDATE_TASK_REQUEST,
-    DELETE_TASK_REQUEST,
-
-    addTaskFailure,
-    addTaskSuccess,
-
-    fetchTaskFailure,
-    fetchTaskSuccess,
-    
-    listTaskFailure,
-    listTaskSuccess,
-
-    updateTaskFailure,
-    updateTaskSuccess,
-    
-    deleteTaskFailure,
-    deleteTaskSuccess,
-    
-} from '../actions/TaskApiAction';
+  ADD_TASK_REQUEST,
+  FETCH_TASK_REQUEST,
+  LIST_TASK_REQUEST,
+  UPDATE_TASK_REQUEST,
+  DELETE_TASK_REQUEST,
+  addTaskFailure,
+  addTaskSuccess,
+  fetchTaskFailure,
+  fetchTaskSuccess,
+  listTaskFailure,
+  listTaskSuccess,
+  updateTaskFailure,
+  updateTaskSuccess,
+  deleteTaskFailure,
+  deleteTaskSuccess,
+} from "../actions/TaskApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Task
 */
 
-
-
-export const TaskMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("Task MIDDLEWARE: " + JSON.stringify(action) )
+export const TaskMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Task MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

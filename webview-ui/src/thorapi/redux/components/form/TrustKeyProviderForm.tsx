@@ -13,33 +13,41 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   TrustKeyProvider,
   TrustKeyProviderProviderTypeEnum,
   TrustKeyProviderProviderStatusEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddTrustKeyProviderMutation } from '../../services/TrustKeyProviderService';
+import { useAddTrustKeyProviderMutation } from "../../services/TrustKeyProviderService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -64,53 +72,53 @@ External or internal key provider for wrap, unwrap, sign, verify, and short-live
 -------------------------------------------------------- */
 const ProviderTypeValidation = () => {
   return [
-    'LOCAL_JAVA_KEYSTORE',
-    'MACOS_KEYCHAIN',
-    'HASHICORP_VAULT',
-    'AWS_KMS',
-    'AZURE_KEY_VAULT',
-    'GCP_KMS',
-    'HSM',
-    'PASSWORD_SERVICE',
-    'TRUST_KMS_MICROSERVICE',
+    "LOCAL_JAVA_KEYSTORE",
+    "MACOS_KEYCHAIN",
+    "HASHICORP_VAULT",
+    "AWS_KMS",
+    "AZURE_KEY_VAULT",
+    "GCP_KMS",
+    "HSM",
+    "PASSWORD_SERVICE",
+    "TRUST_KMS_MICROSERVICE",
   ];
 };
 const ProviderStatusValidation = () => {
-  return [
-    'ACTIVE',
-    'DISABLED',
-    'DEGRADED',
-    'RETIRED',
-  ];
+  return ["ACTIVE", "DISABLED", "DEGRADED", "RETIRED"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        name: Yup.string(),
-      providerType: Yup.mixed()
-        .oneOf(ProviderTypeValidation(), "Invalid value for providerType")
-        ,
-      providerStatus: Yup.mixed()
-        .oneOf(ProviderStatusValidation(), "Invalid value for providerStatus")
-        ,
-        endpointUri: Yup.string(),
-        credentialRef: Yup.string(),
-        healthCheckPath: Yup.string(),
-        tenantId: Yup.string(),
-        ownerId: Yup.string(),
-        trashed: Yup.boolean(),
+  name: Yup.string(),
+  providerType: Yup.mixed().oneOf(
+    ProviderTypeValidation(),
+    "Invalid value for providerType",
+  ),
+  providerStatus: Yup.mixed().oneOf(
+    ProviderStatusValidation(),
+    "Invalid value for providerStatus",
+  ),
+  endpointUri: Yup.string(),
+  credentialRef: Yup.string(),
+  healthCheckPath: Yup.string(),
+  tenantId: Yup.string(),
+  ownerId: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const TrustKeyProviderForm: React.FC = () => {
-  const [addTrustKeyProvider, addTrustKeyProviderResult] = useAddTrustKeyProviderMutation();
+  const [addTrustKeyProvider, addTrustKeyProviderResult] =
+    useAddTrustKeyProviderMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -120,12 +128,18 @@ const TrustKeyProviderForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -133,15 +147,15 @@ const TrustKeyProviderForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<TrustKeyProvider> = {
-          name: '',
-        providerType: undefined,
-        providerStatus: undefined,
-          endpointUri: '',
-          credentialRef: '',
-          healthCheckPath: '',
-          tenantId: '',
-          ownerId: '',
-          trashed: false,
+    name: "",
+    providerType: undefined,
+    providerStatus: undefined,
+    endpointUri: "",
+    credentialRef: "",
+    healthCheckPath: "",
+    tenantId: "",
+    ownerId: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -156,11 +170,14 @@ const TrustKeyProviderForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new TrustKeyProvider:', grants);
+    console.log("Permissions saved for new TrustKeyProvider:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<TrustKeyProvider>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<TrustKeyProvider>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -171,7 +188,7 @@ const TrustKeyProviderForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `TrustKeyProvider created successfully! Would you like to set permissions for this object?`
+          `TrustKeyProvider created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -179,8 +196,8 @@ const TrustKeyProviderForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create TrustKeyProvider:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create TrustKeyProvider:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -201,44 +218,37 @@ const TrustKeyProviderForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addTrustKeyProviderResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New TrustKeyProvider
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    TrustKeyProvider
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.name && !errors.name && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="name"
+                        value={values?.name}
+                        placeholder="Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -250,30 +260,33 @@ const TrustKeyProviderForm: React.FC = () => {
                     <label htmlFor="providerType" className="nice-form-control">
                       <b>
                         Provider Type:
-                        {touched.providerType &&
-                         !errors.providerType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.providerType && !errors.providerType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="providerType"
-                          value={values.providerType || ''}
-                          className={
-                            errors.providerType
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('providerType', true);
-                            setFieldValue('providerType', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Provider Type" />
-                          <ProviderTypeLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="providerType"
+                        value={values.providerType || ""}
+                        className={
+                          errors.providerType
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("providerType", true);
+                          setFieldValue(
+                            "providerType",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Provider Type" />
+                        <ProviderTypeLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -282,33 +295,39 @@ const TrustKeyProviderForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="providerStatus" className="nice-form-control">
+                    <label
+                      htmlFor="providerStatus"
+                      className="nice-form-control"
+                    >
                       <b>
                         Provider Status:
-                        {touched.providerStatus &&
-                         !errors.providerStatus && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.providerStatus && !errors.providerStatus && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="providerStatus"
-                          value={values.providerStatus || ''}
-                          className={
-                            errors.providerStatus
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('providerStatus', true);
-                            setFieldValue('providerStatus', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Provider Status" />
-                          <ProviderStatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="providerStatus"
+                        value={values.providerStatus || ""}
+                        className={
+                          errors.providerStatus
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("providerStatus", true);
+                          setFieldValue(
+                            "providerStatus",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Provider Status" />
+                        <ProviderStatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -320,28 +339,21 @@ const TrustKeyProviderForm: React.FC = () => {
                     <label htmlFor="endpointUri" className="nice-form-control">
                       <b>
                         Endpoint Uri:
-                        {touched.endpointUri &&
-                         !errors.endpointUri && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.endpointUri && !errors.endpointUri && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="endpointUri"
-                            value={values?.endpointUri}
-                            placeholder="Endpoint Uri"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="endpointUri"
+                        value={values?.endpointUri}
+                        placeholder="Endpoint Uri"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -350,31 +362,27 @@ const TrustKeyProviderForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="credentialRef" className="nice-form-control">
+                    <label
+                      htmlFor="credentialRef"
+                      className="nice-form-control"
+                    >
                       <b>
                         Credential Ref:
-                        {touched.credentialRef &&
-                         !errors.credentialRef && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.credentialRef && !errors.credentialRef && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="credentialRef"
-                            value={values?.credentialRef}
-                            placeholder="Credential Ref"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="credentialRef"
+                        value={values?.credentialRef}
+                        placeholder="Credential Ref"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -383,31 +391,27 @@ const TrustKeyProviderForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="healthCheckPath" className="nice-form-control">
+                    <label
+                      htmlFor="healthCheckPath"
+                      className="nice-form-control"
+                    >
                       <b>
                         Health Check Path:
-                        {touched.healthCheckPath &&
-                         !errors.healthCheckPath && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.healthCheckPath && !errors.healthCheckPath && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="healthCheckPath"
-                            value={values?.healthCheckPath}
-                            placeholder="Health Check Path"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="healthCheckPath"
+                        value={values?.healthCheckPath}
+                        placeholder="Health Check Path"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -419,28 +423,21 @@ const TrustKeyProviderForm: React.FC = () => {
                     <label htmlFor="tenantId" className="nice-form-control">
                       <b>
                         Tenant Id:
-                        {touched.tenantId &&
-                         !errors.tenantId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.tenantId && !errors.tenantId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="tenantId"
-                            value={values?.tenantId}
-                            placeholder="Tenant Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="tenantId"
+                        value={values?.tenantId}
+                        placeholder="Tenant Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -452,28 +449,21 @@ const TrustKeyProviderForm: React.FC = () => {
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
-                        {touched.ownerId &&
-                         !errors.ownerId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.ownerId && !errors.ownerId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="ownerId"
-                            value={values?.ownerId}
-                            placeholder="Owner Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="ownerId"
+                        value={values?.ownerId}
+                        placeholder="Owner Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -485,32 +475,25 @@ const TrustKeyProviderForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -520,45 +503,60 @@ const TrustKeyProviderForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New TrustKeyProvider
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New TrustKeyProvider
+                    </CoolButton>
 
-                  {(addTrustKeyProviderResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addTrustKeyProviderResult as any).error ? (addTrustKeyProviderResult as any).error.data : (addTrustKeyProviderResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addTrustKeyProviderResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addTrustKeyProviderResult as any).error
+                              ? (addTrustKeyProviderResult as any).error.data
+                              : (addTrustKeyProviderResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addTrustKeyProviderResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addTrustKeyProviderResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addTrustKeyProviderResult: {JSON.stringify(addTrustKeyProviderResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addTrustKeyProviderResult:{" "}
+                    {JSON.stringify(addTrustKeyProviderResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -590,15 +588,15 @@ kebabcase provider-type-lookup
 const ProviderTypeLookup = () => {
   return (
     <>
-      <option value='LOCAL_JAVA_KEYSTORE' label="Local Java Keystore" />
-      <option value='MACOS_KEYCHAIN' label="Macos Keychain" />
-      <option value='HASHICORP_VAULT' label="Hashicorp Vault" />
-      <option value='AWS_KMS' label="Aws Kms" />
-      <option value='AZURE_KEY_VAULT' label="Azure Key Vault" />
-      <option value='GCP_KMS' label="Gcp Kms" />
-      <option value='HSM' label="Hsm" />
-      <option value='PASSWORD_SERVICE' label="Password Service" />
-      <option value='TRUST_KMS_MICROSERVICE' label="Trust Kms Microservice" />
+      <option value="LOCAL_JAVA_KEYSTORE" label="Local Java Keystore" />
+      <option value="MACOS_KEYCHAIN" label="Macos Keychain" />
+      <option value="HASHICORP_VAULT" label="Hashicorp Vault" />
+      <option value="AWS_KMS" label="Aws Kms" />
+      <option value="AZURE_KEY_VAULT" label="Azure Key Vault" />
+      <option value="GCP_KMS" label="Gcp Kms" />
+      <option value="HSM" label="Hsm" />
+      <option value="PASSWORD_SERVICE" label="Password Service" />
+      <option value="TRUST_KMS_MICROSERVICE" label="Trust Kms Microservice" />
     </>
   );
 };
@@ -615,16 +613,13 @@ kebabcase provider-status-lookup
 const ProviderStatusLookup = () => {
   return (
     <>
-      <option value='ACTIVE' label="Active" />
-      <option value='DISABLED' label="Disabled" />
-      <option value='DEGRADED' label="Degraded" />
-      <option value='RETIRED' label="Retired" />
+      <option value="ACTIVE" label="Active" />
+      <option value="DISABLED" label="Disabled" />
+      <option value="DEGRADED" label="Degraded" />
+      <option value="RETIRED" label="Retired" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default TrustKeyProviderForm;
-

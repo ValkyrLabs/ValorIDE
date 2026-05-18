@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_FILEUPLOADSESSION_REQUEST,
-    FETCH_FILEUPLOADSESSION_REQUEST,
-    LIST_FILEUPLOADSESSION_REQUEST,
-    UPDATE_FILEUPLOADSESSION_REQUEST,
-    DELETE_FILEUPLOADSESSION_REQUEST,
-
-    addFileUploadSessionFailure,
-    addFileUploadSessionSuccess,
-
-    fetchFileUploadSessionFailure,
-    fetchFileUploadSessionSuccess,
-    
-    listFileUploadSessionFailure,
-    listFileUploadSessionSuccess,
-
-    updateFileUploadSessionFailure,
-    updateFileUploadSessionSuccess,
-    
-    deleteFileUploadSessionFailure,
-    deleteFileUploadSessionSuccess,
-    
-} from '../actions/FileUploadSessionApiAction';
+  ADD_FILEUPLOADSESSION_REQUEST,
+  FETCH_FILEUPLOADSESSION_REQUEST,
+  LIST_FILEUPLOADSESSION_REQUEST,
+  UPDATE_FILEUPLOADSESSION_REQUEST,
+  DELETE_FILEUPLOADSESSION_REQUEST,
+  addFileUploadSessionFailure,
+  addFileUploadSessionSuccess,
+  fetchFileUploadSessionFailure,
+  fetchFileUploadSessionSuccess,
+  listFileUploadSessionFailure,
+  listFileUploadSessionSuccess,
+  updateFileUploadSessionFailure,
+  updateFileUploadSessionSuccess,
+  deleteFileUploadSessionFailure,
+  deleteFileUploadSessionSuccess,
+} from "../actions/FileUploadSessionApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: FileUploadSession
 */
 
-
-
-export const FileUploadSessionMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("FileUploadSession MIDDLEWARE: " + JSON.stringify(action) )
+export const FileUploadSessionMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("FileUploadSession MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

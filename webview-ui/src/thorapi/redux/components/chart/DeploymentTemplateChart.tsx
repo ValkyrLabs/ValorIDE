@@ -19,20 +19,33 @@ Description: DeploymentTemplate
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, DeploymentTemplate } from '@thorapi/model';
-import { useGetDeploymentTemplatesQuery, useAddDeploymentTemplateMutation, useUpdateDeploymentTemplateMutation } from '../../services/DeploymentTemplateService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, DeploymentTemplate } from "@thorapi/model";
+import {
+  useGetDeploymentTemplatesQuery,
+  useAddDeploymentTemplateMutation,
+  useUpdateDeploymentTemplateMutation,
+} from "../../services/DeploymentTemplateService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const DeploymentTemplateChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetDeploymentTemplatesQuery();
+  const { data: initialData = [], isLoading } =
+    useGetDeploymentTemplatesQuery();
 
   const [data, setData] = useState<DeploymentTemplate[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<DeploymentTemplate>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +63,9 @@ const DeploymentTemplateChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +73,15 @@ const DeploymentTemplateChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((deploymenttemplate: DataObject) => [deploymenttemplate])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((deploymenttemplate: DataObject) => [
+            deploymenttemplate,
+          ])}
+        />
+      )}
     </>
   );
 };

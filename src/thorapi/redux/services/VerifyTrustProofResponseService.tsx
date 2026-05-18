@@ -13,47 +13,69 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { VerifyTrustProofResponse } from '@thorapi/model/VerifyTrustProofResponse'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { VerifyTrustProofResponse } from "@thorapi/model/VerifyTrustProofResponse";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type VerifyTrustProofResponseResponse = VerifyTrustProofResponse[]
+type VerifyTrustProofResponseResponse = VerifyTrustProofResponse[];
 
-const toVerifyTrustProofResponseList = (result: unknown): VerifyTrustProofResponseResponse => {
+const toVerifyTrustProofResponseList = (
+  result: unknown,
+): VerifyTrustProofResponseResponse => {
   if (Array.isArray(result)) {
-    return result as VerifyTrustProofResponseResponse
+    return result as VerifyTrustProofResponseResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as VerifyTrustProofResponseResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as VerifyTrustProofResponseResponse)
+    : [];
+};
 
 export const VerifyTrustProofResponseService = createApi({
-  reducerPath: 'VerifyTrustProofResponse', // This should remain unique
+  reducerPath: "VerifyTrustProofResponse", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['VerifyTrustProofResponse'],
+  tagTypes: ["VerifyTrustProofResponse"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getVerifyTrustProofResponsesPaged: build.query<VerifyTrustProofResponseResponse, { page: number; size?: number; example?: Partial<VerifyTrustProofResponse> }>({
+    getVerifyTrustProofResponsesPaged: build.query<
+      VerifyTrustProofResponseResponse,
+      {
+        page: number;
+        size?: number;
+        example?: Partial<VerifyTrustProofResponse>;
+      }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `VerifyTrustProofResponse?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `VerifyTrustProofResponse?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toVerifyTrustProofResponseList(result)
+        const rows = toVerifyTrustProofResponseList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'VerifyTrustProofResponse' as const, id })),
-          { type: 'VerifyTrustProofResponse', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({
+              type: "VerifyTrustProofResponse" as const,
+              id,
+            })),
+          { type: "VerifyTrustProofResponse", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getVerifyTrustProofResponses: build.query<VerifyTrustProofResponseResponse, { example?: Partial<VerifyTrustProofResponse> } | void>({
+    getVerifyTrustProofResponses: build.query<
+      VerifyTrustProofResponseResponse,
+      { example?: Partial<VerifyTrustProofResponse> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +84,117 @@ export const VerifyTrustProofResponseService = createApi({
         return `VerifyTrustProofResponse`;
       },
       providesTags: (result) => {
-        const rows = toVerifyTrustProofResponseList(result)
+        const rows = toVerifyTrustProofResponseList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'VerifyTrustProofResponse' as const, id })),
-          { type: 'VerifyTrustProofResponse', id: 'LIST' },
-        ]
+            .map(({ id }) => ({
+              type: "VerifyTrustProofResponse" as const,
+              id,
+            })),
+          { type: "VerifyTrustProofResponse", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addVerifyTrustProofResponse: build.mutation<VerifyTrustProofResponse, Partial<VerifyTrustProofResponse>>({
+    addVerifyTrustProofResponse: build.mutation<
+      VerifyTrustProofResponse,
+      Partial<VerifyTrustProofResponse>
+    >({
       query: (body) => ({
         url: `VerifyTrustProofResponse`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'VerifyTrustProofResponse', id: 'LIST' }],
+      invalidatesTags: [{ type: "VerifyTrustProofResponse", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getVerifyTrustProofResponse: build.query<VerifyTrustProofResponse, string>({
       query: (id) => `VerifyTrustProofResponse/${id}`,
-      providesTags: (result, error, id) => [{ type: 'VerifyTrustProofResponse', id }],
+      providesTags: (result, error, id) => [
+        { type: "VerifyTrustProofResponse", id },
+      ],
     }),
 
     // 5) Update
-    updateVerifyTrustProofResponse: build.mutation<void, Pick<VerifyTrustProofResponse, 'id'> & Partial<VerifyTrustProofResponse>>({
+    updateVerifyTrustProofResponse: build.mutation<
+      void,
+      Pick<VerifyTrustProofResponse, "id"> & Partial<VerifyTrustProofResponse>
+    >({
       query: ({ id, ...patch }) => ({
         url: `VerifyTrustProofResponse/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            VerifyTrustProofResponseService.util.updateQueryData('getVerifyTrustProofResponse', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            VerifyTrustProofResponseService.util.updateQueryData(
+              "getVerifyTrustProofResponse",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<VerifyTrustProofResponse, 'id'>) => [
-        { type: 'VerifyTrustProofResponse', id },
-        { type: 'VerifyTrustProofResponse', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<VerifyTrustProofResponse, "id">,
+      ) => [
+        { type: "VerifyTrustProofResponse", id },
+        { type: "VerifyTrustProofResponse", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteVerifyTrustProofResponse: build.mutation<{ success: boolean; id: string }, number>({
+    deleteVerifyTrustProofResponse: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `VerifyTrustProofResponse/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'VerifyTrustProofResponse', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "VerifyTrustProofResponse", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteVerifyTrustProofResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteVerifyTrustProofResponseCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `VerifyTrustProofResponse/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'VerifyTrustProofResponse', id }, { type: 'VerifyTrustProofResponse', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "VerifyTrustProofResponse", id },
+        { type: "VerifyTrustProofResponse", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetVerifyTrustProofResponsesPagedQuery`
 export const {
-  useGetVerifyTrustProofResponsesPagedQuery,     // immediate fetch
+  useGetVerifyTrustProofResponsesPagedQuery, // immediate fetch
   useLazyGetVerifyTrustProofResponsesPagedQuery, // lazy fetch
   useGetVerifyTrustProofResponseQuery,
   useGetVerifyTrustProofResponsesQuery,
@@ -150,4 +202,4 @@ export const {
   useUpdateVerifyTrustProofResponseMutation,
   useDeleteVerifyTrustProofResponseMutation,
   useDeleteVerifyTrustProofResponseCascadeMutation,
-} = VerifyTrustProofResponseService
+} = VerifyTrustProofResponseService;

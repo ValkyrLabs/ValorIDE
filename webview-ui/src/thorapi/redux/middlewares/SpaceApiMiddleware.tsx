@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_SPACE_REQUEST,
-    FETCH_SPACE_REQUEST,
-    LIST_SPACE_REQUEST,
-    UPDATE_SPACE_REQUEST,
-    DELETE_SPACE_REQUEST,
-
-    addSpaceFailure,
-    addSpaceSuccess,
-
-    fetchSpaceFailure,
-    fetchSpaceSuccess,
-    
-    listSpaceFailure,
-    listSpaceSuccess,
-
-    updateSpaceFailure,
-    updateSpaceSuccess,
-    
-    deleteSpaceFailure,
-    deleteSpaceSuccess,
-    
-} from '../actions/SpaceApiAction';
+  ADD_SPACE_REQUEST,
+  FETCH_SPACE_REQUEST,
+  LIST_SPACE_REQUEST,
+  UPDATE_SPACE_REQUEST,
+  DELETE_SPACE_REQUEST,
+  addSpaceFailure,
+  addSpaceSuccess,
+  fetchSpaceFailure,
+  fetchSpaceSuccess,
+  listSpaceFailure,
+  listSpaceSuccess,
+  updateSpaceFailure,
+  updateSpaceSuccess,
+  deleteSpaceFailure,
+  deleteSpaceSuccess,
+} from "../actions/SpaceApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Space
 */
 
-
-
-export const SpaceMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("Space MIDDLEWARE: " + JSON.stringify(action) )
+export const SpaceMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Space MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

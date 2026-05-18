@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { MediaObject } from '@thorapi/model/MediaObject'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { MediaObject } from "@thorapi/model/MediaObject";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type MediaObjectResponse = MediaObject[]
+type MediaObjectResponse = MediaObject[];
 
 const toMediaObjectList = (result: unknown): MediaObjectResponse => {
   if (Array.isArray(result)) {
-    return result as MediaObjectResponse
+    return result as MediaObjectResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as MediaObjectResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as MediaObjectResponse) : [];
+};
 
 export const MediaObjectService = createApi({
-  reducerPath: 'MediaObject', // This should remain unique
+  reducerPath: "MediaObject", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['MediaObject'],
+  tagTypes: ["MediaObject"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getMediaObjectsPaged: build.query<MediaObjectResponse, { page: number; size?: number; example?: Partial<MediaObject> }>({
+    getMediaObjectsPaged: build.query<
+      MediaObjectResponse,
+      { page: number; size?: number; example?: Partial<MediaObject> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `MediaObject?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `MediaObject?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toMediaObjectList(result)
+        const rows = toMediaObjectList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'MediaObject' as const, id })),
-          { type: 'MediaObject', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "MediaObject" as const, id })),
+          { type: "MediaObject", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getMediaObjects: build.query<MediaObjectResponse, { example?: Partial<MediaObject> } | void>({
+    getMediaObjects: build.query<
+      MediaObjectResponse,
+      { example?: Partial<MediaObject> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const MediaObjectService = createApi({
         return `MediaObject`;
       },
       providesTags: (result) => {
-        const rows = toMediaObjectList(result)
+        const rows = toMediaObjectList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'MediaObject' as const, id })),
-          { type: 'MediaObject', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "MediaObject" as const, id })),
+          { type: "MediaObject", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,73 +87,88 @@ export const MediaObjectService = createApi({
     addMediaObject: build.mutation<MediaObject, Partial<MediaObject>>({
       query: (body) => ({
         url: `MediaObject`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'MediaObject', id: 'LIST' }],
+      invalidatesTags: [{ type: "MediaObject", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getMediaObject: build.query<MediaObject, string>({
       query: (id) => `MediaObject/${id}`,
-      providesTags: (result, error, id) => [{ type: 'MediaObject', id }],
+      providesTags: (result, error, id) => [{ type: "MediaObject", id }],
     }),
 
     // 5) Update
-    updateMediaObject: build.mutation<void, Pick<MediaObject, 'id'> & Partial<MediaObject>>({
+    updateMediaObject: build.mutation<
+      void,
+      Pick<MediaObject, "id"> & Partial<MediaObject>
+    >({
       query: ({ id, ...patch }) => ({
         url: `MediaObject/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            MediaObjectService.util.updateQueryData('getMediaObject', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            MediaObjectService.util.updateQueryData(
+              "getMediaObject",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<MediaObject, 'id'>) => [
-        { type: 'MediaObject', id },
-        { type: 'MediaObject', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<MediaObject, "id">) => [
+        { type: "MediaObject", id },
+        { type: "MediaObject", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteMediaObject: build.mutation<{ success: boolean; id: string }, number>({
-      query(id) {
-        return {
-          url: `MediaObject/${id}`,
-          method: 'DELETE',
-        }
+    deleteMediaObject: build.mutation<{ success: boolean; id: string }, number>(
+      {
+        query(id) {
+          return {
+            url: `MediaObject/${id}`,
+            method: "DELETE",
+          };
+        },
+        invalidatesTags: (result, error, id) => [{ type: "MediaObject", id }],
       },
-      invalidatesTags: (result, error, id) => [{ type: 'MediaObject', id }],
-    }),
+    ),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteMediaObjectCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteMediaObjectCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `MediaObject/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'MediaObject', id }, { type: 'MediaObject', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "MediaObject", id },
+        { type: "MediaObject", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetMediaObjectsPagedQuery`
 export const {
-  useGetMediaObjectsPagedQuery,     // immediate fetch
+  useGetMediaObjectsPagedQuery, // immediate fetch
   useLazyGetMediaObjectsPagedQuery, // lazy fetch
   useGetMediaObjectQuery,
   useGetMediaObjectsQuery,
@@ -150,4 +176,4 @@ export const {
   useUpdateMediaObjectMutation,
   useDeleteMediaObjectMutation,
   useDeleteMediaObjectCascadeMutation,
-} = MediaObjectService
+} = MediaObjectService;

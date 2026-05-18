@@ -84,15 +84,15 @@ export function activate(context: vscode.ExtensionContext) {
       const { selectedLlmDetails } = await getAllExtensionState(context);
       const manualSelection: SelectedPrompt | undefined = selectedLlmDetails
         ? {
-          llmDetailsId: selectedLlmDetails.id,
-          name: selectedLlmDetails.name,
-          prompt: selectedLlmDetails.prompt,
-          mode: selectedLlmDetails.mode,
-          tags: selectedLlmDetails.tags,
-          source:
-            selectedLlmDetails.source === "fallback" ? "fallback" : "thorapi",
-          stackSpecific: true,
-        }
+            llmDetailsId: selectedLlmDetails.id,
+            name: selectedLlmDetails.name,
+            prompt: selectedLlmDetails.prompt,
+            mode: selectedLlmDetails.mode,
+            tags: selectedLlmDetails.tags,
+            source:
+              selectedLlmDetails.source === "fallback" ? "fallback" : "thorapi",
+            stackSpecific: true,
+          }
         : undefined;
 
       await initializeLLMPromptService(
@@ -516,7 +516,8 @@ export function activate(context: vscode.ExtensionContext) {
   https://code.visualstudio.com/api/extension-guides/virtual-documents
   */
   const diffContentProvider = new (class
-    implements vscode.TextDocumentContentProvider {
+    implements vscode.TextDocumentContentProvider
+  {
     provideTextDocumentContent(uri: vscode.Uri): string {
       return Buffer.from(uri.query, "base64").toString("utf-8");
     }
@@ -908,7 +909,6 @@ export function deactivate() {
       Logger.log(`Error cleaning up test mode: ${error}`);
       console.error("Error cleaning up test mode:", error);
     }
-
 
     Logger.log("ValorIDE extension deactivated successfully");
     resolve();

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { VerifyTrustProofResponse } from '@thorapi/model/VerifyTrustProofResponse';
+import { VerifyTrustProofResponse } from "@thorapi/model/VerifyTrustProofResponse";
 
 const VerifyTrustProofResponseSlice = createSlice({
   name: "VerifyTrustProofResponses",
@@ -27,20 +27,27 @@ const VerifyTrustProofResponseSlice = createSlice({
     },
 
     VerifyTrustProofResponseValueToggled(state, action) {
-      console.log("VerifyTrustProofResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const VerifyTrustProofResponse:VerifyTrustProofResponse = state.find((VerifyTrustProofResponse) => VerifyTrustProofResponse.id === action.payload.VerifyTrustProofResponseId);
+      console.log("VerifyTrustProofResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const VerifyTrustProofResponse: VerifyTrustProofResponse = state.find(
+        (VerifyTrustProofResponse) =>
+          VerifyTrustProofResponse.id ===
+          action.payload.VerifyTrustProofResponseId,
+      );
       if (VerifyTrustProofResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     VerifyTrustProofResponsepropertySet(state, action) {
-      const VerifyTrustProofResponse = state.find((VerifyTrustProofResponse) => VerifyTrustProofResponse.id === action.payload.VerifyTrustProofResponseId);
+      const VerifyTrustProofResponse = state.find(
+        (VerifyTrustProofResponse) =>
+          VerifyTrustProofResponse.id ===
+          action.payload.VerifyTrustProofResponseId,
+      );
       if (VerifyTrustProofResponse) {
-      //  VerifyTrustProofResponse[action.property] = action.payload[action.property];
+        //  VerifyTrustProofResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const VerifyTrustProofResponseSlice = createSlice({
 export const {
   VerifyTrustProofResponseAdded,
   VerifyTrustProofResponseValueToggled,
-  VerifyTrustProofResponsepropertySet
+  VerifyTrustProofResponsepropertySet,
 } = VerifyTrustProofResponseSlice.actions;
 export default VerifyTrustProofResponseSlice.reducer;

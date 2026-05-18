@@ -19,20 +19,33 @@ Description: ConversationBranch
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, ConversationBranch } from '@thorapi/model';
-import { useGetConversationBranchsQuery, useAddConversationBranchMutation, useUpdateConversationBranchMutation } from '../../services/ConversationBranchService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, ConversationBranch } from "@thorapi/model";
+import {
+  useGetConversationBranchsQuery,
+  useAddConversationBranchMutation,
+  useUpdateConversationBranchMutation,
+} from "../../services/ConversationBranchService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const ConversationBranchChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetConversationBranchsQuery();
+  const { data: initialData = [], isLoading } =
+    useGetConversationBranchsQuery();
 
   const [data, setData] = useState<ConversationBranch[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<ConversationBranch>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +63,9 @@ const ConversationBranchChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +73,15 @@ const ConversationBranchChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((conversationbranch: DataObject) => [conversationbranch])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((conversationbranch: DataObject) => [
+            conversationbranch,
+          ])}
+        />
+      )}
     </>
   );
 };

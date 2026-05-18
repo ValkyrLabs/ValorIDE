@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { TrustVerificationResult } from '@thorapi/model/TrustVerificationResult';
+import { TrustVerificationResult } from "@thorapi/model/TrustVerificationResult";
 
 const TrustVerificationResultSlice = createSlice({
   name: "TrustVerificationResults",
@@ -27,20 +27,27 @@ const TrustVerificationResultSlice = createSlice({
     },
 
     TrustVerificationResultValueToggled(state, action) {
-      console.log("TrustVerificationResult TOGGLE")
-      console.warn(JSON.stringify(action))
-      const TrustVerificationResult:TrustVerificationResult = state.find((TrustVerificationResult) => TrustVerificationResult.id === action.payload.TrustVerificationResultId);
+      console.log("TrustVerificationResult TOGGLE");
+      console.warn(JSON.stringify(action));
+      const TrustVerificationResult: TrustVerificationResult = state.find(
+        (TrustVerificationResult) =>
+          TrustVerificationResult.id ===
+          action.payload.TrustVerificationResultId,
+      );
       if (TrustVerificationResult) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     TrustVerificationResultpropertySet(state, action) {
-      const TrustVerificationResult = state.find((TrustVerificationResult) => TrustVerificationResult.id === action.payload.TrustVerificationResultId);
+      const TrustVerificationResult = state.find(
+        (TrustVerificationResult) =>
+          TrustVerificationResult.id ===
+          action.payload.TrustVerificationResultId,
+      );
       if (TrustVerificationResult) {
-      //  TrustVerificationResult[action.property] = action.payload[action.property];
+        //  TrustVerificationResult[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const TrustVerificationResultSlice = createSlice({
 export const {
   TrustVerificationResultAdded,
   TrustVerificationResultValueToggled,
-  TrustVerificationResultpropertySet
+  TrustVerificationResultpropertySet,
 } = TrustVerificationResultSlice.actions;
 export default TrustVerificationResultSlice.reducer;

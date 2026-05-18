@@ -38,7 +38,8 @@ const TaskFeedbackButtons: React.FC<TaskFeedbackButtonsProps> = ({
 
   const handleRatingSubmitted = () => {
     try {
-      const feedbackHistory = localStorage.getItem("taskFeedbackHistory") || "{}";
+      const feedbackHistory =
+        localStorage.getItem("taskFeedbackHistory") || "{}";
       const history = JSON.parse(feedbackHistory);
       // Use the messageTs as a unique key for feedback history
       history[String(messageTs)] = true;

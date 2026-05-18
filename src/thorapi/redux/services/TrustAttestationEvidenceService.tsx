@@ -13,47 +13,69 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { TrustAttestationEvidence } from '@thorapi/model/TrustAttestationEvidence'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { TrustAttestationEvidence } from "@thorapi/model/TrustAttestationEvidence";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type TrustAttestationEvidenceResponse = TrustAttestationEvidence[]
+type TrustAttestationEvidenceResponse = TrustAttestationEvidence[];
 
-const toTrustAttestationEvidenceList = (result: unknown): TrustAttestationEvidenceResponse => {
+const toTrustAttestationEvidenceList = (
+  result: unknown,
+): TrustAttestationEvidenceResponse => {
   if (Array.isArray(result)) {
-    return result as TrustAttestationEvidenceResponse
+    return result as TrustAttestationEvidenceResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as TrustAttestationEvidenceResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as TrustAttestationEvidenceResponse)
+    : [];
+};
 
 export const TrustAttestationEvidenceService = createApi({
-  reducerPath: 'TrustAttestationEvidence', // This should remain unique
+  reducerPath: "TrustAttestationEvidence", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['TrustAttestationEvidence'],
+  tagTypes: ["TrustAttestationEvidence"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getTrustAttestationEvidencesPaged: build.query<TrustAttestationEvidenceResponse, { page: number; size?: number; example?: Partial<TrustAttestationEvidence> }>({
+    getTrustAttestationEvidencesPaged: build.query<
+      TrustAttestationEvidenceResponse,
+      {
+        page: number;
+        size?: number;
+        example?: Partial<TrustAttestationEvidence>;
+      }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `TrustAttestationEvidence?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `TrustAttestationEvidence?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toTrustAttestationEvidenceList(result)
+        const rows = toTrustAttestationEvidenceList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'TrustAttestationEvidence' as const, id })),
-          { type: 'TrustAttestationEvidence', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({
+              type: "TrustAttestationEvidence" as const,
+              id,
+            })),
+          { type: "TrustAttestationEvidence", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getTrustAttestationEvidences: build.query<TrustAttestationEvidenceResponse, { example?: Partial<TrustAttestationEvidence> } | void>({
+    getTrustAttestationEvidences: build.query<
+      TrustAttestationEvidenceResponse,
+      { example?: Partial<TrustAttestationEvidence> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +84,117 @@ export const TrustAttestationEvidenceService = createApi({
         return `TrustAttestationEvidence`;
       },
       providesTags: (result) => {
-        const rows = toTrustAttestationEvidenceList(result)
+        const rows = toTrustAttestationEvidenceList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'TrustAttestationEvidence' as const, id })),
-          { type: 'TrustAttestationEvidence', id: 'LIST' },
-        ]
+            .map(({ id }) => ({
+              type: "TrustAttestationEvidence" as const,
+              id,
+            })),
+          { type: "TrustAttestationEvidence", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addTrustAttestationEvidence: build.mutation<TrustAttestationEvidence, Partial<TrustAttestationEvidence>>({
+    addTrustAttestationEvidence: build.mutation<
+      TrustAttestationEvidence,
+      Partial<TrustAttestationEvidence>
+    >({
       query: (body) => ({
         url: `TrustAttestationEvidence`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'TrustAttestationEvidence', id: 'LIST' }],
+      invalidatesTags: [{ type: "TrustAttestationEvidence", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getTrustAttestationEvidence: build.query<TrustAttestationEvidence, string>({
       query: (id) => `TrustAttestationEvidence/${id}`,
-      providesTags: (result, error, id) => [{ type: 'TrustAttestationEvidence', id }],
+      providesTags: (result, error, id) => [
+        { type: "TrustAttestationEvidence", id },
+      ],
     }),
 
     // 5) Update
-    updateTrustAttestationEvidence: build.mutation<void, Pick<TrustAttestationEvidence, 'id'> & Partial<TrustAttestationEvidence>>({
+    updateTrustAttestationEvidence: build.mutation<
+      void,
+      Pick<TrustAttestationEvidence, "id"> & Partial<TrustAttestationEvidence>
+    >({
       query: ({ id, ...patch }) => ({
         url: `TrustAttestationEvidence/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            TrustAttestationEvidenceService.util.updateQueryData('getTrustAttestationEvidence', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            TrustAttestationEvidenceService.util.updateQueryData(
+              "getTrustAttestationEvidence",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<TrustAttestationEvidence, 'id'>) => [
-        { type: 'TrustAttestationEvidence', id },
-        { type: 'TrustAttestationEvidence', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<TrustAttestationEvidence, "id">,
+      ) => [
+        { type: "TrustAttestationEvidence", id },
+        { type: "TrustAttestationEvidence", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteTrustAttestationEvidence: build.mutation<{ success: boolean; id: string }, number>({
+    deleteTrustAttestationEvidence: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `TrustAttestationEvidence/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'TrustAttestationEvidence', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "TrustAttestationEvidence", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteTrustAttestationEvidenceCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteTrustAttestationEvidenceCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `TrustAttestationEvidence/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'TrustAttestationEvidence', id }, { type: 'TrustAttestationEvidence', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "TrustAttestationEvidence", id },
+        { type: "TrustAttestationEvidence", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetTrustAttestationEvidencesPagedQuery`
 export const {
-  useGetTrustAttestationEvidencesPagedQuery,     // immediate fetch
+  useGetTrustAttestationEvidencesPagedQuery, // immediate fetch
   useLazyGetTrustAttestationEvidencesPagedQuery, // lazy fetch
   useGetTrustAttestationEvidenceQuery,
   useGetTrustAttestationEvidencesQuery,
@@ -150,4 +202,4 @@ export const {
   useUpdateTrustAttestationEvidenceMutation,
   useDeleteTrustAttestationEvidenceMutation,
   useDeleteTrustAttestationEvidenceCascadeMutation,
-} = TrustAttestationEvidenceService
+} = TrustAttestationEvidenceService;

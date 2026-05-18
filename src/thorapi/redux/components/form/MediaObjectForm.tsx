@@ -13,32 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  MediaObject,
-  MediaObjectTypeEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddMediaObjectMutation } from '../../services/MediaObjectService';
+import { MediaObject, MediaObjectTypeEnum } from "@thorapi/model";
+
+import { useAddMediaObjectMutation } from "../../services/MediaObjectService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -62,29 +67,28 @@ GridHeim Embedded Media Object
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const TypeValidation = () => {
-  return [
-    'image',
-    'audio',
-    'video',
-    'shape',
-  ];
+  return ["image", "audio", "video", "shape"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        sheetId: Yup.string(),
-      type: Yup.mixed()
-        .oneOf(TypeValidation(), "Invalid value for type")
-        ,
-        url: Yup.string(),
-        positionRow: asNumber(Yup.number().integer().typeError("positionRow must be a number")),
-        positionCol: asNumber(Yup.number().integer().typeError("positionCol must be a number")),
-        trashed: Yup.boolean(),
+  sheetId: Yup.string(),
+  type: Yup.mixed().oneOf(TypeValidation(), "Invalid value for type"),
+  url: Yup.string(),
+  positionRow: asNumber(
+    Yup.number().integer().typeError("positionRow must be a number"),
+  ),
+  positionCol: asNumber(
+    Yup.number().integer().typeError("positionCol must be a number"),
+  ),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -101,12 +105,18 @@ const MediaObjectForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -114,12 +124,12 @@ const MediaObjectForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<MediaObject> = {
-          sheetId: '',
-        type: undefined,
-          url: '',
-          positionRow: 0,
-          positionCol: 0,
-          trashed: false,
+    sheetId: "",
+    type: undefined,
+    url: "",
+    positionRow: 0,
+    positionCol: 0,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -134,11 +144,14 @@ const MediaObjectForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new MediaObject:', grants);
+    console.log("Permissions saved for new MediaObject:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<MediaObject>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<MediaObject>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -149,7 +162,7 @@ const MediaObjectForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `MediaObject created successfully! Would you like to set permissions for this object?`
+          `MediaObject created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -157,8 +170,8 @@ const MediaObjectForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create MediaObject:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create MediaObject:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -179,44 +192,36 @@ const MediaObjectForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addMediaObjectResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New MediaObject
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New MediaObject
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="sheetId" className="nice-form-control">
                       <b>
                         Sheet Id:
-                        {touched.sheetId &&
-                         !errors.sheetId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.sheetId && !errors.sheetId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="sheetId"
-                            value={values?.sheetId}
-                            placeholder="Sheet Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="sheetId"
+                        value={values?.sheetId}
+                        placeholder="Sheet Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -228,30 +233,30 @@ const MediaObjectForm: React.FC = () => {
                     <label htmlFor="type" className="nice-form-control">
                       <b>
                         Type:
-                        {touched.type &&
-                         !errors.type && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.type && !errors.type && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="type"
-                          value={values.type || ''}
-                          className={
-                            errors.type
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('type', true);
-                            setFieldValue('type', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Type" />
-                          <TypeLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="type"
+                        value={values.type || ""}
+                        className={
+                          errors.type
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("type", true);
+                          setFieldValue("type", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Type" />
+                        <TypeLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -263,28 +268,21 @@ const MediaObjectForm: React.FC = () => {
                     <label htmlFor="url" className="nice-form-control">
                       <b>
                         Url:
-                        {touched.url &&
-                         !errors.url && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.url && !errors.url && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="url"
-                            value={values?.url}
-                            placeholder="Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="url"
+                        value={values?.url}
+                        placeholder="Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -296,36 +294,32 @@ const MediaObjectForm: React.FC = () => {
                     <label htmlFor="positionRow" className="nice-form-control">
                       <b>
                         Position : - row:
-                        {touched.positionRow &&
-                         !errors.positionRow && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.positionRow && !errors.positionRow && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="positionRow"
-                            type="number"
-                            value={values.positionRow || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('positionRow', true);
-                              const v = e.target.value;
-                              setFieldValue('positionRow', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.positionRow
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="positionRow"
+                        type="number"
+                        value={values.positionRow || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("positionRow", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "positionRow",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.positionRow
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -337,36 +331,32 @@ const MediaObjectForm: React.FC = () => {
                     <label htmlFor="positionCol" className="nice-form-control">
                       <b>
                         Position - col:
-                        {touched.positionCol &&
-                         !errors.positionCol && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.positionCol && !errors.positionCol && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="positionCol"
-                            type="number"
-                            value={values.positionCol || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('positionCol', true);
-                              const v = e.target.value;
-                              setFieldValue('positionCol', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.positionCol
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="positionCol"
+                        type="number"
+                        value={values.positionCol || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("positionCol", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "positionCol",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.positionCol
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -378,32 +368,25 @@ const MediaObjectForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -413,45 +396,58 @@ const MediaObjectForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New MediaObject
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New MediaObject
+                    </CoolButton>
 
-                  {(addMediaObjectResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addMediaObjectResult as any).error ? (addMediaObjectResult as any).error.data : (addMediaObjectResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addMediaObjectResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addMediaObjectResult as any).error
+                              ? (addMediaObjectResult as any).error.data
+                              : (addMediaObjectResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addMediaObjectResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addMediaObjectResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addMediaObjectResult: {JSON.stringify(addMediaObjectResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addMediaObjectResult: {JSON.stringify(addMediaObjectResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -483,16 +479,13 @@ kebabcase type-lookup
 const TypeLookup = () => {
   return (
     <>
-      <option value='image' label="Media Image" />
-      <option value='audio' label="Media Audio" />
-      <option value='video' label="Media Video" />
-      <option value='shape' label="Media Shape" />
+      <option value="image" label="Media Image" />
+      <option value="audio" label="Media Audio" />
+      <option value="video" label="Media Video" />
+      <option value="shape" label="Media Shape" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default MediaObjectForm;
-

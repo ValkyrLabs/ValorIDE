@@ -19,20 +19,32 @@ Description: AgentEventTrigger
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, AgentEventTrigger } from '@thorapi/model';
-import { useGetAgentEventTriggersQuery, useAddAgentEventTriggerMutation, useUpdateAgentEventTriggerMutation } from '../../services/AgentEventTriggerService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, AgentEventTrigger } from "@thorapi/model";
+import {
+  useGetAgentEventTriggersQuery,
+  useAddAgentEventTriggerMutation,
+  useUpdateAgentEventTriggerMutation,
+} from "../../services/AgentEventTriggerService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const AgentEventTriggerChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetAgentEventTriggersQuery();
 
   const [data, setData] = useState<AgentEventTrigger[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<AgentEventTrigger>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const AgentEventTriggerChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,15 @@ const AgentEventTriggerChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((agenteventtrigger: DataObject) => [agenteventtrigger])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((agenteventtrigger: DataObject) => [
+            agenteventtrigger,
+          ])}
+        />
+      )}
     </>
   );
 };

@@ -19,20 +19,32 @@ Description: CreatorEarnings
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, CreatorEarnings } from '@thorapi/model';
-import { useGetCreatorEarningssQuery, useAddCreatorEarningsMutation, useUpdateCreatorEarningsMutation } from '../../services/CreatorEarningsService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, CreatorEarnings } from "@thorapi/model";
+import {
+  useGetCreatorEarningssQuery,
+  useAddCreatorEarningsMutation,
+  useUpdateCreatorEarningsMutation,
+} from "../../services/CreatorEarningsService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const CreatorEarningsChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetCreatorEarningssQuery();
 
   const [data, setData] = useState<CreatorEarnings[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<CreatorEarnings>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const CreatorEarningsChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,15 @@ const CreatorEarningsChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((creatorearnings: DataObject) => [creatorearnings])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((creatorearnings: DataObject) => [
+            creatorearnings,
+          ])}
+        />
+      )}
     </>
   );
 };

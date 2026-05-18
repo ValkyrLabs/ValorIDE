@@ -10,13 +10,13 @@ import {
 
 export interface ChatAction {
   type:
-  | "chat_message"
-  | "task_start"
-  | "task_complete"
-  | "tool_use"
-  | "file_edit"
-  | "command_execute"
-  | "api_data";
+    | "chat_message"
+    | "task_start"
+    | "task_complete"
+    | "tool_use"
+    | "file_edit"
+    | "command_execute"
+    | "api_data";
   taskId?: string;
   messageId?: string;
   toolName?: string;
@@ -140,13 +140,18 @@ export class ValorIDEMothershipIntegration {
           if (!Array.isArray(userAny.roleList)) userAny.roleList = [];
           if (!Array.isArray(userAny.authorityList)) userAny.authorityList = [];
           if (!Array.isArray(userAny.addresses)) userAny.addresses = [];
-          if (!Array.isArray(userAny.userPreferences)) userAny.userPreferences = [];
-          if (!Array.isArray(userAny.phoneVerifications)) userAny.phoneVerifications = [];
+          if (!Array.isArray(userAny.userPreferences))
+            userAny.userPreferences = [];
+          if (!Array.isArray(userAny.phoneVerifications))
+            userAny.phoneVerifications = [];
           if (!Array.isArray(userAny.loginAudits)) userAny.loginAudits = [];
         }
       } catch (e) {
         // Non-fatal; proceed to send
-        console.warn("ValorIDE: Failed to sanitize user object before sendMessage:", e);
+        console.warn(
+          "ValorIDE: Failed to sanitize user object before sendMessage:",
+          e,
+        );
       }
 
       // Actually send the message

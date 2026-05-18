@@ -26,19 +26,16 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    McpMarketplaceItemTag,
-    McpMarketplaceItemTagFromJSON,
-    McpMarketplaceItemTagToJSON,
-    McpTool,
-    McpToolFromJSON,
-    McpToolToJSON,
-} from './';
-
+  McpMarketplaceItemTag,
+  McpMarketplaceItemTagFromJSON,
+  McpMarketplaceItemTagToJSON,
+  McpTool,
+  McpToolFromJSON,
+  McpToolToJSON,
+} from "./";
 
 // thorapi
 
@@ -47,173 +44,190 @@ import {
  * @export
  * @interface McpToolPreset
  */
-export type McpToolPreset  = DataObject & {
-    /**
-     * Stable identifier used to reference the preset (e.g., apomod-get-plan).
-     * @type {string}
-     * @memberof McpToolPreset
-     */
-    slug?: string;
-    /**
-     * Human friendly name shown in UIs.
-     * @type {string}
-     * @memberof McpToolPreset
-     */
-    displayName?: string;
-    /**
-     * One-line explanation of what the preset does.
-     * @type {string}
-     * @memberof McpToolPreset
-     */
-    summary?: string;
-    /**
-     * Classification for MCP tools to mirror Copilot-like experiences.
-     * @type {string}
-     * @memberof McpToolPreset
-     */
-    category?: McpToolPresetCategoryEnum;
-    /**
-     * 
-     * @type {Array<McpMarketplaceItemTag>}
-     * @memberof McpToolPreset
-     */
-    tags?: Array<McpMarketplaceItemTag>;
-    /**
-     * Suggested personas, workflows, or environments that benefit from the preset.
-     * @type {string}
-     * @memberof McpToolPreset
-     */
-    recommendedFor?: string;
-    /**
-     * Deep link to extended guidance or quick-start instructions.
-     * @type {string}
-     * @memberof McpToolPreset
-     */
-    documentationUrl?: string;
-    /**
-     * Preset default for auto approval when the tool is triggered.
-     * @type {boolean}
-     * @memberof McpToolPreset
-     */
-    autoApprove?: boolean;
-    /**
-     * 
-     * @type {McpTool}
-     * @memberof McpToolPreset
-     */
-    tool?: McpTool;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof McpToolPreset
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof McpToolPreset
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof McpToolPreset
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof McpToolPreset
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof McpToolPreset
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof McpToolPreset
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof McpToolPreset
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof McpToolPreset
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof McpToolPreset
-     */
-    trashed?: boolean;
-}
+export type McpToolPreset = DataObject & {
+  /**
+   * Stable identifier used to reference the preset (e.g., apomod-get-plan).
+   * @type {string}
+   * @memberof McpToolPreset
+   */
+  slug?: string;
+  /**
+   * Human friendly name shown in UIs.
+   * @type {string}
+   * @memberof McpToolPreset
+   */
+  displayName?: string;
+  /**
+   * One-line explanation of what the preset does.
+   * @type {string}
+   * @memberof McpToolPreset
+   */
+  summary?: string;
+  /**
+   * Classification for MCP tools to mirror Copilot-like experiences.
+   * @type {string}
+   * @memberof McpToolPreset
+   */
+  category?: McpToolPresetCategoryEnum;
+  /**
+   *
+   * @type {Array<McpMarketplaceItemTag>}
+   * @memberof McpToolPreset
+   */
+  tags?: Array<McpMarketplaceItemTag>;
+  /**
+   * Suggested personas, workflows, or environments that benefit from the preset.
+   * @type {string}
+   * @memberof McpToolPreset
+   */
+  recommendedFor?: string;
+  /**
+   * Deep link to extended guidance or quick-start instructions.
+   * @type {string}
+   * @memberof McpToolPreset
+   */
+  documentationUrl?: string;
+  /**
+   * Preset default for auto approval when the tool is triggered.
+   * @type {boolean}
+   * @memberof McpToolPreset
+   */
+  autoApprove?: boolean;
+  /**
+   *
+   * @type {McpTool}
+   * @memberof McpToolPreset
+   */
+  tool?: McpTool;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof McpToolPreset
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof McpToolPreset
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof McpToolPreset
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof McpToolPreset
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof McpToolPreset
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof McpToolPreset
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof McpToolPreset
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof McpToolPreset
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof McpToolPreset
+   */
+  trashed?: boolean;
+};
 
 export function McpToolPresetFromJSON(json: any): McpToolPreset {
-    return {
-        ...DataObjectFromJSON(json),
-        'slug': !exists(json, 'slug') ? undefined : json['slug'],
-        'displayName': !exists(json, 'displayName') ? undefined : json['displayName'],
-        'summary': !exists(json, 'summary') ? undefined : json['summary'],
-        'category': !exists(json, 'category') ? undefined : json['category'],
-        'tags': !exists(json, 'tags') ? undefined : (json['tags'] as Array<any>).map(McpMarketplaceItemTagFromJSON),
-        'recommendedFor': !exists(json, 'recommendedFor') ? undefined : json['recommendedFor'],
-        'documentationUrl': !exists(json, 'documentationUrl') ? undefined : json['documentationUrl'],
-        'autoApprove': !exists(json, 'autoApprove') ? undefined : json['autoApprove'],
-        'tool': !exists(json, 'tool') ? undefined : McpToolFromJSON(json['tool']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    slug: !exists(json, "slug") ? undefined : json["slug"],
+    displayName: !exists(json, "displayName") ? undefined : json["displayName"],
+    summary: !exists(json, "summary") ? undefined : json["summary"],
+    category: !exists(json, "category") ? undefined : json["category"],
+    tags: !exists(json, "tags")
+      ? undefined
+      : (json["tags"] as Array<any>).map(McpMarketplaceItemTagFromJSON),
+    recommendedFor: !exists(json, "recommendedFor")
+      ? undefined
+      : json["recommendedFor"],
+    documentationUrl: !exists(json, "documentationUrl")
+      ? undefined
+      : json["documentationUrl"],
+    autoApprove: !exists(json, "autoApprove") ? undefined : json["autoApprove"],
+    tool: !exists(json, "tool") ? undefined : McpToolFromJSON(json["tool"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function McpToolPresetToJSON(value?: McpToolPreset): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'slug': value.slug,
-        'displayName': value.displayName,
-        'summary': value.summary,
-        'category': value.category,
-        'tags': value.tags === undefined ? undefined : (value.tags as Array<any>).map(McpMarketplaceItemTagToJSON),
-        'recommendedFor': value.recommendedFor,
-        'documentationUrl': value.documentationUrl,
-        'autoApprove': value.autoApprove,
-        'tool': McpToolToJSON(value.tool),
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    slug: value.slug,
+    displayName: value.displayName,
+    summary: value.summary,
+    category: value.category,
+    tags:
+      value.tags === undefined
+        ? undefined
+        : (value.tags as Array<any>).map(McpMarketplaceItemTagToJSON),
+    recommendedFor: value.recommendedFor,
+    documentationUrl: value.documentationUrl,
+    autoApprove: value.autoApprove,
+    tool: McpToolToJSON(value.tool),
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum McpToolPresetCategoryEnum {
-    CLOUDPLATFORM = 'cloud_platform',
-    DEVOPS = 'devops',
-    SECURITY = 'security',
-    OBSERVABILITY = 'observability',
-    DATAENGINEERING = 'data_engineering',
-    AIASSISTANT = 'ai_assistant',
-    PRODUCTIVITY = 'productivity',
-    CUSTOMIZATION = 'customization'
+  CLOUDPLATFORM = "cloud_platform",
+  DEVOPS = "devops",
+  SECURITY = "security",
+  OBSERVABILITY = "observability",
+  DATAENGINEERING = "data_engineering",
+  AIASSISTANT = "ai_assistant",
+  PRODUCTIVITY = "productivity",
+  CUSTOMIZATION = "customization",
 }
-
-

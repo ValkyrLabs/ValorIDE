@@ -19,20 +19,32 @@ Description: McpServer
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, McpServer } from '@thorapi/model';
-import { useGetMcpServersQuery, useAddMcpServerMutation, useUpdateMcpServerMutation } from '../../services/McpServerService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, McpServer } from "@thorapi/model";
+import {
+  useGetMcpServersQuery,
+  useAddMcpServerMutation,
+  useUpdateMcpServerMutation,
+} from "../../services/McpServerService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const McpServerChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetMcpServersQuery();
 
   const [data, setData] = useState<McpServer[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<McpServer>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const McpServerChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const McpServerChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((mcpserver: DataObject) => [mcpserver])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((mcpserver: DataObject) => [mcpserver])}
+        />
+      )}
     </>
   );
 };

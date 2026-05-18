@@ -13,33 +13,41 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   DigitalAsset,
   DigitalAssetDeliveryMethodEnum,
   DigitalAssetAccessModelEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddDigitalAssetMutation } from '../../services/DigitalAssetService';
+import { useAddDigitalAssetMutation } from "../../services/DigitalAssetService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -64,40 +72,41 @@ Immutable record linking a FileRecord (physical payload) to a Product for digita
 -------------------------------------------------------- */
 const DeliveryMethodValidation = () => {
   return [
-    'direct_download',
-    'email_delivery',
-    'portal_access',
-    'streaming',
-    'api_key',
+    "direct_download",
+    "email_delivery",
+    "portal_access",
+    "streaming",
+    "api_key",
   ];
 };
 const AccessModelValidation = () => {
-  return [
-    'perpetual',
-    'subscription',
-    'trial',
-    'license_key',
-    'one_time',
-  ];
+  return ["perpetual", "subscription", "trial", "license_key", "one_time"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-      deliveryMethod: Yup.mixed()
-        .oneOf(DeliveryMethodValidation(), "Invalid value for deliveryMethod")
-        .required("deliveryMethod is required."),
-      accessModel: Yup.mixed()
-        .oneOf(AccessModelValidation(), "Invalid value for accessModel")
-        ,
-        maxDownloads: asNumber(Yup.number().integer().typeError("maxDownloads must be a number")),
-        expiresAfterDays: asNumber(Yup.number().integer().typeError("expiresAfterDays must be a number")),
-        notifyCustomerOnExpiry: Yup.boolean(),
-        trashed: Yup.boolean(),
+  deliveryMethod: Yup.mixed()
+    .oneOf(DeliveryMethodValidation(), "Invalid value for deliveryMethod")
+    .required("deliveryMethod is required."),
+  accessModel: Yup.mixed().oneOf(
+    AccessModelValidation(),
+    "Invalid value for accessModel",
+  ),
+  maxDownloads: asNumber(
+    Yup.number().integer().typeError("maxDownloads must be a number"),
+  ),
+  expiresAfterDays: asNumber(
+    Yup.number().integer().typeError("expiresAfterDays must be a number"),
+  ),
+  notifyCustomerOnExpiry: Yup.boolean(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -114,12 +123,18 @@ const DigitalAssetForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -127,12 +142,12 @@ const DigitalAssetForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<DigitalAsset> = {
-        deliveryMethod: undefined,
-        accessModel: undefined,
-          maxDownloads: 0,
-          expiresAfterDays: 0,
-          notifyCustomerOnExpiry: false,
-          trashed: false,
+    deliveryMethod: undefined,
+    accessModel: undefined,
+    maxDownloads: 0,
+    expiresAfterDays: 0,
+    notifyCustomerOnExpiry: false,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -147,11 +162,14 @@ const DigitalAssetForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new DigitalAsset:', grants);
+    console.log("Permissions saved for new DigitalAsset:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<DigitalAsset>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<DigitalAsset>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -162,7 +180,7 @@ const DigitalAssetForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `DigitalAsset created successfully! Would you like to set permissions for this object?`
+          `DigitalAsset created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -170,8 +188,8 @@ const DigitalAssetForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create DigitalAsset:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create DigitalAsset:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -192,46 +210,51 @@ const DigitalAssetForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addDigitalAssetResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New DigitalAsset
-                </Accordion.Header>
-                <Accordion.Body>
-                    <label htmlFor="deliveryMethod" className="nice-form-control">
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New DigitalAsset
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <label
+                      htmlFor="deliveryMethod"
+                      className="nice-form-control"
+                    >
                       <b>
                         Delivery Method:
-                        {touched.deliveryMethod &&
-                         !errors.deliveryMethod && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.deliveryMethod && !errors.deliveryMethod && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="deliveryMethod"
-                          value={values.deliveryMethod || ''}
-                          className={
-                            errors.deliveryMethod
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('deliveryMethod', true);
-                            setFieldValue('deliveryMethod', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Delivery Method" />
-                          <DeliveryMethodLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="deliveryMethod"
+                        value={values.deliveryMethod || ""}
+                        className={
+                          errors.deliveryMethod
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("deliveryMethod", true);
+                          setFieldValue(
+                            "deliveryMethod",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Delivery Method" />
+                        <DeliveryMethodLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -243,30 +266,33 @@ const DigitalAssetForm: React.FC = () => {
                     <label htmlFor="accessModel" className="nice-form-control">
                       <b>
                         Access Model:
-                        {touched.accessModel &&
-                         !errors.accessModel && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.accessModel && !errors.accessModel && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="accessModel"
-                          value={values.accessModel || ''}
-                          className={
-                            errors.accessModel
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('accessModel', true);
-                            setFieldValue('accessModel', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Access Model" />
-                          <AccessModelLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="accessModel"
+                        value={values.accessModel || ""}
+                        className={
+                          errors.accessModel
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("accessModel", true);
+                          setFieldValue(
+                            "accessModel",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Access Model" />
+                        <AccessModelLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -278,36 +304,32 @@ const DigitalAssetForm: React.FC = () => {
                     <label htmlFor="maxDownloads" className="nice-form-control">
                       <b>
                         Max Downloads:
-                        {touched.maxDownloads &&
-                         !errors.maxDownloads && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.maxDownloads && !errors.maxDownloads && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="maxDownloads"
-                            type="number"
-                            value={values.maxDownloads || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('maxDownloads', true);
-                              const v = e.target.value;
-                              setFieldValue('maxDownloads', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.maxDownloads
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="maxDownloads"
+                        type="number"
+                        value={values.maxDownloads || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("maxDownloads", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "maxDownloads",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.maxDownloads
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -316,39 +338,39 @@ const DigitalAssetForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="expiresAfterDays" className="nice-form-control">
+                    <label
+                      htmlFor="expiresAfterDays"
+                      className="nice-form-control"
+                    >
                       <b>
                         Expires After Days:
                         {touched.expiresAfterDays &&
-                         !errors.expiresAfterDays && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.expiresAfterDays && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="expiresAfterDays"
-                            type="number"
-                            value={values.expiresAfterDays || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('expiresAfterDays', true);
-                              const v = e.target.value;
-                              setFieldValue('expiresAfterDays', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.expiresAfterDays
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="expiresAfterDays"
+                        type="number"
+                        value={values.expiresAfterDays || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("expiresAfterDays", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "expiresAfterDays",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.expiresAfterDays
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -357,35 +379,35 @@ const DigitalAssetForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="notifyCustomerOnExpiry" className="nice-form-control">
+                    <label
+                      htmlFor="notifyCustomerOnExpiry"
+                      className="nice-form-control"
+                    >
                       <b>
                         Notify Customer On Expiry:
                         {touched.notifyCustomerOnExpiry &&
-                         !errors.notifyCustomerOnExpiry && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.notifyCustomerOnExpiry && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="notifyCustomerOnExpiry"
-                            name="notifyCustomerOnExpiry"
-                            checked={values.notifyCustomerOnExpiry || false}
-                            onChange={(e) => {
-                              setFieldTouched('notifyCustomerOnExpiry', true);
-                              setFieldValue('notifyCustomerOnExpiry', e.target.checked);
-                            }}
-                            isInvalid={!!errors.notifyCustomerOnExpiry}
-                            className={errors.notifyCustomerOnExpiry ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="notifyCustomerOnExpiry"
+                        name="notifyCustomerOnExpiry"
+                        checked={values.notifyCustomerOnExpiry || false}
+                        onChange={(e) => {
+                          setFieldTouched("notifyCustomerOnExpiry", true);
+                          setFieldValue(
+                            "notifyCustomerOnExpiry",
+                            e.target.checked,
+                          );
+                        }}
+                        isInvalid={!!errors.notifyCustomerOnExpiry}
+                        className={errors.notifyCustomerOnExpiry ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -397,32 +419,25 @@ const DigitalAssetForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -432,45 +447,59 @@ const DigitalAssetForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New DigitalAsset
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New DigitalAsset
+                    </CoolButton>
 
-                  {(addDigitalAssetResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addDigitalAssetResult as any).error ? (addDigitalAssetResult as any).error.data : (addDigitalAssetResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addDigitalAssetResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addDigitalAssetResult as any).error
+                              ? (addDigitalAssetResult as any).error.data
+                              : (addDigitalAssetResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addDigitalAssetResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addDigitalAssetResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addDigitalAssetResult: {JSON.stringify(addDigitalAssetResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addDigitalAssetResult:{" "}
+                    {JSON.stringify(addDigitalAssetResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -502,11 +531,11 @@ kebabcase delivery-method-lookup
 const DeliveryMethodLookup = () => {
   return (
     <>
-      <option value='direct_download' label="Direct Download" />
-      <option value='email_delivery' label="Email Delivery" />
-      <option value='portal_access' label="Portal Access" />
-      <option value='streaming' label="Streaming" />
-      <option value='api_key' label="Api Key" />
+      <option value="direct_download" label="Direct Download" />
+      <option value="email_delivery" label="Email Delivery" />
+      <option value="portal_access" label="Portal Access" />
+      <option value="streaming" label="Streaming" />
+      <option value="api_key" label="Api Key" />
     </>
   );
 };
@@ -523,17 +552,14 @@ kebabcase access-model-lookup
 const AccessModelLookup = () => {
   return (
     <>
-      <option value='perpetual' label="Perpetual" />
-      <option value='subscription' label="Subscription" />
-      <option value='trial' label="Trial" />
-      <option value='license_key' label="License Key" />
-      <option value='one_time' label="One Time" />
+      <option value="perpetual" label="Perpetual" />
+      <option value="subscription" label="Subscription" />
+      <option value="trial" label="Trial" />
+      <option value="license_key" label="License Key" />
+      <option value="one_time" label="One Time" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default DigitalAssetForm;
-

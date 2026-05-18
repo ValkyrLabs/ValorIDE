@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_CREDITS_REQUEST,
-    FETCH_CREDITS_REQUEST,
-    LIST_CREDITS_REQUEST,
-    UPDATE_CREDITS_REQUEST,
-    DELETE_CREDITS_REQUEST,
-
-    addCreditsFailure,
-    addCreditsSuccess,
-
-    fetchCreditsFailure,
-    fetchCreditsSuccess,
-    
-    listCreditsFailure,
-    listCreditsSuccess,
-
-    updateCreditsFailure,
-    updateCreditsSuccess,
-    
-    deleteCreditsFailure,
-    deleteCreditsSuccess,
-    
-} from '../actions/CreditsApiAction';
+  ADD_CREDITS_REQUEST,
+  FETCH_CREDITS_REQUEST,
+  LIST_CREDITS_REQUEST,
+  UPDATE_CREDITS_REQUEST,
+  DELETE_CREDITS_REQUEST,
+  addCreditsFailure,
+  addCreditsSuccess,
+  fetchCreditsFailure,
+  fetchCreditsSuccess,
+  listCreditsFailure,
+  listCreditsSuccess,
+  updateCreditsFailure,
+  updateCreditsSuccess,
+  deleteCreditsFailure,
+  deleteCreditsSuccess,
+} from "../actions/CreditsApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Credits
 */
 
-
-
-export const CreditsMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("Credits MIDDLEWARE: " + JSON.stringify(action) )
+export const CreditsMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Credits MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

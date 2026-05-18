@@ -26,16 +26,13 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    TrustKeyVersion,
-    TrustKeyVersionFromJSON,
-    TrustKeyVersionToJSON,
-} from './';
-
+  TrustKeyVersion,
+  TrustKeyVersionFromJSON,
+  TrustKeyVersionToJSON,
+} from "./";
 
 // thorapi
 
@@ -44,170 +41,192 @@ import {
  * @export
  * @interface TrustPolicyManifest
  */
-export type TrustPolicyManifest  = DataObject & {
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustPolicyManifest
-     */
-    name?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustPolicyManifest
-     */
-    policyStatus?: TrustPolicyManifestPolicyStatusEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustPolicyManifest
-     */
-    apiSpecHash?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustPolicyManifest
-     */
-    generatedSourceHash?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustPolicyManifest
-     */
-    runtimeImageHash?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustPolicyManifest
-     */
-    canonicalManifestHash?: string;
-    /**
-     * JSON array of allowed model references.
-     * @type {string}
-     * @memberof TrustPolicyManifest
-     */
-    allowedModelRefs?: string;
-    /**
-     * JSON array of required TrustKey references.
-     * @type {string}
-     * @memberof TrustPolicyManifest
-     */
-    requiredKeyRefs?: string;
-    /**
-     * 
-     * @type {TrustKeyVersion}
-     * @memberof TrustPolicyManifest
-     */
-    signingKeyVersion?: TrustKeyVersion;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustPolicyManifest
-     */
-    ownerId?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof TrustPolicyManifest
-     */
-    readonly id?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof TrustPolicyManifest
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof TrustPolicyManifest
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof TrustPolicyManifest
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof TrustPolicyManifest
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof TrustPolicyManifest
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof TrustPolicyManifest
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof TrustPolicyManifest
-     */
-    trashed?: boolean;
-}
+export type TrustPolicyManifest = DataObject & {
+  /**
+   *
+   * @type {string}
+   * @memberof TrustPolicyManifest
+   */
+  name?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustPolicyManifest
+   */
+  policyStatus?: TrustPolicyManifestPolicyStatusEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustPolicyManifest
+   */
+  apiSpecHash?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustPolicyManifest
+   */
+  generatedSourceHash?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustPolicyManifest
+   */
+  runtimeImageHash?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustPolicyManifest
+   */
+  canonicalManifestHash?: string;
+  /**
+   * JSON array of allowed model references.
+   * @type {string}
+   * @memberof TrustPolicyManifest
+   */
+  allowedModelRefs?: string;
+  /**
+   * JSON array of required TrustKey references.
+   * @type {string}
+   * @memberof TrustPolicyManifest
+   */
+  requiredKeyRefs?: string;
+  /**
+   *
+   * @type {TrustKeyVersion}
+   * @memberof TrustPolicyManifest
+   */
+  signingKeyVersion?: TrustKeyVersion;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustPolicyManifest
+   */
+  ownerId?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof TrustPolicyManifest
+   */
+  readonly id?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof TrustPolicyManifest
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof TrustPolicyManifest
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof TrustPolicyManifest
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof TrustPolicyManifest
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof TrustPolicyManifest
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof TrustPolicyManifest
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof TrustPolicyManifest
+   */
+  trashed?: boolean;
+};
 
 export function TrustPolicyManifestFromJSON(json: any): TrustPolicyManifest {
-    return {
-        ...DataObjectFromJSON(json),
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'policyStatus': !exists(json, 'policyStatus') ? undefined : json['policyStatus'],
-        'apiSpecHash': !exists(json, 'apiSpecHash') ? undefined : json['apiSpecHash'],
-        'generatedSourceHash': !exists(json, 'generatedSourceHash') ? undefined : json['generatedSourceHash'],
-        'runtimeImageHash': !exists(json, 'runtimeImageHash') ? undefined : json['runtimeImageHash'],
-        'canonicalManifestHash': !exists(json, 'canonicalManifestHash') ? undefined : json['canonicalManifestHash'],
-        'allowedModelRefs': !exists(json, 'allowedModelRefs') ? undefined : json['allowedModelRefs'],
-        'requiredKeyRefs': !exists(json, 'requiredKeyRefs') ? undefined : json['requiredKeyRefs'],
-        'signingKeyVersion': !exists(json, 'signingKeyVersion') ? undefined : TrustKeyVersionFromJSON(json['signingKeyVersion']),
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: !exists(json, "name") ? undefined : json["name"],
+    policyStatus: !exists(json, "policyStatus")
+      ? undefined
+      : json["policyStatus"],
+    apiSpecHash: !exists(json, "apiSpecHash") ? undefined : json["apiSpecHash"],
+    generatedSourceHash: !exists(json, "generatedSourceHash")
+      ? undefined
+      : json["generatedSourceHash"],
+    runtimeImageHash: !exists(json, "runtimeImageHash")
+      ? undefined
+      : json["runtimeImageHash"],
+    canonicalManifestHash: !exists(json, "canonicalManifestHash")
+      ? undefined
+      : json["canonicalManifestHash"],
+    allowedModelRefs: !exists(json, "allowedModelRefs")
+      ? undefined
+      : json["allowedModelRefs"],
+    requiredKeyRefs: !exists(json, "requiredKeyRefs")
+      ? undefined
+      : json["requiredKeyRefs"],
+    signingKeyVersion: !exists(json, "signingKeyVersion")
+      ? undefined
+      : TrustKeyVersionFromJSON(json["signingKeyVersion"]),
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function TrustPolicyManifestToJSON(value?: TrustPolicyManifest): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'name': value.name,
-        'policyStatus': value.policyStatus,
-        'apiSpecHash': value.apiSpecHash,
-        'generatedSourceHash': value.generatedSourceHash,
-        'runtimeImageHash': value.runtimeImageHash,
-        'canonicalManifestHash': value.canonicalManifestHash,
-        'allowedModelRefs': value.allowedModelRefs,
-        'requiredKeyRefs': value.requiredKeyRefs,
-        'signingKeyVersion': TrustKeyVersionToJSON(value.signingKeyVersion),
-        'ownerId': value.ownerId,
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    policyStatus: value.policyStatus,
+    apiSpecHash: value.apiSpecHash,
+    generatedSourceHash: value.generatedSourceHash,
+    runtimeImageHash: value.runtimeImageHash,
+    canonicalManifestHash: value.canonicalManifestHash,
+    allowedModelRefs: value.allowedModelRefs,
+    requiredKeyRefs: value.requiredKeyRefs,
+    signingKeyVersion: TrustKeyVersionToJSON(value.signingKeyVersion),
+    ownerId: value.ownerId,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum TrustPolicyManifestPolicyStatusEnum {
-    DRAFT = 'draft',
-    ACTIVE = 'active',
-    SUSPENDED = 'suspended',
-    RETIRED = 'retired'
+  DRAFT = "draft",
+  ACTIVE = "active",
+  SUSPENDED = "suspended",
+  RETIRED = "retired",
 }
-
-

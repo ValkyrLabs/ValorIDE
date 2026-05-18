@@ -26,16 +26,9 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
-import {
-
-
-    Principal,
-    PrincipalFromJSON,
-    PrincipalToJSON,
-} from './';
-
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { Principal, PrincipalFromJSON, PrincipalToJSON } from "./";
 
 // thorapi
 
@@ -44,178 +37,208 @@ import {
  * @export
  * @interface Quota
  */
-export type Quota  = DataObject & {
-    /**
-     * 
-     * @type {Principal}
-     * @memberof Quota
-     */
-    principal?: Principal;
-    /**
-     * Type of resource being limited
-     * @type {string}
-     * @memberof Quota
-     */
-    resourceType?: QuotaResourceTypeEnum;
-    /**
-     * Maximum concurrent operations
-     * @type {number}
-     * @memberof Quota
-     */
-    maxConcurrent?: number;
-    /**
-     * Maximum operations per hour
-     * @type {number}
-     * @memberof Quota
-     */
-    maxPerHour?: number;
-    /**
-     * Maximum operations per day
-     * @type {number}
-     * @memberof Quota
-     */
-    maxPerDay?: number;
-    /**
-     * Current concurrent operations count
-     * @type {number}
-     * @memberof Quota
-     */
-    currentConcurrent?: number;
-    /**
-     * Operations count in current hour
-     * @type {number}
-     * @memberof Quota
-     */
-    currentHourCount?: number;
-    /**
-     * Operations count in current day
-     * @type {number}
-     * @memberof Quota
-     */
-    currentDayCount?: number;
-    /**
-     * When hourly counter resets
-     * @type {Date}
-     * @memberof Quota
-     */
-    hourResetAt?: Date;
-    /**
-     * When daily counter resets
-     * @type {Date}
-     * @memberof Quota
-     */
-    dayResetAt?: Date;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof Quota
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof Quota
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof Quota
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof Quota
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof Quota
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof Quota
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof Quota
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof Quota
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof Quota
-     */
-    trashed?: boolean;
-}
+export type Quota = DataObject & {
+  /**
+   *
+   * @type {Principal}
+   * @memberof Quota
+   */
+  principal?: Principal;
+  /**
+   * Type of resource being limited
+   * @type {string}
+   * @memberof Quota
+   */
+  resourceType?: QuotaResourceTypeEnum;
+  /**
+   * Maximum concurrent operations
+   * @type {number}
+   * @memberof Quota
+   */
+  maxConcurrent?: number;
+  /**
+   * Maximum operations per hour
+   * @type {number}
+   * @memberof Quota
+   */
+  maxPerHour?: number;
+  /**
+   * Maximum operations per day
+   * @type {number}
+   * @memberof Quota
+   */
+  maxPerDay?: number;
+  /**
+   * Current concurrent operations count
+   * @type {number}
+   * @memberof Quota
+   */
+  currentConcurrent?: number;
+  /**
+   * Operations count in current hour
+   * @type {number}
+   * @memberof Quota
+   */
+  currentHourCount?: number;
+  /**
+   * Operations count in current day
+   * @type {number}
+   * @memberof Quota
+   */
+  currentDayCount?: number;
+  /**
+   * When hourly counter resets
+   * @type {Date}
+   * @memberof Quota
+   */
+  hourResetAt?: Date;
+  /**
+   * When daily counter resets
+   * @type {Date}
+   * @memberof Quota
+   */
+  dayResetAt?: Date;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof Quota
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof Quota
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof Quota
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof Quota
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof Quota
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof Quota
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof Quota
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof Quota
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof Quota
+   */
+  trashed?: boolean;
+};
 
 export function QuotaFromJSON(json: any): Quota {
-    return {
-        ...DataObjectFromJSON(json),
-        'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
-        'resourceType': !exists(json, 'resourceType') ? undefined : json['resourceType'],
-        'maxConcurrent': !exists(json, 'maxConcurrent') ? undefined : json['maxConcurrent'],
-        'maxPerHour': !exists(json, 'maxPerHour') ? undefined : json['maxPerHour'],
-        'maxPerDay': !exists(json, 'maxPerDay') ? undefined : json['maxPerDay'],
-        'currentConcurrent': !exists(json, 'currentConcurrent') ? undefined : json['currentConcurrent'],
-        'currentHourCount': !exists(json, 'currentHourCount') ? undefined : json['currentHourCount'],
-        'currentDayCount': !exists(json, 'currentDayCount') ? undefined : json['currentDayCount'],
-        'hourResetAt': !exists(json, 'hourResetAt') ? undefined : new Date(json['hourResetAt']),
-        'dayResetAt': !exists(json, 'dayResetAt') ? undefined : new Date(json['dayResetAt']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    principal: !exists(json, "principal")
+      ? undefined
+      : PrincipalFromJSON(json["principal"]),
+    resourceType: !exists(json, "resourceType")
+      ? undefined
+      : json["resourceType"],
+    maxConcurrent: !exists(json, "maxConcurrent")
+      ? undefined
+      : json["maxConcurrent"],
+    maxPerHour: !exists(json, "maxPerHour") ? undefined : json["maxPerHour"],
+    maxPerDay: !exists(json, "maxPerDay") ? undefined : json["maxPerDay"],
+    currentConcurrent: !exists(json, "currentConcurrent")
+      ? undefined
+      : json["currentConcurrent"],
+    currentHourCount: !exists(json, "currentHourCount")
+      ? undefined
+      : json["currentHourCount"],
+    currentDayCount: !exists(json, "currentDayCount")
+      ? undefined
+      : json["currentDayCount"],
+    hourResetAt: !exists(json, "hourResetAt")
+      ? undefined
+      : new Date(json["hourResetAt"]),
+    dayResetAt: !exists(json, "dayResetAt")
+      ? undefined
+      : new Date(json["dayResetAt"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function QuotaToJSON(value?: Quota): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'principal': PrincipalToJSON(value.principal),
-        'resourceType': value.resourceType,
-        'maxConcurrent': value.maxConcurrent,
-        'maxPerHour': value.maxPerHour,
-        'maxPerDay': value.maxPerDay,
-        'currentConcurrent': value.currentConcurrent,
-        'currentHourCount': value.currentHourCount,
-        'currentDayCount': value.currentDayCount,
-        'hourResetAt': value.hourResetAt === undefined ? undefined : value.hourResetAt.toISOString(),
-        'dayResetAt': value.dayResetAt === undefined ? undefined : value.dayResetAt.toISOString(),
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    principal: PrincipalToJSON(value.principal),
+    resourceType: value.resourceType,
+    maxConcurrent: value.maxConcurrent,
+    maxPerHour: value.maxPerHour,
+    maxPerDay: value.maxPerDay,
+    currentConcurrent: value.currentConcurrent,
+    currentHourCount: value.currentHourCount,
+    currentDayCount: value.currentDayCount,
+    hourResetAt:
+      value.hourResetAt === undefined
+        ? undefined
+        : value.hourResetAt.toISOString(),
+    dayResetAt:
+      value.dayResetAt === undefined
+        ? undefined
+        : value.dayResetAt.toISOString(),
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum QuotaResourceTypeEnum {
-    WORKFLOWEXECUTION = 'workflow_execution',
-    APICALL = 'api_call',
-    LLMREQUEST = 'llm_request',
-    EMAILSEND = 'email_send',
-    FILEUPLOAD = 'file_upload'
+  WORKFLOWEXECUTION = "workflow_execution",
+  APICALL = "api_call",
+  LLMREQUEST = "llm_request",
+  EMAILSEND = "email_send",
+  FILEUPLOAD = "file_upload",
 }
-
-

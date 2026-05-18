@@ -13,47 +13,69 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { ExecModuleRateLimitConfig } from '@thorapi/model/ExecModuleRateLimitConfig'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { ExecModuleRateLimitConfig } from "@thorapi/model/ExecModuleRateLimitConfig";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type ExecModuleRateLimitConfigResponse = ExecModuleRateLimitConfig[]
+type ExecModuleRateLimitConfigResponse = ExecModuleRateLimitConfig[];
 
-const toExecModuleRateLimitConfigList = (result: unknown): ExecModuleRateLimitConfigResponse => {
+const toExecModuleRateLimitConfigList = (
+  result: unknown,
+): ExecModuleRateLimitConfigResponse => {
   if (Array.isArray(result)) {
-    return result as ExecModuleRateLimitConfigResponse
+    return result as ExecModuleRateLimitConfigResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as ExecModuleRateLimitConfigResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as ExecModuleRateLimitConfigResponse)
+    : [];
+};
 
 export const ExecModuleRateLimitConfigService = createApi({
-  reducerPath: 'ExecModuleRateLimitConfig', // This should remain unique
+  reducerPath: "ExecModuleRateLimitConfig", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['ExecModuleRateLimitConfig'],
+  tagTypes: ["ExecModuleRateLimitConfig"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getExecModuleRateLimitConfigsPaged: build.query<ExecModuleRateLimitConfigResponse, { page: number; size?: number; example?: Partial<ExecModuleRateLimitConfig> }>({
+    getExecModuleRateLimitConfigsPaged: build.query<
+      ExecModuleRateLimitConfigResponse,
+      {
+        page: number;
+        size?: number;
+        example?: Partial<ExecModuleRateLimitConfig>;
+      }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ExecModuleRateLimitConfig?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ExecModuleRateLimitConfig?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toExecModuleRateLimitConfigList(result)
+        const rows = toExecModuleRateLimitConfigList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ExecModuleRateLimitConfig' as const, id })),
-          { type: 'ExecModuleRateLimitConfig', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({
+              type: "ExecModuleRateLimitConfig" as const,
+              id,
+            })),
+          { type: "ExecModuleRateLimitConfig", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getExecModuleRateLimitConfigs: build.query<ExecModuleRateLimitConfigResponse, { example?: Partial<ExecModuleRateLimitConfig> } | void>({
+    getExecModuleRateLimitConfigs: build.query<
+      ExecModuleRateLimitConfigResponse,
+      { example?: Partial<ExecModuleRateLimitConfig> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +84,120 @@ export const ExecModuleRateLimitConfigService = createApi({
         return `ExecModuleRateLimitConfig`;
       },
       providesTags: (result) => {
-        const rows = toExecModuleRateLimitConfigList(result)
+        const rows = toExecModuleRateLimitConfigList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ExecModuleRateLimitConfig' as const, id })),
-          { type: 'ExecModuleRateLimitConfig', id: 'LIST' },
-        ]
+            .map(({ id }) => ({
+              type: "ExecModuleRateLimitConfig" as const,
+              id,
+            })),
+          { type: "ExecModuleRateLimitConfig", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addExecModuleRateLimitConfig: build.mutation<ExecModuleRateLimitConfig, Partial<ExecModuleRateLimitConfig>>({
+    addExecModuleRateLimitConfig: build.mutation<
+      ExecModuleRateLimitConfig,
+      Partial<ExecModuleRateLimitConfig>
+    >({
       query: (body) => ({
         url: `ExecModuleRateLimitConfig`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'ExecModuleRateLimitConfig', id: 'LIST' }],
+      invalidatesTags: [{ type: "ExecModuleRateLimitConfig", id: "LIST" }],
     }),
 
     // 4) Get single by ID
-    getExecModuleRateLimitConfig: build.query<ExecModuleRateLimitConfig, string>({
+    getExecModuleRateLimitConfig: build.query<
+      ExecModuleRateLimitConfig,
+      string
+    >({
       query: (id) => `ExecModuleRateLimitConfig/${id}`,
-      providesTags: (result, error, id) => [{ type: 'ExecModuleRateLimitConfig', id }],
+      providesTags: (result, error, id) => [
+        { type: "ExecModuleRateLimitConfig", id },
+      ],
     }),
 
     // 5) Update
-    updateExecModuleRateLimitConfig: build.mutation<void, Pick<ExecModuleRateLimitConfig, 'id'> & Partial<ExecModuleRateLimitConfig>>({
+    updateExecModuleRateLimitConfig: build.mutation<
+      void,
+      Pick<ExecModuleRateLimitConfig, "id"> & Partial<ExecModuleRateLimitConfig>
+    >({
       query: ({ id, ...patch }) => ({
         url: `ExecModuleRateLimitConfig/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            ExecModuleRateLimitConfigService.util.updateQueryData('getExecModuleRateLimitConfig', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            ExecModuleRateLimitConfigService.util.updateQueryData(
+              "getExecModuleRateLimitConfig",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<ExecModuleRateLimitConfig, 'id'>) => [
-        { type: 'ExecModuleRateLimitConfig', id },
-        { type: 'ExecModuleRateLimitConfig', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<ExecModuleRateLimitConfig, "id">,
+      ) => [
+        { type: "ExecModuleRateLimitConfig", id },
+        { type: "ExecModuleRateLimitConfig", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteExecModuleRateLimitConfig: build.mutation<{ success: boolean; id: string }, number>({
+    deleteExecModuleRateLimitConfig: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `ExecModuleRateLimitConfig/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'ExecModuleRateLimitConfig', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "ExecModuleRateLimitConfig", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteExecModuleRateLimitConfigCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteExecModuleRateLimitConfigCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `ExecModuleRateLimitConfig/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ExecModuleRateLimitConfig', id }, { type: 'ExecModuleRateLimitConfig', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "ExecModuleRateLimitConfig", id },
+        { type: "ExecModuleRateLimitConfig", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetExecModuleRateLimitConfigsPagedQuery`
 export const {
-  useGetExecModuleRateLimitConfigsPagedQuery,     // immediate fetch
+  useGetExecModuleRateLimitConfigsPagedQuery, // immediate fetch
   useLazyGetExecModuleRateLimitConfigsPagedQuery, // lazy fetch
   useGetExecModuleRateLimitConfigQuery,
   useGetExecModuleRateLimitConfigsQuery,
@@ -150,4 +205,4 @@ export const {
   useUpdateExecModuleRateLimitConfigMutation,
   useDeleteExecModuleRateLimitConfigMutation,
   useDeleteExecModuleRateLimitConfigCascadeMutation,
-} = ExecModuleRateLimitConfigService
+} = ExecModuleRateLimitConfigService;

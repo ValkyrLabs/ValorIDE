@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  Cell,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddCellMutation } from '../../services/CellService';
+import { Cell } from "@thorapi/model";
+
+import { useAddCellMutation } from "../../services/CellService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,15 +71,17 @@ GridHeim spreadsheet cell
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        sheetId: Yup.string(),
-        comment: Yup.string(),
-        hyperlink: Yup.string(),
-        stringValue: Yup.string(),
-        numberValue: asNumber(Yup.number().typeError("numberValue must be a number")),
-        trashed: Yup.boolean(),
+  sheetId: Yup.string(),
+  comment: Yup.string(),
+  hyperlink: Yup.string(),
+  stringValue: Yup.string(),
+  numberValue: asNumber(Yup.number().typeError("numberValue must be a number")),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -90,12 +98,18 @@ const CellForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -103,12 +117,12 @@ const CellForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Cell> = {
-          sheetId: '',
-          comment: '',
-          hyperlink: '',
-          stringValue: '',
-          numberValue: 0,
-          trashed: false,
+    sheetId: "",
+    comment: "",
+    hyperlink: "",
+    stringValue: "",
+    numberValue: 0,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -123,11 +137,14 @@ const CellForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new Cell:', grants);
+    console.log("Permissions saved for new Cell:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Cell>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<Cell>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -138,7 +155,7 @@ const CellForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Cell created successfully! Would you like to set permissions for this object?`
+          `Cell created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -146,8 +163,8 @@ const CellForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create Cell:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create Cell:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -168,44 +185,36 @@ const CellForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addCellResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New Cell
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New Cell
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="sheetId" className="nice-form-control">
                       <b>
                         Sheet Id:
-                        {touched.sheetId &&
-                         !errors.sheetId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.sheetId && !errors.sheetId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="sheetId"
-                            value={values?.sheetId}
-                            placeholder="Sheet Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="sheetId"
+                        value={values?.sheetId}
+                        placeholder="Sheet Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -217,28 +226,21 @@ const CellForm: React.FC = () => {
                     <label htmlFor="comment" className="nice-form-control">
                       <b>
                         Comment:
-                        {touched.comment &&
-                         !errors.comment && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.comment && !errors.comment && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="comment"
-                            value={values?.comment}
-                            placeholder="Comment"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="comment"
+                        value={values?.comment}
+                        placeholder="Comment"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -250,28 +252,21 @@ const CellForm: React.FC = () => {
                     <label htmlFor="hyperlink" className="nice-form-control">
                       <b>
                         Hyperlink:
-                        {touched.hyperlink &&
-                         !errors.hyperlink && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.hyperlink && !errors.hyperlink && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="hyperlink"
-                            value={values?.hyperlink}
-                            placeholder="Hyperlink"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="hyperlink"
+                        value={values?.hyperlink}
+                        placeholder="Hyperlink"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -283,28 +278,21 @@ const CellForm: React.FC = () => {
                     <label htmlFor="stringValue" className="nice-form-control">
                       <b>
                         String Value:
-                        {touched.stringValue &&
-                         !errors.stringValue && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.stringValue && !errors.stringValue && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="stringValue"
-                            value={values?.stringValue}
-                            placeholder="String Value"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="stringValue"
+                        value={values?.stringValue}
+                        placeholder="String Value"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -316,37 +304,33 @@ const CellForm: React.FC = () => {
                     <label htmlFor="numberValue" className="nice-form-control">
                       <b>
                         Number Value:
-                        {touched.numberValue &&
-                         !errors.numberValue && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.numberValue && !errors.numberValue && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="numberValue"
-                            type="number"
-                            step="any"
-                            value={values.numberValue || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('numberValue', true);
-                              const v = e.target.value;
-                              setFieldValue('numberValue', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.numberValue
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="numberValue"
+                        type="number"
+                        step="any"
+                        value={values.numberValue || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("numberValue", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "numberValue",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.numberValue
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -358,32 +342,25 @@ const CellForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -393,45 +370,58 @@ const CellForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New Cell
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New Cell
+                    </CoolButton>
 
-                  {(addCellResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addCellResult as any).error ? (addCellResult as any).error.data : (addCellResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addCellResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addCellResult as any).error
+                              ? (addCellResult as any).error.data
+                              : (addCellResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addCellResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addCellResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addCellResult: {JSON.stringify(addCellResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addCellResult: {JSON.stringify(addCellResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -451,8 +441,5 @@ const CellForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default CellForm;
-

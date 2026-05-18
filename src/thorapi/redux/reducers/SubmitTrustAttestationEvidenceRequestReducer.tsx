@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SubmitTrustAttestationEvidenceRequest } from '@thorapi/model/SubmitTrustAttestationEvidenceRequest';
+import { SubmitTrustAttestationEvidenceRequest } from "@thorapi/model/SubmitTrustAttestationEvidenceRequest";
 
 const SubmitTrustAttestationEvidenceRequestSlice = createSlice({
   name: "SubmitTrustAttestationEvidenceRequests",
@@ -27,20 +27,28 @@ const SubmitTrustAttestationEvidenceRequestSlice = createSlice({
     },
 
     SubmitTrustAttestationEvidenceRequestValueToggled(state, action) {
-      console.log("SubmitTrustAttestationEvidenceRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SubmitTrustAttestationEvidenceRequest:SubmitTrustAttestationEvidenceRequest = state.find((SubmitTrustAttestationEvidenceRequest) => SubmitTrustAttestationEvidenceRequest.id === action.payload.SubmitTrustAttestationEvidenceRequestId);
+      console.log("SubmitTrustAttestationEvidenceRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SubmitTrustAttestationEvidenceRequest: SubmitTrustAttestationEvidenceRequest =
+        state.find(
+          (SubmitTrustAttestationEvidenceRequest) =>
+            SubmitTrustAttestationEvidenceRequest.id ===
+            action.payload.SubmitTrustAttestationEvidenceRequestId,
+        );
       if (SubmitTrustAttestationEvidenceRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SubmitTrustAttestationEvidenceRequestpropertySet(state, action) {
-      const SubmitTrustAttestationEvidenceRequest = state.find((SubmitTrustAttestationEvidenceRequest) => SubmitTrustAttestationEvidenceRequest.id === action.payload.SubmitTrustAttestationEvidenceRequestId);
+      const SubmitTrustAttestationEvidenceRequest = state.find(
+        (SubmitTrustAttestationEvidenceRequest) =>
+          SubmitTrustAttestationEvidenceRequest.id ===
+          action.payload.SubmitTrustAttestationEvidenceRequestId,
+      );
       if (SubmitTrustAttestationEvidenceRequest) {
-      //  SubmitTrustAttestationEvidenceRequest[action.property] = action.payload[action.property];
+        //  SubmitTrustAttestationEvidenceRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +57,6 @@ const SubmitTrustAttestationEvidenceRequestSlice = createSlice({
 export const {
   SubmitTrustAttestationEvidenceRequestAdded,
   SubmitTrustAttestationEvidenceRequestValueToggled,
-  SubmitTrustAttestationEvidenceRequestpropertySet
+  SubmitTrustAttestationEvidenceRequestpropertySet,
 } = SubmitTrustAttestationEvidenceRequestSlice.actions;
 export default SubmitTrustAttestationEvidenceRequestSlice.reducer;

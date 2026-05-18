@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SwarmRegisterResponse } from '@thorapi/model/SwarmRegisterResponse';
+import { SwarmRegisterResponse } from "@thorapi/model/SwarmRegisterResponse";
 
 const SwarmRegisterResponseSlice = createSlice({
   name: "SwarmRegisterResponses",
@@ -27,20 +27,25 @@ const SwarmRegisterResponseSlice = createSlice({
     },
 
     SwarmRegisterResponseValueToggled(state, action) {
-      console.log("SwarmRegisterResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SwarmRegisterResponse:SwarmRegisterResponse = state.find((SwarmRegisterResponse) => SwarmRegisterResponse.id === action.payload.SwarmRegisterResponseId);
+      console.log("SwarmRegisterResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SwarmRegisterResponse: SwarmRegisterResponse = state.find(
+        (SwarmRegisterResponse) =>
+          SwarmRegisterResponse.id === action.payload.SwarmRegisterResponseId,
+      );
       if (SwarmRegisterResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SwarmRegisterResponsepropertySet(state, action) {
-      const SwarmRegisterResponse = state.find((SwarmRegisterResponse) => SwarmRegisterResponse.id === action.payload.SwarmRegisterResponseId);
+      const SwarmRegisterResponse = state.find(
+        (SwarmRegisterResponse) =>
+          SwarmRegisterResponse.id === action.payload.SwarmRegisterResponseId,
+      );
       if (SwarmRegisterResponse) {
-      //  SwarmRegisterResponse[action.property] = action.payload[action.property];
+        //  SwarmRegisterResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const SwarmRegisterResponseSlice = createSlice({
 export const {
   SwarmRegisterResponseAdded,
   SwarmRegisterResponseValueToggled,
-  SwarmRegisterResponsepropertySet
+  SwarmRegisterResponsepropertySet,
 } = SwarmRegisterResponseSlice.actions;
 export default SwarmRegisterResponseSlice.reducer;

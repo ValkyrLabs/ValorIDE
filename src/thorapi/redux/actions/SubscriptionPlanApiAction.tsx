@@ -17,95 +17,100 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // SubscriptionPlan
 
-export const FETCH_SUBSCRIPTIONPLAN_REQUEST = 'FETCH_SUBSCRIPTIONPLAN_REQUEST';
-export const FETCH_SUBSCRIPTIONPLAN_SUCCESS = 'FETCH_SUBSCRIPTIONPLAN_SUCCESS';
-export const FETCH_SUBSCRIPTIONPLAN_FAILURE = 'FETCH_SUBSCRIPTIONPLAN_FAILURE';
+export const FETCH_SUBSCRIPTIONPLAN_REQUEST = "FETCH_SUBSCRIPTIONPLAN_REQUEST";
+export const FETCH_SUBSCRIPTIONPLAN_SUCCESS = "FETCH_SUBSCRIPTIONPLAN_SUCCESS";
+export const FETCH_SUBSCRIPTIONPLAN_FAILURE = "FETCH_SUBSCRIPTIONPLAN_FAILURE";
 
-export const ADD_SUBSCRIPTIONPLAN_REQUEST = 'ADD_SUBSCRIPTIONPLAN_REQUEST';
-export const ADD_SUBSCRIPTIONPLAN_SUCCESS = 'ADD_SUBSCRIPTIONPLAN_SUCCESS';
-export const ADD_SUBSCRIPTIONPLAN_FAILURE = 'ADD_SUBSCRIPTIONPLAN_FAILURE';
+export const ADD_SUBSCRIPTIONPLAN_REQUEST = "ADD_SUBSCRIPTIONPLAN_REQUEST";
+export const ADD_SUBSCRIPTIONPLAN_SUCCESS = "ADD_SUBSCRIPTIONPLAN_SUCCESS";
+export const ADD_SUBSCRIPTIONPLAN_FAILURE = "ADD_SUBSCRIPTIONPLAN_FAILURE";
 
-export const UPDATE_SUBSCRIPTIONPLAN_REQUEST = 'UPDATE_SUBSCRIPTIONPLAN_REQUEST';
-export const UPDATE_SUBSCRIPTIONPLAN_SUCCESS = 'UPDATE_SUBSCRIPTIONPLAN_SUCCESS';
-export const UPDATE_SUBSCRIPTIONPLAN_FAILURE = 'UPDATE_SUBSCRIPTIONPLAN_FAILURE';
+export const UPDATE_SUBSCRIPTIONPLAN_REQUEST =
+  "UPDATE_SUBSCRIPTIONPLAN_REQUEST";
+export const UPDATE_SUBSCRIPTIONPLAN_SUCCESS =
+  "UPDATE_SUBSCRIPTIONPLAN_SUCCESS";
+export const UPDATE_SUBSCRIPTIONPLAN_FAILURE =
+  "UPDATE_SUBSCRIPTIONPLAN_FAILURE";
 
-export const DELETE_SUBSCRIPTIONPLAN_REQUEST = 'DELETE_SUBSCRIPTIONPLAN_REQUEST';
-export const DELETE_SUBSCRIPTIONPLAN_SUCCESS = 'DELETE_SUBSCRIPTIONPLAN_SUCCESS';
-export const DELETE_SUBSCRIPTIONPLAN_FAILURE = 'DELETE_SUBSCRIPTIONPLAN_FAILURE';
+export const DELETE_SUBSCRIPTIONPLAN_REQUEST =
+  "DELETE_SUBSCRIPTIONPLAN_REQUEST";
+export const DELETE_SUBSCRIPTIONPLAN_SUCCESS =
+  "DELETE_SUBSCRIPTIONPLAN_SUCCESS";
+export const DELETE_SUBSCRIPTIONPLAN_FAILURE =
+  "DELETE_SUBSCRIPTIONPLAN_FAILURE";
 
-export const LIST_SUBSCRIPTIONPLAN_REQUEST = 'LIST_SUBSCRIPTIONPLAN_REQUEST';
-export const LIST_SUBSCRIPTIONPLAN_SUCCESS = 'LIST_SUBSCRIPTIONPLAN_SUCCESS';
-export const LIST_SUBSCRIPTIONPLAN_FAILURE = 'LIST_SUBSCRIPTIONPLAN_FAILURE';
+export const LIST_SUBSCRIPTIONPLAN_REQUEST = "LIST_SUBSCRIPTIONPLAN_REQUEST";
+export const LIST_SUBSCRIPTIONPLAN_SUCCESS = "LIST_SUBSCRIPTIONPLAN_SUCCESS";
+export const LIST_SUBSCRIPTIONPLAN_FAILURE = "LIST_SUBSCRIPTIONPLAN_FAILURE";
 
 export const addSubscriptionPlanRequest = () => ({
-    type: ADD_SUBSCRIPTIONPLAN_REQUEST,
+  type: ADD_SUBSCRIPTIONPLAN_REQUEST,
 });
 
 export const addSubscriptionPlanSuccess = (SubscriptionPlans: any) => ({
-    type: ADD_SUBSCRIPTIONPLAN_SUCCESS,
-    payload: SubscriptionPlans,
+  type: ADD_SUBSCRIPTIONPLAN_SUCCESS,
+  payload: SubscriptionPlans,
 });
 
 export const addSubscriptionPlanFailure = (error: Error) => ({
-    type: ADD_SUBSCRIPTIONPLAN_FAILURE,
-    payload: error,
+  type: ADD_SUBSCRIPTIONPLAN_FAILURE,
+  payload: error,
 });
 
-
 export const fetchSubscriptionPlanRequest = () => ({
-    type: FETCH_SUBSCRIPTIONPLAN_REQUEST,
+  type: FETCH_SUBSCRIPTIONPLAN_REQUEST,
 });
 
 export const fetchSubscriptionPlanSuccess = (SubscriptionPlans: any) => ({
-    type: FETCH_SUBSCRIPTIONPLAN_SUCCESS,
-    payload: SubscriptionPlans,
+  type: FETCH_SUBSCRIPTIONPLAN_SUCCESS,
+  payload: SubscriptionPlans,
 });
 
 export const fetchSubscriptionPlanFailure = (error: Error) => ({
-    type: FETCH_SUBSCRIPTIONPLAN_FAILURE,
-    payload: error,
+  type: FETCH_SUBSCRIPTIONPLAN_FAILURE,
+  payload: error,
 });
 
 export const listSubscriptionPlanRequest = () => ({
-    type: LIST_SUBSCRIPTIONPLAN_REQUEST,
+  type: LIST_SUBSCRIPTIONPLAN_REQUEST,
 });
 
 export const listSubscriptionPlanSuccess = (SubscriptionPlans: any) => ({
-    type: LIST_SUBSCRIPTIONPLAN_SUCCESS,
-    payload: SubscriptionPlans,
+  type: LIST_SUBSCRIPTIONPLAN_SUCCESS,
+  payload: SubscriptionPlans,
 });
 
 export const listSubscriptionPlanFailure = (error: Error) => ({
-    type: LIST_SUBSCRIPTIONPLAN_FAILURE,
-    payload: error,
+  type: LIST_SUBSCRIPTIONPLAN_FAILURE,
+  payload: error,
 });
 
 export const updateSubscriptionPlanRequest = (SubscriptionPlan: any) => ({
-    type: UPDATE_SUBSCRIPTIONPLAN_REQUEST,
-    payload: SubscriptionPlan,
+  type: UPDATE_SUBSCRIPTIONPLAN_REQUEST,
+  payload: SubscriptionPlan,
 });
 
 export const updateSubscriptionPlanSuccess = (SubscriptionPlan: any) => ({
-    type: UPDATE_SUBSCRIPTIONPLAN_SUCCESS,
-    payload: SubscriptionPlan,
+  type: UPDATE_SUBSCRIPTIONPLAN_SUCCESS,
+  payload: SubscriptionPlan,
 });
 
 export const updateSubscriptionPlanFailure = (error: Error) => ({
-    type: UPDATE_SUBSCRIPTIONPLAN_FAILURE,
-    payload: error,
+  type: UPDATE_SUBSCRIPTIONPLAN_FAILURE,
+  payload: error,
 });
 
 export const deleteSubscriptionPlanRequest = (SubscriptionPlan: any) => ({
-    type: DELETE_SUBSCRIPTIONPLAN_REQUEST,
-    payload: SubscriptionPlan,
+  type: DELETE_SUBSCRIPTIONPLAN_REQUEST,
+  payload: SubscriptionPlan,
 });
 
 export const deleteSubscriptionPlanSuccess = (SubscriptionPlan: any) => ({
-    type: DELETE_SUBSCRIPTIONPLAN_SUCCESS,
-    payload: SubscriptionPlan,
+  type: DELETE_SUBSCRIPTIONPLAN_SUCCESS,
+  payload: SubscriptionPlan,
 });
 
 export const deleteSubscriptionPlanFailure = (error: Error) => ({
-    type: DELETE_SUBSCRIPTIONPLAN_FAILURE,
-    payload: error,
+  type: DELETE_SUBSCRIPTIONPLAN_FAILURE,
+  payload: error,
 });

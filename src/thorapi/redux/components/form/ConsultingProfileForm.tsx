@@ -13,32 +13,40 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   ConsultingProfile,
   ConsultingProfileConsultingTypeEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddConsultingProfileMutation } from '../../services/ConsultingProfileService';
+import { useAddConsultingProfileMutation } from "../../services/ConsultingProfileService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -63,10 +71,10 @@ Profile for candidates interested in consulting/reseller opportunities
 -------------------------------------------------------- */
 const ConsultingTypeValidation = () => {
   return [
-    'INDEPENDENT_CONSULTANT',
-    'AGENCY_OWNER',
-    'FREELANCER',
-    'RESELLER_PARTNER',
+    "INDEPENDENT_CONSULTANT",
+    "AGENCY_OWNER",
+    "FREELANCER",
+    "RESELLER_PARTNER",
   ];
 };
 
@@ -74,52 +82,67 @@ const ConsultingTypeValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        jobSeekerId: Yup.string(),
-      consultingType: Yup.mixed()
-        .oneOf(ConsultingTypeValidation(), "Invalid value for consultingType")
-        ,
-        expertiseAreas: Yup.string(),
-        maximumHourlyRate: asNumber(Yup.number().typeError("maximumHourlyRate must be a number")),
-        minimumMonthlyCommitment: asNumber(Yup.number().integer().typeError("minimumMonthlyCommitment must be a number")),
-        geographicFocus: Yup.string(),
-        projectPortfolio: Yup.string(),
-        profileCompletionScore: asNumber(Yup.number().typeError("profileCompletionScore must be a number")),
-        isAvailable: Yup.boolean(),
-        availableStartDate: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("availableStartDate must be a valid date"),
-        createdDate: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("createdDate must be a valid date"),
-        updatedDate: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("updatedDate must be a valid date"),
-        trashed: Yup.boolean(),
+  jobSeekerId: Yup.string(),
+  consultingType: Yup.mixed().oneOf(
+    ConsultingTypeValidation(),
+    "Invalid value for consultingType",
+  ),
+  expertiseAreas: Yup.string(),
+  maximumHourlyRate: asNumber(
+    Yup.number().typeError("maximumHourlyRate must be a number"),
+  ),
+  minimumMonthlyCommitment: asNumber(
+    Yup.number()
+      .integer()
+      .typeError("minimumMonthlyCommitment must be a number"),
+  ),
+  geographicFocus: Yup.string(),
+  projectPortfolio: Yup.string(),
+  profileCompletionScore: asNumber(
+    Yup.number().typeError("profileCompletionScore must be a number"),
+  ),
+  isAvailable: Yup.boolean(),
+  availableStartDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("availableStartDate must be a valid date"),
+  createdDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("createdDate must be a valid date"),
+  updatedDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("updatedDate must be a valid date"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ConsultingProfileForm: React.FC = () => {
-  const [addConsultingProfile, addConsultingProfileResult] = useAddConsultingProfileMutation();
+  const [addConsultingProfile, addConsultingProfileResult] =
+    useAddConsultingProfileMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -129,12 +152,18 @@ const ConsultingProfileForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -142,19 +171,19 @@ const ConsultingProfileForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ConsultingProfile> = {
-          jobSeekerId: '',
-        consultingType: undefined,
-          expertiseAreas: '',
-          maximumHourlyRate: 0,
-          minimumMonthlyCommitment: 0,
-          geographicFocus: '',
-          projectPortfolio: '',
-          profileCompletionScore: 0,
-          isAvailable: false,
-          availableStartDate: new Date(),
-          createdDate: new Date(),
-          updatedDate: new Date(),
-          trashed: false,
+    jobSeekerId: "",
+    consultingType: undefined,
+    expertiseAreas: "",
+    maximumHourlyRate: 0,
+    minimumMonthlyCommitment: 0,
+    geographicFocus: "",
+    projectPortfolio: "",
+    profileCompletionScore: 0,
+    isAvailable: false,
+    availableStartDate: new Date(),
+    createdDate: new Date(),
+    updatedDate: new Date(),
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -169,11 +198,14 @@ const ConsultingProfileForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new ConsultingProfile:', grants);
+    console.log("Permissions saved for new ConsultingProfile:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ConsultingProfile>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<ConsultingProfile>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -184,7 +216,7 @@ const ConsultingProfileForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ConsultingProfile created successfully! Would you like to set permissions for this object?`
+          `ConsultingProfile created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -192,8 +224,8 @@ const ConsultingProfileForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create ConsultingProfile:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create ConsultingProfile:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -214,44 +246,37 @@ const ConsultingProfileForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addConsultingProfileResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New ConsultingProfile
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    ConsultingProfile
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="jobSeekerId" className="nice-form-control">
                       <b>
                         Job Seeker Id:
-                        {touched.jobSeekerId &&
-                         !errors.jobSeekerId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.jobSeekerId && !errors.jobSeekerId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="jobSeekerId"
-                            value={values?.jobSeekerId}
-                            placeholder="Job Seeker Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="jobSeekerId"
+                        value={values?.jobSeekerId}
+                        placeholder="Job Seeker Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -260,33 +285,39 @@ const ConsultingProfileForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="consultingType" className="nice-form-control">
+                    <label
+                      htmlFor="consultingType"
+                      className="nice-form-control"
+                    >
                       <b>
                         Consulting Type:
-                        {touched.consultingType &&
-                         !errors.consultingType && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.consultingType && !errors.consultingType && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="consultingType"
-                          value={values.consultingType || ''}
-                          className={
-                            errors.consultingType
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('consultingType', true);
-                            setFieldValue('consultingType', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Consulting Type" />
-                          <ConsultingTypeLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="consultingType"
+                        value={values.consultingType || ""}
+                        className={
+                          errors.consultingType
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("consultingType", true);
+                          setFieldValue(
+                            "consultingType",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Consulting Type" />
+                        <ConsultingTypeLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -295,31 +326,27 @@ const ConsultingProfileForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="expertiseAreas" className="nice-form-control">
+                    <label
+                      htmlFor="expertiseAreas"
+                      className="nice-form-control"
+                    >
                       <b>
                         Expertise Areas:
-                        {touched.expertiseAreas &&
-                         !errors.expertiseAreas && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.expertiseAreas && !errors.expertiseAreas && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="expertiseAreas"
-                            value={values?.expertiseAreas}
-                            placeholder="Expertise Areas"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="expertiseAreas"
+                        value={values?.expertiseAreas}
+                        placeholder="Expertise Areas"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -328,40 +355,40 @@ const ConsultingProfileForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="maximumHourlyRate" className="nice-form-control">
+                    <label
+                      htmlFor="maximumHourlyRate"
+                      className="nice-form-control"
+                    >
                       <b>
                         Maximum Hourly Rate:
                         {touched.maximumHourlyRate &&
-                         !errors.maximumHourlyRate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.maximumHourlyRate && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="maximumHourlyRate"
-                            type="number"
-                            step="any"
-                            value={values.maximumHourlyRate || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('maximumHourlyRate', true);
-                              const v = e.target.value;
-                              setFieldValue('maximumHourlyRate', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.maximumHourlyRate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="maximumHourlyRate"
+                        type="number"
+                        step="any"
+                        value={values.maximumHourlyRate || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("maximumHourlyRate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "maximumHourlyRate",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.maximumHourlyRate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -370,39 +397,39 @@ const ConsultingProfileForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="minimumMonthlyCommitment" className="nice-form-control">
+                    <label
+                      htmlFor="minimumMonthlyCommitment"
+                      className="nice-form-control"
+                    >
                       <b>
                         Minimum Monthly Commitment:
                         {touched.minimumMonthlyCommitment &&
-                         !errors.minimumMonthlyCommitment && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.minimumMonthlyCommitment && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="minimumMonthlyCommitment"
-                            type="number"
-                            value={values.minimumMonthlyCommitment || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('minimumMonthlyCommitment', true);
-                              const v = e.target.value;
-                              setFieldValue('minimumMonthlyCommitment', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.minimumMonthlyCommitment
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="minimumMonthlyCommitment"
+                        type="number"
+                        value={values.minimumMonthlyCommitment || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("minimumMonthlyCommitment", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "minimumMonthlyCommitment",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.minimumMonthlyCommitment
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -411,31 +438,27 @@ const ConsultingProfileForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="geographicFocus" className="nice-form-control">
+                    <label
+                      htmlFor="geographicFocus"
+                      className="nice-form-control"
+                    >
                       <b>
                         Geographic Focus:
-                        {touched.geographicFocus &&
-                         !errors.geographicFocus && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.geographicFocus && !errors.geographicFocus && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="geographicFocus"
-                            value={values?.geographicFocus}
-                            placeholder="Geographic Focus"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="geographicFocus"
+                        value={values?.geographicFocus}
+                        placeholder="Geographic Focus"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -444,31 +467,28 @@ const ConsultingProfileForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="projectPortfolio" className="nice-form-control">
+                    <label
+                      htmlFor="projectPortfolio"
+                      className="nice-form-control"
+                    >
                       <b>
                         Project Portfolio:
                         {touched.projectPortfolio &&
-                         !errors.projectPortfolio && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.projectPortfolio && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="projectPortfolio"
-                            value={values?.projectPortfolio}
-                            placeholder="Project Portfolio"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="projectPortfolio"
+                        value={values?.projectPortfolio}
+                        placeholder="Project Portfolio"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -477,40 +497,40 @@ const ConsultingProfileForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="profileCompletionScore" className="nice-form-control">
+                    <label
+                      htmlFor="profileCompletionScore"
+                      className="nice-form-control"
+                    >
                       <b>
                         Profile Completion Score:
                         {touched.profileCompletionScore &&
-                         !errors.profileCompletionScore && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.profileCompletionScore && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="profileCompletionScore"
-                            type="number"
-                            step="any"
-                            value={values.profileCompletionScore || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('profileCompletionScore', true);
-                              const v = e.target.value;
-                              setFieldValue('profileCompletionScore', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.profileCompletionScore
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="profileCompletionScore"
+                        type="number"
+                        step="any"
+                        value={values.profileCompletionScore || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("profileCompletionScore", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "profileCompletionScore",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.profileCompletionScore
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -522,32 +542,25 @@ const ConsultingProfileForm: React.FC = () => {
                     <label htmlFor="isAvailable" className="nice-form-control">
                       <b>
                         Is Available:
-                        {touched.isAvailable &&
-                         !errors.isAvailable && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.isAvailable && !errors.isAvailable && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="isAvailable"
-                            name="isAvailable"
-                            checked={values.isAvailable || false}
-                            onChange={(e) => {
-                              setFieldTouched('isAvailable', true);
-                              setFieldValue('isAvailable', e.target.checked);
-                            }}
-                            isInvalid={!!errors.isAvailable}
-                            className={errors.isAvailable ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="isAvailable"
+                        name="isAvailable"
+                        checked={values.isAvailable || false}
+                        onChange={(e) => {
+                          setFieldTouched("isAvailable", true);
+                          setFieldValue("isAvailable", e.target.checked);
+                        }}
+                        isInvalid={!!errors.isAvailable}
+                        className={errors.isAvailable ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -556,41 +569,45 @@ const ConsultingProfileForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="availableStartDate" className="nice-form-control">
+                    <label
+                      htmlFor="availableStartDate"
+                      className="nice-form-control"
+                    >
                       <b>
                         Available Start Date:
                         {touched.availableStartDate &&
-                         !errors.availableStartDate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.availableStartDate && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="availableStartDate"
-                            type="datetime-local"
-                            value={values.availableStartDate ? 
-                              new Date(values.availableStartDate).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('availableStartDate', true);
-                              const v = e.target.value;
-                              setFieldValue('availableStartDate', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.availableStartDate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="availableStartDate"
+                        type="datetime-local"
+                        value={
+                          values.availableStartDate
+                            ? new Date(values.availableStartDate)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("availableStartDate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "availableStartDate",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.availableStartDate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -602,38 +619,38 @@ const ConsultingProfileForm: React.FC = () => {
                     <label htmlFor="createdDate" className="nice-form-control">
                       <b>
                         Created Date:
-                        {touched.createdDate &&
-                         !errors.createdDate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.createdDate && !errors.createdDate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="createdDate"
-                            type="datetime-local"
-                            value={values.createdDate ? 
-                              new Date(values.createdDate).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('createdDate', true);
-                              const v = e.target.value;
-                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.createdDate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="createdDate"
+                        type="datetime-local"
+                        value={
+                          values.createdDate
+                            ? new Date(values.createdDate)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("createdDate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "createdDate",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.createdDate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -645,38 +662,38 @@ const ConsultingProfileForm: React.FC = () => {
                     <label htmlFor="updatedDate" className="nice-form-control">
                       <b>
                         Updated Date:
-                        {touched.updatedDate &&
-                         !errors.updatedDate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.updatedDate && !errors.updatedDate && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="updatedDate"
-                            type="datetime-local"
-                            value={values.updatedDate ? 
-                              new Date(values.updatedDate).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('updatedDate', true);
-                              const v = e.target.value;
-                              setFieldValue('updatedDate', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.updatedDate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="updatedDate"
+                        type="datetime-local"
+                        value={
+                          values.updatedDate
+                            ? new Date(values.updatedDate)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("updatedDate", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "updatedDate",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.updatedDate
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -688,32 +705,25 @@ const ConsultingProfileForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -723,45 +733,60 @@ const ConsultingProfileForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New ConsultingProfile
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New ConsultingProfile
+                    </CoolButton>
 
-                  {(addConsultingProfileResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addConsultingProfileResult as any).error ? (addConsultingProfileResult as any).error.data : (addConsultingProfileResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addConsultingProfileResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addConsultingProfileResult as any).error
+                              ? (addConsultingProfileResult as any).error.data
+                              : (addConsultingProfileResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addConsultingProfileResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addConsultingProfileResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addConsultingProfileResult: {JSON.stringify(addConsultingProfileResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addConsultingProfileResult:{" "}
+                    {JSON.stringify(addConsultingProfileResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -793,16 +818,13 @@ kebabcase consulting-type-lookup
 const ConsultingTypeLookup = () => {
   return (
     <>
-      <option value='INDEPENDENT_CONSULTANT' label="INDEPENDENT _ CONSULTANT" />
-      <option value='AGENCY_OWNER' label="AGENCY _ OWNER" />
-      <option value='FREELANCER' label="FREELANCER" />
-      <option value='RESELLER_PARTNER' label="RESELLER _ PARTNER" />
+      <option value="INDEPENDENT_CONSULTANT" label="INDEPENDENT _ CONSULTANT" />
+      <option value="AGENCY_OWNER" label="AGENCY _ OWNER" />
+      <option value="FREELANCER" label="FREELANCER" />
+      <option value="RESELLER_PARTNER" label="RESELLER _ PARTNER" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default ConsultingProfileForm;
-

@@ -18,663 +18,771 @@ Template file: typescript-redux-query/apis.mustache
 Description: GrayMatterApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    GrayMatter,
-    GrayMatterFromJSON,
-    GrayMatterToJSON,
-    MemoryActionRequest,
-    MemoryActionRequestFromJSON,
-    MemoryActionRequestToJSON,
-    MemoryActionResponse,
-    MemoryActionResponseFromJSON,
-    MemoryActionResponseToJSON,
-    MemoryRunRecord,
-    MemoryRunRecordFromJSON,
-    MemoryRunRecordToJSON,
-    MemoryStats,
-    MemoryStatsFromJSON,
-    MemoryStatsToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  GrayMatter,
+  GrayMatterFromJSON,
+  GrayMatterToJSON,
+  MemoryActionRequest,
+  MemoryActionRequestFromJSON,
+  MemoryActionRequestToJSON,
+  MemoryActionResponse,
+  MemoryActionResponseFromJSON,
+  MemoryActionResponseToJSON,
+  MemoryRunRecord,
+  MemoryRunRecordFromJSON,
+  MemoryRunRecordToJSON,
+  MemoryStats,
+  MemoryStatsFromJSON,
+  MemoryStatsToJSON,
+} from "../model";
 
 export interface CompactMemoryApiRequest {
-    memoryActionRequest?: MemoryActionRequest;
+  memoryActionRequest?: MemoryActionRequest;
 }
 
 export interface DeleteGrayMatterApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface ExpandMemoryApiRequest {
-    memoryActionRequest?: MemoryActionRequest;
+  memoryActionRequest?: MemoryActionRequest;
 }
 
 export interface GetGrayMatterApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetGrayMatterListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface GetMemoryRunsApiRequest {
-    limit?: number;
+  limit?: number;
 }
 
 export interface PatchGrayMatterByIdApiRequest {
-    id: string;
-    grayMatter: GrayMatter;
+  id: string;
+  grayMatter: GrayMatter;
 }
 
 export interface PostGrayMatterApiRequest {
-    grayMatter: GrayMatter;
+  grayMatter: GrayMatter;
 }
 
 export interface PruneMemoryApiRequest {
-    memoryActionRequest?: MemoryActionRequest;
+  memoryActionRequest?: MemoryActionRequest;
 }
 
 export interface ReindexMemoryApiRequest {
-    memoryActionRequest?: MemoryActionRequest;
+  memoryActionRequest?: MemoryActionRequest;
 }
 
 export interface UpdateGrayMatterApiRequest {
-    id: string;
-    grayMatter: GrayMatter;
+  id: string;
+  grayMatter: GrayMatter;
 }
-
 
 /**
  * Runs the memory compaction ExecModule to reduce context size. Costs credits.
  * Compact memory (reduce context size)
  */
-function compactMemoryRaw<T>(requestParameters: CompactMemoryApiRequest, requestConfig: runtime.TypedQueryConfig<T, MemoryActionResponse> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function compactMemoryRaw<T>(
+  requestParameters: CompactMemoryApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, MemoryActionResponse> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/memory/compact`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      MemoryActionRequestToJSON(requestParameters.memoryActionRequest),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(MemoryActionResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/memory/compact`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || MemoryActionRequestToJSON(requestParameters.memoryActionRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(MemoryActionResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Runs the memory compaction ExecModule to reduce context size. Costs credits.
-* Compact memory (reduce context size)
-*/
-export function compactMemory<T>(requestParameters: CompactMemoryApiRequest, requestConfig?: runtime.TypedQueryConfig<T, MemoryActionResponse>): QueryConfig<T> {
-    return compactMemoryRaw(requestParameters, requestConfig);
+ * Runs the memory compaction ExecModule to reduce context size. Costs credits.
+ * Compact memory (reduce context size)
+ */
+export function compactMemory<T>(
+  requestParameters: CompactMemoryApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, MemoryActionResponse>,
+): QueryConfig<T> {
+  return compactMemoryRaw(requestParameters, requestConfig);
 }
 
 /**
  * Deletes a specific GrayMatter.
  * Delete a GrayMatter.
  */
-function deleteGrayMatterRaw<T>(requestParameters: DeleteGrayMatterApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteGrayMatter.');
-    }
+function deleteGrayMatterRaw<T>(
+  requestParameters: DeleteGrayMatterApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteGrayMatter.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/GrayMatter/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/GrayMatter/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific GrayMatter.
-* Delete a GrayMatter.
-*/
-export function deleteGrayMatter<T>(requestParameters: DeleteGrayMatterApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteGrayMatterRaw(requestParameters, requestConfig);
+ * Deletes a specific GrayMatter.
+ * Delete a GrayMatter.
+ */
+export function deleteGrayMatter<T>(
+  requestParameters: DeleteGrayMatterApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteGrayMatterRaw(requestParameters, requestConfig);
 }
 
 /**
  * Upgrades context capacity for the current session. Costs credits.
  * Expand context window
  */
-function expandMemoryRaw<T>(requestParameters: ExpandMemoryApiRequest, requestConfig: runtime.TypedQueryConfig<T, MemoryActionResponse> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function expandMemoryRaw<T>(
+  requestParameters: ExpandMemoryApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, MemoryActionResponse> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/memory/expand`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      MemoryActionRequestToJSON(requestParameters.memoryActionRequest),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(MemoryActionResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/memory/expand`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || MemoryActionRequestToJSON(requestParameters.memoryActionRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(MemoryActionResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Upgrades context capacity for the current session. Costs credits.
-* Expand context window
-*/
-export function expandMemory<T>(requestParameters: ExpandMemoryApiRequest, requestConfig?: runtime.TypedQueryConfig<T, MemoryActionResponse>): QueryConfig<T> {
-    return expandMemoryRaw(requestParameters, requestConfig);
+ * Upgrades context capacity for the current session. Costs credits.
+ * Expand context window
+ */
+export function expandMemory<T>(
+  requestParameters: ExpandMemoryApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, MemoryActionResponse>,
+): QueryConfig<T> {
+  return expandMemoryRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single GrayMatter for a specific uid.
  * Retrieve a single GrayMatter
  */
-function getGrayMatterRaw<T>(requestParameters: GetGrayMatterApiRequest, requestConfig: runtime.TypedQueryConfig<T, GrayMatter> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getGrayMatter.');
-    }
+function getGrayMatterRaw<T>(
+  requestParameters: GetGrayMatterApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, GrayMatter> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getGrayMatter.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/GrayMatter/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(GrayMatterFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/GrayMatter/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(GrayMatterFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single GrayMatter for a specific uid.
-* Retrieve a single GrayMatter
-*/
-export function getGrayMatter<T>(requestParameters: GetGrayMatterApiRequest, requestConfig?: runtime.TypedQueryConfig<T, GrayMatter>): QueryConfig<T> {
-    return getGrayMatterRaw(requestParameters, requestConfig);
+ * Retrieves a single GrayMatter for a specific uid.
+ * Retrieve a single GrayMatter
+ */
+export function getGrayMatter<T>(
+  requestParameters: GetGrayMatterApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, GrayMatter>,
+): QueryConfig<T> {
+  return getGrayMatterRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of GrayMatters.
  * Retrieve a list of GrayMatters
  */
-function getGrayMatterListRaw<T>(requestParameters: GetGrayMatterListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<GrayMatter>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getGrayMatterListRaw<T>(
+  requestParameters: GetGrayMatterListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<GrayMatter>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/GrayMatter`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(GrayMatterFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/GrayMatter`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(GrayMatterFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of GrayMatters.
-* Retrieve a list of GrayMatters
-*/
-export function getGrayMatterList<T>(requestParameters: GetGrayMatterListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<GrayMatter>>): QueryConfig<T> {
-    return getGrayMatterListRaw(requestParameters, requestConfig);
+ * Retrieves a list of GrayMatters.
+ * Retrieve a list of GrayMatters
+ */
+export function getGrayMatterList<T>(
+  requestParameters: GetGrayMatterListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<GrayMatter>>,
+): QueryConfig<T> {
+  return getGrayMatterListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Returns the last N workflow runs for the current principal, including memory cost and quality signals, for the run timeline panel.
  * Get recent workflow run records with memory cost data
  */
-function getMemoryRunsRaw<T>(requestParameters: GetMemoryRunsApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<MemoryRunRecord>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getMemoryRunsRaw<T>(
+  requestParameters: GetMemoryRunsApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<MemoryRunRecord>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.limit !== undefined) {
+    queryParameters["limit"] = requestParameters.limit;
+  }
 
-    if (requestParameters.limit !== undefined) {
-        queryParameters['limit'] = requestParameters.limit;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/memory/runs`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(MemoryRunRecordFromJSON), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/memory/runs`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(MemoryRunRecordFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Returns the last N workflow runs for the current principal, including memory cost and quality signals, for the run timeline panel.
-* Get recent workflow run records with memory cost data
-*/
-export function getMemoryRuns<T>(requestParameters: GetMemoryRunsApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<MemoryRunRecord>>): QueryConfig<T> {
-    return getMemoryRunsRaw(requestParameters, requestConfig);
+ * Returns the last N workflow runs for the current principal, including memory cost and quality signals, for the run timeline panel.
+ * Get recent workflow run records with memory cost data
+ */
+export function getMemoryRuns<T>(
+  requestParameters: GetMemoryRunsApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<MemoryRunRecord>>,
+): QueryConfig<T> {
+  return getMemoryRunsRaw(requestParameters, requestConfig);
 }
 
 /**
  * Returns real-time context fill percentage, hit rate, waste ratio, and cost burn data for the GrayMatter Memory Dashboard.
  * Get memory stats for current principal
  */
-function getMemoryStatsRaw<T>( requestConfig: runtime.TypedQueryConfig<T, MemoryStats> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getMemoryStatsRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, MemoryStats> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/memory/stats`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(MemoryStatsFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/memory/stats`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(MemoryStatsFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Returns real-time context fill percentage, hit rate, waste ratio, and cost burn data for the GrayMatter Memory Dashboard.
-* Get memory stats for current principal
-*/
-export function getMemoryStats<T>( requestConfig?: runtime.TypedQueryConfig<T, MemoryStats>): QueryConfig<T> {
-    return getMemoryStatsRaw( requestConfig);
+ * Returns real-time context fill percentage, hit rate, waste ratio, and cost burn data for the GrayMatter Memory Dashboard.
+ * Get memory stats for current principal
+ */
+export function getMemoryStats<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, MemoryStats>,
+): QueryConfig<T> {
+  return getMemoryStatsRaw(requestConfig);
 }
 
 /**
  * Updates an existing GrayMatter.
  * Partially update an existing GrayMatter
  */
-function patchGrayMatterByIdRaw<T>(requestParameters: PatchGrayMatterByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, GrayMatter> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchGrayMatterById.');
-    }
+function patchGrayMatterByIdRaw<T>(
+  requestParameters: PatchGrayMatterByIdApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, GrayMatter> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling patchGrayMatterById.",
+    );
+  }
 
-    if (requestParameters.grayMatter === null || requestParameters.grayMatter === undefined) {
-        throw new runtime.RequiredError('grayMatter','Required parameter requestParameters.grayMatter was null or undefined when calling patchGrayMatterById.');
-    }
+  if (
+    requestParameters.grayMatter === null ||
+    requestParameters.grayMatter === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "grayMatter",
+      "Required parameter requestParameters.grayMatter was null or undefined when calling patchGrayMatterById.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/merge-patch+json";
 
-    headerParameters['Content-Type'] = 'application/merge-patch+json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/GrayMatter/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PATCH",
+      headers: headerParameters,
+    },
+    body: queryParameters || GrayMatterToJSON(requestParameters.grayMatter),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(GrayMatterFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/GrayMatter/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PATCH',
-            headers: headerParameters,
-        },
-        body: queryParameters || GrayMatterToJSON(requestParameters.grayMatter),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(GrayMatterFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing GrayMatter.
-* Partially update an existing GrayMatter
-*/
-export function patchGrayMatterById<T>(requestParameters: PatchGrayMatterByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, GrayMatter>): QueryConfig<T> {
-    return patchGrayMatterByIdRaw(requestParameters, requestConfig);
+ * Updates an existing GrayMatter.
+ * Partially update an existing GrayMatter
+ */
+export function patchGrayMatterById<T>(
+  requestParameters: PatchGrayMatterByIdApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, GrayMatter>,
+): QueryConfig<T> {
+  return patchGrayMatterByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new GrayMatter.
  * Create a new GrayMatter
  */
-function postGrayMatterRaw<T>(requestParameters: PostGrayMatterApiRequest, requestConfig: runtime.TypedQueryConfig<T, GrayMatter> = {}): QueryConfig<T> {
-    if (requestParameters.grayMatter === null || requestParameters.grayMatter === undefined) {
-        throw new runtime.RequiredError('grayMatter','Required parameter requestParameters.grayMatter was null or undefined when calling postGrayMatter.');
-    }
+function postGrayMatterRaw<T>(
+  requestParameters: PostGrayMatterApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, GrayMatter> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.grayMatter === null ||
+    requestParameters.grayMatter === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "grayMatter",
+      "Required parameter requestParameters.grayMatter was null or undefined when calling postGrayMatter.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/GrayMatter`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || GrayMatterToJSON(requestParameters.grayMatter),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(GrayMatterFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/GrayMatter`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || GrayMatterToJSON(requestParameters.grayMatter),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(GrayMatterFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new GrayMatter.
-* Create a new GrayMatter
-*/
-export function postGrayMatter<T>(requestParameters: PostGrayMatterApiRequest, requestConfig?: runtime.TypedQueryConfig<T, GrayMatter>): QueryConfig<T> {
-    return postGrayMatterRaw(requestParameters, requestConfig);
+ * Creates a new GrayMatter.
+ * Create a new GrayMatter
+ */
+export function postGrayMatter<T>(
+  requestParameters: PostGrayMatterApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, GrayMatter>,
+): QueryConfig<T> {
+  return postGrayMatterRaw(requestParameters, requestConfig);
 }
 
 /**
  * Removes low-relevance or expired MemoryEntry records for the current principal. Costs credits.
  * Prune memory (remove noise)
  */
-function pruneMemoryRaw<T>(requestParameters: PruneMemoryApiRequest, requestConfig: runtime.TypedQueryConfig<T, MemoryActionResponse> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function pruneMemoryRaw<T>(
+  requestParameters: PruneMemoryApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, MemoryActionResponse> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/memory/prune`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      MemoryActionRequestToJSON(requestParameters.memoryActionRequest),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(MemoryActionResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/memory/prune`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || MemoryActionRequestToJSON(requestParameters.memoryActionRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(MemoryActionResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Removes low-relevance or expired MemoryEntry records for the current principal. Costs credits.
-* Prune memory (remove noise)
-*/
-export function pruneMemory<T>(requestParameters: PruneMemoryApiRequest, requestConfig?: runtime.TypedQueryConfig<T, MemoryActionResponse>): QueryConfig<T> {
-    return pruneMemoryRaw(requestParameters, requestConfig);
+ * Removes low-relevance or expired MemoryEntry records for the current principal. Costs credits.
+ * Prune memory (remove noise)
+ */
+export function pruneMemory<T>(
+  requestParameters: PruneMemoryApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, MemoryActionResponse>,
+): QueryConfig<T> {
+  return pruneMemoryRaw(requestParameters, requestConfig);
 }
 
 /**
  * Rebuilds memory index to improve retrieval hit rate. Costs credits.
  * Reindex memory (improve hit rate)
  */
-function reindexMemoryRaw<T>(requestParameters: ReindexMemoryApiRequest, requestConfig: runtime.TypedQueryConfig<T, MemoryActionResponse> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function reindexMemoryRaw<T>(
+  requestParameters: ReindexMemoryApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, MemoryActionResponse> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/memory/reindex`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      MemoryActionRequestToJSON(requestParameters.memoryActionRequest),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(MemoryActionResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/memory/reindex`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || MemoryActionRequestToJSON(requestParameters.memoryActionRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(MemoryActionResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Rebuilds memory index to improve retrieval hit rate. Costs credits.
-* Reindex memory (improve hit rate)
-*/
-export function reindexMemory<T>(requestParameters: ReindexMemoryApiRequest, requestConfig?: runtime.TypedQueryConfig<T, MemoryActionResponse>): QueryConfig<T> {
-    return reindexMemoryRaw(requestParameters, requestConfig);
+ * Rebuilds memory index to improve retrieval hit rate. Costs credits.
+ * Reindex memory (improve hit rate)
+ */
+export function reindexMemory<T>(
+  requestParameters: ReindexMemoryApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, MemoryActionResponse>,
+): QueryConfig<T> {
+  return reindexMemoryRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing GrayMatter.
  * Update an existing GrayMatter
  */
-function updateGrayMatterRaw<T>(requestParameters: UpdateGrayMatterApiRequest, requestConfig: runtime.TypedQueryConfig<T, GrayMatter> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateGrayMatter.');
-    }
+function updateGrayMatterRaw<T>(
+  requestParameters: UpdateGrayMatterApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, GrayMatter> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateGrayMatter.",
+    );
+  }
 
-    if (requestParameters.grayMatter === null || requestParameters.grayMatter === undefined) {
-        throw new runtime.RequiredError('grayMatter','Required parameter requestParameters.grayMatter was null or undefined when calling updateGrayMatter.');
-    }
+  if (
+    requestParameters.grayMatter === null ||
+    requestParameters.grayMatter === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "grayMatter",
+      "Required parameter requestParameters.grayMatter was null or undefined when calling updateGrayMatter.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/GrayMatter/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || GrayMatterToJSON(requestParameters.grayMatter),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(GrayMatterFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/GrayMatter/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || GrayMatterToJSON(requestParameters.grayMatter),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(GrayMatterFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing GrayMatter.
-* Update an existing GrayMatter
-*/
-export function updateGrayMatter<T>(requestParameters: UpdateGrayMatterApiRequest, requestConfig?: runtime.TypedQueryConfig<T, GrayMatter>): QueryConfig<T> {
-    return updateGrayMatterRaw(requestParameters, requestConfig);
+ * Updates an existing GrayMatter.
+ * Update an existing GrayMatter
+ */
+export function updateGrayMatter<T>(
+  requestParameters: UpdateGrayMatterApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, GrayMatter>,
+): QueryConfig<T> {
+  return updateGrayMatterRaw(requestParameters, requestConfig);
 }
-

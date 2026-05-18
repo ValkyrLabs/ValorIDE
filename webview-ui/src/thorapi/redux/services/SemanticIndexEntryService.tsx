@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { SemanticIndexEntry } from '@thorapi/model/SemanticIndexEntry'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { SemanticIndexEntry } from "@thorapi/model/SemanticIndexEntry";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type SemanticIndexEntryResponse = SemanticIndexEntry[]
+type SemanticIndexEntryResponse = SemanticIndexEntry[];
 
-const toSemanticIndexEntryList = (result: unknown): SemanticIndexEntryResponse => {
+const toSemanticIndexEntryList = (
+  result: unknown,
+): SemanticIndexEntryResponse => {
   if (Array.isArray(result)) {
-    return result as SemanticIndexEntryResponse
+    return result as SemanticIndexEntryResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as SemanticIndexEntryResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as SemanticIndexEntryResponse)
+    : [];
+};
 
 export const SemanticIndexEntryService = createApi({
-  reducerPath: 'SemanticIndexEntry', // This should remain unique
+  reducerPath: "SemanticIndexEntry", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['SemanticIndexEntry'],
+  tagTypes: ["SemanticIndexEntry"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSemanticIndexEntrysPaged: build.query<SemanticIndexEntryResponse, { page: number; size?: number; example?: Partial<SemanticIndexEntry> }>({
+    getSemanticIndexEntrysPaged: build.query<
+      SemanticIndexEntryResponse,
+      { page: number; size?: number; example?: Partial<SemanticIndexEntry> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SemanticIndexEntry?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SemanticIndexEntry?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toSemanticIndexEntryList(result)
+        const rows = toSemanticIndexEntryList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'SemanticIndexEntry' as const, id })),
-          { type: 'SemanticIndexEntry', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "SemanticIndexEntry" as const, id })),
+          { type: "SemanticIndexEntry", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSemanticIndexEntrys: build.query<SemanticIndexEntryResponse, { example?: Partial<SemanticIndexEntry> } | void>({
+    getSemanticIndexEntrys: build.query<
+      SemanticIndexEntryResponse,
+      { example?: Partial<SemanticIndexEntry> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,112 @@ export const SemanticIndexEntryService = createApi({
         return `SemanticIndexEntry`;
       },
       providesTags: (result) => {
-        const rows = toSemanticIndexEntryList(result)
+        const rows = toSemanticIndexEntryList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'SemanticIndexEntry' as const, id })),
-          { type: 'SemanticIndexEntry', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "SemanticIndexEntry" as const, id })),
+          { type: "SemanticIndexEntry", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addSemanticIndexEntry: build.mutation<SemanticIndexEntry, Partial<SemanticIndexEntry>>({
+    addSemanticIndexEntry: build.mutation<
+      SemanticIndexEntry,
+      Partial<SemanticIndexEntry>
+    >({
       query: (body) => ({
         url: `SemanticIndexEntry`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'SemanticIndexEntry', id: 'LIST' }],
+      invalidatesTags: [{ type: "SemanticIndexEntry", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getSemanticIndexEntry: build.query<SemanticIndexEntry, string>({
       query: (id) => `SemanticIndexEntry/${id}`,
-      providesTags: (result, error, id) => [{ type: 'SemanticIndexEntry', id }],
+      providesTags: (result, error, id) => [{ type: "SemanticIndexEntry", id }],
     }),
 
     // 5) Update
-    updateSemanticIndexEntry: build.mutation<void, Pick<SemanticIndexEntry, 'id'> & Partial<SemanticIndexEntry>>({
+    updateSemanticIndexEntry: build.mutation<
+      void,
+      Pick<SemanticIndexEntry, "id"> & Partial<SemanticIndexEntry>
+    >({
       query: ({ id, ...patch }) => ({
         url: `SemanticIndexEntry/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            SemanticIndexEntryService.util.updateQueryData('getSemanticIndexEntry', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            SemanticIndexEntryService.util.updateQueryData(
+              "getSemanticIndexEntry",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<SemanticIndexEntry, 'id'>) => [
-        { type: 'SemanticIndexEntry', id },
-        { type: 'SemanticIndexEntry', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<SemanticIndexEntry, "id">,
+      ) => [
+        { type: "SemanticIndexEntry", id },
+        { type: "SemanticIndexEntry", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteSemanticIndexEntry: build.mutation<{ success: boolean; id: string }, number>({
+    deleteSemanticIndexEntry: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `SemanticIndexEntry/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'SemanticIndexEntry', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "SemanticIndexEntry", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSemanticIndexEntryCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteSemanticIndexEntryCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `SemanticIndexEntry/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'SemanticIndexEntry', id }, { type: 'SemanticIndexEntry', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "SemanticIndexEntry", id },
+        { type: "SemanticIndexEntry", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetSemanticIndexEntrysPagedQuery`
 export const {
-  useGetSemanticIndexEntrysPagedQuery,     // immediate fetch
+  useGetSemanticIndexEntrysPagedQuery, // immediate fetch
   useLazyGetSemanticIndexEntrysPagedQuery, // lazy fetch
   useGetSemanticIndexEntryQuery,
   useGetSemanticIndexEntrysQuery,
@@ -150,4 +190,4 @@ export const {
   useUpdateSemanticIndexEntryMutation,
   useDeleteSemanticIndexEntryMutation,
   useDeleteSemanticIndexEntryCascadeMutation,
-} = SemanticIndexEntryService
+} = SemanticIndexEntryService;

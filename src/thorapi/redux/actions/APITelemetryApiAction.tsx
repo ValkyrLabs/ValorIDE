@@ -17,95 +17,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // APITelemetry
 
-export const FETCH_APITELEMETRY_REQUEST = 'FETCH_APITELEMETRY_REQUEST';
-export const FETCH_APITELEMETRY_SUCCESS = 'FETCH_APITELEMETRY_SUCCESS';
-export const FETCH_APITELEMETRY_FAILURE = 'FETCH_APITELEMETRY_FAILURE';
+export const FETCH_APITELEMETRY_REQUEST = "FETCH_APITELEMETRY_REQUEST";
+export const FETCH_APITELEMETRY_SUCCESS = "FETCH_APITELEMETRY_SUCCESS";
+export const FETCH_APITELEMETRY_FAILURE = "FETCH_APITELEMETRY_FAILURE";
 
-export const ADD_APITELEMETRY_REQUEST = 'ADD_APITELEMETRY_REQUEST';
-export const ADD_APITELEMETRY_SUCCESS = 'ADD_APITELEMETRY_SUCCESS';
-export const ADD_APITELEMETRY_FAILURE = 'ADD_APITELEMETRY_FAILURE';
+export const ADD_APITELEMETRY_REQUEST = "ADD_APITELEMETRY_REQUEST";
+export const ADD_APITELEMETRY_SUCCESS = "ADD_APITELEMETRY_SUCCESS";
+export const ADD_APITELEMETRY_FAILURE = "ADD_APITELEMETRY_FAILURE";
 
-export const UPDATE_APITELEMETRY_REQUEST = 'UPDATE_APITELEMETRY_REQUEST';
-export const UPDATE_APITELEMETRY_SUCCESS = 'UPDATE_APITELEMETRY_SUCCESS';
-export const UPDATE_APITELEMETRY_FAILURE = 'UPDATE_APITELEMETRY_FAILURE';
+export const UPDATE_APITELEMETRY_REQUEST = "UPDATE_APITELEMETRY_REQUEST";
+export const UPDATE_APITELEMETRY_SUCCESS = "UPDATE_APITELEMETRY_SUCCESS";
+export const UPDATE_APITELEMETRY_FAILURE = "UPDATE_APITELEMETRY_FAILURE";
 
-export const DELETE_APITELEMETRY_REQUEST = 'DELETE_APITELEMETRY_REQUEST';
-export const DELETE_APITELEMETRY_SUCCESS = 'DELETE_APITELEMETRY_SUCCESS';
-export const DELETE_APITELEMETRY_FAILURE = 'DELETE_APITELEMETRY_FAILURE';
+export const DELETE_APITELEMETRY_REQUEST = "DELETE_APITELEMETRY_REQUEST";
+export const DELETE_APITELEMETRY_SUCCESS = "DELETE_APITELEMETRY_SUCCESS";
+export const DELETE_APITELEMETRY_FAILURE = "DELETE_APITELEMETRY_FAILURE";
 
-export const LIST_APITELEMETRY_REQUEST = 'LIST_APITELEMETRY_REQUEST';
-export const LIST_APITELEMETRY_SUCCESS = 'LIST_APITELEMETRY_SUCCESS';
-export const LIST_APITELEMETRY_FAILURE = 'LIST_APITELEMETRY_FAILURE';
+export const LIST_APITELEMETRY_REQUEST = "LIST_APITELEMETRY_REQUEST";
+export const LIST_APITELEMETRY_SUCCESS = "LIST_APITELEMETRY_SUCCESS";
+export const LIST_APITELEMETRY_FAILURE = "LIST_APITELEMETRY_FAILURE";
 
 export const addAPITelemetryRequest = () => ({
-    type: ADD_APITELEMETRY_REQUEST,
+  type: ADD_APITELEMETRY_REQUEST,
 });
 
 export const addAPITelemetrySuccess = (APITelemetrys: any) => ({
-    type: ADD_APITELEMETRY_SUCCESS,
-    payload: APITelemetrys,
+  type: ADD_APITELEMETRY_SUCCESS,
+  payload: APITelemetrys,
 });
 
 export const addAPITelemetryFailure = (error: Error) => ({
-    type: ADD_APITELEMETRY_FAILURE,
-    payload: error,
+  type: ADD_APITELEMETRY_FAILURE,
+  payload: error,
 });
 
-
 export const fetchAPITelemetryRequest = () => ({
-    type: FETCH_APITELEMETRY_REQUEST,
+  type: FETCH_APITELEMETRY_REQUEST,
 });
 
 export const fetchAPITelemetrySuccess = (APITelemetrys: any) => ({
-    type: FETCH_APITELEMETRY_SUCCESS,
-    payload: APITelemetrys,
+  type: FETCH_APITELEMETRY_SUCCESS,
+  payload: APITelemetrys,
 });
 
 export const fetchAPITelemetryFailure = (error: Error) => ({
-    type: FETCH_APITELEMETRY_FAILURE,
-    payload: error,
+  type: FETCH_APITELEMETRY_FAILURE,
+  payload: error,
 });
 
 export const listAPITelemetryRequest = () => ({
-    type: LIST_APITELEMETRY_REQUEST,
+  type: LIST_APITELEMETRY_REQUEST,
 });
 
 export const listAPITelemetrySuccess = (APITelemetrys: any) => ({
-    type: LIST_APITELEMETRY_SUCCESS,
-    payload: APITelemetrys,
+  type: LIST_APITELEMETRY_SUCCESS,
+  payload: APITelemetrys,
 });
 
 export const listAPITelemetryFailure = (error: Error) => ({
-    type: LIST_APITELEMETRY_FAILURE,
-    payload: error,
+  type: LIST_APITELEMETRY_FAILURE,
+  payload: error,
 });
 
 export const updateAPITelemetryRequest = (APITelemetry: any) => ({
-    type: UPDATE_APITELEMETRY_REQUEST,
-    payload: APITelemetry,
+  type: UPDATE_APITELEMETRY_REQUEST,
+  payload: APITelemetry,
 });
 
 export const updateAPITelemetrySuccess = (APITelemetry: any) => ({
-    type: UPDATE_APITELEMETRY_SUCCESS,
-    payload: APITelemetry,
+  type: UPDATE_APITELEMETRY_SUCCESS,
+  payload: APITelemetry,
 });
 
 export const updateAPITelemetryFailure = (error: Error) => ({
-    type: UPDATE_APITELEMETRY_FAILURE,
-    payload: error,
+  type: UPDATE_APITELEMETRY_FAILURE,
+  payload: error,
 });
 
 export const deleteAPITelemetryRequest = (APITelemetry: any) => ({
-    type: DELETE_APITELEMETRY_REQUEST,
-    payload: APITelemetry,
+  type: DELETE_APITELEMETRY_REQUEST,
+  payload: APITelemetry,
 });
 
 export const deleteAPITelemetrySuccess = (APITelemetry: any) => ({
-    type: DELETE_APITELEMETRY_SUCCESS,
-    payload: APITelemetry,
+  type: DELETE_APITELEMETRY_SUCCESS,
+  payload: APITelemetry,
 });
 
 export const deleteAPITelemetryFailure = (error: Error) => ({
-    type: DELETE_APITELEMETRY_FAILURE,
-    payload: error,
+  type: DELETE_APITELEMETRY_FAILURE,
+  payload: error,
 });

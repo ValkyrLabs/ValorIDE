@@ -26,16 +26,9 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
-import {
-
-
-    AgentBilling,
-    AgentBillingFromJSON,
-    AgentBillingToJSON,
-} from './';
-
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { AgentBilling, AgentBillingFromJSON, AgentBillingToJSON } from "./";
 
 // thorapi
 
@@ -44,134 +37,151 @@ import {
  * @export
  * @interface AgentHierarchyNode
  */
-export type AgentHierarchyNode  = DataObject & {
-    /**
-     * Agent identifier.
-     * @type {string}
-     * @memberof AgentHierarchyNode
-     */
-    agentId?: string;
-    /**
-     * Parent agent ID (null for root nodes).
-     * @type {string}
-     * @memberof AgentHierarchyNode
-     */
-    parentAgentId?: string;
-    /**
-     * Direct child nodes.
-     * @type {Array<AgentHierarchyNode>}
-     * @memberof AgentHierarchyNode
-     */
-    children?: Array<AgentHierarchyNode>;
-    /**
-     * Depth in the tree.
-     * @type {number}
-     * @memberof AgentHierarchyNode
-     */
-    depth?: number;
-    /**
-     * Current status.
-     * @type {string}
-     * @memberof AgentHierarchyNode
-     */
-    status?: string;
-    /**
-     * 
-     * @type {AgentBilling}
-     * @memberof AgentHierarchyNode
-     */
-    billing?: AgentBilling;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof AgentHierarchyNode
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof AgentHierarchyNode
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof AgentHierarchyNode
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof AgentHierarchyNode
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof AgentHierarchyNode
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof AgentHierarchyNode
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof AgentHierarchyNode
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof AgentHierarchyNode
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof AgentHierarchyNode
-     */
-    trashed?: boolean;
-}
+export type AgentHierarchyNode = DataObject & {
+  /**
+   * Agent identifier.
+   * @type {string}
+   * @memberof AgentHierarchyNode
+   */
+  agentId?: string;
+  /**
+   * Parent agent ID (null for root nodes).
+   * @type {string}
+   * @memberof AgentHierarchyNode
+   */
+  parentAgentId?: string;
+  /**
+   * Direct child nodes.
+   * @type {Array<AgentHierarchyNode>}
+   * @memberof AgentHierarchyNode
+   */
+  children?: Array<AgentHierarchyNode>;
+  /**
+   * Depth in the tree.
+   * @type {number}
+   * @memberof AgentHierarchyNode
+   */
+  depth?: number;
+  /**
+   * Current status.
+   * @type {string}
+   * @memberof AgentHierarchyNode
+   */
+  status?: string;
+  /**
+   *
+   * @type {AgentBilling}
+   * @memberof AgentHierarchyNode
+   */
+  billing?: AgentBilling;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof AgentHierarchyNode
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof AgentHierarchyNode
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof AgentHierarchyNode
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof AgentHierarchyNode
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof AgentHierarchyNode
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof AgentHierarchyNode
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof AgentHierarchyNode
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof AgentHierarchyNode
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof AgentHierarchyNode
+   */
+  trashed?: boolean;
+};
 
 export function AgentHierarchyNodeFromJSON(json: any): AgentHierarchyNode {
-    return {
-        ...DataObjectFromJSON(json),
-        'agentId': !exists(json, 'agentId') ? undefined : json['agentId'],
-        'parentAgentId': !exists(json, 'parentAgentId') ? undefined : json['parentAgentId'],
-        'children': !exists(json, 'children') ? undefined : (json['children'] as Array<any>).map(AgentHierarchyNodeFromJSON),
-        'depth': !exists(json, 'depth') ? undefined : json['depth'],
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'billing': !exists(json, 'billing') ? undefined : AgentBillingFromJSON(json['billing']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    agentId: !exists(json, "agentId") ? undefined : json["agentId"],
+    parentAgentId: !exists(json, "parentAgentId")
+      ? undefined
+      : json["parentAgentId"],
+    children: !exists(json, "children")
+      ? undefined
+      : (json["children"] as Array<any>).map(AgentHierarchyNodeFromJSON),
+    depth: !exists(json, "depth") ? undefined : json["depth"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    billing: !exists(json, "billing")
+      ? undefined
+      : AgentBillingFromJSON(json["billing"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function AgentHierarchyNodeToJSON(value?: AgentHierarchyNode): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'agentId': value.agentId,
-        'parentAgentId': value.parentAgentId,
-        'children': value.children === undefined ? undefined : (value.children as Array<any>).map(AgentHierarchyNodeToJSON),
-        'depth': value.depth,
-        'status': value.status,
-        'billing': AgentBillingToJSON(value.billing),
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    agentId: value.agentId,
+    parentAgentId: value.parentAgentId,
+    children:
+      value.children === undefined
+        ? undefined
+        : (value.children as Array<any>).map(AgentHierarchyNodeToJSON),
+    depth: value.depth,
+    status: value.status,
+    billing: AgentBillingToJSON(value.billing),
+    trashed: value.trashed,
+  };
 }
-
-

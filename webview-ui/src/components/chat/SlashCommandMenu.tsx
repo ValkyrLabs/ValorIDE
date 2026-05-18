@@ -1,5 +1,8 @@
 import React, { useCallback, useRef, useEffect } from "react";
-import { SlashCommand, getMatchingSlashCommands } from "@thorapi/utils/slash-commands";
+import {
+  SlashCommand,
+  getMatchingSlashCommands,
+} from "@thorapi/utils/slash-commands";
 
 interface SlashCommandMenuProps {
   onSelect: (command: SlashCommand) => void;
@@ -65,7 +68,7 @@ const SlashCommandMenu: React.FC<SlashCommandMenuProps> = ({
                 index === selectedIndex
                   ? "bg-[var(--vscode-quickInputList-focusBackground)] text-[var(--vscode-quickInputList-focusForeground)]"
                   : "" // Removed bg-transparent
-                } hover:bg-[var(--vscode-list-hoverBackground)]`}
+              } hover:bg-[var(--vscode-list-hoverBackground)]`}
               onClick={() => handleClick(command)}
               onMouseEnter={() => setSelectedIndex(index)}
             >

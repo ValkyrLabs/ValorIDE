@@ -25,7 +25,6 @@ export class ErrorService {
 
   static initialize() {
     // Initialize sentry
-
   }
 
   static toggleEnabled(state: boolean) {

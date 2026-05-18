@@ -13,32 +13,40 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   MemoryActionResponse,
   MemoryActionResponseActionEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddMemoryActionResponseMutation } from '../../services/MemoryActionResponseService';
+import { useAddMemoryActionResponseMutation } from "../../services/MemoryActionResponseService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -62,36 +70,36 @@ Result payload returned by memory action operations.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const ActionValidation = () => {
-  return [
-    'compact',
-    'reindex',
-    'prune',
-    'expand',
-  ];
+  return ["compact", "reindex", "prune", "expand"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-      action: Yup.mixed()
-        .oneOf(ActionValidation(), "Invalid value for action")
-        ,
-        success: Yup.boolean(),
-        creditsCharged: asNumber(Yup.number().typeError("creditsCharged must be a number")),
-        entriesAffected: asNumber(Yup.number().integer().typeError("entriesAffected must be a number")),
-        message: Yup.string(),
-        trashed: Yup.boolean(),
+  action: Yup.mixed().oneOf(ActionValidation(), "Invalid value for action"),
+  success: Yup.boolean(),
+  creditsCharged: asNumber(
+    Yup.number().typeError("creditsCharged must be a number"),
+  ),
+  entriesAffected: asNumber(
+    Yup.number().integer().typeError("entriesAffected must be a number"),
+  ),
+  message: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const MemoryActionResponseForm: React.FC = () => {
-  const [addMemoryActionResponse, addMemoryActionResponseResult] = useAddMemoryActionResponseMutation();
+  const [addMemoryActionResponse, addMemoryActionResponseResult] =
+    useAddMemoryActionResponseMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -101,12 +109,18 @@ const MemoryActionResponseForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -114,12 +128,12 @@ const MemoryActionResponseForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<MemoryActionResponse> = {
-        action: undefined,
-          success: false,
-          creditsCharged: 0,
-          entriesAffected: 0,
-          message: '',
-          trashed: false,
+    action: undefined,
+    success: false,
+    creditsCharged: 0,
+    entriesAffected: 0,
+    message: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -134,11 +148,14 @@ const MemoryActionResponseForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new MemoryActionResponse:', grants);
+    console.log("Permissions saved for new MemoryActionResponse:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<MemoryActionResponse>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<MemoryActionResponse>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -149,7 +166,7 @@ const MemoryActionResponseForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `MemoryActionResponse created successfully! Would you like to set permissions for this object?`
+          `MemoryActionResponse created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -157,8 +174,8 @@ const MemoryActionResponseForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create MemoryActionResponse:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create MemoryActionResponse:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -179,46 +196,47 @@ const MemoryActionResponseForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addMemoryActionResponseResult.isLoading;
+          const isSaving =
+            isSubmitting || addMemoryActionResponseResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New MemoryActionResponse
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    MemoryActionResponse
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="action" className="nice-form-control">
                       <b>
                         Action:
-                        {touched.action &&
-                         !errors.action && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.action && !errors.action && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="action"
-                          value={values.action || ''}
-                          className={
-                            errors.action
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('action', true);
-                            setFieldValue('action', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Action" />
-                          <ActionLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="action"
+                        value={values.action || ""}
+                        className={
+                          errors.action
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("action", true);
+                          setFieldValue("action", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Action" />
+                        <ActionLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -230,32 +248,25 @@ const MemoryActionResponseForm: React.FC = () => {
                     <label htmlFor="success" className="nice-form-control">
                       <b>
                         Success:
-                        {touched.success &&
-                         !errors.success && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.success && !errors.success && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="success"
-                            name="success"
-                            checked={values.success || false}
-                            onChange={(e) => {
-                              setFieldTouched('success', true);
-                              setFieldValue('success', e.target.checked);
-                            }}
-                            isInvalid={!!errors.success}
-                            className={errors.success ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="success"
+                        name="success"
+                        checked={values.success || false}
+                        onChange={(e) => {
+                          setFieldTouched("success", true);
+                          setFieldValue("success", e.target.checked);
+                        }}
+                        isInvalid={!!errors.success}
+                        className={errors.success ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -264,40 +275,39 @@ const MemoryActionResponseForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="creditsCharged" className="nice-form-control">
+                    <label
+                      htmlFor="creditsCharged"
+                      className="nice-form-control"
+                    >
                       <b>
                         Credits Charged:
-                        {touched.creditsCharged &&
-                         !errors.creditsCharged && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.creditsCharged && !errors.creditsCharged && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-                          {/* DOUBLE FIELD */}
-                          <Field
-                            name="creditsCharged"
-                            type="number"
-                            step="any"
-                            value={values.creditsCharged || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('creditsCharged', true);
-                              const v = e.target.value;
-                              setFieldValue('creditsCharged', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.creditsCharged
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
+                      {/* DOUBLE FIELD */}
+                      <Field
+                        name="creditsCharged"
+                        type="number"
+                        step="any"
+                        value={values.creditsCharged || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("creditsCharged", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "creditsCharged",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.creditsCharged
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -306,39 +316,38 @@ const MemoryActionResponseForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="entriesAffected" className="nice-form-control">
+                    <label
+                      htmlFor="entriesAffected"
+                      className="nice-form-control"
+                    >
                       <b>
                         Entries Affected:
-                        {touched.entriesAffected &&
-                         !errors.entriesAffected && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.entriesAffected && !errors.entriesAffected && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-                          {/* LONG FIELD */}
-                          <Field
-                            name="entriesAffected"
-                            type="number"
-                            value={values.entriesAffected || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('entriesAffected', true);
-                              const v = e.target.value;
-                              setFieldValue('entriesAffected', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.entriesAffected
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
+                      {/* LONG FIELD */}
+                      <Field
+                        name="entriesAffected"
+                        type="number"
+                        value={values.entriesAffected || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("entriesAffected", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "entriesAffected",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.entriesAffected
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -350,28 +359,21 @@ const MemoryActionResponseForm: React.FC = () => {
                     <label htmlFor="message" className="nice-form-control">
                       <b>
                         Message:
-                        {touched.message &&
-                         !errors.message && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.message && !errors.message && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="message"
-                            value={values?.message}
-                            placeholder="Message"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="message"
+                        value={values?.message}
+                        placeholder="Message"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -383,32 +385,25 @@ const MemoryActionResponseForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -418,45 +413,64 @@ const MemoryActionResponseForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New MemoryActionResponse
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New
+                      MemoryActionResponse
+                    </CoolButton>
 
-                  {(addMemoryActionResponseResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addMemoryActionResponseResult as any).error ? (addMemoryActionResponseResult as any).error.data : (addMemoryActionResponseResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addMemoryActionResponseResult.isError ||
+                      errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in
+                              (addMemoryActionResponseResult as any).error
+                              ? (addMemoryActionResponseResult as any).error
+                                  .data
+                              : (addMemoryActionResponseResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addMemoryActionResponseResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addMemoryActionResponseResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addMemoryActionResponseResult: {JSON.stringify(addMemoryActionResponseResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addMemoryActionResponseResult:{" "}
+                    {JSON.stringify(addMemoryActionResponseResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -488,16 +502,13 @@ kebabcase action-lookup
 const ActionLookup = () => {
   return (
     <>
-      <option value='compact' label="Compact" />
-      <option value='reindex' label="Reindex" />
-      <option value='prune' label="Prune" />
-      <option value='expand' label="Expand" />
+      <option value="compact" label="Compact" />
+      <option value="reindex" label="Reindex" />
+      <option value="prune" label="Prune" />
+      <option value="expand" label="Expand" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default MemoryActionResponseForm;
-

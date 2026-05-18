@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ServiceSubscription } from '@thorapi/model/ServiceSubscription';
+import { ServiceSubscription } from "@thorapi/model/ServiceSubscription";
 
 const ServiceSubscriptionSlice = createSlice({
   name: "ServiceSubscriptions",
@@ -27,20 +27,25 @@ const ServiceSubscriptionSlice = createSlice({
     },
 
     ServiceSubscriptionValueToggled(state, action) {
-      console.log("ServiceSubscription TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ServiceSubscription:ServiceSubscription = state.find((ServiceSubscription) => ServiceSubscription.id === action.payload.ServiceSubscriptionId);
+      console.log("ServiceSubscription TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ServiceSubscription: ServiceSubscription = state.find(
+        (ServiceSubscription) =>
+          ServiceSubscription.id === action.payload.ServiceSubscriptionId,
+      );
       if (ServiceSubscription) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ServiceSubscriptionpropertySet(state, action) {
-      const ServiceSubscription = state.find((ServiceSubscription) => ServiceSubscription.id === action.payload.ServiceSubscriptionId);
+      const ServiceSubscription = state.find(
+        (ServiceSubscription) =>
+          ServiceSubscription.id === action.payload.ServiceSubscriptionId,
+      );
       if (ServiceSubscription) {
-      //  ServiceSubscription[action.property] = action.payload[action.property];
+        //  ServiceSubscription[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const ServiceSubscriptionSlice = createSlice({
 export const {
   ServiceSubscriptionAdded,
   ServiceSubscriptionValueToggled,
-  ServiceSubscriptionpropertySet
+  ServiceSubscriptionpropertySet,
 } = ServiceSubscriptionSlice.actions;
 export default ServiceSubscriptionSlice.reducer;

@@ -19,20 +19,32 @@ Description: ReferralLink
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, ReferralLink } from '@thorapi/model';
-import { useGetReferralLinksQuery, useAddReferralLinkMutation, useUpdateReferralLinkMutation } from '../../services/ReferralLinkService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, ReferralLink } from "@thorapi/model";
+import {
+  useGetReferralLinksQuery,
+  useAddReferralLinkMutation,
+  useUpdateReferralLinkMutation,
+} from "../../services/ReferralLinkService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const ReferralLinkChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetReferralLinksQuery();
 
   const [data, setData] = useState<ReferralLink[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<ReferralLink>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const ReferralLinkChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const ReferralLinkChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((referrallink: DataObject) => [referrallink])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((referrallink: DataObject) => [referrallink])}
+        />
+      )}
     </>
   );
 };

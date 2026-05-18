@@ -68,7 +68,11 @@ async function readDefaultThemeFile(filename: string): Promise<string> {
   const extensionRoot = getExtensionUri().fsPath;
 
   for (const pathParts of defaultThemePathCandidates) {
-    const candidatePath = path.join(extensionRoot, ...pathParts, normalizedFilename);
+    const candidatePath = path.join(
+      extensionRoot,
+      ...pathParts,
+      normalizedFilename,
+    );
     try {
       return await fs.readFile(candidatePath, "utf-8");
     } catch (error) {

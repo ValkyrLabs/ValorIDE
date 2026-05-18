@@ -3,7 +3,12 @@ import { RemoteCodingSessionRegistry } from "./RemoteCodingSessionRegistry";
 describe("RemoteCodingSessionRegistry", () => {
   it("starts and lists detached sessions", () => {
     const registry = new RemoteCodingSessionRegistry();
-    const started = registry.start({ id: "s1", task: "Run lint", createdAt: 1000, timeoutMs: 5000 });
+    const started = registry.start({
+      id: "s1",
+      task: "Run lint",
+      createdAt: 1000,
+      timeoutMs: 5000,
+    });
 
     expect(started.status).toBe("running");
     expect(registry.list()).toHaveLength(1);
@@ -28,15 +33,25 @@ describe("RemoteCodingSessionRegistry", () => {
 
   it("supports safe cancel and timeout controls", () => {
     const registry = new RemoteCodingSessionRegistry();
-    registry.start({ id: "cancel-me", task: "Refactor", createdAt: 0, timeoutMs: 1000 });
-    registry.start({ id: "timeout-me", task: "Docs", createdAt: 0, timeoutMs: 1000 });
+    registry.start({
+      id: "cancel-me",
+      task: "Refactor",
+      createdAt: 0,
+      timeoutMs: 1000,
+    });
+    registry.start({
+      id: "timeout-me",
+      task: "Docs",
+      createdAt: 0,
+      timeoutMs: 1000,
+    });
 
     const cancelled = registry.cancel("cancel-me", "user_requested", 500);
     const timedOut = registry.expireTimedOutSessions(1501);
 
     expect(cancelled.status).toBe("cancelled");
     expect(cancelled.cancelReason).toBe("user_requested");
-    expect(timedOut.map(s => s.id)).toEqual(["timeout-me"]);
+    expect(timedOut.map((s) => s.id)).toEqual(["timeout-me"]);
     expect(registry.get("timeout-me")?.status).toBe("timed_out");
   });
 });

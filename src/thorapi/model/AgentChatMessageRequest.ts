@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,128 +36,142 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
  * @export
  * @interface AgentChatMessageRequest
  */
-export type AgentChatMessageRequest  = DataObject & {
-    /**
-     * Conversation thread identifier.
-     * @type {string}
-     * @memberof AgentChatMessageRequest
-     */
-    conversationId?: string;
-    /**
-     * Chat message text.
-     * @type {string}
-     * @memberof AgentChatMessageRequest
-     */
-    message?: string;
-    /**
-     * Optional JSON metadata for attachments.
-     * @type {string}
-     * @memberof AgentChatMessageRequest
-     */
-    attachments?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof AgentChatMessageRequest
-     */
-    priority?: AgentChatMessageRequestPriorityEnum;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof AgentChatMessageRequest
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof AgentChatMessageRequest
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof AgentChatMessageRequest
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof AgentChatMessageRequest
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof AgentChatMessageRequest
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof AgentChatMessageRequest
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof AgentChatMessageRequest
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof AgentChatMessageRequest
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof AgentChatMessageRequest
-     */
-    trashed?: boolean;
+export type AgentChatMessageRequest = DataObject & {
+  /**
+   * Conversation thread identifier.
+   * @type {string}
+   * @memberof AgentChatMessageRequest
+   */
+  conversationId?: string;
+  /**
+   * Chat message text.
+   * @type {string}
+   * @memberof AgentChatMessageRequest
+   */
+  message?: string;
+  /**
+   * Optional JSON metadata for attachments.
+   * @type {string}
+   * @memberof AgentChatMessageRequest
+   */
+  attachments?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof AgentChatMessageRequest
+   */
+  priority?: AgentChatMessageRequestPriorityEnum;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof AgentChatMessageRequest
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof AgentChatMessageRequest
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof AgentChatMessageRequest
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof AgentChatMessageRequest
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof AgentChatMessageRequest
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof AgentChatMessageRequest
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof AgentChatMessageRequest
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof AgentChatMessageRequest
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof AgentChatMessageRequest
+   */
+  trashed?: boolean;
+};
+
+export function AgentChatMessageRequestFromJSON(
+  json: any,
+): AgentChatMessageRequest {
+  return {
+    ...DataObjectFromJSON(json),
+    conversationId: !exists(json, "conversationId")
+      ? undefined
+      : json["conversationId"],
+    message: !exists(json, "message") ? undefined : json["message"],
+    attachments: !exists(json, "attachments") ? undefined : json["attachments"],
+    priority: !exists(json, "priority") ? undefined : json["priority"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
-export function AgentChatMessageRequestFromJSON(json: any): AgentChatMessageRequest {
-    return {
-        ...DataObjectFromJSON(json),
-        'conversationId': !exists(json, 'conversationId') ? undefined : json['conversationId'],
-        'message': !exists(json, 'message') ? undefined : json['message'],
-        'attachments': !exists(json, 'attachments') ? undefined : json['attachments'],
-        'priority': !exists(json, 'priority') ? undefined : json['priority'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
-}
-
-export function AgentChatMessageRequestToJSON(value?: AgentChatMessageRequest): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'conversationId': value.conversationId,
-        'message': value.message,
-        'attachments': value.attachments,
-        'priority': value.priority,
-        'trashed': value.trashed,
-    };
+export function AgentChatMessageRequestToJSON(
+  value?: AgentChatMessageRequest,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    conversationId: value.conversationId,
+    message: value.message,
+    attachments: value.attachments,
+    priority: value.priority,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum AgentChatMessageRequestPriorityEnum {
-    LOW = 'low',
-    NORMAL = 'normal',
-    HIGH = 'high'
+  LOW = "low",
+  NORMAL = "normal",
+  HIGH = "high",
 }
-
-

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { FileAuditLog } from '@thorapi/model/FileAuditLog';
+import { FileAuditLog } from "@thorapi/model/FileAuditLog";
 
 const FileAuditLogSlice = createSlice({
   name: "FileAuditLogs",
@@ -27,20 +27,23 @@ const FileAuditLogSlice = createSlice({
     },
 
     FileAuditLogValueToggled(state, action) {
-      console.log("FileAuditLog TOGGLE")
-      console.warn(JSON.stringify(action))
-      const FileAuditLog:FileAuditLog = state.find((FileAuditLog) => FileAuditLog.id === action.payload.FileAuditLogId);
+      console.log("FileAuditLog TOGGLE");
+      console.warn(JSON.stringify(action));
+      const FileAuditLog: FileAuditLog = state.find(
+        (FileAuditLog) => FileAuditLog.id === action.payload.FileAuditLogId,
+      );
       if (FileAuditLog) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     FileAuditLogpropertySet(state, action) {
-      const FileAuditLog = state.find((FileAuditLog) => FileAuditLog.id === action.payload.FileAuditLogId);
+      const FileAuditLog = state.find(
+        (FileAuditLog) => FileAuditLog.id === action.payload.FileAuditLogId,
+      );
       if (FileAuditLog) {
-      //  FileAuditLog[action.property] = action.payload[action.property];
+        //  FileAuditLog[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const FileAuditLogSlice = createSlice({
 export const {
   FileAuditLogAdded,
   FileAuditLogValueToggled,
-  FileAuditLogpropertySet
+  FileAuditLogpropertySet,
 } = FileAuditLogSlice.actions;
 export default FileAuditLogSlice.reducer;

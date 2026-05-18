@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Depend } from '@thorapi/model/Depend';
+import { Depend } from "@thorapi/model/Depend";
 
 const DependSlice = createSlice({
   name: "Depends",
@@ -27,28 +27,28 @@ const DependSlice = createSlice({
     },
 
     DependValueToggled(state, action) {
-      console.log("Depend TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Depend:Depend = state.find((Depend) => Depend.id === action.payload.DependId);
+      console.log("Depend TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Depend: Depend = state.find(
+        (Depend) => Depend.id === action.payload.DependId,
+      );
       if (Depend) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     DependpropertySet(state, action) {
-      const Depend = state.find((Depend) => Depend.id === action.payload.DependId);
+      const Depend = state.find(
+        (Depend) => Depend.id === action.payload.DependId,
+      );
       if (Depend) {
-      //  Depend[action.property] = action.payload[action.property];
+        //  Depend[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  DependAdded,
-  DependValueToggled,
-  DependpropertySet
-} = DependSlice.actions;
+export const { DependAdded, DependValueToggled, DependpropertySet } =
+  DependSlice.actions;
 export default DependSlice.reducer;

@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { FileMetadata } from '@thorapi/model/FileMetadata';
+import { FileMetadata } from "@thorapi/model/FileMetadata";
 
 const FileMetadataSlice = createSlice({
   name: "FileMetadatas",
@@ -27,20 +27,23 @@ const FileMetadataSlice = createSlice({
     },
 
     FileMetadataValueToggled(state, action) {
-      console.log("FileMetadata TOGGLE")
-      console.warn(JSON.stringify(action))
-      const FileMetadata:FileMetadata = state.find((FileMetadata) => FileMetadata.id === action.payload.FileMetadataId);
+      console.log("FileMetadata TOGGLE");
+      console.warn(JSON.stringify(action));
+      const FileMetadata: FileMetadata = state.find(
+        (FileMetadata) => FileMetadata.id === action.payload.FileMetadataId,
+      );
       if (FileMetadata) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     FileMetadatapropertySet(state, action) {
-      const FileMetadata = state.find((FileMetadata) => FileMetadata.id === action.payload.FileMetadataId);
+      const FileMetadata = state.find(
+        (FileMetadata) => FileMetadata.id === action.payload.FileMetadataId,
+      );
       if (FileMetadata) {
-      //  FileMetadata[action.property] = action.payload[action.property];
+        //  FileMetadata[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +52,6 @@ const FileMetadataSlice = createSlice({
 export const {
   FileMetadataAdded,
   FileMetadataValueToggled,
-  FileMetadatapropertySet
+  FileMetadatapropertySet,
 } = FileMetadataSlice.actions;
 export default FileMetadataSlice.reducer;

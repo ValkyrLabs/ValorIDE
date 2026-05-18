@@ -13,32 +13,40 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   ProductLandingPage,
   ProductLandingPageTemplateIdEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddProductLandingPageMutation } from '../../services/ProductLandingPageService';
+import { useAddProductLandingPageMutation } from "../../services/ProductLandingPageService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -63,11 +71,11 @@ Product landing page entity for funnel pages
 -------------------------------------------------------- */
 const TemplateIdValidation = () => {
   return [
-    'MINIMAL_CLEAN',
-    'BOLD_HERO',
-    'FEATURE_GRID',
-    'TESTIMONIAL_HEAVY',
-    'VIDEO_FIRST',
+    "MINIMAL_CLEAN",
+    "BOLD_HERO",
+    "FEATURE_GRID",
+    "TESTIMONIAL_HEAVY",
+    "VIDEO_FIRST",
   ];
 };
 
@@ -75,36 +83,41 @@ const TemplateIdValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        productId: Yup.string(),
-      templateId: Yup.mixed()
-        .oneOf(TemplateIdValidation(), "Invalid value for templateId")
-        ,
-        slug: Yup.string(),
-        seoTitle: Yup.string(),
-        seoDescription: Yup.string(),
-        seoKeywords: Yup.string(),
-        ogImageUrl: Yup.string(),
-        isPublished: Yup.boolean(),
-        publishedAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("publishedAt must be a valid date"),
-        config: Yup.string(),
-        trashed: Yup.boolean(),
+  productId: Yup.string(),
+  templateId: Yup.mixed().oneOf(
+    TemplateIdValidation(),
+    "Invalid value for templateId",
+  ),
+  slug: Yup.string(),
+  seoTitle: Yup.string(),
+  seoDescription: Yup.string(),
+  seoKeywords: Yup.string(),
+  ogImageUrl: Yup.string(),
+  isPublished: Yup.boolean(),
+  publishedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("publishedAt must be a valid date"),
+  config: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ProductLandingPageForm: React.FC = () => {
-  const [addProductLandingPage, addProductLandingPageResult] = useAddProductLandingPageMutation();
+  const [addProductLandingPage, addProductLandingPageResult] =
+    useAddProductLandingPageMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -114,12 +127,18 @@ const ProductLandingPageForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -127,17 +146,17 @@ const ProductLandingPageForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<ProductLandingPage> = {
-          productId: '',
-        templateId: undefined,
-          slug: '',
-          seoTitle: '',
-          seoDescription: '',
-          seoKeywords: '',
-          ogImageUrl: '',
-          isPublished: false,
-          publishedAt: new Date(),
-          config: '',
-          trashed: false,
+    productId: "",
+    templateId: undefined,
+    slug: "",
+    seoTitle: "",
+    seoDescription: "",
+    seoKeywords: "",
+    ogImageUrl: "",
+    isPublished: false,
+    publishedAt: new Date(),
+    config: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -152,11 +171,14 @@ const ProductLandingPageForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new ProductLandingPage:', grants);
+    console.log("Permissions saved for new ProductLandingPage:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ProductLandingPage>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<ProductLandingPage>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -167,7 +189,7 @@ const ProductLandingPageForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `ProductLandingPage created successfully! Would you like to set permissions for this object?`
+          `ProductLandingPage created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -175,8 +197,8 @@ const ProductLandingPageForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create ProductLandingPage:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create ProductLandingPage:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -197,44 +219,38 @@ const ProductLandingPageForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
-          const isSaving = isSubmitting || addProductLandingPageResult.isLoading;
+          const isSaving =
+            isSubmitting || addProductLandingPageResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New ProductLandingPage
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New
+                    ProductLandingPage
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="productId" className="nice-form-control">
                       <b>
                         Product Id:
-                        {touched.productId &&
-                         !errors.productId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.productId && !errors.productId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="productId"
-                            value={values?.productId}
-                            placeholder="Product Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="productId"
+                        value={values?.productId}
+                        placeholder="Product Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -246,30 +262,33 @@ const ProductLandingPageForm: React.FC = () => {
                     <label htmlFor="templateId" className="nice-form-control">
                       <b>
                         Template Id:
-                        {touched.templateId &&
-                         !errors.templateId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.templateId && !errors.templateId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="templateId"
-                          value={values.templateId || ''}
-                          className={
-                            errors.templateId
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('templateId', true);
-                            setFieldValue('templateId', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Template Id" />
-                          <TemplateIdLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="templateId"
+                        value={values.templateId || ""}
+                        className={
+                          errors.templateId
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("templateId", true);
+                          setFieldValue(
+                            "templateId",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Template Id" />
+                        <TemplateIdLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -281,28 +300,21 @@ const ProductLandingPageForm: React.FC = () => {
                     <label htmlFor="slug" className="nice-form-control">
                       <b>
                         Slug:
-                        {touched.slug &&
-                         !errors.slug && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.slug && !errors.slug && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="slug"
-                            value={values?.slug}
-                            placeholder="Slug"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="slug"
+                        value={values?.slug}
+                        placeholder="Slug"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -314,28 +326,21 @@ const ProductLandingPageForm: React.FC = () => {
                     <label htmlFor="seoTitle" className="nice-form-control">
                       <b>
                         Seo Title:
-                        {touched.seoTitle &&
-                         !errors.seoTitle && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.seoTitle && !errors.seoTitle && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="seoTitle"
-                            value={values?.seoTitle}
-                            placeholder="Seo Title"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="seoTitle"
+                        value={values?.seoTitle}
+                        placeholder="Seo Title"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -344,31 +349,27 @@ const ProductLandingPageForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="seoDescription" className="nice-form-control">
+                    <label
+                      htmlFor="seoDescription"
+                      className="nice-form-control"
+                    >
                       <b>
                         Seo Description:
-                        {touched.seoDescription &&
-                         !errors.seoDescription && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.seoDescription && !errors.seoDescription && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="seoDescription"
-                            value={values?.seoDescription}
-                            placeholder="Seo Description"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="seoDescription"
+                        value={values?.seoDescription}
+                        placeholder="Seo Description"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -380,28 +381,21 @@ const ProductLandingPageForm: React.FC = () => {
                     <label htmlFor="seoKeywords" className="nice-form-control">
                       <b>
                         Seo Keywords:
-                        {touched.seoKeywords &&
-                         !errors.seoKeywords && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.seoKeywords && !errors.seoKeywords && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="seoKeywords"
-                            value={values?.seoKeywords}
-                            placeholder="Seo Keywords"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="seoKeywords"
+                        value={values?.seoKeywords}
+                        placeholder="Seo Keywords"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -413,28 +407,21 @@ const ProductLandingPageForm: React.FC = () => {
                     <label htmlFor="ogImageUrl" className="nice-form-control">
                       <b>
                         Og Image Url:
-                        {touched.ogImageUrl &&
-                         !errors.ogImageUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.ogImageUrl && !errors.ogImageUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="ogImageUrl"
-                            value={values?.ogImageUrl}
-                            placeholder="Og Image Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="ogImageUrl"
+                        value={values?.ogImageUrl}
+                        placeholder="Og Image Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -446,32 +433,25 @@ const ProductLandingPageForm: React.FC = () => {
                     <label htmlFor="isPublished" className="nice-form-control">
                       <b>
                         Is Published:
-                        {touched.isPublished &&
-                         !errors.isPublished && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.isPublished && !errors.isPublished && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="isPublished"
-                            name="isPublished"
-                            checked={values.isPublished || false}
-                            onChange={(e) => {
-                              setFieldTouched('isPublished', true);
-                              setFieldValue('isPublished', e.target.checked);
-                            }}
-                            isInvalid={!!errors.isPublished}
-                            className={errors.isPublished ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="isPublished"
+                        name="isPublished"
+                        checked={values.isPublished || false}
+                        onChange={(e) => {
+                          setFieldTouched("isPublished", true);
+                          setFieldValue("isPublished", e.target.checked);
+                        }}
+                        isInvalid={!!errors.isPublished}
+                        className={errors.isPublished ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -483,38 +463,38 @@ const ProductLandingPageForm: React.FC = () => {
                     <label htmlFor="publishedAt" className="nice-form-control">
                       <b>
                         Published At:
-                        {touched.publishedAt &&
-                         !errors.publishedAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.publishedAt && !errors.publishedAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="publishedAt"
-                            type="datetime-local"
-                            value={values.publishedAt ? 
-                              new Date(values.publishedAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('publishedAt', true);
-                              const v = e.target.value;
-                              setFieldValue('publishedAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.publishedAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="publishedAt"
+                        type="datetime-local"
+                        value={
+                          values.publishedAt
+                            ? new Date(values.publishedAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("publishedAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "publishedAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.publishedAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -526,28 +506,21 @@ const ProductLandingPageForm: React.FC = () => {
                     <label htmlFor="config" className="nice-form-control">
                       <b>
                         Config:
-                        {touched.config &&
-                         !errors.config && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.config && !errors.config && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="config"
-                            value={values?.config}
-                            placeholder="Config"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="config"
+                        value={values?.config}
+                        placeholder="Config"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -559,32 +532,25 @@ const ProductLandingPageForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -594,45 +560,60 @@ const ProductLandingPageForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New ProductLandingPage
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New ProductLandingPage
+                    </CoolButton>
 
-                  {(addProductLandingPageResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addProductLandingPageResult as any).error ? (addProductLandingPageResult as any).error.data : (addProductLandingPageResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addProductLandingPageResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addProductLandingPageResult as any).error
+                              ? (addProductLandingPageResult as any).error.data
+                              : (addProductLandingPageResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addProductLandingPageResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addProductLandingPageResult.isSuccess ||
+                      successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addProductLandingPageResult: {JSON.stringify(addProductLandingPageResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addProductLandingPageResult:{" "}
+                    {JSON.stringify(addProductLandingPageResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -664,17 +645,14 @@ kebabcase template-id-lookup
 const TemplateIdLookup = () => {
   return (
     <>
-      <option value='MINIMAL_CLEAN' label="Minimal Clean" />
-      <option value='BOLD_HERO' label="Bold Hero" />
-      <option value='FEATURE_GRID' label="Feature Grid" />
-      <option value='TESTIMONIAL_HEAVY' label="Testimonial Heavy" />
-      <option value='VIDEO_FIRST' label="Video First" />
+      <option value="MINIMAL_CLEAN" label="Minimal Clean" />
+      <option value="BOLD_HERO" label="Bold Hero" />
+      <option value="FEATURE_GRID" label="Feature Grid" />
+      <option value="TESTIMONIAL_HEAVY" label="Testimonial Heavy" />
+      <option value="VIDEO_FIRST" label="Video First" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default ProductLandingPageForm;
-

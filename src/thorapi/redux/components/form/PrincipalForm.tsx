@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  Principal,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddPrincipalMutation } from '../../services/PrincipalService';
+import { Principal } from "@thorapi/model";
+
+import { useAddPrincipalMutation } from "../../services/PrincipalService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,42 +71,64 @@ The Valkyr Principal. Represents a user, service, or agent in the system with pr
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        firstName: Yup.string(),
-        middleName: Yup.string(),
-        lastName: Yup.string(),
-        username: Yup.string(),
-        password: Yup.string().matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$/, "password must match pattern Your account password"),
-        federalIdentification: Yup.string().matches(/^\\d{3}-\\d{2}-\\d{4}$/, "federalIdentification must match pattern SSN or a 10 digit federal government ID (encrypted)"),
-        residenceCountry: Yup.string(),
-        stateIdentification: Yup.string().matches(/^\\d{10}$/, "stateIdentification must match pattern Driver\&#39;s License or a 10 digit state government ID"),
-        residenceState: Yup.string(),
-        email: Yup.string().email("Invalid email").matches(/^[a-zA-Z0-9_!#$%&’*+\/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$/, "email must match pattern The main email address"),
-        phone: Yup.string().matches(/^\\+?[1-9]\\d{1,14}$/, "phone must match pattern The main phone number"),
-        social: Yup.string(),
-        bio: Yup.string(),
-        notes: Yup.string(),
-        avatarUrl: Yup.string(),
-        acceptedCookies: Yup.boolean(),
-        acceptedTos: Yup.boolean(),
-        enabled: Yup.boolean(),
-        credentialNonExpired: Yup.boolean(),
-        accountEnabled: Yup.boolean(),
-        accountNonLocked: Yup.boolean(),
-        accountNonExpired: Yup.boolean(),
-        twoFactorEnabled: Yup.boolean(),
-        loginAttempts: asNumber(Yup.number().integer().typeError("loginAttempts must be a number")),
-        lockoutUntil: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("lockoutUntil must be a valid date"),
-        trashed: Yup.boolean(),
+  firstName: Yup.string(),
+  middleName: Yup.string(),
+  lastName: Yup.string(),
+  username: Yup.string(),
+  password: Yup.string().matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$/,
+    "password must match pattern Your account password",
+  ),
+  federalIdentification: Yup.string().matches(
+    /^\\d{3}-\\d{2}-\\d{4}$/,
+    "federalIdentification must match pattern SSN or a 10 digit federal government ID (encrypted)",
+  ),
+  residenceCountry: Yup.string(),
+  stateIdentification: Yup.string().matches(
+    /^\\d{10}$/,
+    "stateIdentification must match pattern Driver\&#39;s License or a 10 digit state government ID",
+  ),
+  residenceState: Yup.string(),
+  email: Yup.string()
+    .email("Invalid email")
+    .matches(
+      /^[a-zA-Z0-9_!#$%&’*+\/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$/,
+      "email must match pattern The main email address",
+    ),
+  phone: Yup.string().matches(
+    /^\\+?[1-9]\\d{1,14}$/,
+    "phone must match pattern The main phone number",
+  ),
+  social: Yup.string(),
+  bio: Yup.string(),
+  notes: Yup.string(),
+  avatarUrl: Yup.string(),
+  acceptedCookies: Yup.boolean(),
+  acceptedTos: Yup.boolean(),
+  enabled: Yup.boolean(),
+  credentialNonExpired: Yup.boolean(),
+  accountEnabled: Yup.boolean(),
+  accountNonLocked: Yup.boolean(),
+  accountNonExpired: Yup.boolean(),
+  twoFactorEnabled: Yup.boolean(),
+  loginAttempts: asNumber(
+    Yup.number().integer().typeError("loginAttempts must be a number"),
+  ),
+  lockoutUntil: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("lockoutUntil must be a valid date"),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -117,12 +145,18 @@ const PrincipalForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -130,32 +164,32 @@ const PrincipalForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Principal> = {
-          firstName: '',
-          middleName: '',
-          lastName: '',
-          username: '',
-          password: '',
-          federalIdentification: '',
-          residenceCountry: '',
-          stateIdentification: '',
-          residenceState: '',
-          email: '',
-          phone: '',
-          social: '',
-          bio: '',
-          notes: '',
-          avatarUrl: '',
-          acceptedCookies: false,
-          acceptedTos: false,
-          enabled: false,
-          credentialNonExpired: false,
-          accountEnabled: false,
-          accountNonLocked: false,
-          accountNonExpired: false,
-          twoFactorEnabled: false,
-          loginAttempts: 0,
-          lockoutUntil: new Date(),
-          trashed: false,
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    username: "",
+    password: "",
+    federalIdentification: "",
+    residenceCountry: "",
+    stateIdentification: "",
+    residenceState: "",
+    email: "",
+    phone: "",
+    social: "",
+    bio: "",
+    notes: "",
+    avatarUrl: "",
+    acceptedCookies: false,
+    acceptedTos: false,
+    enabled: false,
+    credentialNonExpired: false,
+    accountEnabled: false,
+    accountNonLocked: false,
+    accountNonExpired: false,
+    twoFactorEnabled: false,
+    loginAttempts: 0,
+    lockoutUntil: new Date(),
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -170,11 +204,14 @@ const PrincipalForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new Principal:', grants);
+    console.log("Permissions saved for new Principal:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Principal>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<Principal>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -185,7 +222,7 @@ const PrincipalForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Principal created successfully! Would you like to set permissions for this object?`
+          `Principal created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -193,8 +230,8 @@ const PrincipalForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create Principal:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create Principal:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -215,44 +252,36 @@ const PrincipalForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addPrincipalResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New Principal
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New Principal
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="firstName" className="nice-form-control">
                       <b>
                         First Name:
-                        {touched.firstName &&
-                         !errors.firstName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.firstName && !errors.firstName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="firstName"
-                            value={values?.firstName}
-                            placeholder="First Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="firstName"
+                        value={values?.firstName}
+                        placeholder="First Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -264,28 +293,21 @@ const PrincipalForm: React.FC = () => {
                     <label htmlFor="middleName" className="nice-form-control">
                       <b>
                         Middle Name:
-                        {touched.middleName &&
-                         !errors.middleName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.middleName && !errors.middleName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="middleName"
-                            value={values?.middleName}
-                            placeholder="Middle Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="middleName"
+                        value={values?.middleName}
+                        placeholder="Middle Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -297,28 +319,21 @@ const PrincipalForm: React.FC = () => {
                     <label htmlFor="lastName" className="nice-form-control">
                       <b>
                         Last Name:
-                        {touched.lastName &&
-                         !errors.lastName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.lastName && !errors.lastName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="lastName"
-                            value={values?.lastName}
-                            placeholder="Last Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="lastName"
+                        value={values?.lastName}
+                        placeholder="Last Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -330,28 +345,21 @@ const PrincipalForm: React.FC = () => {
                     <label htmlFor="username" className="nice-form-control">
                       <b>
                         Username:
-                        {touched.username &&
-                         !errors.username && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.username && !errors.username && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="username"
-                            value={values?.username}
-                            placeholder="Username"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="username"
+                        value={values?.username}
+                        placeholder="Username"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -363,28 +371,21 @@ const PrincipalForm: React.FC = () => {
                     <label htmlFor="password" className="nice-form-control">
                       <b>
                         Password:
-                        {touched.password &&
-                         !errors.password && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.password && !errors.password && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="password"
-                            value={values?.password}
-                            placeholder="Password"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="password"
+                        value={values?.password}
+                        placeholder="Password"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -393,31 +394,28 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="federalIdentification" className="nice-form-control">
+                    <label
+                      htmlFor="federalIdentification"
+                      className="nice-form-control"
+                    >
                       <b>
                         Federal Identification:
                         {touched.federalIdentification &&
-                         !errors.federalIdentification && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.federalIdentification && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="federalIdentification"
-                            value={values?.federalIdentification}
-                            placeholder="Federal Identification"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="federalIdentification"
+                        value={values?.federalIdentification}
+                        placeholder="Federal Identification"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -426,31 +424,28 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="residenceCountry" className="nice-form-control">
+                    <label
+                      htmlFor="residenceCountry"
+                      className="nice-form-control"
+                    >
                       <b>
                         Residence Country:
                         {touched.residenceCountry &&
-                         !errors.residenceCountry && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.residenceCountry && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="residenceCountry"
-                            value={values?.residenceCountry}
-                            placeholder="Residence Country"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="residenceCountry"
+                        value={values?.residenceCountry}
+                        placeholder="Residence Country"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -459,31 +454,28 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="stateIdentification" className="nice-form-control">
+                    <label
+                      htmlFor="stateIdentification"
+                      className="nice-form-control"
+                    >
                       <b>
                         State Identification:
                         {touched.stateIdentification &&
-                         !errors.stateIdentification && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.stateIdentification && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="stateIdentification"
-                            value={values?.stateIdentification}
-                            placeholder="State Identification"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="stateIdentification"
+                        value={values?.stateIdentification}
+                        placeholder="State Identification"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -492,31 +484,27 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="residenceState" className="nice-form-control">
+                    <label
+                      htmlFor="residenceState"
+                      className="nice-form-control"
+                    >
                       <b>
                         Residence State:
-                        {touched.residenceState &&
-                         !errors.residenceState && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.residenceState && !errors.residenceState && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="residenceState"
-                            value={values?.residenceState}
-                            placeholder="Residence State"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="residenceState"
+                        value={values?.residenceState}
+                        placeholder="Residence State"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -528,28 +516,21 @@ const PrincipalForm: React.FC = () => {
                     <label htmlFor="email" className="nice-form-control">
                       <b>
                         Email:
-                        {touched.email &&
-                         !errors.email && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.email && !errors.email && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="email"
-                            value={values?.email}
-                            placeholder="Email"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="email"
+                        value={values?.email}
+                        placeholder="Email"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -561,28 +542,21 @@ const PrincipalForm: React.FC = () => {
                     <label htmlFor="phone" className="nice-form-control">
                       <b>
                         Phone:
-                        {touched.phone &&
-                         !errors.phone && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.phone && !errors.phone && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="phone"
-                            value={values?.phone}
-                            placeholder="Phone"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="phone"
+                        value={values?.phone}
+                        placeholder="Phone"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -594,28 +568,21 @@ const PrincipalForm: React.FC = () => {
                     <label htmlFor="social" className="nice-form-control">
                       <b>
                         Social:
-                        {touched.social &&
-                         !errors.social && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.social && !errors.social && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="social"
-                            value={values?.social}
-                            placeholder="Social"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="social"
+                        value={values?.social}
+                        placeholder="Social"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -627,28 +594,21 @@ const PrincipalForm: React.FC = () => {
                     <label htmlFor="bio" className="nice-form-control">
                       <b>
                         Bio:
-                        {touched.bio &&
-                         !errors.bio && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.bio && !errors.bio && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="bio"
-                            value={values?.bio}
-                            placeholder="Bio"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="bio"
+                        value={values?.bio}
+                        placeholder="Bio"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -660,28 +620,21 @@ const PrincipalForm: React.FC = () => {
                     <label htmlFor="notes" className="nice-form-control">
                       <b>
                         Notes:
-                        {touched.notes &&
-                         !errors.notes && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.notes && !errors.notes && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="notes"
-                            value={values?.notes}
-                            placeholder="Notes"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="notes"
+                        value={values?.notes}
+                        placeholder="Notes"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -693,28 +646,21 @@ const PrincipalForm: React.FC = () => {
                     <label htmlFor="avatarUrl" className="nice-form-control">
                       <b>
                         Avatar Url:
-                        {touched.avatarUrl &&
-                         !errors.avatarUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.avatarUrl && !errors.avatarUrl && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="avatarUrl"
-                            value={values?.avatarUrl}
-                            placeholder="Avatar Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="avatarUrl"
+                        value={values?.avatarUrl}
+                        placeholder="Avatar Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -723,35 +669,31 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="acceptedCookies" className="nice-form-control">
+                    <label
+                      htmlFor="acceptedCookies"
+                      className="nice-form-control"
+                    >
                       <b>
                         Accepted Cookies:
-                        {touched.acceptedCookies &&
-                         !errors.acceptedCookies && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.acceptedCookies && !errors.acceptedCookies && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="acceptedCookies"
-                            name="acceptedCookies"
-                            checked={values.acceptedCookies || false}
-                            onChange={(e) => {
-                              setFieldTouched('acceptedCookies', true);
-                              setFieldValue('acceptedCookies', e.target.checked);
-                            }}
-                            isInvalid={!!errors.acceptedCookies}
-                            className={errors.acceptedCookies ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="acceptedCookies"
+                        name="acceptedCookies"
+                        checked={values.acceptedCookies || false}
+                        onChange={(e) => {
+                          setFieldTouched("acceptedCookies", true);
+                          setFieldValue("acceptedCookies", e.target.checked);
+                        }}
+                        isInvalid={!!errors.acceptedCookies}
+                        className={errors.acceptedCookies ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -763,32 +705,25 @@ const PrincipalForm: React.FC = () => {
                     <label htmlFor="acceptedTos" className="nice-form-control">
                       <b>
                         Accepted Tos:
-                        {touched.acceptedTos &&
-                         !errors.acceptedTos && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.acceptedTos && !errors.acceptedTos && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="acceptedTos"
-                            name="acceptedTos"
-                            checked={values.acceptedTos || false}
-                            onChange={(e) => {
-                              setFieldTouched('acceptedTos', true);
-                              setFieldValue('acceptedTos', e.target.checked);
-                            }}
-                            isInvalid={!!errors.acceptedTos}
-                            className={errors.acceptedTos ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="acceptedTos"
+                        name="acceptedTos"
+                        checked={values.acceptedTos || false}
+                        onChange={(e) => {
+                          setFieldTouched("acceptedTos", true);
+                          setFieldValue("acceptedTos", e.target.checked);
+                        }}
+                        isInvalid={!!errors.acceptedTos}
+                        className={errors.acceptedTos ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -800,32 +735,25 @@ const PrincipalForm: React.FC = () => {
                     <label htmlFor="enabled" className="nice-form-control">
                       <b>
                         Enabled:
-                        {touched.enabled &&
-                         !errors.enabled && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.enabled && !errors.enabled && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="enabled"
-                            name="enabled"
-                            checked={values.enabled || false}
-                            onChange={(e) => {
-                              setFieldTouched('enabled', true);
-                              setFieldValue('enabled', e.target.checked);
-                            }}
-                            isInvalid={!!errors.enabled}
-                            className={errors.enabled ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="enabled"
+                        name="enabled"
+                        checked={values.enabled || false}
+                        onChange={(e) => {
+                          setFieldTouched("enabled", true);
+                          setFieldValue("enabled", e.target.checked);
+                        }}
+                        isInvalid={!!errors.enabled}
+                        className={errors.enabled ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -834,35 +762,35 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="credentialNonExpired" className="nice-form-control">
+                    <label
+                      htmlFor="credentialNonExpired"
+                      className="nice-form-control"
+                    >
                       <b>
                         Credential Non Expired:
                         {touched.credentialNonExpired &&
-                         !errors.credentialNonExpired && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.credentialNonExpired && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="credentialNonExpired"
-                            name="credentialNonExpired"
-                            checked={values.credentialNonExpired || false}
-                            onChange={(e) => {
-                              setFieldTouched('credentialNonExpired', true);
-                              setFieldValue('credentialNonExpired', e.target.checked);
-                            }}
-                            isInvalid={!!errors.credentialNonExpired}
-                            className={errors.credentialNonExpired ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="credentialNonExpired"
+                        name="credentialNonExpired"
+                        checked={values.credentialNonExpired || false}
+                        onChange={(e) => {
+                          setFieldTouched("credentialNonExpired", true);
+                          setFieldValue(
+                            "credentialNonExpired",
+                            e.target.checked,
+                          );
+                        }}
+                        isInvalid={!!errors.credentialNonExpired}
+                        className={errors.credentialNonExpired ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -871,35 +799,31 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="accountEnabled" className="nice-form-control">
+                    <label
+                      htmlFor="accountEnabled"
+                      className="nice-form-control"
+                    >
                       <b>
                         Account Enabled:
-                        {touched.accountEnabled &&
-                         !errors.accountEnabled && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.accountEnabled && !errors.accountEnabled && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="accountEnabled"
-                            name="accountEnabled"
-                            checked={values.accountEnabled || false}
-                            onChange={(e) => {
-                              setFieldTouched('accountEnabled', true);
-                              setFieldValue('accountEnabled', e.target.checked);
-                            }}
-                            isInvalid={!!errors.accountEnabled}
-                            className={errors.accountEnabled ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="accountEnabled"
+                        name="accountEnabled"
+                        checked={values.accountEnabled || false}
+                        onChange={(e) => {
+                          setFieldTouched("accountEnabled", true);
+                          setFieldValue("accountEnabled", e.target.checked);
+                        }}
+                        isInvalid={!!errors.accountEnabled}
+                        className={errors.accountEnabled ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -908,35 +832,32 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="accountNonLocked" className="nice-form-control">
+                    <label
+                      htmlFor="accountNonLocked"
+                      className="nice-form-control"
+                    >
                       <b>
                         Account Non Locked:
                         {touched.accountNonLocked &&
-                         !errors.accountNonLocked && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.accountNonLocked && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="accountNonLocked"
-                            name="accountNonLocked"
-                            checked={values.accountNonLocked || false}
-                            onChange={(e) => {
-                              setFieldTouched('accountNonLocked', true);
-                              setFieldValue('accountNonLocked', e.target.checked);
-                            }}
-                            isInvalid={!!errors.accountNonLocked}
-                            className={errors.accountNonLocked ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="accountNonLocked"
+                        name="accountNonLocked"
+                        checked={values.accountNonLocked || false}
+                        onChange={(e) => {
+                          setFieldTouched("accountNonLocked", true);
+                          setFieldValue("accountNonLocked", e.target.checked);
+                        }}
+                        isInvalid={!!errors.accountNonLocked}
+                        className={errors.accountNonLocked ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -945,35 +866,32 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="accountNonExpired" className="nice-form-control">
+                    <label
+                      htmlFor="accountNonExpired"
+                      className="nice-form-control"
+                    >
                       <b>
                         Account Non Expired:
                         {touched.accountNonExpired &&
-                         !errors.accountNonExpired && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.accountNonExpired && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="accountNonExpired"
-                            name="accountNonExpired"
-                            checked={values.accountNonExpired || false}
-                            onChange={(e) => {
-                              setFieldTouched('accountNonExpired', true);
-                              setFieldValue('accountNonExpired', e.target.checked);
-                            }}
-                            isInvalid={!!errors.accountNonExpired}
-                            className={errors.accountNonExpired ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="accountNonExpired"
+                        name="accountNonExpired"
+                        checked={values.accountNonExpired || false}
+                        onChange={(e) => {
+                          setFieldTouched("accountNonExpired", true);
+                          setFieldValue("accountNonExpired", e.target.checked);
+                        }}
+                        isInvalid={!!errors.accountNonExpired}
+                        className={errors.accountNonExpired ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -982,35 +900,32 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="twoFactorEnabled" className="nice-form-control">
+                    <label
+                      htmlFor="twoFactorEnabled"
+                      className="nice-form-control"
+                    >
                       <b>
                         Two Factor Enabled:
                         {touched.twoFactorEnabled &&
-                         !errors.twoFactorEnabled && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.twoFactorEnabled && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="twoFactorEnabled"
-                            name="twoFactorEnabled"
-                            checked={values.twoFactorEnabled || false}
-                            onChange={(e) => {
-                              setFieldTouched('twoFactorEnabled', true);
-                              setFieldValue('twoFactorEnabled', e.target.checked);
-                            }}
-                            isInvalid={!!errors.twoFactorEnabled}
-                            className={errors.twoFactorEnabled ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="twoFactorEnabled"
+                        name="twoFactorEnabled"
+                        checked={values.twoFactorEnabled || false}
+                        onChange={(e) => {
+                          setFieldTouched("twoFactorEnabled", true);
+                          setFieldValue("twoFactorEnabled", e.target.checked);
+                        }}
+                        isInvalid={!!errors.twoFactorEnabled}
+                        className={errors.twoFactorEnabled ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1019,39 +934,38 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="loginAttempts" className="nice-form-control">
+                    <label
+                      htmlFor="loginAttempts"
+                      className="nice-form-control"
+                    >
                       <b>
                         Login Attempts:
-                        {touched.loginAttempts &&
-                         !errors.loginAttempts && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.loginAttempts && !errors.loginAttempts && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="loginAttempts"
-                            type="number"
-                            value={values.loginAttempts || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('loginAttempts', true);
-                              const v = e.target.value;
-                              setFieldValue('loginAttempts', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.loginAttempts
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="loginAttempts"
+                        type="number"
+                        value={values.loginAttempts || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("loginAttempts", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "loginAttempts",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.loginAttempts
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1063,38 +977,38 @@ const PrincipalForm: React.FC = () => {
                     <label htmlFor="lockoutUntil" className="nice-form-control">
                       <b>
                         Lockout Until:
-                        {touched.lockoutUntil &&
-                         !errors.lockoutUntil && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.lockoutUntil && !errors.lockoutUntil && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="lockoutUntil"
-                            type="datetime-local"
-                            value={values.lockoutUntil ? 
-                              new Date(values.lockoutUntil).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('lockoutUntil', true);
-                              const v = e.target.value;
-                              setFieldValue('lockoutUntil', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.lockoutUntil
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="lockoutUntil"
+                        type="datetime-local"
+                        value={
+                          values.lockoutUntil
+                            ? new Date(values.lockoutUntil)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("lockoutUntil", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "lockoutUntil",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.lockoutUntil
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1106,32 +1020,25 @@ const PrincipalForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -1141,45 +1048,58 @@ const PrincipalForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New Principal
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New Principal
+                    </CoolButton>
 
-                  {(addPrincipalResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addPrincipalResult as any).error ? (addPrincipalResult as any).error.data : (addPrincipalResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addPrincipalResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addPrincipalResult as any).error
+                              ? (addPrincipalResult as any).error.data
+                              : (addPrincipalResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addPrincipalResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addPrincipalResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addPrincipalResult: {JSON.stringify(addPrincipalResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addPrincipalResult: {JSON.stringify(addPrincipalResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -1199,8 +1119,5 @@ const PrincipalForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default PrincipalForm;
-

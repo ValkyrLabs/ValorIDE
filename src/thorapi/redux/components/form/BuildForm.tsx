@@ -13,33 +13,41 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
 import {
   Build,
   BuildStatusEnum,
   BuildTestEnumCodegenEnum,
-} from '@thorapi/model';
+} from "@thorapi/model";
 
-import { useAddBuildMutation } from '../../services/BuildService';
+import { useAddBuildMutation } from "../../services/BuildService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -63,39 +71,31 @@ Represents a ThorAPI build including success or failure
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const StatusValidation = () => {
-  return [
-    'PENDING',
-    'RUNNING',
-    'SUCCESS',
-    'FAILURE',
-  ];
+  return ["PENDING", "RUNNING", "SUCCESS", "FAILURE"];
 };
 const TestEnumCodegenValidation = () => {
-  return [
-    0,
-    10,
-    1000,
-  ];
+  return [0, 10, 1000];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        name: Yup.string(),
-        applicationId: Yup.string(),
-      status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        ,
-        projectPath: Yup.string(),
-      testEnumCodegen: Yup.mixed()
-        .oneOf(TestEnumCodegenValidation(), "Invalid value for testEnumCodegen")
-        ,
-        mavenHome: Yup.string(),
-        trashed: Yup.boolean(),
+  name: Yup.string(),
+  applicationId: Yup.string(),
+  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
+  projectPath: Yup.string(),
+  testEnumCodegen: Yup.mixed().oneOf(
+    TestEnumCodegenValidation(),
+    "Invalid value for testEnumCodegen",
+  ),
+  mavenHome: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -112,12 +112,18 @@ const BuildForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -125,13 +131,13 @@ const BuildForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Build> = {
-          name: '',
-          applicationId: '',
-        status: undefined,
-          projectPath: '',
-        testEnumCodegen: undefined,
-          mavenHome: '',
-          trashed: false,
+    name: "",
+    applicationId: "",
+    status: undefined,
+    projectPath: "",
+    testEnumCodegen: undefined,
+    mavenHome: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -146,11 +152,14 @@ const BuildForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new Build:', grants);
+    console.log("Permissions saved for new Build:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Build>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<Build>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -161,7 +170,7 @@ const BuildForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `Build created successfully! Would you like to set permissions for this object?`
+          `Build created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -169,8 +178,8 @@ const BuildForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create Build:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create Build:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -191,44 +200,36 @@ const BuildForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addBuildResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New Build
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New Build
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
-                        {touched.name &&
-                         !errors.name && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.name && !errors.name && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="name"
-                            value={values?.name}
-                            placeholder="Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="name"
+                        value={values?.name}
+                        placeholder="Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -237,31 +238,27 @@ const BuildForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="applicationId" className="nice-form-control">
+                    <label
+                      htmlFor="applicationId"
+                      className="nice-form-control"
+                    >
                       <b>
                         Application Id:
-                        {touched.applicationId &&
-                         !errors.applicationId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.applicationId && !errors.applicationId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="applicationId"
-                            value={values?.applicationId}
-                            placeholder="Application Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="applicationId"
+                        value={values?.applicationId}
+                        placeholder="Application Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -273,30 +270,30 @@ const BuildForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="status"
-                          value={values.status || ''}
-                          className={
-                            errors.status
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Status" />
-                          <StatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="status"
+                        value={values.status || ""}
+                        className={
+                          errors.status
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("status", true);
+                          setFieldValue("status", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Status" />
+                        <StatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -308,28 +305,21 @@ const BuildForm: React.FC = () => {
                     <label htmlFor="projectPath" className="nice-form-control">
                       <b>
                         Project Path:
-                        {touched.projectPath &&
-                         !errors.projectPath && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.projectPath && !errors.projectPath && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="projectPath"
-                            value={values?.projectPath}
-                            placeholder="Project Path"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="projectPath"
+                        value={values?.projectPath}
+                        placeholder="Project Path"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -338,33 +328,41 @@ const BuildForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="testEnumCodegen" className="nice-form-control">
+                    <label
+                      htmlFor="testEnumCodegen"
+                      className="nice-form-control"
+                    >
                       <b>
                         Test Enum Codegen:
-                        {touched.testEnumCodegen &&
-                         !errors.testEnumCodegen && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.testEnumCodegen && !errors.testEnumCodegen && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="testEnumCodegen"
-                          value={values.testEnumCodegen || ''}
-                          className={
-                            errors.testEnumCodegen
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('testEnumCodegen', true);
-                            setFieldValue('testEnumCodegen', e.target.value === '' ? undefined : Number(e.target.value));
-                          }}
-                        >
-                          <option value="" label="Select Test Enum Codegen" />
-                          <TestEnumCodegenLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="testEnumCodegen"
+                        value={values.testEnumCodegen || ""}
+                        className={
+                          errors.testEnumCodegen
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("testEnumCodegen", true);
+                          setFieldValue(
+                            "testEnumCodegen",
+                            e.target.value === ""
+                              ? undefined
+                              : Number(e.target.value),
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Test Enum Codegen" />
+                        <TestEnumCodegenLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -376,28 +374,21 @@ const BuildForm: React.FC = () => {
                     <label htmlFor="mavenHome" className="nice-form-control">
                       <b>
                         Maven Home:
-                        {touched.mavenHome &&
-                         !errors.mavenHome && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.mavenHome && !errors.mavenHome && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="mavenHome"
-                            value={values?.mavenHome}
-                            placeholder="Maven Home"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="mavenHome"
+                        value={values?.mavenHome}
+                        placeholder="Maven Home"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -409,32 +400,25 @@ const BuildForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -444,45 +428,58 @@ const BuildForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New Build
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New Build
+                    </CoolButton>
 
-                  {(addBuildResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addBuildResult as any).error ? (addBuildResult as any).error.data : (addBuildResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addBuildResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addBuildResult as any).error
+                              ? (addBuildResult as any).error.data
+                              : (addBuildResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addBuildResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addBuildResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addBuildResult: {JSON.stringify(addBuildResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addBuildResult: {JSON.stringify(addBuildResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -514,10 +511,10 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value='PENDING' label="Pending" />
-      <option value='RUNNING' label="Running" />
-      <option value='SUCCESS' label="Success" />
-      <option value='FAILURE' label="Failure" />
+      <option value="PENDING" label="Pending" />
+      <option value="RUNNING" label="Running" />
+      <option value="SUCCESS" label="Success" />
+      <option value="FAILURE" label="Failure" />
     </>
   );
 };
@@ -531,7 +528,6 @@ camelcase testEnumCodegenLookup
 kebabcase test-enum-codegen-lookup
 */
 
-
 const TestEnumCodegenLookup = () => {
   return (
     <>
@@ -542,7 +538,5 @@ const TestEnumCodegenLookup = () => {
   );
 };
 
-
 /* Export the generated form */
 export default BuildForm;
-

@@ -13,42 +13,50 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { Tag } from '@thorapi/model/Tag'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { Tag } from "@thorapi/model/Tag";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type TagResponse = Tag[]
+type TagResponse = Tag[];
 
 const toTagList = (result: unknown): TagResponse => {
   if (Array.isArray(result)) {
-    return result as TagResponse
+    return result as TagResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as TagResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as TagResponse) : [];
+};
 
 export const TagService = createApi({
-  reducerPath: 'Tag', // This should remain unique
+  reducerPath: "Tag", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['Tag'],
+  tagTypes: ["Tag"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getTagsPaged: build.query<TagResponse, { page: number; size?: number; example?: Partial<Tag> }>({
+    getTagsPaged: build.query<
+      TagResponse,
+      { page: number; size?: number; example?: Partial<Tag> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Tag?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Tag?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toTagList(result)
+        const rows = toTagList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'Tag' as const, id })),
-          { type: 'Tag', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "Tag" as const, id })),
+          { type: "Tag", id: `PAGE_${page}` },
+        ];
       },
     }),
 
@@ -62,13 +70,13 @@ export const TagService = createApi({
         return `Tag`;
       },
       providesTags: (result) => {
-        const rows = toTagList(result)
+        const rows = toTagList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'Tag' as const, id })),
-          { type: 'Tag', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "Tag" as const, id })),
+          { type: "Tag", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,42 +84,42 @@ export const TagService = createApi({
     addTag: build.mutation<Tag, Partial<Tag>>({
       query: (body) => ({
         url: `Tag`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'Tag', id: 'LIST' }],
+      invalidatesTags: [{ type: "Tag", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getTag: build.query<Tag, string>({
       query: (id) => `Tag/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Tag', id }],
+      providesTags: (result, error, id) => [{ type: "Tag", id }],
     }),
 
     // 5) Update
-    updateTag: build.mutation<void, Pick<Tag, 'id'> & Partial<Tag>>({
+    updateTag: build.mutation<void, Pick<Tag, "id"> & Partial<Tag>>({
       query: ({ id, ...patch }) => ({
         url: `Tag/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            TagService.util.updateQueryData('getTag', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            TagService.util.updateQueryData("getTag", id, (draft) => {
+              Object.assign(draft, patch);
+            }),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<Tag, 'id'>) => [
-        { type: 'Tag', id },
-        { type: 'Tag', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<Tag, "id">) => [
+        { type: "Tag", id },
+        { type: "Tag", id: "LIST" },
       ],
     }),
 
@@ -120,29 +128,35 @@ export const TagService = createApi({
       query(id) {
         return {
           url: `Tag/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'Tag', id }],
+      invalidatesTags: (result, error, id) => [{ type: "Tag", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteTagCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteTagCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `Tag/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Tag', id }, { type: 'Tag', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Tag", id },
+        { type: "Tag", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetTagsPagedQuery`
 export const {
-  useGetTagsPagedQuery,     // immediate fetch
+  useGetTagsPagedQuery, // immediate fetch
   useLazyGetTagsPagedQuery, // lazy fetch
   useGetTagQuery,
   useGetTagsQuery,
@@ -150,4 +164,4 @@ export const {
   useUpdateTagMutation,
   useDeleteTagMutation,
   useDeleteTagCascadeMutation,
-} = TagService
+} = TagService;

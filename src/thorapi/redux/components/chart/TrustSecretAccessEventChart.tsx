@@ -19,20 +19,35 @@ Description: TrustSecretAccessEvent
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, TrustSecretAccessEvent } from '@thorapi/model';
-import { useGetTrustSecretAccessEventsQuery, useAddTrustSecretAccessEventMutation, useUpdateTrustSecretAccessEventMutation } from '../../services/TrustSecretAccessEventService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, TrustSecretAccessEvent } from "@thorapi/model";
+import {
+  useGetTrustSecretAccessEventsQuery,
+  useAddTrustSecretAccessEventMutation,
+  useUpdateTrustSecretAccessEventMutation,
+} from "../../services/TrustSecretAccessEventService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const TrustSecretAccessEventChart: React.FC = () => {
-  const { data: initialData = [], isLoading } = useGetTrustSecretAccessEventsQuery();
+  const { data: initialData = [], isLoading } =
+    useGetTrustSecretAccessEventsQuery();
 
   const [data, setData] = useState<TrustSecretAccessEvent[]>([]); // Array to hold table data
-  const [chartData, setChartData] = useState<Partial<TrustSecretAccessEvent>>({});
-  
+  const [chartData, setChartData] = useState<Partial<TrustSecretAccessEvent>>(
+    {},
+  );
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +65,9 @@ const TrustSecretAccessEventChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +75,15 @@ const TrustSecretAccessEventChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((trustsecretaccessevent: DataObject) => [trustsecretaccessevent])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((trustsecretaccessevent: DataObject) => [
+            trustsecretaccessevent,
+          ])}
+        />
+      )}
     </>
   );
 };

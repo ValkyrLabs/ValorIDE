@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { TrustSecretAccessEvent } from '@thorapi/model/TrustSecretAccessEvent';
+import { TrustSecretAccessEvent } from "@thorapi/model/TrustSecretAccessEvent";
 
 const TrustSecretAccessEventSlice = createSlice({
   name: "TrustSecretAccessEvents",
@@ -27,20 +27,25 @@ const TrustSecretAccessEventSlice = createSlice({
     },
 
     TrustSecretAccessEventValueToggled(state, action) {
-      console.log("TrustSecretAccessEvent TOGGLE")
-      console.warn(JSON.stringify(action))
-      const TrustSecretAccessEvent:TrustSecretAccessEvent = state.find((TrustSecretAccessEvent) => TrustSecretAccessEvent.id === action.payload.TrustSecretAccessEventId);
+      console.log("TrustSecretAccessEvent TOGGLE");
+      console.warn(JSON.stringify(action));
+      const TrustSecretAccessEvent: TrustSecretAccessEvent = state.find(
+        (TrustSecretAccessEvent) =>
+          TrustSecretAccessEvent.id === action.payload.TrustSecretAccessEventId,
+      );
       if (TrustSecretAccessEvent) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     TrustSecretAccessEventpropertySet(state, action) {
-      const TrustSecretAccessEvent = state.find((TrustSecretAccessEvent) => TrustSecretAccessEvent.id === action.payload.TrustSecretAccessEventId);
+      const TrustSecretAccessEvent = state.find(
+        (TrustSecretAccessEvent) =>
+          TrustSecretAccessEvent.id === action.payload.TrustSecretAccessEventId,
+      );
       if (TrustSecretAccessEvent) {
-      //  TrustSecretAccessEvent[action.property] = action.payload[action.property];
+        //  TrustSecretAccessEvent[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const TrustSecretAccessEventSlice = createSlice({
 export const {
   TrustSecretAccessEventAdded,
   TrustSecretAccessEventValueToggled,
-  TrustSecretAccessEventpropertySet
+  TrustSecretAccessEventpropertySet,
 } = TrustSecretAccessEventSlice.actions;
 export default TrustSecretAccessEventSlice.reducer;

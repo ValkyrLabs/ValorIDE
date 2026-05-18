@@ -13,47 +13,58 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { PresignRequest } from '@thorapi/model/PresignRequest'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { PresignRequest } from "@thorapi/model/PresignRequest";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type PresignRequestResponse = PresignRequest[]
+type PresignRequestResponse = PresignRequest[];
 
 const toPresignRequestList = (result: unknown): PresignRequestResponse => {
   if (Array.isArray(result)) {
-    return result as PresignRequestResponse
+    return result as PresignRequestResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as PresignRequestResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as PresignRequestResponse) : [];
+};
 
 export const PresignRequestService = createApi({
-  reducerPath: 'PresignRequest', // This should remain unique
+  reducerPath: "PresignRequest", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['PresignRequest'],
+  tagTypes: ["PresignRequest"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getPresignRequestsPaged: build.query<PresignRequestResponse, { page: number; size?: number; example?: Partial<PresignRequest> }>({
+    getPresignRequestsPaged: build.query<
+      PresignRequestResponse,
+      { page: number; size?: number; example?: Partial<PresignRequest> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `PresignRequest?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `PresignRequest?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toPresignRequestList(result)
+        const rows = toPresignRequestList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'PresignRequest' as const, id })),
-          { type: 'PresignRequest', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "PresignRequest" as const, id })),
+          { type: "PresignRequest", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getPresignRequests: build.query<PresignRequestResponse, { example?: Partial<PresignRequest> } | void>({
+    getPresignRequests: build.query<
+      PresignRequestResponse,
+      { example?: Partial<PresignRequest> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,13 +73,13 @@ export const PresignRequestService = createApi({
         return `PresignRequest`;
       },
       providesTags: (result) => {
-        const rows = toPresignRequestList(result)
+        const rows = toPresignRequestList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'PresignRequest' as const, id })),
-          { type: 'PresignRequest', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "PresignRequest" as const, id })),
+          { type: "PresignRequest", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,73 +87,89 @@ export const PresignRequestService = createApi({
     addPresignRequest: build.mutation<PresignRequest, Partial<PresignRequest>>({
       query: (body) => ({
         url: `PresignRequest`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'PresignRequest', id: 'LIST' }],
+      invalidatesTags: [{ type: "PresignRequest", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getPresignRequest: build.query<PresignRequest, string>({
       query: (id) => `PresignRequest/${id}`,
-      providesTags: (result, error, id) => [{ type: 'PresignRequest', id }],
+      providesTags: (result, error, id) => [{ type: "PresignRequest", id }],
     }),
 
     // 5) Update
-    updatePresignRequest: build.mutation<void, Pick<PresignRequest, 'id'> & Partial<PresignRequest>>({
+    updatePresignRequest: build.mutation<
+      void,
+      Pick<PresignRequest, "id"> & Partial<PresignRequest>
+    >({
       query: ({ id, ...patch }) => ({
         url: `PresignRequest/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            PresignRequestService.util.updateQueryData('getPresignRequest', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            PresignRequestService.util.updateQueryData(
+              "getPresignRequest",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<PresignRequest, 'id'>) => [
-        { type: 'PresignRequest', id },
-        { type: 'PresignRequest', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<PresignRequest, "id">) => [
+        { type: "PresignRequest", id },
+        { type: "PresignRequest", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deletePresignRequest: build.mutation<{ success: boolean; id: string }, number>({
+    deletePresignRequest: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `PresignRequest/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'PresignRequest', id }],
+      invalidatesTags: (result, error, id) => [{ type: "PresignRequest", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deletePresignRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deletePresignRequestCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `PresignRequest/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'PresignRequest', id }, { type: 'PresignRequest', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "PresignRequest", id },
+        { type: "PresignRequest", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetPresignRequestsPagedQuery`
 export const {
-  useGetPresignRequestsPagedQuery,     // immediate fetch
+  useGetPresignRequestsPagedQuery, // immediate fetch
   useLazyGetPresignRequestsPagedQuery, // lazy fetch
   useGetPresignRequestQuery,
   useGetPresignRequestsQuery,
@@ -150,4 +177,4 @@ export const {
   useUpdatePresignRequestMutation,
   useDeletePresignRequestMutation,
   useDeletePresignRequestCascadeMutation,
-} = PresignRequestService
+} = PresignRequestService;

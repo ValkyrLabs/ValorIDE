@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { CompleteTrustExecutionRequest } from '@thorapi/model/CompleteTrustExecutionRequest';
+import { CompleteTrustExecutionRequest } from "@thorapi/model/CompleteTrustExecutionRequest";
 
 const CompleteTrustExecutionRequestSlice = createSlice({
   name: "CompleteTrustExecutionRequests",
@@ -27,20 +27,28 @@ const CompleteTrustExecutionRequestSlice = createSlice({
     },
 
     CompleteTrustExecutionRequestValueToggled(state, action) {
-      console.log("CompleteTrustExecutionRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const CompleteTrustExecutionRequest:CompleteTrustExecutionRequest = state.find((CompleteTrustExecutionRequest) => CompleteTrustExecutionRequest.id === action.payload.CompleteTrustExecutionRequestId);
+      console.log("CompleteTrustExecutionRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const CompleteTrustExecutionRequest: CompleteTrustExecutionRequest =
+        state.find(
+          (CompleteTrustExecutionRequest) =>
+            CompleteTrustExecutionRequest.id ===
+            action.payload.CompleteTrustExecutionRequestId,
+        );
       if (CompleteTrustExecutionRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     CompleteTrustExecutionRequestpropertySet(state, action) {
-      const CompleteTrustExecutionRequest = state.find((CompleteTrustExecutionRequest) => CompleteTrustExecutionRequest.id === action.payload.CompleteTrustExecutionRequestId);
+      const CompleteTrustExecutionRequest = state.find(
+        (CompleteTrustExecutionRequest) =>
+          CompleteTrustExecutionRequest.id ===
+          action.payload.CompleteTrustExecutionRequestId,
+      );
       if (CompleteTrustExecutionRequest) {
-      //  CompleteTrustExecutionRequest[action.property] = action.payload[action.property];
+        //  CompleteTrustExecutionRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +57,6 @@ const CompleteTrustExecutionRequestSlice = createSlice({
 export const {
   CompleteTrustExecutionRequestAdded,
   CompleteTrustExecutionRequestValueToggled,
-  CompleteTrustExecutionRequestpropertySet
+  CompleteTrustExecutionRequestpropertySet,
 } = CompleteTrustExecutionRequestSlice.actions;
 export default CompleteTrustExecutionRequestSlice.reducer;

@@ -19,20 +19,32 @@ Description: WorkflowState
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, WorkflowState } from '@thorapi/model';
-import { useGetWorkflowStatesQuery, useAddWorkflowStateMutation, useUpdateWorkflowStateMutation } from '../../services/WorkflowStateService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, WorkflowState } from "@thorapi/model";
+import {
+  useGetWorkflowStatesQuery,
+  useAddWorkflowStateMutation,
+  useUpdateWorkflowStateMutation,
+} from "../../services/WorkflowStateService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const WorkflowStateChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetWorkflowStatesQuery();
 
   const [data, setData] = useState<WorkflowState[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<WorkflowState>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const WorkflowStateChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const WorkflowStateChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((workflowstate: DataObject) => [workflowstate])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((workflowstate: DataObject) => [workflowstate])}
+        />
+      )}
     </>
   );
 };

@@ -13,32 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  JobMetadata,
-  JobMetadataStatusEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddJobMetadataMutation } from '../../services/JobMetadataService';
+import { JobMetadata, JobMetadataStatusEnum } from "@thorapi/model";
+
+import { useAddJobMetadataMutation } from "../../services/JobMetadataService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -62,47 +67,43 @@ Job status and metadata
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const StatusValidation = () => {
-  return [
-    'QUEUED',
-    'RUNNING',
-    'COMPLETED',
-    'FAILED',
-    'CANCELLED',
-  ];
+  return ["QUEUED", "RUNNING", "COMPLETED", "FAILED", "CANCELLED"];
 };
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        type: Yup.string(),
-      status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        ,
-        inputJson: Yup.string(),
-        outputJson: Yup.string(),
-        error: Yup.string(),
-        startedAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("startedAt must be a valid date"),
-        finishedAt: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("finishedAt must be a valid date"),
-        idempotencyKey: Yup.string(),
-        trashed: Yup.boolean(),
+  type: Yup.string(),
+  status: Yup.mixed().oneOf(StatusValidation(), "Invalid value for status"),
+  inputJson: Yup.string(),
+  outputJson: Yup.string(),
+  error: Yup.string(),
+  startedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("startedAt must be a valid date"),
+  finishedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("finishedAt must be a valid date"),
+  idempotencyKey: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
@@ -119,12 +120,18 @@ const JobMetadataForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -132,15 +139,15 @@ const JobMetadataForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<JobMetadata> = {
-          type: '',
-        status: undefined,
-          inputJson: '',
-          outputJson: '',
-          error: '',
-          startedAt: new Date(),
-          finishedAt: new Date(),
-          idempotencyKey: '',
-          trashed: false,
+    type: "",
+    status: undefined,
+    inputJson: "",
+    outputJson: "",
+    error: "",
+    startedAt: new Date(),
+    finishedAt: new Date(),
+    idempotencyKey: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -155,11 +162,14 @@ const JobMetadataForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new JobMetadata:', grants);
+    console.log("Permissions saved for new JobMetadata:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<JobMetadata>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<JobMetadata>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -170,7 +180,7 @@ const JobMetadataForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `JobMetadata created successfully! Would you like to set permissions for this object?`
+          `JobMetadata created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -178,8 +188,8 @@ const JobMetadataForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create JobMetadata:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create JobMetadata:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -200,44 +210,36 @@ const JobMetadataForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addJobMetadataResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New JobMetadata
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New JobMetadata
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="type" className="nice-form-control">
                       <b>
                         Type:
-                        {touched.type &&
-                         !errors.type && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.type && !errors.type && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="type"
-                            value={values?.type}
-                            placeholder="Type"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="type"
+                        value={values?.type}
+                        placeholder="Type"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -249,30 +251,30 @@ const JobMetadataForm: React.FC = () => {
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
-                        {touched.status &&
-                         !errors.status && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.status && !errors.status && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="status"
-                          value={values.status || ''}
-                          className={
-                            errors.status
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Status" />
-                          <StatusLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="status"
+                        value={values.status || ""}
+                        className={
+                          errors.status
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("status", true);
+                          setFieldValue("status", e.target.value || undefined);
+                        }}
+                      >
+                        <option value="" label="Select Status" />
+                        <StatusLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -284,28 +286,21 @@ const JobMetadataForm: React.FC = () => {
                     <label htmlFor="inputJson" className="nice-form-control">
                       <b>
                         Input Json:
-                        {touched.inputJson &&
-                         !errors.inputJson && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.inputJson && !errors.inputJson && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="inputJson"
-                            value={values?.inputJson}
-                            placeholder="Input Json"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="inputJson"
+                        value={values?.inputJson}
+                        placeholder="Input Json"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -317,28 +312,21 @@ const JobMetadataForm: React.FC = () => {
                     <label htmlFor="outputJson" className="nice-form-control">
                       <b>
                         Output Json:
-                        {touched.outputJson &&
-                         !errors.outputJson && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.outputJson && !errors.outputJson && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="outputJson"
-                            value={values?.outputJson}
-                            placeholder="Output Json"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="outputJson"
+                        value={values?.outputJson}
+                        placeholder="Output Json"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -350,28 +338,21 @@ const JobMetadataForm: React.FC = () => {
                     <label htmlFor="error" className="nice-form-control">
                       <b>
                         Error:
-                        {touched.error &&
-                         !errors.error && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.error && !errors.error && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="error"
-                            value={values?.error}
-                            placeholder="Error"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="error"
+                        value={values?.error}
+                        placeholder="Error"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -383,38 +364,38 @@ const JobMetadataForm: React.FC = () => {
                     <label htmlFor="startedAt" className="nice-form-control">
                       <b>
                         Started At:
-                        {touched.startedAt &&
-                         !errors.startedAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.startedAt && !errors.startedAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="startedAt"
-                            type="datetime-local"
-                            value={values.startedAt ? 
-                              new Date(values.startedAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('startedAt', true);
-                              const v = e.target.value;
-                              setFieldValue('startedAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.startedAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="startedAt"
+                        type="datetime-local"
+                        value={
+                          values.startedAt
+                            ? new Date(values.startedAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("startedAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "startedAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.startedAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -426,38 +407,38 @@ const JobMetadataForm: React.FC = () => {
                     <label htmlFor="finishedAt" className="nice-form-control">
                       <b>
                         Finished At:
-                        {touched.finishedAt &&
-                         !errors.finishedAt && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.finishedAt && !errors.finishedAt && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="finishedAt"
-                            type="datetime-local"
-                            value={values.finishedAt ? 
-                              new Date(values.finishedAt).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('finishedAt', true);
-                              const v = e.target.value;
-                              setFieldValue('finishedAt', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.finishedAt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                      {/* DATETIME FIELD */}
+                      <Field
+                        name="finishedAt"
+                        type="datetime-local"
+                        value={
+                          values.finishedAt
+                            ? new Date(values.finishedAt)
+                                .toISOString()
+                                .slice(0, 16)
+                            : ""
+                        }
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("finishedAt", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "finishedAt",
+                            v ? new Date(v).toISOString() : "",
+                          );
+                        }}
+                        className={
+                          errors.finishedAt
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -466,31 +447,27 @@ const JobMetadataForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="idempotencyKey" className="nice-form-control">
+                    <label
+                      htmlFor="idempotencyKey"
+                      className="nice-form-control"
+                    >
                       <b>
                         Idempotency Key:
-                        {touched.idempotencyKey &&
-                         !errors.idempotencyKey && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.idempotencyKey && !errors.idempotencyKey && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="idempotencyKey"
-                            value={values?.idempotencyKey}
-                            placeholder="Idempotency Key"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="idempotencyKey"
+                        value={values?.idempotencyKey}
+                        placeholder="Idempotency Key"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -502,32 +479,25 @@ const JobMetadataForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -537,45 +507,58 @@ const JobMetadataForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New JobMetadata
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New JobMetadata
+                    </CoolButton>
 
-                  {(addJobMetadataResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addJobMetadataResult as any).error ? (addJobMetadataResult as any).error.data : (addJobMetadataResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addJobMetadataResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addJobMetadataResult as any).error
+                              ? (addJobMetadataResult as any).error.data
+                              : (addJobMetadataResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addJobMetadataResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addJobMetadataResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addJobMetadataResult: {JSON.stringify(addJobMetadataResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addJobMetadataResult: {JSON.stringify(addJobMetadataResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -607,17 +590,14 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value='QUEUED' label="Queued" />
-      <option value='RUNNING' label="Running" />
-      <option value='COMPLETED' label="Completed" />
-      <option value='FAILED' label="Failed" />
-      <option value='CANCELLED' label="Cancelled" />
+      <option value="QUEUED" label="Queued" />
+      <option value="RUNNING" label="Running" />
+      <option value="COMPLETED" label="Completed" />
+      <option value="FAILED" label="Failed" />
+      <option value="CANCELLED" label="Cancelled" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default JobMetadataForm;
-

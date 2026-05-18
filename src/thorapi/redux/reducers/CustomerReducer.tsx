@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Customer } from '@thorapi/model/Customer';
+import { Customer } from "@thorapi/model/Customer";
 
 const CustomerSlice = createSlice({
   name: "Customers",
@@ -27,28 +27,28 @@ const CustomerSlice = createSlice({
     },
 
     CustomerValueToggled(state, action) {
-      console.log("Customer TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Customer:Customer = state.find((Customer) => Customer.id === action.payload.CustomerId);
+      console.log("Customer TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Customer: Customer = state.find(
+        (Customer) => Customer.id === action.payload.CustomerId,
+      );
       if (Customer) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     CustomerpropertySet(state, action) {
-      const Customer = state.find((Customer) => Customer.id === action.payload.CustomerId);
+      const Customer = state.find(
+        (Customer) => Customer.id === action.payload.CustomerId,
+      );
       if (Customer) {
-      //  Customer[action.property] = action.payload[action.property];
+        //  Customer[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  CustomerAdded,
-  CustomerValueToggled,
-  CustomerpropertySet
-} = CustomerSlice.actions;
+export const { CustomerAdded, CustomerValueToggled, CustomerpropertySet } =
+  CustomerSlice.actions;
 export default CustomerSlice.reducer;

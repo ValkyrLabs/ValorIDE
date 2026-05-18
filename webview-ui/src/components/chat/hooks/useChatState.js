@@ -106,7 +106,7 @@ export const useChatState = ({ messages, chatSettings }) => {
                 (m) =>
                   m.type === "ask" &&
                   m.ask === "followup" &&
-                  m.text?.includes("Are you sure you completed all")
+                  m.text?.includes("Are you sure you completed all"),
               ).length;
               // Update button text with attempt counter during stubborn mode
               if (
@@ -115,7 +115,7 @@ export const useChatState = ({ messages, chatSettings }) => {
                 stubbornAttempts < maxAttempts
               ) {
                 setPrimaryButtonText(
-                  `Stubborn ${stubbornAttempts + 1}/${maxAttempts}`
+                  `Stubborn ${stubbornAttempts + 1}/${maxAttempts}`,
                 );
               } else {
                 setPrimaryButtonText("Start New Task");

@@ -13,34 +13,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_RATING_REQUEST,
-    FETCH_RATING_REQUEST,
-    LIST_RATING_REQUEST,
-    UPDATE_RATING_REQUEST,
-    DELETE_RATING_REQUEST,
-
-    addRatingFailure,
-    addRatingSuccess,
-
-    fetchRatingFailure,
-    fetchRatingSuccess,
-    
-    listRatingFailure,
-    listRatingSuccess,
-
-    updateRatingFailure,
-    updateRatingSuccess,
-    
-    deleteRatingFailure,
-    deleteRatingSuccess,
-    
-} from '../actions/RatingApiAction';
+  ADD_RATING_REQUEST,
+  FETCH_RATING_REQUEST,
+  LIST_RATING_REQUEST,
+  UPDATE_RATING_REQUEST,
+  DELETE_RATING_REQUEST,
+  addRatingFailure,
+  addRatingSuccess,
+  fetchRatingFailure,
+  fetchRatingSuccess,
+  listRatingFailure,
+  listRatingSuccess,
+  updateRatingFailure,
+  updateRatingSuccess,
+  deleteRatingFailure,
+  deleteRatingSuccess,
+} from "../actions/RatingApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -58,15 +47,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Rating
 */
 
-
-
-export const RatingMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("Rating MIDDLEWARE: " + JSON.stringify(action) )
+export const RatingMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Rating MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

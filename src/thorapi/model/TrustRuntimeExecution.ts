@@ -26,16 +26,13 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    TrustPolicyManifest,
-    TrustPolicyManifestFromJSON,
-    TrustPolicyManifestToJSON,
-} from './';
-
+  TrustPolicyManifest,
+  TrustPolicyManifestFromJSON,
+  TrustPolicyManifestToJSON,
+} from "./";
 
 // thorapi
 
@@ -44,155 +41,177 @@ import {
  * @export
  * @interface TrustRuntimeExecution
  */
-export type TrustRuntimeExecution  = DataObject & {
-    /**
-     * 
-     * @type {TrustPolicyManifest}
-     * @memberof TrustRuntimeExecution
-     */
-    policyManifest?: TrustPolicyManifest;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustRuntimeExecution
-     */
-    actorId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustRuntimeExecution
-     */
-    serviceAccountId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustRuntimeExecution
-     */
-    workflowId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustRuntimeExecution
-     */
-    executionStatus?: TrustRuntimeExecutionExecutionStatusEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustRuntimeExecution
-     */
-    firstEventHash?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustRuntimeExecution
-     */
-    lastEventHash?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof TrustRuntimeExecution
-     */
-    ownerId?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof TrustRuntimeExecution
-     */
-    readonly id?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof TrustRuntimeExecution
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof TrustRuntimeExecution
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof TrustRuntimeExecution
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof TrustRuntimeExecution
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof TrustRuntimeExecution
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof TrustRuntimeExecution
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof TrustRuntimeExecution
-     */
-    trashed?: boolean;
+export type TrustRuntimeExecution = DataObject & {
+  /**
+   *
+   * @type {TrustPolicyManifest}
+   * @memberof TrustRuntimeExecution
+   */
+  policyManifest?: TrustPolicyManifest;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustRuntimeExecution
+   */
+  actorId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustRuntimeExecution
+   */
+  serviceAccountId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustRuntimeExecution
+   */
+  workflowId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustRuntimeExecution
+   */
+  executionStatus?: TrustRuntimeExecutionExecutionStatusEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustRuntimeExecution
+   */
+  firstEventHash?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustRuntimeExecution
+   */
+  lastEventHash?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrustRuntimeExecution
+   */
+  ownerId?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof TrustRuntimeExecution
+   */
+  readonly id?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof TrustRuntimeExecution
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof TrustRuntimeExecution
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof TrustRuntimeExecution
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof TrustRuntimeExecution
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof TrustRuntimeExecution
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof TrustRuntimeExecution
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof TrustRuntimeExecution
+   */
+  trashed?: boolean;
+};
+
+export function TrustRuntimeExecutionFromJSON(
+  json: any,
+): TrustRuntimeExecution {
+  return {
+    ...DataObjectFromJSON(json),
+    policyManifest: !exists(json, "policyManifest")
+      ? undefined
+      : TrustPolicyManifestFromJSON(json["policyManifest"]),
+    actorId: !exists(json, "actorId") ? undefined : json["actorId"],
+    serviceAccountId: !exists(json, "serviceAccountId")
+      ? undefined
+      : json["serviceAccountId"],
+    workflowId: !exists(json, "workflowId") ? undefined : json["workflowId"],
+    executionStatus: !exists(json, "executionStatus")
+      ? undefined
+      : json["executionStatus"],
+    firstEventHash: !exists(json, "firstEventHash")
+      ? undefined
+      : json["firstEventHash"],
+    lastEventHash: !exists(json, "lastEventHash")
+      ? undefined
+      : json["lastEventHash"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
-export function TrustRuntimeExecutionFromJSON(json: any): TrustRuntimeExecution {
-    return {
-        ...DataObjectFromJSON(json),
-        'policyManifest': !exists(json, 'policyManifest') ? undefined : TrustPolicyManifestFromJSON(json['policyManifest']),
-        'actorId': !exists(json, 'actorId') ? undefined : json['actorId'],
-        'serviceAccountId': !exists(json, 'serviceAccountId') ? undefined : json['serviceAccountId'],
-        'workflowId': !exists(json, 'workflowId') ? undefined : json['workflowId'],
-        'executionStatus': !exists(json, 'executionStatus') ? undefined : json['executionStatus'],
-        'firstEventHash': !exists(json, 'firstEventHash') ? undefined : json['firstEventHash'],
-        'lastEventHash': !exists(json, 'lastEventHash') ? undefined : json['lastEventHash'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
-}
-
-export function TrustRuntimeExecutionToJSON(value?: TrustRuntimeExecution): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'policyManifest': TrustPolicyManifestToJSON(value.policyManifest),
-        'actorId': value.actorId,
-        'serviceAccountId': value.serviceAccountId,
-        'workflowId': value.workflowId,
-        'executionStatus': value.executionStatus,
-        'firstEventHash': value.firstEventHash,
-        'lastEventHash': value.lastEventHash,
-        'ownerId': value.ownerId,
-        'trashed': value.trashed,
-    };
+export function TrustRuntimeExecutionToJSON(
+  value?: TrustRuntimeExecution,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    policyManifest: TrustPolicyManifestToJSON(value.policyManifest),
+    actorId: value.actorId,
+    serviceAccountId: value.serviceAccountId,
+    workflowId: value.workflowId,
+    executionStatus: value.executionStatus,
+    firstEventHash: value.firstEventHash,
+    lastEventHash: value.lastEventHash,
+    ownerId: value.ownerId,
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum TrustRuntimeExecutionExecutionStatusEnum {
-    STARTED = 'started',
-    RUNNING = 'running',
-    COMPLETED = 'completed',
-    FAILED = 'failed',
-    CANCELLED = 'cancelled'
+  STARTED = "started",
+  RUNNING = "running",
+  COMPLETED = "completed",
+  FAILED = "failed",
+  CANCELLED = "cancelled",
 }
-
-

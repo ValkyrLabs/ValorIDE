@@ -3,7 +3,9 @@ import { RemoteCodingSessionOrchestrator } from "./RemoteCodingSessionOrchestrat
 
 describe("RemoteCodingSessionOrchestrator", () => {
   it("supports start/list/cancel lifecycle", () => {
-    const orchestrator = new RemoteCodingSessionOrchestrator(new RemoteCodingSessionRegistry());
+    const orchestrator = new RemoteCodingSessionOrchestrator(
+      new RemoteCodingSessionRegistry(),
+    );
 
     const started = orchestrator.handle({
       id: "cmd-1",
@@ -43,7 +45,12 @@ describe("RemoteCodingSessionOrchestrator", () => {
     const registry = new RemoteCodingSessionRegistry();
     const orchestrator = new RemoteCodingSessionOrchestrator(registry);
 
-    registry.start({ id: "s2", task: "Long run", timeoutMs: 1, createdAt: 100 });
+    registry.start({
+      id: "s2",
+      task: "Long run",
+      timeoutMs: 1,
+      createdAt: 100,
+    });
 
     const expired = orchestrator.handle({
       id: "cmd-6",
@@ -56,7 +63,9 @@ describe("RemoteCodingSessionOrchestrator", () => {
   });
 
   it("supports template listing and preset-driven starts", () => {
-    const orchestrator = new RemoteCodingSessionOrchestrator(new RemoteCodingSessionRegistry());
+    const orchestrator = new RemoteCodingSessionOrchestrator(
+      new RemoteCodingSessionRegistry(),
+    );
 
     const templates = orchestrator.handle({
       id: "cmd-7",

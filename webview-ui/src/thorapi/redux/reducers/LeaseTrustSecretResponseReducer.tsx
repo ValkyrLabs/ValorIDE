@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { LeaseTrustSecretResponse } from '@thorapi/model/LeaseTrustSecretResponse';
+import { LeaseTrustSecretResponse } from "@thorapi/model/LeaseTrustSecretResponse";
 
 const LeaseTrustSecretResponseSlice = createSlice({
   name: "LeaseTrustSecretResponses",
@@ -27,20 +27,27 @@ const LeaseTrustSecretResponseSlice = createSlice({
     },
 
     LeaseTrustSecretResponseValueToggled(state, action) {
-      console.log("LeaseTrustSecretResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const LeaseTrustSecretResponse:LeaseTrustSecretResponse = state.find((LeaseTrustSecretResponse) => LeaseTrustSecretResponse.id === action.payload.LeaseTrustSecretResponseId);
+      console.log("LeaseTrustSecretResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const LeaseTrustSecretResponse: LeaseTrustSecretResponse = state.find(
+        (LeaseTrustSecretResponse) =>
+          LeaseTrustSecretResponse.id ===
+          action.payload.LeaseTrustSecretResponseId,
+      );
       if (LeaseTrustSecretResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     LeaseTrustSecretResponsepropertySet(state, action) {
-      const LeaseTrustSecretResponse = state.find((LeaseTrustSecretResponse) => LeaseTrustSecretResponse.id === action.payload.LeaseTrustSecretResponseId);
+      const LeaseTrustSecretResponse = state.find(
+        (LeaseTrustSecretResponse) =>
+          LeaseTrustSecretResponse.id ===
+          action.payload.LeaseTrustSecretResponseId,
+      );
       if (LeaseTrustSecretResponse) {
-      //  LeaseTrustSecretResponse[action.property] = action.payload[action.property];
+        //  LeaseTrustSecretResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +56,6 @@ const LeaseTrustSecretResponseSlice = createSlice({
 export const {
   LeaseTrustSecretResponseAdded,
   LeaseTrustSecretResponseValueToggled,
-  LeaseTrustSecretResponsepropertySet
+  LeaseTrustSecretResponsepropertySet,
 } = LeaseTrustSecretResponseSlice.actions;
 export default LeaseTrustSecretResponseSlice.reducer;

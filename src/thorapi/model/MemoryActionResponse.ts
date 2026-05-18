@@ -26,16 +26,9 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
-import {
-
-
-    MemoryStats,
-    MemoryStatsFromJSON,
-    MemoryStatsToJSON,
-} from './';
-
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { MemoryStats, MemoryStatsFromJSON, MemoryStatsToJSON } from "./";
 
 // thorapi
 
@@ -44,145 +37,159 @@ import {
  * @export
  * @interface MemoryActionResponse
  */
-export type MemoryActionResponse  = DataObject & {
-    /**
-     * Action that was requested.
-     * @type {string}
-     * @memberof MemoryActionResponse
-     */
-    action?: MemoryActionResponseActionEnum;
-    /**
-     * Indicates whether action execution succeeded.
-     * @type {boolean}
-     * @memberof MemoryActionResponse
-     */
-    success?: boolean;
-    /**
-     * Credits charged for this action.
-     * @type {number}
-     * @memberof MemoryActionResponse
-     */
-    creditsCharged?: number;
-    /**
-     * Number of records impacted by the action.
-     * @type {number}
-     * @memberof MemoryActionResponse
-     */
-    entriesAffected?: number;
-    /**
-     * Human-readable operation result summary.
-     * @type {string}
-     * @memberof MemoryActionResponse
-     */
-    message?: string;
-    /**
-     * 
-     * @type {MemoryStats}
-     * @memberof MemoryActionResponse
-     */
-    updatedStats?: MemoryStats;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof MemoryActionResponse
-     */
-    readonly id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof MemoryActionResponse
-     */
-    readonly ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof MemoryActionResponse
-     */
-    readonly createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof MemoryActionResponse
-     */
-    readonly keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof MemoryActionResponse
-     */
-    readonly lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof MemoryActionResponse
-     */
-    readonly lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof MemoryActionResponse
-     */
-    readonly lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof MemoryActionResponse
-     */
-    readonly lastModifiedDate?: Date;
-    /**
-     * Indicates if the object is trashed (soft deleted)
-     * @type {boolean}
-     * @memberof MemoryActionResponse
-     */
-    trashed?: boolean;
-}
+export type MemoryActionResponse = DataObject & {
+  /**
+   * Action that was requested.
+   * @type {string}
+   * @memberof MemoryActionResponse
+   */
+  action?: MemoryActionResponseActionEnum;
+  /**
+   * Indicates whether action execution succeeded.
+   * @type {boolean}
+   * @memberof MemoryActionResponse
+   */
+  success?: boolean;
+  /**
+   * Credits charged for this action.
+   * @type {number}
+   * @memberof MemoryActionResponse
+   */
+  creditsCharged?: number;
+  /**
+   * Number of records impacted by the action.
+   * @type {number}
+   * @memberof MemoryActionResponse
+   */
+  entriesAffected?: number;
+  /**
+   * Human-readable operation result summary.
+   * @type {string}
+   * @memberof MemoryActionResponse
+   */
+  message?: string;
+  /**
+   *
+   * @type {MemoryStats}
+   * @memberof MemoryActionResponse
+   */
+  updatedStats?: MemoryStats;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof MemoryActionResponse
+   */
+  readonly id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof MemoryActionResponse
+   */
+  readonly ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof MemoryActionResponse
+   */
+  readonly createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof MemoryActionResponse
+   */
+  readonly keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof MemoryActionResponse
+   */
+  readonly lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof MemoryActionResponse
+   */
+  readonly lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof MemoryActionResponse
+   */
+  readonly lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof MemoryActionResponse
+   */
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof MemoryActionResponse
+   */
+  trashed?: boolean;
+};
 
 export function MemoryActionResponseFromJSON(json: any): MemoryActionResponse {
-    return {
-        ...DataObjectFromJSON(json),
-        'action': !exists(json, 'action') ? undefined : json['action'],
-        'success': !exists(json, 'success') ? undefined : json['success'],
-        'creditsCharged': !exists(json, 'creditsCharged') ? undefined : json['creditsCharged'],
-        'entriesAffected': !exists(json, 'entriesAffected') ? undefined : json['entriesAffected'],
-        'message': !exists(json, 'message') ? undefined : json['message'],
-        'updatedStats': !exists(json, 'updatedStats') ? undefined : MemoryStatsFromJSON(json['updatedStats']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    action: !exists(json, "action") ? undefined : json["action"],
+    success: !exists(json, "success") ? undefined : json["success"],
+    creditsCharged: !exists(json, "creditsCharged")
+      ? undefined
+      : json["creditsCharged"],
+    entriesAffected: !exists(json, "entriesAffected")
+      ? undefined
+      : json["entriesAffected"],
+    message: !exists(json, "message") ? undefined : json["message"],
+    updatedStats: !exists(json, "updatedStats")
+      ? undefined
+      : MemoryStatsFromJSON(json["updatedStats"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 
 export function MemoryActionResponseToJSON(value?: MemoryActionResponse): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        'action': value.action,
-        'success': value.success,
-        'creditsCharged': value.creditsCharged,
-        'entriesAffected': value.entriesAffected,
-        'message': value.message,
-        'updatedStats': MemoryStatsToJSON(value.updatedStats),
-        'trashed': value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    action: value.action,
+    success: value.success,
+    creditsCharged: value.creditsCharged,
+    entriesAffected: value.entriesAffected,
+    message: value.message,
+    updatedStats: MemoryStatsToJSON(value.updatedStats),
+    trashed: value.trashed,
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum MemoryActionResponseActionEnum {
-    COMPACT = 'compact',
-    REINDEX = 'reindex',
-    PRUNE = 'prune',
-    EXPAND = 'expand'
+  COMPACT = "compact",
+  REINDEX = "reindex",
+  PRUNE = "prune",
+  EXPAND = "expand",
 }
-
-

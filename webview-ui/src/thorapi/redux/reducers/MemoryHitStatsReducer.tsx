@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { MemoryHitStats } from '@thorapi/model/MemoryHitStats';
+import { MemoryHitStats } from "@thorapi/model/MemoryHitStats";
 
 const MemoryHitStatsSlice = createSlice({
   name: "MemoryHitStatss",
@@ -27,20 +27,25 @@ const MemoryHitStatsSlice = createSlice({
     },
 
     MemoryHitStatsValueToggled(state, action) {
-      console.log("MemoryHitStats TOGGLE")
-      console.warn(JSON.stringify(action))
-      const MemoryHitStats:MemoryHitStats = state.find((MemoryHitStats) => MemoryHitStats.id === action.payload.MemoryHitStatsId);
+      console.log("MemoryHitStats TOGGLE");
+      console.warn(JSON.stringify(action));
+      const MemoryHitStats: MemoryHitStats = state.find(
+        (MemoryHitStats) =>
+          MemoryHitStats.id === action.payload.MemoryHitStatsId,
+      );
       if (MemoryHitStats) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     MemoryHitStatspropertySet(state, action) {
-      const MemoryHitStats = state.find((MemoryHitStats) => MemoryHitStats.id === action.payload.MemoryHitStatsId);
+      const MemoryHitStats = state.find(
+        (MemoryHitStats) =>
+          MemoryHitStats.id === action.payload.MemoryHitStatsId,
+      );
       if (MemoryHitStats) {
-      //  MemoryHitStats[action.property] = action.payload[action.property];
+        //  MemoryHitStats[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const MemoryHitStatsSlice = createSlice({
 export const {
   MemoryHitStatsAdded,
   MemoryHitStatsValueToggled,
-  MemoryHitStatspropertySet
+  MemoryHitStatspropertySet,
 } = MemoryHitStatsSlice.actions;
 export default MemoryHitStatsSlice.reducer;

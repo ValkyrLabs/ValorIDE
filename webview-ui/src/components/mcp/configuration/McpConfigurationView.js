@@ -17,7 +17,7 @@ import { useCommunicationService } from "@thorapi/context/CommunicationServiceCo
 const McpConfigurationView = ({ onDone, initialTab }) => {
   const { mcpMarketplaceEnabled } = useExtensionState();
   const [activeTab, setActiveTab] = useState(
-    initialTab || (mcpMarketplaceEnabled ? "marketplace" : "installed")
+    initialTab || (mcpMarketplaceEnabled ? "marketplace" : "installed"),
   );
   const handleTabChange = (tab) => {
     setActiveTab(tab);

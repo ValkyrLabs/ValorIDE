@@ -13,42 +13,50 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { Goal } from '@thorapi/model/Goal'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { Goal } from "@thorapi/model/Goal";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type GoalResponse = Goal[]
+type GoalResponse = Goal[];
 
 const toGoalList = (result: unknown): GoalResponse => {
   if (Array.isArray(result)) {
-    return result as GoalResponse
+    return result as GoalResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as GoalResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate) ? (candidate as GoalResponse) : [];
+};
 
 export const GoalService = createApi({
-  reducerPath: 'Goal', // This should remain unique
+  reducerPath: "Goal", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['Goal'],
+  tagTypes: ["Goal"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getGoalsPaged: build.query<GoalResponse, { page: number; size?: number; example?: Partial<Goal> }>({
+    getGoalsPaged: build.query<
+      GoalResponse,
+      { page: number; size?: number; example?: Partial<Goal> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Goal?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Goal?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toGoalList(result)
+        const rows = toGoalList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'Goal' as const, id })),
-          { type: 'Goal', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "Goal" as const, id })),
+          { type: "Goal", id: `PAGE_${page}` },
+        ];
       },
     }),
 
@@ -62,13 +70,13 @@ export const GoalService = createApi({
         return `Goal`;
       },
       providesTags: (result) => {
-        const rows = toGoalList(result)
+        const rows = toGoalList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'Goal' as const, id })),
-          { type: 'Goal', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "Goal" as const, id })),
+          { type: "Goal", id: "LIST" },
+        ];
       },
     }),
 
@@ -76,42 +84,42 @@ export const GoalService = createApi({
     addGoal: build.mutation<Goal, Partial<Goal>>({
       query: (body) => ({
         url: `Goal`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'Goal', id: 'LIST' }],
+      invalidatesTags: [{ type: "Goal", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getGoal: build.query<Goal, string>({
       query: (id) => `Goal/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Goal', id }],
+      providesTags: (result, error, id) => [{ type: "Goal", id }],
     }),
 
     // 5) Update
-    updateGoal: build.mutation<void, Pick<Goal, 'id'> & Partial<Goal>>({
+    updateGoal: build.mutation<void, Pick<Goal, "id"> & Partial<Goal>>({
       query: ({ id, ...patch }) => ({
         url: `Goal/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            GoalService.util.updateQueryData('getGoal', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            GoalService.util.updateQueryData("getGoal", id, (draft) => {
+              Object.assign(draft, patch);
+            }),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<Goal, 'id'>) => [
-        { type: 'Goal', id },
-        { type: 'Goal', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<Goal, "id">) => [
+        { type: "Goal", id },
+        { type: "Goal", id: "LIST" },
       ],
     }),
 
@@ -120,29 +128,35 @@ export const GoalService = createApi({
       query(id) {
         return {
           url: `Goal/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'Goal', id }],
+      invalidatesTags: (result, error, id) => [{ type: "Goal", id }],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteGoalCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteGoalCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `Goal/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Goal', id }, { type: 'Goal', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Goal", id },
+        { type: "Goal", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetGoalsPagedQuery`
 export const {
-  useGetGoalsPagedQuery,     // immediate fetch
+  useGetGoalsPagedQuery, // immediate fetch
   useLazyGetGoalsPagedQuery, // lazy fetch
   useGetGoalQuery,
   useGetGoalsQuery,
@@ -150,4 +164,4 @@ export const {
   useUpdateGoalMutation,
   useDeleteGoalMutation,
   useDeleteGoalCascadeMutation,
-} = GoalService
+} = GoalService;

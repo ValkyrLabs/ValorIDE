@@ -19,20 +19,32 @@ Description: Logout
   @see https://valkyrlabs.com/docs
 
 */
-import React, { useState, useEffect, useRef } from 'react';
-import { DataObject, Logout } from '@thorapi/model';
-import { useGetLogoutsQuery, useAddLogoutMutation, useUpdateLogoutMutation } from '../../services/LogoutService';
+import React, { useState, useEffect, useRef } from "react";
+import { DataObject, Logout } from "@thorapi/model";
+import {
+  useGetLogoutsQuery,
+  useAddLogoutMutation,
+  useUpdateLogoutMutation,
+} from "../../services/LogoutService";
 import TimeSeriesChart from "@valkyr/component-library/Charts/TimeSeriesChart";
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 
-const fieldSkipList = [ 'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'];
+const fieldSkipList = [
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+];
 
 const LogoutChart: React.FC = () => {
   const { data: initialData = [], isLoading } = useGetLogoutsQuery();
 
   const [data, setData] = useState<Logout[]>([]); // Array to hold table data
   const [chartData, setChartData] = useState<Partial<Logout>>({});
-  
+
   const [showAllFields, setShowAllFields] = useState(false);
 
   useEffect(() => {
@@ -50,9 +62,9 @@ const LogoutChart: React.FC = () => {
 
   const renderValue = (value: any) => {
     if (value === null || value === undefined) {
-      return '';
+      return "";
     }
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return JSON.stringify(value, null, 2);
     }
     return value;
@@ -60,11 +72,13 @@ const LogoutChart: React.FC = () => {
 
   return (
     <>
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : (
-            <TimeSeriesChart data={data.flatMap((logout: DataObject) => [logout])} />
-          )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <TimeSeriesChart
+          data={data.flatMap((logout: DataObject) => [logout])}
+        />
+      )}
     </>
   );
 };

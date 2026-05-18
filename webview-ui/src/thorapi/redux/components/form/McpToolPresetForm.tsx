@@ -13,32 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  McpToolPreset,
-  McpToolPresetCategoryEnum,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddMcpToolPresetMutation } from '../../services/McpToolPresetService';
+import { McpToolPreset, McpToolPresetCategoryEnum } from "@thorapi/model";
+
+import { useAddMcpToolPresetMutation } from "../../services/McpToolPresetService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -63,14 +68,14 @@ Opinionated MCP tool definition bundled with ValkyrAI for rapid enablement.
 -------------------------------------------------------- */
 const CategoryValidation = () => {
   return [
-    'cloud_platform',
-    'devops',
-    'security',
-    'observability',
-    'data_engineering',
-    'ai_assistant',
-    'productivity',
-    'customization',
+    "cloud_platform",
+    "devops",
+    "security",
+    "observability",
+    "data_engineering",
+    "ai_assistant",
+    "productivity",
+    "customization",
   ];
 };
 
@@ -78,26 +83,30 @@ const CategoryValidation = () => {
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        slug: Yup.string(),
-        displayName: Yup.string(),
-        summary: Yup.string(),
-      category: Yup.mixed()
-        .oneOf(CategoryValidation(), "Invalid value for category")
-        ,
-        recommendedFor: Yup.string(),
-        documentationUrl: Yup.string(),
-        autoApprove: Yup.boolean(),
-        trashed: Yup.boolean(),
+  slug: Yup.string(),
+  displayName: Yup.string(),
+  summary: Yup.string(),
+  category: Yup.mixed().oneOf(
+    CategoryValidation(),
+    "Invalid value for category",
+  ),
+  recommendedFor: Yup.string(),
+  documentationUrl: Yup.string(),
+  autoApprove: Yup.boolean(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const McpToolPresetForm: React.FC = () => {
-  const [addMcpToolPreset, addMcpToolPresetResult] = useAddMcpToolPresetMutation();
+  const [addMcpToolPreset, addMcpToolPresetResult] =
+    useAddMcpToolPresetMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -107,12 +116,18 @@ const McpToolPresetForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -120,14 +135,14 @@ const McpToolPresetForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<McpToolPreset> = {
-          slug: '',
-          displayName: '',
-          summary: '',
-        category: undefined,
-          recommendedFor: '',
-          documentationUrl: '',
-          autoApprove: false,
-          trashed: false,
+    slug: "",
+    displayName: "",
+    summary: "",
+    category: undefined,
+    recommendedFor: "",
+    documentationUrl: "",
+    autoApprove: false,
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -142,11 +157,14 @@ const McpToolPresetForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new McpToolPreset:', grants);
+    console.log("Permissions saved for new McpToolPreset:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<McpToolPreset>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<McpToolPreset>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -157,7 +175,7 @@ const McpToolPresetForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `McpToolPreset created successfully! Would you like to set permissions for this object?`
+          `McpToolPreset created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -165,8 +183,8 @@ const McpToolPresetForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create McpToolPreset:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create McpToolPreset:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -187,44 +205,36 @@ const McpToolPresetForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addMcpToolPresetResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New McpToolPreset
-                </Accordion.Header>
-                <Accordion.Body>
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New McpToolPreset
+                  </Accordion.Header>
+                  <Accordion.Body>
                     <label htmlFor="slug" className="nice-form-control">
                       <b>
                         Slug:
-                        {touched.slug &&
-                         !errors.slug && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.slug && !errors.slug && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="slug"
-                            value={values?.slug}
-                            placeholder="Slug"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="slug"
+                        value={values?.slug}
+                        placeholder="Slug"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -236,28 +246,21 @@ const McpToolPresetForm: React.FC = () => {
                     <label htmlFor="displayName" className="nice-form-control">
                       <b>
                         Display Name:
-                        {touched.displayName &&
-                         !errors.displayName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.displayName && !errors.displayName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="displayName"
-                            value={values?.displayName}
-                            placeholder="Display Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="displayName"
+                        value={values?.displayName}
+                        placeholder="Display Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -269,28 +272,21 @@ const McpToolPresetForm: React.FC = () => {
                     <label htmlFor="summary" className="nice-form-control">
                       <b>
                         Summary:
-                        {touched.summary &&
-                         !errors.summary && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.summary && !errors.summary && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="summary"
-                            value={values?.summary}
-                            placeholder="Summary"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="summary"
+                        value={values?.summary}
+                        placeholder="Summary"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -302,30 +298,33 @@ const McpToolPresetForm: React.FC = () => {
                     <label htmlFor="category" className="nice-form-control">
                       <b>
                         Category:
-                        {touched.category &&
-                         !errors.category && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.category && !errors.category && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-                        {/* ENUM DROPDOWN */}
-                        <BSForm.Select
-                          name="category"
-                          value={values.category || ''}
-                          className={
-                            errors.category
-                              ? 'form-control field-error'
-                              : 'nice-form-control form-control'
-                          }
-                          onChange={(e) => {
-                            setFieldTouched('category', true);
-                            setFieldValue('category', e.target.value || undefined);
-                          }}
-                        >
-                          <option value="" label="Select Category" />
-                          <CategoryLookup />
-                        </BSForm.Select>
-
+                      {/* ENUM DROPDOWN */}
+                      <BSForm.Select
+                        name="category"
+                        value={values.category || ""}
+                        className={
+                          errors.category
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                        onChange={(e) => {
+                          setFieldTouched("category", true);
+                          setFieldValue(
+                            "category",
+                            e.target.value || undefined,
+                          );
+                        }}
+                      >
+                        <option value="" label="Select Category" />
+                        <CategoryLookup />
+                      </BSForm.Select>
 
                       <ErrorMessage
                         className="error"
@@ -334,31 +333,27 @@ const McpToolPresetForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="recommendedFor" className="nice-form-control">
+                    <label
+                      htmlFor="recommendedFor"
+                      className="nice-form-control"
+                    >
                       <b>
                         Recommended For:
-                        {touched.recommendedFor &&
-                         !errors.recommendedFor && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.recommendedFor && !errors.recommendedFor && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="recommendedFor"
-                            value={values?.recommendedFor}
-                            placeholder="Recommended For"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="recommendedFor"
+                        value={values?.recommendedFor}
+                        placeholder="Recommended For"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -367,31 +362,28 @@ const McpToolPresetForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="documentationUrl" className="nice-form-control">
+                    <label
+                      htmlFor="documentationUrl"
+                      className="nice-form-control"
+                    >
                       <b>
                         Documentation Url:
                         {touched.documentationUrl &&
-                         !errors.documentationUrl && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.documentationUrl && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="documentationUrl"
-                            value={values?.documentationUrl}
-                            placeholder="Documentation Url"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="documentationUrl"
+                        value={values?.documentationUrl}
+                        placeholder="Documentation Url"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -403,32 +395,25 @@ const McpToolPresetForm: React.FC = () => {
                     <label htmlFor="autoApprove" className="nice-form-control">
                       <b>
                         Auto Approve:
-                        {touched.autoApprove &&
-                         !errors.autoApprove && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.autoApprove && !errors.autoApprove && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="autoApprove"
-                            name="autoApprove"
-                            checked={values.autoApprove || false}
-                            onChange={(e) => {
-                              setFieldTouched('autoApprove', true);
-                              setFieldValue('autoApprove', e.target.checked);
-                            }}
-                            isInvalid={!!errors.autoApprove}
-                            className={errors.autoApprove ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="autoApprove"
+                        name="autoApprove"
+                        checked={values.autoApprove || false}
+                        onChange={(e) => {
+                          setFieldTouched("autoApprove", true);
+                          setFieldValue("autoApprove", e.target.checked);
+                        }}
+                        isInvalid={!!errors.autoApprove}
+                        className={errors.autoApprove ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -440,32 +425,25 @@ const McpToolPresetForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -475,45 +453,59 @@ const McpToolPresetForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New McpToolPreset
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New McpToolPreset
+                    </CoolButton>
 
-                  {(addMcpToolPresetResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addMcpToolPresetResult as any).error ? (addMcpToolPresetResult as any).error.data : (addMcpToolPresetResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addMcpToolPresetResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addMcpToolPresetResult as any).error
+                              ? (addMcpToolPresetResult as any).error.data
+                              : (addMcpToolPresetResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addMcpToolPresetResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addMcpToolPresetResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addMcpToolPresetResult: {JSON.stringify(addMcpToolPresetResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addMcpToolPresetResult:{" "}
+                    {JSON.stringify(addMcpToolPresetResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -545,20 +537,17 @@ kebabcase category-lookup
 const CategoryLookup = () => {
   return (
     <>
-      <option value='cloud_platform' label="Cloud Platform" />
-      <option value='devops' label="Devops" />
-      <option value='security' label="Security" />
-      <option value='observability' label="Observability" />
-      <option value='data_engineering' label="Data Engineering" />
-      <option value='ai_assistant' label="Ai Assistant" />
-      <option value='productivity' label="Productivity" />
-      <option value='customization' label="Customization" />
+      <option value="cloud_platform" label="Cloud Platform" />
+      <option value="devops" label="Devops" />
+      <option value="security" label="Security" />
+      <option value="observability" label="Observability" />
+      <option value="data_engineering" label="Data Engineering" />
+      <option value="ai_assistant" label="Ai Assistant" />
+      <option value="productivity" label="Productivity" />
+      <option value="customization" label="Customization" />
     </>
   );
 };
 
-
-
 /* Export the generated form */
 export default McpToolPresetForm;
-

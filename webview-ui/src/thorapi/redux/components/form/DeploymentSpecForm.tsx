@@ -13,31 +13,37 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
 import {
   Form as BSForm,
   Accordion,
   Col,
   Row,
   Spinner,
-  Alert
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  Alert,
+} from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  DeploymentSpec,
-} from '@thorapi/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddDeploymentSpecMutation } from '../../services/DeploymentSpecService';
+import { DeploymentSpec } from "@thorapi/model";
+
+import { useAddDeploymentSpecMutation } from "../../services/DeploymentSpecService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -65,31 +71,40 @@ Specifications for deploying an application
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        applicationId: Yup.string(),
-        buildArtifactId: Yup.string(),
-        instanceName: Yup.string(),
-        description: Yup.string(),
-        cpu: asNumber(Yup.number().integer().typeError("cpu must be a number")),
-        memory: asNumber(Yup.number().integer().typeError("memory must be a number")),
-        containerPort: asNumber(Yup.number().integer().typeError("containerPort must be a number")),
-        environmentVariables: Yup.string(),
-        secrets: Yup.string(),
-        healthCheckPath: Yup.string(),
-        autoScale: Yup.boolean(),
-        minInstances: asNumber(Yup.number().integer().typeError("minInstances must be a number")),
-        maxInstances: asNumber(Yup.number().integer().typeError("maxInstances must be a number")),
-        tags: Yup.string(),
-        trashed: Yup.boolean(),
+  applicationId: Yup.string(),
+  buildArtifactId: Yup.string(),
+  instanceName: Yup.string(),
+  description: Yup.string(),
+  cpu: asNumber(Yup.number().integer().typeError("cpu must be a number")),
+  memory: asNumber(Yup.number().integer().typeError("memory must be a number")),
+  containerPort: asNumber(
+    Yup.number().integer().typeError("containerPort must be a number"),
+  ),
+  environmentVariables: Yup.string(),
+  secrets: Yup.string(),
+  healthCheckPath: Yup.string(),
+  autoScale: Yup.boolean(),
+  minInstances: asNumber(
+    Yup.number().integer().typeError("minInstances must be a number"),
+  ),
+  maxInstances: asNumber(
+    Yup.number().integer().typeError("maxInstances must be a number"),
+  ),
+  tags: Yup.string(),
+  trashed: Yup.boolean(),
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const DeploymentSpecForm: React.FC = () => {
-  const [addDeploymentSpec, addDeploymentSpecResult] = useAddDeploymentSpecMutation();
+  const [addDeploymentSpec, addDeploymentSpecResult] =
+    useAddDeploymentSpecMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -99,12 +114,18 @@ const DeploymentSpecForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -112,21 +133,21 @@ const DeploymentSpecForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<DeploymentSpec> = {
-          applicationId: '',
-          buildArtifactId: '',
-          instanceName: '',
-          description: '',
-          cpu: 0,
-          memory: 0,
-          containerPort: 0,
-          environmentVariables: '',
-          secrets: '',
-          healthCheckPath: '',
-          autoScale: false,
-          minInstances: 0,
-          maxInstances: 0,
-          tags: '',
-          trashed: false,
+    applicationId: "",
+    buildArtifactId: "",
+    instanceName: "",
+    description: "",
+    cpu: 0,
+    memory: 0,
+    containerPort: 0,
+    environmentVariables: "",
+    secrets: "",
+    healthCheckPath: "",
+    autoScale: false,
+    minInstances: 0,
+    maxInstances: 0,
+    tags: "",
+    trashed: false,
   };
 
   // Permission Management Handlers
@@ -141,11 +162,14 @@ const DeploymentSpecForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new DeploymentSpec:', grants);
+    console.log("Permissions saved for new DeploymentSpec:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<DeploymentSpec>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<DeploymentSpec>,
+  ) => {
     try {
       setSuccessMessage(null);
       setErrorMessage(null);
@@ -156,7 +180,7 @@ const DeploymentSpecForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `DeploymentSpec created successfully! Would you like to set permissions for this object?`
+          `DeploymentSpec created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -164,8 +188,8 @@ const DeploymentSpecForm: React.FC = () => {
       }
       setSuccessMessage("Saved successfully.");
     } catch (error) {
-      console.error('Failed to create DeploymentSpec:', error);
-      setErrorMessage('Failed to save. Please try again.');
+      console.error("Failed to create DeploymentSpec:", error);
+      setErrorMessage("Failed to save. Please try again.");
     }
     setSubmitting(false);
   };
@@ -186,44 +210,39 @@ const DeploymentSpecForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => {
           const isSaving = isSubmitting || addDeploymentSpecResult.isLoading;
           return (
-          <form onSubmit={handleSubmit} className="form">
-            <Accordion defaultActiveKey="1">
-              
-              {/* Editable Fields (NON read-only) */}
-              <Accordion.Item eventKey="1">
-                <Accordion.Header>
-                  <FaRegPlusSquare size={28} /> &nbsp; Add New DeploymentSpec
-                </Accordion.Header>
-                <Accordion.Body>
-                    <label htmlFor="applicationId" className="nice-form-control">
+            <form onSubmit={handleSubmit} className="form">
+              <Accordion defaultActiveKey="1">
+                {/* Editable Fields (NON read-only) */}
+                <Accordion.Item eventKey="1">
+                  <Accordion.Header>
+                    <FaRegPlusSquare size={28} /> &nbsp; Add New DeploymentSpec
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <label
+                      htmlFor="applicationId"
+                      className="nice-form-control"
+                    >
                       <b>
                         Application Id:
-                        {touched.applicationId &&
-                         !errors.applicationId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.applicationId && !errors.applicationId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="applicationId"
-                            value={values?.applicationId}
-                            placeholder="Application Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="applicationId"
+                        value={values?.applicationId}
+                        placeholder="Application Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -232,31 +251,27 @@ const DeploymentSpecForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="buildArtifactId" className="nice-form-control">
+                    <label
+                      htmlFor="buildArtifactId"
+                      className="nice-form-control"
+                    >
                       <b>
                         Build Artifact Id:
-                        {touched.buildArtifactId &&
-                         !errors.buildArtifactId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.buildArtifactId && !errors.buildArtifactId && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="buildArtifactId"
-                            value={values?.buildArtifactId}
-                            placeholder="Build Artifact Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="buildArtifactId"
+                        value={values?.buildArtifactId}
+                        placeholder="Build Artifact Id"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -268,28 +283,21 @@ const DeploymentSpecForm: React.FC = () => {
                     <label htmlFor="instanceName" className="nice-form-control">
                       <b>
                         Instance Name:
-                        {touched.instanceName &&
-                         !errors.instanceName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.instanceName && !errors.instanceName && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="instanceName"
-                            value={values?.instanceName}
-                            placeholder="Instance Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="instanceName"
+                        value={values?.instanceName}
+                        placeholder="Instance Name"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -301,28 +309,21 @@ const DeploymentSpecForm: React.FC = () => {
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
-                        {touched.description &&
-                         !errors.description && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.description && !errors.description && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="description"
-                            value={values?.description}
-                            placeholder="Description"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="description"
+                        value={values?.description}
+                        placeholder="Description"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -334,36 +335,32 @@ const DeploymentSpecForm: React.FC = () => {
                     <label htmlFor="cpu" className="nice-form-control">
                       <b>
                         Cpu:
-                        {touched.cpu &&
-                         !errors.cpu && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.cpu && !errors.cpu && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="cpu"
-                            type="number"
-                            value={values.cpu || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('cpu', true);
-                              const v = e.target.value;
-                              setFieldValue('cpu', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.cpu
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="cpu"
+                        type="number"
+                        value={values.cpu || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("cpu", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "cpu",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.cpu
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -375,36 +372,32 @@ const DeploymentSpecForm: React.FC = () => {
                     <label htmlFor="memory" className="nice-form-control">
                       <b>
                         Memory:
-                        {touched.memory &&
-                         !errors.memory && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.memory && !errors.memory && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="memory"
-                            type="number"
-                            value={values.memory || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('memory', true);
-                              const v = e.target.value;
-                              setFieldValue('memory', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.memory
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="memory"
+                        type="number"
+                        value={values.memory || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("memory", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "memory",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.memory
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -413,39 +406,38 @@ const DeploymentSpecForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="containerPort" className="nice-form-control">
+                    <label
+                      htmlFor="containerPort"
+                      className="nice-form-control"
+                    >
                       <b>
                         Container Port:
-                        {touched.containerPort &&
-                         !errors.containerPort && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.containerPort && !errors.containerPort && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="containerPort"
-                            type="number"
-                            value={values.containerPort || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('containerPort', true);
-                              const v = e.target.value;
-                              setFieldValue('containerPort', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.containerPort
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="containerPort"
+                        type="number"
+                        value={values.containerPort || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("containerPort", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "containerPort",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.containerPort
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -454,31 +446,28 @@ const DeploymentSpecForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="environmentVariables" className="nice-form-control">
+                    <label
+                      htmlFor="environmentVariables"
+                      className="nice-form-control"
+                    >
                       <b>
                         Environment Variables:
                         {touched.environmentVariables &&
-                         !errors.environmentVariables && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
+                          !errors.environmentVariables && (
+                            <span className="okCheck">
+                              <FaCheckCircle /> looks good!
+                            </span>
+                          )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="environmentVariables"
-                            value={values?.environmentVariables}
-                            placeholder="Environment Variables"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="environmentVariables"
+                        value={values?.environmentVariables}
+                        placeholder="Environment Variables"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -490,28 +479,21 @@ const DeploymentSpecForm: React.FC = () => {
                     <label htmlFor="secrets" className="nice-form-control">
                       <b>
                         Secrets:
-                        {touched.secrets &&
-                         !errors.secrets && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.secrets && !errors.secrets && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="secrets"
-                            value={values?.secrets}
-                            placeholder="Secrets"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="secrets"
+                        value={values?.secrets}
+                        placeholder="Secrets"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -520,31 +502,27 @@ const DeploymentSpecForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="healthCheckPath" className="nice-form-control">
+                    <label
+                      htmlFor="healthCheckPath"
+                      className="nice-form-control"
+                    >
                       <b>
                         Health Check Path:
-                        {touched.healthCheckPath &&
-                         !errors.healthCheckPath && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.healthCheckPath && !errors.healthCheckPath && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="healthCheckPath"
-                            value={values?.healthCheckPath}
-                            placeholder="Health Check Path"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="healthCheckPath"
+                        value={values?.healthCheckPath}
+                        placeholder="Health Check Path"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -556,32 +534,25 @@ const DeploymentSpecForm: React.FC = () => {
                     <label htmlFor="autoScale" className="nice-form-control">
                       <b>
                         Auto Scale:
-                        {touched.autoScale &&
-                         !errors.autoScale && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.autoScale && !errors.autoScale && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="autoScale"
-                            name="autoScale"
-                            checked={values.autoScale || false}
-                            onChange={(e) => {
-                              setFieldTouched('autoScale', true);
-                              setFieldValue('autoScale', e.target.checked);
-                            }}
-                            isInvalid={!!errors.autoScale}
-                            className={errors.autoScale ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="autoScale"
+                        name="autoScale"
+                        checked={values.autoScale || false}
+                        onChange={(e) => {
+                          setFieldTouched("autoScale", true);
+                          setFieldValue("autoScale", e.target.checked);
+                        }}
+                        isInvalid={!!errors.autoScale}
+                        className={errors.autoScale ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -593,36 +564,32 @@ const DeploymentSpecForm: React.FC = () => {
                     <label htmlFor="minInstances" className="nice-form-control">
                       <b>
                         Min Instances:
-                        {touched.minInstances &&
-                         !errors.minInstances && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.minInstances && !errors.minInstances && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="minInstances"
-                            type="number"
-                            value={values.minInstances || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('minInstances', true);
-                              const v = e.target.value;
-                              setFieldValue('minInstances', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.minInstances
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="minInstances"
+                        type="number"
+                        value={values.minInstances || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("minInstances", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "minInstances",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.minInstances
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -634,36 +601,32 @@ const DeploymentSpecForm: React.FC = () => {
                     <label htmlFor="maxInstances" className="nice-form-control">
                       <b>
                         Max Instances:
-                        {touched.maxInstances &&
-                         !errors.maxInstances && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.maxInstances && !errors.maxInstances && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="maxInstances"
-                            type="number"
-                            value={values.maxInstances || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('maxInstances', true);
-                              const v = e.target.value;
-                              setFieldValue('maxInstances', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.maxInstances
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
+                      {/* INTEGER FIELD */}
+                      <Field
+                        name="maxInstances"
+                        type="number"
+                        value={values.maxInstances || ""}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setFieldTouched("maxInstances", true);
+                          const v = e.target.value;
+                          setFieldValue(
+                            "maxInstances",
+                            v === "" ? undefined : Number(v),
+                          );
+                        }}
+                        className={
+                          errors.maxInstances
+                            ? "form-control field-error"
+                            : "nice-form-control form-control"
+                        }
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -675,28 +638,21 @@ const DeploymentSpecForm: React.FC = () => {
                     <label htmlFor="tags" className="nice-form-control">
                       <b>
                         Tags:
-                        {touched.tags &&
-                         !errors.tags && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.tags && !errors.tags && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="tags"
-                            value={values?.tags}
-                            placeholder="Tags"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
+                      {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                      <SmartField
+                        name="tags"
+                        value={values?.tags}
+                        placeholder="Tags"
+                        setFieldValue={setFieldValue}
+                        setFieldTouched={setFieldTouched}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -708,32 +664,25 @@ const DeploymentSpecForm: React.FC = () => {
                     <label htmlFor="trashed" className="nice-form-control">
                       <b>
                         Trashed:
-                        {touched.trashed &&
-                         !errors.trashed && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        {touched.trashed && !errors.trashed && (
+                          <span className="okCheck">
+                            <FaCheckCircle /> looks good!
+                          </span>
                         )}
                       </b>
 
-
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            id="trashed"
-                            name="trashed"
-                            checked={values.trashed || false}
-                            onChange={(e) => {
-                              setFieldTouched('trashed', true);
-                              setFieldValue('trashed', e.target.checked);
-                            }}
-                            isInvalid={!!errors.trashed}
-                            className={errors.trashed ? 'error' : ''}
-                          />
-
-
-
-
-
-
-
+                      {/* CHECKBOX FIELD */}
+                      <BSForm.Check
+                        id="trashed"
+                        name="trashed"
+                        checked={values.trashed || false}
+                        onChange={(e) => {
+                          setFieldTouched("trashed", true);
+                          setFieldValue("trashed", e.target.checked);
+                        }}
+                        isInvalid={!!errors.trashed}
+                        className={errors.trashed ? "error" : ""}
+                      />
 
                       <ErrorMessage
                         className="error"
@@ -743,45 +692,59 @@ const DeploymentSpecForm: React.FC = () => {
                     </label>
                     <br />
 
-                  {/* SUBMIT BUTTON */}
-                  <CoolButton
-                    variant={isValid ? (isSaving ? 'disabled' : 'success') : 'warning'}
-                    type="submit"
-                    disabled={!isValid || isSaving}
-                  >
-                    {isSaving && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
-                    <FaCheckCircle size={28} /> Create New DeploymentSpec
-                  </CoolButton>
+                    {/* SUBMIT BUTTON */}
+                    <CoolButton
+                      variant={
+                        isValid
+                          ? isSaving
+                            ? "disabled"
+                            : "success"
+                          : "warning"
+                      }
+                      type="submit"
+                      disabled={!isValid || isSaving}
+                    >
+                      {isSaving && (
+                        <span style={{ float: "left", minHeight: 0 }}>
+                          <LoadingSpinner label="" size={18} />
+                        </span>
+                      )}
+                      <FaCheckCircle size={28} /> Create New DeploymentSpec
+                    </CoolButton>
 
-                  {(addDeploymentSpecResult.isError || errorMessage) && (
-                    <Alert variant="danger" className="mt-3">
-                      {errorMessage ||
-                        JSON.stringify('data' in (addDeploymentSpecResult as any).error ? (addDeploymentSpecResult as any).error.data : (addDeploymentSpecResult as any).error)}
-                    </Alert>
-                  )}
+                    {(addDeploymentSpecResult.isError || errorMessage) && (
+                      <Alert variant="danger" className="mt-3">
+                        {errorMessage ||
+                          JSON.stringify(
+                            "data" in (addDeploymentSpecResult as any).error
+                              ? (addDeploymentSpecResult as any).error.data
+                              : (addDeploymentSpecResult as any).error,
+                          )}
+                      </Alert>
+                    )}
 
-                  {(addDeploymentSpecResult.isSuccess || successMessage) && (
-                    <Alert variant="success" className="mt-3">
-                      {successMessage || 'Saved successfully.'}
-                    </Alert>
-                  )}
-                </Accordion.Body>
-              </Accordion.Item>
+                    {(addDeploymentSpecResult.isSuccess || successMessage) && (
+                      <Alert variant="success" className="mt-3">
+                        {successMessage || "Saved successfully."}
+                      </Alert>
+                    )}
+                  </Accordion.Body>
+                </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={28} /> &nbsp;Server Messages
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  addDeploymentSpecResult: {JSON.stringify(addDeploymentSpecResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-            </Accordion>
-          </form>
+                {/* Debug/Dev Accordion */}
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                    <FaCogs size={28} /> &nbsp;Server Messages
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    errors: {JSON.stringify(errors)}
+                    <br />
+                    addDeploymentSpecResult:{" "}
+                    {JSON.stringify(addDeploymentSpecResult)}
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
+            </form>
           );
         }}
       </Formik>
@@ -801,8 +764,5 @@ const DeploymentSpecForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default DeploymentSpecForm;
-

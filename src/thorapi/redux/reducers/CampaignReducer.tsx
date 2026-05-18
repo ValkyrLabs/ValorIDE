@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Campaign } from '@thorapi/model/Campaign';
+import { Campaign } from "@thorapi/model/Campaign";
 
 const CampaignSlice = createSlice({
   name: "Campaigns",
@@ -27,28 +27,28 @@ const CampaignSlice = createSlice({
     },
 
     CampaignValueToggled(state, action) {
-      console.log("Campaign TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Campaign:Campaign = state.find((Campaign) => Campaign.id === action.payload.CampaignId);
+      console.log("Campaign TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Campaign: Campaign = state.find(
+        (Campaign) => Campaign.id === action.payload.CampaignId,
+      );
       if (Campaign) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     CampaignpropertySet(state, action) {
-      const Campaign = state.find((Campaign) => Campaign.id === action.payload.CampaignId);
+      const Campaign = state.find(
+        (Campaign) => Campaign.id === action.payload.CampaignId,
+      );
       if (Campaign) {
-      //  Campaign[action.property] = action.payload[action.property];
+        //  Campaign[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  CampaignAdded,
-  CampaignValueToggled,
-  CampaignpropertySet
-} = CampaignSlice.actions;
+export const { CampaignAdded, CampaignValueToggled, CampaignpropertySet } =
+  CampaignSlice.actions;
 export default CampaignSlice.reducer;

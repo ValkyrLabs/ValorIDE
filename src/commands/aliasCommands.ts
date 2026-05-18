@@ -57,11 +57,11 @@ export function registerAliasCommands(context: vscode.ExtensionContext) {
       const selectedFolders: vscode.Uri[] = resourceUri
         ? [resourceUri]
         : (await vscode.window.showOpenDialog({
-          canSelectFiles: false,
-          canSelectFolders: true,
-          canSelectMany: true,
-          openLabel: "Select ThorAPI project folder(s)",
-        })) || [];
+            canSelectFiles: false,
+            canSelectFolders: true,
+            canSelectMany: true,
+            openLabel: "Select ThorAPI project folder(s)",
+          })) || [];
       // Check if user cancelled dialog
       if (!selectedFolders || selectedFolders.length === 0) return;
 
@@ -164,7 +164,9 @@ export function registerAliasCommands(context: vscode.ExtensionContext) {
             json.compilerOptions = json.compilerOptions || {};
             json.compilerOptions.baseUrl = json.compilerOptions.baseUrl || ".";
             json.compilerOptions.paths = json.compilerOptions.paths || {};
-            json.compilerOptions.paths["@thorapi/*"] = [combinedTargets.thorAll];
+            json.compilerOptions.paths["@thorapi/*"] = [
+              combinedTargets.thorAll,
+            ];
             json.compilerOptions.paths["@valkyr/component-library/*"] = [
               combinedTargets.componentLib,
             ];

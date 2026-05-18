@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Workbook } from '@thorapi/model/Workbook';
+import { Workbook } from "@thorapi/model/Workbook";
 
 const WorkbookSlice = createSlice({
   name: "Workbooks",
@@ -27,28 +27,28 @@ const WorkbookSlice = createSlice({
     },
 
     WorkbookValueToggled(state, action) {
-      console.log("Workbook TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Workbook:Workbook = state.find((Workbook) => Workbook.id === action.payload.WorkbookId);
+      console.log("Workbook TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Workbook: Workbook = state.find(
+        (Workbook) => Workbook.id === action.payload.WorkbookId,
+      );
       if (Workbook) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     WorkbookpropertySet(state, action) {
-      const Workbook = state.find((Workbook) => Workbook.id === action.payload.WorkbookId);
+      const Workbook = state.find(
+        (Workbook) => Workbook.id === action.payload.WorkbookId,
+      );
       if (Workbook) {
-      //  Workbook[action.property] = action.payload[action.property];
+        //  Workbook[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  WorkbookAdded,
-  WorkbookValueToggled,
-  WorkbookpropertySet
-} = WorkbookSlice.actions;
+export const { WorkbookAdded, WorkbookValueToggled, WorkbookpropertySet } =
+  WorkbookSlice.actions;
 export default WorkbookSlice.reducer;

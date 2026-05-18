@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Workflow } from '@thorapi/model/Workflow';
+import { Workflow } from "@thorapi/model/Workflow";
 
 const WorkflowSlice = createSlice({
   name: "Workflows",
@@ -27,28 +27,28 @@ const WorkflowSlice = createSlice({
     },
 
     WorkflowValueToggled(state, action) {
-      console.log("Workflow TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Workflow:Workflow = state.find((Workflow) => Workflow.id === action.payload.WorkflowId);
+      console.log("Workflow TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Workflow: Workflow = state.find(
+        (Workflow) => Workflow.id === action.payload.WorkflowId,
+      );
       if (Workflow) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     WorkflowpropertySet(state, action) {
-      const Workflow = state.find((Workflow) => Workflow.id === action.payload.WorkflowId);
+      const Workflow = state.find(
+        (Workflow) => Workflow.id === action.payload.WorkflowId,
+      );
       if (Workflow) {
-      //  Workflow[action.property] = action.payload[action.property];
+        //  Workflow[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  WorkflowAdded,
-  WorkflowValueToggled,
-  WorkflowpropertySet
-} = WorkflowSlice.actions;
+export const { WorkflowAdded, WorkflowValueToggled, WorkflowpropertySet } =
+  WorkflowSlice.actions;
 export default WorkflowSlice.reducer;

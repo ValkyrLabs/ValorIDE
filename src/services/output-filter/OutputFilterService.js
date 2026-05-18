@@ -268,7 +268,7 @@ export class OutputFilterService {
       (l) =>
         l.includes("[ERROR]") ||
         l.includes("Compilation failure") ||
-        /BUILD (FAILURE)/.test(l)
+        /BUILD (FAILURE)/.test(l),
     );
     // If there are errors, show everything
     if (hasErrors) {
@@ -281,7 +281,7 @@ export class OutputFilterService {
         !/\/thorapi\//i.test(line) &&
         !/Building jar:/.test(line) &&
         !line.includes("valkyrai/generated") &&
-        !line.includes("thorapi/generated")
+        !line.includes("thorapi/generated"),
     );
     return filteredLines.join("\n");
   }

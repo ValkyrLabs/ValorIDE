@@ -1,4 +1,7 @@
-import { RemoteTaskTemplateId, RemoteTaskTemplatePayload } from "./RemoteTaskTemplates";
+import {
+  RemoteTaskTemplateId,
+  RemoteTaskTemplatePayload,
+} from "./RemoteTaskTemplates";
 
 export interface RemoteTaskPreset {
   id: string;

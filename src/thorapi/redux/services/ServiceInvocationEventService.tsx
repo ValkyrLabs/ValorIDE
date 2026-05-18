@@ -13,47 +13,62 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { ServiceInvocationEvent } from '@thorapi/model/ServiceInvocationEvent'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { ServiceInvocationEvent } from "@thorapi/model/ServiceInvocationEvent";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type ServiceInvocationEventResponse = ServiceInvocationEvent[]
+type ServiceInvocationEventResponse = ServiceInvocationEvent[];
 
-const toServiceInvocationEventList = (result: unknown): ServiceInvocationEventResponse => {
+const toServiceInvocationEventList = (
+  result: unknown,
+): ServiceInvocationEventResponse => {
   if (Array.isArray(result)) {
-    return result as ServiceInvocationEventResponse
+    return result as ServiceInvocationEventResponse;
   }
 
-  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
-  return Array.isArray(candidate) ? (candidate as ServiceInvocationEventResponse) : []
-}
+  const candidate =
+    (result as any)?.content ??
+    (result as any)?.items ??
+    (result as any)?.results ??
+    (result as any)?.data;
+  return Array.isArray(candidate)
+    ? (candidate as ServiceInvocationEventResponse)
+    : [];
+};
 
 export const ServiceInvocationEventService = createApi({
-  reducerPath: 'ServiceInvocationEvent', // This should remain unique
+  reducerPath: "ServiceInvocationEvent", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['ServiceInvocationEvent'],
+  tagTypes: ["ServiceInvocationEvent"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getServiceInvocationEventsPaged: build.query<ServiceInvocationEventResponse, { page: number; size?: number; example?: Partial<ServiceInvocationEvent> }>({
+    getServiceInvocationEventsPaged: build.query<
+      ServiceInvocationEventResponse,
+      { page: number; size?: number; example?: Partial<ServiceInvocationEvent> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ServiceInvocationEvent?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ServiceInvocationEvent?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toServiceInvocationEventList(result)
+        const rows = toServiceInvocationEventList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ServiceInvocationEvent' as const, id })),
-          { type: 'ServiceInvocationEvent', id: `PAGE_${page}` },
-        ]
+            .map(({ id }) => ({ type: "ServiceInvocationEvent" as const, id })),
+          { type: "ServiceInvocationEvent", id: `PAGE_${page}` },
+        ];
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getServiceInvocationEvents: build.query<ServiceInvocationEventResponse, { example?: Partial<ServiceInvocationEvent> } | void>({
+    getServiceInvocationEvents: build.query<
+      ServiceInvocationEventResponse,
+      { example?: Partial<ServiceInvocationEvent> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -62,87 +77,114 @@ export const ServiceInvocationEventService = createApi({
         return `ServiceInvocationEvent`;
       },
       providesTags: (result) => {
-        const rows = toServiceInvocationEventList(result)
+        const rows = toServiceInvocationEventList(result);
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: 'ServiceInvocationEvent' as const, id })),
-          { type: 'ServiceInvocationEvent', id: 'LIST' },
-        ]
+            .map(({ id }) => ({ type: "ServiceInvocationEvent" as const, id })),
+          { type: "ServiceInvocationEvent", id: "LIST" },
+        ];
       },
     }),
 
     // 3) Create
-    addServiceInvocationEvent: build.mutation<ServiceInvocationEvent, Partial<ServiceInvocationEvent>>({
+    addServiceInvocationEvent: build.mutation<
+      ServiceInvocationEvent,
+      Partial<ServiceInvocationEvent>
+    >({
       query: (body) => ({
         url: `ServiceInvocationEvent`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'ServiceInvocationEvent', id: 'LIST' }],
+      invalidatesTags: [{ type: "ServiceInvocationEvent", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getServiceInvocationEvent: build.query<ServiceInvocationEvent, string>({
       query: (id) => `ServiceInvocationEvent/${id}`,
-      providesTags: (result, error, id) => [{ type: 'ServiceInvocationEvent', id }],
+      providesTags: (result, error, id) => [
+        { type: "ServiceInvocationEvent", id },
+      ],
     }),
 
     // 5) Update
-    updateServiceInvocationEvent: build.mutation<void, Pick<ServiceInvocationEvent, 'id'> & Partial<ServiceInvocationEvent>>({
+    updateServiceInvocationEvent: build.mutation<
+      void,
+      Pick<ServiceInvocationEvent, "id"> & Partial<ServiceInvocationEvent>
+    >({
       query: ({ id, ...patch }) => ({
         url: `ServiceInvocationEvent/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            ServiceInvocationEventService.util.updateQueryData('getServiceInvocationEvent', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            ServiceInvocationEventService.util.updateQueryData(
+              "getServiceInvocationEvent",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }: Pick<ServiceInvocationEvent, 'id'>) => [
-        { type: 'ServiceInvocationEvent', id },
-        { type: 'ServiceInvocationEvent', id: 'LIST' },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<ServiceInvocationEvent, "id">,
+      ) => [
+        { type: "ServiceInvocationEvent", id },
+        { type: "ServiceInvocationEvent", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteServiceInvocationEvent: build.mutation<{ success: boolean; id: string }, number>({
+    deleteServiceInvocationEvent: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `ServiceInvocationEvent/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'ServiceInvocationEvent', id }],
+      invalidatesTags: (result, error, id) => [
+        { type: "ServiceInvocationEvent", id },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteServiceInvocationEventCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
+    deleteServiceInvocationEventCascade: build.mutation<
+      { success: boolean; id: string },
+      { id: string; cascade?: boolean; trash?: boolean }
+    >({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
         return {
           url: `ServiceInvocationEvent/${id}?${params}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ServiceInvocationEvent', id }, { type: 'ServiceInvocationEvent', id: 'LIST' }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "ServiceInvocationEvent", id },
+        { type: "ServiceInvocationEvent", id: "LIST" },
+      ],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetServiceInvocationEventsPagedQuery`
 export const {
-  useGetServiceInvocationEventsPagedQuery,     // immediate fetch
+  useGetServiceInvocationEventsPagedQuery, // immediate fetch
   useLazyGetServiceInvocationEventsPagedQuery, // lazy fetch
   useGetServiceInvocationEventQuery,
   useGetServiceInvocationEventsQuery,
@@ -150,4 +192,4 @@ export const {
   useUpdateServiceInvocationEventMutation,
   useDeleteServiceInvocationEventMutation,
   useDeleteServiceInvocationEventCascadeMutation,
-} = ServiceInvocationEventService
+} = ServiceInvocationEventService;

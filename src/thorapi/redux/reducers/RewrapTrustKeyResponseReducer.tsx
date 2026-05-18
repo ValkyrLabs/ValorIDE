@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { RewrapTrustKeyResponse } from '@thorapi/model/RewrapTrustKeyResponse';
+import { RewrapTrustKeyResponse } from "@thorapi/model/RewrapTrustKeyResponse";
 
 const RewrapTrustKeyResponseSlice = createSlice({
   name: "RewrapTrustKeyResponses",
@@ -27,20 +27,25 @@ const RewrapTrustKeyResponseSlice = createSlice({
     },
 
     RewrapTrustKeyResponseValueToggled(state, action) {
-      console.log("RewrapTrustKeyResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const RewrapTrustKeyResponse:RewrapTrustKeyResponse = state.find((RewrapTrustKeyResponse) => RewrapTrustKeyResponse.id === action.payload.RewrapTrustKeyResponseId);
+      console.log("RewrapTrustKeyResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const RewrapTrustKeyResponse: RewrapTrustKeyResponse = state.find(
+        (RewrapTrustKeyResponse) =>
+          RewrapTrustKeyResponse.id === action.payload.RewrapTrustKeyResponseId,
+      );
       if (RewrapTrustKeyResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     RewrapTrustKeyResponsepropertySet(state, action) {
-      const RewrapTrustKeyResponse = state.find((RewrapTrustKeyResponse) => RewrapTrustKeyResponse.id === action.payload.RewrapTrustKeyResponseId);
+      const RewrapTrustKeyResponse = state.find(
+        (RewrapTrustKeyResponse) =>
+          RewrapTrustKeyResponse.id === action.payload.RewrapTrustKeyResponseId,
+      );
       if (RewrapTrustKeyResponse) {
-      //  RewrapTrustKeyResponse[action.property] = action.payload[action.property];
+        //  RewrapTrustKeyResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +54,6 @@ const RewrapTrustKeyResponseSlice = createSlice({
 export const {
   RewrapTrustKeyResponseAdded,
   RewrapTrustKeyResponseValueToggled,
-  RewrapTrustKeyResponsepropertySet
+  RewrapTrustKeyResponsepropertySet,
 } = RewrapTrustKeyResponseSlice.actions;
 export default RewrapTrustKeyResponseSlice.reducer;

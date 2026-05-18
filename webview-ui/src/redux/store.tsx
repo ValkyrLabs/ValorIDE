@@ -52,7 +52,8 @@ const rootReducer = combineReducers({
   [LlmDetailsService.reducerPath]: LlmDetailsService.reducer,
   [ContentDataService.reducerPath]: ContentDataService.reducer,
   [McpServerService.reducerPath]: McpServerService.reducer,
-  [McpMarketplaceCatalogService.reducerPath]: McpMarketplaceCatalogService.reducer,
+  [McpMarketplaceCatalogService.reducerPath]:
+    McpMarketplaceCatalogService.reducer,
   [McpMarketplaceItemService.reducerPath]: McpMarketplaceItemService.reducer,
   [creditsApi.reducerPath]: creditsApi.reducer,
   apiErrors: apiErrorsReducer,

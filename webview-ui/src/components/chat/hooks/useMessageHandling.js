@@ -14,7 +14,7 @@ export const useMessageHandling = ({
   // Helper: detect @valoride mention
   const containsValorIDEMention = useCallback(
     (text) => text?.toLowerCase?.().includes("@valoride") === true,
-    []
+    [],
   );
   const handleSendMessage = useCallback(
     async (text, images) => {
@@ -30,7 +30,7 @@ export const useMessageHandling = ({
               user: { id: ourSenderId },
             };
             window.dispatchEvent(
-              new CustomEvent("websocket-send", { detail: wsMessage })
+              new CustomEvent("websocket-send", { detail: wsMessage }),
             );
             vscode.postMessage({
               type: "displayVSCodeInfo",
@@ -96,7 +96,7 @@ export const useMessageHandling = ({
       setValorIDEAsk,
       setEnableButtons,
       ourSenderId,
-    ]
+    ],
   );
   return {
     containsValorIDEMention,

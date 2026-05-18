@@ -15,7 +15,7 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 
-import { RegisterTrustPolicyResponse } from '@thorapi/model/RegisterTrustPolicyResponse';
+import { RegisterTrustPolicyResponse } from "@thorapi/model/RegisterTrustPolicyResponse";
 
 const RegisterTrustPolicyResponseSlice = createSlice({
   name: "RegisterTrustPolicyResponses",
@@ -27,20 +27,28 @@ const RegisterTrustPolicyResponseSlice = createSlice({
     },
 
     RegisterTrustPolicyResponseValueToggled(state, action) {
-      console.log("RegisterTrustPolicyResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const RegisterTrustPolicyResponse:RegisterTrustPolicyResponse = state.find((RegisterTrustPolicyResponse) => RegisterTrustPolicyResponse.id === action.payload.RegisterTrustPolicyResponseId);
+      console.log("RegisterTrustPolicyResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const RegisterTrustPolicyResponse: RegisterTrustPolicyResponse =
+        state.find(
+          (RegisterTrustPolicyResponse) =>
+            RegisterTrustPolicyResponse.id ===
+            action.payload.RegisterTrustPolicyResponseId,
+        );
       if (RegisterTrustPolicyResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     RegisterTrustPolicyResponsepropertySet(state, action) {
-      const RegisterTrustPolicyResponse = state.find((RegisterTrustPolicyResponse) => RegisterTrustPolicyResponse.id === action.payload.RegisterTrustPolicyResponseId);
+      const RegisterTrustPolicyResponse = state.find(
+        (RegisterTrustPolicyResponse) =>
+          RegisterTrustPolicyResponse.id ===
+          action.payload.RegisterTrustPolicyResponseId,
+      );
       if (RegisterTrustPolicyResponse) {
-      //  RegisterTrustPolicyResponse[action.property] = action.payload[action.property];
+        //  RegisterTrustPolicyResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -49,6 +57,6 @@ const RegisterTrustPolicyResponseSlice = createSlice({
 export const {
   RegisterTrustPolicyResponseAdded,
   RegisterTrustPolicyResponseValueToggled,
-  RegisterTrustPolicyResponsepropertySet
+  RegisterTrustPolicyResponsepropertySet,
 } = RegisterTrustPolicyResponseSlice.actions;
 export default RegisterTrustPolicyResponseSlice.reducer;
