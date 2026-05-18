@@ -16,6 +16,7 @@ import { getApiMetrics } from "@shared/getApiMetrics";
 import BuyCredits from "@thorapi/components/BuyCredits";
 import { vscode } from "@thorapi/utils/vscode";
 import CoolButton from "../CoolButton";
+import { CREDIT_INTENT_EVENT, CreditIntent } from "@thorapi/types/creditIntent";
 interface SystemAlert {
   id: string;
   type: "budget" | "blocker";
@@ -155,6 +156,22 @@ const SystemAlerts: React.FC = () => {
       ) {
         const alertId = `blocker-insufficient-funds-${lastMessage.ts}`;
         if (!dismissedAlerts.has(alertId)) {
+          const requiredCredits = Math.max(1, Math.ceil((apiMetrics.totalCost || 0) + 1));
+          const intent: CreditIntent = {
+            actionName: "Continue current request",
+            requiredCredits,
+            currentBalance: typeof balanceData?.currentBalance === "number" ? balanceData.currentBalance : 0,
+            originView: "chat",
+            resumeLabel: "Return to chat",
+            messageTs: Number(lastMessage.ts || Date.now()),
+          };
+
+          window.dispatchEvent(
+            new CustomEvent(CREDIT_INTENT_EVENT, {
+              detail: intent,
+            }),
+          );
+
           const newAlert: SystemAlert = {
             id: alertId,
             type: "budget",
@@ -230,7 +247,7 @@ const SystemAlerts: React.FC = () => {
         });
       }
     }
-  }, [valorideMessages, dismissedAlerts]);
+  }, [valorideMessages, dismissedAlerts, apiMetrics.totalCost, balanceData?.currentBalance]);
 
   const handleDismiss = (alertId: string) => {
     setDismissedAlerts((prev) => new Set([...Array.from(prev), alertId]));
