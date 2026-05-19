@@ -77,6 +77,8 @@ const AccountView = ({
   onClearServerConsoleNeedsAttention,
   initialActiveTab,
   onConsumeInitialActiveTab,
+  creditIntent,
+  onClearCreditIntent,
 }: AccountViewProps) => {
   const { userInfo, authenticatedUser, isLoggedIn, jwtToken } =
     useExtensionState();
