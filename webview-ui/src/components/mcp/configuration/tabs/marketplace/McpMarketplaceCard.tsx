@@ -51,17 +51,31 @@ const McpMarketplaceCard = ({
     return item.githubUrl;
   }, [item.githubUrl]);
 
-  // Link to application detail page if mcpId is available (which could be an app ID),
-  // otherwise fall back to GitHub URL
+  const webBaseUrl = useMemo(() => {
+    const configuredBaseUrl = (import.meta as any)?.env?.VITE_VALKYR_WEB_BASE_URL;
+    const fallbackBaseUrl = "https://valkyrlabs.com";
+
+    const rawBaseUrl = (configuredBaseUrl || fallbackBaseUrl).trim();
+    return rawBaseUrl.endsWith("/") ? rawBaseUrl.slice(0, -1) : rawBaseUrl;
+  }, []);
+
+  // Link to hosted application detail page for first-party marketplace apps,
+  // otherwise fall back to GitHub URL for external MCP servers.
   const detailUrl = useMemo(() => {
-    // If this MCP is linked to an application (via mcpId that could be an applicationId)
-    // use the application detail page
-    if ((item as any).applicationId) {
-      return `http://localhost:5173/application-detail/${(item as any).applicationId}`;
+    const applicationId = (item as any).applicationId;
+    if (applicationId) {
+      const params = new URLSearchParams({
+        source: "valoride",
+        surface: "mcp_marketplace",
+        mcpId: item.mcpId || "",
+        applicationId: String(applicationId),
+      });
+
+      return `${webBaseUrl}/application-detail/${applicationId}?${params.toString()}`;
     }
-    // Fall back to GitHub URL for external MCP servers
+
     return item.githubUrl;
-  }, [item]);
+  }, [item, webBaseUrl]);
 
   const isInternalApp = useMemo(() => {
     return !!(item as any).applicationId;
@@ -85,6 +99,8 @@ const McpMarketplaceCard = ({
       </style>
       <a
         href={detailUrl}
+        target="_blank"
+        rel="noopener noreferrer"
         className="mcp-card"
         style={{
           padding: "14px 16px",
