@@ -28,6 +28,7 @@ import { ValorIDEAccountService } from "@services/account/ValorIDEAccountService
 import { BrowserSession } from "@services/browser/BrowserSession";
 import { McpHub } from "@services/mcp/McpHub";
 import { searchWorkspaceFiles } from "@services/search/file-search";
+import { telemetryService } from "@services/telemetry/TelemetryService";
 
 import { getLLMPromptService } from "@services/llmPromptService";
 import { getSwarmPromptBroadcaster } from "@services/swarmPromptBroadcaster";
@@ -841,6 +842,28 @@ export class Controller {
           await openUrlWithSimpleBrowser(message.url);
         }
         break;
+      case "creditCheckoutEvent": {
+        const allowedKeys = new Set([
+          "amountCents",
+          "creditsAmountCents",
+          "currency",
+          "errorCode",
+          "productType",
+          "source",
+          "state",
+          "surface",
+        ]);
+        const sanitizedProperties = Object.fromEntries(
+          Object.entries(message.telemetryProperties ?? {}).filter(([key]) =>
+            allowedKeys.has(key),
+          ),
+        );
+        telemetryService.capture({
+          event: message.telemetryEvent || "valoride_credit_checkout_event",
+          properties: sanitizedProperties,
+        });
+        break;
+      }
       case "fetchOpenGraphData":
         this.fetchOpenGraphData(message.text!);
         break;
