@@ -36,6 +36,38 @@
   margin-bottom: 24px;
 }
 
+.status-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.status-banner.success {
+  background: rgba(76, 175, 80, 0.12);
+  border: 1px solid rgba(76, 175, 80, 0.4);
+}
+
+.status-banner.error {
+  background: rgba(255, 68, 68, 0.12);
+  border: 1px solid rgba(255, 68, 68, 0.4);
+}
+
+.status-banner p {
+  margin: 0;
+}
+
+.status-banner button {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
 .error-banner p {
   margin: 0;
   color: #ff6b6b;
@@ -346,4 +378,50 @@
 .btn-reset:hover {
   background: rgba(100, 200, 255, 0.3);
   border-color: rgba(100, 200, 255, 0.6);
+}
+
+.service-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+}
+
+.service-modal {
+  width: min(560px, 100%);
+  background: #14152f;
+  border: 1px solid rgba(100, 200, 255, 0.35);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.service-modal h2 {
+  margin-top: 0;
+}
+
+.modal-meta {
+  margin: 12px 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  display: grid;
+  gap: 6px;
+}
+
+.service-modal select {
+  width: 100%;
+  margin-top: 6px;
+  margin-bottom: 16px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(100, 200, 255, 0.35);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
 }

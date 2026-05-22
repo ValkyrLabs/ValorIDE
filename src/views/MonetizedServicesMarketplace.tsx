@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   ManagedMcpService,
+  SubscriptionType,
   getMarketplaceServices,
   subscribeToService,
 } from "@thorapi/services/monetization/ServiceMonetizationService";
@@ -14,6 +15,13 @@ export const MonetizedServicesMarketplace: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [subscribing, setSubscribing] = useState<string | null>(null);
+  const [selectedService, setSelectedService] = useState<ManagedMcpService | null>(
+    null,
+  );
+  const [subscriptionType, setSubscriptionType] =
+    useState<SubscriptionType>("PAY_AS_YOU_GO");
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [statusTone, setStatusTone] = useState<"success" | "error">("success");
   const [filterTier, setFilterTier] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<"newest" | "popular" | "price-low">(
     "newest",
@@ -39,18 +47,23 @@ export const MonetizedServicesMarketplace: React.FC = () => {
     }
   };
 
-  const handleSubscribe = async (serviceId: string) => {
+  const handleSubscribe = async (
+    serviceId: string,
+    type: SubscriptionType = "PAY_AS_YOU_GO",
+  ) => {
     setSubscribing(serviceId);
 
     try {
-      await subscribeToService(serviceId, "PAY_AS_YOU_GO");
-      // Show success and refresh
-      alert("✓ Successfully subscribed!");
+      await subscribeToService(serviceId, type);
+      setStatusTone("success");
+      setStatusMessage("Subscription activated. You can now use this service.");
+      setSelectedService(null);
       loadServices();
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Failed to subscribe";
-      alert(`✗ ${message}`);
+      setStatusTone("error");
+      setStatusMessage(message);
     } finally {
       setSubscribing(null);
     }
@@ -98,6 +111,13 @@ export const MonetizedServicesMarketplace: React.FC = () => {
         <div className="error-banner">
           <p>{error}</p>
           <button onClick={loadServices}>Retry</button>
+        </div>
+      )}
+
+      {statusMessage && (
+        <div className={`status-banner ${statusTone}`}>
+          <p>{statusMessage}</p>
+          <button onClick={() => setStatusMessage(null)}>Dismiss</button>
         </div>
       )}
 
@@ -178,7 +198,7 @@ export const MonetizedServicesMarketplace: React.FC = () => {
               </div>
 
               <div className="creator-info">
-                <span className="creator-label">By: Creator</span>
+                <span className="creator-label">By: {service.createdBy}</span>
                 <span className="created-date">
                   {new Date(service.createdAt).toLocaleDateString()}
                 </span>
@@ -194,7 +214,19 @@ export const MonetizedServicesMarketplace: React.FC = () => {
                     ? "Subscribing..."
                     : "Subscribe Now"}
                 </button>
-                <button className="btn btn-details">Details →</button>
+                <button
+                  className="btn btn-details"
+                  onClick={() => {
+                    setSelectedService(service);
+                    setSubscriptionType(
+                      service.pricingModel === "PER_MONTH"
+                        ? "MONTHLY"
+                        : "PAY_AS_YOU_GO",
+                    );
+                  }}
+                >
+                  Details →
+                </button>
               </div>
             </div>
           ))}
@@ -207,6 +239,43 @@ export const MonetizedServicesMarketplace: React.FC = () => {
           <button onClick={() => setFilterTier(null)} className="btn btn-reset">
             Reset Filters
           </button>
+        </div>
+      )}
+
+      {selectedService && (
+        <div className="service-modal-backdrop" onClick={() => setSelectedService(null)}>
+          <div className="service-modal" onClick={(e) => e.stopPropagation()}>
+            <h2>{selectedService.name}</h2>
+            <p>{selectedService.description || "No description available"}</p>
+            <div className="modal-meta">
+              <div>Creator: {selectedService.createdBy}</div>
+              <div>Pricing Model: {selectedService.pricingModel}</div>
+              <div>
+                Est. Credits/Call: {selectedService.costPerCall ?? "Not specified"}
+              </div>
+            </div>
+            <label htmlFor="subscriptionType">Plan</label>
+            <select
+              id="subscriptionType"
+              value={subscriptionType}
+              onChange={(e) => setSubscriptionType(e.target.value as SubscriptionType)}
+            >
+              <option value="PAY_AS_YOU_GO">Pay as you go</option>
+              <option value="MONTHLY">Monthly</option>
+            </select>
+            <div className="modal-actions">
+              <button className="btn btn-details" onClick={() => setSelectedService(null)}>
+                Cancel
+              </button>
+              <button
+                className="btn btn-subscribe"
+                disabled={subscribing === selectedService.id}
+                onClick={() => handleSubscribe(selectedService.id, subscriptionType)}
+              >
+                {subscribing === selectedService.id ? "Subscribing..." : "Subscribe"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
