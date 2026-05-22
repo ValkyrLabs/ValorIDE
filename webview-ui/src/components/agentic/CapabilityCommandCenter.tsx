@@ -1,6 +1,7 @@
 import React from "react";
 import {
   FaBrain,
+  FaCreditCard,
   FaNetworkWired,
   FaPlug,
   FaRobot,
@@ -10,11 +11,19 @@ import type { AgenticCapabilityCommandCenterState } from "@shared/AgenticState";
 import type { ApiConfiguration } from "@shared/api";
 import type { McpServer } from "@shared/mcp";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
 import "./CapabilityCommandCenter.css";
 
 type GrayMatterLike = {
+  balanceCredits?: number;
   capabilities?: Record<string, boolean | undefined>;
   error?: string;
+  estimatedUnlockCredits?: number;
+  lastBlockedAction?: {
+    capabilityId?: string;
+    commandId?: string;
+    label?: string;
+  };
   status?: string;
 };
 
@@ -187,6 +196,64 @@ const commandStatus = (
     : titleCaseStatus(command.status);
 };
 
+const hostedUrl = (path: string, state: Record<string, any>): URL => {
+  const configuredHost = state.apiConfiguration?.valkyraiHost;
+  let origin = "https://valkyrlabs.com";
+  if (typeof configuredHost === "string" && configuredHost.length > 0) {
+    try {
+      origin = new URL(configuredHost).origin;
+    } catch {
+      origin = "https://valkyrlabs.com";
+    }
+  }
+  return new URL(path, origin);
+};
+
+const quotaActionContext = (
+  grayMatterSession: GrayMatterLike | undefined,
+  latestCommand:
+    | AgenticCapabilityCommandCenterState["recentCommands"][number]
+    | undefined,
+) => {
+  const blocked = grayMatterSession?.lastBlockedAction;
+  return {
+    capabilityId: blocked?.capabilityId ?? latestCommand?.capabilityId,
+    commandId: blocked?.commandId ?? latestCommand?.commandId,
+    label: blocked?.label ?? latestCommand?.toolLabel,
+  };
+};
+
+const quotaRecoveryUrl = (
+  path: string,
+  state: Record<string, any>,
+  grayMatterSession: GrayMatterLike | undefined,
+  latestCommand:
+    | AgenticCapabilityCommandCenterState["recentCommands"][number]
+    | undefined,
+): string => {
+  const url = hostedUrl(path, state);
+  const context = quotaActionContext(grayMatterSession, latestCommand);
+  url.searchParams.set("source", "valoride-graymatter-quota");
+  url.searchParams.set("intent", "resume-blocked-action");
+  if (context.capabilityId) {
+    url.searchParams.set("capability", context.capabilityId);
+  }
+  if (context.commandId) {
+    url.searchParams.set("resumeCommand", context.commandId);
+  }
+  if (context.label) {
+    url.searchParams.set("action", context.label);
+  }
+  return url.toString();
+};
+
+const formatCredits = (value?: number): string | undefined => {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return undefined;
+  }
+  return `${value.toLocaleString()} credits`;
+};
+
 const StatusPill = ({
   detail,
   icon,
@@ -208,6 +275,55 @@ const StatusPill = ({
     ) : null}
   </div>
 );
+
+const GrayMatterQuotaRecovery = ({
+  grayMatterSession,
+  latestCommand,
+  state,
+}: {
+  grayMatterSession?: GrayMatterLike;
+  latestCommand?: AgenticCapabilityCommandCenterState["recentCommands"][number];
+  state: Record<string, any>;
+}) => {
+  const balance = formatCredits(grayMatterSession?.balanceCredits);
+  const unlockCost = formatCredits(grayMatterSession?.estimatedUnlockCredits);
+  const context = quotaActionContext(grayMatterSession, latestCommand);
+  const blockedAction = context.capabilityId ?? "GrayMatter action";
+
+  const openRecoveryUrl = (path: string) => {
+    vscode.postMessage({
+      type: "openInBrowser",
+      url: quotaRecoveryUrl(path, state, grayMatterSession, latestCommand),
+    });
+  };
+
+  return (
+    <div className="capability-command-center__quota" role="alert">
+      <div className="capability-command-center__quota-copy">
+        <FaCreditCard aria-hidden="true" />
+        <span>
+          GrayMatter is waiting on credits for <strong>{blockedAction}</strong>.
+          {balance ? ` Balance: ${balance}.` : ""}
+          {unlockCost ? ` Estimated unlock: ${unlockCost}.` : ""}
+        </span>
+      </div>
+      <div className="capability-command-center__quota-actions">
+        <button type="button" onClick={() => openRecoveryUrl("/buy-credits")}>
+          Recharge credits
+        </button>
+        <button type="button" onClick={() => openRecoveryUrl("/pricing")}>
+          Upgrade plan
+        </button>
+        <button
+          type="button"
+          onClick={() => vscode.postMessage({ type: "showAccountViewClicked" })}
+        >
+          View usage
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const CapabilityCommandCenter = () => {
   const state = useExtensionState() as Record<string, any>;
@@ -289,6 +405,14 @@ const CapabilityCommandCenter = () => {
           </div>
         )}
       </div>
+
+      {grayMatterSession?.status === "quota" ? (
+        <GrayMatterQuotaRecovery
+          grayMatterSession={grayMatterSession}
+          latestCommand={latestCommand}
+          state={state}
+        />
+      ) : null}
     </section>
   );
 };
