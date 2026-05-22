@@ -115,6 +115,50 @@
   flex: 0 0 auto;
 }
 
+.capability-command-center__quota {
+  align-items: center;
+  background: rgba(210, 153, 34, 0.12);
+  border: 1px solid rgba(210, 153, 34, 0.45);
+  border-radius: 8px;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  padding: 8px 10px;
+}
+
+.capability-command-center__quota-copy {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+}
+
+.capability-command-center__quota-copy span {
+  line-height: 1.35;
+}
+
+.capability-command-center__quota-actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.capability-command-center__quota-actions button {
+  background: var(--vscode-button-background, #0e639c);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--vscode-button-foreground, #ffffff);
+  cursor: pointer;
+  font: inherit;
+  padding: 3px 8px;
+}
+
+.capability-command-center__quota-actions button:hover {
+  background: var(--vscode-button-hoverBackground, #1177bb);
+}
+
 @media (max-width: 640px) {
   .capability-command-center__topline {
     align-items: flex-start;
@@ -124,5 +168,14 @@
   .capability-command-center__model {
     justify-content: flex-start;
     max-width: 100%;
+  }
+
+  .capability-command-center__quota {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .capability-command-center__quota-actions {
+    justify-content: flex-start;
   }
 }
