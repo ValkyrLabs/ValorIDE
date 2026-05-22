@@ -1,18 +1,23 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { jsx, jsxs } from "react/jsx-runtime";
 import { useState, useEffect } from "react";
 import {
   getMarketplaceServices,
-  subscribeToService,
+  subscribeToService
 } from "@thorapi/services/monetization/ServiceMonetizationService";
 import "./MonetizedServicesMarketplace.css";
-/**
- * Browse and subscribe to monetized MCP services from creators.
- */
-export const MonetizedServicesMarketplace = () => {
+import {
+  buildMarketplaceFunnel,
+  sortMarketplaceServices
+} from "./monetizedMarketplaceFunnel";
+const MonetizedServicesMarketplace = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [subscribing, setSubscribing] = useState(null);
+  const [selectedService, setSelectedService] = useState(null);
+  const [subscriptionType, setSubscriptionType] = useState("PAY_AS_YOU_GO");
+  const [statusMessage, setStatusMessage] = useState(null);
+  const [statusTone, setStatusTone] = useState("success");
   const [filterTier, setFilterTier] = useState(null);
   const [sortBy, setSortBy] = useState("newest");
   useEffect(() => {
@@ -25,257 +30,239 @@ export const MonetizedServicesMarketplace = () => {
       const data = await getMarketplaceServices();
       setServices(data);
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to load services";
+      const message = err instanceof Error ? err.message : "Failed to load services";
       setError(message);
     } finally {
       setLoading(false);
     }
   };
-  const handleSubscribe = async (serviceId) => {
+  const handleSubscribe = async (serviceId, type = "PAY_AS_YOU_GO") => {
     setSubscribing(serviceId);
     try {
-      await subscribeToService(serviceId, "PAY_AS_YOU_GO");
-      // Show success and refresh
-      alert("✓ Successfully subscribed!");
+      await subscribeToService(serviceId, type);
+      setStatusTone("success");
+      setStatusMessage("Subscription activated. You can now use this service.");
+      setSelectedService(null);
       loadServices();
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to subscribe";
-      alert(`✗ ${message}`);
+      const message = err instanceof Error ? err.message : "Failed to subscribe";
+      setStatusTone("error");
+      setStatusMessage(message);
     } finally {
       setSubscribing(null);
     }
   };
-  const filteredServices = filterTier
-    ? services.filter((s) => s.tierName === filterTier)
-    : services;
-  const sortedServices = [...filteredServices].sort((a, b) => {
-    switch (sortBy) {
-      case "price-low":
-        return (a.costPerCall || 999) - (b.costPerCall || 999);
-      case "popular":
-        return b.updatedAt.localeCompare(a.updatedAt);
-      default:
-        return b.createdAt.localeCompare(a.createdAt);
-    }
-  });
+  const filteredServices = filterTier ? services.filter((s) => s.tierName === filterTier) : services;
+  const sortedServices = sortMarketplaceServices(filteredServices, sortBy);
+  const openServiceDetails = (service) => {
+    const funnel = buildMarketplaceFunnel(service);
+    setSelectedService(service);
+    setSubscriptionType(funnel.recommendedSubscriptionType);
+  };
   if (loading) {
-    return _jsx("div", {
-      className: "marketplace",
-      children: _jsxs("div", {
-        className: "loading-state",
-        children: [
-          _jsx("div", { className: "spinner" }),
-          _jsx("p", { children: "Discovering amazing services..." }),
-        ],
-      }),
-    });
+    return /* @__PURE__ */ jsx("div", { className: "marketplace", children: /* @__PURE__ */ jsxs("div", { className: "loading-state", children: [
+      /* @__PURE__ */ jsx("div", { className: "spinner" }),
+      /* @__PURE__ */ jsx("p", { children: "Discovering amazing services..." })
+    ] }) });
   }
-  return _jsxs("div", {
-    className: "marketplace",
-    children: [
-      _jsx("div", {
-        className: "marketplace-header",
-        children: _jsxs("div", {
-          className: "header-content",
-          children: [
-            _jsx("h1", { children: "\uD83D\uDE80 Monetized MCP Services" }),
-            _jsx("p", {
-              children:
-                "Discover and subscribe to premium MCP services created by our community",
-            }),
-          ],
-        }),
-      }),
-      error &&
-        _jsxs("div", {
-          className: "error-banner",
-          children: [
-            _jsx("p", { children: error }),
-            _jsx("button", { onClick: loadServices, children: "Retry" }),
-          ],
-        }),
-      _jsxs("div", {
-        className: "controls-bar",
-        children: [
-          _jsxs("div", {
-            className: "filters",
+  return /* @__PURE__ */ jsxs("div", { className: "marketplace", children: [
+    /* @__PURE__ */ jsx("div", { className: "marketplace-header", children: /* @__PURE__ */ jsxs("div", { className: "header-content", children: [
+      /* @__PURE__ */ jsx("h1", { children: "\u{1F680} Monetized MCP Services" }),
+      /* @__PURE__ */ jsx("p", { children: "Compare creator proof, pricing, and plan fit before activating a paid MCP service." })
+    ] }) }),
+    error && /* @__PURE__ */ jsxs("div", { className: "error-banner", children: [
+      /* @__PURE__ */ jsx("p", { children: error }),
+      /* @__PURE__ */ jsx("button", { onClick: loadServices, children: "Retry" })
+    ] }),
+    statusMessage && /* @__PURE__ */ jsxs("div", { className: `status-banner ${statusTone}`, children: [
+      /* @__PURE__ */ jsx("p", { children: statusMessage }),
+      /* @__PURE__ */ jsx("button", { onClick: () => setStatusMessage(null), children: "Dismiss" })
+    ] }),
+    /* @__PURE__ */ jsxs("div", { className: "controls-bar", children: [
+      /* @__PURE__ */ jsxs("div", { className: "filters", children: [
+        /* @__PURE__ */ jsx("label", { children: "Tier:" }),
+        /* @__PURE__ */ jsxs(
+          "select",
+          {
+            value: filterTier || "",
+            onChange: (e) => setFilterTier(e.target.value || null),
+            className: "filter-select",
             children: [
-              _jsx("label", { children: "Tier:" }),
-              _jsxs("select", {
-                value: filterTier || "",
-                onChange: (e) => setFilterTier(e.target.value || null),
-                className: "filter-select",
-                children: [
-                  _jsx("option", { value: "", children: "All Tiers" }),
-                  _jsx("option", { value: "STARTER", children: "Starter" }),
-                  _jsx("option", { value: "PRO", children: "Pro" }),
-                  _jsx("option", {
-                    value: "ENTERPRISE",
-                    children: "Enterprise",
-                  }),
-                ],
-              }),
-            ],
-          }),
-          _jsxs("div", {
-            className: "sorting",
+              /* @__PURE__ */ jsx("option", { value: "", children: "All Tiers" }),
+              /* @__PURE__ */ jsx("option", { value: "STARTER", children: "Starter" }),
+              /* @__PURE__ */ jsx("option", { value: "PRO", children: "Pro" }),
+              /* @__PURE__ */ jsx("option", { value: "ENTERPRISE", children: "Enterprise" })
+            ]
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "sorting", children: [
+        /* @__PURE__ */ jsx("label", { children: "Sort by:" }),
+        /* @__PURE__ */ jsxs(
+          "select",
+          {
+            value: sortBy,
+            onChange: (e) => setSortBy(e.target.value),
+            className: "sort-select",
             children: [
-              _jsx("label", { children: "Sort by:" }),
-              _jsxs("select", {
-                value: sortBy,
-                onChange: (e) => setSortBy(e.target.value),
-                className: "sort-select",
-                children: [
-                  _jsx("option", { value: "newest", children: "Newest" }),
-                  _jsx("option", {
-                    value: "popular",
-                    children: "Most Popular",
-                  }),
-                  _jsx("option", {
-                    value: "price-low",
-                    children: "Lowest Price",
-                  }),
-                ],
-              }),
-            ],
-          }),
-          _jsxs("div", {
-            className: "result-count",
-            children: [
-              sortedServices.length,
-              " service",
-              sortedServices.length !== 1 ? "s" : "",
-              " found",
-            ],
-          }),
-        ],
-      }),
-      sortedServices.length > 0
-        ? _jsx("div", {
-            className: "services-grid",
-            children: sortedServices.map((service) =>
-              _jsxs(
-                "div",
-                {
-                  className: "service-card",
-                  children: [
-                    _jsxs("div", {
-                      className: "card-header",
-                      children: [
-                        _jsx("h3", { children: service.name }),
-                        service.tierName &&
-                          _jsx("span", {
-                            className: `tier-badge tier-${service.tierName.toLowerCase()}`,
-                            children: service.tierName,
-                          }),
-                      ],
-                    }),
-                    _jsx("p", {
-                      className: "description",
-                      children:
-                        service.description || "No description available",
-                    }),
-                    _jsxs("div", {
-                      className: "pricing-info",
-                      children: [
-                        service.pricingModel === "PER_CALL" &&
-                          service.costPerCall &&
-                          _jsxs("div", {
-                            className: "price",
-                            children: [
-                              _jsx("span", {
-                                className: "price-label",
-                                children: "Per Call:",
-                              }),
-                              _jsx("span", {
-                                className: "price-value",
-                                children: service.costPerCall,
-                              }),
-                              _jsx("span", {
-                                className: "price-unit",
-                                children: "credits",
-                              }),
-                            ],
-                          }),
-                        service.pricingModel === "PER_MONTH" &&
-                          service.costPerMonth &&
-                          _jsxs("div", {
-                            className: "price",
-                            children: [
-                              _jsx("span", {
-                                className: "price-label",
-                                children: "Monthly:",
-                              }),
-                              _jsxs("span", {
-                                className: "price-value",
-                                children: ["$", service.costPerMonth],
-                              }),
-                            ],
-                          }),
-                      ],
-                    }),
-                    _jsxs("div", {
-                      className: "creator-info",
-                      children: [
-                        _jsx("span", {
-                          className: "creator-label",
-                          children: "By: Creator",
-                        }),
-                        _jsx("span", {
-                          className: "created-date",
-                          children: new Date(
-                            service.createdAt,
-                          ).toLocaleDateString(),
-                        }),
-                      ],
-                    }),
-                    _jsxs("div", {
-                      className: "card-actions",
-                      children: [
-                        _jsx("button", {
-                          onClick: () => handleSubscribe(service.id),
-                          disabled: subscribing === service.id,
-                          className: "btn btn-subscribe",
-                          children:
-                            subscribing === service.id
-                              ? "Subscribing..."
-                              : "Subscribe Now",
-                        }),
-                        _jsx("button", {
-                          className: "btn btn-details",
-                          children: "Details \u2192",
-                        }),
-                      ],
-                    }),
-                  ],
-                },
-                service.id,
-              ),
+              /* @__PURE__ */ jsx("option", { value: "newest", children: "Newest" }),
+              /* @__PURE__ */ jsx("option", { value: "popular", children: "Most Popular" }),
+              /* @__PURE__ */ jsx("option", { value: "price-low", children: "Lowest Price" })
+            ]
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "result-count", children: [
+        sortedServices.length,
+        " service",
+        sortedServices.length !== 1 ? "s" : "",
+        " found"
+      ] })
+    ] }),
+    sortedServices.length > 0 ? /* @__PURE__ */ jsx("div", { className: "services-grid", children: sortedServices.map((service) => /* @__PURE__ */ jsxs("div", { className: "service-card", children: [
+      /* @__PURE__ */ jsxs("div", { className: "card-header", children: [
+        /* @__PURE__ */ jsx("h3", { children: service.name }),
+        service.tierName && /* @__PURE__ */ jsx(
+          "span",
+          {
+            className: `tier-badge tier-${service.tierName.toLowerCase()}`,
+            children: service.tierName
+          }
+        )
+      ] }),
+      /* @__PURE__ */ jsx("p", { className: "description", children: service.description || "No description available" }),
+      /* @__PURE__ */ jsxs("div", { className: "pricing-info", children: [
+        /* @__PURE__ */ jsx("div", { className: "price-summary", children: buildMarketplaceFunnel(service).priceLabel }),
+        service.pricingModel === "PER_CALL" && service.costPerCall && /* @__PURE__ */ jsxs("div", { className: "price", children: [
+          /* @__PURE__ */ jsx("span", { className: "price-label", children: "Per Call:" }),
+          /* @__PURE__ */ jsx("span", { className: "price-value", children: service.costPerCall }),
+          /* @__PURE__ */ jsx("span", { className: "price-unit", children: "credits" })
+        ] }),
+        service.pricingModel === "PER_MONTH" && service.costPerMonth && /* @__PURE__ */ jsxs("div", { className: "price", children: [
+          /* @__PURE__ */ jsx("span", { className: "price-label", children: "Monthly:" }),
+          /* @__PURE__ */ jsxs("span", { className: "price-value", children: [
+            "$",
+            service.costPerMonth
+          ] })
+        ] })
+      ] }),
+      /* @__PURE__ */ jsx("div", { className: "funnel-proof", children: buildMarketplaceFunnel(service).proofPoints.slice(0, 3).map((point) => /* @__PURE__ */ jsxs("span", { children: [
+        "\u2713 ",
+        point
+      ] }, point)) }),
+      /* @__PURE__ */ jsxs("div", { className: "creator-info", children: [
+        /* @__PURE__ */ jsxs("span", { className: "creator-label", children: [
+          "By: ",
+          buildMarketplaceFunnel(service).creatorDisplayName
+        ] }),
+        /* @__PURE__ */ jsx("span", { className: "created-date", children: new Date(service.createdAt).toLocaleDateString() })
+      ] }),
+      /* @__PURE__ */ jsxs("div", { className: "card-actions", children: [
+        /* @__PURE__ */ jsx(
+          "button",
+          {
+            onClick: () => openServiceDetails(service),
+            disabled: subscribing === service.id,
+            className: "btn btn-subscribe",
+            children: subscribing === service.id ? "Activating..." : buildMarketplaceFunnel(service).primaryCta
+          }
+        ),
+        /* @__PURE__ */ jsx(
+          "button",
+          {
+            className: "btn btn-details",
+            onClick: () => openServiceDetails(service),
+            children: "Details \u2192"
+          }
+        )
+      ] })
+    ] }, service.id)) }) : /* @__PURE__ */ jsxs("div", { className: "empty-state", children: [
+      /* @__PURE__ */ jsx("div", { className: "empty-icon", children: "\u{1F50D}" }),
+      /* @__PURE__ */ jsx("h2", { children: "No services match your filters" }),
+      /* @__PURE__ */ jsx("p", { children: "Try adjusting your search or check back later for more options" }),
+      /* @__PURE__ */ jsx("button", { onClick: () => setFilterTier(null), className: "btn btn-reset", children: "Reset Filters" })
+    ] }),
+    selectedService && /* @__PURE__ */ jsx(
+      "div",
+      {
+        className: "service-modal-backdrop",
+        onClick: () => setSelectedService(null),
+        children: /* @__PURE__ */ jsxs("div", { className: "service-modal", onClick: (e) => e.stopPropagation(), children: [
+          /* @__PURE__ */ jsx("h2", { children: selectedService.name }),
+          /* @__PURE__ */ jsx("p", { children: selectedService.description || "No description available" }),
+          /* @__PURE__ */ jsxs("div", { className: "modal-hero", children: [
+            /* @__PURE__ */ jsx("strong", { children: buildMarketplaceFunnel(selectedService).priceLabel }),
+            /* @__PURE__ */ jsx("span", { children: "Checkout-safe MCP activation path" })
+          ] }),
+          /* @__PURE__ */ jsxs("div", { className: "modal-meta", children: [
+            /* @__PURE__ */ jsxs("div", { children: [
+              "Creator:",
+              " ",
+              buildMarketplaceFunnel(selectedService).creatorDisplayName
+            ] }),
+            /* @__PURE__ */ jsxs("div", { children: [
+              "Pricing Model: ",
+              selectedService.pricingModel
+            ] }),
+            /* @__PURE__ */ jsxs("div", { children: [
+              "Est. Credits/Call:",
+              " ",
+              selectedService.costPerCall ?? "Not specified"
+            ] })
+          ] }),
+          /* @__PURE__ */ jsx("ul", { className: "modal-proof", children: buildMarketplaceFunnel(selectedService).proofPoints.map(
+            (point) => /* @__PURE__ */ jsx("li", { children: point }, point)
+          ) }),
+          /* @__PURE__ */ jsx("label", { htmlFor: "subscriptionType", children: "Plan" }),
+          /* @__PURE__ */ jsxs(
+            "select",
+            {
+              id: "subscriptionType",
+              value: subscriptionType,
+              onChange: (e) => setSubscriptionType(e.target.value),
+              children: [
+                /* @__PURE__ */ jsx("option", { value: "PAY_AS_YOU_GO", children: "Pay as you go" }),
+                /* @__PURE__ */ jsx("option", { value: "MONTHLY", children: "Monthly" })
+              ]
+            }
+          ),
+          /* @__PURE__ */ jsxs("div", { className: "modal-actions", children: [
+            /* @__PURE__ */ jsx(
+              "button",
+              {
+                className: "btn btn-details",
+                onClick: () => setSelectedService(null),
+                children: "Cancel"
+              }
             ),
-          })
-        : _jsxs("div", {
-            className: "empty-state",
-            children: [
-              _jsx("div", {
-                className: "empty-icon",
-                children: "\uD83D\uDD0D",
-              }),
-              _jsx("h2", { children: "No services match your filters" }),
-              _jsx("p", {
-                children:
-                  "Try adjusting your search or check back later for more options",
-              }),
-              _jsx("button", {
-                onClick: () => setFilterTier(null),
-                className: "btn btn-reset",
-                children: "Reset Filters",
-              }),
-            ],
-          }),
-    ],
-  });
+            buildMarketplaceFunnel(selectedService).detailHref && /* @__PURE__ */ jsx(
+              "a",
+              {
+                className: "btn btn-details",
+                href: buildMarketplaceFunnel(selectedService).detailHref ?? void 0,
+                target: "_blank",
+                rel: "noreferrer",
+                children: "Hosted detail"
+              }
+            ),
+            /* @__PURE__ */ jsx(
+              "button",
+              {
+                className: "btn btn-subscribe",
+                disabled: subscribing === selectedService.id,
+                onClick: () => handleSubscribe(selectedService.id, subscriptionType),
+                children: subscribing === selectedService.id ? "Subscribing..." : "Subscribe"
+              }
+            )
+          ] })
+        ] })
+      }
+    )
+  ] });
 };
-export default MonetizedServicesMarketplace;
+var MonetizedServicesMarketplace_default = MonetizedServicesMarketplace;
+export {
+  MonetizedServicesMarketplace,
+  MonetizedServicesMarketplace_default as default
+};
 //# sourceMappingURL=MonetizedServicesMarketplace.js.map
