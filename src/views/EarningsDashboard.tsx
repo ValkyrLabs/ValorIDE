@@ -6,6 +6,10 @@ import {
   getCreatorServices,
   ManagedMcpService,
 } from "@thorapi/services/monetization/ServiceMonetizationService";
+import {
+  MONETIZATION_PRICING_UPDATED_EVENT,
+  isPricingUpdatedEvent,
+} from "@thorapi/services/monetization/pricingEvents";
 import "./EarningsDashboard.css";
 
 /**
@@ -26,6 +30,36 @@ export const EarningsDashboard: React.FC = () => {
 
   useEffect(() => {
     loadData();
+  }, [selectedMonth]);
+
+  useEffect(() => {
+    const handlePricingUpdated = (event: Event) => {
+      if (!isPricingUpdatedEvent(event)) {
+        return;
+      }
+
+      const updatedService = event.detail.service;
+      setServices((current) =>
+        current.map((service) =>
+          service.id === updatedService.id
+            ? { ...service, ...updatedService }
+            : service,
+        ),
+      );
+      void loadData();
+    };
+
+    window.addEventListener(
+      MONETIZATION_PRICING_UPDATED_EVENT,
+      handlePricingUpdated,
+    );
+
+    return () => {
+      window.removeEventListener(
+        MONETIZATION_PRICING_UPDATED_EVENT,
+        handlePricingUpdated,
+      );
+    };
   }, [selectedMonth]);
 
   const loadData = async () => {

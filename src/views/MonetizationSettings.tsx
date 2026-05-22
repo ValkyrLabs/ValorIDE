@@ -5,10 +5,8 @@ import {
   enableMonetization,
   updatePricing,
 } from "@thorapi/services/monetization/ServiceMonetizationService";
+import { dispatchPricingUpdated } from "@thorapi/services/monetization/pricingEvents";
 import "./MonetizationSettings.css";
-
-export const MONETIZATION_PRICING_UPDATED_EVENT =
-  "valoride:monetization-pricing-updated";
 
 interface MonetizationSettingsProps {
   applicationId: string;
@@ -26,28 +24,6 @@ function validatePrice(costPerCall: number): string | null {
   return null;
 }
 
-function notifyPricingUpdated(service: ManagedMcpService) {
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  window.dispatchEvent(
-    new CustomEvent(MONETIZATION_PRICING_UPDATED_EVENT, {
-      detail: {
-        service,
-        audit: {
-          action: "creator_pricing_updated",
-          serviceId: service.id,
-          applicationId: service.applicationId,
-          pricingModel: service.pricingModel,
-          costPerCall: service.costPerCall,
-          recordedAt: new Date().toISOString(),
-        },
-      },
-    }),
-  );
-}
-
 /**
  * Component to enable and configure monetization on MCP services.
  * Only accessible to RESELLER and PRO/ENTERPRISE users.
@@ -62,9 +38,7 @@ export const MonetizationSettings: React.FC<MonetizationSettingsProps> = ({
   const [resolvedServiceId, setResolvedServiceId] = useState(
     service?.id ?? serviceId ?? "",
   );
-  const [isMonetized, setIsMonetized] = useState(
-    service?.isMonetized ?? false,
-  );
+  const [isMonetized, setIsMonetized] = useState(service?.isMonetized ?? false);
   const [pricingModel, setPricingModel] = useState<PricingModel>(
     service?.pricingModel ?? "PER_CALL",
   );
@@ -94,7 +68,7 @@ export const MonetizationSettings: React.FC<MonetizationSettingsProps> = ({
     setCostPerCall(result.costPerCall ?? costPerCall);
     setSuccess(true);
     onSuccess?.(result);
-    notifyPricingUpdated(result);
+    dispatchPricingUpdated(result);
 
     // Auto-hide success message after 3s
     setTimeout(() => setSuccess(false), 3000);
