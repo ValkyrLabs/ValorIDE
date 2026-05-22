@@ -15,6 +15,8 @@ import { initializeTestMode, cleanupTestMode } from "./services/test/TestMode";
 import { registerUrlCommands } from "./commands/urlCommands";
 import { registerAliasCommands } from "./commands/aliasCommands";
 import { StartupAuthService } from "./services/auth/StartupAuthService";
+import { AuthCodeExchangeService } from "./services/auth/AuthCodeExchangeService";
+import { parseAuthCallbackQuery } from "./services/auth/AuthCallbackSecurity";
 import { initializePromptService } from "./services/promptService";
 import { initializeMemoryBankLoader } from "./services/memoryBankLoader";
 import { initializeLLMContextInjector } from "./services/llmContextInjector";
@@ -530,22 +532,16 @@ export function activate(context: vscode.ExtensionContext) {
 
   // URI Handler
   const handleUri = async (uri: vscode.Uri) => {
-    console.log("URI Handler called with:", {
-      path: uri.path,
-      query: uri.query,
-      scheme: uri.scheme,
-    });
-
     const path = uri.path;
-    // Guard against missing query to avoid calling replace on undefined
-    const rawQuery = uri.query || "";
-    const query = new URLSearchParams(rawQuery.replace(/\+/g, "%2B"));
     const visibleWebview = WebviewProvider.getVisibleInstance();
     if (!visibleWebview) {
       return;
     }
     switch (path) {
       case "/openrouter": {
+        const query = new URLSearchParams(
+          (uri.query || "").replace(/\+/g, "%2B"),
+        );
         const code = query.get("code");
         if (code) {
           await visibleWebview?.controller.handleOpenRouterCallback(code);
@@ -553,47 +549,51 @@ export function activate(context: vscode.ExtensionContext) {
         break;
       }
       case "/auth": {
-        const token = query.get("token");
-        const state = query.get("state");
-        const apiKey = query.get("apiKey");
-        const authenticatedPrincipal = query.get("authenticatedPrincipal");
+        const callback = parseAuthCallbackQuery(uri);
+        Logger.log(
+          `Auth callback received: ${JSON.stringify(callback.diagnostics)}`,
+        );
 
-        console.log("Auth callback received:", {
-          token: token,
-          state: state,
-          apiKey: apiKey,
-          authenticatedPrincipal: authenticatedPrincipal,
-        });
+        if (callback.hasLegacySecretParams) {
+          vscode.window.showErrorMessage(
+            "ValorIDE rejected an insecure auth callback. Please retry sign-in to use the secure code exchange flow.",
+          );
+          return;
+        }
 
-        // Validate state parameter
-        if (!(await visibleWebview?.controller.validateAuthState(state))) {
+        // Validate state parameter before exchanging the one-time code.
+        if (
+          !(await visibleWebview?.controller.validateAuthState(callback.state))
+        ) {
           vscode.window.showErrorMessage("Invalid auth state");
           return;
         }
 
-        if (token && apiKey) {
-          let parsedUser;
-          try {
-            parsedUser = authenticatedPrincipal
-              ? JSON.parse(decodeURIComponent(authenticatedPrincipal))
-              : undefined;
-          } catch (error) {
-            console.warn("Failed to parse authenticatedPrincipal:", error);
-          }
-
-          // Use StartupAuthService to handle login persistently
-          const startupAuthService = StartupAuthService.getInstance(context);
-          await startupAuthService.handleSuccessfulLogin(
-            { jwtToken: token, apiKey },
-            parsedUser,
+        if (!callback.code || !callback.state) {
+          vscode.window.showErrorMessage(
+            "ValorIDE auth callback did not include a valid one-time code.",
           );
-
-          await visibleWebview?.controller.handleAuthCallback(
-            token,
-            apiKey,
-            parsedUser,
-          );
+          return;
         }
+
+        const exchangeService = new AuthCodeExchangeService();
+        const authResult = await exchangeService.exchangeCode(
+          callback.code,
+          callback.state,
+        );
+
+        // Use StartupAuthService to handle login persistently via VS Code SecretStorage.
+        const startupAuthService = StartupAuthService.getInstance(context);
+        await startupAuthService.handleSuccessfulLogin(
+          authResult.tokens,
+          authResult.user,
+        );
+
+        await visibleWebview?.controller.handleAuthCallback(
+          authResult.tokens.jwtToken,
+          authResult.tokens.apiKey || "",
+          authResult.user,
+        );
         break;
       }
       default:
