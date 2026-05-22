@@ -10,6 +10,30 @@ import {
   type ApiErrorPayload,
 } from "../slices/apiErrorsSlice";
 import { clearStoredAuthSession } from "@thorapi/utils/accessControl";
+import { CreditIntent } from "../../types/creditIntent";
+
+const firstFiniteNumber = (...values: unknown[]): number | undefined => {
+  for (const value of values) {
+    const numericValue =
+      typeof value === "number"
+        ? value
+        : typeof value === "string" && value.trim() !== ""
+          ? Number(value)
+          : Number.NaN;
+    if (Number.isFinite(numericValue)) {
+      return numericValue;
+    }
+  }
+  return undefined;
+};
+
+const titleizeEndpoint = (endpointName?: string): string => {
+  if (!endpointName) return "ValorIDE action";
+  return endpointName
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/[_-]+/g, " ")
+    .replace(/^./, (char) => char.toUpperCase());
+};
 
 const isInsufficientCreditsPayload = (data: any): boolean => {
   if (!data) return false;
@@ -36,6 +60,47 @@ const buildMessage = (status: number, data: any): string => {
   } catch {
     return `Request failed with status ${status}`;
   }
+};
+
+const buildCreditIntent = (data: any, endpointName?: string): CreditIntent => {
+  const requiredCredits = Math.max(
+    0.01,
+    firstFiniteNumber(
+      data?.requiredCredits,
+      data?.creditsRequired,
+      data?.required,
+      data?.estimatedCredits,
+      data?.estimatedCost,
+      data?.cost,
+      data?.minimumTopUp,
+      data?.neededCredits,
+    ) ?? 1,
+  );
+  const currentBalance = Math.max(
+    0,
+    firstFiniteNumber(
+      data?.currentBalance,
+      data?.balance,
+      data?.availableCredits,
+      data?.creditBalance,
+    ) ?? 0,
+  );
+
+  return {
+    actionName:
+      (typeof data?.actionName === "string" && data.actionName) ||
+      (typeof data?.operation === "string" && data.operation) ||
+      titleizeEndpoint(endpointName),
+    requiredCredits,
+    currentBalance,
+    originView:
+      (typeof data?.originView === "string" && data.originView) || endpointName,
+    resumeLabel:
+      (typeof data?.resumeLabel === "string" && data.resumeLabel) ||
+      "Return after top-up",
+    resumeUrl: typeof data?.resumeUrl === "string" ? data.resumeUrl : undefined,
+    messageTs: Date.now(),
+  };
 };
 
 const isExpiredSessionPayload = (status: number, data: any): boolean => {
@@ -82,7 +147,12 @@ apiErrorListener.startListening({
     }
 
     if (isInsufficientCreditsPayload(data)) {
-      listenerApi.dispatch(insufficientCreditsDetected(errorPayload));
+      listenerApi.dispatch(
+        insufficientCreditsDetected({
+          error: errorPayload,
+          creditIntent: buildCreditIntent(data, endpointName),
+        }),
+      );
       return;
     }
 

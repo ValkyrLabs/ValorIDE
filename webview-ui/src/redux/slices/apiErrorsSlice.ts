@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { CreditIntent } from "../../types/creditIntent";
 
 export interface ApiErrorPayload {
   id: string;
@@ -11,11 +12,13 @@ export interface ApiErrorPayload {
 interface ApiErrorsState {
   lastError: ApiErrorPayload | null;
   showAccountBalance: boolean;
+  creditIntent?: CreditIntent;
 }
 
 const initialState: ApiErrorsState = {
   lastError: null,
   showAccountBalance: false,
+  creditIntent: undefined,
 };
 
 const apiErrorsSlice = createSlice({
@@ -27,16 +30,23 @@ const apiErrorsSlice = createSlice({
     },
     insufficientCreditsDetected: (
       state,
-      action: PayloadAction<ApiErrorPayload>,
+      action: PayloadAction<{
+        error: ApiErrorPayload;
+        creditIntent?: CreditIntent;
+      }>,
     ) => {
-      state.lastError = action.payload;
+      state.lastError = action.payload.error;
       state.showAccountBalance = true;
+      state.creditIntent = action.payload.creditIntent;
     },
     clearLastError: (state) => {
       state.lastError = null;
     },
     clearAccountBalancePrompt: (state) => {
       state.showAccountBalance = false;
+    },
+    clearCreditIntent: (state) => {
+      state.creditIntent = undefined;
     },
   },
 });
@@ -46,6 +56,7 @@ export const {
   insufficientCreditsDetected,
   clearLastError,
   clearAccountBalancePrompt,
+  clearCreditIntent,
 } = apiErrorsSlice.actions;
 
 export default apiErrorsSlice.reducer;

@@ -53,7 +53,13 @@ describe("apiErrorListener", () => {
       type: "fake/rejected",
       payload: {
         status: 402,
-        data: { error: "INSUFFICIENT_CREDITS", message: "insufficient" },
+        data: {
+          error: "INSUFFICIENT_CREDITS",
+          message: "insufficient",
+          requiredCredits: 4,
+          currentBalance: 0.5,
+          actionName: "Generate paid app",
+        },
       },
       meta: {
         arg: { endpointName: "generateApplication" },
@@ -71,6 +77,44 @@ describe("apiErrorListener", () => {
     expect((state.lastError as ApiErrorPayload).endpointName).toBe(
       "generateApplication",
     );
+    expect(state.creditIntent).toMatchObject({
+      actionName: "Generate paid app",
+      requiredCredits: 4,
+      currentBalance: 0.5,
+      originView: "generateApplication",
+    });
+  });
+
+  it("builds a task-aware credit intent from generic insufficient funds payloads", async () => {
+    const store = makeStore();
+
+    store.dispatch({
+      type: "fake/rejected",
+      payload: {
+        status: 402,
+        data: {
+          error: "INSUFFICIENT_FUNDS",
+          cost: "2.25",
+          balance: "0.25",
+        },
+      },
+      meta: {
+        arg: { endpointName: "activateAgent" },
+        requestId: "r1b",
+        rejectedWithValue: true,
+        requestStatus: "rejected",
+      },
+      error: { message: "Rejected" },
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(store.getState().apiErrors.creditIntent).toMatchObject({
+      actionName: "Activate Agent",
+      requiredCredits: 2.25,
+      currentBalance: 0.25,
+      resumeLabel: "Return after top-up",
+    });
   });
 
   it("stores generic api errors for non credit failures", async () => {
