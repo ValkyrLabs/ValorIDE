@@ -392,9 +392,6 @@ const AppContent = () => {
               onConsumeInitialActiveTab={() => setAccountInitialActiveTab(undefined)}
               creditIntent={creditIntent}
               onClearCreditIntent={() => setCreditIntent(undefined)}
-              onConsumeInitialActiveTab={() =>
-                setAccountInitialActiveTab(undefined)
-              }
             />
           )}
           {showGeneratedFiles && <GeneratedFilesView />}
