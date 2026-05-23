@@ -1,0 +1,37 @@
+name: ValorIDE VSIX package audit
+
+on:
+  pull_request:
+    branches: [main, rc-5]
+  push:
+    branches: [main, rc-5]
+
+jobs:
+  package-audit:
+    runs-on: ubuntu-latest
+    env:
+      VALORIDE_VSIX_MAX_BYTES: 99614720
+      VALORIDE_VSIX_MAX_FILES: 15000
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install extension dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install webview dependencies
+        run: yarn --cwd webview-ui install --frozen-lockfile
+
+      - name: Build VSIX
+        run: yarn package:vsix
+
+      - name: Upload VSIX audit artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: valoride-vsix-audit
+          path: artifacts/vsix-audit/
