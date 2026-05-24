@@ -155,15 +155,22 @@ const SystemAlerts: React.FC = () => {
       apiError?.data?.error === "INSUFFICIENT_CREDITS" ||
       apiError?.data?.error === "INSUFFICIENT_FUNDS";
 
+    let errorTitle = "API Error";
+    if (isInsufficientCredits) {
+      errorTitle = "Insufficient Credits";
+    } else if (apiError.endpointName) {
+      errorTitle = `API Error — ${apiError.endpointName}`;
+    }
+
     const newAlert: SystemAlert = {
       id: alertId,
       type: "blocker",
       severity: "danger",
-      title: isInsufficientCredits ? "Insufficient Credits" : "API Error",
+      title: errorTitle,
       message: isInsufficientCredits
         ? "You don't have enough credits to complete this request. Please add credits to continue."
         : apiError.message ||
-          "ValorIDE encountered an error processing your request.",
+        "ValorIDE encountered an error processing your request.",
       timestamp: Date.now(),
     };
 

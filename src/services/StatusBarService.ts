@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import type { GrayMatterSessionStatus } from "@shared/GrayMatterSession";
 
 export interface StatusBarUpdate {
   model?: string;
@@ -21,6 +22,8 @@ export class StatusBarService {
   private cacheTokens = 0;
   private status: "idle" | "running" | "streaming" | "error" = "idle";
   private errorMessage: string | undefined;
+  private grayMatterStatus: GrayMatterSessionStatus | undefined;
+  private grayMatterMessage: string | undefined;
 
   /**
    * Initialize the status bar item.
@@ -106,8 +109,21 @@ export class StatusBarService {
       parts.push(`💾 ${this.cacheTokens.toLocaleString()}`);
     }
 
+    if (this.grayMatterStatus) {
+      parts.push(`$(database) ${this.grayMatterStatus}`);
+    }
+
     this.statusBar.text = parts.join(" ");
     this.statusBar.tooltip = this.getTooltip();
+  }
+
+  updateGrayMatterStatus(
+    status: GrayMatterSessionStatus,
+    message?: string,
+  ): void {
+    this.grayMatterStatus = status;
+    this.grayMatterMessage = message;
+    this.updateDisplay();
   }
 
   /**
@@ -161,6 +177,14 @@ export class StatusBarService {
 
     parts.push(`Status: ${this.status.toUpperCase()}`);
 
+    if (this.grayMatterStatus) {
+      parts.push(`GrayMatter: ${this.grayMatterStatus}`);
+    }
+
+    if (this.grayMatterMessage) {
+      parts.push(`GrayMatter detail: ${this.grayMatterMessage}`);
+    }
+
     if (this.errorMessage) {
       parts.push(`Error: ${this.errorMessage}`);
     }
@@ -185,6 +209,9 @@ export class StatusBarService {
         ? [`💾 Cache: ${this.cacheTokens.toLocaleString()}`]
         : []),
       `🔄 Status: ${this.status.toUpperCase()}`,
+      ...(this.grayMatterStatus
+        ? [`GrayMatter: ${this.grayMatterStatus}`]
+        : []),
       ...(costEstimate ? [`💰 Est. Cost: $${costEstimate}`] : []),
     ];
 

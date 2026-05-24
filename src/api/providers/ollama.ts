@@ -5,7 +5,11 @@ import { ApiHandlerOptions, ModelInfo } from "../../shared/api";
 import { convertToOllamaMessages } from "../transform/ollama-format";
 import { ApiStream } from "../transform/stream";
 import { withRetry } from "../retry";
-import { getOllamaModelInfo, streamOllamaChatResponse } from "./ollama-runtime";
+import {
+  getOllamaModelInfo,
+  resolveOllamaRequestTimeoutMs,
+  streamOllamaChatResponse,
+} from "./ollama-runtime";
 
 /**
  * Enhanced Ollama Handler with improved timeout, streaming, and configuration support
@@ -69,14 +73,11 @@ export class OllamaHandler implements ApiHandler {
    * slow-but-steady local generation is allowed to continue.
    */
   private getRequestTimeout(): number {
-    const timeoutStr = this.options.ollamaRequestTimeout;
-    if (timeoutStr) {
-      const timeout = Number.parseInt(timeoutStr, 10);
-      if (!Number.isNaN(timeout) && timeout > 0) {
-        return Math.min(timeout, 60 * 60 * 1000);
-      }
-    }
-    return 10 * 60 * 1000;
+    return resolveOllamaRequestTimeoutMs(this.options.ollamaRequestTimeout);
+  }
+
+  getApiStreamStartTimeoutMs(): number {
+    return this.getRequestTimeout();
   }
 
   /**

@@ -7,9 +7,7 @@ import {
 } from "./MothershipService";
 import { Logger } from "../logging/Logger";
 import { WebviewProvider } from "../../core/webview";
-<<<<<<< HEAD
 import { WidgetCommandEnvelope } from "@shared/ExtensionMessage";
-=======
 import {
   CapabilityAnnouncement,
   CapabilityRegistry,
@@ -29,7 +27,6 @@ import type {
   AgenticSwarmState,
 } from "@shared/AgenticState";
 import type { ApiConfiguration } from "@shared/api";
->>>>>>> e007b234 (feat(core): rc wip login and reliability fixes)
 
 type GitExtension = {
   getAPI(version: number): GitAPI;

@@ -89,9 +89,9 @@ describe("CapabilityCommandCenter", () => {
 
     render(<CapabilityCommandCenter />);
 
-    expect(screen.getByText("jm")).toBeInTheDocument();
-    expect(screen.getByText("api-0.valkyrlabs.com")).toBeInTheDocument();
-    expect(screen.getByText("openai-native / gpt-5.5")).toBeInTheDocument();
+    expect(screen.queryByText("jm")).not.toBeInTheDocument();
+    expect(screen.queryByText("api-0.valkyrlabs.com")).not.toBeInTheDocument();
+    expect(screen.queryByText("openai-native / gpt-5.5")).not.toBeInTheDocument();
     expect(screen.getByText("GrayMatter Ready")).toBeInTheDocument();
     expect(
       screen.getByText("memory query, memory write, swarm ops, swarm graph"),
@@ -125,12 +125,12 @@ describe("CapabilityCommandCenter", () => {
 
     render(<CapabilityCommandCenter />);
 
-    expect(screen.getByText("Not signed in")).toBeInTheDocument();
-    expect(screen.getByText("ollama / gemma4:26b")).toBeInTheDocument();
+    expect(screen.queryByText("Not signed in")).not.toBeInTheDocument();
+    expect(screen.queryByText("ollama / gemma4:26b")).not.toBeInTheDocument();
     expect(screen.getByText("GrayMatter Sign in needed")).toBeInTheDocument();
     expect(screen.getByText("SWARM Offline")).toBeInTheDocument();
     expect(screen.getByText("MCP 0/0")).toBeInTheDocument();
-    expect(screen.getByText("No recent remote commands")).toBeInTheDocument();
+    expect(screen.queryByText("No recent remote commands")).not.toBeInTheDocument();
   });
 
   it("turns GrayMatter quota blocks into recharge, upgrade, and usage recovery actions", async () => {

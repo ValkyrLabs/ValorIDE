@@ -4,11 +4,9 @@ import {
   FaCreditCard,
   FaNetworkWired,
   FaPlug,
-  FaRobot,
   FaTerminal,
 } from "react-icons/fa";
 import type { AgenticCapabilityCommandCenterState } from "@shared/AgenticState";
-import type { ApiConfiguration } from "@shared/api";
 import type { McpServer } from "@shared/mcp";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import { vscode } from "@thorapi/utils/vscode";
@@ -40,17 +38,6 @@ const capabilityLabels: Array<[string, string]> = [
   ["swarmGraph", "swarm graph"],
 ];
 
-const providerModelFields: Array<keyof ApiConfiguration> = [
-  "apiModelId",
-  "openRouterModelId",
-  "requestyModelId",
-  "togetherModelId",
-  "ollamaModelId",
-  "lmStudioModelId",
-  "openAiModelId",
-  "liteLlmModelId",
-];
-
 const titleCaseStatus = (value?: string): string => {
   if (!value) {
     return "Unknown";
@@ -60,48 +47,6 @@ const titleCaseStatus = (value?: string): string => {
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(" ");
-};
-
-const hostLabel = (host?: string): string => {
-  if (!host) {
-    return "Host not set";
-  }
-  try {
-    return new URL(host).host;
-  } catch {
-    return host.replace(/^https?:\/\//, "").replace(/\/.*$/, "") || host;
-  }
-};
-
-const userLabel = (state: Record<string, any>): string => {
-  const principal = state.authenticatedUser ?? state.userInfo;
-  return (
-    principal?.username ||
-    principal?.email ||
-    principal?.id ||
-    principal?.subject ||
-    "Not signed in"
-  );
-};
-
-const modelLabel = (
-  config?: ApiConfiguration,
-  selectedLlmDetails?: { id?: string; name?: string },
-): string => {
-  const provider = config?.apiProvider ?? "provider";
-  const selectedModel =
-    providerModelFields
-      .map((field) => config?.[field])
-      .find(
-        (value): value is string =>
-          typeof value === "string" && value.length > 0,
-      ) ||
-    config?.vsCodeLmModelSelector?.id ||
-    selectedLlmDetails?.name ||
-    selectedLlmDetails?.id ||
-    "model not selected";
-
-  return `${provider} / ${selectedModel}`;
 };
 
 const grayMatterLabel = (
@@ -344,22 +289,6 @@ const CapabilityCommandCenter = () => {
       className="capability-command-center"
       aria-label="Agentic command center"
     >
-      <div className="capability-command-center__topline">
-        <div className="capability-command-center__identity">
-          <FaRobot aria-hidden="true" />
-          <strong>{userLabel(state)}</strong>
-          <span className="capability-command-center__host">
-            {hostLabel(state.apiConfiguration?.valkyraiHost)}
-          </span>
-        </div>
-        <div className="capability-command-center__model">
-          <FaTerminal aria-hidden="true" />
-          <span>
-            {modelLabel(state.apiConfiguration, state.selectedLlmDetails)}
-          </span>
-        </div>
-      </div>
-
       <div className="capability-command-center__grid">
         <StatusPill
           detail={enabledCapabilityLabel(grayMatterSession)}
@@ -396,14 +325,7 @@ const CapabilityCommandCenter = () => {
               {commandStatus(latestCommand)}
             </span>
           </div>
-        ) : (
-          <div className="capability-command-center__command">
-            <span className="capability-command-center__command-meta">
-              <FaTerminal aria-hidden="true" />
-              <span>No recent remote commands</span>
-            </span>
-          </div>
-        )}
+        ) : null}
       </div>
 
       {grayMatterSession?.status === "quota" ? (

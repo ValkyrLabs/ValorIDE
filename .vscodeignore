@@ -1,53 +1,13 @@
-# Exclude version control and config
-.git/
-.gitignore
-.husky/
-.vscode/
-.DS_Store
-.valoride
-ValorIDE_docs/
-# ignore caches and build outputs
-**/dist/**
-**/.cache/**
-**/*.log
-# Exclude source, tests, docs, configs, and build scripts
-src/
-test/
-tests/
-__tests__/
-docs/
-evals/
-*.ts
-*.tsx
-*.jsx
-*.test.*
-*.spec.*
-tsconfig.json
-tsconfig.*.json
-esbuild.js
-vite.config.*
-eslint.config.*
-*.log
-*.lock
-*.md
-*.markdown
-*.vsix
+# Keep the VSIX as small as possible: exclude everything, then allowlist only runtime artifacts.
+**
 
-# Exclude node_modules except production dependencies (if not bundled)
-node_modules/
-
-# Exclude other common unnecessary files
-*.swp
-*.swo
-*.bak
-*.tmp
-
-# Include only the built output and essential files
-!out/
-!dist/
-dist/**/*.map
-!extension.js
+# Allowlist runtime artifacts
+!dist/**
+!assets/icons/**
+!assets/valorIde.acorn
 !package.json
 !README.md
 !LICENSE
-!assets/
+
+# Never ship sourcemaps in published package
+dist/**/*.map

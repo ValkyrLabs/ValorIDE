@@ -223,16 +223,8 @@ export interface ExtensionMessage {
   filename?: string;
   specPath?: string;
   message?: string;
-<<<<<<< HEAD
-  error?: string;
-};
-filename ?: string;
-specPath ?: string;
-message ?: string;
-widgetCommand ?: WidgetCommandEnvelope;
-=======
+  widgetCommand?: WidgetCommandEnvelope;
   agenticState?: AgenticCapabilityCommandCenterState;
->>>>>>> e007b234 (feat(core): rc wip login and reliability fixes)
 }
 
 export type Invoke =

@@ -151,6 +151,7 @@ import { ToolExecutionEngine } from "./ToolExecutionEngine";
 import { getStatusBarService } from "@services/StatusBarService";
 import { buildTaskSummary } from "./summary/TaskSummaryBuilder";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
+import { resolveFirstChunkTimeoutMs } from "./apiTimeouts";
 
 export const cwd =
   vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
@@ -2410,15 +2411,10 @@ export class Task {
       );
       const iterator = stream[Symbol.asyncIterator]();
 
-      const defaultFirstChunkTimeout =
-        DEFAULT_CHAT_SETTINGS.apiFirstChunkTimeoutMs ?? 45_000;
-      const configuredFirstChunkTimeout =
-        typeof this.chatSettings?.apiFirstChunkTimeoutMs === "number" &&
-        this.chatSettings.apiFirstChunkTimeoutMs > 0
-          ? this.chatSettings.apiFirstChunkTimeoutMs
-          : undefined;
-      const firstChunkTimeoutMs =
-        configuredFirstChunkTimeout ?? defaultFirstChunkTimeout;
+      const firstChunkTimeoutMs = resolveFirstChunkTimeoutMs(
+        this.api,
+        this.chatSettings,
+      );
 
       const handleFirstChunkFailure = async (
         error: Error,
