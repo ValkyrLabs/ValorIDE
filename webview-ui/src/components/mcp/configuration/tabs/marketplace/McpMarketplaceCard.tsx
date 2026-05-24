@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef, useMemo } from "react";
+import { useCallback, useState, useRef, useMemo, type MouseEvent } from "react";
 import styled from "styled-components";
 import { McpMarketplaceItem, McpServer } from "@shared/mcp";
 import { vscode } from "@thorapi/utils/vscode";
@@ -81,6 +81,17 @@ const McpMarketplaceCard = ({
     return !!(item as any).applicationId;
   }, [item]);
 
+  const openDetail = useCallback(
+    (event: MouseEvent<HTMLAnchorElement>) => {
+      event.preventDefault();
+      vscode.postMessage({
+        type: "openInBrowser",
+        url: detailUrl,
+      });
+    },
+    [detailUrl],
+  );
+
   return (
     <>
       <style>
@@ -102,6 +113,7 @@ const McpMarketplaceCard = ({
         target="_blank"
         rel="noopener noreferrer"
         className="mcp-card"
+        onClick={openDetail}
         style={{
           padding: "14px 16px",
           display: "flex",
