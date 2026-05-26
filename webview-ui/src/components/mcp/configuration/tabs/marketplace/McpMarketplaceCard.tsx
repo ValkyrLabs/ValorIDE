@@ -17,6 +17,62 @@ interface McpMarketplaceCardProps {
   installedServers: McpServer[];
 }
 
+const DEFAULT_MARKETPLACE_WEB_BASE = "https://valkyrlabs.com";
+
+const trimTrailingSlash = (value: string) => value.replace(/\/+$/, "");
+
+const readMarketplaceWebBase = () => {
+  const envBase = import.meta.env?.VITE_VALKYRAI_WEB_BASE_URL;
+  const windowBase =
+    typeof window !== "undefined"
+      ? (window as any).__valorideMarketplaceWebBaseUrl
+      : undefined;
+  const rawBase =
+    (typeof windowBase === "string" && windowBase.trim()) ||
+    (typeof envBase === "string" && envBase.trim()) ||
+    DEFAULT_MARKETPLACE_WEB_BASE;
+  return trimTrailingSlash(rawBase);
+};
+
+const canUseLocalhostInternalLinks = () => {
+  const envFlag = String(
+    import.meta.env?.VITE_ENABLE_LOCALHOST_INTERNAL_APP_LINKS || "",
+  ).toLowerCase();
+  return envFlag === "1" || envFlag === "true" || envFlag === "yes";
+};
+
+const appendAttribution = (
+  urlString: string,
+  item: McpMarketplaceItem,
+  applicationId?: string,
+) => {
+  const url = new URL(urlString);
+  url.searchParams.set("source", "valoride");
+  url.searchParams.set("surface", "mcp_marketplace");
+  url.searchParams.set("mcpId", item.mcpId);
+  if (applicationId) {
+    url.searchParams.set("applicationId", applicationId);
+  }
+  return url.toString();
+};
+
+export const getMarketplaceDetailUrl = (item: McpMarketplaceItem) => {
+  const applicationId = String((item as any).applicationId || "").trim();
+  if (applicationId) {
+    const localDevUrl = `http://localhost:5173/application-detail/${applicationId}`;
+    if (canUseLocalhostInternalLinks()) {
+      return appendAttribution(localDevUrl, item, applicationId);
+    }
+    const hostedBase = readMarketplaceWebBase();
+    return appendAttribution(
+      `${hostedBase}/application-detail/${applicationId}`,
+      item,
+      applicationId,
+    );
+  }
+  return item.githubUrl;
+};
+
 const McpMarketplaceCard = ({
   item,
   installedServers,
@@ -51,31 +107,9 @@ const McpMarketplaceCard = ({
     return item.githubUrl;
   }, [item.githubUrl]);
 
-  const webBaseUrl = useMemo(() => {
-    const configuredBaseUrl = (import.meta as any)?.env?.VITE_VALKYR_WEB_BASE_URL;
-    const fallbackBaseUrl = "https://valkyrlabs.com";
-
-    const rawBaseUrl = (configuredBaseUrl || fallbackBaseUrl).trim();
-    return rawBaseUrl.endsWith("/") ? rawBaseUrl.slice(0, -1) : rawBaseUrl;
-  }, []);
-
-  // Link to hosted application detail page for first-party marketplace apps,
-  // otherwise fall back to GitHub URL for external MCP servers.
-  const detailUrl = useMemo(() => {
-    const applicationId = (item as any).applicationId;
-    if (applicationId) {
-      const params = new URLSearchParams({
-        source: "valoride",
-        surface: "mcp_marketplace",
-        mcpId: item.mcpId || "",
-        applicationId: String(applicationId),
-      });
-
-      return `${webBaseUrl}/application-detail/${applicationId}?${params.toString()}`;
-    }
-
-    return item.githubUrl;
-  }, [item, webBaseUrl]);
+  // Link to application detail page if mcpId is available (which could be an app ID),
+  // otherwise fall back to GitHub URL
+  const detailUrl = useMemo(() => getMarketplaceDetailUrl(item), [item]);
 
   const isInternalApp = useMemo(() => {
     return !!(item as any).applicationId;
@@ -99,9 +133,14 @@ const McpMarketplaceCard = ({
       </style>
       <a
         href={detailUrl}
-        target="_blank"
-        rel="noopener noreferrer"
         className="mcp-card"
+        onClick={(e) => {
+          e.preventDefault();
+          vscode.postMessage({
+            type: "openInBrowser",
+            url: detailUrl,
+          });
+        }}
         style={{
           padding: "14px 16px",
           display: "flex",
@@ -392,16 +431,16 @@ const StyledInstallButton = styled.button<{ $isInstalled?: boolean }>`
 
   &:hover:not(:disabled) {
     background: ${(props) =>
-      props.$isInstalled
-        ? "var(--vscode-button-secondaryHoverBackground)"
-        : "var(--vscode-button-hoverBackground)"};
+    props.$isInstalled
+      ? "var(--vscode-button-secondaryHoverBackground)"
+      : "var(--vscode-button-hoverBackground)"};
   }
 
   &:active:not(:disabled) {
     background: ${(props) =>
-      props.$isInstalled
-        ? "var(--vscode-button-secondaryBackground)"
-        : "var(--vscode-button-background)"};
+    props.$isInstalled
+      ? "var(--vscode-button-secondaryBackground)"
+      : "var(--vscode-button-background)"};
     opacity: 0.7;
   }
 
