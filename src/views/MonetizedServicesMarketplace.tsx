@@ -10,6 +10,11 @@ import {
   isPricingUpdatedEvent,
 } from "@thorapi/services/monetization/pricingEvents";
 import "./MonetizedServicesMarketplace.css";
+import {
+  buildMarketplaceFunnel,
+  sortMarketplaceServices,
+  type MarketplaceSort,
+} from "./monetizedMarketplaceFunnel";
 
 /**
  * Browse and subscribe to monetized MCP services from creators.
@@ -26,9 +31,7 @@ export const MonetizedServicesMarketplace: React.FC = () => {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [statusTone, setStatusTone] = useState<"success" | "error">("success");
   const [filterTier, setFilterTier] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<"newest" | "popular" | "price-low">(
-    "newest",
-  );
+  const [sortBy, setSortBy] = useState<MarketplaceSort>("newest");
 
   useEffect(() => {
     loadServices();
@@ -113,16 +116,13 @@ export const MonetizedServicesMarketplace: React.FC = () => {
     ? services.filter((s) => s.tierName === filterTier)
     : services;
 
-  const sortedServices = [...filteredServices].sort((a, b) => {
-    switch (sortBy) {
-      case "price-low":
-        return (a.costPerCall || 999) - (b.costPerCall || 999);
-      case "popular":
-        return b.updatedAt.localeCompare(a.updatedAt);
-      default:
-        return b.createdAt.localeCompare(a.createdAt);
-    }
-  });
+  const sortedServices = sortMarketplaceServices(filteredServices, sortBy);
+
+  const openServiceDetails = (service: ManagedMcpService) => {
+    const funnel = buildMarketplaceFunnel(service);
+    setSelectedService(service);
+    setSubscriptionType(funnel.recommendedSubscriptionType);
+  };
 
   if (loading) {
     return (
@@ -141,8 +141,8 @@ export const MonetizedServicesMarketplace: React.FC = () => {
         <div className="header-content">
           <h1>🚀 Monetized MCP Services</h1>
           <p>
-            Discover and subscribe to premium MCP services created by our
-            community
+            Compare creator proof, pricing, and plan fit before activating a
+            paid MCP service.
           </p>
         </div>
       </div>
@@ -181,9 +181,7 @@ export const MonetizedServicesMarketplace: React.FC = () => {
           <label>Sort by:</label>
           <select
             value={sortBy}
-            onChange={(e) =>
-              setSortBy(e.target.value as "newest" | "popular" | "price-low")
-            }
+            onChange={(e) => setSortBy(e.target.value as MarketplaceSort)}
             className="sort-select"
           >
             <option value="newest">Newest</option>
@@ -219,6 +217,9 @@ export const MonetizedServicesMarketplace: React.FC = () => {
               </p>
 
               <div className="pricing-info">
+                <div className="price-summary">
+                  {buildMarketplaceFunnel(service).priceLabel}
+                </div>
                 {service.pricingModel === "PER_CALL" && service.costPerCall && (
                   <div className="price">
                     <span className="price-label">Per Call:</span>
@@ -237,8 +238,18 @@ export const MonetizedServicesMarketplace: React.FC = () => {
                   )}
               </div>
 
+              <div className="funnel-proof">
+                {buildMarketplaceFunnel(service)
+                  .proofPoints.slice(0, 3)
+                  .map((point) => (
+                    <span key={point}>✓ {point}</span>
+                  ))}
+              </div>
+
               <div className="creator-info">
-                <span className="creator-label">By: {service.createdBy}</span>
+                <span className="creator-label">
+                  By: {buildMarketplaceFunnel(service).creatorDisplayName}
+                </span>
                 <span className="created-date">
                   {new Date(service.createdAt).toLocaleDateString()}
                 </span>
@@ -246,24 +257,17 @@ export const MonetizedServicesMarketplace: React.FC = () => {
 
               <div className="card-actions">
                 <button
-                  onClick={() => handleSubscribe(service.id)}
+                  onClick={() => openServiceDetails(service)}
                   disabled={subscribing === service.id}
                   className="btn btn-subscribe"
                 >
                   {subscribing === service.id
-                    ? "Subscribing..."
-                    : "Subscribe Now"}
+                    ? "Activating..."
+                    : buildMarketplaceFunnel(service).primaryCta}
                 </button>
                 <button
                   className="btn btn-details"
-                  onClick={() => {
-                    setSelectedService(service);
-                    setSubscriptionType(
-                      service.pricingModel === "PER_MONTH"
-                        ? "MONTHLY"
-                        : "PAY_AS_YOU_GO",
-                    );
-                  }}
+                  onClick={() => openServiceDetails(service)}
                 >
                   Details →
                 </button>
@@ -290,14 +294,30 @@ export const MonetizedServicesMarketplace: React.FC = () => {
           <div className="service-modal" onClick={(e) => e.stopPropagation()}>
             <h2>{selectedService.name}</h2>
             <p>{selectedService.description || "No description available"}</p>
+            <div className="modal-hero">
+              <strong>
+                {buildMarketplaceFunnel(selectedService).priceLabel}
+              </strong>
+              <span>Checkout-safe MCP activation path</span>
+            </div>
             <div className="modal-meta">
-              <div>Creator: {selectedService.createdBy}</div>
+              <div>
+                Creator:{" "}
+                {buildMarketplaceFunnel(selectedService).creatorDisplayName}
+              </div>
               <div>Pricing Model: {selectedService.pricingModel}</div>
               <div>
                 Est. Credits/Call:{" "}
                 {selectedService.costPerCall ?? "Not specified"}
               </div>
             </div>
+            <ul className="modal-proof">
+              {buildMarketplaceFunnel(selectedService).proofPoints.map(
+                (point) => (
+                  <li key={point}>{point}</li>
+                ),
+              )}
+            </ul>
             <label htmlFor="subscriptionType">Plan</label>
             <select
               id="subscriptionType"
@@ -316,6 +336,19 @@ export const MonetizedServicesMarketplace: React.FC = () => {
               >
                 Cancel
               </button>
+              {buildMarketplaceFunnel(selectedService).detailHref && (
+                <a
+                  className="btn btn-details"
+                  href={
+                    buildMarketplaceFunnel(selectedService).detailHref ??
+                    undefined
+                  }
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Hosted detail
+                </a>
+              )}
               <button
                 className="btn btn-subscribe"
                 disabled={subscribing === selectedService.id}
