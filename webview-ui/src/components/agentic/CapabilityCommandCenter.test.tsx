@@ -203,4 +203,69 @@ describe("CapabilityCommandCenter", () => {
       type: "showAccountViewClicked",
     });
   });
+
+  it("shows sign-in and workspace recovery actions for unauthenticated sessions", async () => {
+    const user = userEvent.setup();
+    mockUseExtensionState.mockReturnValue({
+      apiConfiguration: {
+        valkyraiHost: "https://api-0.valkyrlabs.com/v1",
+      },
+      grayMatterSession: {
+        status: "unauthenticated",
+      },
+      mcpServers: [],
+    });
+
+    render(<CapabilityCommandCenter />);
+
+    await user.click(screen.getByRole("button", { name: "Sign in to ValkyrAI" }));
+    expect(mockPostMessage).toHaveBeenLastCalledWith({
+      type: "openInBrowser",
+      url: "https://api-0.valkyrlabs.com/graymatter/activate?source=valoride-graymatter-auth",
+    });
+
+    await user.click(screen.getByRole("button", { name: "Create workspace" }));
+    expect(mockPostMessage).toHaveBeenLastCalledWith({
+      type: "openInBrowser",
+      url: "https://api-0.valkyrlabs.com/signup?source=valoride-graymatter-workspace",
+    });
+  });
+
+  it("surfaces RBAC, unavailable, and MCP recovery actions", async () => {
+    const user = userEvent.setup();
+    mockUseExtensionState.mockReturnValue({
+      apiConfiguration: {
+        valkyraiHost: "https://api-0.valkyrlabs.com/v1",
+      },
+      grayMatterSession: {
+        status: "forbidden",
+      },
+      mcpServers: [{ name: "broken", status: "disconnected", disabled: false }],
+    });
+
+    render(<CapabilityCommandCenter />);
+
+    await user.click(screen.getByRole("button", { name: "Request access" }));
+    expect(mockPostMessage).toHaveBeenLastCalledWith({
+      type: "openInBrowser",
+      url: "https://api-0.valkyrlabs.com/account?source=valoride-graymatter-rbac-request",
+    });
+
+    await user.click(screen.getByRole("button", { name: "Open admin RBAC" }));
+    expect(mockPostMessage).toHaveBeenLastCalledWith({
+      type: "openInBrowser",
+      url: "https://api-0.valkyrlabs.com/admin/rbac?source=valoride-graymatter-rbac-admin",
+    });
+
+    await user.click(screen.getByRole("button", { name: "Retry discovery" }));
+    expect(mockPostMessage).toHaveBeenLastCalledWith({
+      type: "fetchLatestMcpServersFromHub",
+    });
+
+    await user.click(screen.getByRole("button", { name: "Open MCP setup" }));
+    expect(mockPostMessage).toHaveBeenLastCalledWith({
+      type: "mcpButtonClicked",
+      tab: "installed",
+    });
+  });
 });

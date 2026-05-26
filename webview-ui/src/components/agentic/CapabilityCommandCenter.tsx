@@ -270,6 +270,97 @@ const GrayMatterQuotaRecovery = ({
   );
 };
 
+const GrayMatterRecoveryActions = ({
+  grayMatterSession,
+  state,
+}: {
+  grayMatterSession?: GrayMatterLike;
+  state: Record<string, any>;
+}) => {
+  const openHosted = (path: string, source: string) => {
+    const url = hostedUrl(path, state);
+    url.searchParams.set("source", source);
+    vscode.postMessage({ type: "openInBrowser", url: url.toString() });
+  };
+
+  if (grayMatterSession?.status === "unauthenticated") {
+    return (
+      <div className="capability-command-center__quota" role="alert">
+        <div className="capability-command-center__quota-copy">
+          <FaCreditCard aria-hidden="true" />
+          <span>Sign in to restore GrayMatter memory and activation flows.</span>
+        </div>
+        <div className="capability-command-center__quota-actions">
+          <button
+            type="button"
+            onClick={() => openHosted("/graymatter/activate", "valoride-graymatter-auth")}
+          >
+            Sign in to ValkyrAI
+          </button>
+          <button
+            type="button"
+            onClick={() => openHosted("/signup", "valoride-graymatter-workspace")}
+          >
+            Create workspace
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (grayMatterSession?.status === "forbidden") {
+    return (
+      <div className="capability-command-center__quota" role="alert">
+        <div className="capability-command-center__quota-copy">
+          <FaCreditCard aria-hidden="true" />
+          <span>Missing role/scope detected. Request access or open RBAC controls.</span>
+        </div>
+        <div className="capability-command-center__quota-actions">
+          <button
+            type="button"
+            onClick={() => openHosted("/account", "valoride-graymatter-rbac-request")}
+          >
+            Request access
+          </button>
+          <button
+            type="button"
+            onClick={() => openHosted("/admin/rbac", "valoride-graymatter-rbac-admin")}
+          >
+            Open admin RBAC
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (grayMatterSession?.status === "unavailable") {
+    return (
+      <div className="capability-command-center__quota" role="alert">
+        <div className="capability-command-center__quota-copy">
+          <FaCreditCard aria-hidden="true" />
+          <span>GrayMatter is unavailable. Open diagnostics and retry setup.</span>
+        </div>
+        <div className="capability-command-center__quota-actions">
+          <button
+            type="button"
+            onClick={() => openHosted("/graymatter/activate", "valoride-graymatter-diagnostics")}
+          >
+            Open diagnostics
+          </button>
+          <button
+            type="button"
+            onClick={() => vscode.postMessage({ type: "webviewDidLaunch" })}
+          >
+            Retry setup
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+};
+
 const CapabilityCommandCenter = () => {
   const state = useExtensionState() as Record<string, any>;
   const grayMatterSession = state.grayMatterSession as
@@ -334,6 +425,31 @@ const CapabilityCommandCenter = () => {
           latestCommand={latestCommand}
           state={state}
         />
+      ) : null}
+      {grayMatterSession?.status !== "quota" ? (
+        <GrayMatterRecoveryActions grayMatterSession={grayMatterSession} state={state} />
+      ) : null}
+      {mcp.tone === "warn" ? (
+        <div className="capability-command-center__quota" role="status">
+          <div className="capability-command-center__quota-copy">
+            <FaPlug aria-hidden="true" />
+            <span>MCP connectivity needs attention. Retry discovery or open setup.</span>
+          </div>
+          <div className="capability-command-center__quota-actions">
+            <button
+              type="button"
+              onClick={() => vscode.postMessage({ type: "fetchLatestMcpServersFromHub" })}
+            >
+              Retry discovery
+            </button>
+            <button
+              type="button"
+              onClick={() => vscode.postMessage({ type: "mcpButtonClicked", tab: "installed" })}
+            >
+              Open MCP setup
+            </button>
+          </div>
+        </div>
       ) : null}
     </section>
   );
