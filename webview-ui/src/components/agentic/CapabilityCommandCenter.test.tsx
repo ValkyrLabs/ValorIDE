@@ -30,11 +30,16 @@ describe("CapabilityCommandCenter", () => {
   it("maps every degraded capability state to a recovery or upsell action", () => {
     const cards = deriveCapabilityCards(degradedSnapshots);
 
-    expect(
-      cards
-        .find((card) => card.status === "unauthenticated")
-        ?.actions.map((action) => action.action),
-    ).toContain("signIn");
+    const unauthenticatedCard = cards.find(
+      (card) => card.status === "unauthenticated",
+    );
+
+    expect(unauthenticatedCard?.actions.map((action) => action.action)).toContain(
+      "signIn",
+    );
+    expect(unauthenticatedCard?.actions.map((action) => action.label)).toEqual(
+      expect.arrayContaining(["Sign in to ValkyrAI", "Create workspace"]),
+    );
     expect(
       cards
         .find((card) => card.status === "rbacDenied")

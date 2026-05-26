@@ -75,14 +75,14 @@ const ACTIONS_BY_STATUS: Record<CapabilityStatus, CapabilityActionModel[]> = {
   unauthenticated: [
     {
       action: "signIn",
-      label: "Sign in",
+      label: "Sign in to ValkyrAI",
       detail: "Authenticate ValorIDE before using GrayMatter memory.",
       variant: "primary",
     },
     {
       action: "setupGrayMatter",
-      label: "Setup guide",
-      detail: "Open the account and activation path for GrayMatter setup.",
+      label: "Create workspace",
+      detail: "Open the activation path and return to ValorIDE when setup completes.",
       variant: "secondary",
     },
   ],
