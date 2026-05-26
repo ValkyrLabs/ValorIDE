@@ -5,6 +5,10 @@ import {
   getMarketplaceServices,
   subscribeToService,
 } from "@thorapi/services/monetization/ServiceMonetizationService";
+import {
+  MONETIZATION_PRICING_UPDATED_EVENT,
+  isPricingUpdatedEvent,
+} from "@thorapi/services/monetization/pricingEvents";
 import "./MonetizedServicesMarketplace.css";
 
 /**
@@ -15,9 +19,8 @@ export const MonetizedServicesMarketplace: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [subscribing, setSubscribing] = useState<string | null>(null);
-  const [selectedService, setSelectedService] = useState<ManagedMcpService | null>(
-    null,
-  );
+  const [selectedService, setSelectedService] =
+    useState<ManagedMcpService | null>(null);
   const [subscriptionType, setSubscriptionType] =
     useState<SubscriptionType>("PAY_AS_YOU_GO");
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
@@ -29,6 +32,43 @@ export const MonetizedServicesMarketplace: React.FC = () => {
 
   useEffect(() => {
     loadServices();
+  }, []);
+
+  useEffect(() => {
+    const handlePricingUpdated = (event: Event) => {
+      if (!isPricingUpdatedEvent(event)) {
+        return;
+      }
+
+      const updatedService = event.detail.service;
+      setServices((current) =>
+        current.map((service) =>
+          service.id === updatedService.id
+            ? { ...service, ...updatedService }
+            : service,
+        ),
+      );
+      setSelectedService((current) =>
+        current?.id === updatedService.id
+          ? { ...current, ...updatedService }
+          : current,
+      );
+      setStatusTone("success");
+      setStatusMessage("Marketplace refreshed with the saved creator pricing.");
+      void loadServices();
+    };
+
+    window.addEventListener(
+      MONETIZATION_PRICING_UPDATED_EVENT,
+      handlePricingUpdated,
+    );
+
+    return () => {
+      window.removeEventListener(
+        MONETIZATION_PRICING_UPDATED_EVENT,
+        handlePricingUpdated,
+      );
+    };
   }, []);
 
   const loadServices = async () => {
@@ -243,7 +283,10 @@ export const MonetizedServicesMarketplace: React.FC = () => {
       )}
 
       {selectedService && (
-        <div className="service-modal-backdrop" onClick={() => setSelectedService(null)}>
+        <div
+          className="service-modal-backdrop"
+          onClick={() => setSelectedService(null)}
+        >
           <div className="service-modal" onClick={(e) => e.stopPropagation()}>
             <h2>{selectedService.name}</h2>
             <p>{selectedService.description || "No description available"}</p>
@@ -251,28 +294,38 @@ export const MonetizedServicesMarketplace: React.FC = () => {
               <div>Creator: {selectedService.createdBy}</div>
               <div>Pricing Model: {selectedService.pricingModel}</div>
               <div>
-                Est. Credits/Call: {selectedService.costPerCall ?? "Not specified"}
+                Est. Credits/Call:{" "}
+                {selectedService.costPerCall ?? "Not specified"}
               </div>
             </div>
             <label htmlFor="subscriptionType">Plan</label>
             <select
               id="subscriptionType"
               value={subscriptionType}
-              onChange={(e) => setSubscriptionType(e.target.value as SubscriptionType)}
+              onChange={(e) =>
+                setSubscriptionType(e.target.value as SubscriptionType)
+              }
             >
               <option value="PAY_AS_YOU_GO">Pay as you go</option>
               <option value="MONTHLY">Monthly</option>
             </select>
             <div className="modal-actions">
-              <button className="btn btn-details" onClick={() => setSelectedService(null)}>
+              <button
+                className="btn btn-details"
+                onClick={() => setSelectedService(null)}
+              >
                 Cancel
               </button>
               <button
                 className="btn btn-subscribe"
                 disabled={subscribing === selectedService.id}
-                onClick={() => handleSubscribe(selectedService.id, subscriptionType)}
+                onClick={() =>
+                  handleSubscribe(selectedService.id, subscriptionType)
+                }
               >
-                {subscribing === selectedService.id ? "Subscribing..." : "Subscribe"}
+                {subscribing === selectedService.id
+                  ? "Subscribing..."
+                  : "Subscribe"}
               </button>
             </div>
           </div>

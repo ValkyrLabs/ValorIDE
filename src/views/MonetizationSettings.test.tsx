@@ -19,17 +19,28 @@ jest.mock("@thorapi/services/monetization/ServiceMonetizationService", () => ({
 }));
 
 const React = require("react");
-const { fireEvent, render, screen, waitFor } = require("@testing-library/react");
+const {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} = require("@testing-library/react");
 require("@testing-library/jest-dom");
 
+const { MonetizationSettings } = require("./MonetizationSettings");
+const {
+  updatePricing,
+} = require("@thorapi/services/monetization/ServiceMonetizationService");
 const {
   MONETIZATION_PRICING_UPDATED_EVENT,
-  MonetizationSettings,
-} = require("./MonetizationSettings");
-const { updatePricing } = require("@thorapi/services/monetization/ServiceMonetizationService");
+} = require("@thorapi/services/monetization/pricingEvents");
 
 const updatePricingMock = updatePricing as jest.MockedFunction<
-  (serviceId: string, pricingModel: string, costPerCall: number) => Promise<ManagedMcpService>
+  (
+    serviceId: string,
+    pricingModel: string,
+    costPerCall: number,
+  ) => Promise<ManagedMcpService>
 >;
 
 function monetizedService(overrides: Partial<ManagedMcpService> = {}) {
@@ -120,7 +131,10 @@ describe("MonetizationSettings", () => {
 
   it("blocks invalid pricing before calling the backend", async () => {
     render(
-      <MonetizationSettings applicationId="app-123" service={monetizedService()} />,
+      <MonetizationSettings
+        applicationId="app-123"
+        service={monetizedService()}
+      />,
     );
 
     fireEvent.change(screen.getByLabelText(/cost per call/i), {
@@ -142,17 +156,24 @@ describe("MonetizationSettings", () => {
     );
 
     render(
-      <MonetizationSettings applicationId="app-123" service={monetizedService()} />,
+      <MonetizationSettings
+        applicationId="app-123"
+        service={monetizedService()}
+      />,
     );
 
     fireEvent.click(screen.getByRole("button", { name: /update pricing/i }));
 
-    expect(await screen.findByRole("button", { name: /updating/i })).toBeDisabled();
+    expect(
+      await screen.findByRole("button", { name: /updating/i }),
+    ).toBeDisabled();
 
     resolveSave(monetizedService({ costPerCall: 6 }));
 
     await waitFor(() =>
-      expect(screen.getByRole("button", { name: /update pricing/i })).toBeEnabled(),
+      expect(
+        screen.getByRole("button", { name: /update pricing/i }),
+      ).toBeEnabled(),
     );
   });
 });
