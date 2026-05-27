@@ -45,6 +45,11 @@ import LoadingSpinner from "@thorapi/components/LoadingSpinner";
 import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
 import UserPreferences from "./UserPreferences";
 import BuyCredits from "@thorapi/components/BuyCredits";
+import CapabilityCommandCenter, {
+  CapabilityAction,
+  CapabilityCardModel,
+  CapabilitySnapshot,
+} from "../agentic/CapabilityCommandCenter";
 import {
   storeJwtToken,
   useAccessControl,
@@ -56,18 +61,24 @@ type AccountViewProps = {
   onDone: () => void;
   serverConsoleNeedsAttention: boolean;
   initialActiveTab?:
-  | "login"
-  | "account"
-  | "applications"
-  | "generatedFiles"
-  | "userPreferences"
-  | "serverConsole";
+    | "login"
+    | "account"
+    | "applications"
+    | "generatedFiles"
+    | "userPreferences"
+    | "serverConsole";
   onConsumeInitialActiveTab?: () => void;
   onClearServerConsoleNeedsAttention: () => void;
 };
 
-const AccountView = ({ onDone, serverConsoleNeedsAttention, onClearServerConsoleNeedsAttention, initialActiveTab, onConsumeInitialActiveTab }: AccountViewProps) => {
-  const { userInfo, authenticatedUser, isLoggedIn, jwtToken } =
+const AccountView = ({
+  onDone,
+  serverConsoleNeedsAttention,
+  onClearServerConsoleNeedsAttention,
+  initialActiveTab,
+  onConsumeInitialActiveTab,
+}: AccountViewProps) => {
+  const { userInfo, authenticatedUser, isLoggedIn, jwtToken, mcpServers } =
     useExtensionState();
   // Read live messages once at top-level to respect Hooks rules
   const { valorideMessages } = useExtensionState();
@@ -103,7 +114,12 @@ const AccountView = ({ onDone, serverConsoleNeedsAttention, onClearServerConsole
 
   // Default to login tab when unauthenticated, otherwise account
   const [activeTab, setActiveTab] = useState<
-    "login" | "account" | "applications" | "generatedFiles" | "userPreferences" | "serverConsole"
+    | "login"
+    | "account"
+    | "applications"
+    | "generatedFiles"
+    | "userPreferences"
+    | "serverConsole"
   >(authed ? "account" : "login");
 
   // Keep active tab in sync with authentication state
@@ -300,6 +316,125 @@ const AccountView = ({ onDone, serverConsoleNeedsAttention, onClearServerConsole
         : "Offline";
   const kind = ready ? "ok" : hasError ? "error" : "warn";
 
+  const effectiveBalance = useMemo(() => {
+    const rawBalance = balanceData?.currentBalance ?? 0;
+    return Math.max(0, rawBalance - (apiMetrics.totalCost || 0));
+  }, [apiMetrics.totalCost, balanceData?.currentBalance]);
+
+  const capabilitySnapshots = useMemo<CapabilitySnapshot[]>(() => {
+    const graymatterStatus: CapabilitySnapshot["status"] = !authed
+      ? "unauthenticated"
+      : hasError
+        ? "unavailable"
+        : effectiveBalance <= 0
+          ? "quotaBlocked"
+          : effectiveBalance < 5
+            ? "lowCredit"
+            : "ready";
+
+    return [
+      {
+        id: "graymatter",
+        label: "GrayMatter memory",
+        status: graymatterStatus,
+        detail:
+          graymatterStatus === "ready"
+            ? "Memory, entitlement, and credit prerequisites look usable from the current webview state."
+            : undefined,
+        latestFailure: hasError
+          ? {
+              command: "capability.discovery",
+              message:
+                "Communication service reported an error. Open diagnostics before retrying.",
+            }
+          : effectiveBalance <= 0 && authed
+            ? {
+                command: "memory.write",
+                message:
+                  "Credits are depleted. Add credits or upgrade before retrying.",
+              }
+            : undefined,
+      },
+      {
+        id: "mcp",
+        label: "MCP tools",
+        status: mcpServers.length > 0 ? "ready" : "disconnected",
+        detail:
+          mcpServers.length > 0
+            ? `${mcpServers.length} MCP server${mcpServers.length === 1 ? "" : "s"} visible to ValorIDE.`
+            : undefined,
+      },
+      {
+        id: "swarm",
+        label: "SWARM handoff",
+        status: ready ? "ready" : "offline",
+        detail: ready
+          ? value
+          : "SWARM presence is not fully online. Use diagnostics or retry discovery.",
+      },
+    ];
+  }, [authed, effectiveBalance, hasError, mcpServers.length, ready, value]);
+
+  const handleCapabilityAction = useCallback(
+    async (action: CapabilityAction, capability: CapabilityCardModel) => {
+      const activationEvent = {
+        type: "valoride:capability-action",
+        payload: {
+          source: "capability-command-center",
+          action,
+          capability: capability.id,
+          status: capability.status,
+          timestamp: Date.now(),
+        },
+        messageId: Math.random().toString(36).slice(2, 12),
+        timestamp: Date.now(),
+      };
+
+      window.dispatchEvent(
+        new CustomEvent("websocket-send", { detail: activationEvent }),
+      );
+
+      switch (action) {
+        case "signIn":
+          setActiveTab("login");
+          vscode.postMessage({ type: "accountLoginClicked" });
+          break;
+        case "setupGrayMatter":
+          setActiveTab("account");
+          vscode.postMessage({ type: "showAccountViewClicked" });
+          break;
+        case "buyCredits":
+          setActiveTab("account");
+          break;
+        case "teamPlan":
+          vscode.postMessage({
+            type: "openInBrowser",
+            text: "https://valkyrlabs.com/pricing?utm_source=valoride&utm_campaign=capability-command-center&intent=team-plan",
+          });
+          break;
+        case "openMcpMarketplace":
+          vscode.postMessage({ type: "showMcpView", tab: "marketplace" });
+          break;
+        case "openDiagnostics":
+          setActiveTab("serverConsole");
+          vscode.postMessage({
+            type: "displayVSCodeInfo",
+            text: `${capability.label} diagnostics opened from Capability Command Center.`,
+          });
+          break;
+        case "retry":
+          vscode.postMessage({ type: "fetchLatestMcpServersFromHub" });
+          await refetchBalance();
+          if (authed) {
+            refetchUsage();
+            refetchPayments();
+          }
+          break;
+      }
+    },
+    [authed, refetchBalance, refetchPayments, refetchUsage],
+  );
+
   return (
     <div
       style={{
@@ -312,6 +447,11 @@ const AccountView = ({ onDone, serverConsoleNeedsAttention, onClearServerConsole
       }}
     >
       <SystemAlerts />
+
+      <CapabilityCommandCenter
+        snapshots={capabilitySnapshots}
+        onAction={handleCapabilityAction}
+      />
 
       {peers.length > 0 && (
         <div className="border border-solid border-(--vscode-panel-border) rounded-md p-[10px] mb-3 bg-[var(--vscode-panel-background)] text-[var(--vscode-foreground)]">
@@ -496,23 +636,12 @@ const AccountView = ({ onDone, serverConsoleNeedsAttention, onClearServerConsole
                   <LoadingSpinner label="Loading balance..." size={28} />
                 ) : (
                   <>
-                    {(() => {
-                      const rawBalance = balanceData?.currentBalance ?? 0;
-                      const effectiveBalance = Math.max(
-                        0,
-                        rawBalance - (apiMetrics.totalCost || 0),
-                      );
-                      return (
-                        <>
-                          <span>$</span>
-                          <CountUp
-                            end={effectiveBalance}
-                            duration={0.66}
-                            decimals={2}
-                          />
-                        </>
-                      );
-                    })()}
+                    <span>$</span>
+                    <CountUp
+                      end={effectiveBalance}
+                      duration={0.66}
+                      decimals={2}
+                    />
                     <VSCodeButton
                       appearance="icon"
                       className="mt-1"

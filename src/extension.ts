@@ -22,6 +22,8 @@ import {
   parseLegacyAuthCallbackCredentials,
   summarizeAuthCallback,
 } from "./security/authCallback";
+import { AuthCodeExchangeService } from "./services/auth/AuthCodeExchangeService";
+import { parseAuthCallbackQuery } from "./services/auth/AuthCallbackSecurity";
 import { initializePromptService } from "./services/promptService";
 import { initializeMemoryBankLoader } from "./services/memoryBankLoader";
 import { initializeLLMContextInjector } from "./services/llmContextInjector";
@@ -552,6 +554,9 @@ export function activate(context: vscode.ExtensionContext) {
     }
     switch (path) {
       case "/openrouter": {
+        const query = new URLSearchParams(
+          (uri.query || "").replace(/\+/g, "%2B"),
+        );
         const code = query.get("code");
         if (code) {
           await visibleWebview?.controller.handleOpenRouterCallback(code);
@@ -622,7 +627,51 @@ export function activate(context: vscode.ExtensionContext) {
               legacyCredentials.authenticatedPrincipal,
             );
           }
+        const callback = parseAuthCallbackQuery(uri);
+        Logger.log(
+          `Auth callback received: ${JSON.stringify(callback.diagnostics)}`,
+        );
+
+        if (callback.hasLegacySecretParams) {
+          vscode.window.showErrorMessage(
+            "ValorIDE rejected an insecure auth callback. Please retry sign-in to use the secure code exchange flow.",
+          );
+          return;
         }
+
+        // Validate state parameter before exchanging the one-time code.
+        if (
+          !(await visibleWebview?.controller.validateAuthState(callback.state))
+        ) {
+          vscode.window.showErrorMessage("Invalid auth state");
+          return;
+        }
+
+        if (!callback.code || !callback.state) {
+          vscode.window.showErrorMessage(
+            "ValorIDE auth callback did not include a valid one-time code.",
+          );
+          return;
+        }
+
+        const exchangeService = new AuthCodeExchangeService();
+        const authResult = await exchangeService.exchangeCode(
+          callback.code,
+          callback.state,
+        );
+
+        // Use StartupAuthService to handle login persistently via VS Code SecretStorage.
+        const startupAuthService = StartupAuthService.getInstance(context);
+        await startupAuthService.handleSuccessfulLogin(
+          authResult.tokens,
+          authResult.user,
+        );
+
+        await visibleWebview?.controller.handleAuthCallback(
+          authResult.tokens.jwtToken,
+          authResult.tokens.apiKey || "",
+          authResult.user,
+        );
         break;
       }
       default:
