@@ -1,5 +1,6 @@
 import {
   getOllamaModelInfo,
+  resolveOllamaRequestTimeoutMs,
   streamOllamaChatResponse,
 } from "../ollama-runtime";
 
@@ -17,6 +18,14 @@ async function collectStream(stream: AsyncIterable<any>, modelId = "gemma4") {
 }
 
 describe("OllamaHandler slow local model behavior", () => {
+  it("exposes configured startup timeout to the task stream watchdog", () => {
+    expect(resolveOllamaRequestTimeoutMs("900000")).toBe(900_000);
+  });
+
+  it("defaults the startup timeout to ten minutes for local model loading", () => {
+    expect(resolveOllamaRequestTimeoutMs()).toBe(600_000);
+  });
+
   it("waits for slow-but-steady chunks instead of failing on a tiny chunk timeout", async () => {
     const stream = {
       [Symbol.asyncIterator]: async function* () {

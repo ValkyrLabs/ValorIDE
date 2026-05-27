@@ -1,22 +1,25 @@
-# Exclude version control and config
+# Version control, editor state, and local ValorIDE workspace artifacts
 .git/
 .gitignore
+.github/
 .husky/
 .vscode/
 .DS_Store
-.valoride
+.valoride/
+.worktrees/
+**/.worktrees/**
 ValorIDE_docs/
-# ignore caches and build outputs
-**/dist/**
-**/.cache/**
-**/*.log
-# Exclude source, tests, docs, configs, and build scripts
+
+# Source, tests, docs, samples, and development-only config
 src/
 test/
 tests/
 __tests__/
 docs/
 evals/
+samples/
+templates/
+system-prompts-and-models-of-ai-tools/
 *.ts
 *.tsx
 *.jsx
@@ -27,27 +30,53 @@ tsconfig.*.json
 esbuild.js
 vite.config.*
 eslint.config.*
-*.log
-*.lock
+jest.config.*
 *.md
 *.markdown
-*.vsix
 
-# Exclude node_modules except production dependencies (if not bundled)
+# Dependency trees and package manager state must not ship raw in the VSIX.
 node_modules/
+**/node_modules/**
+packages/*/node_modules/**
+webview-ui/node_modules/**
+*.lock
+package-lock.json
+pnpm-lock.yaml
 
-# Exclude other common unnecessary files
+# Build caches, duplicate webview output, previous packages, and logs
+**/.cache/**
+**/.turbo/**
+**/.vite/**
+**/coverage/**
+webview-ui/build/**
+*.vsix
+*.log
+*.tmp
+*.bak
 *.swp
 *.swo
-*.bak
-*.tmp
 
-# Include only the built output and essential files
-!out/
-!dist/
-dist/**/*.map
-!extension.js
+# Source maps and native dev-tool binaries inflate release packages and are not runtime assets.
+**/*.map
+**/@swc/core-*/**
+**/@esbuild/*/**
+
+# Runtime release surface: bundled extension, bundled webview, metadata, and static assets.
+!dist/**
+!assets/**
 !package.json
 !README.md
 !LICENSE
-!assets/
+# Keep the VSIX as small as possible: exclude everything, then allowlist only runtime artifacts.
+**
+
+# Allowlist runtime artifacts
+!dist/**
+!assets/icons/**
+!assets/valorIde.acorn
+!package.json
+!README.md
+!LICENSE
+
+# Never ship sourcemaps in published package
+dist/**/*.map

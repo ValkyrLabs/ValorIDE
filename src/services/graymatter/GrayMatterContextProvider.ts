@@ -1,0 +1,305 @@
+import * as vscode from "vscode";
+import {
+  GrayMatterClientError,
+  GrayMatterErrorKind,
+  GrayMatterMemoryQuery,
+} from "./GrayMatterClient";
+
+export type GrayMatterMemoryScope = "organization" | "project" | "user";
+
+export interface GrayMatterContextConfig {
+  enabled: boolean;
+  maxTokens: number;
+  queryMemory: (query: GrayMatterMemoryQuery) => Promise<unknown>;
+  scopes: GrayMatterMemoryScope[];
+  seedQuery?: string;
+  timeoutMs: number;
+}
+
+export interface GrayMatterContextResult {
+  durationMs: number;
+  entriesUsed: number;
+  formattedBlock: string;
+  fromScopes: string[];
+  tokensEstimated: number;
+}
+
+interface MemoryEntryForPrompt {
+  content: string;
+  id: string;
+  scope: GrayMatterMemoryScope;
+  tags: string[];
+  title?: string;
+  type?: string;
+}
+
+type MemoryEntryLike = Record<string, unknown>;
+
+const DEFAULT_MAX_TOKENS = 2000;
+const DEFAULT_TIMEOUT_MS = 3000;
+const SCOPE_ORDER: GrayMatterMemoryScope[] = [
+  "project",
+  "organization",
+  "user",
+];
+
+export class GrayMatterContextProvider {
+  constructor(
+    private readonly logger?: Pick<vscode.OutputChannel, "appendLine">,
+    private readonly now: () => number = () => Date.now(),
+  ) {}
+
+  async getContextForPrompt(
+    seedQuery: string,
+    config: GrayMatterContextConfig,
+  ): Promise<GrayMatterContextResult | null> {
+    if (!config.enabled) {
+      return null;
+    }
+
+    const query = (
+      config.seedQuery ||
+      seedQuery ||
+      "ValorIDE session context"
+    ).trim();
+    const timeoutMs = config.timeoutMs || DEFAULT_TIMEOUT_MS;
+    const maxTokens = config.maxTokens || DEFAULT_MAX_TOKENS;
+    const start = this.now();
+
+    try {
+      const response = await withTimeout(
+        config.queryMemory({
+          limit: 24,
+          query,
+        }),
+        timeoutMs,
+      );
+      const entries = extractEntries(response)
+        .map(normalizeEntry)
+        .filter((entry): entry is MemoryEntryForPrompt => Boolean(entry))
+        .filter((entry) => config.scopes.includes(entry.scope))
+        .sort(
+          (a, b) => SCOPE_ORDER.indexOf(a.scope) - SCOPE_ORDER.indexOf(b.scope),
+        );
+
+      const selected = fitEntriesToBudget(entries, maxTokens);
+      if (!selected.length) {
+        return null;
+      }
+
+      const formattedBlock = formatRememberedContextBlock(selected);
+      const tokensEstimated = estimateTokens(formattedBlock);
+      const fromScopes = Array.from(
+        new Set(selected.map((entry) => entry.scope)),
+      );
+
+      return {
+        durationMs: this.now() - start,
+        entriesUsed: selected.length,
+        formattedBlock,
+        fromScopes,
+        tokensEstimated,
+      };
+    } catch (error) {
+      this.logger?.appendLine(
+        `[GrayMatterContextProvider] Skipping context layer: ${formatReadError(error)}`,
+      );
+      return null;
+    }
+  }
+}
+
+export const getGrayMatterContextConfigFromSettings = (
+  queryMemory: GrayMatterContextConfig["queryMemory"],
+  seedQuery?: string,
+): GrayMatterContextConfig => {
+  const config = vscode.workspace.getConfiguration("valoride.graymatter");
+  return {
+    enabled: config.get<boolean>("enabled", true),
+    maxTokens: config.get<number>("contextMaxTokens", DEFAULT_MAX_TOKENS),
+    queryMemory,
+    scopes: ["project", "organization", "user"],
+    seedQuery,
+    timeoutMs: config.get<number>("queryTimeoutMs", DEFAULT_TIMEOUT_MS),
+  };
+};
+
+const withTimeout = async <T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+): Promise<T> => {
+  let timeout: NodeJS.Timeout | undefined;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeout = setTimeout(
+      () => reject(new Error("GrayMatter context query timed out.")),
+      timeoutMs,
+    );
+  });
+
+  try {
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+  }
+};
+
+const extractEntries = (response: unknown): MemoryEntryLike[] => {
+  if (Array.isArray(response)) {
+    return response.filter(isRecord);
+  }
+  if (!isRecord(response)) {
+    return [];
+  }
+  for (const key of ["results", "items", "data", "memoryEntries", "entries"]) {
+    const candidate = response[key];
+    if (Array.isArray(candidate)) {
+      return candidate.filter(isRecord);
+    }
+  }
+  return [];
+};
+
+const normalizeEntry = (
+  entry: MemoryEntryLike,
+): MemoryEntryForPrompt | undefined => {
+  const id = getString(entry, "id") ?? getString(entry, "uid");
+  const content =
+    getString(entry, "content") ??
+    getString(entry, "summary") ??
+    getString(entry, "text") ??
+    getString(entry, "body");
+  if (!id || !content) {
+    return undefined;
+  }
+
+  const tags = getStringArray(entry, "tags") ?? [];
+  return {
+    content: redactSensitive(content),
+    id,
+    scope: getScope(tags),
+    tags,
+    title:
+      getString(entry, "title") ??
+      getString(entry, "name") ??
+      getMetadataTitle(entry),
+    type: getString(entry, "type") ?? "context",
+  };
+};
+
+const getScope = (tags: string[]): GrayMatterMemoryScope => {
+  if (tags.some((tag) => tag === "scope:organization" || tag === "scope:org")) {
+    return "organization";
+  }
+  if (tags.includes("scope:user")) {
+    return "user";
+  }
+  return "project";
+};
+
+const fitEntriesToBudget = (
+  entries: MemoryEntryForPrompt[],
+  maxTokens: number,
+): MemoryEntryForPrompt[] => {
+  const selected: MemoryEntryForPrompt[] = [];
+  let used = estimateTokens("## Remembered Context\n");
+
+  for (const entry of entries) {
+    const projected = estimateTokens(formatEntry(entry));
+    if (used + projected > maxTokens) {
+      continue;
+    }
+    selected.push(entry);
+    used += projected;
+  }
+
+  return selected;
+};
+
+const formatRememberedContextBlock = (entries: MemoryEntryForPrompt[]) => {
+  const lines = ["## Remembered Context", ""];
+  for (const scope of SCOPE_ORDER) {
+    const scoped = entries.filter((entry) => entry.scope === scope);
+    if (!scoped.length) {
+      continue;
+    }
+    lines.push(`### ${scope}`);
+    lines.push(...scoped.map(formatEntry));
+    lines.push("");
+  }
+  return lines.join("\n").trim();
+};
+
+const formatEntry = (entry: MemoryEntryForPrompt) => {
+  const label = [
+    `[gm:${entry.id}]`,
+    entry.type,
+    entry.title ? `"${entry.title}"` : undefined,
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const tags = entry.tags.length ? ` (${entry.tags.join(", ")})` : "";
+  return `- ${label}${tags}: ${truncate(entry.content, 700)}`;
+};
+
+const getString = (
+  record: MemoryEntryLike,
+  key: string,
+): string | undefined => {
+  const value = record[key];
+  return typeof value === "string" && value.trim() ? value : undefined;
+};
+
+const getStringArray = (
+  record: MemoryEntryLike,
+  key: string,
+): string[] | undefined => {
+  const value = record[key];
+  if (!Array.isArray(value)) {
+    return undefined;
+  }
+  const strings = value.filter(
+    (item): item is string => typeof item === "string" && Boolean(item.trim()),
+  );
+  return strings.length ? strings : undefined;
+};
+
+const getMetadataTitle = (record: MemoryEntryLike): string | undefined => {
+  const metadata = record.metadata;
+  if (!isRecord(metadata)) {
+    return undefined;
+  }
+  return getString(metadata, "title");
+};
+
+const estimateTokens = (value: string) => Math.ceil(value.length / 4);
+
+const truncate = (value: string, maxChars: number) => {
+  const normalized = value.replace(/\s+/g, " ").trim();
+  if (normalized.length <= maxChars) {
+    return normalized;
+  }
+  return `${normalized.slice(0, Math.max(0, maxChars - 3)).trim()}...`;
+};
+
+const redactSensitive = (value: string) =>
+  value
+    .replace(/(authorization\s*:\s*bearer\s+)[^\s,;]+/giu, "$1[REDACTED]")
+    .replace(/\b(bearer\s+)[^\s,;]+/giu, "$1[REDACTED]")
+    .replace(
+      /\b[A-Za-z0-9_-]{12,}\.[A-Za-z0-9_-]{12,}\.[A-Za-z0-9_-]{8,}\b/gu,
+      "[REDACTED_JWT]",
+    );
+
+const formatReadError = (error: unknown) => {
+  if (error instanceof GrayMatterClientError) {
+    return `${mapErrorKind(error.kind)} (${error.status ?? "no status"})`;
+  }
+  return error instanceof Error ? error.message : "unknown error";
+};
+
+const mapErrorKind = (kind: GrayMatterErrorKind) => kind;
+
+const isRecord = (value: unknown): value is MemoryEntryLike =>
+  Boolean(value) && typeof value === "object" && !Array.isArray(value);

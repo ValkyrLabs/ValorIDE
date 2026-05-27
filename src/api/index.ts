@@ -33,6 +33,7 @@ export interface ApiHandler {
   ): ApiStream;
   getModel(): { id: string; info: ModelInfo };
   getApiStreamUsage?(): Promise<ApiStreamUsageChunk | undefined>;
+  getApiStreamStartTimeoutMs?(): number | undefined;
 }
 
 export interface SingleCompletionHandler {

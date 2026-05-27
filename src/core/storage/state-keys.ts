@@ -22,6 +22,7 @@ export type SecretKey =
   | "xaiApiKey"
   | "sambanovaApiKey"
   | "valkyraiJwt"
+  | "graymatter-token"
   | "jwtToken";
 
 export type GlobalStateKey =

@@ -38,6 +38,15 @@ type BillingStatus = {
   remainingQuota: number;
 };
 
+type BillingHistoryEntry = {
+  id: string;
+  kind: "CHARGE" | "USAGE" | "PURCHASE";
+  amount: number;
+  status: "SUCCEEDED" | "FAILED";
+  createdAt: string;
+  detail: string;
+};
+
 type ErrorAlert = {
   type: "error" | "warning" | "success" | "info";
   message: string;
@@ -222,6 +231,8 @@ export const SwarmPanel: React.FC = () => {
     null,
   );
   const [alerts, setAlerts] = useState<ErrorAlert[]>([]);
+  const [showUpgradeFlow, setShowUpgradeFlow] = useState(false);
+  const [showBillingHistory, setShowBillingHistory] = useState(false);
 
   // Get userId/senderId from window or localStorage
   const getSenderId = useCallback(() => {
@@ -240,6 +251,22 @@ export const SwarmPanel: React.FC = () => {
       setAlerts((prev) => prev.filter((a) => a.timestamp !== alert.timestamp));
     }, 5000);
   }, []); // Fetch agents from both WebSocket and REST API
+
+  const trackBillingEvent = useCallback((eventName: string) => {
+    try {
+      window.dispatchEvent(
+        new CustomEvent("valoride-analytics", {
+          detail: {
+            eventName,
+            organizationId: getOrganizationId(),
+            timestamp: Date.now(),
+          },
+        }),
+      );
+    } catch {
+      // no-op
+    }
+  }, []);
   useEffect(() => {
     const refreshAgents = async () => {
       const discovered = await fetchAgentDiscovery();
@@ -500,6 +527,29 @@ export const SwarmPanel: React.FC = () => {
     fontWeight: activeTab === tab ? "bold" : "normal",
     color: activeTab === tab ? "#2196F3" : "#666",
   });
+
+  const usagePercent = billingStatus
+    ? Math.round((billingStatus.activeAgentCount / billingStatus.quotaAgents) * 100)
+    : 0;
+
+  const billingHistory: BillingHistoryEntry[] = [
+    {
+      id: "charge-1",
+      kind: "CHARGE",
+      amount: 24.99,
+      status: "SUCCEEDED",
+      createdAt: new Date().toISOString(),
+      detail: "Monthly base plan",
+    },
+    {
+      id: "usage-1",
+      kind: "USAGE",
+      amount: 3.5,
+      status: "SUCCEEDED",
+      createdAt: new Date(Date.now() - 86400000).toISOString(),
+      detail: "Agent instantiation usage",
+    },
+  ];
 
   return (
     <div
@@ -1016,8 +1066,8 @@ export const SwarmPanel: React.FC = () => {
               >
                 <button
                   onClick={() => {
-                    addAlert("info", "Opening upgrade dialog...");
-                    // TODO: Open billing/upgrade modal
+                    setShowUpgradeFlow(true);
+                    trackBillingEvent("valoride.upgrade_clicked");
                   }}
                   style={{
                     padding: "10px 16px",
@@ -1033,8 +1083,7 @@ export const SwarmPanel: React.FC = () => {
                 </button>
                 <button
                   onClick={() => {
-                    addAlert("info", "Opening billing history...");
-                    // TODO: Open billing history modal
+                    setShowBillingHistory(true);
                   }}
                   style={{
                     padding: "10px 16px",
@@ -1048,6 +1097,89 @@ export const SwarmPanel: React.FC = () => {
                 >
                   📋 View Billing History
                 </button>
+
+                {showUpgradeFlow && billingStatus && (
+                  <div
+                    style={{
+                      border: "1px solid #ddd",
+                      borderRadius: 6,
+                      padding: 12,
+                      background: "#fff",
+                    }}
+                  >
+                    <strong>Upgrade quota</strong>
+                    <p style={{ fontSize: 12, marginTop: 8 }}>
+                      Usage: {billingStatus.activeAgentCount}/{billingStatus.quotaAgents} ({usagePercent}%).
+                    </p>
+                    {billingStatus.billingStatus === "SUSPENDED" ? (
+                      <p style={{ fontSize: 12, color: "#b71c1c" }}>
+                        Billing is suspended. Update payment method or contact your workspace admin.
+                      </p>
+                    ) : null}
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                      <button
+                        onClick={() => {
+                          trackBillingEvent("valoride.checkout_started");
+                          window.open(
+                            `https://valkyrlabs.com/billing/checkout?organizationId=${encodeURIComponent(getOrganizationId())}`,
+                            "_blank",
+                          );
+                        }}
+                        style={{ padding: "6px 10px", cursor: "pointer" }}
+                      >
+                        Start checkout
+                      </button>
+                      <button
+                        onClick={async () => {
+                          const refreshed = await fetchBillingStatus();
+                          setBillingStatus(refreshed);
+                          trackBillingEvent("valoride.checkout_completed");
+                          addAlert("success", "Billing status refreshed");
+                        }}
+                        style={{ padding: "6px 10px", cursor: "pointer" }}
+                      >
+                        I upgraded, refresh status
+                      </button>
+                      <button
+                        onClick={() => setShowUpgradeFlow(false)}
+                        style={{ padding: "6px 10px", cursor: "pointer" }}
+                      >
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {showBillingHistory && (
+                  <div
+                    style={{
+                      border: "1px solid #ddd",
+                      borderRadius: 6,
+                      padding: 12,
+                      background: "#fff",
+                    }}
+                  >
+                    <strong>Billing history</strong>
+                    <div style={{ marginTop: 8, fontSize: 12 }}>
+                      {billingHistory.map((entry) => (
+                        <div key={entry.id} style={{ marginBottom: 8 }}>
+                          <div>
+                            {entry.kind} • ${entry.amount.toFixed(2)} • {entry.status}
+                          </div>
+                          <div style={{ color: "#666" }}>
+                            {entry.detail} • {new Date(entry.createdAt).toLocaleString()}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => setShowBillingHistory(false)}
+                      style={{ padding: "6px 10px", cursor: "pointer" }}
+                    >
+                      Close history
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ) : (

@@ -5,12 +5,23 @@ import {
   enableMonetization,
   updatePricing,
 } from "@thorapi/services/monetization/ServiceMonetizationService";
+import { dispatchPricingUpdated } from "@thorapi/services/monetization/pricingEvents";
 import "./MonetizationSettings.css";
 
 interface MonetizationSettingsProps {
   applicationId: string;
+  serviceId?: string;
+  service?: ManagedMcpService;
   onSuccess?: (service: ManagedMcpService) => void;
   onError?: (error: Error) => void;
+}
+
+function validatePrice(costPerCall: number): string | null {
+  if (!Number.isFinite(costPerCall) || costPerCall < 0.1) {
+    return "Enter a valid price of at least 0.1 credits before saving.";
+  }
+
+  return null;
 }
 
 /**
@@ -19,22 +30,58 @@ interface MonetizationSettingsProps {
  */
 export const MonetizationSettings: React.FC<MonetizationSettingsProps> = ({
   applicationId,
+  serviceId,
+  service,
   onSuccess,
   onError,
 }) => {
-  const [isMonetized, setIsMonetized] = useState(false);
-  const [pricingModel, setPricingModel] = useState<PricingModel>("PER_CALL");
-  const [costPerCall, setCostPerCall] = useState(5.0);
+  const [resolvedServiceId, setResolvedServiceId] = useState(
+    service?.id ?? serviceId ?? "",
+  );
+  const [isMonetized, setIsMonetized] = useState(service?.isMonetized ?? false);
+  const [pricingModel, setPricingModel] = useState<PricingModel>(
+    service?.pricingModel ?? "PER_CALL",
+  );
+  const [costPerCall, setCostPerCall] = useState(service?.costPerCall ?? 5.0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // Check if this service is already monetized
   useEffect(() => {
-    // Could load existing monetization status here
-  }, [applicationId]);
+    setResolvedServiceId(service?.id ?? serviceId ?? "");
+    setIsMonetized(service?.isMonetized ?? Boolean(serviceId));
+    setPricingModel(service?.pricingModel ?? "PER_CALL");
+    setCostPerCall(service?.costPerCall ?? 5.0);
+  }, [service, serviceId, applicationId]);
+
+  const handleSaveError = (err: unknown, fallback: string) => {
+    const message = err instanceof Error ? err.message : fallback;
+    setSuccess(false);
+    setError(message);
+    onError?.(err instanceof Error ? err : new Error(message));
+  };
+
+  const completeSuccessfulSave = (result: ManagedMcpService) => {
+    setResolvedServiceId(result.id);
+    setIsMonetized(result.isMonetized ?? true);
+    setPricingModel(result.pricingModel ?? pricingModel);
+    setCostPerCall(result.costPerCall ?? costPerCall);
+    setSuccess(true);
+    onSuccess?.(result);
+    dispatchPricingUpdated(result);
+
+    // Auto-hide success message after 3s
+    setTimeout(() => setSuccess(false), 3000);
+  };
 
   const handleEnableMonetization = async () => {
+    const validationError = validatePrice(costPerCall);
+    if (validationError) {
+      setError(validationError);
+      setSuccess(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
     setSuccess(false);
@@ -45,47 +92,46 @@ export const MonetizationSettings: React.FC<MonetizationSettingsProps> = ({
         pricingModel,
         costPerCall,
       );
-      setIsMonetized(result.isMonetized ?? false);
-      setSuccess(true);
-
-      if (onSuccess) {
-        onSuccess(result);
-      }
-
-      // Auto-hide success message after 3s
-      setTimeout(() => setSuccess(false), 3000);
+      completeSuccessfulSave(result);
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to enable monetization";
-      setError(message);
-
-      if (onError) {
-        onError(err instanceof Error ? err : new Error(message));
-      }
+      handleSaveError(err, "Failed to enable monetization");
     } finally {
       setLoading(false);
     }
   };
 
   const handleUpdatePricing = async () => {
+    const validationError = validatePrice(costPerCall);
+    if (validationError) {
+      setError(validationError);
+      setSuccess(false);
+      return;
+    }
+
+    if (!resolvedServiceId) {
+      setError(
+        "Select a published MCP service before updating pricing. No service ID was provided.",
+      );
+      setSuccess(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
+    setSuccess(false);
 
     try {
-      // First get the service to get its ID
-      // In real implementation, you'd pass serviceId as prop
-      // await updatePricing(serviceId, pricingModel, costPerCall);
-      // For now, just show success
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 3000);
+      const result = await updatePricing(
+        resolvedServiceId,
+        pricingModel,
+        costPerCall,
+      );
+      completeSuccessfulSave(result);
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to update pricing";
-      setError(message);
-
-      if (onError) {
-        onError(err instanceof Error ? err : new Error(message));
-      }
+      handleSaveError(
+        err,
+        "Pricing was not saved. Check your permissions and try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -102,7 +148,9 @@ export const MonetizationSettings: React.FC<MonetizationSettingsProps> = ({
 
       {error && <div className="error-banner">{error}</div>}
       {success && (
-        <div className="success-banner">✓ Settings saved successfully!</div>
+        <div className="success-banner">
+          ✓ Pricing persisted. Marketplace and earnings views can refresh now.
+        </div>
       )}
 
       <div className="settings-form">
@@ -110,26 +158,28 @@ export const MonetizationSettings: React.FC<MonetizationSettingsProps> = ({
         <div className="form-group">
           <label>Pricing Model</label>
           <div className="radio-group">
-            {["PER_CALL", "PER_MONTH", "TIERED"].map((model) => (
-              <label key={model} className="radio-label">
-                <input
-                  type="radio"
-                  value={model}
-                  checked={pricingModel === model}
-                  onChange={(e) =>
-                    setPricingModel(e.target.value as PricingModel)
-                  }
-                  disabled={loading}
-                />
-                <span>
-                  {model === "PER_CALL"
-                    ? "Per Call"
-                    : model === "PER_MONTH"
-                      ? "Monthly Subscription"
-                      : "Tiered"}
-                </span>
-              </label>
-            ))}
+            {(["PER_CALL", "PER_MONTH", "TIERED"] as PricingModel[]).map(
+              (model) => (
+                <label key={model} className="radio-label">
+                  <input
+                    type="radio"
+                    value={model}
+                    checked={pricingModel === model}
+                    onChange={(e) =>
+                      setPricingModel(e.target.value as PricingModel)
+                    }
+                    disabled={loading}
+                  />
+                  <span>
+                    {model === "PER_CALL"
+                      ? "Per Call"
+                      : model === "PER_MONTH"
+                        ? "Monthly Subscription"
+                        : "Tiered"}
+                  </span>
+                </label>
+              ),
+            )}
           </div>
         </div>
 
@@ -178,6 +228,16 @@ export const MonetizationSettings: React.FC<MonetizationSettingsProps> = ({
           </p>
         </div>
 
+        {isMonetized && (
+          <div className="revenue-breakdown">
+            <h4>Next best actions</h4>
+            <p className="breakdown-note">
+              Publish paid service, preview buyer card, then share listing once
+              the saved price appears in marketplace refreshes.
+            </p>
+          </div>
+        )}
+
         {/* Action Buttons */}
         <div className="button-group">
           {!isMonetized ? (
@@ -206,7 +266,7 @@ export const MonetizationSettings: React.FC<MonetizationSettingsProps> = ({
 
         {/* Terms & Conditions */}
         <div className="terms-notice">
-          <input type="checkbox" id="agreeTerms" />
+          <input type="checkbox" id="agreeTerms" disabled={loading} />
           <label htmlFor="agreeTerms">
             I agree to the Monetization Terms & Service
           </label>

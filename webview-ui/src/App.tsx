@@ -36,7 +36,10 @@ import {
 import McpView from "./components/mcp/configuration/McpConfigurationView";
 import { McpViewTab } from "@shared/mcp";
 import { CREDIT_INTENT_EVENT, CreditIntent } from "./types/creditIntent";
-import { clearAccountBalancePrompt } from "./redux/slices/apiErrorsSlice";
+import {
+  clearAccountBalancePrompt,
+  clearCreditIntent,
+} from "./redux/slices/apiErrorsSlice";
 
 const AppContent = () => {
   const {
@@ -49,6 +52,9 @@ const AppContent = () => {
   const dispatch = useDispatch();
   const showAccountBalance = useSelector(
     (state: any) => state?.apiErrors?.showAccountBalance,
+  );
+  const apiErrorCreditIntent = useSelector(
+    (state: any) => state?.apiErrors?.creditIntent,
   );
   const [hasStoredAuth, setHasStoredAuth] = useState(false);
 
@@ -300,7 +306,10 @@ const AppContent = () => {
       setAccountInitialActiveTab("account");
     };
 
-    window.addEventListener(CREDIT_INTENT_EVENT, handleCreditIntent as EventListener);
+    window.addEventListener(
+      CREDIT_INTENT_EVENT,
+      handleCreditIntent as EventListener,
+    );
     return () =>
       window.removeEventListener(
         CREDIT_INTENT_EVENT,
@@ -327,9 +336,12 @@ const AppContent = () => {
     setShowApplicationProgress(false);
     setShowFileExplorer(true);
     setAccountInitialActiveTab("account");
+    if (apiErrorCreditIntent) {
+      setCreditIntent(apiErrorCreditIntent);
+    }
 
     dispatch(clearAccountBalancePrompt());
-  }, [dispatch, showAccountBalance]);
+  }, [apiErrorCreditIntent, dispatch, showAccountBalance]);
 
   const handleFileSelect = useCallback((filePath: string) => {
     // Use openMention to open the selected file
@@ -389,12 +401,14 @@ const AppContent = () => {
                 setServerConsoleNeedsAttention(false)
               }
               initialActiveTab={accountInitialActiveTab}
-              onConsumeInitialActiveTab={() => setAccountInitialActiveTab(undefined)}
-              creditIntent={creditIntent}
-              onClearCreditIntent={() => setCreditIntent(undefined)}
               onConsumeInitialActiveTab={() =>
                 setAccountInitialActiveTab(undefined)
               }
+              creditIntent={creditIntent}
+              onClearCreditIntent={() => {
+                setCreditIntent(undefined);
+                dispatch(clearCreditIntent());
+              }}
             />
           )}
           {showGeneratedFiles && <GeneratedFilesView />}

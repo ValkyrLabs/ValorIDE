@@ -33,6 +33,8 @@ import { getLLMPromptService } from "@services/llmPromptService";
 import { getSwarmPromptBroadcaster } from "@services/swarmPromptBroadcaster";
 import { StartupAuthService } from "@services/auth/StartupAuthService";
 import { createGrayMatterSessionState } from "@services/graymatter/GrayMatterSessionService";
+import { GrayMatterMcpBridge } from "@services/graymatter/GrayMatterMcpBridge";
+import { getStatusBarService } from "@services/StatusBarService";
 import { ApiProvider, ModelInfo } from "@shared/api";
 import { LlmDetailsSummary, SelectedLlmDetails } from "@shared/llm";
 import {
@@ -133,6 +135,13 @@ export class Controller {
       (msg) => this.postMessageToWebview(msg),
       this.context.extension?.packageJSON?.version ?? "1.0.0",
     );
+    void new GrayMatterMcpBridge({ logger: this.outputChannel })
+      .register(this.mcpHub)
+      .catch((error) => {
+        this.outputChannel.appendLine(
+          `GrayMatter MCP registration failed: ${String(error)}`,
+        );
+      });
     this.accountService = new ValorIDEAccountService(
       (msg) => this.postMessageToWebview(msg),
       async () => {
@@ -2522,7 +2531,10 @@ export class Controller {
   }
 
   private async refreshGrayMatterSessionState(token?: string) {
-    const resolvedToken = token || (await getSecret(this.context, "jwtToken"));
+    const resolvedToken =
+      token ||
+      (await getSecret(this.context, "graymatter-token")) ||
+      (await getSecret(this.context, "jwtToken"));
     const grayMatterSession = await createGrayMatterSessionState({
       baseUrl: getValkyraiBasePath(),
       token: resolvedToken,
@@ -2531,6 +2543,10 @@ export class Controller {
       this.context,
       "grayMatterSession",
       grayMatterSession,
+    );
+    getStatusBarService().updateGrayMatterStatus(
+      grayMatterSession.status,
+      grayMatterSession.error,
     );
     return grayMatterSession;
   }
