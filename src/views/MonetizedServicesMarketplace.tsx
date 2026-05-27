@@ -3,9 +3,18 @@ import {
   ManagedMcpService,
   SubscriptionType,
   getMarketplaceServices,
+  getService,
   subscribeToService,
 } from "@thorapi/services/monetization/ServiceMonetizationService";
 import {
+  MarketplaceActionState,
+  MarketplaceSort,
+  PurchaseSheetMode,
+  estimateMonthlySpend,
+  getCreatorLabel,
+  getServicePriceLabel,
+  sortMarketplaceServices,
+} from "./MonetizedServicesMarketplace.helpers";
   MONETIZATION_PRICING_UPDATED_EVENT,
   isPricingUpdatedEvent,
 } from "@thorapi/services/monetization/pricingEvents";
@@ -15,6 +24,10 @@ import {
   sortMarketplaceServices,
   type MarketplaceSort,
 } from "./monetizedMarketplaceFunnel";
+
+function getErrorMessage(err: unknown, fallback: string): string {
+  return err instanceof Error ? err.message : fallback;
+}
 
 /**
  * Browse and subscribe to monetized MCP services from creators.
@@ -32,6 +45,10 @@ export const MonetizedServicesMarketplace: React.FC = () => {
   const [statusTone, setStatusTone] = useState<"success" | "error">("success");
   const [filterTier, setFilterTier] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<MarketplaceSort>("newest");
+  const [selectedService, setSelectedService] = useState<ManagedMcpService | null>(null);
+  const [purchaseMode, setPurchaseMode] = useState<PurchaseSheetMode>("details");
+  const [actionState, setActionState] = useState<MarketplaceActionState | null>(null);
+  const [detailsLoading, setDetailsLoading] = useState(false);
 
   useEffect(() => {
     loadServices();
@@ -82,21 +99,68 @@ export const MonetizedServicesMarketplace: React.FC = () => {
       const data = await getMarketplaceServices();
       setServices(data);
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Failed to load services";
-      setError(message);
+      setError(getErrorMessage(err, "Failed to load services"));
     } finally {
       setLoading(false);
     }
   };
 
+  const openServiceSheet = async (
+    service: ManagedMcpService,
+    mode: PurchaseSheetMode,
+  ) => {
+    setPurchaseMode(mode);
+    setSelectedService(service);
+    setActionState(null);
+    setDetailsLoading(true);
+
+    try {
+      setSelectedService(await getService(service.id));
+    } catch (err) {
+      setActionState({
+        kind: "info",
+        message: `Showing cached marketplace details. ${getErrorMessage(
+          err,
+          "Live service profile is temporarily unavailable.",
+        )}`,
+      });
+    } finally {
+      setDetailsLoading(false);
+    }
+  };
+
+  const closeServiceSheet = () => {
+    if (subscribing) {
+      return;
+    }
+    setSelectedService(null);
+    setActionState(null);
+  };
+
+  const handleSubscribe = async (serviceId: string) => {
   const handleSubscribe = async (
     serviceId: string,
     type: SubscriptionType = "PAY_AS_YOU_GO",
   ) => {
     setSubscribing(serviceId);
+    setActionState(null);
 
     try {
+      await subscribeToService(serviceId, "PAY_AS_YOU_GO");
+      setActionState({
+        kind: "success",
+        message: "Subscription activated. Invocation credits and limits will refresh shortly.",
+      });
+      await loadServices();
+    } catch (err) {
+      const message = getErrorMessage(err, "Failed to subscribe");
+      setActionState({
+        kind: "error",
+        message:
+          message.toLowerCase().includes("credit") || message.toLowerCase().includes("balance")
+            ? `${message} Buy credits, then return here to resume this MCP subscription.`
+            : message,
+      });
       await subscribeToService(serviceId, type);
       setStatusTone("success");
       setStatusMessage("Subscription activated. You can now use this service.");
@@ -185,7 +249,7 @@ export const MonetizedServicesMarketplace: React.FC = () => {
             className="sort-select"
           >
             <option value="newest">Newest</option>
-            <option value="popular">Most Popular</option>
+            <option value="popular">Trust-ready</option>
             <option value="price-low">Lowest Price</option>
           </select>
         </div>
@@ -236,6 +300,13 @@ export const MonetizedServicesMarketplace: React.FC = () => {
                       </span>
                     </div>
                   )}
+                <p className="spend-estimate">{estimateMonthlySpend(service)}</p>
+              </div>
+
+              <div className="trust-signals" aria-label="Marketplace trust signals">
+                <span>{service.isMonetized ? "✓ Monetized" : "Review required"}</span>
+                <span>{service.status}</span>
+                <span>{service.tierName || "Usage plan"}</span>
               </div>
 
               <div className="funnel-proof">
@@ -247,6 +318,7 @@ export const MonetizedServicesMarketplace: React.FC = () => {
               </div>
 
               <div className="creator-info">
+                <span className="creator-label">{getCreatorLabel(service)}</span>
                 <span className="creator-label">
                   By: {buildMarketplaceFunnel(service).creatorDisplayName}
                 </span>
@@ -257,11 +329,18 @@ export const MonetizedServicesMarketplace: React.FC = () => {
 
               <div className="card-actions">
                 <button
+                  onClick={() => openServiceSheet(service, "subscribe")}
                   onClick={() => openServiceDetails(service)}
                   disabled={subscribing === service.id}
                   className="btn btn-subscribe"
                 >
                   {subscribing === service.id
+                    ? "Subscribing..."
+                    : "Review & Subscribe"}
+                </button>
+                <button
+                  className="btn btn-details"
+                  onClick={() => openServiceSheet(service, "details")}
                     ? "Activating..."
                     : buildMarketplaceFunnel(service).primaryCta}
                 </button>
@@ -287,6 +366,84 @@ export const MonetizedServicesMarketplace: React.FC = () => {
       )}
 
       {selectedService && (
+        <div className="purchase-sheet-backdrop" role="presentation">
+          <section
+            className="purchase-sheet"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="purchase-sheet-title"
+          >
+            <button
+              className="purchase-sheet-close"
+              aria-label="Close service purchase sheet"
+              onClick={closeServiceSheet}
+              disabled={Boolean(subscribing)}
+            >
+              ×
+            </button>
+
+            <div className="purchase-sheet-header">
+              <span className="sheet-eyebrow">
+                {purchaseMode === "subscribe" ? "Purchase review" : "Service profile"}
+              </span>
+              <h2 id="purchase-sheet-title">{selectedService.name}</h2>
+              <p>{selectedService.description || "No description available"}</p>
+            </div>
+
+            {detailsLoading && <p className="sheet-loading">Refreshing service details…</p>}
+
+            {actionState && (
+              <div className={`sheet-status sheet-status-${actionState.kind}`}>
+                {actionState.message}
+              </div>
+            )}
+
+            <div className="sheet-grid">
+              <div>
+                <h3>Pricing</h3>
+                <p className="sheet-price">{getServicePriceLabel(selectedService)}</p>
+                <p>{estimateMonthlySpend(selectedService)}</p>
+              </div>
+              <div>
+                <h3>Creator</h3>
+                <p>{getCreatorLabel(selectedService)}</p>
+                <p>Status: {selectedService.status}</p>
+              </div>
+              <div>
+                <h3>Trust posture</h3>
+                <ul>
+                  <li>{selectedService.isMonetized ? "Monetization enabled" : "Not yet monetized"}</li>
+                  <li>Refund and support policy shown before checkout.</li>
+                  <li>Usage resumes here after credit top-up.</li>
+                </ul>
+              </div>
+              <div>
+                <h3>Before you subscribe</h3>
+                <ul>
+                  <li>Review permissions and sample calls in service docs.</li>
+                  <li>Confirm your credit balance covers expected usage.</li>
+                  <li>Enterprise services may require creator approval.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="purchase-sheet-actions">
+              <button
+                className="btn btn-details"
+                onClick={closeServiceSheet}
+                disabled={Boolean(subscribing)}
+              >
+                Keep browsing
+              </button>
+              <button
+                className="btn btn-subscribe"
+                onClick={() => handleSubscribe(selectedService.id)}
+                disabled={Boolean(subscribing)}
+              >
+                {subscribing === selectedService.id ? "Activating…" : "Confirm subscription"}
+              </button>
+            </div>
+          </section>
         <div
           className="service-modal-backdrop"
           onClick={() => setSelectedService(null)}
