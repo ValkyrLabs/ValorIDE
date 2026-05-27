@@ -49,6 +49,26 @@ export interface BalanceResponse {
   message?: string;
 }
 
+export interface CreateCreditCheckoutRequest {
+  successUrl: string;
+  cancelUrl: string;
+  currency?: string;
+  amountCents: number;
+  itemName?: string;
+  productType?: "credits";
+  sku?: string;
+  creditsAmountCents?: number;
+  idempotencyKey?: string;
+}
+
+export interface CreateCreditCheckoutResponse {
+  session_id?: string;
+  checkout_url?: string;
+  url?: string;
+  error?: string;
+  [key: string]: any;
+}
+
 // Error response
 export interface ErrorResponse {
   error: string;
@@ -129,6 +149,25 @@ export const creditsApi = createApi({
         { type: "Credits", id: "BALANCE" },
       ],
     }),
+
+    /**
+     * POST /v1/checkout/create-session
+     * Start a server-priced Stripe Checkout session for normal credit top-ups.
+     * This intentionally avoids the admin/test-only direct ledger booking path.
+     */
+    createCreditCheckoutSession: builder.mutation<
+      CreateCreditCheckoutResponse,
+      CreateCreditCheckoutRequest
+    >({
+      query: ({ idempotencyKey, ...body }) => ({
+        url: `checkout/create-session`,
+        method: "POST",
+        body,
+        headers: {
+          "Idempotency-Key": idempotencyKey || uuidv4(),
+        },
+      }),
+    }),
   }),
 });
 
@@ -138,6 +177,7 @@ export const {
   useLazyGetAccountBalanceQuery,
   useRecordUsageTransactionMutation,
   useRecordPaymentTransactionMutation,
+  useCreateCreditCheckoutSessionMutation,
 } = creditsApi;
 
 /**

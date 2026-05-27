@@ -105,6 +105,7 @@ export interface WebviewMessage {
   | "uploadOpenAPISpec"
   | "uploadOpenAPISpecResult"
   | "remoteCodingSessionCommand"
+  | "creditCheckoutEvent"
   | "openFile";
 
   // | "relaunchChromeDebugMode"
@@ -136,6 +137,8 @@ export interface WebviewMessage {
   customToken?: string;
   // For openInBrowser
   url?: string;
+  telemetryEvent?: string;
+  telemetryProperties?: Record<string, unknown>;
   planActSeparateModelsSetting?: boolean;
   telemetrySetting?: TelemetrySetting;
   customInstructionsSetting?: string;

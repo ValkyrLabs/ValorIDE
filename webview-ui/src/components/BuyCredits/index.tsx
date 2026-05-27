@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Card, Form, InputGroup, Button, Alert } from "react-bootstrap";
 import { FaCreditCard, FaShoppingCart, FaDollarSign } from "react-icons/fa";
 import CoolButton from "@valkyr/component-library/CoolButton";
-import { useRecordPaymentTransactionMutation } from "../../services/creditsApi";
+import { vscode } from "@thorapi/utils/vscode";
+import { useCreateCreditCheckoutSessionMutation } from "../../services/creditsApi";
 
 interface BuyCreditsProps {
   authenticatedPrincipal?: any;
@@ -20,12 +21,32 @@ const BuyCredits: React.FC<BuyCreditsProps> = ({
   const [amount, setAmount] = useState<number>(10);
   const [isProcessing, setIsProcessing] = useState(false);
   const [message, setMessage] = useState<{
-    type: "success" | "error";
+    type: "success" | "error" | "info";
     text: string;
   } | null>(null);
 
   // RTK Query mutations
-  const [recordPaymentTransaction] = useRecordPaymentTransactionMutation();
+  const [createCreditCheckoutSession] = useCreateCreditCheckoutSessionMutation();
+
+  const trackCheckoutEvent = (
+    state: "started" | "opened" | "failed" | "refresh_requested",
+    extra: Record<string, unknown> = {},
+  ) => {
+    vscode.postMessage({
+      type: "creditCheckoutEvent",
+      telemetryEvent: `valoride_credit_checkout_${state}`,
+      telemetryProperties: {
+        amountCents: Math.round(amount * 100),
+        creditsAmountCents: Math.round(amount * 100),
+        currency: "usd",
+        productType: "credits",
+        source: "valoride",
+        state,
+        surface: "BuyCredits",
+        ...extra,
+      },
+    });
+  };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
@@ -79,44 +100,50 @@ const BuyCredits: React.FC<BuyCreditsProps> = ({
 
     setIsProcessing(true);
     setMessage(null);
+    trackCheckoutEvent("started");
 
     try {
-      // Record payment transaction - this is the primary operation
-      // The backend handles creating the account balance, transaction history, etc.
-      const paymentTx = {
-        paidAt: new Date().toISOString(),
-        amountCents: Math.round(amount * 100),
-        credits: amount,
-      };
       const idempotencyKey =
         globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
+      const amountCents = Math.round(amount * 100);
 
-      await recordPaymentTransaction({
-        accountId: accountId as string,
-        payment: paymentTx,
+      const checkout = await createCreditCheckoutSession({
+        successUrl:
+          "https://valkyrlabs.com/checkout/success?source=valoride&product=credits&session_id={CHECKOUT_SESSION_ID}",
+        cancelUrl:
+          "https://valkyrlabs.com/buy-credits?source=valoride&status=cancelled",
+        currency: "usd",
+        amountCents,
+        creditsAmountCents: amountCents,
+        itemName: `ValorIDE $${amount} Credit Top-up`,
+        productType: "credits",
+        sku: `valoride-credits-usd-${amount}`,
         idempotencyKey,
       }).unwrap();
 
+      const checkoutUrl = checkout.checkout_url || checkout.url;
+      if (!checkoutUrl) {
+        throw new Error(checkout.error || "Checkout did not return a URL.");
+      }
+
+      vscode.postMessage({ type: "openInBrowser", url: checkoutUrl });
+      trackCheckoutEvent("opened");
+
       setMessage({
-        type: "success",
-        text: `Successfully added $${amount} credits! Your balance has been updated.`,
+        type: "info",
+        text: "Stripe Checkout opened in your browser. After payment, return here and refresh your balance while the webhook reconciles credits.",
       });
-
-      // Call success callback
-      onPurchaseSuccess?.(amount);
-
-      // Reset form
-      setAmount(10);
-
-      // Auto-dismiss success message
-      setTimeout(() => {
-        setMessage(null);
-      }, 3000);
     } catch (error: any) {
       console.error("Purchase failed:", error);
+      trackCheckoutEvent("failed", {
+        errorCode: error?.data?.error || error?.message || "checkout_failed",
+      });
       setMessage({
         type: "error",
-        text: error.data?.message || "Purchase failed. Please try again.",
+        text:
+          error.data?.message ||
+          error.message ||
+          "Checkout could not be started. No credits were booked; please try again.",
       });
     } finally {
       setIsProcessing(false);
@@ -147,12 +174,32 @@ const BuyCredits: React.FC<BuyCreditsProps> = ({
       <Card.Body>
         {message && (
           <Alert
-            variant={message.type === "success" ? "success" : "danger"}
+            variant={
+              message.type === "success"
+                ? "success"
+                : message.type === "info"
+                  ? "info"
+                  : "danger"
+            }
             className="mb-3"
             dismissible
             onClose={() => setMessage(null)}
           >
             {message.text}
+            {message.type === "info" && (
+              <div className="mt-2">
+                <Button
+                  size="sm"
+                  variant="outline-info"
+                  onClick={() => {
+                    trackCheckoutEvent("refresh_requested");
+                    onPurchaseSuccess?.(amount);
+                  }}
+                >
+                  I completed checkout — refresh balance
+                </Button>
+              </div>
+            )}
           </Alert>
         )}
 
@@ -242,7 +289,7 @@ const BuyCredits: React.FC<BuyCreditsProps> = ({
 
           <div className="mt-2 text-center">
             <small className="text-muted">
-              Secure payment via Stripe • Instant credit delivery
+              Secure Stripe Checkout • Credits post after webhook reconciliation
             </small>
           </div>
         </Form>

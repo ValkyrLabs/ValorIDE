@@ -15,6 +15,15 @@ import { initializeTestMode, cleanupTestMode } from "./services/test/TestMode";
 import { registerUrlCommands } from "./commands/urlCommands";
 import { registerAliasCommands } from "./commands/aliasCommands";
 import { StartupAuthService } from "./services/auth/StartupAuthService";
+import { ValorideAuthCodeExchangeService } from "./services/auth/ValorideAuthCodeExchangeService";
+import {
+  hasDirectCallbackCredentials,
+  parseAuthCallbackQuery,
+  parseLegacyAuthCallbackCredentials,
+  summarizeAuthCallback,
+} from "./security/authCallback";
+import { AuthCodeExchangeService } from "./services/auth/AuthCodeExchangeService";
+import { parseAuthCallbackQuery } from "./services/auth/AuthCallbackSecurity";
 import { initializePromptService } from "./services/promptService";
 import { initializeMemoryBankLoader } from "./services/memoryBankLoader";
 import { initializeLLMContextInjector } from "./services/llmContextInjector";
@@ -84,15 +93,15 @@ export function activate(context: vscode.ExtensionContext) {
       const { selectedLlmDetails } = await getAllExtensionState(context);
       const manualSelection: SelectedPrompt | undefined = selectedLlmDetails
         ? {
-          llmDetailsId: selectedLlmDetails.id,
-          name: selectedLlmDetails.name,
-          prompt: selectedLlmDetails.prompt,
-          mode: selectedLlmDetails.mode,
-          tags: selectedLlmDetails.tags,
-          source:
-            selectedLlmDetails.source === "fallback" ? "fallback" : "thorapi",
-          stackSpecific: true,
-        }
+            llmDetailsId: selectedLlmDetails.id,
+            name: selectedLlmDetails.name,
+            prompt: selectedLlmDetails.prompt,
+            mode: selectedLlmDetails.mode,
+            tags: selectedLlmDetails.tags,
+            source:
+              selectedLlmDetails.source === "fallback" ? "fallback" : "thorapi",
+            stackSpecific: true,
+          }
         : undefined;
 
       await initializeLLMPromptService(
@@ -227,9 +236,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Initialize ToolRelayService for remote control capabilities
     try {
-      const toolRelayMod = await import(
-        "./services/communication/ToolRelayService"
-      );
+      const toolRelayMod =
+        await import("./services/communication/ToolRelayService");
       const visibleWebview =
         WebviewProvider.getVisibleInstance() || sidebarWebview;
       if (visibleWebview?.controller) {
@@ -516,7 +524,8 @@ export function activate(context: vscode.ExtensionContext) {
   https://code.visualstudio.com/api/extension-guides/virtual-documents
   */
   const diffContentProvider = new (class
-    implements vscode.TextDocumentContentProvider {
+    implements vscode.TextDocumentContentProvider
+  {
     provideTextDocumentContent(uri: vscode.Uri): string {
       return Buffer.from(uri.query, "base64").toString("utf-8");
     }
@@ -530,22 +539,24 @@ export function activate(context: vscode.ExtensionContext) {
 
   // URI Handler
   const handleUri = async (uri: vscode.Uri) => {
-    console.log("URI Handler called with:", {
-      path: uri.path,
-      query: uri.query,
-      scheme: uri.scheme,
-    });
-
     const path = uri.path;
-    // Guard against missing query to avoid calling replace on undefined
-    const rawQuery = uri.query || "";
-    const query = new URLSearchParams(rawQuery.replace(/\+/g, "%2B"));
+    const query = parseAuthCallbackQuery(uri.query);
     const visibleWebview = WebviewProvider.getVisibleInstance();
+
+    Logger.log(
+      `URI Handler called with: ${JSON.stringify(
+        summarizeAuthCallback(query, uri.path, uri.scheme),
+      )}`,
+    );
+
     if (!visibleWebview) {
       return;
     }
     switch (path) {
       case "/openrouter": {
+        const query = new URLSearchParams(
+          (uri.query || "").replace(/\+/g, "%2B"),
+        );
         const code = query.get("code");
         if (code) {
           await visibleWebview?.controller.handleOpenRouterCallback(code);
@@ -553,47 +564,114 @@ export function activate(context: vscode.ExtensionContext) {
         break;
       }
       case "/auth": {
-        const token = query.get("token");
         const state = query.get("state");
-        const apiKey = query.get("apiKey");
-        const authenticatedPrincipal = query.get("authenticatedPrincipal");
 
-        console.log("Auth callback received:", {
-          token: token,
-          state: state,
-          apiKey: apiKey,
-          authenticatedPrincipal: authenticatedPrincipal,
-        });
-
-        // Validate state parameter
+        // Validate state before reading any credential-bearing field.
         if (!(await visibleWebview?.controller.validateAuthState(state))) {
           vscode.window.showErrorMessage("Invalid auth state");
           return;
         }
 
-        if (token && apiKey) {
-          let parsedUser;
-          try {
-            parsedUser = authenticatedPrincipal
-              ? JSON.parse(decodeURIComponent(authenticatedPrincipal))
-              : undefined;
-          } catch (error) {
-            console.warn("Failed to parse authenticatedPrincipal:", error);
+        const startupAuthService = StartupAuthService.getInstance(context);
+        const code = query.get("code");
+        if (code && state) {
+          const exchange =
+            await new ValorideAuthCodeExchangeService().exchangeCode(
+              code,
+              state,
+            );
+          await startupAuthService.handleSuccessfulLogin(
+            exchange.tokens,
+            exchange.user,
+          );
+
+          if (exchange.tokens.apiKey) {
+            await visibleWebview?.controller.handleAuthCallback(
+              exchange.tokens.jwtToken,
+              exchange.tokens.apiKey,
+              exchange.user,
+            );
+          }
+          break;
+        }
+
+        if (hasDirectCallbackCredentials(query)) {
+          const isProductionExtension =
+            context.extensionMode === vscode.ExtensionMode.Production ||
+            process.env.NODE_ENV === "production";
+          if (isProductionExtension) {
+            Logger.log(
+              `Rejected direct credential auth callback: ${JSON.stringify(
+                summarizeAuthCallback(query, uri.path, uri.scheme),
+              )}`,
+            );
+            vscode.window.showErrorMessage(
+              "ValorIDE sign-in must use a one-time authorization code. Please retry sign-in.",
+            );
+            return;
           }
 
-          // Use StartupAuthService to handle login persistently
-          const startupAuthService = StartupAuthService.getInstance(context);
-          await startupAuthService.handleSuccessfulLogin(
-            { jwtToken: token, apiKey },
-            parsedUser,
-          );
+          const legacyCredentials = parseLegacyAuthCallbackCredentials(query);
+          if (legacyCredentials) {
+            await startupAuthService.handleSuccessfulLogin(
+              {
+                jwtToken: legacyCredentials.token,
+                apiKey: legacyCredentials.apiKey,
+              },
+              legacyCredentials.authenticatedPrincipal,
+            );
 
-          await visibleWebview?.controller.handleAuthCallback(
-            token,
-            apiKey,
-            parsedUser,
+            await visibleWebview?.controller.handleAuthCallback(
+              legacyCredentials.token,
+              legacyCredentials.apiKey,
+              legacyCredentials.authenticatedPrincipal,
+            );
+          }
+        const callback = parseAuthCallbackQuery(uri);
+        Logger.log(
+          `Auth callback received: ${JSON.stringify(callback.diagnostics)}`,
+        );
+
+        if (callback.hasLegacySecretParams) {
+          vscode.window.showErrorMessage(
+            "ValorIDE rejected an insecure auth callback. Please retry sign-in to use the secure code exchange flow.",
           );
+          return;
         }
+
+        // Validate state parameter before exchanging the one-time code.
+        if (
+          !(await visibleWebview?.controller.validateAuthState(callback.state))
+        ) {
+          vscode.window.showErrorMessage("Invalid auth state");
+          return;
+        }
+
+        if (!callback.code || !callback.state) {
+          vscode.window.showErrorMessage(
+            "ValorIDE auth callback did not include a valid one-time code.",
+          );
+          return;
+        }
+
+        const exchangeService = new AuthCodeExchangeService();
+        const authResult = await exchangeService.exchangeCode(
+          callback.code,
+          callback.state,
+        );
+
+        // Use StartupAuthService to handle login persistently via VS Code SecretStorage.
+        const startupAuthService = StartupAuthService.getInstance(context);
+        await startupAuthService.handleSuccessfulLogin(
+          authResult.tokens,
+          authResult.user,
+        );
+
+        await visibleWebview?.controller.handleAuthCallback(
+          authResult.tokens.jwtToken,
+          authResult.tokens.apiKey || "",
+          authResult.user,
+        );
         break;
       }
       default:
@@ -908,7 +986,6 @@ export function deactivate() {
       Logger.log(`Error cleaning up test mode: ${error}`);
       console.error("Error cleaning up test mode:", error);
     }
-
 
     Logger.log("ValorIDE extension deactivated successfully");
     resolve();
