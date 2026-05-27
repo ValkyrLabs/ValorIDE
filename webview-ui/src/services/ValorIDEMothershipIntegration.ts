@@ -10,13 +10,13 @@ import {
 
 export interface ChatAction {
   type:
-    | "chat_message"
-    | "task_start"
-    | "task_complete"
-    | "tool_use"
-    | "file_edit"
-    | "command_execute"
-    | "api_data";
+  | "chat_message"
+  | "task_start"
+  | "task_complete"
+  | "tool_use"
+  | "file_edit"
+  | "command_execute"
+  | "api_data";
   taskId?: string;
   messageId?: string;
   toolName?: string;
@@ -38,6 +38,8 @@ export interface ValorIDEState {
  * Sends every significant action to ValkyrAI for coordination and remote control
  */
 export class ValorIDEMothershipIntegration {
+  private static readonly MAX_QUEUED_ACTIONS = 200;
+
   private mothershipService: MothershipService | null = null;
   private currentState: ValorIDEState = {
     activeTools: [],
@@ -46,6 +48,8 @@ export class ValorIDEMothershipIntegration {
   };
   private actionQueue: ChatAction[] = [];
   private isProcessingQueue = false;
+  private lastDisconnectedWarningAt = 0;
+  private readonly disconnectedWarningIntervalMs = 5_000;
 
   constructor(mothershipService: MothershipService | null) {
     this.mothershipService = mothershipService;
@@ -82,23 +86,26 @@ export class ValorIDEMothershipIntegration {
    * Send a ValorIDE action to the mothership using command protocol
    */
   public async sendChatAction(action: ChatAction): Promise<void> {
-    console.log("🚀 sendChatAction called with:", action);
     this.updateLastActivity();
 
-    // Debug connection status
+    const hasService = !!this.mothershipService;
     const isConnected = this.mothershipService?.isConnected();
     const instanceId = this.mothershipService?.getInstanceId();
-    console.log("🚀 Mothership service status:", {
-      hasService: !!this.mothershipService,
-      isConnected,
-      instanceId,
-      queueLength: this.actionQueue.length,
-    });
+
+    // High-frequency telemetry should never queue while disconnected.
+    if (action.type === "api_data" && !isConnected) {
+      return;
+    }
+
+    if (!hasService) {
+      this.logDisconnectedWarning(
+        `Mothership service unavailable; dropping action: ${action.type}`,
+      );
+      return;
+    }
 
     if (!isConnected) {
-      // Queue the action for when connection is restored
-      this.actionQueue.push(action);
-      console.warn("🚀 Mothership not connected, queuing action:", action.type);
+      this.enqueueAction(action);
       return;
     }
 
@@ -125,14 +132,6 @@ export class ValorIDEMothershipIntegration {
         time: new Date().toISOString(),
       };
 
-      console.log("🚀 Sending message to mothership:", {
-        messageType: message.type,
-        payloadLength: message.payload?.length,
-        actionType: action.type,
-        taskId: action.taskId,
-        messagePreview: message.payload?.substring(0, 200) + "...",
-      });
-
       // Defensive: ensure user arrays exist before serializing to JSON
       try {
         const userAny: any = (message as any).user;
@@ -155,12 +154,7 @@ export class ValorIDEMothershipIntegration {
       }
 
       // Actually send the message
-      const result = this.mothershipService.sendMessage(message);
-      console.log("🚀 sendMessage result:", result);
-      console.log(
-        "🚀 Successfully sent ValorIDE command to mothership:",
-        action.type,
-      );
+      this.mothershipService.sendMessage(message);
     } catch (error) {
       console.error("🚀 Failed to send chat action to mothership:", error);
       console.error("🚀 Error details:", {
@@ -423,6 +417,27 @@ export class ValorIDEMothershipIntegration {
 
     this.isProcessingQueue = false;
     console.log("🚀 Finished processing action queue");
+  }
+
+  private enqueueAction(action: ChatAction): void {
+    if (this.actionQueue.length >= ValorIDEMothershipIntegration.MAX_QUEUED_ACTIONS) {
+      this.actionQueue.shift();
+      this.logDisconnectedWarning(
+        `Mothership queue full (${ValorIDEMothershipIntegration.MAX_QUEUED_ACTIONS}); dropping oldest action`,
+      );
+    }
+
+    this.actionQueue.push(action);
+  }
+
+  private logDisconnectedWarning(message: string): void {
+    const now = Date.now();
+    if (now - this.lastDisconnectedWarningAt < this.disconnectedWarningIntervalMs) {
+      return;
+    }
+
+    this.lastDisconnectedWarningAt = now;
+    console.warn(message);
   }
 
   /**

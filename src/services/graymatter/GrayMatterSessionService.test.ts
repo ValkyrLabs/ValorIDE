@@ -16,19 +16,112 @@ const jsonResponse = (status: number, body: unknown): Response =>
   }) as unknown as Response;
 
 describe("GrayMatterSessionService", () => {
-  it("loads RBAC-scoped capability state after authentication", async () => {
+  it("loads the Valhalla GrayMatter control surface when api-0 exposes it", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async () =>
         jsonResponse(200, {
-          paths: {
-            "/v1/Agent": {},
-            "/v1/GrayMatter/search": {},
-            "/v1/MemoryEntry": {},
-            "/v1/MemoryEntry/query": {},
-            "/v1/MemoryEntry/write": {},
-            "/v1/SwarmOps/register": {},
+          suite: {
+            backend: "ValkyrAI api-0",
+            memoryLayer: "GrayMatter",
+            name: "Valhalla",
+          },
+          memory: {
+            excludedPrimitives: ["SwarmOps"],
+            primitives: ["MemoryEntry", "GrayMatter", "SemanticIndexEntry"],
+          },
+          objectGraph: {
+            businessDomains: ["Project"],
+            coordinationPrimitives: ["Agent", "SwarmOps"],
+            mode: "rbac_visible_schema",
+            suitePrimitives: ["Project", "ProjectObjectLink"],
+          },
+          clients: {
+            valoride: {
+              grayMatterClient: true,
+              swarmAgent: true,
+            },
+          },
+          endpoints: {
+            agent: {
+              activate: "/Agent/{id}/activate",
+              list: "/Agent",
+            },
+            memory: {
+              query: "/MemoryEntry/query",
+              read: "/MemoryEntry/read",
+              write: "/MemoryEntry/write",
+            },
+            projects: {
+              list: "/Project",
+              objectLinks: "/ProjectObjectLink",
+            },
+            swarm: {
+              graph: "/swarm-ops/graph",
+              register: "/swarm-ops/register",
+            },
           },
         }),
+    );
+
+    await expect(
+      createGrayMatterSessionState({
+        baseUrl: "https://api-0.valkyrlabs.com",
+        fetch: fetchMock,
+        now: () => new Date("2026-05-26T12:00:00.000Z"),
+        token: "jwt-token",
+      }),
+    ).resolves.toMatchObject({
+      baseUrl: "https://api-0.valkyrlabs.com/v1",
+      capabilities: {
+        agent: true,
+        grayMatter: true,
+        memoryEntry: true,
+        memoryQuery: true,
+        memoryRead: true,
+        memoryWrite: true,
+        project: true,
+        projectObjectLink: true,
+        swarmGraph: true,
+        swarmOps: true,
+      },
+      checkedAt: "2026-05-26T12:00:00.000Z",
+      controlSurface: {
+        suite: {
+          name: "Valhalla",
+        },
+        memory: {
+          excludedPrimitives: ["SwarmOps"],
+        },
+        objectGraph: {
+          mode: "rbac_visible_schema",
+        },
+      },
+      error: undefined,
+      status: "ready",
+    });
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://api-0.valkyrlabs.com/v1/graymatter/control",
+      expect.any(Object),
+    );
+  });
+
+  it("loads RBAC-scoped capability state after authentication", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async (url) =>
+        url.endsWith("/graymatter/control")
+          ? jsonResponse(404, { message: "Control surface unavailable" })
+          : jsonResponse(200, {
+              paths: {
+                "/v1/Agent": {},
+                "/v1/GrayMatter/search": {},
+                "/v1/MemoryEntry": {},
+                "/v1/MemoryEntry/query": {},
+                "/v1/MemoryEntry/write": {},
+                "/v1/Project": {},
+                "/v1/ProjectObjectLink": {},
+                "/v1/SwarmOps/register": {},
+              },
+            }),
     );
 
     await expect(
@@ -47,6 +140,8 @@ describe("GrayMatterSessionService", () => {
         memoryQuery: true,
         memoryRead: true,
         memoryWrite: true,
+        project: true,
+        projectObjectLink: true,
         swarmGraph: false,
         swarmOps: true,
       },

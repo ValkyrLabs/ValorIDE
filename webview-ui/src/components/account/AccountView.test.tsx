@@ -170,7 +170,7 @@ vi.mock("@thorapi/components/LoadingSpinner", () => ({
   default: () => <div data-testid="loading-spinner" />,
 }));
 
-describe.skip("AccountView - BuyCredits integration", () => {
+describe("AccountView - Buy Credits button integration", () => {
   beforeEach(async () => {
     ({ default: AccountView } = await import("./AccountView"));
     mockExtensionState = { ...baseExtensionState };
@@ -196,22 +196,25 @@ describe.skip("AccountView - BuyCredits integration", () => {
     });
   });
 
-  it("renders the embedded BuyCredits component instead of an external link when authenticated", () => {
+  it("renders the Buy Credits button and triggers openInBrowser message", () => {
+    const postMessage = vi.spyOn(require("@thorapi/utils/vscode"), "vscode", "get").mockReturnValue({ postMessage: vi.fn() });
     render(
       <AccountView
         {...({
-          onDone: () => {},
+          onDone: () => { },
           serverConsoleNeedsAttention: false,
-          onClearServerConsoleNeedsAttention: () => {},
+          onClearServerConsoleNeedsAttention: () => { },
         } as any)}
       />,
     );
-
-    expect(
-      screen.queryByRole("link", { name: /buy credits/i }),
-    ).not.toBeInTheDocument();
-
-    expect(screen.getByText(/buy credits/i)).toBeInTheDocument();
+    const btn = screen.getByTestId("buy-credits-btn");
+    expect(btn).toBeInTheDocument();
+    btn.click();
+    expect(postMessage().postMessage).toHaveBeenCalledWith({
+      type: "openInBrowser",
+      url: "https://valkyrlabs.com/buy-credits",
+    });
+    postMessage.mockRestore();
   });
 
   it("adds a 'needs-attention' class on the Server Console tab when flagged and clears it on click", () => {
@@ -219,7 +222,7 @@ describe.skip("AccountView - BuyCredits integration", () => {
     render(
       <AccountView
         {...({
-          onDone: () => {},
+          onDone: () => { },
           serverConsoleNeedsAttention: true,
           onClearServerConsoleNeedsAttention: onClear,
         } as any)}
@@ -237,9 +240,9 @@ describe.skip("AccountView - BuyCredits integration", () => {
     render(
       <AccountView
         {...({
-          onDone: () => {},
+          onDone: () => { },
           serverConsoleNeedsAttention: false,
-          onClearServerConsoleNeedsAttention: () => {},
+          onClearServerConsoleNeedsAttention: () => { },
           initialActiveTab: "serverConsole",
         } as any)}
       />,
@@ -258,9 +261,9 @@ describe.skip("AccountView - BuyCredits integration", () => {
 
     render(
       <AccountView
-        onDone={() => {}}
+        onDone={() => { }}
         serverConsoleNeedsAttention={false}
-        onClearServerConsoleNeedsAttention={() => {}}
+        onClearServerConsoleNeedsAttention={() => { }}
       />,
     );
 
@@ -268,7 +271,7 @@ describe.skip("AccountView - BuyCredits integration", () => {
       "user-123",
       expect.objectContaining({ skip: false }),
     );
-    expect(screen.getByText(/buy credits/i)).toBeInTheDocument();
+    expect(screen.getByTestId("buy-credits-btn")).toBeInTheDocument();
   });
 });
 
@@ -312,9 +315,9 @@ describe("AccountView - BuyCredits visibility", () => {
 
     render(
       <AccountView
-        onDone={() => {}}
+        onDone={() => { }}
         serverConsoleNeedsAttention={false}
-        onClearServerConsoleNeedsAttention={() => {}}
+        onClearServerConsoleNeedsAttention={() => { }}
       />,
     );
 
@@ -331,9 +334,9 @@ describe("AccountView - BuyCredits visibility", () => {
 
     render(
       <AccountView
-        onDone={() => {}}
+        onDone={() => { }}
         serverConsoleNeedsAttention={false}
-        onClearServerConsoleNeedsAttention={() => {}}
+        onClearServerConsoleNeedsAttention={() => { }}
       />,
     );
 

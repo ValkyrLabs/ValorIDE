@@ -76,6 +76,9 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 
   const handleHistorySelect = useCallback(
     (id: string) => {
+      if (!id) {
+        return;
+      }
       vscode.postMessage({ type: "showTaskWithId", text: id });
       onDone();
     },
@@ -102,7 +105,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
   }, []);
 
   const presentableTasks = useMemo(() => {
-    return taskHistory.filter((item) => item.ts && item.task);
+    return taskHistory.filter((item) => item.id && item.ts && item.task);
   }, [taskHistory]);
 
   const fuse = useMemo(() => {

@@ -19,16 +19,45 @@ const headerValue = (
   (headers as Record<string, string> | undefined)?.[name.toLowerCase()];
 
 describe("GrayMatterClient", () => {
-  it("loads RBAC-scoped GrayMatter capabilities from the live OpenAPI schema", async () => {
+  it("loads RBAC-scoped GrayMatter capabilities from the Valhalla control surface", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
       async () =>
         jsonResponse(200, {
-          paths: {
-            "/GrayMatter": {},
-            "/MemoryEntry": {},
-            "/MemoryEntry/query": {},
-            "/MemoryEntry/write": {},
-            "/SwarmOps/graph": {},
+          suite: {
+            memoryLayer: "GrayMatter",
+            name: "Valhalla",
+          },
+          memory: {
+            primitives: ["MemoryEntry", "GrayMatter", "SemanticIndexEntry"],
+          },
+          objectGraph: {
+            businessDomains: ["Project"],
+            coordinationPrimitives: ["Agent", "SwarmOps"],
+            mode: "rbac_visible_schema",
+            suitePrimitives: ["Project", "ProjectObjectLink"],
+          },
+          clients: {
+            valoride: {
+              swarmAgent: true,
+            },
+          },
+          endpoints: {
+            agent: {
+              list: "/Agent",
+            },
+            memory: {
+              query: "/MemoryEntry/query",
+              read: "/MemoryEntry/read",
+              write: "/MemoryEntry/write",
+            },
+            projects: {
+              list: "/Project",
+              objectLinks: "/ProjectObjectLink",
+            },
+            swarm: {
+              graph: "/swarm-ops/graph",
+              register: "/swarm-ops/register",
+            },
           },
         }),
     );
@@ -41,7 +70,55 @@ describe("GrayMatterClient", () => {
     const capabilities = await client.loadCapabilities();
     const [url, init] = fetchMock.mock.calls[0];
 
-    expect(url).toBe("https://api-0.valkyrlabs.com/v1/api-docs");
+    expect(url).toBe("https://api-0.valkyrlabs.com/v1/graymatter/control");
+    expect(headerValue(init?.headers, "authorization")).toBe(
+      "Bearer session-token",
+    );
+    expect(capabilities).toMatchObject({
+      agent: true,
+      grayMatter: true,
+      memoryEntry: true,
+      memoryQuery: true,
+      memoryRead: true,
+      memoryWrite: true,
+      project: true,
+      projectObjectLink: true,
+      swarmGraph: true,
+      swarmOps: true,
+    });
+  });
+
+  it("falls back to the live OpenAPI schema when the control surface is unavailable", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async (url) =>
+        url.endsWith("/graymatter/control")
+          ? jsonResponse(404, { message: "Control surface unavailable" })
+          : jsonResponse(200, {
+              paths: {
+                "/GrayMatter": {},
+                "/MemoryEntry": {},
+                "/MemoryEntry/query": {},
+                "/MemoryEntry/write": {},
+                "/Project": {},
+                "/ProjectObjectLink": {},
+                "/SwarmOps/graph": {},
+              },
+            }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api-0.valkyrlabs.com",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+    });
+
+    const capabilities = await client.loadCapabilities();
+    const [controlUrl] = fetchMock.mock.calls[0];
+    const [apiDocsUrl, init] = fetchMock.mock.calls[1];
+
+    expect(controlUrl).toBe(
+      "https://api-0.valkyrlabs.com/v1/graymatter/control",
+    );
+    expect(apiDocsUrl).toBe("https://api-0.valkyrlabs.com/v1/api-docs");
     expect(headerValue(init?.headers, "authorization")).toBe(
       "Bearer session-token",
     );
@@ -50,24 +127,30 @@ describe("GrayMatterClient", () => {
       memoryQuery: true,
       memoryRead: true,
       memoryWrite: true,
+      project: true,
+      projectObjectLink: true,
       swarmGraph: true,
     });
   });
 
   it("discovers GrayMatter, MemoryEntry, Agent, and SwarmOps paths even when OpenAPI includes the /v1 prefix", async () => {
     const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
-      async () =>
-        jsonResponse(200, {
-          paths: {
-            "/v1/Agent": {},
-            "/v1/GrayMatter/search": {},
-            "/v1/MemoryEntry/{id}": {},
-            "/v1/MemoryEntry/query": {},
-            "/v1/MemoryEntry/write": {},
-            "/v1/SwarmOps/graph": {},
-            "/v1/SwarmOps/register": {},
-          },
-        }),
+      async (url) =>
+        url.endsWith("/graymatter/control")
+          ? jsonResponse(404, { message: "Control surface unavailable" })
+          : jsonResponse(200, {
+              paths: {
+                "/v1/Agent": {},
+                "/v1/GrayMatter/search": {},
+                "/v1/MemoryEntry/{id}": {},
+                "/v1/MemoryEntry/query": {},
+                "/v1/MemoryEntry/write": {},
+                "/v1/Project": {},
+                "/v1/ProjectObjectLink": {},
+                "/v1/SwarmOps/graph": {},
+                "/v1/SwarmOps/register": {},
+              },
+            }),
     );
     const client = new GrayMatterClient({
       baseUrl: "https://api-0.valkyrlabs.com/v1",
@@ -82,6 +165,8 @@ describe("GrayMatterClient", () => {
       memoryQuery: true,
       memoryRead: true,
       memoryWrite: true,
+      project: true,
+      projectObjectLink: true,
       swarmGraph: true,
       swarmOps: true,
     });
@@ -118,6 +203,41 @@ describe("GrayMatterClient", () => {
       metadata: { source: "valoride" },
       tags: ["valoride", "graymatter"],
       type: "decision",
+    });
+  });
+
+  it("creates Project records with ValorIDE as the source surface", async () => {
+    const fetchMock = jest.fn<Promise<Response>, [string, RequestInit?]>(
+      async () =>
+        jsonResponse(201, {
+          id: "project-1",
+          name: "Generated app",
+        }),
+    );
+    const client = new GrayMatterClient({
+      baseUrl: "https://api.example.test/v1",
+      fetch: fetchMock,
+      getAuthToken: async () => "session-token",
+    });
+
+    await client.createProject({
+      currentStage: "vibe-code",
+      name: "Generated app",
+      projectType: "valoride-coding",
+      workspacePath: "/workspace/generated-app",
+    });
+
+    const [url, init] = fetchMock.mock.calls[0];
+    const body = JSON.parse(init?.body as string);
+
+    expect(url).toBe("https://api.example.test/v1/Project");
+    expect(init?.method).toBe("POST");
+    expect(body).toMatchObject({
+      currentStage: "vibe-code",
+      name: "Generated app",
+      projectType: "valoride-coding",
+      sourceSurface: "valoride",
+      workspacePath: "/workspace/generated-app",
     });
   });
 

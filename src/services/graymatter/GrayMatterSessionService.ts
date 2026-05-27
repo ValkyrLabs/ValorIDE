@@ -45,14 +45,20 @@ export const createGrayMatterSessionState = async ({
       fetch,
       getAuthToken: () => token,
     });
-    const capabilities = await client.loadCapabilities();
-    return {
+    const discovery = await client.loadDiscovery();
+    const sessionState: GrayMatterSessionState = {
       baseUrl: normalizedBaseUrl,
-      capabilities,
+      capabilities: discovery.capabilities,
       checkedAt,
       error: undefined,
       status: "ready",
     };
+
+    if (discovery.controlSurface) {
+      sessionState.controlSurface = discovery.controlSurface;
+    }
+
+    return sessionState;
   } catch (error) {
     const clientError =
       error instanceof GrayMatterClientError ? error : undefined;

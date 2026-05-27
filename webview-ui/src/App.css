@@ -82,6 +82,32 @@ button > .nav-link:active:hover {
   opacity: 1;
   pointer-events: auto;
 }
+
+.history-preview-card {
+  background: var(
+    --vscode-editorWidget-background,
+    rgba(32, 32, 32, 0.9)
+  ) !important;
+  border: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.35)) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2) !important;
+}
+
+.history-preview-card::before {
+  content: none !important;
+}
+
+.history-preview-card .card-header {
+  background: var(
+    --vscode-sideBarSectionHeader-background,
+    rgba(45, 45, 45, 0.7)
+  ) !important;
+  border-bottom: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.3)) !important;
+}
+
+.history-preview-card .card-body {
+  background: transparent !important;
+}
+
 .history-item-highlight {
   background-color: var(--vscode-editor-findMatchHighlightBackground);
   color: inherit;

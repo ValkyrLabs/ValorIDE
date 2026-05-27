@@ -115,7 +115,7 @@ describe("customBaseQuery", () => {
     );
 
     expect(headersFromFetchCall(fetchMock).get("authorization")).toBeNull();
-    expect(credentialsFromFetchCall(fetchMock)).toBe("omit");
+    expect(credentialsFromFetchCall(fetchMock)).toBe("include");
     expect(urlFromFetchCall(fetchMock)).toBe(
       "https://api.example.test/v1/auth/login",
     );
@@ -145,7 +145,7 @@ describe("customBaseQuery", () => {
     expect(urlFromFetchCall(fetchMock)).toBe(
       "https://api.example.test/v1/auth/login",
     );
-    expect(credentialsFromFetchCall(fetchMock)).toBe("omit");
+    expect(credentialsFromFetchCall(fetchMock)).toBe("include");
   });
 
   it("clears persisted auth when api-0 rejects a replaced session", async () => {

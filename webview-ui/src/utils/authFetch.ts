@@ -1,6 +1,13 @@
 import { BASE_PATH } from "@thorapi/src";
+import {
+  applyCsrfHeader,
+  CSRF_HEADER_NAME,
+  rememberCsrfToken,
+  shouldAttachCsrfToken,
+} from "./csrfToken";
 
 type HeadersLike = HeadersInit | undefined;
+export interface AuthRequestInit extends RequestInit { }
 
 const apiBasePath = BASE_PATH.replace(/\/+$/, "");
 const rootBasePath = apiBasePath.replace(/\/v1$/, "");
@@ -22,47 +29,6 @@ const resolveUrl = (input: string): string => {
   return `${apiBasePath}${input}`;
 };
 
-const attachAuthHeader = (headers: Headers) => {
-  if (!headers.has("Authorization")) {
-    const token =
-      typeof window !== "undefined" ? sessionStorage.getItem("jwtToken") : null;
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
-    }
-  }
-};
-
-const attachOrgHeader = (headers: Headers) => {
-  if (headers.has("X-Org-Id") || headers.has("X-Organization-Id")) return;
-  if (typeof window === "undefined") return;
-
-  const pickOrg = (): string | null => {
-    const direct =
-      sessionStorage.getItem("orgId") ||
-      sessionStorage.getItem("organizationId") ||
-      sessionStorage.getItem("ownerId");
-    if (direct) return direct;
-
-    const principalRaw = sessionStorage.getItem("authenticatedPrincipal");
-    if (principalRaw) {
-      try {
-        const parsed = JSON.parse(principalRaw);
-        return (
-          parsed?.organizationId || parsed?.orgId || parsed?.ownerId || null
-        );
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  };
-
-  const org = pickOrg();
-  if (org) {
-    headers.set("X-Org-Id", org);
-  }
-};
-
 const buildError = async (response: Response, url: string) => {
   let detail: string | undefined;
   try {
@@ -72,29 +38,136 @@ const buildError = async (response: Response, url: string) => {
   }
   const bodyPreview = detail ? detail.slice(0, 800) : "";
   throw new Error(
-    `Request to ${url} failed with ${response.status} ${response.statusText}${
-      bodyPreview ? ` – ${bodyPreview}` : ""
+    `Request to ${url} failed with ${response.status} ${response.statusText}${bodyPreview ? ` – ${bodyPreview}` : ""
     }`,
   );
 };
 
+const readStorageValue = (storage: Storage, key: string): string | null => {
+  try {
+    return storage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+
+const resolveOrganizationIdFromStorage = (): string | undefined => {
+  if (typeof window === "undefined") {
+    return undefined;
+  }
+
+  const directKeys = ["orgId", "organizationId"];
+  for (const key of directKeys) {
+    const fromSession = readStorageValue(window.sessionStorage, key);
+    if (fromSession) {
+      return fromSession;
+    }
+    const fromLocal = readStorageValue(window.localStorage, key);
+    if (fromLocal) {
+      return fromLocal;
+    }
+  }
+
+  const rawPrincipal = readStorageValue(
+    window.localStorage,
+    "authenticatedPrincipal",
+  );
+  if (!rawPrincipal) {
+    return undefined;
+  }
+
+  try {
+    const parsed = JSON.parse(rawPrincipal) as Record<string, any>;
+    const value =
+      parsed?.organizationId ?? parsed?.orgId ?? parsed?.organization?.id;
+    return value ? String(value) : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+const applyAuthHeaders = (headers: Headers): Headers => {
+  const orgId = resolveOrganizationIdFromStorage();
+  if (orgId) {
+    if (!headers.has("X-Org-Id")) {
+      headers.set("X-Org-Id", orgId);
+    }
+    if (!headers.has("X-OrganizationId")) {
+      headers.set("X-OrganizationId", orgId);
+    }
+    if (!headers.has("X-OrgId")) {
+      headers.set("X-OrgId", orgId);
+    }
+  }
+  return headers;
+};
+
+export const refreshCsrfToken = async (): Promise<string | undefined> => {
+  try {
+    const response = await fetch(resolveUrl("/auth/csrf"), {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        Accept: "application/json",
+      },
+    });
+    if (!response.ok) {
+      return undefined;
+    }
+
+    let token =
+      response.headers.get(CSRF_HEADER_NAME) ||
+      response.headers.get("X-CSRF-TOKEN");
+    if (!token) {
+      try {
+        const body = (await response.json()) as { token?: string };
+        token = body.token;
+      } catch {
+        token = undefined;
+      }
+    }
+    rememberCsrfToken(token);
+    return token || undefined;
+  } catch {
+    return undefined;
+  }
+};
+
 export const authFetch = async (
   input: string,
-  init: RequestInit = {},
+  init: AuthRequestInit = {},
 ): Promise<Response> => {
-  const headers = toHeaders(init.headers);
-  attachAuthHeader(headers);
-  attachOrgHeader(headers);
+  const callerHeaders = toHeaders(init.headers);
+  const callerProvidedCsrf = callerHeaders.has(CSRF_HEADER_NAME);
   const url = resolveUrl(input);
-  return fetch(url, {
-    ...init,
-    headers,
-  });
+
+  const buildInit = (): RequestInit => {
+    const headers = applyAuthHeaders(toHeaders(init.headers));
+    applyCsrfHeader(headers, init.method);
+    return {
+      ...init,
+      headers,
+      credentials: init.credentials ?? "include",
+    };
+  };
+
+  const response = await fetch(url, buildInit());
+  if (
+    response.status === 403 &&
+    shouldAttachCsrfToken(init.method) &&
+    !callerProvidedCsrf
+  ) {
+    const refreshed = await refreshCsrfToken();
+    if (refreshed) {
+      return fetch(url, buildInit());
+    }
+  }
+  return response;
 };
 
 export const authJsonFetch = async <T>(
   input: string,
-  init: RequestInit = {},
+  init: AuthRequestInit = {},
 ): Promise<T> => {
   const headers = toHeaders(init.headers);
   if (!(init.body instanceof FormData)) {

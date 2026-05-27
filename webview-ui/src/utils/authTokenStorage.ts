@@ -1,3 +1,5 @@
+import { clearRememberedCsrfToken } from "./csrfToken";
+
 const readStorage = (
   storage: Storage | undefined,
   key: string,
@@ -150,6 +152,7 @@ export const clearReadableAuthCookies = (): void => {
 export const clearBrowserAuthStorage = (
   options: ClearBrowserAuthStorageOptions = {},
 ): void => {
+  clearRememberedCsrfToken();
   const { localStorage, sessionStorage } = getStorageScope();
   clearStorage(sessionStorage, options.preserveSessionKeys);
   clearStorage(localStorage);

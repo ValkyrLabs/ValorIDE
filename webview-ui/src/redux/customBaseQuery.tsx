@@ -7,6 +7,9 @@ import type {
 } from "@reduxjs/toolkit/query";
 import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 import { clearStoredAuthSession } from "@thorapi/utils/accessControl";
+import { applyCsrfHeader, shouldAttachCsrfToken } from "@thorapi/utils/csrfToken";
+import { getStoredJwtToken } from "@thorapi/utils/authTokenStorage";
+import { refreshCsrfToken } from "@thorapi/utils/authFetch";
 
 const getRequestPath = (arg: unknown): string => {
   const url = typeof arg === "string" ? arg : (arg as { url?: string })?.url;
@@ -54,30 +57,42 @@ const buildBaseQuery = () =>
     baseUrl: getValkyraiHost(),
     credentials: "include",
     prepareHeaders: (headers, { arg }) => {
-      const token = sessionStorage.getItem("jwtToken");
+      const token = getStoredJwtToken();
       if (token && !isLoginRequest(arg)) {
-        headers.set("authorization", `Bearer ${token}`);
+        headers.set("Authorization", `Bearer ${token}`);
+        headers.set("jwtSession", token);
       }
-      return headers;
+
+      const method = typeof arg === "string" ? undefined : arg?.method;
+      return applyCsrfHeader(headers, method);
     },
   });
-
-const omitCredentials = (args: string | FetchArgs): FetchArgs =>
-  typeof args === "string"
-    ? { url: args, credentials: "omit" }
-    : { ...args, credentials: "omit" };
 
 const customBaseQuery: BaseQueryFn = async (args, api, extraOptions) => {
   const isLogin = isLoginRequest(args);
   if (isLogin) {
     clearStoredAuthSession("pre-login");
   }
+
   const baseQuery = buildBaseQuery();
-  const result = await baseQuery(
-    isLogin ? omitCredentials(args as string | FetchArgs) : args,
-    api,
-    extraOptions,
-  );
+  let result = await baseQuery(args, api, extraOptions);
+
+  if (
+    result.error &&
+    typeof result.error === "object" &&
+    "status" in result.error &&
+    (result.error as any).status === 403
+  ) {
+    const method =
+      typeof args === "string" ? undefined : (args as FetchArgs).method;
+    if (shouldAttachCsrfToken(method)) {
+      const refreshed = await refreshCsrfToken();
+      if (refreshed) {
+        result = await baseQuery(args, api, extraOptions);
+      }
+    }
+  }
+
   if (isExpiredSessionError(result.error)) {
     clearStoredAuthSession("api-auth-error");
   }

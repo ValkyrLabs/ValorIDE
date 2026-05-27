@@ -1,7 +1,14 @@
 import { normalizeValkyraiHost } from "@utils/serverValkyraiHost";
+import type {
+  GrayMatterCapabilities,
+  GrayMatterControlSurface,
+} from "@shared/GrayMatterSession";
+
+export type { GrayMatterCapabilities, GrayMatterControlSurface };
 
 export type GrayMatterMemoryType =
   | "artifact"
+  | "configuration"
   | "context"
   | "decision"
   | "preference"
@@ -12,17 +19,6 @@ export type GrayMatterErrorKind =
   | "quota"
   | "unauthenticated"
   | "unavailable";
-
-export interface GrayMatterCapabilities {
-  agent: boolean;
-  grayMatter: boolean;
-  memoryEntry: boolean;
-  memoryQuery: boolean;
-  memoryRead: boolean;
-  memoryWrite: boolean;
-  swarmOps: boolean;
-  swarmGraph: boolean;
-}
 
 export interface GrayMatterClientOptions {
   baseUrl: string;
@@ -42,11 +38,29 @@ export interface GrayMatterMemoryQuery {
   query: string;
 }
 
+export interface GrayMatterProjectInput {
+  currentStage?: string;
+  description?: string;
+  name?: string;
+  notes?: string;
+  progressPercent?: number;
+  projectType?: string;
+  repositoryUrl?: string;
+  sourceSurface?: string;
+  status?: string;
+  workspacePath?: string;
+}
+
 type FetchLike = (url: string, init?: RequestInit) => Promise<Response>;
 type HeaderRecord = Record<string, string>;
 
 interface OpenApiLike {
   paths?: Record<string, unknown>;
+}
+
+export interface GrayMatterDiscovery {
+  capabilities: GrayMatterCapabilities;
+  controlSurface?: GrayMatterControlSurface;
 }
 
 export class GrayMatterClientError extends Error {
@@ -69,7 +83,34 @@ export class GrayMatterClient {
     this.fetchImpl = options.fetch ?? globalThis.fetch.bind(globalThis);
   }
 
+  async loadDiscovery(): Promise<GrayMatterDiscovery> {
+    try {
+      const controlSurface = await this.loadControlSurface();
+      return {
+        capabilities: capabilitiesFromControlSurface(controlSurface),
+        controlSurface,
+      };
+    } catch (error) {
+      if (!(error instanceof GrayMatterClientError) || error.status !== 404) {
+        throw error;
+      }
+    }
+
+    return {
+      capabilities: await this.loadCapabilitiesFromOpenApi(),
+    };
+  }
+
   async loadCapabilities(): Promise<GrayMatterCapabilities> {
+    const discovery = await this.loadDiscovery();
+    return discovery.capabilities;
+  }
+
+  async loadControlSurface(): Promise<GrayMatterControlSurface> {
+    return this.request<GrayMatterControlSurface>("/graymatter/control");
+  }
+
+  private async loadCapabilitiesFromOpenApi(): Promise<GrayMatterCapabilities> {
     const openApi = await this.request<OpenApiLike>("/api-docs");
     const paths = Object.keys(openApi.paths ?? {}).map(normalizeOpenApiPath);
     const hasResource = (resource: string) => {
@@ -97,6 +138,8 @@ export class GrayMatterClient {
         hasResource("MemoryEntry") || hasOperation("MemoryEntry", "read"),
       memoryWrite:
         hasResourceRoot("MemoryEntry") || hasOperation("MemoryEntry", "write"),
+      project: hasResource("Project"),
+      projectObjectLink: hasResource("ProjectObjectLink"),
       swarmGraph: hasOperation("SwarmOps", "graph"),
       swarmOps: hasResource("SwarmOps"),
     };
@@ -124,6 +167,33 @@ export class GrayMatterClient {
     return this.request("/MemoryEntry", {
       body: JSON.stringify(input),
       method: "POST",
+    });
+  }
+
+  async listProjects(): Promise<unknown> {
+    return this.request("/Project");
+  }
+
+  async createProject(input: GrayMatterProjectInput): Promise<unknown> {
+    return this.request("/Project", {
+      body: JSON.stringify({
+        sourceSurface: "valoride",
+        ...input,
+      }),
+      method: "POST",
+    });
+  }
+
+  async updateProject(
+    id: string,
+    input: GrayMatterProjectInput,
+  ): Promise<unknown> {
+    return this.request(`/Project/${encodeURIComponent(id)}`, {
+      body: JSON.stringify({
+        sourceSurface: "valoride",
+        ...input,
+      }),
+      method: "PUT",
     });
   }
 
@@ -257,6 +327,55 @@ const getHeaderValue = (headers: Response["headers"], name: string) => {
   }
 
   return anyHeaders[name.toLowerCase()] ?? anyHeaders[name];
+};
+
+const capabilitiesFromControlSurface = (
+  controlSurface: GrayMatterControlSurface,
+): GrayMatterCapabilities => {
+  const memoryEndpoints = controlSurface.endpoints?.memory ?? {};
+  const swarmEndpoints = controlSurface.endpoints?.swarm ?? {};
+  const agentEndpoints = controlSurface.endpoints?.agent ?? {};
+  const memoryPrimitives = new Set(
+    controlSurface.memory?.primitives?.map((value) => value.toLowerCase()) ??
+      [],
+  );
+  const graphPrimitives = new Set(
+    [
+      ...(controlSurface.objectGraph?.memoryPrimitives ?? []),
+      ...(controlSurface.objectGraph?.coordinationPrimitives ?? []),
+      ...(controlSurface.objectGraph?.businessDomains ?? []),
+    ].map((value) => value.toLowerCase()),
+  );
+  const valorideProfile = controlSurface.clients?.valoride;
+
+  return {
+    agent:
+      Boolean(agentEndpoints.list || agentEndpoints.activate) ||
+      graphPrimitives.has("agent"),
+    grayMatter:
+      controlSurface.suite?.memoryLayer?.toLowerCase() === "graymatter" ||
+      memoryPrimitives.has("graymatter"),
+    memoryEntry: memoryPrimitives.has("memoryentry"),
+    memoryQuery: Boolean(memoryEndpoints.query),
+    memoryRead: Boolean(memoryEndpoints.read || memoryEndpoints.query),
+    memoryWrite: Boolean(memoryEndpoints.write),
+    project:
+      graphPrimitives.has("project") ||
+      Boolean(controlSurface.endpoints?.projects?.list),
+    projectObjectLink:
+      graphPrimitives.has("projectobjectlink") ||
+      Boolean(controlSurface.endpoints?.projects?.objectLinks),
+    swarmGraph: Boolean(
+      swarmEndpoints.graph ||
+        controlSurface.swarm?.graphEndpoint ||
+        valorideProfile?.endpoints?.swarmGraph,
+    ),
+    swarmOps: Boolean(
+      swarmEndpoints.register ||
+        controlSurface.swarm?.registrationEndpoint ||
+        valorideProfile?.swarmAgent,
+    ),
+  };
 };
 
 const normalizeOpenApiPath = (value: string) => {

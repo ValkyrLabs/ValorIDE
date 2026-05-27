@@ -554,10 +554,10 @@ export class Controller {
         await this.setUserInfo(
           message.user
             ? {
-                username: message.user.name || null,
-                email: null, // Replace with actual email if available
-                avatarUrl: null, // Replace with actual avatar URL if available
-              }
+              username: message.user.name || null,
+              email: null, // Replace with actual email if available
+              avatarUrl: null, // Replace with actual avatar URL if available
+            }
             : undefined,
         );
         await this.postStateToWebview();
@@ -791,7 +791,7 @@ export class Controller {
         }
         break;
       case "showTaskWithId":
-        this.showTaskWithId(message.text!);
+        await this.showTaskWithId(message.text || "");
         break;
       case "deleteTaskWithId":
         this.deleteTaskWithId(message.text!);
@@ -2037,10 +2037,9 @@ export class Controller {
               );
             } catch (extractionError) {
               throw new Error(
-                `Failed to extract archive: ${
-                  extractionError instanceof Error
-                    ? extractionError.message
-                    : String(extractionError)
+                `Failed to extract archive: ${extractionError instanceof Error
+                  ? extractionError.message
+                  : String(extractionError)
                 }`,
               );
             }
@@ -2055,10 +2054,9 @@ export class Controller {
 
             await fs.unlink(filePath).catch((unlinkError) => {
               console.warn(
-                `Failed to delete archive ${filePath}: ${
-                  unlinkError instanceof Error
-                    ? unlinkError.message
-                    : String(unlinkError)
+                `Failed to delete archive ${filePath}: ${unlinkError instanceof Error
+                  ? unlinkError.message
+                  : String(unlinkError)
                 }`,
               );
             });
@@ -2673,14 +2671,71 @@ export class Controller {
         headers["authorization"] = `Bearer ${token}`;
       }
 
-      // Fetch server details from marketplace API using the correct endpoint
-      const response = await axios.get<any>(
-        `${getValkyraiBasePath()}/mcp/services/${encodeURIComponent(mcpId)}`,
-        {
-          headers,
-          timeout: 10000,
-        },
-      );
+      const getServiceByIdentifier = async (identifier: string) =>
+        axios.get<any>(
+          `${getValkyraiBasePath()}/mcp/services/${encodeURIComponent(identifier)}`,
+          {
+            headers,
+            timeout: 10000,
+          },
+        );
+
+      let response: any;
+      let resolvedServiceId = mcpId;
+
+      try {
+        response = await getServiceByIdentifier(resolvedServiceId);
+      } catch (initialError) {
+        const isNotFound =
+          axios.isAxiosError(initialError) &&
+          initialError.response?.status === 404;
+
+        if (!isNotFound) {
+          throw initialError;
+        }
+
+        // Fallback: resolve marketplace item IDs to a concrete service identifier
+        // (slug, id, or name) then retry /mcp/services/{slug}.
+        const serviceListResponse = await axios.get<any>(
+          `${getValkyraiBasePath()}/mcp/services`,
+          {
+            headers,
+            timeout: 10000,
+          },
+        );
+
+        const services = Array.isArray(serviceListResponse.data)
+          ? serviceListResponse.data
+          : [];
+        const target = String(mcpId).trim().toLowerCase();
+
+        const matchedService = services.find((service: any) => {
+          const candidates = [
+            service?.slug,
+            service?.id,
+            service?.mcpServerId,
+            service?.name,
+            service?.displayName,
+          ]
+            .filter((value) => value !== undefined && value !== null)
+            .map((value) => String(value).trim().toLowerCase());
+
+          return candidates.includes(target);
+        });
+
+        const fallbackIdentifier =
+          matchedService?.slug ||
+          matchedService?.id ||
+          matchedService?.mcpServerId ||
+          matchedService?.name;
+
+        if (!fallbackIdentifier) {
+          throw initialError;
+        }
+
+        resolvedServiceId = String(fallbackIdentifier);
+        response = await getServiceByIdentifier(resolvedServiceId);
+      }
 
       if (!response.data) {
         throw new Error("Invalid response from MCP marketplace API");
@@ -2689,6 +2744,8 @@ export class Controller {
       console.log("[downloadMcp] Response from MCP services API", { response });
 
       const mcpService = response.data;
+      const normalizedMcpId =
+        mcpService.slug || mcpService.id || mcpService.mcpServerId || mcpId;
 
       // Validate required fields
       if (!mcpService.apiBaseUrl && !mcpService.manifestUrl) {
@@ -2697,11 +2754,15 @@ export class Controller {
 
       // Construct the download details response from the service registry
       const mcpDetails: McpDownloadResponse = {
-        mcpId: mcpId,
-        name: mcpService.displayName || mcpService.slug || mcpId,
+        mcpId: String(normalizedMcpId),
+        name:
+          mcpService.displayName ||
+          mcpService.name ||
+          mcpService.slug ||
+          String(normalizedMcpId),
         author: mcpService.author || "Unknown",
         description: mcpService.description || "",
-        githubUrl: "", // Will be populated from manifest or service details
+        githubUrl: mcpService.githubUrl || mcpService.repoUrl || "",
         llmsInstallationContent: "",
         readmeContent: "", // Will be populated from manifest or README
         requiresApiKey: false,
@@ -3395,11 +3456,31 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
   }
 
   async showTaskWithId(id: string) {
-    if (id !== this.task?.taskId) {
-      // non-current task
-      const { historyItem } = await this.getTaskWithId(id);
-      await this.initTask(undefined, undefined, historyItem); // clears existing task
+    if (!id) {
+      await this.postMessageToWebview({
+        type: "action",
+        action: "chatButtonClicked",
+      });
+      return;
     }
+
+    if (id !== this.task?.taskId) {
+      try {
+        // non-current task
+        const { historyItem } = await this.getTaskWithId(id);
+        await this.initTask(undefined, undefined, historyItem); // clears existing task
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : "Task history item unavailable";
+        console.warn(`showTaskWithId failed for ${id}:`, error);
+        await this.postStateToWebview();
+        void vscode.window.showWarningMessage(
+          `Could not open that task: ${message}`,
+        );
+        return;
+      }
+    }
+
     await this.postMessageToWebview({
       type: "action",
       action: "chatButtonClicked",
@@ -3837,18 +3918,16 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
           }
         } catch (subdirError) {
           console.warn(
-            `findReadmeFile: unable to scan ${subdir}: ${
-              subdirError instanceof Error
-                ? subdirError.message
-                : String(subdirError)
+            `findReadmeFile: unable to scan ${subdir}: ${subdirError instanceof Error
+              ? subdirError.message
+              : String(subdirError)
             }`,
           );
         }
       }
     } catch (error) {
       console.warn(
-        `findReadmeFile: unable to scan ${directory}: ${
-          error instanceof Error ? error.message : String(error)
+        `findReadmeFile: unable to scan ${directory}: ${error instanceof Error ? error.message : String(error)
         }`,
       );
     }

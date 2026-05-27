@@ -138,7 +138,12 @@ export function convertThorMcpMarketplaceItemToShared(thorItem) {
   }
   try {
     return {
-      mcpId: thorItem.id || "",
+      mcpId:
+        thorItem.mcpServerId ||
+        thorItem.slug ||
+        thorItem.id ||
+        thorItem.name ||
+        "",
       githubUrl: thorItem.githubUrl || "",
       name: thorItem.name || "Unknown Item",
       author: thorItem.author || "Unknown Author",

@@ -44,7 +44,7 @@ import SystemAlerts from "@thorapi/components/SystemAlerts";
 import LoadingSpinner from "@thorapi/components/LoadingSpinner";
 import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
 import UserPreferences from "./UserPreferences";
-import BuyCredits from "@thorapi/components/BuyCredits";
+// import BuyCredits from "@thorapi/components/BuyCredits";
 import {
   storeJwtToken,
   useAccessControl,
@@ -58,12 +58,12 @@ type AccountViewProps = {
   onDone: () => void;
   serverConsoleNeedsAttention: boolean;
   initialActiveTab?:
-    | "login"
-    | "account"
-    | "applications"
-    | "generatedFiles"
-    | "userPreferences"
-    | "serverConsole";
+  | "login"
+  | "account"
+  | "applications"
+  | "generatedFiles"
+  | "userPreferences"
+  | "serverConsole";
   onConsumeInitialActiveTab?: () => void;
   onClearServerConsoleNeedsAttention: () => void;
   creditIntent?: CreditIntent;
@@ -343,7 +343,7 @@ const AccountView = ({
       <SystemAlerts />
 
       {peers.length > 0 && (
-        <div className="border border-solid border-(--vscode-panel-border) rounded-md p-[10px] mb-3 bg-[var(--vscode-panel-background)] text-[var(--vscode-foreground)]">
+        <div className="border border-solid border-(--vscode-panel-border) rounded-md p-2.5 mb-3 bg-(--vscode-panel-background) text-(--vscode-foreground)">
           <div className="mb-2 font-semibold">Active instances</div>
           <div className="flex flex-wrap gap-2">
             {peers.map((id) => (
@@ -484,7 +484,7 @@ const AccountView = ({
         </div>
       ) : activeTab === "userPreferences" ? (
         <div className="h-full flex flex-col pr-3 overflow-y-auto">
-          <div className="flex-grow flex flex-col min-h-0">
+          <div className="grow flex flex-col min-h-0">
             <h3 style={{ marginBottom: "16px" }}>User Preferences</h3>
             <UserPreferences />
           </div>
@@ -560,7 +560,7 @@ const AccountView = ({
                 )}
               </div>
 
-              <div className="w-full">
+              <div className="w-full flex flex-col items-center">
                 {creditIntent && (
                   <div
                     data-testid="credit-intent-panel"
@@ -596,18 +596,19 @@ const AccountView = ({
                     )}
                   </div>
                 )}
-                <BuyCredits
-                  authenticatedPrincipal={
-                    resolvedPrincipal || authenticatedUser || userInfo
-                  }
-                  onPurchaseSuccess={async () => {
-                    await refetchBalance();
-                    refetchUsage();
-                    refetchPayments();
-                    onClearCreditIntent?.();
+                <VSCodeButton
+                  appearance="primary"
+                  className="w-full mt-2"
+                  onClick={() => {
+                    vscode.postMessage({
+                      type: "openInBrowser",
+                      url: "https://valkyrlabs.com/buy-credits",
+                    });
                   }}
-                  className="w-full"
-                />
+                  data-testid="buy-credits-btn"
+                >
+                  Buy Credits
+                </VSCodeButton>
               </div>
             </div>
 

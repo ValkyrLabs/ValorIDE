@@ -14,6 +14,8 @@ export interface GrayMatterCapabilities {
   memoryQuery: boolean;
   memoryRead: boolean;
   memoryWrite: boolean;
+  project: boolean;
+  projectObjectLink: boolean;
   swarmGraph: boolean;
   swarmOps: boolean;
 }
@@ -22,6 +24,7 @@ export interface GrayMatterSessionState {
   baseUrl: string;
   capabilities: GrayMatterCapabilities;
   checkedAt: string;
+  controlSurface?: GrayMatterControlSurface;
   error?: string;
   status: GrayMatterSessionStatus;
 }
@@ -33,6 +36,70 @@ export const defaultGrayMatterCapabilities: GrayMatterCapabilities = {
   memoryQuery: false,
   memoryRead: false,
   memoryWrite: false,
+  project: false,
+  projectObjectLink: false,
   swarmGraph: false,
   swarmOps: false,
 };
+
+export interface GrayMatterControlSurface {
+  clients?: Record<string, GrayMatterClientProfile>;
+  endpoints?: Record<string, Record<string, string>>;
+  generatedAt?: string;
+  memory?: {
+    adminActions?: string[];
+    entryTypes?: string[];
+    excludedPrimitives?: string[];
+    policy?: string;
+    primitives?: string[];
+  };
+  objectGraph?: {
+    agenticInterfaces?: string[];
+    businessDomains?: string[];
+    coordinationPrimitives?: string[];
+    externalAgentFamilies?: string[];
+    memoryPrimitives?: string[];
+    mode?: string;
+    relationshipPolicy?: string;
+    schemaEndpoint?: string;
+    source?: string;
+    suitePrimitives?: string[];
+  };
+  principalId?: string;
+  semantic?: {
+    activeProvider?: string;
+    activeRows?: number;
+    qualityState?: string;
+    recommendedAction?: string;
+    reindexRecommended?: boolean;
+    staleRows?: number;
+  };
+  suite?: {
+    agenticChat?: string;
+    agenticIde?: string;
+    backend?: string;
+    gridProducts?: string[];
+    memoryLayer?: string;
+    name?: string;
+    productSurfaces?: string[];
+  };
+  swarm?: {
+    coordinationOnly?: boolean;
+    graphEndpoint?: string;
+    policy?: string;
+    registrationEndpoint?: string;
+    supportedAgentFamilies?: string[];
+  };
+}
+
+export interface GrayMatterClientProfile {
+  agenticWorkInterface?: boolean;
+  appGenerationClient?: boolean;
+  displayName?: string;
+  endpoints?: Record<string, string>;
+  grayMatterClient?: boolean;
+  role?: string;
+  suiteProducts?: string[];
+  swarmAgent?: boolean;
+  workCapabilities?: string[];
+}

@@ -55,7 +55,9 @@ export const setValkyraiHost = (value) => {
 };
 export const subscribeToValkyraiHost = (listener) => {
   listeners.add(listener);
-  return () => listeners.delete(listener);
+  return () => {
+    listeners.delete(listener);
+  };
 };
 export const deriveWsUrlFromHost = (host) => {
   if (!host) {

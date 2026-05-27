@@ -18,7 +18,8 @@ Template file: typescript-redux-query/customBaseQuery.mustache
   Cookie transport is default; bearer header fallback is opt-in.
 */
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { applyCsrfHeader } from "../../utils/csrfToken";
+import { applyCsrfHeader, shouldAttachCsrfToken } from "../../utils/csrfToken";
+import { refreshCsrfToken } from "../../utils/authFetch";
 import { getStoredJwtToken } from "../../utils/authTokenStorage";
 import { BASE_PATH } from "../src";
 
@@ -42,7 +43,7 @@ const isBearerFallbackEnabled = (): boolean => {
   }
 };
 
-const customBaseQuery = fetchBaseQuery({
+const rawBaseQuery = fetchBaseQuery({
   baseUrl: BASE_PATH, // Replace with your base URL
   credentials: "include",
   prepareHeaders: (headers, { arg }) => {
@@ -66,5 +67,27 @@ const customBaseQuery = fetchBaseQuery({
     return applyCsrfHeader(headers, method);
   },
 });
+
+const customBaseQuery = async (args: any, api: any, extraOptions: any) => {
+  let result = await rawBaseQuery(args, api, extraOptions);
+
+  // On 403 for mutating requests, the CSRF token may be stale (common in
+  // cross-subdomain deployments where JS cannot read the API-domain cookie).
+  // Refresh the token via /auth/csrf and retry exactly once.
+  if (result.error && typeof result.error === "object" && "status" in result.error) {
+    const status = (result.error as any).status;
+    if (status === 403) {
+      const method = typeof args === "string" ? undefined : args?.method;
+      if (shouldAttachCsrfToken(method)) {
+        const refreshed = await refreshCsrfToken();
+        if (refreshed) {
+          result = await rawBaseQuery(args, api, extraOptions);
+        }
+      }
+    }
+  }
+
+  return result;
+};
 
 export default customBaseQuery;

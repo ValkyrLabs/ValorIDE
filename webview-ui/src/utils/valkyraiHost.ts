@@ -78,7 +78,9 @@ export const setValkyraiHost = (value?: string) => {
 
 export const subscribeToValkyraiHost = (listener: HostListener) => {
   listeners.add(listener);
-  return () => listeners.delete(listener);
+  return () => {
+    listeners.delete(listener);
+  };
 };
 
 export const deriveWsUrlFromHost = (host?: string): string | undefined => {

@@ -14,6 +14,9 @@ type HistoryPreviewProps = {
 const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
   const { taskHistory } = useExtensionState();
   const handleHistorySelect = (id: string) => {
+    if (!id) {
+      return;
+    }
     vscode.postMessage({ type: "showTaskWithId", text: id });
   };
 
@@ -64,13 +67,13 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
 
       <div style={{ padding: "1em" }}>
         {taskHistory
-          .filter((item) => item.ts && item.task)
+          .filter((item) => item.id && item.ts && item.task)
           .slice(0, 3)
           .map((item) => (
             <Card
+              className="history-preview-item history-preview-card"
               style={{ cursor: "pointer", maxHeight: "8em", margin: "1em" }}
               key={item.id}
-              /*className="history-preview-item"*/
               onClick={() => handleHistorySelect(item.id)}
             >
               <Card.Header

@@ -22,4 +22,49 @@ describe("ValorIDEMothershipIntegration", () => {
     // Should not throw
     await expect(integration.sendChatAction(action)).resolves.toBeUndefined();
   });
+
+  it("does not queue api_data actions while disconnected", async () => {
+    const fakeMothership: any = {
+      on: vi.fn(),
+      off: vi.fn(),
+      isConnected: () => false,
+      getInstanceId: () => "test-instance",
+      sendMessage: vi.fn(() => true),
+      sendRemoteCommand: vi.fn(),
+    };
+
+    const integration = new ValorIDEMothershipIntegration(fakeMothership);
+
+    await integration.sendChatAction({
+      type: "api_data",
+      metadata: { source: "stream" },
+    } as any);
+
+    expect((integration as any).actionQueue).toHaveLength(0);
+  });
+
+  it("caps queued actions while disconnected", async () => {
+    const fakeMothership: any = {
+      on: vi.fn(),
+      off: vi.fn(),
+      isConnected: () => false,
+      getInstanceId: () => "test-instance",
+      sendMessage: vi.fn(() => true),
+      sendRemoteCommand: vi.fn(),
+    };
+
+    const integration = new ValorIDEMothershipIntegration(fakeMothership);
+
+    for (let i = 0; i < 250; i++) {
+      await integration.sendChatAction({
+        type: "chat_message",
+        content: `msg-${i}`,
+      } as any);
+    }
+
+    const queue = (integration as any).actionQueue as Array<{ content?: string }>;
+    expect(queue).toHaveLength(200);
+    expect(queue[0]?.content).toBe("msg-50");
+    expect(queue[199]?.content).toBe("msg-249");
+  });
 });
