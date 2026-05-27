@@ -1,3 +1,72 @@
+# Version control, editor state, and local ValorIDE workspace artifacts
+.git/
+.gitignore
+.github/
+.husky/
+.vscode/
+.DS_Store
+.valoride/
+.worktrees/
+**/.worktrees/**
+ValorIDE_docs/
+
+# Source, tests, docs, samples, and development-only config
+src/
+test/
+tests/
+__tests__/
+docs/
+evals/
+samples/
+templates/
+system-prompts-and-models-of-ai-tools/
+*.ts
+*.tsx
+*.jsx
+*.test.*
+*.spec.*
+tsconfig.json
+tsconfig.*.json
+esbuild.js
+vite.config.*
+eslint.config.*
+jest.config.*
+*.md
+*.markdown
+
+# Dependency trees and package manager state must not ship raw in the VSIX.
+node_modules/
+**/node_modules/**
+packages/*/node_modules/**
+webview-ui/node_modules/**
+*.lock
+package-lock.json
+pnpm-lock.yaml
+
+# Build caches, duplicate webview output, previous packages, and logs
+**/.cache/**
+**/.turbo/**
+**/.vite/**
+**/coverage/**
+webview-ui/build/**
+*.vsix
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Source maps and native dev-tool binaries inflate release packages and are not runtime assets.
+**/*.map
+**/@swc/core-*/**
+**/@esbuild/*/**
+
+# Runtime release surface: bundled extension, bundled webview, metadata, and static assets.
+!dist/**
+!assets/**
+!package.json
+!README.md
+!LICENSE
 # Keep the VSIX as small as possible: exclude everything, then allowlist only runtime artifacts.
 **
 

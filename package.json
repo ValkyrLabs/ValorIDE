@@ -570,7 +570,10 @@
     "publish:marketplace:prerelease": "NODE_OPTIONS= vsce publish --pre-release --no-yarn --no-dependencies && ovsx publish --pre-release",
     "prepare": "husky",
     "changeset": "changeset",
-    "version-packages": "changeset version"
+    "version-packages": "changeset version",
+    "package:audit": "node scripts/audit-vsix-package.mjs",
+    "test:package-audit": "node --test scripts/audit-vsix-package.test.mjs",
+    "package:vsix": "npm run package && npx --yes @vscode/vsce package --no-yarn --no-dependencies && npm run package:audit"
   },
   "devDependencies": {
     "@ant-design/icons": "6.1.0",
