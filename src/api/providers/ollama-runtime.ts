@@ -6,6 +6,8 @@ import {
 import { ApiStream } from "../transform/stream";
 
 const NANOSECONDS_PER_MILLISECOND = 1_000_000;
+const DEFAULT_OLLAMA_REQUEST_TIMEOUT_MS = 10 * 60 * 1000;
+const MAX_OLLAMA_REQUEST_TIMEOUT_MS = 60 * 60 * 1000;
 
 export interface OllamaStreamMetadata {
   modelId: string;
@@ -18,6 +20,15 @@ function parsePositiveInteger(value?: string | number): number | undefined {
   }
   const parsed = typeof value === "number" ? value : Number.parseInt(value, 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
+}
+
+export function resolveOllamaRequestTimeoutMs(
+  timeout?: string | number,
+): number {
+  const parsed = parsePositiveInteger(timeout);
+  return parsed
+    ? Math.min(parsed, MAX_OLLAMA_REQUEST_TIMEOUT_MS)
+    : DEFAULT_OLLAMA_REQUEST_TIMEOUT_MS;
 }
 
 export function getOllamaModelInfo(

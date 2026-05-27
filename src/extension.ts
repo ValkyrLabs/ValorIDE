@@ -18,6 +18,7 @@ import { StartupAuthService } from "./services/auth/StartupAuthService";
 import { initializePromptService } from "./services/promptService";
 import { initializeMemoryBankLoader } from "./services/memoryBankLoader";
 import { initializeLLMContextInjector } from "./services/llmContextInjector";
+import { GrayMatterContextProvider } from "./services/graymatter/GrayMatterContextProvider";
 import { initializeSwarmOrchestrator } from "./services/swarmOrchestrator";
 import { initializeThorAPIGeneratorService } from "./services/thorapiGeneratorService";
 import { initializeToolRankingEngine } from "./services/toolRankingEngine";
@@ -31,6 +32,10 @@ import {
   SelectedPrompt,
 } from "./services/llmPromptService";
 import { getAllExtensionState } from "./core/storage/state";
+import {
+  refreshGrayMatterStatus,
+  registerGrayMatterCommands,
+} from "./commands/graymatter/graymatterCommands";
 import { SelectedLlmDetails } from "@shared/llm";
 
 /*
@@ -108,7 +113,10 @@ export function activate(context: vscode.ExtensionContext) {
   })();
 
   // Initialize LLMContextInjector (synthesize all prompt layers)
-  void initializeLLMContextInjector(outputChannel)
+  void initializeLLMContextInjector(
+    outputChannel,
+    new GrayMatterContextProvider(outputChannel),
+  )
     .then(() => {
       Logger.log("LLMContextInjector initialized successfully");
     })
@@ -147,6 +155,10 @@ export function activate(context: vscode.ExtensionContext) {
   // Initialize StatusBarService (Token tracking & status display)
   initializeStatusBarService(context);
   Logger.log("StatusBarService initialized successfully");
+  registerGrayMatterCommands(context);
+  void refreshGrayMatterStatus(context).catch((error) => {
+    Logger.log(`GrayMatter status refresh failed: ${error}`);
+  });
 
   // Register the webview view provider FIRST
   const sidebarWebview = new WebviewProvider(context, outputChannel);

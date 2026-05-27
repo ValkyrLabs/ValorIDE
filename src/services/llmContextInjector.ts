@@ -2,6 +2,10 @@ import * as vscode from "vscode";
 import { PromptService, getPromptService } from "./promptService";
 import { MemoryBankLoader, getMemoryBankLoader } from "./memoryBankLoader";
 import { LLMPromptService, getLLMPromptService } from "./llmPromptService";
+import {
+  GrayMatterContextConfig,
+  GrayMatterContextProvider,
+} from "./graymatter/GrayMatterContextProvider";
 
 /**
  * LLMContextInjector — Synthesizes all prompt configs into unified LLM system context
@@ -11,6 +15,7 @@ import { LLMPromptService, getLLMPromptService } from "./llmPromptService";
  * 2. ThorAPI catalog (services, models, RBAC)
  * 3. Swarm rules (Supervisor + Workers, coordination)
  * 4. Memory bank (projectContext, activeContext, systemPatterns, progress)
+ * 4.5. GrayMatter memories (RBAC-scoped project/org/user context)
  * 5. LLMDetails override (if selected via UI dropdown)
  *
  * Output: Single unified system prompt ready for LLM API call
@@ -21,6 +26,9 @@ export interface InjectionConfig {
   includeThorAPICatalog: boolean;
   includeSwarmRules: boolean;
   includeMemoryBank: boolean;
+  grayMatter?: Omit<GrayMatterContextConfig, "queryMemory"> & {
+    queryMemory?: GrayMatterContextConfig["queryMemory"];
+  };
   includeLLMDetailsOverride: boolean;
 }
 
@@ -28,6 +36,7 @@ export class LLMContextInjector {
   private promptService: PromptService | null = null;
   private memoryBankLoader: MemoryBankLoader | null = null;
   private llmPromptService: LLMPromptService | null = null;
+  private grayMatterContextProvider: GrayMatterContextProvider | null = null;
   private logger: vscode.OutputChannel;
   private defaultConfig: InjectionConfig = {
     includeSystemPrompt: true,
@@ -37,8 +46,12 @@ export class LLMContextInjector {
     includeLLMDetailsOverride: true,
   };
 
-  constructor(logger: vscode.OutputChannel) {
+  constructor(
+    logger: vscode.OutputChannel,
+    grayMatterContextProvider?: GrayMatterContextProvider,
+  ) {
     this.logger = logger;
+    this.grayMatterContextProvider = grayMatterContextProvider ?? null;
   }
 
   /**
@@ -162,6 +175,102 @@ export class LLMContextInjector {
       );
       throw error;
     }
+  }
+
+  async generateSystemPromptAsync(
+    config?: Partial<InjectionConfig>,
+  ): Promise<string> {
+    const mergedConfig = { ...this.defaultConfig, ...config };
+    const sections = this.generateBaseSections(mergedConfig);
+
+    if (
+      mergedConfig.grayMatter?.enabled &&
+      mergedConfig.grayMatter.queryMemory &&
+      this.grayMatterContextProvider
+    ) {
+      const context = await this.grayMatterContextProvider.getContextForPrompt(
+        mergedConfig.grayMatter.seedQuery ?? "ValorIDE conversation start",
+        {
+          enabled: mergedConfig.grayMatter.enabled,
+          maxTokens: mergedConfig.grayMatter.maxTokens,
+          queryMemory: mergedConfig.grayMatter.queryMemory,
+          scopes: mergedConfig.grayMatter.scopes,
+          seedQuery: mergedConfig.grayMatter.seedQuery,
+          timeoutMs: mergedConfig.grayMatter.timeoutMs,
+        },
+      );
+      if (context?.formattedBlock) {
+        const insertAt = Math.max(0, sections.length - 1);
+        sections.splice(insertAt, 0, context.formattedBlock);
+        this.logger.appendLine(
+          `[LLMContextInjector] ✅ Layer 3.5: GrayMatter injected (${context.entriesUsed} entries, ${context.durationMs}ms)`,
+        );
+      }
+    }
+
+    const unified = sections.join("\n\n===== SECTION SEPARATOR =====\n\n");
+    this.logger.appendLine(
+      `[LLMContextInjector] ✅ Async unified prompt generated (${unified.length} chars)`,
+    );
+    return unified;
+  }
+
+  private generateBaseSections(mergedConfig: InjectionConfig): string[] {
+    const sections: string[] = [];
+
+    let selectedPrompt: ReturnType<LLMPromptService["getSelectedPrompt"]> =
+      null;
+
+    if (mergedConfig.includeLLMDetailsOverride && this.llmPromptService) {
+      try {
+        selectedPrompt = this.llmPromptService.getSelectedPrompt();
+      } catch {
+        selectedPrompt = null;
+      }
+    }
+
+    const shouldReplaceSystemPrompt =
+      !!selectedPrompt &&
+      selectedPrompt.mode === "SYSTEM" &&
+      !!selectedPrompt.prompt;
+
+    if (shouldReplaceSystemPrompt) {
+      sections.push(this.formatCustomPromptSection(selectedPrompt!));
+    } else if (mergedConfig.includeSystemPrompt && this.promptService) {
+      sections.push(this.promptService.getSystemPrompt());
+    }
+
+    if (mergedConfig.includeThorAPICatalog && this.promptService) {
+      sections.push(
+        this.formatThorAPICatalogSection(
+          this.promptService.getThorAPICatalog(),
+        ),
+      );
+    }
+
+    if (mergedConfig.includeSwarmRules && this.promptService) {
+      sections.push(
+        this.formatSwarmRulesSection(this.promptService.getSwarmRules()),
+      );
+    }
+
+    if (mergedConfig.includeMemoryBank && this.memoryBankLoader) {
+      const memoryBank = this.memoryBankLoader.getMemoryBank();
+      if (memoryBank) {
+        sections.push(this.formatMemoryBankSection(memoryBank));
+      }
+    }
+
+    if (
+      mergedConfig.includeLLMDetailsOverride &&
+      selectedPrompt &&
+      selectedPrompt.mode === "APPEND" &&
+      selectedPrompt.prompt
+    ) {
+      sections.push(this.formatCustomPromptSection(selectedPrompt));
+    }
+
+    return sections;
   }
 
   /**
@@ -347,8 +456,12 @@ export let llmContextInjector: LLMContextInjector | null = null;
  */
 export async function initializeLLMContextInjector(
   logger: vscode.OutputChannel,
+  grayMatterContextProvider?: GrayMatterContextProvider,
 ): Promise<void> {
-  llmContextInjector = new LLMContextInjector(logger);
+  llmContextInjector = new LLMContextInjector(
+    logger,
+    grayMatterContextProvider,
+  );
   await llmContextInjector.initialize();
 }
 

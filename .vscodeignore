@@ -67,3 +67,16 @@ webview-ui/build/**
 !package.json
 !README.md
 !LICENSE
+# Keep the VSIX as small as possible: exclude everything, then allowlist only runtime artifacts.
+**
+
+# Allowlist runtime artifacts
+!dist/**
+!assets/icons/**
+!assets/valorIde.acorn
+!package.json
+!README.md
+!LICENSE
+
+# Never ship sourcemaps in published package
+dist/**/*.map

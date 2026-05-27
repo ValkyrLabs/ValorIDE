@@ -4,54 +4,23 @@
   color: var(--vscode-foreground);
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 8px 12px;
+  gap: 6px;
+  padding: 6px 10px;
   width: 100%;
   box-sizing: border-box;
 }
 
-.capability-command-center__topline,
 .capability-command-center__grid {
-  align-items: center;
-  display: flex;
-  gap: 8px;
-  min-width: 0;
-}
-
-.capability-command-center__topline {
-  justify-content: space-between;
-}
-
-.capability-command-center__identity,
-.capability-command-center__model {
   align-items: center;
   display: flex;
   gap: 6px;
   min-width: 0;
 }
 
-.capability-command-center__identity strong,
-.capability-command-center__model span,
-.capability-command-center__host,
 .capability-command-center__command-id {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.capability-command-center__identity strong {
-  max-width: 150px;
-}
-
-.capability-command-center__host {
-  color: var(--vscode-descriptionForeground);
-  max-width: 240px;
-}
-
-.capability-command-center__model {
-  color: var(--vscode-descriptionForeground);
-  justify-content: flex-end;
-  max-width: 45%;
 }
 
 .capability-command-center__grid {
@@ -65,9 +34,9 @@
   border-radius: 6px;
   display: inline-flex;
   gap: 6px;
-  min-height: 28px;
+  min-height: 26px;
   min-width: 0;
-  padding: 4px 8px;
+  padding: 3px 7px;
 }
 
 .capability-command-center__pill {

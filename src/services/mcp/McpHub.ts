@@ -962,6 +962,32 @@ export class McpHub {
     }
   }
 
+  public async upsertServerConfig(
+    serverName: string,
+    serverConfig: McpServerConfig,
+  ): Promise<void> {
+    const settingsPath = await this.getMcpSettingsFilePath();
+    const content = await fs.readFile(settingsPath, "utf-8");
+    const config = JSON.parse(content);
+    if (!config.mcpServers || typeof config.mcpServers !== "object") {
+      config.mcpServers = {};
+    }
+
+    const { transportType, ...fileConfig } = serverConfig as McpServerConfig & {
+      transportType?: McpTransportType;
+    };
+    config.mcpServers[serverName] = fileConfig;
+
+    await fs.writeFile(settingsPath, JSON.stringify(config, null, 2));
+    const parsedServers = Object.fromEntries(
+      Object.entries(config.mcpServers).map(([name, value]) => [
+        name,
+        ServerConfigSchema.parse(value),
+      ]),
+    );
+    await this.updateServerConnections(parsedServers);
+  }
+
   public async deleteServer(serverName: string) {
     try {
       const settingsPath = await this.getMcpSettingsFilePath();

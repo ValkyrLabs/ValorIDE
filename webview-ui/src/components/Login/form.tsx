@@ -269,7 +269,7 @@ const Form: React.FC<FormProps> = ({
 
                 {/* Loader overlay during submission */}
                 {isSubmitting && (
-                  <LoadingSpinner size={64} label="Signing you in..." />
+                  <LoadingSpinner size={24} label="Signing in..." />
                 )}
               </form>
             );

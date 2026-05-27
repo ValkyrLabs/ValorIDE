@@ -425,3 +425,59 @@
   display: flex;
   gap: 8px;
 }
+
+.price-summary {
+  margin-bottom: 8px;
+  color: #9be7ff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.funnel-proof {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  background: rgba(76, 175, 80, 0.08);
+  border: 1px solid rgba(76, 175, 80, 0.18);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.modal-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin: 14px 0;
+  padding: 12px;
+  background: rgba(100, 200, 255, 0.08);
+  border: 1px solid rgba(100, 200, 255, 0.2);
+  border-radius: 8px;
+}
+
+.modal-hero strong {
+  color: #64c8ff;
+  font-size: 18px;
+}
+
+.modal-hero span {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 12px;
+}
+
+.modal-proof {
+  margin: 12px 0 16px;
+  padding-left: 18px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.modal-actions a.btn {
+  text-align: center;
+  text-decoration: none;
+}

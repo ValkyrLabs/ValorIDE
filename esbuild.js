@@ -6,6 +6,26 @@ const tsconfigPathsPlugin = require("@esbuild-plugins/tsconfig-paths"); // Renam
 const production = process.argv.includes("--production");
 const watch = process.argv.includes("--watch");
 
+const cleanStaleSourceMaps = {
+  name: "clean-stale-source-maps",
+  setup(build) {
+    build.onStart(() => {
+      if (!production) {
+        return;
+      }
+
+      const extensionSourceMap = path.join(
+        __dirname,
+        "dist",
+        "extension.js.map",
+      );
+      if (fs.existsSync(extensionSourceMap)) {
+        fs.rmSync(extensionSourceMap, { force: true });
+      }
+    });
+  },
+};
+
 const esbuildProblemMatcherPlugin = {
   name: "esbuild-problem-matcher",
 
@@ -89,6 +109,7 @@ const extensionConfig = {
     ),
   },
   plugins: [
+    cleanStaleSourceMaps,
     copyWasmFiles,
     /*tsconfigPathsPlugin.default({ tsconfig: "./tsconfig.json" }), // Use .default*/
     /* add to the end of plugins array */

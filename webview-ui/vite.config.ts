@@ -8,8 +8,9 @@ export default defineConfig({
 
   build: {
     outDir: "build",
-    // Emit source maps so we can debug minified stack traces in production builds
-    sourcemap: true,
+    // Keep production packages lean by default.
+    // Opt in with WEBVIEW_SOURCEMAP=true when debugging bundle traces.
+    sourcemap: process.env.WEBVIEW_SOURCEMAP === "true",
     rollupOptions: {
       output: {
         inlineDynamicImports: true,

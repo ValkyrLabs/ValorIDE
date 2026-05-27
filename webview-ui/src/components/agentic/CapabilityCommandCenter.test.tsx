@@ -89,9 +89,9 @@ describe("CapabilityCommandCenter", () => {
 
     render(<CapabilityCommandCenter />);
 
-    expect(screen.getByText("jm")).toBeInTheDocument();
-    expect(screen.getByText("api-0.valkyrlabs.com")).toBeInTheDocument();
-    expect(screen.getByText("openai-native / gpt-5.5")).toBeInTheDocument();
+    expect(screen.queryByText("jm")).not.toBeInTheDocument();
+    expect(screen.queryByText("api-0.valkyrlabs.com")).not.toBeInTheDocument();
+    expect(screen.queryByText("openai-native / gpt-5.5")).not.toBeInTheDocument();
     expect(screen.getByText("GrayMatter Ready")).toBeInTheDocument();
     expect(
       screen.getByText("memory query, memory write, swarm ops, swarm graph"),
@@ -125,12 +125,12 @@ describe("CapabilityCommandCenter", () => {
 
     render(<CapabilityCommandCenter />);
 
-    expect(screen.getByText("Not signed in")).toBeInTheDocument();
-    expect(screen.getByText("ollama / gemma4:26b")).toBeInTheDocument();
+    expect(screen.queryByText("Not signed in")).not.toBeInTheDocument();
+    expect(screen.queryByText("ollama / gemma4:26b")).not.toBeInTheDocument();
     expect(screen.getByText("GrayMatter Sign in needed")).toBeInTheDocument();
     expect(screen.getByText("SWARM Offline")).toBeInTheDocument();
     expect(screen.getByText("MCP 0/0")).toBeInTheDocument();
-    expect(screen.getByText("No recent remote commands")).toBeInTheDocument();
+    expect(screen.queryByText("No recent remote commands")).not.toBeInTheDocument();
   });
 
   it("turns GrayMatter quota blocks into recharge, upgrade, and usage recovery actions", async () => {
@@ -201,6 +201,71 @@ describe("CapabilityCommandCenter", () => {
     await user.click(screen.getByRole("button", { name: "View usage" }));
     expect(mockPostMessage).toHaveBeenLastCalledWith({
       type: "showAccountViewClicked",
+    });
+  });
+
+  it("shows sign-in and workspace recovery actions for unauthenticated sessions", async () => {
+    const user = userEvent.setup();
+    mockUseExtensionState.mockReturnValue({
+      apiConfiguration: {
+        valkyraiHost: "https://api-0.valkyrlabs.com/v1",
+      },
+      grayMatterSession: {
+        status: "unauthenticated",
+      },
+      mcpServers: [],
+    });
+
+    render(<CapabilityCommandCenter />);
+
+    await user.click(screen.getByRole("button", { name: "Sign in to ValkyrAI" }));
+    expect(mockPostMessage).toHaveBeenLastCalledWith({
+      type: "openInBrowser",
+      url: "https://api-0.valkyrlabs.com/graymatter/activate?source=valoride-graymatter-auth",
+    });
+
+    await user.click(screen.getByRole("button", { name: "Create workspace" }));
+    expect(mockPostMessage).toHaveBeenLastCalledWith({
+      type: "openInBrowser",
+      url: "https://api-0.valkyrlabs.com/signup?source=valoride-graymatter-workspace",
+    });
+  });
+
+  it("surfaces RBAC, unavailable, and MCP recovery actions", async () => {
+    const user = userEvent.setup();
+    mockUseExtensionState.mockReturnValue({
+      apiConfiguration: {
+        valkyraiHost: "https://api-0.valkyrlabs.com/v1",
+      },
+      grayMatterSession: {
+        status: "forbidden",
+      },
+      mcpServers: [{ name: "broken", status: "disconnected", disabled: false }],
+    });
+
+    render(<CapabilityCommandCenter />);
+
+    await user.click(screen.getByRole("button", { name: "Request access" }));
+    expect(mockPostMessage).toHaveBeenLastCalledWith({
+      type: "openInBrowser",
+      url: "https://api-0.valkyrlabs.com/account?source=valoride-graymatter-rbac-request",
+    });
+
+    await user.click(screen.getByRole("button", { name: "Open admin RBAC" }));
+    expect(mockPostMessage).toHaveBeenLastCalledWith({
+      type: "openInBrowser",
+      url: "https://api-0.valkyrlabs.com/admin/rbac?source=valoride-graymatter-rbac-admin",
+    });
+
+    await user.click(screen.getByRole("button", { name: "Retry discovery" }));
+    expect(mockPostMessage).toHaveBeenLastCalledWith({
+      type: "fetchLatestMcpServersFromHub",
+    });
+
+    await user.click(screen.getByRole("button", { name: "Open MCP setup" }));
+    expect(mockPostMessage).toHaveBeenLastCalledWith({
+      type: "mcpButtonClicked",
+      tab: "installed",
     });
   });
 });
