@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
+import {
+  getValkyraiHost,
+  subscribeToValkyraiHost,
+} from "../../utils/valkyraiHost";
 
-const SWARM_API_BASE = "http://localhost:8080/v1/swarm";
+const getSwarmApiBase = () =>
+  `${getValkyraiHost().replace(/\/+$/, "")}/swarm`;
 
 export interface AgentDiscoveryRecord {
   id: string;
@@ -43,6 +48,7 @@ export function useDiscoveryQuery(
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [hostVersion, setHostVersion] = useState(0);
 
   const fetchAgents = async () => {
     if (!enabled || !organizationId) {
@@ -54,14 +60,20 @@ export function useDiscoveryQuery(
     setError(null);
 
     try {
-      const url = new URL(`${SWARM_API_BASE}/agents`);
+      const url = new URL(`${getSwarmApiBase()}/agents`);
       url.searchParams.set("organizationId", organizationId);
 
       if (status && status !== "all") {
         url.searchParams.set("status", status);
       }
 
-      const response = await fetch(url.toString());
+      const token =
+        sessionStorage.getItem("jwtToken") ||
+        localStorage.getItem("jwtToken") ||
+        localStorage.getItem("authToken");
+      const response = await fetch(url.toString(), {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
 
       if (!response.ok) {
         throw new Error(`Failed to fetch agents: ${response.statusText}`);
@@ -95,7 +107,13 @@ export function useDiscoveryQuery(
         clearInterval(interval);
       }
     };
-  }, [organizationId, status, enabled, refetchInterval]);
+  }, [organizationId, status, enabled, refetchInterval, hostVersion]);
+
+  useEffect(() => {
+    return subscribeToValkyraiHost(() => {
+      setHostVersion((value) => value + 1);
+    });
+  }, []);
 
   return {
     data,
