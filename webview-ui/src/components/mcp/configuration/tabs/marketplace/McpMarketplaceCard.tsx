@@ -17,6 +17,62 @@ interface McpMarketplaceCardProps {
   installedServers: McpServer[];
 }
 
+const DEFAULT_MARKETPLACE_WEB_BASE = "https://valkyrlabs.com";
+
+const trimTrailingSlash = (value: string) => value.replace(/\/+$/, "");
+
+const readMarketplaceWebBase = () => {
+  const envBase = import.meta.env?.VITE_VALKYRAI_WEB_BASE_URL;
+  const windowBase =
+    typeof window !== "undefined"
+      ? (window as any).__valorideMarketplaceWebBaseUrl
+      : undefined;
+  const rawBase =
+    (typeof windowBase === "string" && windowBase.trim()) ||
+    (typeof envBase === "string" && envBase.trim()) ||
+    DEFAULT_MARKETPLACE_WEB_BASE;
+  return trimTrailingSlash(rawBase);
+};
+
+const canUseLocalhostInternalLinks = () => {
+  const envFlag = String(
+    import.meta.env?.VITE_ENABLE_LOCALHOST_INTERNAL_APP_LINKS || "",
+  ).toLowerCase();
+  return envFlag === "1" || envFlag === "true" || envFlag === "yes";
+};
+
+const appendAttribution = (
+  urlString: string,
+  item: McpMarketplaceItem,
+  applicationId?: string,
+) => {
+  const url = new URL(urlString);
+  url.searchParams.set("source", "valoride");
+  url.searchParams.set("surface", "mcp_marketplace");
+  url.searchParams.set("mcpId", item.mcpId);
+  if (applicationId) {
+    url.searchParams.set("applicationId", applicationId);
+  }
+  return url.toString();
+};
+
+export const getMarketplaceDetailUrl = (item: McpMarketplaceItem) => {
+  const applicationId = String((item as any).applicationId || "").trim();
+  if (applicationId) {
+    const localDevUrl = `http://localhost:5173/application-detail/${applicationId}`;
+    if (canUseLocalhostInternalLinks()) {
+      return appendAttribution(localDevUrl, item, applicationId);
+    }
+    const hostedBase = readMarketplaceWebBase();
+    return appendAttribution(
+      `${hostedBase}/application-detail/${applicationId}`,
+      item,
+      applicationId,
+    );
+  }
+  return item.githubUrl;
+};
+
 const McpMarketplaceCard = ({
   item,
   installedServers,
@@ -53,15 +109,7 @@ const McpMarketplaceCard = ({
 
   // Link to application detail page if mcpId is available (which could be an app ID),
   // otherwise fall back to GitHub URL
-  const detailUrl = useMemo(() => {
-    // If this MCP is linked to an application (via mcpId that could be an applicationId)
-    // use the application detail page
-    if ((item as any).applicationId) {
-      return `http://localhost:5173/application-detail/${(item as any).applicationId}`;
-    }
-    // Fall back to GitHub URL for external MCP servers
-    return item.githubUrl;
-  }, [item]);
+  const detailUrl = useMemo(() => getMarketplaceDetailUrl(item), [item]);
 
   const isInternalApp = useMemo(() => {
     return !!(item as any).applicationId;
@@ -86,6 +134,13 @@ const McpMarketplaceCard = ({
       <a
         href={detailUrl}
         className="mcp-card"
+        onClick={(e) => {
+          e.preventDefault();
+          vscode.postMessage({
+            type: "openInBrowser",
+            url: detailUrl,
+          });
+        }}
         style={{
           padding: "14px 16px",
           display: "flex",
