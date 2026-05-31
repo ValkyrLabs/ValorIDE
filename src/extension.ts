@@ -37,6 +37,7 @@ import {
   registerGrayMatterCommands,
 } from "./commands/graymatter/graymatterCommands";
 import { SelectedLlmDetails } from "@shared/llm";
+import { buildAuthCallbackDiagnostics } from "./utils/authCallback";
 
 /*
 Built using https://github.com/microsoft/vscode-webview-ui-toolkit
@@ -543,16 +544,11 @@ export function activate(context: vscode.ExtensionContext) {
 
   // URI Handler
   const handleUri = async (uri: vscode.Uri) => {
-    console.log("URI Handler called with:", {
-      path: uri.path,
-      query: uri.query,
-      scheme: uri.scheme,
-    });
-
     const path = uri.path;
     // Guard against missing query to avoid calling replace on undefined
     const rawQuery = uri.query || "";
     const query = new URLSearchParams(rawQuery.replace(/\+/g, "%2B"));
+    Logger.log("URI callback received", buildAuthCallbackDiagnostics(path, query));
     const visibleWebview = WebviewProvider.getVisibleInstance();
     if (!visibleWebview) {
       return;
@@ -566,23 +562,17 @@ export function activate(context: vscode.ExtensionContext) {
         break;
       }
       case "/auth": {
-        const token = query.get("token");
         const state = query.get("state");
-        const apiKey = query.get("apiKey");
-        const authenticatedPrincipal = query.get("authenticatedPrincipal");
-
-        console.log("Auth callback received:", {
-          token: token,
-          state: state,
-          apiKey: apiKey,
-          authenticatedPrincipal: authenticatedPrincipal,
-        });
 
         // Validate state parameter
         if (!(await visibleWebview?.controller.validateAuthState(state))) {
           vscode.window.showErrorMessage("Invalid auth state");
           return;
         }
+
+        const token = query.get("token");
+        const apiKey = query.get("apiKey");
+        const authenticatedPrincipal = query.get("authenticatedPrincipal");
 
         if (token && apiKey) {
           let parsedUser;
@@ -591,7 +581,7 @@ export function activate(context: vscode.ExtensionContext) {
               ? JSON.parse(decodeURIComponent(authenticatedPrincipal))
               : undefined;
           } catch (error) {
-            console.warn("Failed to parse authenticatedPrincipal:", error);
+            Logger.log("Failed to parse auth callback principal payload");
           }
 
           // Use StartupAuthService to handle login persistently
