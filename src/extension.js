@@ -365,8 +365,8 @@ export function activate(context) {
     const handleUri = async (uri) => {
         console.log("URI Handler called with:", {
             path: uri.path,
-            query: uri.query,
             scheme: uri.scheme,
+            hasQuery: Boolean(uri.query),
         });
         const path = uri.path;
         // Guard against missing query to avoid calling replace on undefined
@@ -385,15 +385,15 @@ export function activate(context) {
                 break;
             }
             case "/auth": {
-                const token = query.get("token");
                 const state = query.get("state");
+                const token = query.get("token");
                 const apiKey = query.get("apiKey");
                 const authenticatedPrincipal = query.get("authenticatedPrincipal");
                 console.log("Auth callback received:", {
-                    token: token,
-                    state: state,
-                    apiKey: apiKey,
-                    authenticatedPrincipal: authenticatedPrincipal,
+                    hasToken: Boolean(token),
+                    hasState: Boolean(state),
+                    hasApiKey: Boolean(apiKey),
+                    hasAuthenticatedPrincipal: Boolean(authenticatedPrincipal),
                 });
                 // Validate state parameter
                 if (!(await visibleWebview?.controller.validateAuthState(state))) {
@@ -408,7 +408,7 @@ export function activate(context) {
                             : undefined;
                     }
                     catch (error) {
-                        console.warn("Failed to parse authenticatedPrincipal:", error);
+                        console.warn("Failed to parse auth callback principal payload");
                     }
                     // Use StartupAuthService to handle login persistently
                     const startupAuthService = StartupAuthService.getInstance(context);
