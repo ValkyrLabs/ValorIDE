@@ -52,7 +52,7 @@ const WelcomeView = memo(() => {
   const disableLetsGoButton = apiErrorMessage != null;
 
   const handleLogin = () => {
-    vscode.postMessage({ type: "accountLoginClicked" });
+    vscode.postMessage({ type: "showAccountViewClicked" });
   };
 
   const handleSubmit = () => {

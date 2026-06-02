@@ -139,9 +139,14 @@ window.addEventListener("error", (event) => {
       container.style.left = "12px";
       container.style.top = "12px";
       container.style.zIndex = "99999";
-      container.style.background = "rgba(255,0,0,0.08)";
-      container.style.color = "var(--vscode-editor-foreground)";
-      container.style.border = "1px solid rgba(255,0,0,0.12)";
+      container.style.background =
+        "var(--vscode-inputValidation-errorBackground, #5a1d1d)";
+      container.style.color = "var(--vscode-editor-foreground, #f8f8f8)";
+      container.style.border =
+        "1px solid var(--vscode-inputValidation-errorBorder, #be1100)";
+      container.style.boxShadow = "0 8px 24px rgba(0,0,0,0.35)";
+      container.style.maxWidth = "calc(100vw - 24px)";
+      container.style.overflowWrap = "anywhere";
       container.style.padding = "12px";
       container.style.borderRadius = "6px";
       container.innerText = `${String(event.message || "An unexpected error occurred")}`;
@@ -177,9 +182,14 @@ window.addEventListener("unhandledrejection", (event) => {
       container.style.left = "12px";
       container.style.top = "12px";
       container.style.zIndex = "99999";
-      container.style.background = "rgba(255,0,0,0.08)";
-      container.style.color = "var(--vscode-editor-foreground)";
-      container.style.border = "1px solid rgba(255,0,0,0.12)";
+      container.style.background =
+        "var(--vscode-inputValidation-errorBackground, #5a1d1d)";
+      container.style.color = "var(--vscode-editor-foreground, #f8f8f8)";
+      container.style.border =
+        "1px solid var(--vscode-inputValidation-errorBorder, #be1100)";
+      container.style.boxShadow = "0 8px 24px rgba(0,0,0,0.35)";
+      container.style.maxWidth = "calc(100vw - 24px)";
+      container.style.overflowWrap = "anywhere";
       container.style.padding = "12px";
       container.style.borderRadius = "6px";
       container.innerText = `Unhandled rejection: ${String((event as any).reason ?? "")}`;

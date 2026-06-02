@@ -12,6 +12,7 @@ import { convertToOpenAiMessages } from "../transform/openai-format";
 import { ApiStream } from "../transform/stream";
 import { convertToR1Format } from "../transform/r1-format";
 import type { ChatCompletionReasoningEffort } from "openai/resources/chat/completions";
+import type { Headers } from "openai/core";
 
 export class OpenAiHandler implements ApiHandler {
   private options: ApiHandlerOptions;
@@ -19,6 +20,20 @@ export class OpenAiHandler implements ApiHandler {
 
   constructor(options: ApiHandlerOptions) {
     this.options = options;
+    const configuredOpenAiApiKey = this.options.openAiApiKey?.trim();
+    const openAiApiKey = configuredOpenAiApiKey || "noop";
+    const hasConfiguredAuthorizationHeader = Object.keys(
+      this.options.openAiHeaders ?? {},
+    ).some((header) => header.toLowerCase() === "authorization");
+    const openAiHeaders: Headers | undefined =
+      configuredOpenAiApiKey ||
+      this.options.azureApiVersion ||
+      hasConfiguredAuthorizationHeader
+        ? this.options.openAiHeaders
+        : {
+            ...this.options.openAiHeaders,
+            Authorization: null,
+          };
     // Azure API shape slightly differs from the core API shape: https://github.com/openai/openai-node?tab=readme-ov-file#microsoft-azure-openai
     // Use azureApiVersion to determine if this is an Azure endpoint, since the URL may not always contain 'azure.com'
     if (
@@ -28,16 +43,16 @@ export class OpenAiHandler implements ApiHandler {
     ) {
       this.client = new AzureOpenAI({
         baseURL: this.options.openAiBaseUrl,
-        apiKey: this.options.openAiApiKey,
+        apiKey: openAiApiKey,
         apiVersion:
           this.options.azureApiVersion || azureOpenAiDefaultApiVersion,
-        defaultHeaders: this.options.openAiHeaders,
+        defaultHeaders: openAiHeaders,
       });
     } else {
       this.client = new OpenAI({
         baseURL: this.options.openAiBaseUrl,
-        apiKey: this.options.openAiApiKey,
-        defaultHeaders: this.options.openAiHeaders,
+        apiKey: openAiApiKey,
+        defaultHeaders: openAiHeaders,
       });
     }
   }

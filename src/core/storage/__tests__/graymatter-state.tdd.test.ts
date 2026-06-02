@@ -51,6 +51,8 @@ describe("GrayMatter extension state", () => {
         memoryQuery: true,
         memoryRead: true,
         memoryWrite: true,
+        project: true,
+        projectObjectLink: true,
         swarmGraph: false,
         swarmOps: true,
       },

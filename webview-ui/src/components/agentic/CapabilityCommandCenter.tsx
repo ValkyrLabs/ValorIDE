@@ -444,7 +444,7 @@ const CapabilityCommandCenter = () => {
             </button>
             <button
               type="button"
-              onClick={() => vscode.postMessage({ type: "mcpButtonClicked", tab: "installed" })}
+              onClick={() => vscode.postMessage({ type: "showMcpView", tab: "installed" })}
             >
               Open MCP setup
             </button>

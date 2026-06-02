@@ -60,23 +60,6 @@ export class RemoteCodingSessionRegistry {
 
   list(): RemoteCodingSession[] {
     return Array.from(this.sessions.values()).map(s => ({ ...s, logs: [...s.logs], artifacts: [...s.artifacts] }));
-      artifacts: [],
-    };
-
-    this.sessions.set(input.id, session);
-    return {
-      ...session,
-      logs: [...session.logs],
-      artifacts: [...session.artifacts],
-    };
-  }
-
-  list(): RemoteCodingSession[] {
-    return Array.from(this.sessions.values()).map((s) => ({
-      ...s,
-      logs: [...s.logs],
-      artifacts: [...s.artifacts],
-    }));
   }
 
   get(sessionId: string): RemoteCodingSession | undefined {

@@ -25,6 +25,8 @@ const readySession = {
     memoryQuery: true,
     memoryRead: true,
     memoryWrite: true,
+    project: true,
+    projectObjectLink: true,
     swarmGraph: false,
     swarmOps: true,
   },

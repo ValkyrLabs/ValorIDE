@@ -1144,9 +1144,9 @@ const ApiOptions = ({
             style={{ width: "100%", marginBottom: 10 }}
             type="password"
             onInput={handleInputChange("openAiApiKey")}
-            placeholder="Enter API Key..."
+            placeholder="Optional: Enter API key..."
           >
-            <span style={{ fontWeight: 500 }}>API Key</span>
+            <span style={{ fontWeight: 500 }}>API Key (Optional)</span>
           </VSCodeTextField>
           <VSCodeTextField
             value={apiConfiguration?.openAiModelId || ""}

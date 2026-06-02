@@ -197,7 +197,8 @@ describe("AccountView - Buy Credits button integration", () => {
   });
 
   it("renders the Buy Credits button and triggers openInBrowser message", () => {
-    const postMessage = vi.spyOn(require("@thorapi/utils/vscode"), "vscode", "get").mockReturnValue({ postMessage: vi.fn() });
+    const { vscode } = require("@thorapi/utils/vscode");
+    const postMessage = vi.spyOn(vscode, "postMessage");
     render(
       <AccountView
         {...({
@@ -210,7 +211,7 @@ describe("AccountView - Buy Credits button integration", () => {
     const btn = screen.getByTestId("buy-credits-btn");
     expect(btn).toBeInTheDocument();
     btn.click();
-    expect(postMessage().postMessage).toHaveBeenCalledWith({
+    expect(postMessage).toHaveBeenCalledWith({
       type: "openInBrowser",
       url: "https://valkyrlabs.com/buy-credits",
     });

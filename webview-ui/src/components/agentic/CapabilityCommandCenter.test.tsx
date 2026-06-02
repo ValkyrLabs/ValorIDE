@@ -264,7 +264,7 @@ describe("CapabilityCommandCenter", () => {
 
     await user.click(screen.getByRole("button", { name: "Open MCP setup" }));
     expect(mockPostMessage).toHaveBeenLastCalledWith({
-      type: "mcpButtonClicked",
+      type: "showMcpView",
       tab: "installed",
     });
   });

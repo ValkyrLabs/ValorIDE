@@ -54,6 +54,7 @@ import { HistoryItem } from "@shared/HistoryItem";
 import {
   McpDownloadResponse,
   McpMarketplaceCatalog,
+  McpMarketplaceItem,
   McpServer,
 } from "@shared/mcp";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
@@ -994,18 +995,11 @@ export class Controller {
         await this.postStateToWebview();
         break;
       case "accountLoginClicked": {
-        // Generate nonce for state validation
-        const nonce = crypto.randomBytes(32).toString("hex");
-        await storeSecret(this.context, "authNonce", nonce);
-
-        // Open browser for authentication with state param
-        console.log("Login button clicked in account page");
-        console.log("Opening auth page with state param");
-
-        const uriScheme = vscode.env.uriScheme;
-
-        const authUrl = vscode.Uri.parse(`https://valkyrlabs.com/sign-up`);
-        await openUrlWithSimpleBrowser(authUrl.toString());
+        // Open the Account view which has the in-extension login form
+        await this.postMessageToWebview({
+          type: "action",
+          action: "accountButtonClicked",
+        });
         break;
       }
       case "accountLogoutClicked": {
@@ -2555,9 +2549,21 @@ export class Controller {
     silent: boolean = false,
   ): Promise<McpMarketplaceCatalog | undefined> {
     try {
-      const catalog: McpMarketplaceCatalog = {
-        items: [],
+      const token = await getSecret(this.context, "jwtToken");
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
       };
+      if (token) {
+        headers["authorization"] = `Bearer ${token}`;
+      }
+
+      const response = await axios.get<McpMarketplaceItem[]>(
+        `${getValkyraiBasePath()}/v1/McpMarketplace`,
+        { headers, timeout: 10000 },
+      );
+
+      const items = Array.isArray(response.data) ? response.data : [];
+      const catalog: McpMarketplaceCatalog = { items };
 
       // Store in global state
       await updateGlobalState(this.context, "mcpMarketplaceCatalog", catalog);
