@@ -32,21 +32,61 @@ test('auditEntries fails packages that exceed budgets', () => {
 test('auditEntries blocks known VSIX bloat sources', () => {
   const report = auditEntries([
     { size: 1, name: 'extension/.worktrees/feature/package.json' },
+    { size: 1, name: 'extension/src/extension.ts' },
+    { size: 1, name: 'extension/docs/release-notes.md' },
+    { size: 1, name: 'extension/webview-ui/src/main.tsx' },
+    { size: 1, name: 'extension/yarn.lock' },
+    { size: 1, name: 'extension/tsconfig.json' },
     { size: 1, name: 'extension/webview-ui/build/assets/index.js' },
     { size: 1, name: 'extension/dist/extension.js.map' },
     { size: 1, name: 'extension/node_modules/@esbuild/darwin-arm64/bin/esbuild' },
     { size: 1, name: 'extension/node_modules/@swc/core-darwin-arm64/swc.darwin-arm64.node' },
-  ], { archiveBytes: 5, maxArchiveBytes: 1000, maxFileCount: 20 });
+  ], { archiveBytes: 10, maxArchiveBytes: 1000, maxFileCount: 20 });
 
   assert.equal(report.ok, false);
   assert.deepEqual(report.forbiddenMatches.map((match) => match.rule).sort(), [
+    'dev_config',
+    'docs_tree',
     'duplicate_webview_build',
     'native_esbuild_binary',
     'native_swc_binary',
     'node_modules',
     'node_modules',
+    'package_lock',
     'source_map',
+    'source_tree',
+    'webview_source',
+    'webview_source',
     'worktrees',
+  ]);
+});
+
+test('auditEntries enforces the runtime package allowlist', () => {
+  const passing = auditEntries([
+    { size: 10, name: '[Content_Types].xml' },
+    { size: 10, name: 'extension.vsixmanifest' },
+    { size: 20, name: 'extension/package.json' },
+    { size: 20, name: 'extension/README.md' },
+    { size: 20, name: 'extension/LICENSE' },
+    { size: 200, name: 'extension/dist/extension.js' },
+    { size: 200, name: 'extension/dist/webview/assets/index.js' },
+    { size: 50, name: 'extension/assets/icons/icon.png' },
+    { size: 50, name: 'extension/assets/valorIde.acorn' },
+  ], { archiveBytes: 550, maxArchiveBytes: 1000, maxFileCount: 20 });
+
+  assert.equal(passing.ok, true);
+  assert.deepEqual(passing.unexpectedRuntimeEntries, []);
+
+  const failing = auditEntries([
+    { size: 10, name: 'extension/CHANGELOG.md' },
+    { size: 10, name: 'extension/assets/docs/demo.gif' },
+  ], { archiveBytes: 20, maxArchiveBytes: 1000, maxFileCount: 20 });
+
+  assert.equal(failing.ok, false);
+  assert.match(failing.failures.join('\n'), /entries outside the runtime package allowlist/);
+  assert.deepEqual(failing.unexpectedRuntimeEntries.map((entry) => entry.path), [
+    'extension/CHANGELOG.md',
+    'extension/assets/docs/demo.gif',
   ]);
 });
 
