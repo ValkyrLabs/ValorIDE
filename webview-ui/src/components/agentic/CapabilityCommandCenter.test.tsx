@@ -21,7 +21,14 @@ import CapabilityCommandCenter, {
 const degradedSnapshots: CapabilitySnapshot[] = [
   { id: "graymatter", label: "GrayMatter", status: "unauthenticated" },
   { id: "graymatter", label: "GrayMatter RBAC", status: "rbacDenied" },
-  { id: "graymatter", label: "GrayMatter quota", status: "quotaBlocked" },
+  {
+    id: "graymatter",
+    label: "GrayMatter quota",
+    status: "quotaBlocked",
+    balanceCredits: 0,
+    estimatedUnlockCredits: 5,
+    blockedAction: "memory.write",
+  },
   { id: "graymatter", label: "GrayMatter unavailable", status: "unavailable" },
   { id: "mcp", label: "MCP", status: "disconnected" },
   { id: "swarm", label: "SWARM", status: "offline" },
@@ -45,12 +52,19 @@ describe("CapabilityCommandCenter", () => {
       cards
         .find((card) => card.status === "rbacDenied")
         ?.actions.map((action) => action.action),
-    ).toContain("teamPlan");
+    ).toContain("upgradePlan");
     expect(
       cards
         .find((card) => card.status === "quotaBlocked")
         ?.actions.map((action) => action.action),
-    ).toContain("buyCredits");
+    ).toEqual(
+      expect.arrayContaining([
+        "rechargeCredits",
+        "upgradePlan",
+        "viewUsage",
+        "retryAfterRecharge",
+      ]),
+    );
     expect(
       cards
         .find((card) => card.status === "unavailable")
@@ -66,6 +80,26 @@ describe("CapabilityCommandCenter", () => {
         .find((card) => card.status === "offline")
         ?.actions.map((action) => action.action),
     ).toContain("openDiagnostics");
+  });
+
+  it("renders quota balance, unlock cost, and recharge CTAs", () => {
+    render(
+      <CapabilityCommandCenter
+        snapshots={[degradedSnapshots[2]]}
+        onAction={() => undefined}
+      />,
+    );
+
+    expect(screen.getByText(/memory\.write is paused/i)).toBeInTheDocument();
+    expect(screen.getByText(/Balance: 0 credits/i)).toBeInTheDocument();
+    expect(screen.getByText(/Estimated unlock: 5 credits/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Recharge credits/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Upgrade plan/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /View usage/i })).toBeInTheDocument();
   });
 
   it("renders latest command failure detail without secret-looking payloads", () => {
@@ -130,7 +164,7 @@ describe("CapabilityCommandCenter", () => {
 
   it("builds safe recovery URLs with deep-link return context", () => {
     const url = new URL(
-      buildCapabilityRecoveryUrl("buyCredits", {
+      buildCapabilityRecoveryUrl("rechargeCredits", {
         id: "graymatter",
         status: "quotaBlocked",
       }) ?? "",
@@ -160,5 +194,36 @@ describe("CapabilityCommandCenter", () => {
         status: "offline",
       }),
     ).toBeUndefined();
+    expect(
+      buildCapabilityRecoveryUrl("viewUsage", {
+        id: "graymatter",
+        status: "quotaBlocked",
+      }),
+    ).toBeUndefined();
+  });
+
+  it("emits the blocked action context when retry-after-recharge is clicked", async () => {
+    const user = userEvent.setup();
+    const onAction = vi.fn();
+
+    render(
+      <CapabilityCommandCenter
+        snapshots={[degradedSnapshots[2]]}
+        onAction={onAction}
+      />,
+    );
+
+    await user.click(
+      screen.getByRole("button", { name: /Retry after recharge/i }),
+    );
+
+    expect(onAction).toHaveBeenCalledWith(
+      "retryAfterRecharge",
+      expect.objectContaining({
+        id: "graymatter",
+        blockedAction: "memory.write",
+        status: "quotaBlocked",
+      }),
+    );
   });
 });
