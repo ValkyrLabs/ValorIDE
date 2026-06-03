@@ -15,6 +15,7 @@ jest.mock("./MonetizationSettings.css", () => ({}));
 
 jest.mock("@thorapi/services/monetization/ServiceMonetizationService", () => ({
   enableMonetization: jest.fn(),
+  getTotalEarnings: jest.fn(),
   updatePricing: jest.fn(),
 }));
 
@@ -29,6 +30,8 @@ require("@testing-library/jest-dom");
 
 const { MonetizationSettings } = require("./MonetizationSettings");
 const {
+  enableMonetization,
+  getTotalEarnings,
   updatePricing,
 } = require("@thorapi/services/monetization/ServiceMonetizationService");
 const {
@@ -41,6 +44,16 @@ const updatePricingMock = updatePricing as jest.MockedFunction<
     pricingModel: string,
     costPerCall: number,
   ) => Promise<ManagedMcpService>
+>;
+const enableMonetizationMock = enableMonetization as jest.MockedFunction<
+  (
+    applicationId: string,
+    pricingModel: string,
+    costPerCall: number,
+  ) => Promise<ManagedMcpService>
+>;
+const getTotalEarningsMock = getTotalEarnings as jest.MockedFunction<
+  () => Promise<{ totalAllTimeEarnings: number }>
 >;
 
 function monetizedService(overrides: Partial<ManagedMcpService> = {}) {
@@ -58,6 +71,10 @@ function monetizedService(overrides: Partial<ManagedMcpService> = {}) {
     updatedAt: "2026-05-21T00:00:00.000Z",
     ...overrides,
   } satisfies ManagedMcpService;
+}
+
+function acceptTerms() {
+  fireEvent.click(screen.getByLabelText(/monetization terms/i));
 }
 
 describe("MonetizationSettings", () => {
@@ -84,6 +101,7 @@ describe("MonetizationSettings", () => {
     fireEvent.change(screen.getByLabelText(/cost per call/i), {
       target: { value: "8" },
     });
+    acceptTerms();
     fireEvent.click(screen.getByRole("button", { name: /update pricing/i }));
 
     expect(updatePricingMock).toHaveBeenCalledWith("svc-123", "PER_CALL", 8);
@@ -108,6 +126,7 @@ describe("MonetizationSettings", () => {
       />,
     );
 
+    acceptTerms();
     fireEvent.click(screen.getByRole("button", { name: /update pricing/i }));
 
     await screen.findByText("Unauthorized");
@@ -123,6 +142,7 @@ describe("MonetizationSettings", () => {
       />,
     );
 
+    acceptTerms();
     fireEvent.click(screen.getByRole("button", { name: /update pricing/i }));
 
     await screen.findByText(/no service id was provided/i);
@@ -140,6 +160,7 @@ describe("MonetizationSettings", () => {
     fireEvent.change(screen.getByLabelText(/cost per call/i), {
       target: { value: "0" },
     });
+    acceptTerms();
     fireEvent.click(screen.getByRole("button", { name: /update pricing/i }));
 
     await screen.findByText(/at least 0.1 credits/i);
@@ -162,6 +183,7 @@ describe("MonetizationSettings", () => {
       />,
     );
 
+    acceptTerms();
     fireEvent.click(screen.getByRole("button", { name: /update pricing/i }));
 
     expect(
@@ -175,5 +197,51 @@ describe("MonetizationSettings", () => {
         screen.getByRole("button", { name: /update pricing/i }),
       ).toBeEnabled(),
     );
+  });
+
+  it("requires terms acceptance before enabling monetization", async () => {
+    enableMonetizationMock.mockResolvedValue(
+      monetizedService({ isMonetized: true }),
+    );
+
+    render(<MonetizationSettings applicationId="app-123" />);
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /enable monetization/i }),
+    );
+
+    await screen.findByText(/accept the monetization terms/i);
+    expect(enableMonetizationMock).not.toHaveBeenCalled();
+
+    acceptTerms();
+    fireEvent.click(
+      screen.getByRole("button", { name: /enable monetization/i }),
+    );
+
+    await screen.findByText(/pricing persisted/i);
+    expect(enableMonetizationMock).toHaveBeenCalledWith(
+      "app-123",
+      "PER_CALL",
+      5,
+    );
+  });
+
+  it("opens the creator earnings dashboard with backend earnings", async () => {
+    getTotalEarningsMock.mockResolvedValue({ totalAllTimeEarnings: 42.5 });
+
+    render(
+      <MonetizationSettings
+        applicationId="app-123"
+        service={monetizedService()}
+      />,
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /view earnings dashboard/i }),
+    );
+
+    await screen.findByText(/creator earnings/i);
+    expect(await screen.findByText("$42.50")).toBeInTheDocument();
+    expect(getTotalEarningsMock).toHaveBeenCalledTimes(1);
   });
 });

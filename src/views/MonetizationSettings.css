@@ -146,6 +146,46 @@
   font-style: italic;
 }
 
+.earnings-dashboard {
+  background: rgba(76, 175, 80, 0.08);
+  border: 1px solid rgba(76, 175, 80, 0.26);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.earnings-dashboard h4 {
+  margin: 0 0 4px 0;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.earnings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.earnings-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.earnings-metric span {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 12px;
+}
+
+.earnings-metric strong {
+  color: #7be495;
+  font-size: 16px;
+}
+
 .button-group {
   display: flex;
   gap: 12px;
