@@ -394,6 +394,12 @@
           "markdownDescription": "Base URL used for ValkyrAI API calls (synced across machines).",
           "scope": "application"
         },
+        "valoride.revealOnStartup": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Reveal and focus the ValorIDE sidebar on every startup. ValorIDE still reveals once after first activation and remains available from the Activity Bar, command palette, and status bar.",
+          "scope": "application"
+        },
         "valoride.graymatter.enabled": {
           "type": "boolean",
           "default": true,
