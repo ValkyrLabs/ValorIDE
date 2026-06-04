@@ -182,8 +182,6 @@ export class LLMPromptService {
         `[LLMPromptService] Query tags: ${tags.join(", ")}`,
       );
 
-      // Query LLMDetailsService by tag (highest-rated first)
-      // This is a mock call - actual implementation requires webview RTK Query integration
       const llmDetails = await this.queryLLMDetails(tags);
 
       if (llmDetails) {
@@ -206,6 +204,10 @@ export class LLMPromptService {
         this.logger.appendLine(
           `[LLMPromptService] ✅ Loaded from ThorAPI: ${llmDetails.name}`,
         );
+      } else {
+        this.logger.appendLine(
+          "[LLMPromptService] ThorAPI returned no matching LLMDetails prompts",
+        );
       }
     } catch (error) {
       this.logger.appendLine(
@@ -214,9 +216,6 @@ export class LLMPromptService {
     }
   }
 
-  /**
-   * Query LLMDetails by tags (stub for now)
-   */
   private async queryLLMDetails(
     tags: string[],
   ): Promise<LlmDetailsSummary | null> {
@@ -474,16 +473,32 @@ const toPromptSummary = (record: any): LlmDetailsSummary | null => {
     initialPrompt: record.initialPrompt,
     promptType: normalizePromptMode(record.promptType ?? metadata.promptType),
     tags: [
-      ...parsePromptTags(record.tags),
-      ...parsePromptTags(record.promptTags),
-      ...parsePromptTags(metadata.tags),
-      ...parsePromptTags(metadata.promptTags),
+      ...new Set([
+        ...parsePromptTags(record.tags),
+        ...parsePromptTags(record.promptTags),
+        ...parsePromptTags(metadata.tags),
+        ...parsePromptTags(metadata.promptTags),
+      ]),
     ],
     ratingScore: Number(record.ratingScore ?? metadata.ratingScore ?? 0),
     provider: record.provider,
     version: record.version,
     lastModifiedDate: record.lastModifiedDate,
   };
+};
+
+const extractLlmDetailsRows = (payload: any): any[] => {
+  if (Array.isArray(payload)) {
+    return payload;
+  }
+
+  for (const key of ["content", "items", "records", "data"]) {
+    if (Array.isArray(payload?.[key])) {
+      return payload[key];
+    }
+  }
+
+  return [];
 };
 
 const scorePrompt = (prompt: LlmDetailsSummary, tags: string[]): number => {
@@ -521,7 +536,7 @@ export class ThorApiLlmDetailsClient implements LlmDetailsClient {
       }),
     );
     const response = await this.http.get(`/LlmDetails?example=${example}`);
-    const rows = Array.isArray(response.data) ? response.data : [];
+    const rows = extractLlmDetailsRows(response.data);
 
     return rows
       .map(toPromptSummary)

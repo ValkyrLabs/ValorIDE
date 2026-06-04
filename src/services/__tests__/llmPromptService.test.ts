@@ -4,11 +4,19 @@ import {
   LLMPromptService,
   LlmDetailsClient,
   getLLMPromptService,
+  ThorApiLlmDetailsClient,
 } from "../llmPromptService";
+import axios from "axios";
 import * as vscode from "vscode";
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
+
+vi.mock("axios", () => ({
+  default: {
+    create: vi.fn(),
+  },
+}));
 
 describe("LLMPromptService", () => {
   let service: LLMPromptService;
@@ -119,6 +127,49 @@ describe("LLMPromptService", () => {
       llmDetailsId: "manual-prompt",
       prompt: "Manual wins.",
       mode: "APPEND",
+    });
+  });
+
+  it("normalizes wrapped ThorAPI LLMDetails responses and ranks tag matches", async () => {
+    const get = vi.fn().mockResolvedValue({
+      data: {
+        content: [
+          {
+            id: "generic",
+            name: "Generic Prompt",
+            initialPrompt: "Generic fallback.",
+            tags: "production",
+            ratingScore: 5,
+          },
+          {
+            id: "thorapi",
+            name: "ThorAPI Prompt",
+            initialPrompt: "Use ThorAPI contracts first.",
+            tags: JSON.stringify(["typescript", "thorapi"]),
+            metaData: JSON.stringify({
+              promptType: "APPEND",
+              promptTags: ["production", "thorapi"],
+            }),
+            ratingScore: 4.5,
+          },
+        ],
+      },
+    });
+    vi.mocked(axios.create).mockReturnValue({ get } as any);
+
+    const client = new ThorApiLlmDetailsClient("token", "https://api.test/v1");
+    const matches = await client.query({
+      tags: ["typescript", "thorapi", "production"],
+      limit: 1,
+    });
+
+    expect(get).toHaveBeenCalledWith(expect.stringContaining("/LlmDetails"));
+    expect(matches).toHaveLength(1);
+    expect(matches[0]).toMatchObject({
+      id: "thorapi",
+      name: "ThorAPI Prompt",
+      promptType: "APPEND",
+      tags: ["typescript", "thorapi", "production"],
     });
   });
 });
