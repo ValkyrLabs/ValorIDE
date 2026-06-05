@@ -28,6 +28,7 @@ import { initializeThorAPIModelRegistry } from "./services/thorapiModelRegistry"
 import { initializeRatingService } from "./services/ratingService";
 import { initializeStatusBarService } from "./services/StatusBarService";
 import {
+  ExtensionHostLLMDetailsService,
   initializeLLMPromptService,
   SelectedPrompt,
 } from "./services/llmPromptService";
@@ -104,7 +105,7 @@ export function activate(context: vscode.ExtensionContext) {
       await initializeLLMPromptService(
         workspaceRoot,
         outputChannel,
-        undefined,
+        new ExtensionHostLLMDetailsService(context, outputChannel),
         manualSelection,
       );
       Logger.log("LLMPromptService initialized successfully");
@@ -548,7 +549,9 @@ export function activate(context: vscode.ExtensionContext) {
     // Guard against missing query to avoid calling replace on undefined
     const rawQuery = uri.query || "";
     const query = new URLSearchParams(rawQuery.replace(/\+/g, "%2B"));
-    Logger.log("URI callback received", buildAuthCallbackDiagnostics(path, query));
+    Logger.log(
+      `URI callback received ${JSON.stringify(buildAuthCallbackDiagnostics(path, query))}`,
+    );
     const visibleWebview = WebviewProvider.getVisibleInstance();
     if (!visibleWebview) {
       return;

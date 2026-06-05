@@ -1,6 +1,9 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
+import { getAllExtensionState, getSecret } from "@core/storage/state";
+import { normalizeValkyraiHost } from "@utils/serverValkyraiHost";
+import type { LlmDetailsSummary } from "@shared/llm";
 
 /**
  * LLMPromptService — ThorAPI-FIRST prompt loading
@@ -33,12 +36,202 @@ export interface ProjectStack {
   isGenerated: boolean;
 }
 
+export interface LLMDetailsQuery {
+  tags: string[];
+  projectStack: ProjectStack | null;
+}
+
+export interface LLMDetailsService {
+  queryByTags(query: LLMDetailsQuery): Promise<LlmDetailsSummary | null>;
+}
+
+type FetchLike = (
+  input: string,
+  init?: RequestInit,
+) => Promise<{
+  ok: boolean;
+  status: number;
+  statusText?: string;
+  json(): Promise<unknown>;
+}>;
+
+const extractLLMDetailsList = (payload: unknown): LlmDetailsSummary[] => {
+  if (Array.isArray(payload)) {
+    return payload as LlmDetailsSummary[];
+  }
+  if (payload && typeof payload === "object") {
+    const record = payload as Record<string, unknown>;
+    for (const key of ["data", "content", "items", "results"]) {
+      if (Array.isArray(record[key])) {
+        return record[key] as LlmDetailsSummary[];
+      }
+    }
+  }
+  return [];
+};
+
+const parseMetadata = (
+  llmDetails: LlmDetailsSummary & { metaData?: unknown },
+): Record<string, unknown> => {
+  const raw = llmDetails.metaData;
+  if (!raw || typeof raw !== "string") {
+    return {};
+  }
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object"
+      ? (parsed as Record<string, unknown>)
+      : {};
+  } catch {
+    return {};
+  }
+};
+
+const normalizeTags = (value: unknown): string[] => {
+  if (Array.isArray(value)) {
+    return value
+      .filter((tag): tag is string => typeof tag === "string")
+      .map((tag) => tag.toLowerCase().trim())
+      .filter(Boolean);
+  }
+  if (typeof value === "string") {
+    return value
+      .split(/[,\s]+/u)
+      .map((tag) => tag.toLowerCase().trim())
+      .filter(Boolean);
+  }
+  return [];
+};
+
+const scoreLLMDetails = (
+  llmDetails: LlmDetailsSummary,
+  queryTags: string[],
+  projectStack: ProjectStack | null,
+): number => {
+  if (!llmDetails.initialPrompt?.trim()) {
+    return -1;
+  }
+
+  const metadata = parseMetadata(llmDetails);
+  const detailsTags = new Set([
+    ...normalizeTags(llmDetails.tags),
+    ...normalizeTags(metadata.tags),
+    ...normalizeTags(metadata.stack),
+    ...normalizeTags(metadata.promptTags),
+  ]);
+  const searchableText = [
+    llmDetails.name,
+    llmDetails.description,
+    llmDetails.provider,
+    llmDetails.version,
+    metadata.intent,
+    metadata.source,
+  ]
+    .filter((value): value is string => typeof value === "string")
+    .join(" ")
+    .toLowerCase();
+
+  const tagScore = queryTags.reduce((score, tag) => {
+    const normalizedTag = tag.toLowerCase();
+    if (detailsTags.has(normalizedTag)) {
+      return score + 25;
+    }
+    if (searchableText.includes(normalizedTag)) {
+      return score + 8;
+    }
+    return score;
+  }, 0);
+
+  const thorApiScore =
+    projectStack?.isThorAPI &&
+    (detailsTags.has("thorapi") || searchableText.includes("thorapi"))
+      ? 20
+      : 0;
+  const ratingScore =
+    typeof llmDetails.ratingScore === "number" ? llmDetails.ratingScore : 0;
+
+  return tagScore + thorApiScore + ratingScore;
+};
+
+export class ExtensionHostLLMDetailsService implements LLMDetailsService {
+  constructor(
+    private readonly context: vscode.ExtensionContext,
+    private readonly logger: vscode.OutputChannel,
+    private readonly fetchImpl: FetchLike = fetch as FetchLike,
+  ) {}
+
+  async queryByTags(query: LLMDetailsQuery): Promise<LlmDetailsSummary | null> {
+    const { apiConfiguration } = await getAllExtensionState(this.context);
+    const valkyraiHost = normalizeValkyraiHost(apiConfiguration?.valkyraiHost);
+    const authToken =
+      apiConfiguration?.valkyraiJwt ||
+      (await getSecret(this.context, "jwtToken"));
+
+    if (!authToken) {
+      this.logger.appendLine(
+        "[LLMPromptService] ThorAPI LLMDetails skipped: missing auth token",
+      );
+      return null;
+    }
+
+    const response = await this.fetchImpl(`${valkyraiHost}/LlmDetails`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      const reason =
+        response.status === 401
+          ? "auth"
+          : response.status === 402
+            ? "credits"
+            : response.status === 403
+              ? "forbidden"
+              : response.status >= 500
+                ? "unavailable"
+                : "request";
+      throw new Error(
+        `LLMDetails ${reason} failure (${response.status} ${response.statusText || ""})`.trim(),
+      );
+    }
+
+    const llmDetails = extractLLMDetailsList(await response.json());
+    const ranked = llmDetails
+      .map((candidate) => ({
+        candidate,
+        score: scoreLLMDetails(
+          candidate,
+          query.tags,
+          query.projectStack,
+        ),
+      }))
+      .filter(({ score }) => score >= 0)
+      .sort((left, right) => {
+        if (right.score !== left.score) {
+          return right.score - left.score;
+        }
+        const rightDate = new Date(
+          right.candidate.lastModifiedDate ?? 0,
+        ).getTime();
+        const leftDate = new Date(
+          left.candidate.lastModifiedDate ?? 0,
+        ).getTime();
+        return rightDate - leftDate;
+      });
+
+    return ranked[0]?.candidate ?? null;
+  }
+}
+
 export class LLMPromptService {
   private workspaceRoot: string;
   private logger: vscode.OutputChannel;
   private selectedPrompt: SelectedPrompt | null = null;
   private projectStack: ProjectStack | null = null;
-  private llmDetailsService: any = null; // Will be injected from webview
+  private llmDetailsService: LLMDetailsService | null = null;
 
   constructor(workspaceRoot: string, logger: vscode.OutputChannel) {
     this.workspaceRoot = workspaceRoot;
@@ -48,7 +241,7 @@ export class LLMPromptService {
   /**
    * Initialize — detect project stack and attempt ThorAPI load
    */
-  async initialize(llmDetailsService?: any): Promise<void> {
+  async initialize(llmDetailsService?: LLMDetailsService): Promise<void> {
     this.logger.appendLine("[LLMPromptService] Initializing...");
 
     try {
@@ -64,7 +257,7 @@ export class LLMPromptService {
         await this.loadFromThorAPI();
       } else {
         this.logger.appendLine(
-          "[LLMPromptService] LLMDetailsService not available, skipping ThorAPI load",
+          "[LLMPromptService] LLMDetailsService not available, using fallback prompt",
         );
       }
 
@@ -171,18 +364,16 @@ export class LLMPromptService {
         `[LLMPromptService] Query tags: ${tags.join(", ")}`,
       );
 
-      // Query LLMDetailsService by tag (highest-rated first)
-      // This is a mock call - actual implementation requires webview RTK Query integration
       const llmDetails = await this.queryLLMDetails(tags);
 
       if (llmDetails) {
         this.selectedPrompt = {
           source: "thorapi",
           llmDetailsId: llmDetails.id,
-          name: llmDetails.name,
+          name: llmDetails.name || "ThorAPI LLMDetails Prompt",
           prompt: llmDetails.initialPrompt,
           mode: llmDetails.promptType || "SYSTEM",
-          tags: llmDetails.tags || [],
+          tags: normalizeTags(llmDetails.tags),
           stackSpecific: true,
         };
         this.logger.appendLine(
@@ -196,13 +387,15 @@ export class LLMPromptService {
     }
   }
 
-  /**
-   * Query LLMDetails by tags (stub for now)
-   */
-  private async queryLLMDetails(tags: string[]): Promise<any> {
-    // TODO: Implement via webview RTK Query once integrated
-    // return await llmDetailsService.query({ tags, sortBy: 'ratingScore', limit: 1 })
-    return null;
+  private async queryLLMDetails(
+    tags: string[],
+  ): Promise<LlmDetailsSummary | null> {
+    return (
+      (await this.llmDetailsService?.queryByTags({
+        tags,
+        projectStack: this.projectStack,
+      })) ?? null
+    );
   }
 
   /**
@@ -372,7 +565,7 @@ export let llmPromptService: LLMPromptService | null = null;
 export async function initializeLLMPromptService(
   workspaceRoot: string,
   logger: vscode.OutputChannel,
-  llmDetailsService?: any,
+  llmDetailsService?: LLMDetailsService,
   manualSelection?: SelectedPrompt,
 ): Promise<void> {
   llmPromptService = new LLMPromptService(workspaceRoot, logger);
