@@ -88,6 +88,15 @@
   flex: 0 0 auto;
 }
 
+.capability-command-center__command-detail {
+  color: var(--vscode-descriptionForeground);
+  flex: 1 1 100%;
+  font-size: 0.92em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .capability-command-center__quota {
   align-items: center;
   background: rgba(210, 153, 34, 0.12);
