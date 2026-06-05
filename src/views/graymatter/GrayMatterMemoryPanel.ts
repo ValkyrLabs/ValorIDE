@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { getGlobalState } from "@core/storage/state";
 import type { GrayMatterSessionState } from "@services/graymatter/GrayMatterSessionService";
+import { loadPendingGrayMatterWrites } from "@services/graymatter/GrayMatterMemoryQueueStorage";
 
 export class GrayMatterMemoryPanel {
   static readonly viewType = "valoride.graymatter.memoryPanel";
@@ -26,6 +27,8 @@ const renderMemoryPanel = async (context: vscode.ExtensionContext) => {
   const status = session?.status ?? "unauthenticated";
   const checkedAt = session?.checkedAt ?? "never";
   const capabilities = session?.capabilities;
+  const pendingWrites = await loadPendingGrayMatterWrites(context);
+  const pendingPreview = pendingWrites.slice(0, 5);
 
   return `<!doctype html>
 <html lang="en">
@@ -43,6 +46,9 @@ const renderMemoryPanel = async (context: vscode.ExtensionContext) => {
     section { border: 1px solid var(--vscode-panel-border); border-radius: 6px; padding: 12px; }
     .status { color: var(--vscode-descriptionForeground); font-size: 12px; }
     .empty { color: var(--vscode-descriptionForeground); margin: 0; }
+    .queue { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+    .queue li { border-top: 1px solid var(--vscode-panel-border); padding-top: 8px; }
+    .queue .meta { color: var(--vscode-descriptionForeground); font-size: 12px; }
     code { color: var(--vscode-textLink-foreground); }
   </style>
 </head>
@@ -66,11 +72,34 @@ const renderMemoryPanel = async (context: vscode.ExtensionContext) => {
     </section>
     <section>
       <h2>Session Log</h2>
-      <p class="empty">Reads and writes are tracked by the GrayMatter services during agent tasks.</p>
+      ${renderQueueSummary(pendingWrites.length, pendingPreview)}
     </section>
   </main>
 </body>
 </html>`;
+};
+
+const renderQueueSummary = (
+  pendingCount: number,
+  pendingPreview: Awaited<ReturnType<typeof loadPendingGrayMatterWrites>>,
+) => {
+  if (!pendingCount) {
+    return `<p class="empty">No pending memory writes. Reads and writes are tracked by the GrayMatter services during agent tasks.</p>`;
+  }
+
+  const hiddenCount = Math.max(0, pendingCount - pendingPreview.length);
+  const items = pendingPreview
+    .map(
+      (write) => `<li>
+        <div><code>${escapeHtml(write.type)}</code> ${escapeHtml(write.content.slice(0, 140))}</div>
+        <div class="meta">Queued ${escapeHtml(write.queuedAt)}${write.lastErrorKind ? ` · ${escapeHtml(write.lastErrorKind)}` : ""}${write.attempts ? ` · attempts ${write.attempts}` : ""}</div>
+      </li>`,
+    )
+    .join("");
+
+  return `<p class="empty">${pendingCount} memory write${pendingCount === 1 ? "" : "s"} queued for replay.</p>
+    <ul class="queue">${items}</ul>
+    ${hiddenCount ? `<p class="empty">${hiddenCount} more queued item${hiddenCount === 1 ? "" : "s"} hidden.</p>` : ""}`;
 };
 
 const escapeHtml = (value: string) =>

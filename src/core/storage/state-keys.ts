@@ -75,6 +75,7 @@ export type GlobalStateKey =
   | "authenticatedPrincipal"
   | "isLoggedIn"
   | "grayMatterSession"
+  | "grayMatterPendingWrites"
   | "agenticState"
   | "previousModeApiProvider"
   | "previousModeModelId"
