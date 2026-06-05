@@ -409,7 +409,7 @@ const AccountView = ({
         case "teamPlan":
           vscode.postMessage({
             type: "openInBrowser",
-            text: "https://valkyrlabs.com/pricing?utm_source=valoride&utm_campaign=capability-command-center&intent=team-plan",
+            url: "https://valkyrlabs.com/pricing?utm_source=valoride&utm_campaign=capability-command-center&intent=team-plan",
           });
           break;
         case "openMcpMarketplace":

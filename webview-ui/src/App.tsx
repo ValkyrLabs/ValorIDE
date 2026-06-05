@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useLayoutEffect } from "react";
+import { useCallback, useEffect, useRef, useState, useLayoutEffect } from "react";
 import { useEvent } from "react-use";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import ChatView from "./components/chat/ChatView";
@@ -66,6 +66,7 @@ const AppContent = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [showMcp, setShowMcp] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
+  const didOpenCommandCenter = useRef(false);
   const [showGeneratedFiles, setShowGeneratedFiles] = useState(false);
   const [showServerConsole, setShowServerConsole] = useState(false);
   // Server Console is now rendered as a tab in the Account view
@@ -103,6 +104,21 @@ const AppContent = () => {
     const cleanup = registerExternalLinkInterceptor();
     return cleanup;
   }, []);
+
+  useEffect(() => {
+    if (didOpenCommandCenter.current || !didHydrateState || showWelcome) {
+      return;
+    }
+    if (hasStoredAuth) {
+      didOpenCommandCenter.current = true;
+      setShowSettings(false);
+      setShowHistory(false);
+      setShowMcp(false);
+      setShowAccount(true);
+      setShowGeneratedFiles(false);
+      setShowApplicationProgress(false);
+    }
+  }, [didHydrateState, hasStoredAuth, showWelcome]);
 
   const handleMessage = useCallback(
     (e: MessageEvent) => {

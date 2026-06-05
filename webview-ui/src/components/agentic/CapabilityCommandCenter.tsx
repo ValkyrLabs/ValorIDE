@@ -1,6 +1,3 @@
-import React from "react";
-import type { WebviewMessage } from "@shared/WebviewMessage";
-import { vscode } from "../../utils/vscode";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 
 export type CapabilityId = "graymatter" | "mcp" | "swarm";
@@ -8,201 +5,6 @@ export type CapabilityId = "graymatter" | "mcp" | "swarm";
 export type CapabilityStatus =
   | "ready"
   | "unauthenticated"
-  | "quota"
-  | "forbidden"
-  | "unavailable"
-  | "mcp_disconnected"
-  | "swarm_error";
-
-export interface AgenticCapability {
-  id: string;
-  label: string;
-  status: CapabilityStatus;
-  detail?: string;
-  workspaceId?: string;
-  projectId?: string;
-}
-
-interface RecoveryAction {
-  label: string;
-  message: Pick<WebviewMessage, "type" | "url" | "text">;
-  kind: "primary" | "secondary";
-}
-
-interface CapabilityCommandCenterProps {
-  capabilities: AgenticCapability[];
-  returnTo?: string;
-}
-
-const VALKYR_BASE = "https://valkyrlabs.com";
-
-const withContext = (
-  path: string,
-  capability: AgenticCapability,
-  returnTo = "valoride://capability-recovery",
-) => {
-  const url = new URL(path, VALKYR_BASE);
-  url.searchParams.set("source", "valoride");
-  url.searchParams.set("capability", capability.id);
-  url.searchParams.set("returnTo", returnTo);
-  if (capability.workspaceId)
-    url.searchParams.set("workspaceId", capability.workspaceId);
-  if (capability.projectId)
-    url.searchParams.set("projectId", capability.projectId);
-  return url.toString();
-};
-
-export const getRecoveryActions = (
-  capability: AgenticCapability,
-  returnTo?: string,
-): RecoveryAction[] => {
-  switch (capability.status) {
-    case "unauthenticated":
-      return [
-        {
-          label: "Sign in",
-          kind: "primary",
-          message: { type: "accountLoginClicked" },
-        },
-        {
-          label: "Activate workspace",
-          kind: "secondary",
-          message: {
-            type: "openInBrowser",
-            url: withContext("/valoride/activate", capability, returnTo),
-          },
-        },
-      ];
-    case "quota":
-      return [
-        {
-          label: "Buy credits",
-          kind: "primary",
-          message: {
-            type: "openInBrowser",
-            url: withContext("/buy-credits", capability, returnTo),
-          },
-        },
-        {
-          label: "Retry after purchase",
-          kind: "secondary",
-          message: {
-            type: "displayVSCodeInfo",
-            text: "Retry the blocked ValorIDE capability after checkout returns.",
-          },
-        },
-      ];
-    case "forbidden":
-      return [
-        {
-          label: "Request access",
-          kind: "primary",
-          message: {
-            type: "openInBrowser",
-            url: withContext("/valoride/access-request", capability, returnTo),
-          },
-        },
-        {
-          label: "Admin guide",
-          kind: "secondary",
-          message: {
-            type: "openInBrowser",
-            url: withContext(
-              "/v1/docs/Products/ValorIDE/team-access",
-              capability,
-              returnTo,
-            ),
-          },
-        },
-      ];
-    case "mcp_disconnected":
-      return [
-        {
-          label: "Retry MCP",
-          kind: "primary",
-          message: { type: "fetchLatestMcpServersFromHub" },
-        },
-        {
-          label: "Setup guide",
-          kind: "secondary",
-          message: {
-            type: "openInBrowser",
-            url: withContext(
-              "/v1/docs/Products/ValorIDE/mcp-setup",
-              capability,
-              returnTo,
-            ),
-          },
-        },
-      ];
-    case "swarm_error":
-    case "unavailable":
-      return [
-        {
-          label: "Run diagnostics",
-          kind: "primary",
-          message: {
-            type: "displayVSCodeInfo",
-            text: `Run ValorIDE diagnostics for ${capability.label}.`,
-          },
-        },
-        {
-          label: "Recovery guide",
-          kind: "secondary",
-          message: {
-            type: "openInBrowser",
-            url: withContext(
-              "/v1/docs/Products/ValorIDE/recovery",
-              capability,
-              returnTo,
-            ),
-          },
-        },
-      ];
-    case "ready":
-    default:
-      return [];
-  }
-};
-
-const statusCopy: Record<CapabilityStatus, string> = {
-  ready: "Ready",
-  unauthenticated: "Sign-in needed",
-  quota: "Quota blocked",
-  forbidden: "Access blocked",
-  unavailable: "Unavailable",
-  mcp_disconnected: "MCP disconnected",
-  swarm_error: "SWARM needs attention",
-};
-
-export const CapabilityCommandCenter: React.FC<
-  CapabilityCommandCenterProps
-> = ({ capabilities, returnTo }) => {
-  const handleAction = (
-    capability: AgenticCapability,
-    action: RecoveryAction,
-  ) => {
-    vscode.postMessage({
-      type: "displayVSCodeInfo",
-      text: `valoride_capability_recovery_clicked:${capability.id}:${action.label}`,
-    });
-    vscode.postMessage(action.message);
-  };
-
-  return (
-    <section
-      aria-label="Agentic capability command center"
-      style={{ display: "grid", gap: 8 }}
-    >
-      {capabilities.map((capability) => {
-        const actions = getRecoveryActions(capability, returnTo);
-        return (
-          <article
-            key={capability.id}
-            style={{
-              border: "1px solid var(--vscode-panel-border)",
-              borderRadius: 8,
-              padding: 10,
   | "rbacDenied"
   | "quotaBlocked"
   | "lowCredit"
@@ -246,6 +48,11 @@ export type CapabilityCardModel = CapabilitySnapshot & {
   actions: CapabilityActionModel[];
 };
 
+type CapabilityCommandCenterProps = {
+  snapshots: CapabilitySnapshot[];
+  onAction: (action: CapabilityAction, capability: CapabilityCardModel) => void;
+};
+
 const STATUS_COPY: Record<
   CapabilityStatus,
   { label: string; tone: CapabilityCardModel["tone"] }
@@ -273,28 +80,27 @@ const ACTIONS_BY_STATUS: Record<CapabilityStatus, CapabilityActionModel[]> = {
     {
       action: "signIn",
       label: "Sign in to ValkyrAI",
-      detail: "Authenticate ValorIDE before using GrayMatter memory.",
+      detail: "Authenticate ValorIDE before using agentic capabilities.",
       variant: "primary",
     },
     {
       action: "setupGrayMatter",
       label: "Create workspace",
-      detail: "Open the activation path and return to ValorIDE when setup completes.",
+      detail: "Start the GrayMatter workspace activation path.",
       variant: "secondary",
     },
   ],
   rbacDenied: [
     {
       action: "teamPlan",
-      label: "Team access",
-      detail:
-        "Open the team-plan path when your org role blocks memory writes.",
+      label: "Request team access",
+      detail: "Open the team-plan path for RBAC and entitlement recovery.",
       variant: "primary",
     },
     {
       action: "openDiagnostics",
-      label: "Diagnostics",
-      detail: "Open diagnostics without exposing tokens or secrets.",
+      label: "Open diagnostics",
+      detail: "Inspect the active account, workspace, and API host state.",
       variant: "secondary",
     },
   ],
@@ -302,13 +108,13 @@ const ACTIONS_BY_STATUS: Record<CapabilityStatus, CapabilityActionModel[]> = {
     {
       action: "buyCredits",
       label: "Buy credits",
-      detail: "Recharge credits before retrying the failed capability.",
+      detail: "Preserve the blocked action and route to credit recovery.",
       variant: "primary",
     },
     {
-      action: "teamPlan",
-      label: "Upgrade team plan",
-      detail: "Open plan upgrade options for sustained memory usage.",
+      action: "retry",
+      label: "Retry after purchase",
+      detail: "Refresh balance, usage, payments, and MCP discovery.",
       variant: "secondary",
     },
   ],
@@ -316,21 +122,27 @@ const ACTIONS_BY_STATUS: Record<CapabilityStatus, CapabilityActionModel[]> = {
     {
       action: "buyCredits",
       label: "Add credits",
-      detail: "Top up before the next agentic command is blocked.",
+      detail: "Top up before longer agentic runs exhaust the balance.",
       variant: "primary",
+    },
+    {
+      action: "retry",
+      label: "Refresh balance",
+      detail: "Reconcile the latest account balance and usage.",
+      variant: "secondary",
     },
   ],
   unavailable: [
     {
       action: "openDiagnostics",
-      label: "Diagnostics",
-      detail: "Open server-console diagnostics for the unavailable service.",
+      label: "Open diagnostics",
+      detail: "Inspect local transport and backend availability.",
       variant: "primary",
     },
     {
       action: "retry",
-      label: "Retry",
-      detail: "Retry capability discovery after diagnostics.",
+      label: "Retry discovery",
+      detail: "Retry capability discovery after the service recovers.",
       variant: "secondary",
     },
   ],
@@ -338,13 +150,13 @@ const ACTIONS_BY_STATUS: Record<CapabilityStatus, CapabilityActionModel[]> = {
     {
       action: "openMcpMarketplace",
       label: "Open MCP marketplace",
-      detail: "Install or reconnect MCP tools from the marketplace.",
+      detail: "Connect or repair MCP tools for the current workspace.",
       variant: "primary",
     },
     {
       action: "retry",
-      label: "Retry connection",
-      detail: "Refresh installed MCP server state.",
+      label: "Retry MCP",
+      detail: "Refresh the latest MCP server catalog.",
       variant: "secondary",
     },
   ],
@@ -352,178 +164,153 @@ const ACTIONS_BY_STATUS: Record<CapabilityStatus, CapabilityActionModel[]> = {
     {
       action: "openDiagnostics",
       label: "Open diagnostics",
-      detail: "Inspect SWARM and server-console connectivity.",
+      detail: "Inspect SWARM presence and connection state.",
       variant: "primary",
     },
     {
       action: "retry",
-      label: "Retry",
-      detail: "Retry SWARM presence discovery.",
+      label: "Retry discovery",
+      detail: "Refresh capability state after reconnecting.",
       variant: "secondary",
     },
   ],
 };
 
-const FALLBACK_DETAIL: Record<CapabilityId, string> = {
-  graymatter:
-    "Durable memory needs auth, entitlement, credits, and API reachability.",
-  mcp: "MCP needs at least one connected server before tools can recover workflows.",
-  swarm: "SWARM needs local and ValkyrAI connectivity for multi-agent handoff.",
+const toneColor: Record<CapabilityCardModel["tone"], string> = {
+  ready: "var(--vscode-testing-iconPassed)",
+  warning: "var(--vscode-editorWarning-foreground)",
+  danger: "var(--vscode-errorForeground)",
 };
 
-export function deriveCapabilityCards(
+export const deriveCapabilityCards = (
   snapshots: CapabilitySnapshot[],
-): CapabilityCardModel[] {
-  return snapshots.map((snapshot) => {
-    const copy = STATUS_COPY[snapshot.status];
+): CapabilityCardModel[] =>
+  snapshots.map((snapshot) => {
+    const status = STATUS_COPY[snapshot.status];
     return {
       ...snapshot,
-      tone: copy.tone,
-      statusLabel: copy.label,
-      detail: snapshot.detail || FALLBACK_DETAIL[snapshot.id],
+      tone: status.tone,
+      statusLabel: status.label,
       actions: ACTIONS_BY_STATUS[snapshot.status],
     };
   });
-}
 
-type CapabilityCommandCenterProps = {
-  snapshots: CapabilitySnapshot[];
-  onAction: (action: CapabilityAction, capability: CapabilityCardModel) => void;
-};
+const safeFailureMessage = (message: string) =>
+  message.replace(/(token|jwt|secret|api[_-]?key)\s*[:=]\s*\S+/gi, "$1=[redacted]");
 
-export default function CapabilityCommandCenter({
+const CapabilityCommandCenter = ({
   snapshots,
   onAction,
-}: CapabilityCommandCenterProps) {
+}: CapabilityCommandCenterProps) => {
   const cards = deriveCapabilityCards(snapshots);
 
   return (
     <section
-      aria-label="Capability Command Center"
+      aria-label="ValorIDE command center"
       style={{
         border: "1px solid var(--vscode-panel-border)",
-        borderRadius: 10,
+        borderRadius: 8,
+        background: "var(--vscode-sideBar-background)",
+        display: "grid",
+        gap: 10,
+        marginBottom: 12,
         padding: 12,
-        margin: "0 0 16px",
-        background: "var(--vscode-editor-background)",
       }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          gap: 12,
+          flexWrap: "wrap",
+        }}
+      >
         <div>
-          <h3 style={{ margin: 0 }}>Capability Command Center</h3>
+          <h2 style={{ fontSize: 15, margin: 0 }}>Command Center</h2>
           <p
             style={{
-              margin: "4px 0 12px",
               color: "var(--vscode-descriptionForeground)",
               fontSize: 12,
+              margin: "4px 0 0",
             }}
           >
-            Recovery actions stay inside ValorIDE and avoid exposing raw auth
-            state.
+            Account, credits, MCP, SWARM, and GrayMatter capability state.
           </p>
         </div>
       </div>
 
-      <div style={{ display: "grid", gap: 10 }}>
+      <div
+        style={{
+          display: "grid",
+          gap: 8,
+          gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
+        }}
+      >
         {cards.map((card) => (
           <article
-            key={card.id}
-            data-testid={`capability-card-${card.id}`}
+            key={`${card.id}-${card.label}`}
             style={{
               border: "1px solid var(--vscode-panel-border)",
-              borderLeft: `4px solid ${
-                card.tone === "ready"
-                  ? "var(--vscode-testing-iconPassed)"
-                  : card.tone === "danger"
-                    ? "var(--vscode-testing-iconFailed)"
-                    : "var(--vscode-testing-iconQueued)"
-              }`,
               borderRadius: 8,
               padding: 10,
-              background: "var(--vscode-sideBar-background)",
+              background: "var(--vscode-editor-background)",
+              display: "grid",
+              gap: 8,
+              minWidth: 0,
             }}
           >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                gap: 8,
-              }}
-            >
-              <strong>{capability.label}</strong>
-              <span>{statusCopy[capability.status]}</span>
-            </div>
-            {capability.detail && (
-              <p style={{ margin: "6px 0" }}>{capability.detail}</p>
-            )}
-            {actions.length > 0 && (
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                {actions.map((action) => (
-                  <button
-                    key={action.label}
-                    type="button"
-                    onClick={() => handleAction(capability, action)}
-                  >
-                    {action.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </article>
-        );
-      })}
-    </section>
-  );
-};
-
-export default CapabilityCommandCenter;
-                gap: 10,
-              }}
-            >
-              <strong>{card.label}</strong>
-              <span
-                aria-label={`${card.label} status`}
-                style={{
-                  border: "1px solid var(--vscode-panel-border)",
-                  borderRadius: 999,
-                  padding: "2px 8px",
-                  fontSize: 11,
-                }}
-              >
-                {card.statusLabel}
-              </span>
-            </div>
-            <p
-              style={{
-                margin: "6px 0",
-                color: "var(--vscode-descriptionForeground)",
-              }}
-            >
-              {card.detail}
-            </p>
-            {card.latestFailure && (
+            <div style={{ display: "grid", gap: 4 }}>
               <div
-                role="note"
-                title={card.latestFailure.message}
                 style={{
-                  fontSize: 12,
-                  color: "var(--vscode-descriptionForeground)",
-                  marginBottom: 8,
+                  alignItems: "center",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: 8,
                 }}
               >
-                Latest failure: <strong>{card.latestFailure.command}</strong> —{" "}
-                {card.latestFailure.message}
+                <strong style={{ fontSize: 13 }}>{card.label}</strong>
+                <span
+                  style={{
+                    color: toneColor[card.tone],
+                    fontSize: 11,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {card.statusLabel}
+                </span>
               </div>
-            )}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {card.detail && (
+                <p
+                  style={{
+                    color: "var(--vscode-descriptionForeground)",
+                    fontSize: 12,
+                    margin: 0,
+                  }}
+                >
+                  {card.detail}
+                </p>
+              )}
+              {card.latestFailure && (
+                <p
+                  style={{
+                    color: "var(--vscode-descriptionForeground)",
+                    fontSize: 12,
+                    margin: 0,
+                  }}
+                >
+                  <strong>Latest failure:</strong> {card.latestFailure.command} -{" "}
+                  {safeFailureMessage(card.latestFailure.message)}
+                </p>
+              )}
+            </div>
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
               {card.actions.map((action) => (
                 <VSCodeButton
-                  key={`${card.id}-${action.action}`}
-                  appearance={
-                    action.variant === "primary" ? "primary" : "secondary"
-                  }
-                  title={action.detail}
+                  key={action.action}
+                  appearance={action.variant === "primary" ? "primary" : "secondary"}
                   onClick={() => onAction(action.action, card)}
+                  title={action.detail}
                 >
                   {action.label}
                 </VSCodeButton>
@@ -534,4 +321,6 @@ export default CapabilityCommandCenter;
       </div>
     </section>
   );
-}
+};
+
+export default CapabilityCommandCenter;
