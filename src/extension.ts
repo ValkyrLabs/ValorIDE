@@ -33,6 +33,7 @@ import { initializeSwarmPromptBroadcaster } from "./services/swarmPromptBroadcas
 import { initializeThorAPIModelRegistry } from "./services/thorapiModelRegistry";
 import { initializeRatingService } from "./services/ratingService";
 import { initializeStatusBarService } from "./services/StatusBarService";
+import { revealValorideSidebar } from "./services/startupReveal";
 import {
   initializeLLMPromptService,
   SelectedPrompt,
@@ -290,14 +291,9 @@ export function activate(context: vscode.ExtensionContext) {
     IS_DEV && IS_DEV === "true",
   );
 
-  // Ensure our Activity Bar container is visible, then focus our view
-  // This helps recover if the container was hidden from prior layout changes
-  void vscode.commands.executeCommand(
-    "workbench.view.extension.valoride-activitybar",
+  Logger.log(
+    "Startup reveal skipped; use ValorIDE: Open Sidebar or Reset Layout to focus the view.",
   );
-  // Proactively reveal the sidebar view once after activation
-  // This helps surface the Activity Bar icon if the container was hidden/cached
-  void vscode.commands.executeCommand(`${WebviewProvider.sideBarId}.focus`);
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
@@ -438,6 +434,13 @@ export function activate(context: vscode.ExtensionContext) {
       "valoride.openInNewTab",
       openValorIDEInNewTab,
     ),
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand("valoride.revealSidebar", async () => {
+      await revealValorideSidebar(WebviewProvider.sideBarId, (command) =>
+        vscode.commands.executeCommand(command),
+      );
+    }),
   );
 
   context.subscriptions.push(
@@ -918,11 +921,10 @@ export function activate(context: vscode.ExtensionContext) {
         Logger.log(`Error running resetViewLocations: ${err}`);
       }
 
-      // Bring our container and view to the front after reset
-      void vscode.commands.executeCommand(
-        "workbench.view.extension.valoride-activitybar",
+      // Bring our container and view to the front after an explicit reset.
+      await revealValorideSidebar(WebviewProvider.sideBarId, (command) =>
+        vscode.commands.executeCommand(command),
       );
-      void vscode.commands.executeCommand(`${WebviewProvider.sideBarId}.focus`);
 
       vscode.window.showInformationMessage(
         "View locations reset. ValorIDE sidebar restored (if previously moved).",
