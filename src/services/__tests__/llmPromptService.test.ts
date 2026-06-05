@@ -133,26 +133,28 @@ describe("LLMPromptService", () => {
   it("normalizes wrapped ThorAPI LLMDetails responses and ranks tag matches", async () => {
     const get = vi.fn().mockResolvedValue({
       data: {
-        content: [
-          {
-            id: "generic",
-            name: "Generic Prompt",
-            initialPrompt: "Generic fallback.",
-            tags: "production",
-            ratingScore: 5,
-          },
-          {
-            id: "thorapi",
-            name: "ThorAPI Prompt",
-            initialPrompt: "Use ThorAPI contracts first.",
-            tags: JSON.stringify(["typescript", "thorapi"]),
-            metaData: JSON.stringify({
-              promptType: "APPEND",
-              promptTags: ["production", "thorapi"],
-            }),
-            ratingScore: 4.5,
-          },
-        ],
+        data: {
+          content: [
+            {
+              id: "generic",
+              name: "Generic Prompt",
+              initialPrompt: "Generic fallback.",
+              tags: "production",
+              ratingScore: 5,
+            },
+            {
+              id: "thorapi",
+              name: "ThorAPI Prompt",
+              initialPrompt: "Use ThorAPI contracts first.",
+              tags: JSON.stringify(["typescript", "thorapi"]),
+              metaData: JSON.stringify({
+                promptType: "append",
+                promptTags: ["production", "thorapi"],
+              }),
+              ratingScore: 4.5,
+            },
+          ],
+        },
       },
     });
     vi.mocked(axios.create).mockReturnValue({ get } as any);

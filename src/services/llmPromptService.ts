@@ -449,7 +449,9 @@ const parsePromptTags = (value: unknown): string[] => {
 };
 
 const normalizePromptMode = (value: unknown): LlmPromptMode => {
-  return value === "APPEND" ? "APPEND" : "SYSTEM";
+  return typeof value === "string" && value.toUpperCase() === "APPEND"
+    ? "APPEND"
+    : "SYSTEM";
 };
 
 const toPromptSummary = (record: any): LlmDetailsSummary | null => {
@@ -496,6 +498,10 @@ const extractLlmDetailsRows = (payload: any): any[] => {
     if (Array.isArray(payload?.[key])) {
       return payload[key];
     }
+  }
+
+  if (payload?.data && typeof payload.data === "object") {
+    return extractLlmDetailsRows(payload.data);
   }
 
   return [];
