@@ -1,6 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
+import axios, { AxiosInstance } from "axios";
+import { LlmDetailsSummary, LlmPromptMode } from "@shared/llm";
 
 /**
  * LLMPromptService — ThorAPI-FIRST prompt loading
@@ -26,6 +28,15 @@ export interface SelectedPrompt {
   stackSpecific: boolean;
 }
 
+export interface LlmDetailsQuery {
+  tags: string[];
+  limit?: number;
+}
+
+export interface LlmDetailsClient {
+  query(query: LlmDetailsQuery): Promise<LlmDetailsSummary[]>;
+}
+
 export interface ProjectStack {
   language: "java" | "python" | "nodejs" | "typescript" | "mixed" | "unknown";
   framework?: string;
@@ -38,7 +49,7 @@ export class LLMPromptService {
   private logger: vscode.OutputChannel;
   private selectedPrompt: SelectedPrompt | null = null;
   private projectStack: ProjectStack | null = null;
-  private llmDetailsService: any = null; // Will be injected from webview
+  private llmDetailsService: LlmDetailsClient | null = null;
 
   constructor(workspaceRoot: string, logger: vscode.OutputChannel) {
     this.workspaceRoot = workspaceRoot;
@@ -48,7 +59,7 @@ export class LLMPromptService {
   /**
    * Initialize — detect project stack and attempt ThorAPI load
    */
-  async initialize(llmDetailsService?: any): Promise<void> {
+  async initialize(llmDetailsService?: LlmDetailsClient): Promise<void> {
     this.logger.appendLine("[LLMPromptService] Initializing...");
 
     try {
@@ -64,7 +75,7 @@ export class LLMPromptService {
         await this.loadFromThorAPI();
       } else {
         this.logger.appendLine(
-          "[LLMPromptService] LLMDetailsService not available, skipping ThorAPI load",
+          "[LLMPromptService] LLMDetails client not available, skipping ThorAPI load",
         );
       }
 
@@ -171,11 +182,16 @@ export class LLMPromptService {
         `[LLMPromptService] Query tags: ${tags.join(", ")}`,
       );
 
-      // Query LLMDetailsService by tag (highest-rated first)
-      // This is a mock call - actual implementation requires webview RTK Query integration
       const llmDetails = await this.queryLLMDetails(tags);
 
       if (llmDetails) {
+        if (!llmDetails.initialPrompt) {
+          this.logger.appendLine(
+            `[LLMPromptService] ThorAPI prompt ${llmDetails.id} has no initialPrompt; skipping`,
+          );
+          return;
+        }
+
         this.selectedPrompt = {
           source: "thorapi",
           llmDetailsId: llmDetails.id,
@@ -188,6 +204,10 @@ export class LLMPromptService {
         this.logger.appendLine(
           `[LLMPromptService] ✅ Loaded from ThorAPI: ${llmDetails.name}`,
         );
+      } else {
+        this.logger.appendLine(
+          "[LLMPromptService] ThorAPI returned no matching LLMDetails prompts",
+        );
       }
     } catch (error) {
       this.logger.appendLine(
@@ -196,13 +216,11 @@ export class LLMPromptService {
     }
   }
 
-  /**
-   * Query LLMDetails by tags (stub for now)
-   */
-  private async queryLLMDetails(tags: string[]): Promise<any> {
-    // TODO: Implement via webview RTK Query once integrated
-    // return await llmDetailsService.query({ tags, sortBy: 'ratingScore', limit: 1 })
-    return null;
+  private async queryLLMDetails(
+    tags: string[],
+  ): Promise<LlmDetailsSummary | null> {
+    const matches = await this.llmDetailsService?.query({ tags, limit: 10 });
+    return matches?.[0] ?? null;
   }
 
   /**
@@ -372,11 +390,13 @@ export let llmPromptService: LLMPromptService | null = null;
 export async function initializeLLMPromptService(
   workspaceRoot: string,
   logger: vscode.OutputChannel,
-  llmDetailsService?: any,
+  llmDetailsService?: LlmDetailsClient,
   manualSelection?: SelectedPrompt,
 ): Promise<void> {
   llmPromptService = new LLMPromptService(workspaceRoot, logger);
-  await llmPromptService.initialize(llmDetailsService);
+  await llmPromptService.initialize(
+    manualSelection ? undefined : llmDetailsService,
+  );
   if (manualSelection) {
     llmPromptService.applyManualSelection(manualSelection);
   }
@@ -390,4 +410,142 @@ export function getLLMPromptService(): LLMPromptService {
     throw new Error("LLMPromptService not initialized");
   }
   return llmPromptService;
+}
+
+const normalizeApiBase = (basePath: string): string => {
+  const trimmed = basePath.replace(/\/+$/, "");
+  return /\/v\d+$/i.test(trimmed) ? trimmed : `${trimmed}/v1`;
+};
+
+const parsePromptTags = (value: unknown): string[] => {
+  if (Array.isArray(value)) {
+    return value.filter((tag): tag is string => typeof tag === "string");
+  }
+  if (typeof value !== "string" || !value.trim()) {
+    return [];
+  }
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed)) {
+      return parsed.filter((tag): tag is string => typeof tag === "string");
+    }
+    if (Array.isArray(parsed?.tags)) {
+      return parsed.tags.filter(
+        (tag: unknown): tag is string => typeof tag === "string",
+      );
+    }
+    if (Array.isArray(parsed?.promptTags)) {
+      return parsed.promptTags.filter(
+        (tag: unknown): tag is string => typeof tag === "string",
+      );
+    }
+  } catch {
+    return value
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+  }
+  return [];
+};
+
+const normalizePromptMode = (value: unknown): LlmPromptMode => {
+  return value === "APPEND" ? "APPEND" : "SYSTEM";
+};
+
+const toPromptSummary = (record: any): LlmDetailsSummary | null => {
+  if (!record?.id || !record?.name || !record?.initialPrompt) {
+    return null;
+  }
+
+  let metadata: any = {};
+  if (typeof record.metaData === "string" && record.metaData.trim()) {
+    try {
+      metadata = JSON.parse(record.metaData);
+    } catch {
+      metadata = {};
+    }
+  }
+
+  return {
+    id: String(record.id),
+    name: String(record.name),
+    description: record.description,
+    initialPrompt: record.initialPrompt,
+    promptType: normalizePromptMode(record.promptType ?? metadata.promptType),
+    tags: [
+      ...new Set([
+        ...parsePromptTags(record.tags),
+        ...parsePromptTags(record.promptTags),
+        ...parsePromptTags(metadata.tags),
+        ...parsePromptTags(metadata.promptTags),
+      ]),
+    ],
+    ratingScore: Number(record.ratingScore ?? metadata.ratingScore ?? 0),
+    provider: record.provider,
+    version: record.version,
+    lastModifiedDate: record.lastModifiedDate,
+  };
+};
+
+const extractLlmDetailsRows = (payload: any): any[] => {
+  if (Array.isArray(payload)) {
+    return payload;
+  }
+
+  for (const key of ["content", "items", "records", "data"]) {
+    if (Array.isArray(payload?.[key])) {
+      return payload[key];
+    }
+  }
+
+  return [];
+};
+
+const scorePrompt = (prompt: LlmDetailsSummary, tags: string[]): number => {
+  const promptTags = new Set(
+    (prompt.tags ?? []).map((tag) => tag.toLowerCase()),
+  );
+  const tagScore = tags.reduce(
+    (score, tag) => score + (promptTags.has(tag.toLowerCase()) ? 1 : 0),
+    0,
+  );
+  return tagScore * 100 + (prompt.ratingScore ?? 0);
+};
+
+export class ThorApiLlmDetailsClient implements LlmDetailsClient {
+  private readonly http: AxiosInstance;
+  private readonly hasAuth: boolean;
+
+  constructor(authToken?: string, basePath = "https://api-0.valkyrlabs.com") {
+    this.hasAuth = Boolean(authToken);
+    this.http = axios.create({
+      baseURL: normalizeApiBase(basePath),
+      timeout: 10000,
+      headers: authToken ? { Authorization: `Bearer ${authToken}` } : undefined,
+    });
+  }
+
+  async query(query: LlmDetailsQuery): Promise<LlmDetailsSummary[]> {
+    if (!this.hasAuth) {
+      throw new Error("ThorAPI LLMDetails query requires signed-in auth");
+    }
+
+    const example = encodeURIComponent(
+      JSON.stringify({
+        trashed: false,
+      }),
+    );
+    const response = await this.http.get(`/LlmDetails?example=${example}`);
+    const rows = extractLlmDetailsRows(response.data);
+
+    return rows
+      .map(toPromptSummary)
+      .filter((prompt): prompt is LlmDetailsSummary => Boolean(prompt))
+      .filter((prompt) => scorePrompt(prompt, query.tags) > 0)
+      .sort(
+        (left, right) =>
+          scorePrompt(right, query.tags) - scorePrompt(left, query.tags),
+      )
+      .slice(0, query.limit ?? 1);
+  }
 }

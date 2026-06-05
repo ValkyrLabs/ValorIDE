@@ -22,8 +22,6 @@ import {
   parseLegacyAuthCallbackCredentials,
   summarizeAuthCallback,
 } from "./security/authCallback";
-import { AuthCodeExchangeService } from "./services/auth/AuthCodeExchangeService";
-import { parseAuthCallbackQuery } from "./services/auth/AuthCallbackSecurity";
 import { initializePromptService } from "./services/promptService";
 import { initializeMemoryBankLoader } from "./services/memoryBankLoader";
 import { initializeLLMContextInjector } from "./services/llmContextInjector";
@@ -38,8 +36,9 @@ import { initializeStatusBarService } from "./services/StatusBarService";
 import {
   initializeLLMPromptService,
   SelectedPrompt,
+  ThorApiLlmDetailsClient,
 } from "./services/llmPromptService";
-import { getAllExtensionState } from "./core/storage/state";
+import { getAllExtensionState, getSecret } from "./core/storage/state";
 import { SelectedLlmDetails } from "@shared/llm";
 
 /*
@@ -90,7 +89,8 @@ export function activate(context: vscode.ExtensionContext) {
   // Initialize LLMPromptService (load base prompt + manual overrides)
   void (async () => {
     try {
-      const { selectedLlmDetails } = await getAllExtensionState(context);
+      const { apiConfiguration, selectedLlmDetails } =
+        await getAllExtensionState(context);
       const manualSelection: SelectedPrompt | undefined = selectedLlmDetails
         ? {
             llmDetailsId: selectedLlmDetails.id,
@@ -103,11 +103,22 @@ export function activate(context: vscode.ExtensionContext) {
             stackSpecific: true,
           }
         : undefined;
+      const authToken =
+        (await getSecret(context, "jwtToken")) ??
+        apiConfiguration.valkyraiJwt ??
+        apiConfiguration.valorideApiKey;
+      const llmDetailsClient =
+        authToken && !manualSelection
+          ? new ThorApiLlmDetailsClient(
+              authToken,
+              apiConfiguration.valkyraiHost,
+            )
+          : undefined;
 
       await initializeLLMPromptService(
         workspaceRoot,
         outputChannel,
-        undefined,
+        llmDetailsClient,
         manualSelection,
       );
       Logger.log("LLMPromptService initialized successfully");
@@ -236,8 +247,9 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Initialize ToolRelayService for remote control capabilities
     try {
-      const toolRelayMod =
-        await import("./services/communication/ToolRelayService");
+      const toolRelayMod = await import(
+        "./services/communication/ToolRelayService"
+      );
       const visibleWebview =
         WebviewProvider.getVisibleInstance() || sidebarWebview;
       if (visibleWebview?.controller) {
@@ -627,51 +639,7 @@ export function activate(context: vscode.ExtensionContext) {
               legacyCredentials.authenticatedPrincipal,
             );
           }
-        const callback = parseAuthCallbackQuery(uri);
-        Logger.log(
-          `Auth callback received: ${JSON.stringify(callback.diagnostics)}`,
-        );
-
-        if (callback.hasLegacySecretParams) {
-          vscode.window.showErrorMessage(
-            "ValorIDE rejected an insecure auth callback. Please retry sign-in to use the secure code exchange flow.",
-          );
-          return;
         }
-
-        // Validate state parameter before exchanging the one-time code.
-        if (
-          !(await visibleWebview?.controller.validateAuthState(callback.state))
-        ) {
-          vscode.window.showErrorMessage("Invalid auth state");
-          return;
-        }
-
-        if (!callback.code || !callback.state) {
-          vscode.window.showErrorMessage(
-            "ValorIDE auth callback did not include a valid one-time code.",
-          );
-          return;
-        }
-
-        const exchangeService = new AuthCodeExchangeService();
-        const authResult = await exchangeService.exchangeCode(
-          callback.code,
-          callback.state,
-        );
-
-        // Use StartupAuthService to handle login persistently via VS Code SecretStorage.
-        const startupAuthService = StartupAuthService.getInstance(context);
-        await startupAuthService.handleSuccessfulLogin(
-          authResult.tokens,
-          authResult.user,
-        );
-
-        await visibleWebview?.controller.handleAuthCallback(
-          authResult.tokens.jwtToken,
-          authResult.tokens.apiKey || "",
-          authResult.user,
-        );
         break;
       }
       default:
