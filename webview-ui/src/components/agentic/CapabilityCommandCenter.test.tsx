@@ -1,7 +1,6 @@
 import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { fireEvent, render, screen } from "@testing-library/react";
 import CapabilityCommandCenter from "./CapabilityCommandCenter";
 
 const mockUseExtensionState = vi.fn();
@@ -138,7 +137,6 @@ describe("CapabilityCommandCenter", () => {
   });
 
   it("turns GrayMatter quota blocks into recharge, upgrade, and usage recovery actions", async () => {
-    const user = userEvent.setup();
     mockUseExtensionState.mockReturnValue({
       apiConfiguration: {
         apiProvider: "openai-native",
@@ -190,26 +188,34 @@ describe("CapabilityCommandCenter", () => {
       "GrayMatter is waiting on credits for graymatter.memory. Balance: 0 credits. Estimated unlock: 25 credits.",
     );
 
-    await user.click(screen.getByRole("button", { name: "Recharge credits" }));
+    fireEvent.click(screen.getByRole("button", { name: "Recharge credits" }));
     expect(mockPostMessage).toHaveBeenLastCalledWith({
       type: "openInBrowser",
-      url: "https://api-0.valkyrlabs.com/buy-credits?source=valoride-graymatter-quota&intent=resume-blocked-action&capability=graymatter.memory&resumeCommand=cmd-quota-1&action=Recall+project+memory",
+      url: "https://api-0.valkyrlabs.com/buy-credits?source=valoride-graymatter-quota&intent=resume-blocked-action&returnTo=valoride%3A%2F%2Fagentic-command-center%2Frecovery%3Faction%3Dresume_blocked_action&capability=graymatter.memory&resumeCommand=cmd-quota-1&action=Recall+project+memory",
+    });
+    expect(mockPostMessage).toHaveBeenCalledWith({
+      event: "valoride_activation_recovery_action",
+      payload: {
+        action: "recharge_credits",
+        status: "quota",
+        surface: "graymatter",
+      },
+      type: "trackFunnelEvent",
     });
 
-    await user.click(screen.getByRole("button", { name: "Upgrade plan" }));
+    fireEvent.click(screen.getByRole("button", { name: "Upgrade plan" }));
     expect(mockPostMessage).toHaveBeenLastCalledWith({
       type: "openInBrowser",
-      url: "https://api-0.valkyrlabs.com/pricing?source=valoride-graymatter-quota&intent=resume-blocked-action&capability=graymatter.memory&resumeCommand=cmd-quota-1&action=Recall+project+memory",
+      url: "https://api-0.valkyrlabs.com/pricing?source=valoride-graymatter-quota&intent=resume-blocked-action&returnTo=valoride%3A%2F%2Fagentic-command-center%2Frecovery%3Faction%3Dresume_blocked_action&capability=graymatter.memory&resumeCommand=cmd-quota-1&action=Recall+project+memory",
     });
 
-    await user.click(screen.getByRole("button", { name: "View usage" }));
+    fireEvent.click(screen.getByRole("button", { name: "View usage" }));
     expect(mockPostMessage).toHaveBeenLastCalledWith({
       type: "showAccountViewClicked",
     });
   });
 
   it("shows sign-in and workspace recovery actions for unauthenticated sessions", async () => {
-    const user = userEvent.setup();
     mockUseExtensionState.mockReturnValue({
       apiConfiguration: {
         valkyraiHost: "https://api-0.valkyrlabs.com/v1",
@@ -222,22 +228,31 @@ describe("CapabilityCommandCenter", () => {
 
     render(<CapabilityCommandCenter />);
 
-    await user.click(
+    fireEvent.click(
       screen.getByRole("button", { name: "Sign in to ValkyrAI" }),
     );
     expect(mockPostMessage).toHaveBeenLastCalledWith({
-      type: "accountLoginClicked",
+      type: "openInBrowser",
+      url: "https://api-0.valkyrlabs.com/graymatter/activate?source=valoride-graymatter-auth&returnTo=valoride%3A%2F%2Fagentic-command-center%2Frecovery%3Faction%3Dsign_in",
+    });
+    expect(mockPostMessage).toHaveBeenCalledWith({
+      event: "valoride_activation_recovery_action",
+      payload: {
+        action: "sign_in",
+        status: "unauthenticated",
+        surface: "graymatter",
+      },
+      type: "trackFunnelEvent",
     });
 
-    await user.click(screen.getByRole("button", { name: "Create workspace" }));
+    fireEvent.click(screen.getByRole("button", { name: "Create workspace" }));
     expect(mockPostMessage).toHaveBeenLastCalledWith({
       type: "openInBrowser",
-      url: "https://api-0.valkyrlabs.com/signup?source=valoride-graymatter-workspace",
+      url: "https://api-0.valkyrlabs.com/signup?source=valoride-graymatter-workspace&returnTo=valoride%3A%2F%2Fagentic-command-center%2Frecovery%3Faction%3Dcreate_workspace",
     });
   });
 
   it("surfaces RBAC, unavailable, and MCP recovery actions", async () => {
-    const user = userEvent.setup();
     mockUseExtensionState.mockReturnValue({
       apiConfiguration: {
         valkyraiHost: "https://api-0.valkyrlabs.com/v1",
@@ -250,32 +265,40 @@ describe("CapabilityCommandCenter", () => {
 
     render(<CapabilityCommandCenter />);
 
-    await user.click(screen.getByRole("button", { name: "Request access" }));
+    fireEvent.click(screen.getByRole("button", { name: "Request access" }));
     expect(mockPostMessage).toHaveBeenLastCalledWith({
       type: "openInBrowser",
-      url: "https://api-0.valkyrlabs.com/account?source=valoride-graymatter-rbac-request",
+      url: "https://api-0.valkyrlabs.com/account?source=valoride-graymatter-rbac-request&returnTo=valoride%3A%2F%2Fagentic-command-center%2Frecovery%3Faction%3Drequest_access",
     });
 
-    await user.click(screen.getByRole("button", { name: "Open admin RBAC" }));
+    fireEvent.click(screen.getByRole("button", { name: "Open admin RBAC" }));
     expect(mockPostMessage).toHaveBeenLastCalledWith({
       type: "openInBrowser",
-      url: "https://api-0.valkyrlabs.com/admin/rbac?source=valoride-graymatter-rbac-admin",
+      url: "https://api-0.valkyrlabs.com/admin/rbac?source=valoride-graymatter-rbac-admin&returnTo=valoride%3A%2F%2Fagentic-command-center%2Frecovery%3Faction%3Dopen_admin_rbac",
     });
 
-    await user.click(screen.getByRole("button", { name: "Retry discovery" }));
+    fireEvent.click(screen.getByRole("button", { name: "Retry discovery" }));
     expect(mockPostMessage).toHaveBeenLastCalledWith({
       type: "fetchLatestMcpServersFromHub",
     });
 
-    await user.click(screen.getByRole("button", { name: "Open MCP setup" }));
+    fireEvent.click(screen.getByRole("button", { name: "Open MCP setup" }));
     expect(mockPostMessage).toHaveBeenLastCalledWith({
       type: "showMcpView",
       tab: "installed",
     });
+    expect(mockPostMessage).toHaveBeenCalledWith({
+      event: "valoride_activation_recovery_action",
+      payload: {
+        action: "open_mcp_setup",
+        status: "unknown",
+        surface: "mcp",
+      },
+      type: "trackFunnelEvent",
+    });
   });
 
   it("offers SWARM recovery and failed command details without exposing user identity", async () => {
-    const user = userEvent.setup();
     mockUseExtensionState.mockReturnValue({
       apiConfiguration: {
         valkyraiHost: "https://api-0.valkyrlabs.com/v1",
@@ -324,12 +347,12 @@ describe("CapabilityCommandCenter", () => {
       screen.getByText("Remote command · swarm.dispatch · approval required"),
     ).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Retry SWARM" }));
+    fireEvent.click(screen.getByRole("button", { name: "Retry SWARM" }));
     expect(mockPostMessage).toHaveBeenLastCalledWith({
       type: "webviewDidLaunch",
     });
 
-    await user.click(screen.getByRole("button", { name: "Open setup" }));
+    fireEvent.click(screen.getByRole("button", { name: "Open setup" }));
     expect(mockPostMessage).toHaveBeenLastCalledWith({
       type: "showMcpView",
       tab: "installed",

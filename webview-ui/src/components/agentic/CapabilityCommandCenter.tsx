@@ -197,6 +197,7 @@ const quotaRecoveryUrl = (
   const context = quotaActionContext(grayMatterSession, latestCommand);
   url.searchParams.set("source", "valoride-graymatter-quota");
   url.searchParams.set("intent", "resume-blocked-action");
+  url.searchParams.set("returnTo", valorideReturnTo("resume_blocked_action"));
   if (context.capabilityId) {
     url.searchParams.set("capability", context.capabilityId);
   }
@@ -207,6 +208,37 @@ const quotaRecoveryUrl = (
     url.searchParams.set("action", context.label);
   }
   return url.toString();
+};
+
+const valorideReturnTo = (action: string): string =>
+  `valoride://agentic-command-center/recovery?action=${encodeURIComponent(action)}`;
+
+const hostedRecoveryUrl = (
+  path: string,
+  state: Record<string, any>,
+  source: string,
+  action: string,
+): string => {
+  const url = hostedUrl(path, state);
+  url.searchParams.set("source", source);
+  url.searchParams.set("returnTo", valorideReturnTo(action));
+  return url.toString();
+};
+
+const trackRecoveryAction = (
+  status: string | undefined,
+  action: string,
+  surface: "graymatter" | "mcp",
+) => {
+  vscode.postMessage({
+    event: "valoride_activation_recovery_action",
+    payload: {
+      action,
+      status: status ?? "unknown",
+      surface,
+    },
+    type: "trackFunnelEvent",
+  });
 };
 
 const formatCredits = (value?: number): string | undefined => {
@@ -252,7 +284,8 @@ const GrayMatterQuotaRecovery = ({
   const context = quotaActionContext(grayMatterSession, latestCommand);
   const blockedAction = context.capabilityId ?? "GrayMatter action";
 
-  const openRecoveryUrl = (path: string) => {
+  const openRecoveryUrl = (path: string, action: string) => {
+    trackRecoveryAction(grayMatterSession?.status, action, "graymatter");
     vscode.postMessage({
       type: "openInBrowser",
       url: quotaRecoveryUrl(path, state, grayMatterSession, latestCommand),
@@ -270,15 +303,28 @@ const GrayMatterQuotaRecovery = ({
         </span>
       </div>
       <div className="capability-command-center__quota-actions">
-        <button type="button" onClick={() => openRecoveryUrl("/buy-credits")}>
+        <button
+          type="button"
+          onClick={() => openRecoveryUrl("/buy-credits", "recharge_credits")}
+        >
           Recharge credits
         </button>
-        <button type="button" onClick={() => openRecoveryUrl("/pricing")}>
+        <button
+          type="button"
+          onClick={() => openRecoveryUrl("/pricing", "upgrade_plan")}
+        >
           Upgrade plan
         </button>
         <button
           type="button"
-          onClick={() => vscode.postMessage({ type: "showAccountViewClicked" })}
+          onClick={() => {
+            trackRecoveryAction(
+              grayMatterSession?.status,
+              "view_usage",
+              "graymatter",
+            );
+            vscode.postMessage({ type: "showAccountViewClicked" });
+          }}
         >
           View usage
         </button>
@@ -294,10 +340,12 @@ const GrayMatterRecoveryActions = ({
   grayMatterSession?: GrayMatterLike;
   state: Record<string, any>;
 }) => {
-  const openHosted = (path: string, source: string) => {
-    const url = hostedUrl(path, state);
-    url.searchParams.set("source", source);
-    vscode.postMessage({ type: "openInBrowser", url: url.toString() });
+  const openHosted = (path: string, source: string, action: string) => {
+    trackRecoveryAction(grayMatterSession?.status, action, "graymatter");
+    vscode.postMessage({
+      type: "openInBrowser",
+      url: hostedRecoveryUrl(path, state, source, action),
+    });
   };
 
   if (grayMatterSession?.status === "unauthenticated") {
@@ -313,7 +361,11 @@ const GrayMatterRecoveryActions = ({
           <button
             type="button"
             onClick={() =>
-              openHosted("/graymatter/activate", "valoride-graymatter-auth")
+              openHosted(
+                "/graymatter/activate",
+                "valoride-graymatter-auth",
+                "sign_in",
+              )
             }
           >
             Sign in to ValkyrAI
@@ -321,7 +373,11 @@ const GrayMatterRecoveryActions = ({
           <button
             type="button"
             onClick={() =>
-              openHosted("/signup", "valoride-graymatter-workspace")
+              openHosted(
+                "/signup",
+                "valoride-graymatter-workspace",
+                "create_workspace",
+              )
             }
           >
             Create workspace
@@ -344,7 +400,11 @@ const GrayMatterRecoveryActions = ({
           <button
             type="button"
             onClick={() =>
-              openHosted("/account", "valoride-graymatter-rbac-request")
+              openHosted(
+                "/account",
+                "valoride-graymatter-rbac-request",
+                "request_access",
+              )
             }
           >
             Request access
@@ -352,7 +412,11 @@ const GrayMatterRecoveryActions = ({
           <button
             type="button"
             onClick={() =>
-              openHosted("/admin/rbac", "valoride-graymatter-rbac-admin")
+              openHosted(
+                "/admin/rbac",
+                "valoride-graymatter-rbac-admin",
+                "open_admin_rbac",
+              )
             }
           >
             Open admin RBAC
@@ -378,6 +442,7 @@ const GrayMatterRecoveryActions = ({
               openHosted(
                 "/graymatter/activate",
                 "valoride-graymatter-diagnostics",
+                "open_diagnostics",
               )
             }
           >
@@ -385,7 +450,14 @@ const GrayMatterRecoveryActions = ({
           </button>
           <button
             type="button"
-            onClick={() => vscode.postMessage({ type: "webviewDidLaunch" })}
+            onClick={() => {
+              trackRecoveryAction(
+                grayMatterSession?.status,
+                "retry_setup",
+                "graymatter",
+              );
+              vscode.postMessage({ type: "webviewDidLaunch" });
+            }}
           >
             Retry setup
           </button>
@@ -531,17 +603,19 @@ const CapabilityCommandCenter = () => {
           <div className="capability-command-center__quota-actions">
             <button
               type="button"
-              onClick={() =>
-                vscode.postMessage({ type: "fetchLatestMcpServersFromHub" })
-              }
+              onClick={() => {
+                trackRecoveryAction(undefined, "retry_discovery", "mcp");
+                vscode.postMessage({ type: "fetchLatestMcpServersFromHub" });
+              }}
             >
               Retry discovery
             </button>
             <button
               type="button"
-              onClick={() =>
-                vscode.postMessage({ type: "showMcpView", tab: "installed" })
-              }
+              onClick={() => {
+                trackRecoveryAction(undefined, "open_mcp_setup", "mcp");
+                vscode.postMessage({ type: "showMcpView", tab: "installed" });
+              }}
             >
               Open MCP setup
             </button>
