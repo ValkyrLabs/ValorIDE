@@ -172,4 +172,16 @@ describe("LLMPromptService", () => {
       tags: ["typescript", "thorapi", "production"],
     });
   });
+
+  it("classifies missing auth before querying ThorAPI LLMDetails", async () => {
+    const get = vi.fn();
+    vi.mocked(axios.create).mockReturnValue({ get } as any);
+
+    const client = new ThorApiLlmDetailsClient(undefined, "https://api.test");
+
+    await expect(
+      client.query({ tags: ["typescript", "thorapi"], limit: 1 }),
+    ).rejects.toThrow("requires signed-in auth");
+    expect(get).not.toHaveBeenCalled();
+  });
 });
