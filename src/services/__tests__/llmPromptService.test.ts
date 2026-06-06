@@ -186,4 +186,26 @@ describe("LLMPromptService", () => {
     ).rejects.toThrow("requires signed-in auth");
     expect(get).not.toHaveBeenCalled();
   });
+
+  it("classifies RBAC-denied ThorAPI LLMDetails responses", async () => {
+    const get = vi.fn().mockRejectedValue({ response: { status: 403 } });
+    vi.mocked(axios.create).mockReturnValue({ get } as any);
+
+    const client = new ThorApiLlmDetailsClient("token", "https://api.test");
+
+    await expect(
+      client.query({ tags: ["typescript", "thorapi"], limit: 1 }),
+    ).rejects.toThrow("denied by RBAC policy");
+  });
+
+  it("classifies unreachable ThorAPI LLMDetails responses as offline", async () => {
+    const get = vi.fn().mockRejectedValue({ request: {} });
+    vi.mocked(axios.create).mockReturnValue({ get } as any);
+
+    const client = new ThorApiLlmDetailsClient("token", "https://api.test");
+
+    await expect(
+      client.query({ tags: ["typescript", "thorapi"], limit: 1 }),
+    ).rejects.toThrow("offline or unreachable");
+  });
 });

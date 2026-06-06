@@ -518,6 +518,27 @@ const scorePrompt = (prompt: LlmDetailsSummary, tags: string[]): number => {
   return tagScore * 100 + (prompt.ratingScore ?? 0);
 };
 
+const classifyThorApiQueryError = (error: any): Error => {
+  const status = error?.response?.status;
+  if (status === 401) {
+    return new Error(
+      "ThorAPI LLMDetails query requires refreshed sign-in auth",
+    );
+  }
+  if (status === 403) {
+    return new Error("ThorAPI LLMDetails query was denied by RBAC policy");
+  }
+  if (status === 429) {
+    return new Error("ThorAPI LLMDetails query was rate limited");
+  }
+  if (error?.request && !error?.response) {
+    return new Error("ThorAPI LLMDetails query is offline or unreachable");
+  }
+  return error instanceof Error
+    ? error
+    : new Error("ThorAPI LLMDetails query failed");
+};
+
 export class ThorApiLlmDetailsClient implements LlmDetailsClient {
   private readonly http: AxiosInstance;
   private readonly hasAuth: boolean;
@@ -541,7 +562,12 @@ export class ThorApiLlmDetailsClient implements LlmDetailsClient {
         trashed: false,
       }),
     );
-    const response = await this.http.get(`/LlmDetails?example=${example}`);
+    let response;
+    try {
+      response = await this.http.get(`/LlmDetails?example=${example}`);
+    } catch (error) {
+      throw classifyThorApiQueryError(error);
+    }
     const rows = extractLlmDetailsRows(response.data);
 
     return rows
