@@ -1,6 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
+import { getAllExtensionState, getSecret } from "@core/storage/state";
+import { normalizeValkyraiHost } from "@utils/serverValkyraiHost";
 
 /**
  * LLMPromptService — ThorAPI-FIRST prompt loading
@@ -33,12 +35,38 @@ export interface ProjectStack {
   isGenerated: boolean;
 }
 
+export interface LLMDetailsQuery {
+  tags: string[];
+  stack: ProjectStack;
+  limit: number;
+}
+
+export interface LLMDetailsPromptCandidate {
+  id?: string;
+  name?: string;
+  initialPrompt?: string;
+  prompt?: string;
+  systemPrompt?: string;
+  promptType?: "SYSTEM" | "APPEND" | string;
+  tags?: string[] | string;
+  ratingScore?: number;
+  rating?: number;
+  updatedDate?: string;
+  lastModifiedDate?: string;
+  isPremium?: boolean;
+  accessStatus?: string;
+}
+
+export interface LLMDetailsPromptService {
+  query(input: LLMDetailsQuery): Promise<LLMDetailsPromptCandidate | null>;
+}
+
 export class LLMPromptService {
   private workspaceRoot: string;
   private logger: vscode.OutputChannel;
   private selectedPrompt: SelectedPrompt | null = null;
   private projectStack: ProjectStack | null = null;
-  private llmDetailsService: any = null; // Will be injected from webview
+  private llmDetailsService: LLMDetailsPromptService | null = null;
 
   constructor(workspaceRoot: string, logger: vscode.OutputChannel) {
     this.workspaceRoot = workspaceRoot;
@@ -48,7 +76,7 @@ export class LLMPromptService {
   /**
    * Initialize — detect project stack and attempt ThorAPI load
    */
-  async initialize(llmDetailsService?: any): Promise<void> {
+  async initialize(llmDetailsService?: LLMDetailsPromptService): Promise<void> {
     this.logger.appendLine("[LLMPromptService] Initializing...");
 
     try {
@@ -181,8 +209,8 @@ export class LLMPromptService {
           llmDetailsId: llmDetails.id,
           name: llmDetails.name,
           prompt: llmDetails.initialPrompt,
-          mode: llmDetails.promptType || "SYSTEM",
-          tags: llmDetails.tags || [],
+          mode: normalizePromptMode(llmDetails.promptType),
+          tags: normalizeTags(llmDetails.tags),
           stackSpecific: true,
         };
         this.logger.appendLine(
@@ -197,12 +225,19 @@ export class LLMPromptService {
   }
 
   /**
-   * Query LLMDetails by tags (stub for now)
+   * Query LLMDetails by tags through the injected extension-host client.
    */
-  private async queryLLMDetails(tags: string[]): Promise<any> {
-    // TODO: Implement via webview RTK Query once integrated
-    // return await llmDetailsService.query({ tags, sortBy: 'ratingScore', limit: 1 })
-    return null;
+  private async queryLLMDetails(
+    tags: string[],
+  ): Promise<LLMDetailsPromptCandidate | null> {
+    if (!this.llmDetailsService || !this.projectStack) {
+      return null;
+    }
+    return await this.llmDetailsService.query({
+      tags,
+      stack: this.projectStack,
+      limit: 1,
+    });
   }
 
   /**
@@ -366,19 +401,146 @@ export class LLMPromptService {
 
 export let llmPromptService: LLMPromptService | null = null;
 
+export function createExtensionHostLLMDetailsService(
+  context: vscode.ExtensionContext,
+  logger: vscode.OutputChannel,
+): LLMDetailsPromptService {
+  return {
+    async query(input: LLMDetailsQuery) {
+      const { apiConfiguration } = await getAllExtensionState(context);
+      if (!apiConfiguration?.valkyraiHost) {
+        logger.appendLine(
+          "[LLMPromptService] ThorAPI query skipped: ValkyrAI host is not configured",
+        );
+        return null;
+      }
+
+      const endpoint = new URL(
+        `${normalizeValkyraiHost(apiConfiguration.valkyraiHost)}/LlmDetails`,
+      );
+      endpoint.searchParams.set("limit", String(Math.max(input.limit, 10)));
+      endpoint.searchParams.set("sort", "ratingScore,desc");
+      for (const tag of input.tags) {
+        endpoint.searchParams.append("tags", tag);
+      }
+
+      const headers: Record<string, string> = {
+        Accept: "application/json",
+      };
+      const authToken =
+        apiConfiguration.valkyraiJwt || (await getSecret(context, "jwtToken"));
+      if (authToken) {
+        headers.Authorization = `Bearer ${authToken}`;
+      }
+
+      const response = await fetch(endpoint.toString(), { headers });
+      if (response.status === 401 || response.status === 403) {
+        logger.appendLine(
+          `[LLMPromptService] ThorAPI query denied by RBAC (${response.status}); using fallback prompt`,
+        );
+        return null;
+      }
+      if (!response.ok) {
+        throw new Error(`LlmDetails query failed with HTTP ${response.status}`);
+      }
+
+      const payload = await response.json();
+      return selectBestLlmDetailsPrompt(payload, input.tags);
+    },
+  };
+}
+
+export function selectBestLlmDetailsPrompt(
+  payload: unknown,
+  tags: string[],
+): LLMDetailsPromptCandidate | null {
+  const candidates = extractLlmDetails(payload).filter((candidate) => {
+    const prompt =
+      candidate.initialPrompt || candidate.prompt || candidate.systemPrompt;
+    if (!prompt || typeof prompt !== "string") {
+      return false;
+    }
+    const accessStatus = `${candidate.accessStatus || ""}`.toLowerCase();
+    return !candidate.isPremium && accessStatus !== "blocked";
+  });
+
+  if (candidates.length === 0) {
+    return null;
+  }
+
+  const queryTags = new Set(tags.map((tag) => tag.toLowerCase()));
+  return candidates
+    .map((candidate) => ({
+      candidate,
+      tagScore: normalizeTags(candidate.tags).filter((tag) =>
+        queryTags.has(tag.toLowerCase()),
+      ).length,
+      rating:
+        typeof candidate.ratingScore === "number"
+          ? candidate.ratingScore
+          : typeof candidate.rating === "number"
+            ? candidate.rating
+            : 0,
+      recency:
+        Date.parse(candidate.updatedDate || candidate.lastModifiedDate || "") ||
+        0,
+    }))
+    .sort(
+      (a, b) =>
+        b.tagScore - a.tagScore ||
+        b.rating - a.rating ||
+        b.recency - a.recency,
+    )[0].candidate;
+}
+
+function extractLlmDetails(payload: unknown): LLMDetailsPromptCandidate[] {
+  if (Array.isArray(payload)) {
+    return payload as LLMDetailsPromptCandidate[];
+  }
+  if (payload && typeof payload === "object") {
+    const record = payload as Record<string, unknown>;
+    for (const key of ["content", "items", "data", "results"]) {
+      if (Array.isArray(record[key])) {
+        return record[key] as LLMDetailsPromptCandidate[];
+      }
+    }
+  }
+  return [];
+}
+
+function normalizePromptMode(mode: unknown): "SYSTEM" | "APPEND" {
+  return mode === "APPEND" ? "APPEND" : "SYSTEM";
+}
+
+function normalizeTags(tags: unknown): string[] {
+  if (Array.isArray(tags)) {
+    return tags
+      .map((tag) => `${tag}`.trim())
+      .filter((tag) => tag.length > 0);
+  }
+  if (typeof tags === "string") {
+    return tags
+      .split(/[,\s]+/)
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0);
+  }
+  return [];
+}
+
 /**
  * Initialize global LLMPromptService instance
  */
 export async function initializeLLMPromptService(
   workspaceRoot: string,
   logger: vscode.OutputChannel,
-  llmDetailsService?: any,
+  llmDetailsService?: LLMDetailsPromptService,
   manualSelection?: SelectedPrompt,
 ): Promise<void> {
   llmPromptService = new LLMPromptService(workspaceRoot, logger);
-  await llmPromptService.initialize(llmDetailsService);
   if (manualSelection) {
     llmPromptService.applyManualSelection(manualSelection);
+  } else {
+    await llmPromptService.initialize(llmDetailsService);
   }
 }
 
