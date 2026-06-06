@@ -1,6 +1,6 @@
 import { readFile } from "fs/promises";
 import { describe, it } from "mocha";
-import path from "path";
+import * as path from "path";
 import "should";
 
 const repoRoot = path.join(__dirname, "..", "..", "..");
