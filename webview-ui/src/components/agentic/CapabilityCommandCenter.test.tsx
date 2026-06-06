@@ -14,6 +14,7 @@ vi.mock("@vscode/webview-ui-toolkit/react", () => ({
 
 import CapabilityCommandCenter, {
   CapabilitySnapshot,
+  buildCapabilityRecoveryUrl,
   deriveCapabilityCards,
 } from "./CapabilityCommandCenter";
 
@@ -125,5 +126,39 @@ describe("CapabilityCommandCenter", () => {
     );
 
     expect(screen.getAllByRole("button", { name: "Refresh" })).toHaveLength(3);
+  });
+
+  it("builds safe recovery URLs with deep-link return context", () => {
+    const url = new URL(
+      buildCapabilityRecoveryUrl("buyCredits", {
+        id: "graymatter",
+        status: "quotaBlocked",
+      }) ?? "",
+    );
+
+    expect(url.origin).toBe("https://valkyrlabs.com");
+    expect(url.pathname).toBe("/buy-credits");
+    expect(url.searchParams.get("intent")).toBe("credit-recovery");
+    expect(url.searchParams.get("capability")).toBe("graymatter");
+    expect(url.searchParams.get("blockedState")).toBe("quotaBlocked");
+    expect(url.searchParams.get("returnTo")).toBe(
+      "valoride://capability-command-center",
+    );
+    expect(url.toString()).not.toMatch(/token|jwt|secret|api[_-]?key/i);
+  });
+
+  it("keeps local-only recovery actions off external URLs", () => {
+    expect(
+      buildCapabilityRecoveryUrl("retry", {
+        id: "mcp",
+        status: "disconnected",
+      }),
+    ).toBeUndefined();
+    expect(
+      buildCapabilityRecoveryUrl("openDiagnostics", {
+        id: "swarm",
+        status: "offline",
+      }),
+    ).toBeUndefined();
   });
 });
