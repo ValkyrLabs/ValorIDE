@@ -290,15 +290,6 @@ export function activate(context: vscode.ExtensionContext) {
     IS_DEV && IS_DEV === "true",
   );
 
-  // Ensure our Activity Bar container is visible, then focus our view
-  // This helps recover if the container was hidden from prior layout changes
-  void vscode.commands.executeCommand(
-    "workbench.view.extension.valoride-activitybar",
-  );
-  // Proactively reveal the sidebar view once after activation
-  // This helps surface the Activity Bar icon if the container was hidden/cached
-  void vscode.commands.executeCommand(`${WebviewProvider.sideBarId}.focus`);
-
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "valoride.plusButtonClicked",
