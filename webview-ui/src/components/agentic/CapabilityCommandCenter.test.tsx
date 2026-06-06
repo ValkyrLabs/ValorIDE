@@ -220,8 +220,7 @@ describe("CapabilityCommandCenter", () => {
 
     await user.click(screen.getByRole("button", { name: "Sign in to ValkyrAI" }));
     expect(mockPostMessage).toHaveBeenLastCalledWith({
-      type: "openInBrowser",
-      url: "https://api-0.valkyrlabs.com/graymatter/activate?source=valoride-graymatter-auth",
+      type: "accountLoginClicked",
     });
 
     await user.click(screen.getByRole("button", { name: "Create workspace" }));

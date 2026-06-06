@@ -293,7 +293,7 @@ const GrayMatterRecoveryActions = ({
         <div className="capability-command-center__quota-actions">
           <button
             type="button"
-            onClick={() => openHosted("/graymatter/activate", "valoride-graymatter-auth")}
+            onClick={() => vscode.postMessage({ type: "accountLoginClicked" })}
           >
             Sign in to ValkyrAI
           </button>
