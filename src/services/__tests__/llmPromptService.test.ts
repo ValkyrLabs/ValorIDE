@@ -86,6 +86,38 @@ describe("LLMPromptService", () => {
     expect(service.getSelectedPrompt()?.source).toBe("fallback");
   });
 
+  it("falls back locally when ThorAPI returns a prompt without an initial prompt body", async () => {
+    const workspaceRoot = fs.mkdtempSync(
+      path.join(os.tmpdir(), "valoride-prompt-empty-remote-test-"),
+    );
+    const promptDir = path.join(workspaceRoot, ".valoride", "prompts");
+    fs.mkdirSync(promptDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(promptDir, "system.json"),
+      JSON.stringify({ name: "Empty Remote Fallback Prompt", sections: [] }),
+    );
+    service = new LLMPromptService(workspaceRoot, mockLogger);
+    const client: LlmDetailsClient = {
+      query: vi.fn().mockResolvedValue([
+        {
+          id: "empty-remote-prompt",
+          name: "Empty Remote Prompt",
+          tags: ["typescript", "nodejs"],
+        },
+      ]),
+    };
+
+    await service.initialize(client);
+
+    expect(service.getSelectedPrompt()).toMatchObject({
+      source: "fallback",
+      name: "Empty Remote Fallback Prompt",
+    });
+    expect(mockLogger.appendLine).toHaveBeenCalledWith(
+      expect.stringContaining("has no initialPrompt"),
+    );
+  });
+
   it("falls back locally when the ThorAPI LLMDetails query fails offline", async () => {
     const workspaceRoot = fs.mkdtempSync(
       path.join(os.tmpdir(), "valoride-prompt-offline-test-"),
