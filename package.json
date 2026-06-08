@@ -374,6 +374,21 @@
           "default": false,
           "markdownDescription": "When enabled, ValorIDE prints the full precision_search_and_replace result report after each edit."
         },
+        "valoride.startup.revealSidebar": {
+          "type": "string",
+          "enum": [
+            "manual",
+            "firstInstall",
+            "always"
+          ],
+          "enumDescriptions": [
+            "Do not reveal or focus ValorIDE on VS Code startup.",
+            "Reveal ValorIDE once, then keep future startups unobtrusive.",
+            "Reveal ValorIDE every time VS Code startup finishes."
+          ],
+          "default": "manual",
+          "markdownDescription": "Controls whether ValorIDE automatically reveals its activity bar view when VS Code starts. The default keeps existing editor focus until the user opens ValorIDE explicitly."
+        },
         "valoride.valkyrai.host": {
           "type": "string",
           "default": "https://api-0.valkyrlabs.com",

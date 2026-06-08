@@ -41,6 +41,12 @@ import {
   ThorApiLlmDetailsClient,
 } from "./services/llmPromptService";
 import { getAllExtensionState, getSecret } from "./core/storage/state";
+import { SelectedLlmDetails } from "@shared/llm";
+import {
+  getStartupRevealMode,
+  shouldRevealSidebarOnStartup,
+  STARTUP_REVEAL_GLOBAL_KEY,
+} from "./startupRevealPolicy";
 
 /*
 Built using https://github.com/microsoft/vscode-webview-ui-toolkit
@@ -314,6 +320,7 @@ export function activate(context: vscode.ExtensionContext) {
     IS_DEV && IS_DEV === "true",
   );
 
+  void maybeRevealValorideOnStartup(context);
   Logger.log(
     "Startup reveal skipped; use ValorIDE: Open Sidebar or Reset Layout to focus the view.",
   );
@@ -963,6 +970,31 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   return createValorIDEAPI(outputChannel, sidebarWebview.controller);
+}
+
+async function maybeRevealValorideOnStartup(context: vscode.ExtensionContext) {
+  try {
+    const revealMode = getStartupRevealMode(
+      vscode.workspace.getConfiguration("valoride"),
+    );
+
+    if (!shouldRevealSidebarOnStartup(revealMode, context)) {
+      Logger.log(`Startup reveal skipped; mode=${revealMode}`);
+      return;
+    }
+
+    Logger.log(`Startup reveal requested; mode=${revealMode}`);
+    await vscode.commands.executeCommand(
+      "workbench.view.extension.valoride-activitybar",
+    );
+    await vscode.commands.executeCommand(`${WebviewProvider.sideBarId}.focus`);
+
+    if (revealMode === "firstInstall") {
+      await context.globalState.update(STARTUP_REVEAL_GLOBAL_KEY, true);
+    }
+  } catch (error) {
+    Logger.log(`Startup reveal failed: ${error}`);
+  }
 }
 
 // TODO: Find a solution for automatically removing DEV related content from production builds.
