@@ -195,6 +195,44 @@ export const deriveCapabilityCards = (
     };
   });
 
+const EXTERNAL_RECOVERY_ROUTES: Partial<Record<CapabilityAction, string>> = {
+  signIn: "https://valkyrlabs.com/signup",
+  setupGrayMatter: "https://valkyrlabs.com/graymatter/install",
+  buyCredits: "https://valkyrlabs.com/buy-credits",
+  teamPlan: "https://valkyrlabs.com/pricing",
+};
+
+const INTENT_BY_ACTION: Partial<Record<CapabilityAction, string>> = {
+  signIn: "valoride-signin",
+  setupGrayMatter: "graymatter-activation",
+  buyCredits: "credit-recovery",
+  teamPlan: "team-plan",
+};
+
+export const buildCapabilityRecoveryUrl = (
+  action: CapabilityAction,
+  capability: Pick<CapabilityCardModel, "id" | "status">,
+) => {
+  const baseUrl = EXTERNAL_RECOVERY_ROUTES[action];
+  if (!baseUrl) {
+    return undefined;
+  }
+
+  const url = new URL(baseUrl);
+  url.search = new URLSearchParams({
+    source: "valoride",
+    utm_source: "valoride",
+    utm_campaign: "capability-command-center",
+    intent: INTENT_BY_ACTION[action] ?? action,
+    product: "ValorIDE",
+    capability: capability.id,
+    blockedState: capability.status,
+    returnTo: "valoride://capability-command-center",
+  }).toString();
+
+  return url.toString();
+};
+
 const safeFailureMessage = (message: string) =>
   message.replace(/(token|jwt|secret|api[_-]?key)\s*[:=]\s*\S+/gi, "$1=[redacted]");
 
