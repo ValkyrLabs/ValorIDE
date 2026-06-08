@@ -208,12 +208,6 @@ export function activate(context) {
     // Initialize test mode and set dev mode context
     context.subscriptions.push(...initializeTestMode(context, sidebarWebview));
     vscode.commands.executeCommand("setContext", "valoride.isDevMode", IS_DEV && IS_DEV === "true");
-    // Ensure our Activity Bar container is visible, then focus our view
-    // This helps recover if the container was hidden from prior layout changes
-    void vscode.commands.executeCommand("workbench.view.extension.valoride-activitybar");
-    // Proactively reveal the sidebar view once after activation
-    // This helps surface the Activity Bar icon if the container was hidden/cached
-    void vscode.commands.executeCommand(`${WebviewProvider.sideBarId}.focus`);
     context.subscriptions.push(vscode.commands.registerCommand("valoride.plusButtonClicked", async (webview) => {
         const openChat = async (instance) => {
             await instance?.controller.clearTask();
