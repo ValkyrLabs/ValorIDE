@@ -40,7 +40,6 @@ import {
   ThorApiLlmDetailsClient,
 } from "./services/llmPromptService";
 import { getAllExtensionState, getSecret } from "./core/storage/state";
-import { SelectedLlmDetails } from "@shared/llm";
 
 /*
 Built using https://github.com/microsoft/vscode-webview-ui-toolkit
@@ -52,6 +51,43 @@ https://github.com/microsoft/vscode-webview-ui-toolkit-samples/tree/main/framewo
 */
 
 let outputChannel: vscode.OutputChannel;
+
+async function initializeWorkspaceLlmPromptService(
+  context: vscode.ExtensionContext,
+  workspaceRoot: string,
+  authTokenOverride?: string,
+): Promise<void> {
+  const { apiConfiguration, selectedLlmDetails } =
+    await getAllExtensionState(context);
+  const manualSelection: SelectedPrompt | undefined = selectedLlmDetails
+    ? {
+        llmDetailsId: selectedLlmDetails.id,
+        name: selectedLlmDetails.name,
+        prompt: selectedLlmDetails.prompt,
+        mode: selectedLlmDetails.mode,
+        tags: selectedLlmDetails.tags,
+        source:
+          selectedLlmDetails.source === "fallback" ? "fallback" : "thorapi",
+        stackSpecific: true,
+      }
+    : undefined;
+  const authToken =
+    authTokenOverride ??
+    (await getSecret(context, "jwtToken")) ??
+    apiConfiguration.valkyraiJwt ??
+    apiConfiguration.valorideApiKey;
+  const llmDetailsClient =
+    authToken && !manualSelection
+      ? new ThorApiLlmDetailsClient(authToken, apiConfiguration.valkyraiHost)
+      : undefined;
+
+  await initializeLLMPromptService(
+    workspaceRoot,
+    outputChannel,
+    llmDetailsClient,
+    manualSelection,
+  );
+}
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -86,38 +122,7 @@ async function initializeDeferredStartupServices(
 
   void (async () => {
     try {
-      const { apiConfiguration, selectedLlmDetails } =
-        await getAllExtensionState(context);
-      const manualSelection: SelectedPrompt | undefined = selectedLlmDetails
-        ? {
-            llmDetailsId: selectedLlmDetails.id,
-            name: selectedLlmDetails.name,
-            prompt: selectedLlmDetails.prompt,
-            mode: selectedLlmDetails.mode,
-            tags: selectedLlmDetails.tags,
-            source:
-              selectedLlmDetails.source === "fallback" ? "fallback" : "thorapi",
-            stackSpecific: true,
-          }
-        : undefined;
-      const authToken =
-        (await getSecret(context, "jwtToken")) ??
-        apiConfiguration.valkyraiJwt ??
-        apiConfiguration.valorideApiKey;
-      const llmDetailsClient =
-        authToken && !manualSelection
-          ? new ThorApiLlmDetailsClient(
-              authToken,
-              apiConfiguration.valkyraiHost,
-            )
-          : undefined;
-
-      await initializeLLMPromptService(
-        workspaceRoot,
-        outputChannel,
-        llmDetailsClient,
-        manualSelection,
-      );
+      await initializeWorkspaceLlmPromptService(context, workspaceRoot);
       Logger.log("LLMPromptService initialized successfully");
     } catch (error) {
       Logger.log(`LLMPromptService initialization failed: ${error}`);
@@ -202,6 +207,12 @@ export function activate(context: vscode.ExtensionContext) {
 
       if (authResult.success) {
         Logger.log("Successfully restored authentication from stored tokens");
+        await initializeWorkspaceLlmPromptService(
+          context,
+          workspaceRoot,
+          authResult.tokens?.jwtToken,
+        );
+        Logger.log("LLMPromptService refreshed with restored authentication");
         // Notify the webview that authentication was restored
         sidebarWebview.controller.postMessageToWebview({
           type: "loginSuccess",

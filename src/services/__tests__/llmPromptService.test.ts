@@ -192,26 +192,28 @@ describe("LLMPromptService", () => {
   it("normalizes wrapped ThorAPI LLMDetails responses and ranks tag matches", async () => {
     const get = vi.fn().mockResolvedValue({
       data: {
-        content: [
-          {
-            id: "generic",
-            name: "Generic Prompt",
-            initialPrompt: "Generic fallback.",
-            tags: "production",
-            ratingScore: 5,
-          },
-          {
-            id: "thorapi",
-            name: "ThorAPI Prompt",
-            initialPrompt: "Use ThorAPI contracts first.",
-            tags: JSON.stringify(["typescript", "thorapi"]),
-            metaData: JSON.stringify({
-              promptType: "APPEND",
-              promptTags: ["production", "thorapi"],
-            }),
-            ratingScore: 4.5,
-          },
-        ],
+        data: {
+          content: [
+            {
+              id: "generic",
+              name: "Generic Prompt",
+              initialPrompt: "Generic fallback.",
+              tags: "production",
+              ratingScore: 5,
+            },
+            {
+              id: "thorapi",
+              name: "ThorAPI Prompt",
+              initialPrompt: "Use ThorAPI contracts first.",
+              tags: JSON.stringify(["typescript", "thorapi"]),
+              metaData: JSON.stringify({
+                promptType: "append",
+                promptTags: ["production", "thorapi"],
+              }),
+              ratingScore: 4.5,
+            },
+          ],
+        },
       },
     });
     vi.mocked(axios.create).mockReturnValue({ get } as any);
@@ -232,6 +234,14 @@ describe("LLMPromptService", () => {
     });
   });
 
+  it("classifies missing auth before querying ThorAPI LLMDetails", async () => {
+    const get = vi.fn();
+    vi.mocked(axios.create).mockReturnValue({ get } as any);
+
+    const client = new ThorApiLlmDetailsClient(undefined, "https://api.test");
+
+    await expect(
+      client.query({ tags: ["typescript", "thorapi"], limit: 1 }),
   it("rejects unauthenticated ThorAPI LLMDetails queries without calling the API", async () => {
     const get = vi.fn();
     vi.mocked(axios.create).mockReturnValue({ get } as any);
@@ -244,6 +254,26 @@ describe("LLMPromptService", () => {
     expect(get).not.toHaveBeenCalled();
   });
 
+  it("classifies RBAC-denied ThorAPI LLMDetails responses", async () => {
+    const get = vi.fn().mockRejectedValue({ response: { status: 403 } });
+    vi.mocked(axios.create).mockReturnValue({ get } as any);
+
+    const client = new ThorApiLlmDetailsClient("token", "https://api.test");
+
+    await expect(
+      client.query({ tags: ["typescript", "thorapi"], limit: 1 }),
+    ).rejects.toThrow("denied by RBAC policy");
+  });
+
+  it("classifies unreachable ThorAPI LLMDetails responses as offline", async () => {
+    const get = vi.fn().mockRejectedValue({ request: {} });
+    vi.mocked(axios.create).mockReturnValue({ get } as any);
+
+    const client = new ThorApiLlmDetailsClient("token", "https://api.test");
+
+    await expect(
+      client.query({ tags: ["typescript", "thorapi"], limit: 1 }),
+    ).rejects.toThrow("offline or unreachable");
   it("normalizes configured ValkyrAI hosts to exactly one /v1 API base", async () => {
     const get = vi.fn().mockResolvedValue({ data: [] });
     const create = vi.mocked(axios.create);
