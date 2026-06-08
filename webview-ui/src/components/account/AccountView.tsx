@@ -49,6 +49,7 @@ import CapabilityCommandCenter, {
   CapabilityAction,
   CapabilityCardModel,
   CapabilitySnapshot,
+  buildCapabilityRecoveryUrl,
 } from "../agentic/CapabilityCommandCenter";
 import {
   storeJwtToken,
@@ -389,6 +390,12 @@ const AccountView = ({
         messageId: Math.random().toString(36).slice(2, 12),
         timestamp: Date.now(),
       };
+      const recoveryUrl = buildCapabilityRecoveryUrl(action, capability);
+      const openRecoveryUrl = () => {
+        if (recoveryUrl) {
+          vscode.postMessage({ type: "openInBrowser", url: recoveryUrl });
+        }
+      };
 
       window.dispatchEvent(
         new CustomEvent("websocket-send", { detail: activationEvent }),
@@ -398,19 +405,19 @@ const AccountView = ({
         case "signIn":
           setActiveTab("login");
           vscode.postMessage({ type: "accountLoginClicked" });
+          openRecoveryUrl();
           break;
         case "setupGrayMatter":
           setActiveTab("account");
           vscode.postMessage({ type: "showAccountViewClicked" });
+          openRecoveryUrl();
           break;
         case "buyCredits":
           setActiveTab("account");
+          openRecoveryUrl();
           break;
         case "teamPlan":
-          vscode.postMessage({
-            type: "openInBrowser",
-            url: "https://valkyrlabs.com/pricing?utm_source=valoride&utm_campaign=capability-command-center&intent=team-plan",
-          });
+          openRecoveryUrl();
           break;
         case "openMcpMarketplace":
           vscode.postMessage({ type: "showMcpView", tab: "marketplace" });
