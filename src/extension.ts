@@ -28,6 +28,7 @@ import { initializeThorAPIModelRegistry } from "./services/thorapiModelRegistry"
 import { initializeRatingService } from "./services/ratingService";
 import { initializeStatusBarService } from "./services/StatusBarService";
 import {
+  createExtensionHostLLMDetailsService,
   initializeLLMPromptService,
   SelectedPrompt,
 } from "./services/llmPromptService";
@@ -104,7 +105,7 @@ export function activate(context: vscode.ExtensionContext) {
       await initializeLLMPromptService(
         workspaceRoot,
         outputChannel,
-        undefined,
+        createExtensionHostLLMDetailsService(context, outputChannel),
         manualSelection,
       );
       Logger.log("LLMPromptService initialized successfully");

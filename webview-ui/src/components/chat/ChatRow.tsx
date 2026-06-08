@@ -578,7 +578,7 @@ type ChatRowContentProps = Omit<ChatRowProps, "onHeightChange"> & {
   onHeightChange?: (isTaller: boolean) => void;
 };
 
-export const API_REQUEST_TIMEOUT_MS = 10000;
+export const API_REQUEST_TIMEOUT_MS = 1000000;
 const severityColors: Record<"info" | "warning" | "error", string> = {
   info: "var(--vscode-notificationsInfoIcon-foreground, var(--vscode-charts-blue))",
   warning:
@@ -2089,23 +2089,23 @@ export const ChatRowContent = ({
                         {apiRequestFailedMessage
                           ?.toLowerCase()
                           .includes("powershell") && (
-                          <>
-                            <br />
-                            <br />
-                            It seems like you're having Windows PowerShell
-                            issues, please see this{" "}
-                            <a
-                              href="https://github.com/valkyrlabs/valoride/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
-                              style={{
-                                color: "inherit",
-                                textDecoration: "underline",
-                              }}
-                            >
-                              troubleshooting guide
-                            </a>
-                            .
-                          </>
-                        )}
+                            <>
+                              <br />
+                              <br />
+                              It seems like you're having Windows PowerShell
+                              issues, please see this{" "}
+                              <a
+                                href="https://github.com/valkyrlabs/valoride/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
+                                style={{
+                                  color: "inherit",
+                                  textDecoration: "underline",
+                                }}
+                              >
+                                troubleshooting guide
+                              </a>
+                              .
+                            </>
+                          )}
                       </p>
                     );
                   })()}
@@ -2438,8 +2438,8 @@ export const ChatRowContent = ({
           // Only hide text if there's a summary AND text matches the initial prompt
           const shouldHideText = Boolean(
             hasSummary &&
-              initialPromptText &&
-              text?.trim() === initialPromptText.trim(),
+            initialPromptText &&
+            text?.trim() === initialPromptText.trim(),
           );
           if (!text && !hasSummary && !hasChanges) {
             return null; // nothing to show
@@ -2646,8 +2646,8 @@ export const ChatRowContent = ({
             const initialPromptText = valorideMessages?.[0]?.text;
             const shouldHideText = Boolean(
               text &&
-                initialPromptText &&
-                text.trim() === initialPromptText.trim(),
+              initialPromptText &&
+              text.trim() === initialPromptText.trim(),
             );
             if (!text && !hasSummary && !hasChanges) {
               return null; // nothing to show
