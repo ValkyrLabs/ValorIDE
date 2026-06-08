@@ -91,7 +91,9 @@ describe("CapabilityCommandCenter", () => {
 
     expect(screen.queryByText("jm")).not.toBeInTheDocument();
     expect(screen.queryByText("api-0.valkyrlabs.com")).not.toBeInTheDocument();
-    expect(screen.queryByText("openai-native / gpt-5.5")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("openai-native / gpt-5.5"),
+    ).not.toBeInTheDocument();
     expect(screen.getByText("GrayMatter Ready")).toBeInTheDocument();
     expect(
       screen.getByText("memory query, memory write, swarm ops, swarm graph"),
@@ -130,7 +132,9 @@ describe("CapabilityCommandCenter", () => {
     expect(screen.getByText("GrayMatter Sign in needed")).toBeInTheDocument();
     expect(screen.getByText("SWARM Offline")).toBeInTheDocument();
     expect(screen.getByText("MCP 0/0")).toBeInTheDocument();
-    expect(screen.queryByText("No recent remote commands")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("No recent remote commands"),
+    ).not.toBeInTheDocument();
   });
 
   it("turns GrayMatter quota blocks into recharge, upgrade, and usage recovery actions", async () => {
@@ -218,7 +222,9 @@ describe("CapabilityCommandCenter", () => {
 
     render(<CapabilityCommandCenter />);
 
-    await user.click(screen.getByRole("button", { name: "Sign in to ValkyrAI" }));
+    await user.click(
+      screen.getByRole("button", { name: "Sign in to ValkyrAI" }),
+    );
     expect(mockPostMessage).toHaveBeenLastCalledWith({
       type: "accountLoginClicked",
     });
@@ -262,6 +268,68 @@ describe("CapabilityCommandCenter", () => {
     });
 
     await user.click(screen.getByRole("button", { name: "Open MCP setup" }));
+    expect(mockPostMessage).toHaveBeenLastCalledWith({
+      type: "showMcpView",
+      tab: "installed",
+    });
+  });
+
+  it("offers SWARM recovery and failed command details without exposing user identity", async () => {
+    const user = userEvent.setup();
+    mockUseExtensionState.mockReturnValue({
+      apiConfiguration: {
+        valkyraiHost: "https://api-0.valkyrlabs.com/v1",
+      },
+      authenticatedUser: {
+        username: "jm",
+        email: "john@example.com",
+      },
+      grayMatterSession: {
+        status: "ready",
+        capabilities: {
+          swarmOps: true,
+        },
+      },
+      mcpServers: [],
+      agenticState: {
+        approvalPolicy: "ask",
+        swarm: {
+          status: "error",
+          lastError: "Registration rejected by policy",
+        },
+        recentCommands: [
+          {
+            commandId: "cmd-swarm-1",
+            capabilityId: "swarm.dispatch",
+            source: "swarm",
+            status: "failed",
+            startedAt: "2026-05-13T17:00:30.000Z",
+            approved: false,
+            requiresApproval: true,
+            toolLabel: "Remote command",
+          },
+        ],
+      },
+    });
+
+    render(<CapabilityCommandCenter />);
+
+    expect(screen.queryByText("jm")).not.toBeInTheDocument();
+    expect(screen.queryByText("john@example.com")).not.toBeInTheDocument();
+    expect(screen.getByText("SWARM Error")).toBeInTheDocument();
+    expect(screen.getAllByText("Registration rejected by policy")).toHaveLength(
+      2,
+    );
+    expect(
+      screen.getByText("Remote command · swarm.dispatch · approval required"),
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Retry SWARM" }));
+    expect(mockPostMessage).toHaveBeenLastCalledWith({
+      type: "webviewDidLaunch",
+    });
+
+    await user.click(screen.getByRole("button", { name: "Open setup" }));
     expect(mockPostMessage).toHaveBeenLastCalledWith({
       type: "showMcpView",
       tab: "installed",
