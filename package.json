@@ -455,6 +455,21 @@
           "default": false,
           "description": "Disables extension from spawning browser session."
         },
+        "valoride.startupReveal": {
+          "type": "string",
+          "enum": [
+            "never",
+            "firstInstall",
+            "always"
+          ],
+          "enumDescriptions": [
+            "Never focus ValorIDE automatically during VS Code startup.",
+            "Focus ValorIDE once per installation, then leave returning sessions alone.",
+            "Focus ValorIDE on every VS Code startup."
+          ],
+          "default": "never",
+          "description": "Controls whether ValorIDE reveals and focuses its sidebar during extension startup."
+        },
         "valoride.modelSettings.o3Mini.reasoningEffort": {
           "type": "string",
           "enum": [
