@@ -14,6 +14,7 @@ import { ErrorService } from "./services/error/ErrorService";
 import { initializeTestMode, cleanupTestMode } from "./services/test/TestMode";
 import { registerUrlCommands } from "./commands/urlCommands";
 import { registerAliasCommands } from "./commands/aliasCommands";
+import { maybeRevealValorIDESidebarOnStartup } from "./startupActivation";
 import { StartupAuthService } from "./services/auth/StartupAuthService";
 import { ValorideAuthCodeExchangeService } from "./services/auth/ValorideAuthCodeExchangeService";
 import {
@@ -33,6 +34,7 @@ import { initializeSwarmPromptBroadcaster } from "./services/swarmPromptBroadcas
 import { initializeThorAPIModelRegistry } from "./services/thorapiModelRegistry";
 import { initializeRatingService } from "./services/ratingService";
 import { initializeStatusBarService } from "./services/StatusBarService";
+import { revealValorideSidebar } from "./services/startupReveal";
 import {
   initializeLLMPromptService,
   SelectedPrompt,
@@ -57,6 +59,43 @@ https://github.com/microsoft/vscode-webview-ui-toolkit-samples/tree/main/framewo
 
 let outputChannel: vscode.OutputChannel;
 
+async function initializeWorkspaceLlmPromptService(
+  context: vscode.ExtensionContext,
+  workspaceRoot: string,
+  authTokenOverride?: string,
+): Promise<void> {
+  const { apiConfiguration, selectedLlmDetails } =
+    await getAllExtensionState(context);
+  const manualSelection: SelectedPrompt | undefined = selectedLlmDetails
+    ? {
+        llmDetailsId: selectedLlmDetails.id,
+        name: selectedLlmDetails.name,
+        prompt: selectedLlmDetails.prompt,
+        mode: selectedLlmDetails.mode,
+        tags: selectedLlmDetails.tags,
+        source:
+          selectedLlmDetails.source === "fallback" ? "fallback" : "thorapi",
+        stackSpecific: true,
+      }
+    : undefined;
+  const authToken =
+    authTokenOverride ??
+    (await getSecret(context, "jwtToken")) ??
+    apiConfiguration.valkyraiJwt ??
+    apiConfiguration.valorideApiKey;
+  const llmDetailsClient =
+    authToken && !manualSelection
+      ? new ThorApiLlmDetailsClient(authToken, apiConfiguration.valkyraiHost)
+      : undefined;
+
+  await initializeLLMPromptService(
+    workspaceRoot,
+    outputChannel,
+    llmDetailsClient,
+    manualSelection,
+  );
+}
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 // Defer loading of browser-only CommunicationService to avoid pulling Vite/runtime
@@ -64,16 +103,14 @@ let outputChannel: vscode.OutputChannel;
 let communicationService: any | null = null;
 let toolRelayService: any | null = null;
 
-export function activate(context: vscode.ExtensionContext) {
-  outputChannel = vscode.window.createOutputChannel("ValorIDE");
-  context.subscriptions.push(outputChannel);
+async function initializeDeferredStartupServices(
+  context: vscode.ExtensionContext,
+  workspaceRoot: string,
+): Promise<void> {
+  const deferredStartedAt = Date.now();
 
-  ErrorService.initialize();
-  Logger.initialize(outputChannel);
+  await setTimeoutPromise(0);
 
-  // Initialize PromptService (load system.json, thorapi-catalog.json, swarm-rules.json)
-  const workspaceRoot =
-    vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || process.cwd();
   void initializePromptService(workspaceRoot, outputChannel)
     .then(() => {
       Logger.log("PromptService initialized successfully");
@@ -82,7 +119,6 @@ export function activate(context: vscode.ExtensionContext) {
       Logger.log(`PromptService initialization failed: ${error}`);
     });
 
-  // Initialize MemoryBankLoader (load .valoride/memorybank/)
   void initializeMemoryBankLoader(workspaceRoot, outputChannel)
     .then(() => {
       Logger.log("MemoryBankLoader initialized successfully");
@@ -91,48 +127,15 @@ export function activate(context: vscode.ExtensionContext) {
       Logger.log(`MemoryBankLoader initialization failed: ${error}`);
     });
 
-  // Initialize LLMPromptService (load base prompt + manual overrides)
   void (async () => {
     try {
-      const { apiConfiguration, selectedLlmDetails } =
-        await getAllExtensionState(context);
-      const manualSelection: SelectedPrompt | undefined = selectedLlmDetails
-        ? {
-            llmDetailsId: selectedLlmDetails.id,
-            name: selectedLlmDetails.name,
-            prompt: selectedLlmDetails.prompt,
-            mode: selectedLlmDetails.mode,
-            tags: selectedLlmDetails.tags,
-            source:
-              selectedLlmDetails.source === "fallback" ? "fallback" : "thorapi",
-            stackSpecific: true,
-          }
-        : undefined;
-      const authToken =
-        (await getSecret(context, "jwtToken")) ??
-        apiConfiguration.valkyraiJwt ??
-        apiConfiguration.valorideApiKey;
-      const llmDetailsClient =
-        authToken && !manualSelection
-          ? new ThorApiLlmDetailsClient(
-              authToken,
-              apiConfiguration.valkyraiHost,
-            )
-          : undefined;
-
-      await initializeLLMPromptService(
-        workspaceRoot,
-        outputChannel,
-        llmDetailsClient,
-        manualSelection,
-      );
+      await initializeWorkspaceLlmPromptService(context, workspaceRoot);
       Logger.log("LLMPromptService initialized successfully");
     } catch (error) {
       Logger.log(`LLMPromptService initialization failed: ${error}`);
     }
   })();
 
-  // Initialize LLMContextInjector (synthesize all prompt layers)
   void initializeLLMContextInjector(outputChannel)
     .then(() => {
       Logger.log("LLMContextInjector initialized successfully");
@@ -141,33 +144,47 @@ export function activate(context: vscode.ExtensionContext) {
       Logger.log(`LLMContextInjector initialization failed: ${error}`);
     });
 
-  // Initialize SwarmOrchestrator (Supervisor agent for task routing)
   initializeSwarmOrchestrator(outputChannel);
   Logger.log("SwarmOrchestrator initialized successfully");
 
-  // Initialize ThorAPIGeneratorService (6-stage app generation)
   initializeThorAPIGeneratorService(workspaceRoot, outputChannel);
   Logger.log("ThorAPIGeneratorService initialized successfully");
 
-  // Initialize ToolRankingEngine (Auto-rank tools by relevance)
   initializeToolRankingEngine(outputChannel);
   Logger.log("ToolRankingEngine initialized successfully");
 
-  // Initialize BrowserErrorCapture (Console error + auto-fix)
   initializeBrowserErrorCapture(workspaceRoot, outputChannel);
   Logger.log("BrowserErrorCapture initialized successfully");
 
-  // Initialize SwarmPromptBroadcaster (Real-time prompt broadcast)
   initializeSwarmPromptBroadcaster(outputChannel);
   Logger.log("SwarmPromptBroadcaster initialized successfully");
 
-  // Initialize ThorAPIModelRegistry (Auto-discover models/services)
   initializeThorAPIModelRegistry(workspaceRoot, outputChannel);
   Logger.log("ThorAPIModelRegistry initialized successfully");
 
-  // Initialize RatingService (Prompt self-improvement)
   initializeRatingService(outputChannel);
   Logger.log("RatingService initialized successfully");
+
+  Logger.log(
+    `Deferred startup services scheduled in ${Date.now() - deferredStartedAt}ms`,
+  );
+}
+
+export function activate(context: vscode.ExtensionContext) {
+  const activationStartedAt = Date.now();
+  outputChannel = vscode.window.createOutputChannel("ValorIDE");
+  context.subscriptions.push(outputChannel);
+
+  ErrorService.initialize();
+  Logger.initialize(outputChannel);
+
+  const workspaceRoot =
+    vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || process.cwd();
+  void initializeDeferredStartupServices(context, workspaceRoot).catch(
+    (error) => {
+      Logger.log(`Deferred startup services failed: ${String(error)}`);
+    },
+  );
 
   // Initialize StatusBarService (Token tracking & status display)
   initializeStatusBarService(context);
@@ -185,7 +202,9 @@ export function activate(context: vscode.ExtensionContext) {
     ),
   );
 
-  Logger.log("ValorIDE extension activated");
+  Logger.log(
+    `ValorIDE extension activated in ${Date.now() - activationStartedAt}ms`,
+  );
 
   // Initialize startup authentication restoration in background
   void (async () => {
@@ -195,6 +214,12 @@ export function activate(context: vscode.ExtensionContext) {
 
       if (authResult.success) {
         Logger.log("Successfully restored authentication from stored tokens");
+        await initializeWorkspaceLlmPromptService(
+          context,
+          workspaceRoot,
+          authResult.tokens?.jwtToken,
+        );
+        Logger.log("LLMPromptService refreshed with restored authentication");
         // Notify the webview that authentication was restored
         sidebarWebview.controller.postMessageToWebview({
           type: "loginSuccess",
@@ -296,6 +321,16 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   void maybeRevealValorideOnStartup(context);
+  Logger.log(
+    "Startup reveal skipped; use ValorIDE: Open Sidebar or Reset Layout to focus the view.",
+  );
+  void maybeRevealValorIDESidebarOnStartup(
+    context,
+    WebviewProvider.sideBarId,
+    (message) => Logger.log(message),
+  ).catch((error) => {
+    Logger.log(`Startup sidebar reveal failed: ${String(error)}`);
+  });
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
@@ -436,6 +471,13 @@ export function activate(context: vscode.ExtensionContext) {
       "valoride.openInNewTab",
       openValorIDEInNewTab,
     ),
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand("valoride.revealSidebar", async () => {
+      await revealValorideSidebar(WebviewProvider.sideBarId, (command) =>
+        vscode.commands.executeCommand(command),
+      );
+    }),
   );
 
   context.subscriptions.push(
@@ -916,11 +958,10 @@ export function activate(context: vscode.ExtensionContext) {
         Logger.log(`Error running resetViewLocations: ${err}`);
       }
 
-      // Bring our container and view to the front after reset
-      void vscode.commands.executeCommand(
-        "workbench.view.extension.valoride-activitybar",
+      // Bring our container and view to the front after an explicit reset.
+      await revealValorideSidebar(WebviewProvider.sideBarId, (command) =>
+        vscode.commands.executeCommand(command),
       );
-      void vscode.commands.executeCommand(`${WebviewProvider.sideBarId}.focus`);
 
       vscode.window.showInformationMessage(
         "View locations reset. ValorIDE sidebar restored (if previously moved).",

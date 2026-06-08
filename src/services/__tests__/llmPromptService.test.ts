@@ -86,6 +86,65 @@ describe("LLMPromptService", () => {
     expect(service.getSelectedPrompt()?.source).toBe("fallback");
   });
 
+  it("falls back locally when ThorAPI returns a prompt without an initial prompt body", async () => {
+    const workspaceRoot = fs.mkdtempSync(
+      path.join(os.tmpdir(), "valoride-prompt-empty-remote-test-"),
+    );
+    const promptDir = path.join(workspaceRoot, ".valoride", "prompts");
+    fs.mkdirSync(promptDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(promptDir, "system.json"),
+      JSON.stringify({ name: "Empty Remote Fallback Prompt", sections: [] }),
+    );
+    service = new LLMPromptService(workspaceRoot, mockLogger);
+    const client: LlmDetailsClient = {
+      query: vi.fn().mockResolvedValue([
+        {
+          id: "empty-remote-prompt",
+          name: "Empty Remote Prompt",
+          tags: ["typescript", "nodejs"],
+        },
+      ]),
+    };
+
+    await service.initialize(client);
+
+    expect(service.getSelectedPrompt()).toMatchObject({
+      source: "fallback",
+      name: "Empty Remote Fallback Prompt",
+    });
+    expect(mockLogger.appendLine).toHaveBeenCalledWith(
+      expect.stringContaining("has no initialPrompt"),
+    );
+  });
+
+  it("falls back locally when the ThorAPI LLMDetails query fails offline", async () => {
+    const workspaceRoot = fs.mkdtempSync(
+      path.join(os.tmpdir(), "valoride-prompt-offline-test-"),
+    );
+    const promptDir = path.join(workspaceRoot, ".valoride", "prompts");
+    fs.mkdirSync(promptDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(promptDir, "system.json"),
+      JSON.stringify({ name: "Offline Fallback Prompt", sections: [] }),
+    );
+    service = new LLMPromptService(workspaceRoot, mockLogger);
+    const client: LlmDetailsClient = {
+      query: vi.fn().mockRejectedValue(new Error("network unavailable")),
+    };
+
+    await service.initialize(client);
+
+    expect(client.query).toHaveBeenCalled();
+    expect(service.getSelectedPrompt()).toMatchObject({
+      source: "fallback",
+      name: "Offline Fallback Prompt",
+    });
+    expect(mockLogger.appendLine).toHaveBeenCalledWith(
+      expect.stringContaining("ThorAPI load failed"),
+    );
+  });
+
   it("applies manual selection overrides from UI", () => {
     service.applyManualSelection({
       llmDetailsId: "prompt-1",
@@ -133,26 +192,28 @@ describe("LLMPromptService", () => {
   it("normalizes wrapped ThorAPI LLMDetails responses and ranks tag matches", async () => {
     const get = vi.fn().mockResolvedValue({
       data: {
-        content: [
-          {
-            id: "generic",
-            name: "Generic Prompt",
-            initialPrompt: "Generic fallback.",
-            tags: "production",
-            ratingScore: 5,
-          },
-          {
-            id: "thorapi",
-            name: "ThorAPI Prompt",
-            initialPrompt: "Use ThorAPI contracts first.",
-            tags: JSON.stringify(["typescript", "thorapi"]),
-            metaData: JSON.stringify({
-              promptType: "APPEND",
-              promptTags: ["production", "thorapi"],
-            }),
-            ratingScore: 4.5,
-          },
-        ],
+        data: {
+          content: [
+            {
+              id: "generic",
+              name: "Generic Prompt",
+              initialPrompt: "Generic fallback.",
+              tags: "production",
+              ratingScore: 5,
+            },
+            {
+              id: "thorapi",
+              name: "ThorAPI Prompt",
+              initialPrompt: "Use ThorAPI contracts first.",
+              tags: JSON.stringify(["typescript", "thorapi"]),
+              metaData: JSON.stringify({
+                promptType: "append",
+                promptTags: ["production", "thorapi"],
+              }),
+              ratingScore: 4.5,
+            },
+          ],
+        },
       },
     });
     vi.mocked(axios.create).mockReturnValue({ get } as any);
@@ -171,5 +232,63 @@ describe("LLMPromptService", () => {
       promptType: "APPEND",
       tags: ["typescript", "thorapi", "production"],
     });
+  });
+
+  it("classifies missing auth before querying ThorAPI LLMDetails", async () => {
+    const get = vi.fn();
+    vi.mocked(axios.create).mockReturnValue({ get } as any);
+
+    const client = new ThorApiLlmDetailsClient(undefined, "https://api.test");
+
+    await expect(
+      client.query({ tags: ["typescript", "thorapi"], limit: 1 }),
+  it("rejects unauthenticated ThorAPI LLMDetails queries without calling the API", async () => {
+    const get = vi.fn();
+    vi.mocked(axios.create).mockReturnValue({ get } as any);
+
+    const client = new ThorApiLlmDetailsClient(undefined, "https://api.test/v1");
+
+    await expect(
+      client.query({ tags: ["typescript"], limit: 1 }),
+    ).rejects.toThrow("requires signed-in auth");
+    expect(get).not.toHaveBeenCalled();
+  });
+
+  it("classifies RBAC-denied ThorAPI LLMDetails responses", async () => {
+    const get = vi.fn().mockRejectedValue({ response: { status: 403 } });
+    vi.mocked(axios.create).mockReturnValue({ get } as any);
+
+    const client = new ThorApiLlmDetailsClient("token", "https://api.test");
+
+    await expect(
+      client.query({ tags: ["typescript", "thorapi"], limit: 1 }),
+    ).rejects.toThrow("denied by RBAC policy");
+  });
+
+  it("classifies unreachable ThorAPI LLMDetails responses as offline", async () => {
+    const get = vi.fn().mockRejectedValue({ request: {} });
+    vi.mocked(axios.create).mockReturnValue({ get } as any);
+
+    const client = new ThorApiLlmDetailsClient("token", "https://api.test");
+
+    await expect(
+      client.query({ tags: ["typescript", "thorapi"], limit: 1 }),
+    ).rejects.toThrow("offline or unreachable");
+  it("normalizes configured ValkyrAI hosts to exactly one /v1 API base", async () => {
+    const get = vi.fn().mockResolvedValue({ data: [] });
+    const create = vi.mocked(axios.create);
+    create.mockReturnValue({ get } as any);
+
+    new ThorApiLlmDetailsClient("token", "https://api.test");
+    new ThorApiLlmDetailsClient("token", "https://api.test/v1");
+
+    expect(create).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({ baseURL: "https://api.test/v1" }),
+    );
+    expect(create).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ baseURL: "https://api.test/v1" }),
+    );
   });
 });

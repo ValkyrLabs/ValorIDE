@@ -449,7 +449,9 @@ const parsePromptTags = (value: unknown): string[] => {
 };
 
 const normalizePromptMode = (value: unknown): LlmPromptMode => {
-  return value === "APPEND" ? "APPEND" : "SYSTEM";
+  return typeof value === "string" && value.toUpperCase() === "APPEND"
+    ? "APPEND"
+    : "SYSTEM";
 };
 
 const toPromptSummary = (record: any): LlmDetailsSummary | null => {
@@ -498,6 +500,10 @@ const extractLlmDetailsRows = (payload: any): any[] => {
     }
   }
 
+  if (payload?.data && typeof payload.data === "object") {
+    return extractLlmDetailsRows(payload.data);
+  }
+
   return [];
 };
 
@@ -510,6 +516,27 @@ const scorePrompt = (prompt: LlmDetailsSummary, tags: string[]): number => {
     0,
   );
   return tagScore * 100 + (prompt.ratingScore ?? 0);
+};
+
+const classifyThorApiQueryError = (error: any): Error => {
+  const status = error?.response?.status;
+  if (status === 401) {
+    return new Error(
+      "ThorAPI LLMDetails query requires refreshed sign-in auth",
+    );
+  }
+  if (status === 403) {
+    return new Error("ThorAPI LLMDetails query was denied by RBAC policy");
+  }
+  if (status === 429) {
+    return new Error("ThorAPI LLMDetails query was rate limited");
+  }
+  if (error?.request && !error?.response) {
+    return new Error("ThorAPI LLMDetails query is offline or unreachable");
+  }
+  return error instanceof Error
+    ? error
+    : new Error("ThorAPI LLMDetails query failed");
 };
 
 export class ThorApiLlmDetailsClient implements LlmDetailsClient {
@@ -535,7 +562,12 @@ export class ThorApiLlmDetailsClient implements LlmDetailsClient {
         trashed: false,
       }),
     );
-    const response = await this.http.get(`/LlmDetails?example=${example}`);
+    let response;
+    try {
+      response = await this.http.get(`/LlmDetails?example=${example}`);
+    } catch (error) {
+      throw classifyThorApiQueryError(error);
+    }
     const rows = extractLlmDetailsRows(response.data);
 
     return rows
