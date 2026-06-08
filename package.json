@@ -46,7 +46,6 @@
     "llama"
   ],
   "activationEvents": [
-    "onStartupFinished",
     "onViewContainer:valoride-activitybar"
   ],
   "main": "./dist/extension.js",
