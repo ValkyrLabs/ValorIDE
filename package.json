@@ -121,6 +121,11 @@
         "category": "ValorIDE"
       },
       {
+        "command": "valoride.revealSidebar",
+        "title": "Open Sidebar",
+        "category": "ValorIDE"
+      },
+      {
         "command": "valoride.diagnostics",
         "title": "Show Diagnostics",
         "category": "ValorIDE"
