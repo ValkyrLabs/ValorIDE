@@ -45,7 +45,7 @@ const readStoredTenantContext = async (context: vscode.ExtensionContext) => {
     "authenticatedPrincipal",
   );
   const userInfo = await getGlobalState(context, "userInfo");
-  const rawTenantContext = await getSecret(context, "tenantContext" as any);
+  const rawTenantContext = await context.secrets.get("tenantContext");
   let tenantSecret = undefined;
   if (rawTenantContext) {
     try {
