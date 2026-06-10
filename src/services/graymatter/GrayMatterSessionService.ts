@@ -9,6 +9,7 @@ import type {
   GrayMatterSessionStatus,
 } from "@shared/GrayMatterSession";
 import { defaultGrayMatterCapabilities } from "@shared/GrayMatterSession";
+import { TenantContext } from "../auth/tenantContext";
 
 export type { GrayMatterSessionStatus, GrayMatterSessionState };
 export { defaultGrayMatterCapabilities } from "@shared/GrayMatterSession";
@@ -16,14 +17,21 @@ export { defaultGrayMatterCapabilities } from "@shared/GrayMatterSession";
 export interface CreateGrayMatterSessionStateOptions {
   baseUrl: string;
   fetch?: (url: string, init?: RequestInit) => Promise<Response>;
+  getTenantContext?: () =>
+    | Promise<TenantContext | undefined>
+    | TenantContext
+    | undefined;
   now?: () => Date;
+  tenantContext?: TenantContext;
   token?: string;
 }
 
 export const createGrayMatterSessionState = async ({
   baseUrl,
   fetch,
+  getTenantContext,
   now = () => new Date(),
+  tenantContext,
   token,
 }: CreateGrayMatterSessionStateOptions): Promise<GrayMatterSessionState> => {
   const normalizedBaseUrl = normalizeValkyraiHost(baseUrl);
@@ -44,6 +52,7 @@ export const createGrayMatterSessionState = async ({
       baseUrl: normalizedBaseUrl,
       fetch,
       getAuthToken: () => token,
+      getTenantContext: getTenantContext ?? (() => tenantContext),
     });
     const discovery = await client.loadDiscovery();
     const sessionState: GrayMatterSessionState = {
