@@ -1,9 +1,5 @@
 export interface TenantContext {
   tenantId?: string;
-  organizationId?: string;
-  orgId?: string;
-  tenantSchema?: string;
-  customerSchema?: string;
 }
 
 const asRecord = (value: unknown): Record<string, any> | undefined =>
@@ -59,8 +55,6 @@ const firstString = (...values: unknown[]): string | undefined => {
 };
 
 export const extractTenantContext = (...payloads: unknown[]): TenantContext => {
-  const context: TenantContext = {};
-
   for (const payload of payloads) {
     const record = parseJsonRecord(payload);
     if (!record) {
@@ -76,84 +70,37 @@ export const extractTenantContext = (...payloads: unknown[]): TenantContext => {
 
     const tenantId = firstString(
       record.tenantId,
-      record.organizationId,
-      record.orgId,
       nested(record, "tenant", "id"),
-      nested(record, "organization", "id"),
       principal?.tenantId,
-      principal?.organizationId,
-      principal?.orgId,
       nested(principal, "tenant", "id"),
-      nested(principal, "organization", "id"),
     );
 
-    const tenantSchema = firstString(
-      record.tenantSchema,
-      record.customerSchema,
-      record.schemaName,
-      nested(record, "tenant", "schema"),
-      nested(record, "organization", "schemaName"),
-      principal?.tenantSchema,
-      principal?.customerSchema,
-      principal?.schemaName,
-      nested(principal, "tenant", "schema"),
-      nested(principal, "organization", "schemaName"),
-    );
-
-    if (tenantId && !context.tenantId) {
-      context.tenantId = tenantId;
-      context.organizationId = context.organizationId ?? tenantId;
-      context.orgId = context.orgId ?? tenantId;
-    }
-    if (tenantSchema && !context.tenantSchema) {
-      context.tenantSchema = tenantSchema;
-      context.customerSchema = context.customerSchema ?? tenantSchema;
+    if (tenantId) {
+      return { tenantId };
     }
   }
 
-  return context;
+  return {};
 };
 
 export const mergeTenantContext = (
   ...contexts: Array<TenantContext | undefined>
 ): TenantContext => {
-  const merged: TenantContext = {};
   for (const context of contexts) {
-    if (!context) {
-      continue;
-    }
-    const tenantId = context.tenantId ?? context.organizationId ?? context.orgId;
-    const tenantSchema = context.tenantSchema ?? context.customerSchema;
-    if (tenantId && !merged.tenantId) {
-      merged.tenantId = tenantId;
-      merged.organizationId = merged.organizationId ?? tenantId;
-      merged.orgId = merged.orgId ?? tenantId;
-    }
-    if (tenantSchema && !merged.tenantSchema) {
-      merged.tenantSchema = tenantSchema;
-      merged.customerSchema = merged.customerSchema ?? tenantSchema;
+    if (context?.tenantId) {
+      return { tenantId: context.tenantId };
     }
   }
-  return merged;
+  return {};
 };
 
 export const buildTenantHeaders = (
   context?: TenantContext,
 ): Record<string, string> => {
-  const tenantId = context?.tenantId ?? context?.organizationId ?? context?.orgId;
-  const tenantSchema = context?.tenantSchema ?? context?.customerSchema;
   const headers: Record<string, string> = {};
 
-  if (tenantId) {
-    headers["X-Tenant-Id"] = tenantId;
-    headers["X-Org-Id"] = tenantId;
-    headers["X-OrganizationId"] = tenantId;
-    headers["X-OrgId"] = tenantId;
-  }
-
-  if (tenantSchema) {
-    headers["X-Tenant-Schema"] = tenantSchema;
-    headers["X-Customer-Schema"] = tenantSchema;
+  if (context?.tenantId) {
+    headers["X-Tenant-Id"] = context.tenantId;
   }
 
   return headers;
