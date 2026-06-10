@@ -3,7 +3,8 @@ import type {
   GrayMatterCapabilities,
   GrayMatterControlSurface,
 } from "@shared/GrayMatterSession";
-import { buildTenantHeaders, TenantContext } from "../auth/tenantContext";
+import { buildTenantHeaders } from "../auth/tenantContext";
+import type { TenantContext } from "../auth/tenantContext";
 
 export type { GrayMatterCapabilities, GrayMatterControlSurface };
 
