@@ -242,6 +242,10 @@ describe("LLMPromptService", () => {
 
     await expect(
       client.query({ tags: ["typescript", "thorapi"], limit: 1 }),
+    ).rejects.toThrow("requires signed-in auth");
+    expect(get).not.toHaveBeenCalled();
+  });
+
   it("rejects unauthenticated ThorAPI LLMDetails queries without calling the API", async () => {
     const get = vi.fn();
     vi.mocked(axios.create).mockReturnValue({ get } as any);
@@ -274,6 +278,8 @@ describe("LLMPromptService", () => {
     await expect(
       client.query({ tags: ["typescript", "thorapi"], limit: 1 }),
     ).rejects.toThrow("offline or unreachable");
+  });
+
   it("normalizes configured ValkyrAI hosts to exactly one /v1 API base", async () => {
     const get = vi.fn().mockResolvedValue({ data: [] });
     const create = vi.mocked(axios.create);
