@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Badge, Spinner, Card } from "react-bootstrap";
 import { FaCreditCard, FaDollarSign } from "react-icons/fa";
 import { useGetAccountBalanceQuery } from "../../services/creditsApi";
 import LoadingSpinner from "../LoadingSpinner";
@@ -13,6 +12,57 @@ interface CurrentBalanceProps {
   style?: React.CSSProperties;
   className?: string;
 }
+
+type BalanceGuidance = {
+  status: "ready" | "watch" | "low" | "depleted";
+  label: string;
+  detail: string;
+  actionLabel: string;
+  color: string;
+};
+
+export const getCreditBalanceGuidance = (
+  balance: number,
+): BalanceGuidance => {
+  if (balance <= 0) {
+    return {
+      status: "depleted",
+      label: "Credits depleted",
+      detail: "Add credits to continue premium agents and generated app runs.",
+      actionLabel: "Buy credits",
+      color: "#ff4d4f",
+    };
+  }
+
+  if (balance < 5) {
+    const needed = Math.max(0, 5 - balance);
+    return {
+      status: "low",
+      label: "Low credits",
+      detail: `${needed.toFixed(2)} credits restores the starter safety buffer.`,
+      actionLabel: "Top up",
+      color: "#ff9f1c",
+    };
+  }
+
+  if (balance < 15) {
+    return {
+      status: "watch",
+      label: "Plan ahead",
+      detail: "Enough for light usage; top up before larger agent workflows.",
+      actionLabel: "Add credits",
+      color: "#ffd700",
+    };
+  }
+
+  return {
+    status: "ready",
+    label: "Credit ready",
+    detail: "Balance is ready for typical ValorIDE agent work.",
+    actionLabel: "Add credits",
+    color: "#06ffa5",
+  };
+};
 
 const CurrentBalance: React.FC<CurrentBalanceProps> = ({
   principalOverride,
@@ -37,10 +87,12 @@ const CurrentBalance: React.FC<CurrentBalanceProps> = ({
     data: accountBalance,
     isLoading,
     error,
+    refetch,
   } = useGetAccountBalanceQuery(accountId);
 
   // Get current balance from the account
   const currentBalance = accountBalance?.currentBalance || 0;
+  const balanceGuidance = getCreditBalanceGuidance(currentBalance);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
@@ -48,16 +100,6 @@ const CurrentBalance: React.FC<CurrentBalanceProps> = ({
       currency: "USD",
       minimumFractionDigits: 2,
     }).format(amount);
-  };
-
-  const getBalanceColor = (balance: number) => {
-    if (balance > 10) {
-      return "#06ffa5";
-    } // Green
-    if (balance > 5) {
-      return "#ffd700";
-    } // Yellow
-    return "#ff6300"; // Orange/Red
   };
 
   if (isLoading) {
@@ -74,10 +116,18 @@ const CurrentBalance: React.FC<CurrentBalanceProps> = ({
         className={`d-flex align-items-center gap-1 ${className}`}
         style={style}
       >
-        <Badge bg="info" style={{ fontSize: "0.9rem" }}>
+        <span className="badge bg-info" style={{ fontSize: "0.9rem" }}>
           <FaDollarSign className="me-1" />
-          Error
-        </Badge>
+          Balance unavailable
+        </span>
+        <button
+          type="button"
+          className="btn btn-sm btn-outline-info"
+          onClick={() => refetch?.()}
+          aria-label="Retry credit balance"
+        >
+          Retry
+        </button>
         <HelpTooltip topic="credits" size="sm" />
       </div>
     );
@@ -89,41 +139,62 @@ const CurrentBalance: React.FC<CurrentBalanceProps> = ({
         className={`d-flex align-items-center gap-1 ${className}`}
         style={{ ...style, cursor: "pointer" }}
         onClick={() => setShowBuyCredits(true)}
-        title="Click to buy credits"
+        title={`${balanceGuidance.label}: ${balanceGuidance.detail}`}
+        aria-label={`${balanceGuidance.label}. ${balanceGuidance.detail}`}
       >
-        <Badge
-          className="d-flex align-items-center"
+        <span
+          className="badge d-flex align-items-center"
           style={{
-            backgroundColor: `${getBalanceColor(currentBalance)}20`,
-            color: getBalanceColor(currentBalance),
+            backgroundColor: `${balanceGuidance.color}20`,
+            color: balanceGuidance.color,
           }}
         >
           <FaCreditCard className="me-1" />
           <h3 className="mb-0">{formatCurrency(currentBalance)}</h3>
-        </Badge>
+        </span>
+        <div className="d-flex flex-column lh-sm">
+          <span style={{ color: balanceGuidance.color, fontWeight: 700 }}>
+            {balanceGuidance.label}
+          </span>
+          <small className="text-muted">{balanceGuidance.detail}</small>
+        </div>
+        <button
+          type="button"
+          className={`btn btn-sm ${
+            balanceGuidance.status === "ready"
+              ? "btn-outline-info"
+              : "btn-outline-warning"
+          }`}
+          onClick={(event) => {
+            event.stopPropagation();
+            setShowBuyCredits(true);
+          }}
+        >
+          {balanceGuidance.actionLabel}
+        </button>
         <HelpTooltip topic="credits" size="sm" />
       </div>
 
       {showBuyCredits && (
-        <Card className="bg-dark border border-info">
-          <Card.Header
+        <section className="bg-dark border border-info">
+          <div
             style={{
               background: "linear-gradient(135deg, #06ffa515, #06ffa505)",
               borderBottom: "1px solid #06ffa530",
             }}
           >
-            <Card.Title>
+            <h2 className="h6 mb-0">
               <FaCreditCard />
               Buy Credits
-            </Card.Title>
-          </Card.Header>
-          <Card.Body style={{ background: "rgba(8, 10, 14, 0.95)" }}>
+            </h2>
+          </div>
+          <div style={{ background: "rgba(8, 10, 14, 0.95)" }}>
             <BuyCredits
               authenticatedPrincipal={resolvedPrincipal}
               onPurchaseSuccess={() => setShowBuyCredits(false)}
             />
-          </Card.Body>
-        </Card>
+          </div>
+        </section>
       )}
     </>
   );
