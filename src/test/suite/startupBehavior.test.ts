@@ -17,6 +17,17 @@ describe("ValorIDE startup behavior", () => {
     );
   });
 
+  it("uses one opt-in startup reveal setting", async () => {
+    const packageJSON = JSON.parse(
+      await readFile(path.join(repoRoot, "package.json"), "utf8"),
+    );
+    const properties = packageJSON.contributes.configuration.properties;
+
+    Object.keys(properties).should.containEql("valoride.startup.revealSidebar");
+    Object.keys(properties).should.not.containEql("valoride.startupReveal");
+    properties["valoride.startup.revealSidebar"].default.should.equal("manual");
+  });
+
   it("does not force the activity bar or sidebar focus during activation", async () => {
     const source = await readFile(
       path.join(repoRoot, "src", "extension.ts"),
@@ -32,6 +43,9 @@ describe("ValorIDE startup behavior", () => {
     );
     startupActivationBody.should.not.containEql(
       "WebviewProvider.sideBarId}.focus",
+    );
+    startupActivationBody.should.not.containEql(
+      "maybeRevealValorIDESidebarOnStartup",
     );
   });
 });

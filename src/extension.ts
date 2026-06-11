@@ -14,7 +14,6 @@ import { ErrorService } from "./services/error/ErrorService";
 import { initializeTestMode, cleanupTestMode } from "./services/test/TestMode";
 import { registerUrlCommands } from "./commands/urlCommands";
 import { registerAliasCommands } from "./commands/aliasCommands";
-import { maybeRevealValorIDESidebarOnStartup } from "./startupActivation";
 import { StartupAuthService } from "./services/auth/StartupAuthService";
 import { ValorideAuthCodeExchangeService } from "./services/auth/ValorideAuthCodeExchangeService";
 import {
@@ -324,13 +323,6 @@ export function activate(context: vscode.ExtensionContext) {
   Logger.log(
     "Startup reveal skipped; use ValorIDE: Open Sidebar or Reset Layout to focus the view.",
   );
-  void maybeRevealValorIDESidebarOnStartup(
-    context,
-    WebviewProvider.sideBarId,
-    (message) => Logger.log(message),
-  ).catch((error) => {
-    Logger.log(`Startup sidebar reveal failed: ${String(error)}`);
-  });
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
