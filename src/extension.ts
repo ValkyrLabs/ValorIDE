@@ -101,15 +101,15 @@ export function activate(context: vscode.ExtensionContext) {
       const { selectedLlmDetails } = await getAllExtensionState(context);
       const manualSelection: SelectedPrompt | undefined = selectedLlmDetails
         ? {
-            llmDetailsId: selectedLlmDetails.id,
-            name: selectedLlmDetails.name,
-            prompt: selectedLlmDetails.prompt,
-            mode: selectedLlmDetails.mode,
-            tags: selectedLlmDetails.tags,
-            source:
-              selectedLlmDetails.source === "fallback" ? "fallback" : "thorapi",
-            stackSpecific: true,
-          }
+          llmDetailsId: selectedLlmDetails.id,
+          name: selectedLlmDetails.name,
+          prompt: selectedLlmDetails.prompt,
+          mode: selectedLlmDetails.mode,
+          tags: selectedLlmDetails.tags,
+          source:
+            selectedLlmDetails.source === "fallback" ? "fallback" : "thorapi",
+          stackSpecific: true,
+        }
         : undefined;
 
       await initializeLLMPromptService(
@@ -553,8 +553,7 @@ export function activate(context: vscode.ExtensionContext) {
   https://code.visualstudio.com/api/extension-guides/virtual-documents
   */
   const diffContentProvider = new (class
-    implements vscode.TextDocumentContentProvider
-  {
+    implements vscode.TextDocumentContentProvider {
     provideTextDocumentContent(uri: vscode.Uri): string {
       return Buffer.from(uri.query, "base64").toString("utf-8");
     }
@@ -569,7 +568,14 @@ export function activate(context: vscode.ExtensionContext) {
   // URI Handler
   const handleUri = async (uri: vscode.Uri) => {
     const path = uri.path;
+<<<<<<< HEAD
     const query = parseAuthCallbackQuery(uri.query);
+=======
+    // Guard against missing query to avoid calling replace on undefined
+    const rawQuery = uri.query || "";
+    const query = new URLSearchParams(rawQuery.replace(/\+/g, "%2B"));
+    Logger.log("URI callback received: " + buildAuthCallbackDiagnostics(path, query));
+>>>>>>> 02544f65 (fix(core): cleanup wip)
     const visibleWebview = WebviewProvider.getVisibleInstance();
 
     Logger.log(
