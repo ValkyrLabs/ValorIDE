@@ -567,8 +567,7 @@ export function activate(context: vscode.ExtensionContext) {
     const rawQuery = uri.query || "";
     const query = new URLSearchParams(rawQuery.replace(/\+/g, "%2B"));
     Logger.log(
-      "URI callback received",
-      buildAuthCallbackDiagnostics(path, query),
+      `URI callback received: ${JSON.stringify(buildAuthCallbackDiagnostics(path, query))}`,
     );
     const visibleWebview = WebviewProvider.getVisibleInstance();
     if (!visibleWebview) {
