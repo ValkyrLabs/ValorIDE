@@ -338,6 +338,10 @@ const AccountView = ({
         id: "graymatter",
         label: "GrayMatter memory",
         status: graymatterStatus,
+        balanceCredits: effectiveBalance,
+        estimatedUnlockCredits: graymatterStatus === "ready" ? undefined : 5,
+        blockedAction:
+          graymatterStatus === "quotaBlocked" ? "memory.write" : undefined,
         detail:
           graymatterStatus === "ready"
             ? "Memory, entitlement, and credit prerequisites look usable from the current webview state."
@@ -412,12 +416,19 @@ const AccountView = ({
           vscode.postMessage({ type: "showAccountViewClicked" });
           openRecoveryUrl();
           break;
-        case "buyCredits":
+        case "rechargeCredits":
           setActiveTab("account");
           openRecoveryUrl();
           break;
-        case "teamPlan":
+        case "upgradePlan":
           openRecoveryUrl();
+          break;
+        case "viewUsage":
+          setActiveTab("account");
+          if (authed) {
+            refetchUsage();
+            refetchPayments();
+          }
           break;
         case "openMcpMarketplace":
           vscode.postMessage({ type: "showMcpView", tab: "marketplace" });
@@ -430,11 +441,18 @@ const AccountView = ({
           });
           break;
         case "retry":
+        case "retryAfterRecharge":
           vscode.postMessage({ type: "fetchLatestMcpServersFromHub" });
           await refetchBalance();
           if (authed) {
             refetchUsage();
             refetchPayments();
+          }
+          if (action === "retryAfterRecharge") {
+            vscode.postMessage({
+              type: "displayVSCodeInfo",
+              text: `${capability.label} refreshed. Retry ${capability.blockedAction || "the blocked action"} when credits are restored.`,
+            });
           }
           break;
       }

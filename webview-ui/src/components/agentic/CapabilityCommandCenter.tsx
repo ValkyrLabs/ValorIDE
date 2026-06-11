@@ -15,11 +15,13 @@ export type CapabilityStatus =
 export type CapabilityAction =
   | "signIn"
   | "setupGrayMatter"
-  | "buyCredits"
-  | "teamPlan"
+  | "rechargeCredits"
+  | "upgradePlan"
+  | "viewUsage"
   | "openMcpMarketplace"
   | "openDiagnostics"
-  | "retry";
+  | "retry"
+  | "retryAfterRecharge";
 
 export type LatestCommandFailure = {
   command: string;
@@ -33,6 +35,9 @@ export type CapabilitySnapshot = {
   status: CapabilityStatus;
   detail?: string;
   latestFailure?: LatestCommandFailure;
+  balanceCredits?: number;
+  estimatedUnlockCredits?: number;
+  blockedAction?: string;
 };
 
 export type CapabilityActionModel = {
@@ -46,6 +51,7 @@ export type CapabilityCardModel = CapabilitySnapshot & {
   tone: "ready" | "warning" | "danger";
   statusLabel: string;
   actions: CapabilityActionModel[];
+  recoverySummary?: string;
 };
 
 type CapabilityCommandCenterProps = {
@@ -92,8 +98,8 @@ const ACTIONS_BY_STATUS: Record<CapabilityStatus, CapabilityActionModel[]> = {
   ],
   rbacDenied: [
     {
-      action: "teamPlan",
-      label: "Request team access",
+      action: "upgradePlan",
+      label: "Team access",
       detail: "Open the team-plan path for RBAC and entitlement recovery.",
       variant: "primary",
     },
@@ -106,29 +112,41 @@ const ACTIONS_BY_STATUS: Record<CapabilityStatus, CapabilityActionModel[]> = {
   ],
   quotaBlocked: [
     {
-      action: "buyCredits",
-      label: "Buy credits",
+      action: "rechargeCredits",
+      label: "Recharge credits",
       detail: "Preserve the blocked action and route to credit recovery.",
       variant: "primary",
     },
     {
-      action: "retry",
-      label: "Retry after purchase",
-      detail: "Refresh balance, usage, payments, and MCP discovery.",
+      action: "upgradePlan",
+      label: "Upgrade plan",
+      detail: "Open plan upgrade options for sustained memory usage.",
+      variant: "secondary",
+    },
+    {
+      action: "viewUsage",
+      label: "View usage",
+      detail: "Review balance, usage, and recent payments before checkout.",
+      variant: "secondary",
+    },
+    {
+      action: "retryAfterRecharge",
+      label: "Retry after recharge",
+      detail: "Refresh credits and retry the blocked capability context.",
       variant: "secondary",
     },
   ],
   lowCredit: [
     {
-      action: "buyCredits",
+      action: "rechargeCredits",
       label: "Add credits",
       detail: "Top up before longer agentic runs exhaust the balance.",
       variant: "primary",
     },
     {
-      action: "retry",
-      label: "Refresh balance",
-      detail: "Reconcile the latest account balance and usage.",
+      action: "viewUsage",
+      label: "View usage",
+      detail: "Review balance, usage, and recent payments.",
       variant: "secondary",
     },
   ],
@@ -182,31 +200,62 @@ const toneColor: Record<CapabilityCardModel["tone"], string> = {
   danger: "var(--vscode-errorForeground)",
 };
 
+const FALLBACK_DETAIL: Record<CapabilityId, string> = {
+  graymatter:
+    "Durable memory needs auth, entitlement, credits, and API reachability.",
+  mcp: "MCP needs at least one connected server before tools can recover workflows.",
+  swarm: "SWARM needs local and ValkyrAI connectivity for multi-agent handoff.",
+};
+
+const formatCredits = (credits?: number): string =>
+  typeof credits === "number" && Number.isFinite(credits)
+    ? credits.toLocaleString(undefined, { maximumFractionDigits: 2 })
+    : "unknown";
+
+const buildQuotaSummary = (snapshot: CapabilitySnapshot): string | undefined => {
+  if (snapshot.status !== "quotaBlocked" && snapshot.status !== "lowCredit") {
+    return undefined;
+  }
+
+  const action = snapshot.blockedAction || "GrayMatter memory";
+  const balance = formatCredits(snapshot.balanceCredits);
+  const cost = formatCredits(snapshot.estimatedUnlockCredits);
+
+  if (snapshot.status === "quotaBlocked") {
+    return `${action} is paused. Balance: ${balance} credits. Estimated unlock: ${cost} credits.`;
+  }
+
+  return `${action} is close to quota. Balance: ${balance} credits. Estimated next use: ${cost} credits.`;
+};
+
 export const deriveCapabilityCards = (
   snapshots: CapabilitySnapshot[],
 ): CapabilityCardModel[] =>
   snapshots.map((snapshot) => {
     const status = STATUS_COPY[snapshot.status];
+    const recoverySummary = buildQuotaSummary(snapshot);
     return {
       ...snapshot,
       tone: status.tone,
       statusLabel: status.label,
+      detail: snapshot.detail || recoverySummary || FALLBACK_DETAIL[snapshot.id],
       actions: ACTIONS_BY_STATUS[snapshot.status],
+      recoverySummary,
     };
   });
 
 const EXTERNAL_RECOVERY_ROUTES: Partial<Record<CapabilityAction, string>> = {
   signIn: "https://valkyrlabs.com/signup",
   setupGrayMatter: "https://valkyrlabs.com/graymatter/install",
-  buyCredits: "https://valkyrlabs.com/buy-credits",
-  teamPlan: "https://valkyrlabs.com/pricing",
+  rechargeCredits: "https://valkyrlabs.com/buy-credits",
+  upgradePlan: "https://valkyrlabs.com/pricing",
 };
 
 const INTENT_BY_ACTION: Partial<Record<CapabilityAction, string>> = {
   signIn: "valoride-signin",
   setupGrayMatter: "graymatter-activation",
-  buyCredits: "credit-recovery",
-  teamPlan: "team-plan",
+  rechargeCredits: "credit-recovery",
+  upgradePlan: "team-plan",
 };
 
 export const buildCapabilityRecoveryUrl = (
