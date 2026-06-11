@@ -15,6 +15,13 @@ import { initializeTestMode, cleanupTestMode } from "./services/test/TestMode";
 import { registerUrlCommands } from "./commands/urlCommands";
 import { registerAliasCommands } from "./commands/aliasCommands";
 import { StartupAuthService } from "./services/auth/StartupAuthService";
+import { ValorideAuthCodeExchangeService } from "./services/auth/ValorideAuthCodeExchangeService";
+import {
+  hasDirectCallbackCredentials,
+  parseAuthCallbackQuery,
+  parseLegacyAuthCallbackCredentials,
+  summarizeAuthCallback,
+} from "./security/authCallback";
 import { initializePromptService } from "./services/promptService";
 import { initializeMemoryBankLoader } from "./services/memoryBankLoader";
 import { initializeLLMContextInjector } from "./services/llmContextInjector";
@@ -42,7 +49,6 @@ import {
   registerGrayMatterCommands,
 } from "./commands/graymatter/graymatterCommands";
 import { SelectedLlmDetails } from "@shared/llm";
-import { buildAuthCallbackDiagnostics } from "./utils/authCallback";
 
 /*
 Built using https://github.com/microsoft/vscode-webview-ui-toolkit
@@ -563,13 +569,15 @@ export function activate(context: vscode.ExtensionContext) {
   // URI Handler
   const handleUri = async (uri: vscode.Uri) => {
     const path = uri.path;
-    // Guard against missing query to avoid calling replace on undefined
-    const rawQuery = uri.query || "";
-    const query = new URLSearchParams(rawQuery.replace(/\+/g, "%2B"));
-    Logger.log(
-      `URI callback received: ${JSON.stringify(buildAuthCallbackDiagnostics(path, query))}`,
-    );
+    const query = parseAuthCallbackQuery(uri.query);
     const visibleWebview = WebviewProvider.getVisibleInstance();
+
+    Logger.log(
+      `URI Handler called with: ${JSON.stringify(
+        summarizeAuthCallback(query, uri.path, uri.scheme),
+      )}`,
+    );
+
     if (!visibleWebview) {
       return;
     }
@@ -584,38 +592,67 @@ export function activate(context: vscode.ExtensionContext) {
       case "/auth": {
         const state = query.get("state");
 
-        // Validate state parameter
+        // Validate state before reading any credential-bearing field.
         if (!(await visibleWebview?.controller.validateAuthState(state))) {
           vscode.window.showErrorMessage("Invalid auth state");
           return;
         }
 
-        const token = query.get("token");
-        const apiKey = query.get("apiKey");
-        const authenticatedPrincipal = query.get("authenticatedPrincipal");
+        const startupAuthService = StartupAuthService.getInstance(context);
+        const code = query.get("code");
+        if (code && state) {
+          const exchange =
+            await new ValorideAuthCodeExchangeService().exchangeCode(
+              code,
+              state,
+            );
+          await startupAuthService.handleSuccessfulLogin(
+            exchange.tokens,
+            exchange.user,
+          );
 
-        if (token && apiKey) {
-          let parsedUser;
-          try {
-            parsedUser = authenticatedPrincipal
-              ? JSON.parse(decodeURIComponent(authenticatedPrincipal))
-              : undefined;
-          } catch (error) {
-            Logger.log("Failed to parse auth callback principal payload");
+          if (exchange.tokens.apiKey) {
+            await visibleWebview?.controller.handleAuthCallback(
+              exchange.tokens.jwtToken,
+              exchange.tokens.apiKey,
+              exchange.user,
+            );
+          }
+          break;
+        }
+
+        if (hasDirectCallbackCredentials(query)) {
+          const isProductionExtension =
+            context.extensionMode === vscode.ExtensionMode.Production ||
+            process.env.NODE_ENV === "production";
+          if (isProductionExtension) {
+            Logger.log(
+              `Rejected direct credential auth callback: ${JSON.stringify(
+                summarizeAuthCallback(query, uri.path, uri.scheme),
+              )}`,
+            );
+            vscode.window.showErrorMessage(
+              "ValorIDE sign-in must use a one-time authorization code. Please retry sign-in.",
+            );
+            return;
           }
 
-          // Use StartupAuthService to handle login persistently
-          const startupAuthService = StartupAuthService.getInstance(context);
-          await startupAuthService.handleSuccessfulLogin(
-            { jwtToken: token, apiKey },
-            parsedUser,
-          );
+          const legacyCredentials = parseLegacyAuthCallbackCredentials(query);
+          if (legacyCredentials) {
+            await startupAuthService.handleSuccessfulLogin(
+              {
+                jwtToken: legacyCredentials.token,
+                apiKey: legacyCredentials.apiKey,
+              },
+              legacyCredentials.authenticatedPrincipal,
+            );
 
-          await visibleWebview?.controller.handleAuthCallback(
-            token,
-            apiKey,
-            parsedUser,
-          );
+            await visibleWebview?.controller.handleAuthCallback(
+              legacyCredentials.token,
+              legacyCredentials.apiKey,
+              legacyCredentials.authenticatedPrincipal,
+            );
+          }
         }
         break;
       }
