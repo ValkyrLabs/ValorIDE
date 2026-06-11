@@ -3,6 +3,8 @@ import type {
   GrayMatterCapabilities,
   GrayMatterControlSurface,
 } from "@shared/GrayMatterSession";
+import { buildTenantHeaders } from "../auth/tenantContext";
+import type { TenantContext } from "../auth/tenantContext";
 
 export type { GrayMatterCapabilities, GrayMatterControlSurface };
 
@@ -24,6 +26,10 @@ export interface GrayMatterClientOptions {
   baseUrl: string;
   fetch?: FetchLike;
   getAuthToken: () => Promise<string | undefined> | string | undefined;
+  getTenantContext?: () =>
+    | Promise<TenantContext | undefined>
+    | TenantContext
+    | undefined;
 }
 
 export interface GrayMatterMemoryInput {
@@ -202,6 +208,7 @@ export class GrayMatterClient {
     init: RequestInit = {},
   ): Promise<T> {
     const token = await this.options.getAuthToken();
+    const tenantContext = await this.options.getTenantContext?.();
     const headers = toHeaderRecord(init.headers);
 
     headers.accept = "application/json";
@@ -211,6 +218,7 @@ export class GrayMatterClient {
     if (token) {
       headers.authorization = `Bearer ${token}`;
     }
+    applyHeaderRecord(headers, buildTenantHeaders(tenantContext));
 
     const response = await this.fetchImpl(`${this.baseUrl}${path}`, {
       ...init,
@@ -249,7 +257,7 @@ export class GrayMatterClient {
         );
       case 403:
         return new GrayMatterClientError(
-          message || "GrayMatter access was denied by RBAC.",
+          message || "GrayMatter access was denied by RBAC or tenant context.",
           "forbidden",
           response.status,
         );
@@ -315,6 +323,19 @@ const toHeaderRecord = (headers?: HeadersInit): HeaderRecord => {
   }
 
   return record;
+};
+
+const applyHeaderRecord = (
+  headers: HeaderRecord,
+  additions: HeaderRecord,
+): HeaderRecord => {
+  for (const [key, value] of Object.entries(additions)) {
+    const normalized = key.toLowerCase();
+    if (value && !headers[normalized]) {
+      headers[normalized] = value;
+    }
+  }
+  return headers;
 };
 
 const getHeaderValue = (headers: Response["headers"], name: string) => {
