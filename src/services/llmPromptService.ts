@@ -61,6 +61,8 @@ export interface LLMDetailsPromptService {
   query(input: LLMDetailsQuery): Promise<LLMDetailsPromptCandidate | null>;
 }
 
+const LLM_DETAILS_QUERY_TIMEOUT_MS = 5000;
+
 export class LLMPromptService {
   private workspaceRoot: string;
   private logger: vscode.OutputChannel;
@@ -204,11 +206,19 @@ export class LLMPromptService {
       const llmDetails = await this.queryLLMDetails(tags);
 
       if (llmDetails) {
+        const prompt = getPromptBody(llmDetails);
+        if (!prompt) {
+          this.logger.appendLine(
+            `[LLMPromptService] ThorAPI prompt ${llmDetails.id || llmDetails.name || "unknown"} did not include prompt text`,
+          );
+          return;
+        }
+
         this.selectedPrompt = {
           source: "thorapi",
           llmDetailsId: llmDetails.id,
-          name: llmDetails.name,
-          prompt: llmDetails.initialPrompt,
+          name: llmDetails.name || "ThorAPI LLMDetails prompt",
+          prompt,
           mode: normalizePromptMode(llmDetails.promptType),
           tags: normalizeTags(llmDetails.tags),
           stackSpecific: true,
@@ -433,7 +443,27 @@ export function createExtensionHostLLMDetailsService(
         headers.Authorization = `Bearer ${authToken}`;
       }
 
-      const response = await fetch(endpoint.toString(), { headers });
+      const controller = new AbortController();
+      const timeout = setTimeout(
+        () => controller.abort(),
+        LLM_DETAILS_QUERY_TIMEOUT_MS,
+      );
+
+      let response: Response;
+      try {
+        response = await fetch(endpoint.toString(), {
+          headers,
+          signal: controller.signal,
+        });
+      } catch (error) {
+        logger.appendLine(
+          `[LLMPromptService] ThorAPI query unavailable (${classifyLlmDetailsQueryError(error)}); using fallback prompt`,
+        );
+        return null;
+      } finally {
+        clearTimeout(timeout);
+      }
+
       if (response.status === 401 || response.status === 403) {
         logger.appendLine(
           `[LLMPromptService] ThorAPI query denied by RBAC (${response.status}); using fallback prompt`,
@@ -455,8 +485,7 @@ export function selectBestLlmDetailsPrompt(
   tags: string[],
 ): LLMDetailsPromptCandidate | null {
   const candidates = extractLlmDetails(payload).filter((candidate) => {
-    const prompt =
-      candidate.initialPrompt || candidate.prompt || candidate.systemPrompt;
+    const prompt = getPromptBody(candidate);
     if (!prompt || typeof prompt !== "string") {
       return false;
     }
@@ -506,6 +535,24 @@ function extractLlmDetails(payload: unknown): LLMDetailsPromptCandidate[] {
     }
   }
   return [];
+}
+
+function getPromptBody(candidate: LLMDetailsPromptCandidate): string | null {
+  const prompt =
+    candidate.initialPrompt || candidate.prompt || candidate.systemPrompt;
+  return typeof prompt === "string" && prompt.trim().length > 0
+    ? prompt
+    : null;
+}
+
+function classifyLlmDetailsQueryError(error: unknown): string {
+  if (error instanceof Error) {
+    if (error.name === "AbortError") {
+      return "timeout";
+    }
+    return error.message || error.name;
+  }
+  return "network error";
 }
 
 function normalizePromptMode(mode: unknown): "SYSTEM" | "APPEND" {

@@ -65,6 +65,26 @@ describe("LLMPromptService", () => {
     expect(selected?.prompt).toBe("Use the generated ThorAPI clients.");
   });
 
+  it("accepts ThorAPI prompt fields when initialPrompt is absent", async () => {
+    service = new LLMPromptService(process.cwd(), mockLogger);
+
+    await service.initialize({
+      async query() {
+        return {
+          id: "llm-prompt-body",
+          name: "Prompt Body Field",
+          prompt: "Use the marketplace-selected prompt body.",
+          promptType: "SYSTEM",
+          tags: ["typescript", "system"],
+        };
+      },
+    });
+
+    expect(service.getSelectedPrompt()?.prompt).toBe(
+      "Use the marketplace-selected prompt body.",
+    );
+  });
+
   it("keeps manual selection from querying ThorAPI during global startup", async () => {
     const query = vi.fn();
 
@@ -118,5 +138,23 @@ describe("LLMPromptService", () => {
     );
 
     expect(selected?.id).toBe("stack");
+  });
+
+  it("selects systemPrompt candidates from paged ThorAPI responses", () => {
+    const selected = selectBestLlmDetailsPrompt(
+      {
+        content: [
+          {
+            id: "system-prompt",
+            name: "System Prompt",
+            systemPrompt: "Follow ThorAPI contracts first.",
+            tags: ["thorapi", "system"],
+          },
+        ],
+      },
+      ["thorapi", "system"],
+    );
+
+    expect(selected?.id).toBe("system-prompt");
   });
 });
