@@ -341,4 +341,30 @@ describe("AccountView - BuyCredits visibility", () => {
 
     expect(screen.getByText(/buy credits/i)).toBeInTheDocument();
   });
+
+  it("renders credit intent context panel when intent is provided", () => {
+    mockUseGetAccountBalanceQuery.mockReturnValue({
+      data: { currentBalance: 0.25 },
+      isLoading: false,
+      isFetching: false,
+      refetch: vi.fn(),
+    });
+
+    render(
+      <AccountView
+        onDone={() => { }}
+        serverConsoleNeedsAttention={false}
+        onClearServerConsoleNeedsAttention={() => { }}
+        creditIntent={{
+          actionName: "Continue current request",
+          requiredCredits: 2,
+          currentBalance: 0.25,
+          originView: "chat",
+        }}
+      />,
+    );
+
+    expect(screen.getByTestId("credit-intent-panel")).toBeInTheDocument();
+    expect(screen.getByText(/finish this action/i)).toBeInTheDocument();
+  });
 });
