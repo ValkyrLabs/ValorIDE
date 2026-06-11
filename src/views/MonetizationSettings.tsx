@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import {
+  CreatorEarnings,
   ManagedMcpService,
   PricingModel,
   enableMonetization,
+  getTotalEarnings,
   updatePricing,
 } from "@thorapi/services/monetization/ServiceMonetizationService";
 import { dispatchPricingUpdated } from "@thorapi/services/monetization/pricingEvents";
@@ -22,6 +24,10 @@ function validatePrice(costPerCall: number): string | null {
   }
 
   return null;
+}
+
+function currentMonth(): string {
+  return new Date().toISOString().slice(0, 7);
 }
 
 /**
@@ -44,6 +50,10 @@ export const MonetizationSettings: React.FC<MonetizationSettingsProps> = ({
   );
   const [costPerCall, setCostPerCall] = useState(service?.costPerCall ?? 5.0);
   const [loading, setLoading] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [earningsOpen, setEarningsOpen] = useState(false);
+  const [earningsLoading, setEarningsLoading] = useState(false);
+  const [earnings, setEarnings] = useState<CreatorEarnings | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
@@ -53,6 +63,18 @@ export const MonetizationSettings: React.FC<MonetizationSettingsProps> = ({
     setPricingModel(service?.pricingModel ?? "PER_CALL");
     setCostPerCall(service?.costPerCall ?? 5.0);
   }, [service, serviceId, applicationId]);
+
+  const requireAcceptedTerms = (): boolean => {
+    if (acceptedTerms) {
+      return true;
+    }
+
+    setError(
+      "Accept the Monetization Terms before enabling or updating paid MCP pricing.",
+    );
+    setSuccess(false);
+    return false;
+  };
 
   const handleSaveError = (err: unknown, fallback: string) => {
     const message = err instanceof Error ? err.message : fallback;
@@ -75,6 +97,10 @@ export const MonetizationSettings: React.FC<MonetizationSettingsProps> = ({
   };
 
   const handleEnableMonetization = async () => {
+    if (!requireAcceptedTerms()) {
+      return;
+    }
+
     const validationError = validatePrice(costPerCall);
     if (validationError) {
       setError(validationError);
@@ -101,6 +127,10 @@ export const MonetizationSettings: React.FC<MonetizationSettingsProps> = ({
   };
 
   const handleUpdatePricing = async () => {
+    if (!requireAcceptedTerms()) {
+      return;
+    }
+
     const validationError = validatePrice(costPerCall);
     if (validationError) {
       setError(validationError);
@@ -134,6 +164,30 @@ export const MonetizationSettings: React.FC<MonetizationSettingsProps> = ({
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleViewEarnings = async () => {
+    setEarningsOpen(true);
+    setEarningsLoading(true);
+    setError(null);
+
+    try {
+      const result = await getTotalEarnings();
+      setEarnings({
+        month: currentMonth(),
+        totalEarned: result.totalAllTimeEarnings,
+        totalInvocations: 0,
+        payoutStatus: "PENDING",
+        totalAllTimeEarnings: result.totalAllTimeEarnings,
+      });
+    } catch (err) {
+      handleSaveError(
+        err,
+        "Earnings dashboard is unavailable. Check your session and try again.",
+      );
+    } finally {
+      setEarningsLoading(false);
     }
   };
 
@@ -257,16 +311,61 @@ export const MonetizationSettings: React.FC<MonetizationSettingsProps> = ({
               >
                 {loading ? "Updating..." : "Update Pricing"}
               </button>
-              <button className="btn btn-tertiary">
-                View Earnings Dashboard
+              <button
+                className="btn btn-tertiary"
+                onClick={() => void handleViewEarnings()}
+                disabled={earningsLoading}
+              >
+                {earningsLoading ? "Loading..." : "View Earnings Dashboard"}
               </button>
             </>
           )}
         </div>
 
+        {earningsOpen && (
+          <div className="earnings-dashboard" aria-live="polite">
+            <div>
+              <h4>Creator earnings</h4>
+              <p className="breakdown-note">
+                Earnings include settled creator revenue reported by ValkyrAI.
+              </p>
+            </div>
+            {earningsLoading ? (
+              <p className="breakdown-note">Loading creator earnings...</p>
+            ) : earnings ? (
+              <div className="earnings-grid">
+                <div className="earnings-metric">
+                  <span>All-time earnings</span>
+                  <strong>
+                    ${earnings.totalAllTimeEarnings?.toFixed(2) ?? "0.00"}
+                  </strong>
+                </div>
+                <div className="earnings-metric">
+                  <span>Payout status</span>
+                  <strong>{earnings.payoutStatus}</strong>
+                </div>
+                <div className="earnings-metric">
+                  <span>Reporting month</span>
+                  <strong>{earnings.month}</strong>
+                </div>
+              </div>
+            ) : (
+              <p className="breakdown-note">
+                Earnings will appear after paid MCP invocations settle.
+              </p>
+            )}
+          </div>
+        )}
+
         {/* Terms & Conditions */}
         <div className="terms-notice">
-          <input type="checkbox" id="agreeTerms" disabled={loading} />
+          <input
+            type="checkbox"
+            id="agreeTerms"
+            checked={acceptedTerms}
+            onChange={(event) => setAcceptedTerms(event.target.checked)}
+            disabled={loading}
+          />
           <label htmlFor="agreeTerms">
             I agree to the Monetization Terms & Service
           </label>
