@@ -32,6 +32,10 @@ import {
   initializeLLMPromptService,
   SelectedPrompt,
 } from "./services/llmPromptService";
+import {
+  decideStartupReveal,
+  FIRST_ACTIVATION_REVEAL_STATE_KEY,
+} from "./services/startupRevealPolicy";
 import { getAllExtensionState } from "./core/storage/state";
 import {
   refreshGrayMatterStatus,
@@ -241,9 +245,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Initialize ToolRelayService for remote control capabilities
     try {
-      const toolRelayMod = await import(
-        "./services/communication/ToolRelayService"
-      );
+      const toolRelayMod =
+        await import("./services/communication/ToolRelayService");
       const visibleWebview =
         WebviewProvider.getVisibleInstance() || sidebarWebview;
       if (visibleWebview?.controller) {
@@ -284,14 +287,28 @@ export function activate(context: vscode.ExtensionContext) {
     IS_DEV && IS_DEV === "true",
   );
 
-  // Ensure our Activity Bar container is visible, then focus our view
-  // This helps recover if the container was hidden from prior layout changes
-  void vscode.commands.executeCommand(
-    "workbench.view.extension.valoride-activitybar",
-  );
-  // Proactively reveal the sidebar view once after activation
-  // This helps surface the Activity Bar icon if the container was hidden/cached
-  void vscode.commands.executeCommand(`${WebviewProvider.sideBarId}.focus`);
+  const revealDecision = decideStartupReveal({
+    revealOnStartupSetting: vscode.workspace
+      .getConfiguration("valoride")
+      .get<boolean>("revealOnStartup", false),
+    firstActivationRevealCompleted: context.globalState.get<boolean>(
+      FIRST_ACTIVATION_REVEAL_STATE_KEY,
+      false,
+    ),
+  });
+
+  if (revealDecision.shouldReveal) {
+    Logger.log(
+      `Revealing ValorIDE sidebar on activation: ${revealDecision.reason}`,
+    );
+    void vscode.commands.executeCommand(
+      "workbench.view.extension.valoride-activitybar",
+    );
+    void vscode.commands.executeCommand(`${WebviewProvider.sideBarId}.focus`);
+    void context.globalState.update(FIRST_ACTIVATION_REVEAL_STATE_KEY, true);
+  } else {
+    Logger.log("ValorIDE startup reveal skipped for returning user");
+  }
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
@@ -549,7 +566,10 @@ export function activate(context: vscode.ExtensionContext) {
     // Guard against missing query to avoid calling replace on undefined
     const rawQuery = uri.query || "";
     const query = new URLSearchParams(rawQuery.replace(/\+/g, "%2B"));
-    Logger.log("URI callback received", buildAuthCallbackDiagnostics(path, query));
+    Logger.log(
+      "URI callback received",
+      buildAuthCallbackDiagnostics(path, query),
+    );
     const visibleWebview = WebviewProvider.getVisibleInstance();
     if (!visibleWebview) {
       return;
