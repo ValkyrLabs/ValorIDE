@@ -5,6 +5,8 @@ import {
   LlmDetailsClient,
   getLLMPromptService,
   ThorApiLlmDetailsClient,
+  createStartupLlmDetailsClient,
+  selectedPromptFromStoredLlmDetails,
 } from "../llmPromptService";
 import axios from "axios";
 import * as vscode from "vscode";
@@ -296,5 +298,48 @@ describe("LLMPromptService", () => {
       2,
       expect.objectContaining({ baseURL: "https://api.test/v1" }),
     );
+  });
+
+  it("creates the startup ThorAPI client from stored auth and configured host", async () => {
+    const get = vi.fn().mockResolvedValue({ data: [] });
+    const create = vi.mocked(axios.create);
+    create.mockReturnValue({ get } as any);
+
+    const client = createStartupLlmDetailsClient({
+      authToken: "stored-jwt",
+      valkyraiHost: "https://api.test",
+    });
+
+    expect(client).toBeInstanceOf(ThorApiLlmDetailsClient);
+    expect(create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        baseURL: "https://api.test/v1",
+        headers: { Authorization: "Bearer stored-jwt" },
+      }),
+    );
+  });
+
+  it("suppresses startup ThorAPI queries when a manual prompt selection exists", () => {
+    const manualSelection = selectedPromptFromStoredLlmDetails({
+      id: "manual-llm-details",
+      name: "Pinned Team Prompt",
+      prompt: "Use this pinned prompt.",
+      mode: "APPEND",
+      tags: ["team-policy"],
+      source: "manual",
+    });
+
+    const client = createStartupLlmDetailsClient({
+      authToken: "stored-jwt",
+      valkyraiHost: "https://api.test",
+      manualSelection,
+    });
+
+    expect(client).toBeUndefined();
+    expect(manualSelection).toMatchObject({
+      llmDetailsId: "manual-llm-details",
+      source: "thorapi",
+      tags: ["team-policy"],
+    });
   });
 });

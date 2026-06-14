@@ -37,6 +37,12 @@ export interface LlmDetailsClient {
   query(query: LlmDetailsQuery): Promise<LlmDetailsSummary[]>;
 }
 
+export interface StartupLlmPromptClientOptions {
+  authToken?: string;
+  valkyraiHost?: string;
+  manualSelection?: SelectedPrompt;
+}
+
 export interface ProjectStack {
   language: "java" | "python" | "nodejs" | "typescript" | "mixed" | "unknown";
   framework?: string;
@@ -581,3 +587,41 @@ export class ThorApiLlmDetailsClient implements LlmDetailsClient {
       .slice(0, query.limit ?? 1);
   }
 }
+
+export const selectedPromptFromStoredLlmDetails = (
+  selectedLlmDetails?: {
+    id: string;
+    name: string;
+    prompt: string;
+    mode: LlmPromptMode;
+    tags?: string[];
+    source?: "thorapi" | "fallback" | "manual";
+  } | null,
+): SelectedPrompt | undefined => {
+  if (!selectedLlmDetails) {
+    return undefined;
+  }
+
+  return {
+    llmDetailsId: selectedLlmDetails.id,
+    name: selectedLlmDetails.name,
+    prompt: selectedLlmDetails.prompt,
+    mode: selectedLlmDetails.mode,
+    tags: selectedLlmDetails.tags ?? [],
+    source:
+      selectedLlmDetails.source === "fallback" ? "fallback" : "thorapi",
+    stackSpecific: true,
+  };
+};
+
+export const createStartupLlmDetailsClient = ({
+  authToken,
+  valkyraiHost,
+  manualSelection,
+}: StartupLlmPromptClientOptions): LlmDetailsClient | undefined => {
+  if (!authToken || manualSelection) {
+    return undefined;
+  }
+
+  return new ThorApiLlmDetailsClient(authToken, valkyraiHost);
+};
