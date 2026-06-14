@@ -58,6 +58,59 @@
   background: rgba(255, 68, 68, 0.3);
 }
 
+.notice-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.notice-banner p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.notice-banner button {
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.notice-success {
+  background: rgba(76, 175, 80, 0.12);
+  border: 1px solid rgba(76, 175, 80, 0.42);
+}
+
+.notice-success p {
+  color: #8ee59b;
+}
+
+.notice-success button {
+  background: rgba(76, 175, 80, 0.18);
+  border: 1px solid rgba(76, 175, 80, 0.38);
+  color: #8ee59b;
+}
+
+.notice-error {
+  background: rgba(255, 68, 68, 0.1);
+  border: 1px solid rgba(255, 68, 68, 0.4);
+}
+
+.notice-error p {
+  color: #ff8a8a;
+}
+
+.notice-error button {
+  background: rgba(255, 68, 68, 0.18);
+  border: 1px solid rgba(255, 68, 68, 0.38);
+  color: #ff8a8a;
+}
+
 .loading-state {
   text-align: center;
   padding: 60px 20px;
@@ -346,4 +399,118 @@
 .btn-reset:hover {
   background: rgba(100, 200, 255, 0.3);
   border-color: rgba(100, 200, 255, 0.6);
+}
+
+.marketplace-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(4, 8, 20, 0.72);
+}
+
+.marketplace-dialog {
+  width: min(620px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  background: #11182e;
+  border: 1px solid rgba(100, 200, 255, 0.35);
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  padding: 24px;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.dialog-kicker {
+  margin: 0 0 4px 0;
+  color: #64c8ff;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.dialog-close {
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(100, 200, 255, 0.28);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.dialog-description,
+.purchase-policy {
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.5;
+}
+
+.service-facts,
+.purchase-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.service-facts div,
+.purchase-summary div {
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(100, 200, 255, 0.15);
+  border-radius: 8px;
+}
+
+.service-facts dt,
+.purchase-summary span {
+  display: block;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.service-facts dd,
+.purchase-summary strong {
+  margin: 0;
+  color: #fff;
+  font-size: 15px;
+}
+
+.trust-signal-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.trust-signal-list span {
+  padding: 6px 10px;
+  background: rgba(100, 200, 255, 0.12);
+  border: 1px solid rgba(100, 200, 255, 0.22);
+  border-radius: 999px;
+  color: #9fdcff;
+  font-size: 12px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
 }
