@@ -35,43 +35,25 @@ const DataObject_1 = require("./DataObject");
 function DeploymentFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        specId: !(0, runtime_1.exists)(json, "specId") ? undefined : json["specId"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        deployedAt: !(0, runtime_1.exists)(json, "deployedAt")
-            ? undefined
-            : new Date(json["deployedAt"]),
-        completedAt: !(0, runtime_1.exists)(json, "completedAt")
-            ? undefined
-            : new Date(json["completedAt"]),
-        endpoint: !(0, runtime_1.exists)(json, "endpoint") ? undefined : json["endpoint"],
-        logs: !(0, runtime_1.exists)(json, "logs") ? undefined : json["logs"],
-        errorMessage: !(0, runtime_1.exists)(json, "errorMessage")
-            ? undefined
-            : json["errorMessage"],
-        cloudResourceId: !(0, runtime_1.exists)(json, "cloudResourceId")
-            ? undefined
-            : json["cloudResourceId"],
-        deployedBy: !(0, runtime_1.exists)(json, "deployedBy") ? undefined : json["deployedBy"],
-        metadata: !(0, runtime_1.exists)(json, "metadata") ? undefined : json["metadata"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'specId': !(0, runtime_1.exists)(json, 'specId') ? undefined : json['specId'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'deployedAt': !(0, runtime_1.exists)(json, 'deployedAt') ? undefined : new Date(json['deployedAt']),
+        'completedAt': !(0, runtime_1.exists)(json, 'completedAt') ? undefined : new Date(json['completedAt']),
+        'endpoint': !(0, runtime_1.exists)(json, 'endpoint') ? undefined : json['endpoint'],
+        'logs': !(0, runtime_1.exists)(json, 'logs') ? undefined : json['logs'],
+        'errorMessage': !(0, runtime_1.exists)(json, 'errorMessage') ? undefined : json['errorMessage'],
+        'cloudResourceId': !(0, runtime_1.exists)(json, 'cloudResourceId') ? undefined : json['cloudResourceId'],
+        'deployedBy': !(0, runtime_1.exists)(json, 'deployedBy') ? undefined : json['deployedBy'],
+        'metadata': !(0, runtime_1.exists)(json, 'metadata') ? undefined : json['metadata'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function DeploymentToJSON(value) {
@@ -80,27 +62,23 @@ function DeploymentToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        specId: value.specId,
-        status: value.status,
-        deployedAt: value.deployedAt === undefined
-            ? undefined
-            : value.deployedAt.toISOString(),
-        completedAt: value.completedAt === undefined
-            ? undefined
-            : value.completedAt.toISOString(),
-        endpoint: value.endpoint,
-        logs: value.logs,
-        errorMessage: value.errorMessage,
-        cloudResourceId: value.cloudResourceId,
-        deployedBy: value.deployedBy,
-        metadata: value.metadata,
-        trashed: value.trashed,
+        'specId': value.specId,
+        'status': value.status,
+        'deployedAt': value.deployedAt === undefined ? undefined : value.deployedAt.toISOString(),
+        'completedAt': value.completedAt === undefined ? undefined : value.completedAt.toISOString(),
+        'endpoint': value.endpoint,
+        'logs': value.logs,
+        'errorMessage': value.errorMessage,
+        'cloudResourceId': value.cloudResourceId,
+        'deployedBy': value.deployedBy,
+        'metadata': value.metadata,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var DeploymentStatusEnum;
 (function (DeploymentStatusEnum) {
     DeploymentStatusEnum["PENDING"] = "pending";

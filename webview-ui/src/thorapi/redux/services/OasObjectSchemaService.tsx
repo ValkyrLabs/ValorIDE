@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { OasObjectSchema } from "@thorapi/model/OasObjectSchema";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { OasObjectSchema } from '@thorapi/model/OasObjectSchema'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type OasObjectSchemaResponse = OasObjectSchema[];
+type OasObjectSchemaResponse = OasObjectSchema[]
+type OasObjectSchemaPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<OasObjectSchema>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type OasObjectSchemaListQueryArg = {
+  example?: Partial<OasObjectSchema>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toOasObjectSchemaList = (result: unknown): OasObjectSchemaResponse => {
   if (Array.isArray(result)) {
-    return result as OasObjectSchemaResponse;
+    return result as OasObjectSchemaResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as OasObjectSchemaResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as OasObjectSchemaResponse) : []
+}
 
 export const OasObjectSchemaService = createApi({
-  reducerPath: "OasObjectSchema", // This should remain unique
+  reducerPath: 'OasObjectSchema', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["OasObjectSchema"],
+  tagTypes: ['OasObjectSchema'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getOasObjectSchemasPaged: build.query<
-      OasObjectSchemaResponse,
-      { page: number; size?: number; example?: Partial<OasObjectSchema> }
-    >({
+    getOasObjectSchemasPaged: build.query<OasObjectSchemaResponse, OasObjectSchemaPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `OasObjectSchema?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `OasObjectSchema?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toOasObjectSchemaList(result);
+        const rows = toOasObjectSchemaList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "OasObjectSchema" as const, id })),
-          { type: "OasObjectSchema", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'OasObjectSchema' as const, id })),
+          { type: 'OasObjectSchema', id: `PAGE_${page}` },
+          { type: 'OasObjectSchema', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOasObjectSchemas: build.query<
-      OasObjectSchemaResponse,
-      { example?: Partial<OasObjectSchema> } | void
-    >({
+    getOasObjectSchemas: build.query<OasObjectSchemaResponse, OasObjectSchemaListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,106 +82,86 @@ export const OasObjectSchemaService = createApi({
         return `OasObjectSchema`;
       },
       providesTags: (result) => {
-        const rows = toOasObjectSchemaList(result);
+        const rows = toOasObjectSchemaList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "OasObjectSchema" as const, id })),
-          { type: "OasObjectSchema", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'OasObjectSchema' as const, id })),
+          { type: 'OasObjectSchema', id: 'LIST' },
+          { type: 'OasObjectSchema', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addOasObjectSchema: build.mutation<
-      OasObjectSchema,
-      Partial<OasObjectSchema>
-    >({
+    addOasObjectSchema: build.mutation<OasObjectSchema, Partial<OasObjectSchema>>({
       query: (body) => ({
         url: `OasObjectSchema`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "OasObjectSchema", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'OasObjectSchema', id: 'LIST' },
+        { type: 'OasObjectSchema', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getOasObjectSchema: build.query<OasObjectSchema, string>({
       query: (id) => `OasObjectSchema/${id}`,
-      providesTags: (result, error, id) => [{ type: "OasObjectSchema", id }],
+      providesTags: (result, error, id) => [{ type: 'OasObjectSchema', id }],
     }),
 
     // 5) Update
-    updateOasObjectSchema: build.mutation<
-      void,
-      Pick<OasObjectSchema, "id"> & Partial<OasObjectSchema>
-    >({
+    updateOasObjectSchema: build.mutation<OasObjectSchema, Pick<OasObjectSchema, 'id'> & Partial<OasObjectSchema>>({
       query: ({ id, ...patch }) => ({
         url: `OasObjectSchema/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            OasObjectSchemaService.util.updateQueryData(
-              "getOasObjectSchema",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<OasObjectSchema, "id">) => [
-        { type: "OasObjectSchema", id },
-        { type: "OasObjectSchema", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<OasObjectSchema, 'id'>) => [
+        { type: 'OasObjectSchema', id },
+        { type: 'OasObjectSchema', id: 'LIST' },
+        { type: 'OasObjectSchema', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteOasObjectSchema: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteOasObjectSchema: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `OasObjectSchema/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "OasObjectSchema", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'OasObjectSchema', id },
+        { type: 'OasObjectSchema', id: 'LIST' },
+        { type: 'OasObjectSchema', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteOasObjectSchemaCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteOasObjectSchemaCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `OasObjectSchema/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "OasObjectSchema", id },
-        { type: "OasObjectSchema", id: "LIST" },
+        { type: 'OasObjectSchema', id },
+        { type: 'OasObjectSchema', id: 'LIST' },
+        { type: 'OasObjectSchema', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetOasObjectSchemasPagedQuery`
 export const {
-  useGetOasObjectSchemasPagedQuery, // immediate fetch
+  useGetOasObjectSchemasPagedQuery,     // immediate fetch
   useLazyGetOasObjectSchemasPagedQuery, // lazy fetch
   useGetOasObjectSchemaQuery,
   useGetOasObjectSchemasQuery,
@@ -180,4 +169,4 @@ export const {
   useUpdateOasObjectSchemaMutation,
   useDeleteOasObjectSchemaMutation,
   useDeleteOasObjectSchemaCascadeMutation,
-} = OasObjectSchemaService;
+} = OasObjectSchemaService

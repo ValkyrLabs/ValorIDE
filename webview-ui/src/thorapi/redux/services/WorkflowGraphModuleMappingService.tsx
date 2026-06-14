@@ -13,69 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { WorkflowGraphModuleMapping } from "@thorapi/model/WorkflowGraphModuleMapping";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { WorkflowGraphModuleMapping } from '@thorapi/model/WorkflowGraphModuleMapping'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type WorkflowGraphModuleMappingResponse = WorkflowGraphModuleMapping[];
+type WorkflowGraphModuleMappingResponse = WorkflowGraphModuleMapping[]
+type WorkflowGraphModuleMappingPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<WorkflowGraphModuleMapping>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toWorkflowGraphModuleMappingList = (
-  result: unknown,
-): WorkflowGraphModuleMappingResponse => {
+type WorkflowGraphModuleMappingListQueryArg = {
+  example?: Partial<WorkflowGraphModuleMapping>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toWorkflowGraphModuleMappingList = (result: unknown): WorkflowGraphModuleMappingResponse => {
   if (Array.isArray(result)) {
-    return result as WorkflowGraphModuleMappingResponse;
+    return result as WorkflowGraphModuleMappingResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as WorkflowGraphModuleMappingResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as WorkflowGraphModuleMappingResponse) : []
+}
 
 export const WorkflowGraphModuleMappingService = createApi({
-  reducerPath: "WorkflowGraphModuleMapping", // This should remain unique
+  reducerPath: 'WorkflowGraphModuleMapping', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["WorkflowGraphModuleMapping"],
+  tagTypes: ['WorkflowGraphModuleMapping'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getWorkflowGraphModuleMappingsPaged: build.query<
-      WorkflowGraphModuleMappingResponse,
-      {
-        page: number;
-        size?: number;
-        example?: Partial<WorkflowGraphModuleMapping>;
-      }
-    >({
+    getWorkflowGraphModuleMappingsPaged: build.query<WorkflowGraphModuleMappingResponse, WorkflowGraphModuleMappingPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `WorkflowGraphModuleMapping?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `WorkflowGraphModuleMapping?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toWorkflowGraphModuleMappingList(result);
+        const rows = toWorkflowGraphModuleMappingList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "WorkflowGraphModuleMapping" as const,
-              id,
-            })),
-          { type: "WorkflowGraphModuleMapping", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'WorkflowGraphModuleMapping' as const, id })),
+          { type: 'WorkflowGraphModuleMapping', id: `PAGE_${page}` },
+          { type: 'WorkflowGraphModuleMapping', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getWorkflowGraphModuleMappings: build.query<
-      WorkflowGraphModuleMappingResponse,
-      { example?: Partial<WorkflowGraphModuleMapping> } | void
-    >({
+    getWorkflowGraphModuleMappings: build.query<WorkflowGraphModuleMappingResponse, WorkflowGraphModuleMappingListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -84,121 +82,86 @@ export const WorkflowGraphModuleMappingService = createApi({
         return `WorkflowGraphModuleMapping`;
       },
       providesTags: (result) => {
-        const rows = toWorkflowGraphModuleMappingList(result);
+        const rows = toWorkflowGraphModuleMappingList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "WorkflowGraphModuleMapping" as const,
-              id,
-            })),
-          { type: "WorkflowGraphModuleMapping", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'WorkflowGraphModuleMapping' as const, id })),
+          { type: 'WorkflowGraphModuleMapping', id: 'LIST' },
+          { type: 'WorkflowGraphModuleMapping', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addWorkflowGraphModuleMapping: build.mutation<
-      WorkflowGraphModuleMapping,
-      Partial<WorkflowGraphModuleMapping>
-    >({
+    addWorkflowGraphModuleMapping: build.mutation<WorkflowGraphModuleMapping, Partial<WorkflowGraphModuleMapping>>({
       query: (body) => ({
         url: `WorkflowGraphModuleMapping`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "WorkflowGraphModuleMapping", id: "LIST" }],
-    }),
-
-    // 4) Get single by ID
-    getWorkflowGraphModuleMapping: build.query<
-      WorkflowGraphModuleMapping,
-      string
-    >({
-      query: (id) => `WorkflowGraphModuleMapping/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "WorkflowGraphModuleMapping", id },
+      invalidatesTags: [
+        { type: 'WorkflowGraphModuleMapping', id: 'LIST' },
+        { type: 'WorkflowGraphModuleMapping', id: 'PARTIAL-LIST' },
       ],
     }),
 
+    // 4) Get single by ID
+    getWorkflowGraphModuleMapping: build.query<WorkflowGraphModuleMapping, string>({
+      query: (id) => `WorkflowGraphModuleMapping/${id}`,
+      providesTags: (result, error, id) => [{ type: 'WorkflowGraphModuleMapping', id }],
+    }),
+
     // 5) Update
-    updateWorkflowGraphModuleMapping: build.mutation<
-      void,
-      Pick<WorkflowGraphModuleMapping, "id"> &
-        Partial<WorkflowGraphModuleMapping>
-    >({
+    updateWorkflowGraphModuleMapping: build.mutation<WorkflowGraphModuleMapping, Pick<WorkflowGraphModuleMapping, 'id'> & Partial<WorkflowGraphModuleMapping>>({
       query: ({ id, ...patch }) => ({
         url: `WorkflowGraphModuleMapping/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            WorkflowGraphModuleMappingService.util.updateQueryData(
-              "getWorkflowGraphModuleMapping",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<WorkflowGraphModuleMapping, "id">,
-      ) => [
-        { type: "WorkflowGraphModuleMapping", id },
-        { type: "WorkflowGraphModuleMapping", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<WorkflowGraphModuleMapping, 'id'>) => [
+        { type: 'WorkflowGraphModuleMapping', id },
+        { type: 'WorkflowGraphModuleMapping', id: 'LIST' },
+        { type: 'WorkflowGraphModuleMapping', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteWorkflowGraphModuleMapping: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteWorkflowGraphModuleMapping: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `WorkflowGraphModuleMapping/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "WorkflowGraphModuleMapping", id },
+        { type: 'WorkflowGraphModuleMapping', id },
+        { type: 'WorkflowGraphModuleMapping', id: 'LIST' },
+        { type: 'WorkflowGraphModuleMapping', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteWorkflowGraphModuleMappingCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteWorkflowGraphModuleMappingCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `WorkflowGraphModuleMapping/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "WorkflowGraphModuleMapping", id },
-        { type: "WorkflowGraphModuleMapping", id: "LIST" },
+        { type: 'WorkflowGraphModuleMapping', id },
+        { type: 'WorkflowGraphModuleMapping', id: 'LIST' },
+        { type: 'WorkflowGraphModuleMapping', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetWorkflowGraphModuleMappingsPagedQuery`
 export const {
-  useGetWorkflowGraphModuleMappingsPagedQuery, // immediate fetch
+  useGetWorkflowGraphModuleMappingsPagedQuery,     // immediate fetch
   useLazyGetWorkflowGraphModuleMappingsPagedQuery, // lazy fetch
   useGetWorkflowGraphModuleMappingQuery,
   useGetWorkflowGraphModuleMappingsQuery,
@@ -206,4 +169,4 @@ export const {
   useUpdateWorkflowGraphModuleMappingMutation,
   useDeleteWorkflowGraphModuleMappingMutation,
   useDeleteWorkflowGraphModuleMappingCascadeMutation,
-} = WorkflowGraphModuleMappingService;
+} = WorkflowGraphModuleMappingService

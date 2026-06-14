@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,221 +36,186 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface ConsultingProfile
  */
-export type ConsultingProfile = DataObject & {
-  /**
-   * Reference to JobSeeker (1:1 relationship)
-   * @type {string}
-   * @memberof ConsultingProfile
-   */
-  jobSeekerId?: string;
-  /**
-   * Type of consulting engagement
-   * @type {string}
-   * @memberof ConsultingProfile
-   */
-  consultingType?: ConsultingProfileConsultingTypeEnum;
-  /**
-   * JSON array (stored as string) of specialization areas (e.g., [\"ThorAPI Implementation\"])
-   * @type {string}
-   * @memberof ConsultingProfile
-   */
-  expertiseAreas?: string;
-  /**
-   * Maximum hourly rate candidate charges
-   * @type {number}
-   * @memberof ConsultingProfile
-   */
-  maximumHourlyRate?: number;
-  /**
-   * Minimum hours per month available
-   * @type {number}
-   * @memberof ConsultingProfile
-   */
-  minimumMonthlyCommitment?: number;
-  /**
-   * Geographic focus (e.g., \"North America\", \"Global\")
-   * @type {string}
-   * @memberof ConsultingProfile
-   */
-  geographicFocus?: string;
-  /**
-   * URLs to portfolio projects or case studies
-   * @type {string}
-   * @memberof ConsultingProfile
-   */
-  projectPortfolio?: string;
-  /**
-   * Profile completion percentage
-   * @type {number}
-   * @memberof ConsultingProfile
-   */
-  profileCompletionScore?: number;
-  /**
-   * Whether currently available for new engagements
-   * @type {boolean}
-   * @memberof ConsultingProfile
-   */
-  isAvailable?: boolean;
-  /**
-   * When available to start new work
-   * @type {Date}
-   * @memberof ConsultingProfile
-   */
-  availableStartDate?: Date;
-  /**
-   * When consulting profile was created
-   * @type {Date}
-   * @memberof ConsultingProfile
-   */
-  createdDate?: Date;
-  /**
-   * Last update time
-   * @type {Date}
-   * @memberof ConsultingProfile
-   */
-  updatedDate?: Date;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof ConsultingProfile
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof ConsultingProfile
-   */
-  readonly ownerId?: string;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof ConsultingProfile
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof ConsultingProfile
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof ConsultingProfile
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof ConsultingProfile
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof ConsultingProfile
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof ConsultingProfile
-   */
-  trashed?: boolean;
-};
+export type ConsultingProfile  = DataObject & {
+    /**
+     * Reference to JobSeeker (1:1 relationship)
+     * @type {string}
+     * @memberof ConsultingProfile
+     */
+    jobSeekerId?: string;
+    /**
+     * Type of consulting engagement
+     * @type {string}
+     * @memberof ConsultingProfile
+     */
+    consultingType?: ConsultingProfileConsultingTypeEnum;
+    /**
+     * JSON array (stored as string) of specialization areas (e.g., [\"ThorAPI Implementation\"])
+     * @type {string}
+     * @memberof ConsultingProfile
+     */
+    expertiseAreas?: string;
+    /**
+     * Maximum hourly rate candidate charges
+     * @type {number}
+     * @memberof ConsultingProfile
+     */
+    maximumHourlyRate?: number;
+    /**
+     * Minimum hours per month available
+     * @type {number}
+     * @memberof ConsultingProfile
+     */
+    minimumMonthlyCommitment?: number;
+    /**
+     * Geographic focus (e.g., \"North America\", \"Global\")
+     * @type {string}
+     * @memberof ConsultingProfile
+     */
+    geographicFocus?: string;
+    /**
+     * URLs to portfolio projects or case studies
+     * @type {string}
+     * @memberof ConsultingProfile
+     */
+    projectPortfolio?: string;
+    /**
+     * Profile completion percentage
+     * @type {number}
+     * @memberof ConsultingProfile
+     */
+    profileCompletionScore?: number;
+    /**
+     * Whether currently available for new engagements
+     * @type {boolean}
+     * @memberof ConsultingProfile
+     */
+    isAvailable?: boolean;
+    /**
+     * When available to start new work
+     * @type {Date}
+     * @memberof ConsultingProfile
+     */
+    availableStartDate?: Date;
+    /**
+     * When consulting profile was created
+     * @type {Date}
+     * @memberof ConsultingProfile
+     */
+    createdDate?: Date;
+    /**
+     * Last update time
+     * @type {Date}
+     * @memberof ConsultingProfile
+     */
+    updatedDate?: Date;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof ConsultingProfile
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof ConsultingProfile
+     */
+    readonly ownerId?: string;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof ConsultingProfile
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof ConsultingProfile
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof ConsultingProfile
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof ConsultingProfile
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof ConsultingProfile
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof ConsultingProfile
+     */
+    trashed?: boolean;
+}
 
 export function ConsultingProfileFromJSON(json: any): ConsultingProfile {
-  return {
-    ...DataObjectFromJSON(json),
-    jobSeekerId: !exists(json, "jobSeekerId") ? undefined : json["jobSeekerId"],
-    consultingType: !exists(json, "consultingType")
-      ? undefined
-      : json["consultingType"],
-    expertiseAreas: !exists(json, "expertiseAreas")
-      ? undefined
-      : json["expertiseAreas"],
-    maximumHourlyRate: !exists(json, "maximumHourlyRate")
-      ? undefined
-      : json["maximumHourlyRate"],
-    minimumMonthlyCommitment: !exists(json, "minimumMonthlyCommitment")
-      ? undefined
-      : json["minimumMonthlyCommitment"],
-    geographicFocus: !exists(json, "geographicFocus")
-      ? undefined
-      : json["geographicFocus"],
-    projectPortfolio: !exists(json, "projectPortfolio")
-      ? undefined
-      : json["projectPortfolio"],
-    profileCompletionScore: !exists(json, "profileCompletionScore")
-      ? undefined
-      : json["profileCompletionScore"],
-    isAvailable: !exists(json, "isAvailable") ? undefined : json["isAvailable"],
-    availableStartDate: !exists(json, "availableStartDate")
-      ? undefined
-      : new Date(json["availableStartDate"]),
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    updatedDate: !exists(json, "updatedDate")
-      ? undefined
-      : new Date(json["updatedDate"]),
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'jobSeekerId': !exists(json, 'jobSeekerId') ? undefined : json['jobSeekerId'],
+        'consultingType': !exists(json, 'consultingType') ? undefined : json['consultingType'],
+        'expertiseAreas': !exists(json, 'expertiseAreas') ? undefined : json['expertiseAreas'],
+        'maximumHourlyRate': !exists(json, 'maximumHourlyRate') ? undefined : json['maximumHourlyRate'],
+        'minimumMonthlyCommitment': !exists(json, 'minimumMonthlyCommitment') ? undefined : json['minimumMonthlyCommitment'],
+        'geographicFocus': !exists(json, 'geographicFocus') ? undefined : json['geographicFocus'],
+        'projectPortfolio': !exists(json, 'projectPortfolio') ? undefined : json['projectPortfolio'],
+        'profileCompletionScore': !exists(json, 'profileCompletionScore') ? undefined : json['profileCompletionScore'],
+        'isAvailable': !exists(json, 'isAvailable') ? undefined : json['isAvailable'],
+        'availableStartDate': !exists(json, 'availableStartDate') ? undefined : new Date(json['availableStartDate']),
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'updatedDate': !exists(json, 'updatedDate') ? undefined : new Date(json['updatedDate']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function ConsultingProfileToJSON(value?: ConsultingProfile): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    jobSeekerId: value.jobSeekerId,
-    consultingType: value.consultingType,
-    expertiseAreas: value.expertiseAreas,
-    maximumHourlyRate: value.maximumHourlyRate,
-    minimumMonthlyCommitment: value.minimumMonthlyCommitment,
-    geographicFocus: value.geographicFocus,
-    projectPortfolio: value.projectPortfolio,
-    profileCompletionScore: value.profileCompletionScore,
-    isAvailable: value.isAvailable,
-    availableStartDate:
-      value.availableStartDate === undefined
-        ? undefined
-        : value.availableStartDate.toISOString(),
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
-    updatedDate:
-      value.updatedDate === undefined
-        ? undefined
-        : value.updatedDate.toISOString(),
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'jobSeekerId': value.jobSeekerId,
+        'consultingType': value.consultingType,
+        'expertiseAreas': value.expertiseAreas,
+        'maximumHourlyRate': value.maximumHourlyRate,
+        'minimumMonthlyCommitment': value.minimumMonthlyCommitment,
+        'geographicFocus': value.geographicFocus,
+        'projectPortfolio': value.projectPortfolio,
+        'profileCompletionScore': value.profileCompletionScore,
+        'isAvailable': value.isAvailable,
+        'availableStartDate': value.availableStartDate === undefined ? undefined : value.availableStartDate.toISOString(),
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
+        'updatedDate': value.updatedDate === undefined ? undefined : value.updatedDate.toISOString(),
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum ConsultingProfileConsultingTypeEnum {
-  INDEPENDENT_CONSULTANT = "independent_consultant",
-  AGENCY_OWNER = "agency_owner",
-  FREELANCER = "freelancer",
-  RESELLER_PARTNER = "reseller_partner",
+    INDEPENDENT_CONSULTANT = 'independent_consultant',
+    AGENCY_OWNER = 'agency_owner',
+    FREELANCER = 'freelancer',
+    RESELLER_PARTNER = 'reseller_partner'
 }
+
+

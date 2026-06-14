@@ -26,133 +26,120 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 import {
-  TrustPolicyManifest,
-  TrustPolicyManifestFromJSON,
-  TrustPolicyManifestToJSON,
-} from "./";
+
+
+    TrustPolicyManifest,
+    TrustPolicyManifestFromJSON,
+    TrustPolicyManifestToJSON,
+} from './';
+
 
 // thorapi
 
 /**
- *
+ * 
  * @export
  * @interface RegisterTrustPolicyRequest
  */
-export type RegisterTrustPolicyRequest = DataObject & {
-  /**
-   *
-   * @type {TrustPolicyManifest}
-   * @memberof RegisterTrustPolicyRequest
-   */
-  policyManifest?: TrustPolicyManifest;
-  /**
-   *
-   * @type {string}
-   * @memberof RegisterTrustPolicyRequest
-   */
-  canonicalManifest?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof RegisterTrustPolicyRequest
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof RegisterTrustPolicyRequest
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof RegisterTrustPolicyRequest
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof RegisterTrustPolicyRequest
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof RegisterTrustPolicyRequest
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof RegisterTrustPolicyRequest
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof RegisterTrustPolicyRequest
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof RegisterTrustPolicyRequest
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof RegisterTrustPolicyRequest
-   */
-  trashed?: boolean;
-};
-
-export function RegisterTrustPolicyRequestFromJSON(
-  json: any,
-): RegisterTrustPolicyRequest {
-  return {
-    ...DataObjectFromJSON(json),
-    policyManifest: !exists(json, "policyManifest")
-      ? undefined
-      : TrustPolicyManifestFromJSON(json["policyManifest"]),
-    canonicalManifest: !exists(json, "canonicalManifest")
-      ? undefined
-      : json["canonicalManifest"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+export type RegisterTrustPolicyRequest  = DataObject & {
+    /**
+     * 
+     * @type {TrustPolicyManifest}
+     * @memberof RegisterTrustPolicyRequest
+     */
+    policyManifest?: TrustPolicyManifest;
+    /**
+     * 
+     * @type {string}
+     * @memberof RegisterTrustPolicyRequest
+     */
+    canonicalManifest?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof RegisterTrustPolicyRequest
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof RegisterTrustPolicyRequest
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof RegisterTrustPolicyRequest
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof RegisterTrustPolicyRequest
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof RegisterTrustPolicyRequest
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof RegisterTrustPolicyRequest
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof RegisterTrustPolicyRequest
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof RegisterTrustPolicyRequest
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof RegisterTrustPolicyRequest
+     */
+    trashed?: boolean;
 }
 
-export function RegisterTrustPolicyRequestToJSON(
-  value?: RegisterTrustPolicyRequest,
-): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    policyManifest: TrustPolicyManifestToJSON(value.policyManifest),
-    canonicalManifest: value.canonicalManifest,
-    trashed: value.trashed,
-  };
+export function RegisterTrustPolicyRequestFromJSON(json: any): RegisterTrustPolicyRequest {
+    return {
+        ...DataObjectFromJSON(json),
+        'policyManifest': !exists(json, 'policyManifest') ? undefined : TrustPolicyManifestFromJSON(json['policyManifest']),
+        'canonicalManifest': !exists(json, 'canonicalManifest') ? undefined : json['canonicalManifest'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
+
+export function RegisterTrustPolicyRequestToJSON(value?: RegisterTrustPolicyRequest): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'policyManifest': TrustPolicyManifestToJSON(value.policyManifest),
+        'canonicalManifest': value.canonicalManifest,
+        'trashed': value.trashed,
+    };
+}
+
+

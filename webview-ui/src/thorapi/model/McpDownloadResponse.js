@@ -34,39 +34,23 @@ const DataObject_1 = require("./DataObject");
 function McpDownloadResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        mcpId: !(0, runtime_1.exists)(json, "mcpId") ? undefined : json["mcpId"],
-        githubUrl: !(0, runtime_1.exists)(json, "githubUrl") ? undefined : json["githubUrl"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        author: !(0, runtime_1.exists)(json, "author") ? undefined : json["author"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        readmeContent: !(0, runtime_1.exists)(json, "readmeContent")
-            ? undefined
-            : json["readmeContent"],
-        llmsInstallationContent: !(0, runtime_1.exists)(json, "llmsInstallationContent")
-            ? undefined
-            : json["llmsInstallationContent"],
-        requiresApiKey: !(0, runtime_1.exists)(json, "requiresApiKey")
-            ? undefined
-            : json["requiresApiKey"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'mcpId': !(0, runtime_1.exists)(json, 'mcpId') ? undefined : json['mcpId'],
+        'githubUrl': !(0, runtime_1.exists)(json, 'githubUrl') ? undefined : json['githubUrl'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'author': !(0, runtime_1.exists)(json, 'author') ? undefined : json['author'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'readmeContent': !(0, runtime_1.exists)(json, 'readmeContent') ? undefined : json['readmeContent'],
+        'llmsInstallationContent': !(0, runtime_1.exists)(json, 'llmsInstallationContent') ? undefined : json['llmsInstallationContent'],
+        'requiresApiKey': !(0, runtime_1.exists)(json, 'requiresApiKey') ? undefined : json['requiresApiKey'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function McpDownloadResponseToJSON(value) {
@@ -75,15 +59,15 @@ function McpDownloadResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        mcpId: value.mcpId,
-        githubUrl: value.githubUrl,
-        name: value.name,
-        author: value.author,
-        description: value.description,
-        readmeContent: value.readmeContent,
-        llmsInstallationContent: value.llmsInstallationContent,
-        requiresApiKey: value.requiresApiKey,
-        trashed: value.trashed,
+        'mcpId': value.mcpId,
+        'githubUrl': value.githubUrl,
+        'name': value.name,
+        'author': value.author,
+        'description': value.description,
+        'readmeContent': value.readmeContent,
+        'llmsInstallationContent': value.llmsInstallationContent,
+        'requiresApiKey': value.requiresApiKey,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=McpDownloadResponse.js.map

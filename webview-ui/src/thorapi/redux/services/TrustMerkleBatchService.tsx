@@ -13,60 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { TrustMerkleBatch } from "@thorapi/model/TrustMerkleBatch";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { TrustMerkleBatch } from '@thorapi/model/TrustMerkleBatch'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type TrustMerkleBatchResponse = TrustMerkleBatch[];
+type TrustMerkleBatchResponse = TrustMerkleBatch[]
+type TrustMerkleBatchPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<TrustMerkleBatch>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type TrustMerkleBatchListQueryArg = {
+  example?: Partial<TrustMerkleBatch>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toTrustMerkleBatchList = (result: unknown): TrustMerkleBatchResponse => {
   if (Array.isArray(result)) {
-    return result as TrustMerkleBatchResponse;
+    return result as TrustMerkleBatchResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as TrustMerkleBatchResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as TrustMerkleBatchResponse) : []
+}
 
 export const TrustMerkleBatchService = createApi({
-  reducerPath: "TrustMerkleBatch", // This should remain unique
+  reducerPath: 'TrustMerkleBatch', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["TrustMerkleBatch"],
+  tagTypes: ['TrustMerkleBatch'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getTrustMerkleBatchsPaged: build.query<
-      TrustMerkleBatchResponse,
-      { page: number; size?: number; example?: Partial<TrustMerkleBatch> }
-    >({
+    getTrustMerkleBatchsPaged: build.query<TrustMerkleBatchResponse, TrustMerkleBatchPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `TrustMerkleBatch?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `TrustMerkleBatch?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toTrustMerkleBatchList(result);
+        const rows = toTrustMerkleBatchList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "TrustMerkleBatch" as const, id })),
-          { type: "TrustMerkleBatch", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'TrustMerkleBatch' as const, id })),
+          { type: 'TrustMerkleBatch', id: `PAGE_${page}` },
+          { type: 'TrustMerkleBatch', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getTrustMerkleBatchs: build.query<
-      TrustMerkleBatchResponse,
-      { example?: Partial<TrustMerkleBatch> } | void
-    >({
+    getTrustMerkleBatchs: build.query<TrustMerkleBatchResponse, TrustMerkleBatchListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -75,112 +82,86 @@ export const TrustMerkleBatchService = createApi({
         return `TrustMerkleBatch`;
       },
       providesTags: (result) => {
-        const rows = toTrustMerkleBatchList(result);
+        const rows = toTrustMerkleBatchList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "TrustMerkleBatch" as const, id })),
-          { type: "TrustMerkleBatch", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'TrustMerkleBatch' as const, id })),
+          { type: 'TrustMerkleBatch', id: 'LIST' },
+          { type: 'TrustMerkleBatch', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addTrustMerkleBatch: build.mutation<
-      TrustMerkleBatch,
-      Partial<TrustMerkleBatch>
-    >({
+    addTrustMerkleBatch: build.mutation<TrustMerkleBatch, Partial<TrustMerkleBatch>>({
       query: (body) => ({
         url: `TrustMerkleBatch`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "TrustMerkleBatch", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'TrustMerkleBatch', id: 'LIST' },
+        { type: 'TrustMerkleBatch', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getTrustMerkleBatch: build.query<TrustMerkleBatch, string>({
       query: (id) => `TrustMerkleBatch/${id}`,
-      providesTags: (result, error, id) => [{ type: "TrustMerkleBatch", id }],
+      providesTags: (result, error, id) => [{ type: 'TrustMerkleBatch', id }],
     }),
 
     // 5) Update
-    updateTrustMerkleBatch: build.mutation<
-      void,
-      Pick<TrustMerkleBatch, "id"> & Partial<TrustMerkleBatch>
-    >({
+    updateTrustMerkleBatch: build.mutation<TrustMerkleBatch, Pick<TrustMerkleBatch, 'id'> & Partial<TrustMerkleBatch>>({
       query: ({ id, ...patch }) => ({
         url: `TrustMerkleBatch/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            TrustMerkleBatchService.util.updateQueryData(
-              "getTrustMerkleBatch",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<TrustMerkleBatch, "id">,
-      ) => [
-        { type: "TrustMerkleBatch", id },
-        { type: "TrustMerkleBatch", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<TrustMerkleBatch, 'id'>) => [
+        { type: 'TrustMerkleBatch', id },
+        { type: 'TrustMerkleBatch', id: 'LIST' },
+        { type: 'TrustMerkleBatch', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteTrustMerkleBatch: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteTrustMerkleBatch: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `TrustMerkleBatch/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "TrustMerkleBatch", id },
+        { type: 'TrustMerkleBatch', id },
+        { type: 'TrustMerkleBatch', id: 'LIST' },
+        { type: 'TrustMerkleBatch', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteTrustMerkleBatchCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteTrustMerkleBatchCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `TrustMerkleBatch/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "TrustMerkleBatch", id },
-        { type: "TrustMerkleBatch", id: "LIST" },
+        { type: 'TrustMerkleBatch', id },
+        { type: 'TrustMerkleBatch', id: 'LIST' },
+        { type: 'TrustMerkleBatch', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetTrustMerkleBatchsPagedQuery`
 export const {
-  useGetTrustMerkleBatchsPagedQuery, // immediate fetch
+  useGetTrustMerkleBatchsPagedQuery,     // immediate fetch
   useLazyGetTrustMerkleBatchsPagedQuery, // lazy fetch
   useGetTrustMerkleBatchQuery,
   useGetTrustMerkleBatchsQuery,
@@ -188,4 +169,4 @@ export const {
   useUpdateTrustMerkleBatchMutation,
   useDeleteTrustMerkleBatchMutation,
   useDeleteTrustMerkleBatchCascadeMutation,
-} = TrustMerkleBatchService;
+} = TrustMerkleBatchService

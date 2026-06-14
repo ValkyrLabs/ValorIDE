@@ -36,61 +36,31 @@ const _1 = require("./");
 function ConversationMemoryNodeFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        branch: !(0, runtime_1.exists)(json, "branch")
-            ? undefined
-            : (0, _1.ConversationBranchFromJSON)(json["branch"]),
-        parent: !(0, runtime_1.exists)(json, "parent")
-            ? undefined
-            : ConversationMemoryNodeFromJSON(json["parent"]),
-        chatMessageId: !(0, runtime_1.exists)(json, "chatMessageId")
-            ? undefined
-            : json["chatMessageId"],
-        messageRole: !(0, runtime_1.exists)(json, "messageRole") ? undefined : json["messageRole"],
-        sessionId: !(0, runtime_1.exists)(json, "sessionId") ? undefined : json["sessionId"],
-        sequenceNo: !(0, runtime_1.exists)(json, "sequenceNo") ? undefined : json["sequenceNo"],
-        contentHash: !(0, runtime_1.exists)(json, "contentHash") ? undefined : json["contentHash"],
-        contentChars: !(0, runtime_1.exists)(json, "contentChars")
-            ? undefined
-            : json["contentChars"],
-        compressedPayload: !(0, runtime_1.exists)(json, "compressedPayload")
-            ? undefined
-            : json["compressedPayload"],
-        embeddingVector: !(0, runtime_1.exists)(json, "embeddingVector")
-            ? undefined
-            : json["embeddingVector"],
-        embeddingDimensions: !(0, runtime_1.exists)(json, "embeddingDimensions")
-            ? undefined
-            : json["embeddingDimensions"],
-        embeddingChecksum: !(0, runtime_1.exists)(json, "embeddingChecksum")
-            ? undefined
-            : json["embeddingChecksum"],
-        keywordsText: !(0, runtime_1.exists)(json, "keywordsText")
-            ? undefined
-            : json["keywordsText"],
-        metadata: !(0, runtime_1.exists)(json, "metadata") ? undefined : json["metadata"],
-        relevanceScore: !(0, runtime_1.exists)(json, "relevanceScore")
-            ? undefined
-            : json["relevanceScore"],
-        archived: !(0, runtime_1.exists)(json, "archived") ? undefined : json["archived"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'branch': !(0, runtime_1.exists)(json, 'branch') ? undefined : (0, _1.ConversationBranchFromJSON)(json['branch']),
+        'parent': !(0, runtime_1.exists)(json, 'parent') ? undefined : ConversationMemoryNodeFromJSON(json['parent']),
+        'chatMessageId': !(0, runtime_1.exists)(json, 'chatMessageId') ? undefined : json['chatMessageId'],
+        'messageRole': !(0, runtime_1.exists)(json, 'messageRole') ? undefined : json['messageRole'],
+        'sessionId': !(0, runtime_1.exists)(json, 'sessionId') ? undefined : json['sessionId'],
+        'sequenceNo': !(0, runtime_1.exists)(json, 'sequenceNo') ? undefined : json['sequenceNo'],
+        'contentHash': !(0, runtime_1.exists)(json, 'contentHash') ? undefined : json['contentHash'],
+        'contentChars': !(0, runtime_1.exists)(json, 'contentChars') ? undefined : json['contentChars'],
+        'compressedPayload': !(0, runtime_1.exists)(json, 'compressedPayload') ? undefined : json['compressedPayload'],
+        'embeddingVector': !(0, runtime_1.exists)(json, 'embeddingVector') ? undefined : json['embeddingVector'],
+        'embeddingDimensions': !(0, runtime_1.exists)(json, 'embeddingDimensions') ? undefined : json['embeddingDimensions'],
+        'embeddingChecksum': !(0, runtime_1.exists)(json, 'embeddingChecksum') ? undefined : json['embeddingChecksum'],
+        'keywordsText': !(0, runtime_1.exists)(json, 'keywordsText') ? undefined : json['keywordsText'],
+        'metadata': !(0, runtime_1.exists)(json, 'metadata') ? undefined : json['metadata'],
+        'relevanceScore': !(0, runtime_1.exists)(json, 'relevanceScore') ? undefined : json['relevanceScore'],
+        'archived': !(0, runtime_1.exists)(json, 'archived') ? undefined : json['archived'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ConversationMemoryNodeToJSON(value) {
@@ -99,29 +69,29 @@ function ConversationMemoryNodeToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        branch: (0, _1.ConversationBranchToJSON)(value.branch),
-        parent: ConversationMemoryNodeToJSON(value.parent),
-        chatMessageId: value.chatMessageId,
-        messageRole: value.messageRole,
-        sessionId: value.sessionId,
-        sequenceNo: value.sequenceNo,
-        contentHash: value.contentHash,
-        contentChars: value.contentChars,
-        compressedPayload: value.compressedPayload,
-        embeddingVector: value.embeddingVector,
-        embeddingDimensions: value.embeddingDimensions,
-        embeddingChecksum: value.embeddingChecksum,
-        keywordsText: value.keywordsText,
-        metadata: value.metadata,
-        relevanceScore: value.relevanceScore,
-        archived: value.archived,
-        trashed: value.trashed,
+        'branch': (0, _1.ConversationBranchToJSON)(value.branch),
+        'parent': ConversationMemoryNodeToJSON(value.parent),
+        'chatMessageId': value.chatMessageId,
+        'messageRole': value.messageRole,
+        'sessionId': value.sessionId,
+        'sequenceNo': value.sequenceNo,
+        'contentHash': value.contentHash,
+        'contentChars': value.contentChars,
+        'compressedPayload': value.compressedPayload,
+        'embeddingVector': value.embeddingVector,
+        'embeddingDimensions': value.embeddingDimensions,
+        'embeddingChecksum': value.embeddingChecksum,
+        'keywordsText': value.keywordsText,
+        'metadata': value.metadata,
+        'relevanceScore': value.relevanceScore,
+        'archived': value.archived,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ConversationMemoryNodeMessageRoleEnum;
 (function (ConversationMemoryNodeMessageRoleEnum) {
     ConversationMemoryNodeMessageRoleEnum["SYSTEM"] = "system";

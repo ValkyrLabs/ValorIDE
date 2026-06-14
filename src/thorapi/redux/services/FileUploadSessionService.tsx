@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { FileUploadSession } from "@thorapi/model/FileUploadSession";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { FileUploadSession } from '@thorapi/model/FileUploadSession'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type FileUploadSessionResponse = FileUploadSession[];
+type FileUploadSessionResponse = FileUploadSession[]
+type FileUploadSessionPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<FileUploadSession>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toFileUploadSessionList = (
-  result: unknown,
-): FileUploadSessionResponse => {
+type FileUploadSessionListQueryArg = {
+  example?: Partial<FileUploadSession>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toFileUploadSessionList = (result: unknown): FileUploadSessionResponse => {
   if (Array.isArray(result)) {
-    return result as FileUploadSessionResponse;
+    return result as FileUploadSessionResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as FileUploadSessionResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as FileUploadSessionResponse) : []
+}
 
 export const FileUploadSessionService = createApi({
-  reducerPath: "FileUploadSession", // This should remain unique
+  reducerPath: 'FileUploadSession', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["FileUploadSession"],
+  tagTypes: ['FileUploadSession'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getFileUploadSessionsPaged: build.query<
-      FileUploadSessionResponse,
-      { page: number; size?: number; example?: Partial<FileUploadSession> }
-    >({
+    getFileUploadSessionsPaged: build.query<FileUploadSessionResponse, FileUploadSessionPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `FileUploadSession?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `FileUploadSession?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toFileUploadSessionList(result);
+        const rows = toFileUploadSessionList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "FileUploadSession" as const, id })),
-          { type: "FileUploadSession", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'FileUploadSession' as const, id })),
+          { type: 'FileUploadSession', id: `PAGE_${page}` },
+          { type: 'FileUploadSession', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getFileUploadSessions: build.query<
-      FileUploadSessionResponse,
-      { example?: Partial<FileUploadSession> } | void
-    >({
+    getFileUploadSessions: build.query<FileUploadSessionResponse, FileUploadSessionListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,112 +82,86 @@ export const FileUploadSessionService = createApi({
         return `FileUploadSession`;
       },
       providesTags: (result) => {
-        const rows = toFileUploadSessionList(result);
+        const rows = toFileUploadSessionList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "FileUploadSession" as const, id })),
-          { type: "FileUploadSession", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'FileUploadSession' as const, id })),
+          { type: 'FileUploadSession', id: 'LIST' },
+          { type: 'FileUploadSession', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addFileUploadSession: build.mutation<
-      FileUploadSession,
-      Partial<FileUploadSession>
-    >({
+    addFileUploadSession: build.mutation<FileUploadSession, Partial<FileUploadSession>>({
       query: (body) => ({
         url: `FileUploadSession`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "FileUploadSession", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'FileUploadSession', id: 'LIST' },
+        { type: 'FileUploadSession', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getFileUploadSession: build.query<FileUploadSession, string>({
       query: (id) => `FileUploadSession/${id}`,
-      providesTags: (result, error, id) => [{ type: "FileUploadSession", id }],
+      providesTags: (result, error, id) => [{ type: 'FileUploadSession', id }],
     }),
 
     // 5) Update
-    updateFileUploadSession: build.mutation<
-      void,
-      Pick<FileUploadSession, "id"> & Partial<FileUploadSession>
-    >({
+    updateFileUploadSession: build.mutation<FileUploadSession, Pick<FileUploadSession, 'id'> & Partial<FileUploadSession>>({
       query: ({ id, ...patch }) => ({
         url: `FileUploadSession/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            FileUploadSessionService.util.updateQueryData(
-              "getFileUploadSession",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<FileUploadSession, "id">,
-      ) => [
-        { type: "FileUploadSession", id },
-        { type: "FileUploadSession", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<FileUploadSession, 'id'>) => [
+        { type: 'FileUploadSession', id },
+        { type: 'FileUploadSession', id: 'LIST' },
+        { type: 'FileUploadSession', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteFileUploadSession: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteFileUploadSession: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `FileUploadSession/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "FileUploadSession", id },
+        { type: 'FileUploadSession', id },
+        { type: 'FileUploadSession', id: 'LIST' },
+        { type: 'FileUploadSession', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteFileUploadSessionCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteFileUploadSessionCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `FileUploadSession/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "FileUploadSession", id },
-        { type: "FileUploadSession", id: "LIST" },
+        { type: 'FileUploadSession', id },
+        { type: 'FileUploadSession', id: 'LIST' },
+        { type: 'FileUploadSession', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetFileUploadSessionsPagedQuery`
 export const {
-  useGetFileUploadSessionsPagedQuery, // immediate fetch
+  useGetFileUploadSessionsPagedQuery,     // immediate fetch
   useLazyGetFileUploadSessionsPagedQuery, // lazy fetch
   useGetFileUploadSessionQuery,
   useGetFileUploadSessionsQuery,
@@ -190,4 +169,4 @@ export const {
   useUpdateFileUploadSessionMutation,
   useDeleteFileUploadSessionMutation,
   useDeleteFileUploadSessionCascadeMutation,
-} = FileUploadSessionService;
+} = FileUploadSessionService

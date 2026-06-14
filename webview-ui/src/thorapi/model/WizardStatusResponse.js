@@ -35,44 +35,24 @@ const DataObject_1 = require("./DataObject");
 function WizardStatusResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        wizardId: !(0, runtime_1.exists)(json, "wizardId") ? undefined : json["wizardId"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        progress: !(0, runtime_1.exists)(json, "progress") ? undefined : json["progress"],
-        currentStep: !(0, runtime_1.exists)(json, "currentStep") ? undefined : json["currentStep"],
-        errorMessage: !(0, runtime_1.exists)(json, "errorMessage")
-            ? undefined
-            : json["errorMessage"],
-        generatedAssets: !(0, runtime_1.exists)(json, "generatedAssets")
-            ? undefined
-            : json["generatedAssets"],
-        contentDataId: !(0, runtime_1.exists)(json, "contentDataId")
-            ? undefined
-            : json["contentDataId"],
-        landingPageId: !(0, runtime_1.exists)(json, "landingPageId")
-            ? undefined
-            : json["landingPageId"],
-        landingPageUrl: !(0, runtime_1.exists)(json, "landingPageUrl")
-            ? undefined
-            : json["landingPageUrl"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'wizardId': !(0, runtime_1.exists)(json, 'wizardId') ? undefined : json['wizardId'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'progress': !(0, runtime_1.exists)(json, 'progress') ? undefined : json['progress'],
+        'currentStep': !(0, runtime_1.exists)(json, 'currentStep') ? undefined : json['currentStep'],
+        'errorMessage': !(0, runtime_1.exists)(json, 'errorMessage') ? undefined : json['errorMessage'],
+        'generatedAssets': !(0, runtime_1.exists)(json, 'generatedAssets') ? undefined : json['generatedAssets'],
+        'contentDataId': !(0, runtime_1.exists)(json, 'contentDataId') ? undefined : json['contentDataId'],
+        'landingPageId': !(0, runtime_1.exists)(json, 'landingPageId') ? undefined : json['landingPageId'],
+        'landingPageUrl': !(0, runtime_1.exists)(json, 'landingPageUrl') ? undefined : json['landingPageUrl'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function WizardStatusResponseToJSON(value) {
@@ -81,22 +61,22 @@ function WizardStatusResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        wizardId: value.wizardId,
-        status: value.status,
-        progress: value.progress,
-        currentStep: value.currentStep,
-        errorMessage: value.errorMessage,
-        generatedAssets: value.generatedAssets,
-        contentDataId: value.contentDataId,
-        landingPageId: value.landingPageId,
-        landingPageUrl: value.landingPageUrl,
-        trashed: value.trashed,
+        'wizardId': value.wizardId,
+        'status': value.status,
+        'progress': value.progress,
+        'currentStep': value.currentStep,
+        'errorMessage': value.errorMessage,
+        'generatedAssets': value.generatedAssets,
+        'contentDataId': value.contentDataId,
+        'landingPageId': value.landingPageId,
+        'landingPageUrl': value.landingPageUrl,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var WizardStatusResponseStatusEnum;
 (function (WizardStatusResponseStatusEnum) {
     WizardStatusResponseStatusEnum["STARTED"] = "started";

@@ -35,28 +35,18 @@ const DataObject_1 = require("./DataObject");
 function BorderFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        formatId: !(0, runtime_1.exists)(json, "formatId") ? undefined : json["formatId"],
-        style: !(0, runtime_1.exists)(json, "style") ? undefined : json["style"],
-        color: !(0, runtime_1.exists)(json, "color") ? undefined : json["color"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'formatId': !(0, runtime_1.exists)(json, 'formatId') ? undefined : json['formatId'],
+        'style': !(0, runtime_1.exists)(json, 'style') ? undefined : json['style'],
+        'color': !(0, runtime_1.exists)(json, 'color') ? undefined : json['color'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function BorderToJSON(value) {
@@ -65,16 +55,16 @@ function BorderToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        formatId: value.formatId,
-        style: value.style,
-        color: value.color,
-        trashed: value.trashed,
+        'formatId': value.formatId,
+        'style': value.style,
+        'color': value.color,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var BorderStyleEnum;
 (function (BorderStyleEnum) {
     BorderStyleEnum["BORDERNONE"] = "none";
@@ -93,9 +83,9 @@ var BorderStyleEnum;
     BorderStyleEnum["BORDERSLANTEDDASHDOT"] = "slanteddashdot";
 })(BorderStyleEnum || (exports.BorderStyleEnum = BorderStyleEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var BorderColorEnum;
 (function (BorderColorEnum) {
     BorderColorEnum["COLORBLACK"] = "black";

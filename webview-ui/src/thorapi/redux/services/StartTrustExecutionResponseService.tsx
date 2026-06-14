@@ -13,69 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { StartTrustExecutionResponse } from "@thorapi/model/StartTrustExecutionResponse";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { StartTrustExecutionResponse } from '@thorapi/model/StartTrustExecutionResponse'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type StartTrustExecutionResponseResponse = StartTrustExecutionResponse[];
+type StartTrustExecutionResponseResponse = StartTrustExecutionResponse[]
+type StartTrustExecutionResponsePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<StartTrustExecutionResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toStartTrustExecutionResponseList = (
-  result: unknown,
-): StartTrustExecutionResponseResponse => {
+type StartTrustExecutionResponseListQueryArg = {
+  example?: Partial<StartTrustExecutionResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toStartTrustExecutionResponseList = (result: unknown): StartTrustExecutionResponseResponse => {
   if (Array.isArray(result)) {
-    return result as StartTrustExecutionResponseResponse;
+    return result as StartTrustExecutionResponseResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as StartTrustExecutionResponseResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as StartTrustExecutionResponseResponse) : []
+}
 
 export const StartTrustExecutionResponseService = createApi({
-  reducerPath: "StartTrustExecutionResponse", // This should remain unique
+  reducerPath: 'StartTrustExecutionResponse', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["StartTrustExecutionResponse"],
+  tagTypes: ['StartTrustExecutionResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getStartTrustExecutionResponsesPaged: build.query<
-      StartTrustExecutionResponseResponse,
-      {
-        page: number;
-        size?: number;
-        example?: Partial<StartTrustExecutionResponse>;
-      }
-    >({
+    getStartTrustExecutionResponsesPaged: build.query<StartTrustExecutionResponseResponse, StartTrustExecutionResponsePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `StartTrustExecutionResponse?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `StartTrustExecutionResponse?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toStartTrustExecutionResponseList(result);
+        const rows = toStartTrustExecutionResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "StartTrustExecutionResponse" as const,
-              id,
-            })),
-          { type: "StartTrustExecutionResponse", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'StartTrustExecutionResponse' as const, id })),
+          { type: 'StartTrustExecutionResponse', id: `PAGE_${page}` },
+          { type: 'StartTrustExecutionResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getStartTrustExecutionResponses: build.query<
-      StartTrustExecutionResponseResponse,
-      { example?: Partial<StartTrustExecutionResponse> } | void
-    >({
+    getStartTrustExecutionResponses: build.query<StartTrustExecutionResponseResponse, StartTrustExecutionResponseListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -84,121 +82,86 @@ export const StartTrustExecutionResponseService = createApi({
         return `StartTrustExecutionResponse`;
       },
       providesTags: (result) => {
-        const rows = toStartTrustExecutionResponseList(result);
+        const rows = toStartTrustExecutionResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "StartTrustExecutionResponse" as const,
-              id,
-            })),
-          { type: "StartTrustExecutionResponse", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'StartTrustExecutionResponse' as const, id })),
+          { type: 'StartTrustExecutionResponse', id: 'LIST' },
+          { type: 'StartTrustExecutionResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addStartTrustExecutionResponse: build.mutation<
-      StartTrustExecutionResponse,
-      Partial<StartTrustExecutionResponse>
-    >({
+    addStartTrustExecutionResponse: build.mutation<StartTrustExecutionResponse, Partial<StartTrustExecutionResponse>>({
       query: (body) => ({
         url: `StartTrustExecutionResponse`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "StartTrustExecutionResponse", id: "LIST" }],
-    }),
-
-    // 4) Get single by ID
-    getStartTrustExecutionResponse: build.query<
-      StartTrustExecutionResponse,
-      string
-    >({
-      query: (id) => `StartTrustExecutionResponse/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "StartTrustExecutionResponse", id },
+      invalidatesTags: [
+        { type: 'StartTrustExecutionResponse', id: 'LIST' },
+        { type: 'StartTrustExecutionResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
+    // 4) Get single by ID
+    getStartTrustExecutionResponse: build.query<StartTrustExecutionResponse, string>({
+      query: (id) => `StartTrustExecutionResponse/${id}`,
+      providesTags: (result, error, id) => [{ type: 'StartTrustExecutionResponse', id }],
+    }),
+
     // 5) Update
-    updateStartTrustExecutionResponse: build.mutation<
-      void,
-      Pick<StartTrustExecutionResponse, "id"> &
-        Partial<StartTrustExecutionResponse>
-    >({
+    updateStartTrustExecutionResponse: build.mutation<StartTrustExecutionResponse, Pick<StartTrustExecutionResponse, 'id'> & Partial<StartTrustExecutionResponse>>({
       query: ({ id, ...patch }) => ({
         url: `StartTrustExecutionResponse/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            StartTrustExecutionResponseService.util.updateQueryData(
-              "getStartTrustExecutionResponse",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<StartTrustExecutionResponse, "id">,
-      ) => [
-        { type: "StartTrustExecutionResponse", id },
-        { type: "StartTrustExecutionResponse", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<StartTrustExecutionResponse, 'id'>) => [
+        { type: 'StartTrustExecutionResponse', id },
+        { type: 'StartTrustExecutionResponse', id: 'LIST' },
+        { type: 'StartTrustExecutionResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteStartTrustExecutionResponse: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteStartTrustExecutionResponse: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `StartTrustExecutionResponse/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "StartTrustExecutionResponse", id },
+        { type: 'StartTrustExecutionResponse', id },
+        { type: 'StartTrustExecutionResponse', id: 'LIST' },
+        { type: 'StartTrustExecutionResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteStartTrustExecutionResponseCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteStartTrustExecutionResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `StartTrustExecutionResponse/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "StartTrustExecutionResponse", id },
-        { type: "StartTrustExecutionResponse", id: "LIST" },
+        { type: 'StartTrustExecutionResponse', id },
+        { type: 'StartTrustExecutionResponse', id: 'LIST' },
+        { type: 'StartTrustExecutionResponse', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetStartTrustExecutionResponsesPagedQuery`
 export const {
-  useGetStartTrustExecutionResponsesPagedQuery, // immediate fetch
+  useGetStartTrustExecutionResponsesPagedQuery,     // immediate fetch
   useLazyGetStartTrustExecutionResponsesPagedQuery, // lazy fetch
   useGetStartTrustExecutionResponseQuery,
   useGetStartTrustExecutionResponsesQuery,
@@ -206,4 +169,4 @@ export const {
   useUpdateStartTrustExecutionResponseMutation,
   useDeleteStartTrustExecutionResponseMutation,
   useDeleteStartTrustExecutionResponseCascadeMutation,
-} = StartTrustExecutionResponseService;
+} = StartTrustExecutionResponseService

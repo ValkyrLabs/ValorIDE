@@ -34,31 +34,19 @@ const DataObject_1 = require("./DataObject");
 function McpMarketplaceItemTagFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        mcpMarketplaceItemId: !(0, runtime_1.exists)(json, "mcpMarketplaceItemId")
-            ? undefined
-            : json["mcpMarketplaceItemId"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        notes: !(0, runtime_1.exists)(json, "notes") ? undefined : json["notes"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'mcpMarketplaceItemId': !(0, runtime_1.exists)(json, 'mcpMarketplaceItemId') ? undefined : json['mcpMarketplaceItemId'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'notes': !(0, runtime_1.exists)(json, 'notes') ? undefined : json['notes'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function McpMarketplaceItemTagToJSON(value) {
@@ -67,11 +55,11 @@ function McpMarketplaceItemTagToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        mcpMarketplaceItemId: value.mcpMarketplaceItemId,
-        name: value.name,
-        description: value.description,
-        notes: value.notes,
-        trashed: value.trashed,
+        'mcpMarketplaceItemId': value.mcpMarketplaceItemId,
+        'name': value.name,
+        'description': value.description,
+        'notes': value.notes,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=McpMarketplaceItemTag.js.map

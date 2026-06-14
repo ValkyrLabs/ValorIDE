@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,140 +36,130 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface ReferralLink
  */
-export type ReferralLink = DataObject & {
-  /**
-   * the name of the product or service being referred
-   * @type {string}
-   * @memberof ReferralLink
-   */
-  name?: string;
-  /**
-   * the referral link url
-   * @type {string}
-   * @memberof ReferralLink
-   */
-  link?: string;
-  /**
-   * high-level description of the resource
-   * @type {string}
-   * @memberof ReferralLink
-   */
-  description?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof ReferralLink
-   */
-  referralType?: ReferralLinkReferralTypeEnum;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof ReferralLink
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof ReferralLink
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof ReferralLink
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof ReferralLink
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof ReferralLink
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof ReferralLink
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof ReferralLink
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof ReferralLink
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof ReferralLink
-   */
-  trashed?: boolean;
-};
+export type ReferralLink  = DataObject & {
+    /**
+     * the name of the product or service being referred
+     * @type {string}
+     * @memberof ReferralLink
+     */
+    name?: string;
+    /**
+     * the referral link url
+     * @type {string}
+     * @memberof ReferralLink
+     */
+    link?: string;
+    /**
+     * high-level description of the resource
+     * @type {string}
+     * @memberof ReferralLink
+     */
+    description?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ReferralLink
+     */
+    referralType?: ReferralLinkReferralTypeEnum;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof ReferralLink
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof ReferralLink
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof ReferralLink
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof ReferralLink
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof ReferralLink
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof ReferralLink
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof ReferralLink
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof ReferralLink
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof ReferralLink
+     */
+    trashed?: boolean;
+}
 
 export function ReferralLinkFromJSON(json: any): ReferralLink {
-  return {
-    ...DataObjectFromJSON(json),
-    name: !exists(json, "name") ? undefined : json["name"],
-    link: !exists(json, "link") ? undefined : json["link"],
-    description: !exists(json, "description") ? undefined : json["description"],
-    referralType: !exists(json, "referralType")
-      ? undefined
-      : json["referralType"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'link': !exists(json, 'link') ? undefined : json['link'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'referralType': !exists(json, 'referralType') ? undefined : json['referralType'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function ReferralLinkToJSON(value?: ReferralLink): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    name: value.name,
-    link: value.link,
-    description: value.description,
-    referralType: value.referralType,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'name': value.name,
+        'link': value.link,
+        'description': value.description,
+        'referralType': value.referralType,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum ReferralLinkReferralTypeEnum {
-  INTERNAL = "internal",
-  PRODUCT = "product",
-  SERVICE = "service",
-  MEDIA = "media",
-  OTHER = "other",
+    INTERNAL = 'internal',
+    PRODUCT = 'product',
+    SERVICE = 'service',
+    MEDIA = 'media',
+    OTHER = 'other'
 }
+
+

@@ -35,38 +35,22 @@ const _1 = require("./");
 function ChannelSubscriptionFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        channel: !(0, runtime_1.exists)(json, "channel") ? undefined : json["channel"],
-        subscriberList: !(0, runtime_1.exists)(json, "subscriberList")
-            ? undefined
-            : (0, _1.SubscriberListFromJSON)(json["subscriberList"]),
-        channelId: !(0, runtime_1.exists)(json, "channelId") ? undefined : json["channelId"],
-        subscriberId: !(0, runtime_1.exists)(json, "subscriberId")
-            ? undefined
-            : json["subscriberId"],
-        subscribedAt: !(0, runtime_1.exists)(json, "subscribedAt")
-            ? undefined
-            : new Date(json["subscribedAt"]),
-        active: !(0, runtime_1.exists)(json, "active") ? undefined : json["active"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'channel': !(0, runtime_1.exists)(json, 'channel') ? undefined : json['channel'],
+        'subscriberList': !(0, runtime_1.exists)(json, 'subscriberList') ? undefined : (0, _1.SubscriberListFromJSON)(json['subscriberList']),
+        'channelId': !(0, runtime_1.exists)(json, 'channelId') ? undefined : json['channelId'],
+        'subscriberId': !(0, runtime_1.exists)(json, 'subscriberId') ? undefined : json['subscriberId'],
+        'subscribedAt': !(0, runtime_1.exists)(json, 'subscribedAt') ? undefined : new Date(json['subscribedAt']),
+        'active': !(0, runtime_1.exists)(json, 'active') ? undefined : json['active'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ChannelSubscriptionToJSON(value) {
@@ -75,16 +59,14 @@ function ChannelSubscriptionToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        name: value.name,
-        channel: value.channel,
-        subscriberList: (0, _1.SubscriberListToJSON)(value.subscriberList),
-        channelId: value.channelId,
-        subscriberId: value.subscriberId,
-        subscribedAt: value.subscribedAt === undefined
-            ? undefined
-            : value.subscribedAt.toISOString(),
-        active: value.active,
-        trashed: value.trashed,
+        'name': value.name,
+        'channel': value.channel,
+        'subscriberList': (0, _1.SubscriberListToJSON)(value.subscriberList),
+        'channelId': value.channelId,
+        'subscriberId': value.subscriberId,
+        'subscribedAt': value.subscribedAt === undefined ? undefined : value.subscribedAt.toISOString(),
+        'active': value.active,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=ChannelSubscription.js.map

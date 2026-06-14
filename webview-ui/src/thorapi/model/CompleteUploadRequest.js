@@ -35,36 +35,20 @@ const _1 = require("./");
 function CompleteUploadRequestFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        sessionId: !(0, runtime_1.exists)(json, "sessionId") ? undefined : json["sessionId"],
-        uploadId: !(0, runtime_1.exists)(json, "uploadId") ? undefined : json["uploadId"],
-        checksumSha256: !(0, runtime_1.exists)(json, "checksumSha256")
-            ? undefined
-            : json["checksumSha256"],
-        providerEtag: !(0, runtime_1.exists)(json, "providerEtag")
-            ? undefined
-            : json["providerEtag"],
-        parts: !(0, runtime_1.exists)(json, "parts")
-            ? undefined
-            : json["parts"].map(_1.CompleteUploadRequestPartsInnerFromJSON),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'sessionId': !(0, runtime_1.exists)(json, 'sessionId') ? undefined : json['sessionId'],
+        'uploadId': !(0, runtime_1.exists)(json, 'uploadId') ? undefined : json['uploadId'],
+        'checksumSha256': !(0, runtime_1.exists)(json, 'checksumSha256') ? undefined : json['checksumSha256'],
+        'providerEtag': !(0, runtime_1.exists)(json, 'providerEtag') ? undefined : json['providerEtag'],
+        'parts': !(0, runtime_1.exists)(json, 'parts') ? undefined : json['parts'].map(_1.CompleteUploadRequestPartsInnerFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function CompleteUploadRequestToJSON(value) {
@@ -73,14 +57,12 @@ function CompleteUploadRequestToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        sessionId: value.sessionId,
-        uploadId: value.uploadId,
-        checksumSha256: value.checksumSha256,
-        providerEtag: value.providerEtag,
-        parts: value.parts === undefined
-            ? undefined
-            : value.parts.map(_1.CompleteUploadRequestPartsInnerToJSON),
-        trashed: value.trashed,
+        'sessionId': value.sessionId,
+        'uploadId': value.uploadId,
+        'checksumSha256': value.checksumSha256,
+        'providerEtag': value.providerEtag,
+        'parts': value.parts === undefined ? undefined : value.parts.map(_1.CompleteUploadRequestPartsInnerToJSON),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=CompleteUploadRequest.js.map

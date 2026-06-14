@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { RotateTrustKeyResponse } from "@thorapi/model/RotateTrustKeyResponse";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { RotateTrustKeyResponse } from '@thorapi/model/RotateTrustKeyResponse'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type RotateTrustKeyResponseResponse = RotateTrustKeyResponse[];
+type RotateTrustKeyResponseResponse = RotateTrustKeyResponse[]
+type RotateTrustKeyResponsePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<RotateTrustKeyResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toRotateTrustKeyResponseList = (
-  result: unknown,
-): RotateTrustKeyResponseResponse => {
+type RotateTrustKeyResponseListQueryArg = {
+  example?: Partial<RotateTrustKeyResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toRotateTrustKeyResponseList = (result: unknown): RotateTrustKeyResponseResponse => {
   if (Array.isArray(result)) {
-    return result as RotateTrustKeyResponseResponse;
+    return result as RotateTrustKeyResponseResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as RotateTrustKeyResponseResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as RotateTrustKeyResponseResponse) : []
+}
 
 export const RotateTrustKeyResponseService = createApi({
-  reducerPath: "RotateTrustKeyResponse", // This should remain unique
+  reducerPath: 'RotateTrustKeyResponse', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["RotateTrustKeyResponse"],
+  tagTypes: ['RotateTrustKeyResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getRotateTrustKeyResponsesPaged: build.query<
-      RotateTrustKeyResponseResponse,
-      { page: number; size?: number; example?: Partial<RotateTrustKeyResponse> }
-    >({
+    getRotateTrustKeyResponsesPaged: build.query<RotateTrustKeyResponseResponse, RotateTrustKeyResponsePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `RotateTrustKeyResponse?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `RotateTrustKeyResponse?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toRotateTrustKeyResponseList(result);
+        const rows = toRotateTrustKeyResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "RotateTrustKeyResponse" as const, id })),
-          { type: "RotateTrustKeyResponse", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'RotateTrustKeyResponse' as const, id })),
+          { type: 'RotateTrustKeyResponse', id: `PAGE_${page}` },
+          { type: 'RotateTrustKeyResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getRotateTrustKeyResponses: build.query<
-      RotateTrustKeyResponseResponse,
-      { example?: Partial<RotateTrustKeyResponse> } | void
-    >({
+    getRotateTrustKeyResponses: build.query<RotateTrustKeyResponseResponse, RotateTrustKeyResponseListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,114 +82,86 @@ export const RotateTrustKeyResponseService = createApi({
         return `RotateTrustKeyResponse`;
       },
       providesTags: (result) => {
-        const rows = toRotateTrustKeyResponseList(result);
+        const rows = toRotateTrustKeyResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "RotateTrustKeyResponse" as const, id })),
-          { type: "RotateTrustKeyResponse", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'RotateTrustKeyResponse' as const, id })),
+          { type: 'RotateTrustKeyResponse', id: 'LIST' },
+          { type: 'RotateTrustKeyResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addRotateTrustKeyResponse: build.mutation<
-      RotateTrustKeyResponse,
-      Partial<RotateTrustKeyResponse>
-    >({
+    addRotateTrustKeyResponse: build.mutation<RotateTrustKeyResponse, Partial<RotateTrustKeyResponse>>({
       query: (body) => ({
         url: `RotateTrustKeyResponse`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "RotateTrustKeyResponse", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'RotateTrustKeyResponse', id: 'LIST' },
+        { type: 'RotateTrustKeyResponse', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getRotateTrustKeyResponse: build.query<RotateTrustKeyResponse, string>({
       query: (id) => `RotateTrustKeyResponse/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "RotateTrustKeyResponse", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'RotateTrustKeyResponse', id }],
     }),
 
     // 5) Update
-    updateRotateTrustKeyResponse: build.mutation<
-      void,
-      Pick<RotateTrustKeyResponse, "id"> & Partial<RotateTrustKeyResponse>
-    >({
+    updateRotateTrustKeyResponse: build.mutation<RotateTrustKeyResponse, Pick<RotateTrustKeyResponse, 'id'> & Partial<RotateTrustKeyResponse>>({
       query: ({ id, ...patch }) => ({
         url: `RotateTrustKeyResponse/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            RotateTrustKeyResponseService.util.updateQueryData(
-              "getRotateTrustKeyResponse",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<RotateTrustKeyResponse, "id">,
-      ) => [
-        { type: "RotateTrustKeyResponse", id },
-        { type: "RotateTrustKeyResponse", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<RotateTrustKeyResponse, 'id'>) => [
+        { type: 'RotateTrustKeyResponse', id },
+        { type: 'RotateTrustKeyResponse', id: 'LIST' },
+        { type: 'RotateTrustKeyResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteRotateTrustKeyResponse: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteRotateTrustKeyResponse: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `RotateTrustKeyResponse/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "RotateTrustKeyResponse", id },
+        { type: 'RotateTrustKeyResponse', id },
+        { type: 'RotateTrustKeyResponse', id: 'LIST' },
+        { type: 'RotateTrustKeyResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteRotateTrustKeyResponseCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteRotateTrustKeyResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `RotateTrustKeyResponse/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "RotateTrustKeyResponse", id },
-        { type: "RotateTrustKeyResponse", id: "LIST" },
+        { type: 'RotateTrustKeyResponse', id },
+        { type: 'RotateTrustKeyResponse', id: 'LIST' },
+        { type: 'RotateTrustKeyResponse', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetRotateTrustKeyResponsesPagedQuery`
 export const {
-  useGetRotateTrustKeyResponsesPagedQuery, // immediate fetch
+  useGetRotateTrustKeyResponsesPagedQuery,     // immediate fetch
   useLazyGetRotateTrustKeyResponsesPagedQuery, // lazy fetch
   useGetRotateTrustKeyResponseQuery,
   useGetRotateTrustKeyResponsesQuery,
@@ -192,4 +169,4 @@ export const {
   useUpdateRotateTrustKeyResponseMutation,
   useDeleteRotateTrustKeyResponseMutation,
   useDeleteRotateTrustKeyResponseCascadeMutation,
-} = RotateTrustKeyResponseService;
+} = RotateTrustKeyResponseService

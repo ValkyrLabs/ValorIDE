@@ -35,55 +35,29 @@ const DataObject_1 = require("./DataObject");
 function ProductFunnelWizardFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        productId: !(0, runtime_1.exists)(json, "productId") ? undefined : json["productId"],
-        brand: !(0, runtime_1.exists)(json, "brand") ? undefined : json["brand"],
-        targetAudience: !(0, runtime_1.exists)(json, "targetAudience")
-            ? undefined
-            : json["targetAudience"],
-        priceTier: !(0, runtime_1.exists)(json, "priceTier") ? undefined : json["priceTier"],
-        priceAmount: !(0, runtime_1.exists)(json, "priceAmount") ? undefined : json["priceAmount"],
-        deliveryMode: !(0, runtime_1.exists)(json, "deliveryMode")
-            ? undefined
-            : json["deliveryMode"],
-        heroBenefit: !(0, runtime_1.exists)(json, "heroBenefit") ? undefined : json["heroBenefit"],
-        templateType: !(0, runtime_1.exists)(json, "templateType")
-            ? undefined
-            : json["templateType"],
-        customization: !(0, runtime_1.exists)(json, "customization")
-            ? undefined
-            : json["customization"],
-        wizardStatus: !(0, runtime_1.exists)(json, "wizardStatus")
-            ? undefined
-            : json["wizardStatus"],
-        workflowId: !(0, runtime_1.exists)(json, "workflowId") ? undefined : json["workflowId"],
-        generatedContentDataId: !(0, runtime_1.exists)(json, "generatedContentDataId")
-            ? undefined
-            : json["generatedContentDataId"],
-        generatedLandingPageId: !(0, runtime_1.exists)(json, "generatedLandingPageId")
-            ? undefined
-            : json["generatedLandingPageId"],
-        completedAt: !(0, runtime_1.exists)(json, "completedAt")
-            ? undefined
-            : new Date(json["completedAt"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'productId': !(0, runtime_1.exists)(json, 'productId') ? undefined : json['productId'],
+        'brand': !(0, runtime_1.exists)(json, 'brand') ? undefined : json['brand'],
+        'targetAudience': !(0, runtime_1.exists)(json, 'targetAudience') ? undefined : json['targetAudience'],
+        'priceTier': !(0, runtime_1.exists)(json, 'priceTier') ? undefined : json['priceTier'],
+        'priceAmount': !(0, runtime_1.exists)(json, 'priceAmount') ? undefined : json['priceAmount'],
+        'deliveryMode': !(0, runtime_1.exists)(json, 'deliveryMode') ? undefined : json['deliveryMode'],
+        'heroBenefit': !(0, runtime_1.exists)(json, 'heroBenefit') ? undefined : json['heroBenefit'],
+        'templateType': !(0, runtime_1.exists)(json, 'templateType') ? undefined : json['templateType'],
+        'customization': !(0, runtime_1.exists)(json, 'customization') ? undefined : json['customization'],
+        'wizardStatus': !(0, runtime_1.exists)(json, 'wizardStatus') ? undefined : json['wizardStatus'],
+        'workflowId': !(0, runtime_1.exists)(json, 'workflowId') ? undefined : json['workflowId'],
+        'generatedContentDataId': !(0, runtime_1.exists)(json, 'generatedContentDataId') ? undefined : json['generatedContentDataId'],
+        'generatedLandingPageId': !(0, runtime_1.exists)(json, 'generatedLandingPageId') ? undefined : json['generatedLandingPageId'],
+        'completedAt': !(0, runtime_1.exists)(json, 'completedAt') ? undefined : new Date(json['completedAt']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ProductFunnelWizardToJSON(value) {
@@ -92,29 +66,27 @@ function ProductFunnelWizardToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        productId: value.productId,
-        brand: value.brand,
-        targetAudience: value.targetAudience,
-        priceTier: value.priceTier,
-        priceAmount: value.priceAmount,
-        deliveryMode: value.deliveryMode,
-        heroBenefit: value.heroBenefit,
-        templateType: value.templateType,
-        customization: value.customization,
-        wizardStatus: value.wizardStatus,
-        workflowId: value.workflowId,
-        generatedContentDataId: value.generatedContentDataId,
-        generatedLandingPageId: value.generatedLandingPageId,
-        completedAt: value.completedAt === undefined
-            ? undefined
-            : value.completedAt.toISOString(),
-        trashed: value.trashed,
+        'productId': value.productId,
+        'brand': value.brand,
+        'targetAudience': value.targetAudience,
+        'priceTier': value.priceTier,
+        'priceAmount': value.priceAmount,
+        'deliveryMode': value.deliveryMode,
+        'heroBenefit': value.heroBenefit,
+        'templateType': value.templateType,
+        'customization': value.customization,
+        'wizardStatus': value.wizardStatus,
+        'workflowId': value.workflowId,
+        'generatedContentDataId': value.generatedContentDataId,
+        'generatedLandingPageId': value.generatedLandingPageId,
+        'completedAt': value.completedAt === undefined ? undefined : value.completedAt.toISOString(),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ProductFunnelWizardPriceTierEnum;
 (function (ProductFunnelWizardPriceTierEnum) {
     ProductFunnelWizardPriceTierEnum["FREE"] = "free";
@@ -124,9 +96,9 @@ var ProductFunnelWizardPriceTierEnum;
     ProductFunnelWizardPriceTierEnum["PREMIUM"] = "premium";
 })(ProductFunnelWizardPriceTierEnum || (exports.ProductFunnelWizardPriceTierEnum = ProductFunnelWizardPriceTierEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ProductFunnelWizardDeliveryModeEnum;
 (function (ProductFunnelWizardDeliveryModeEnum) {
     ProductFunnelWizardDeliveryModeEnum["DIGITAL"] = "digital";
@@ -135,9 +107,9 @@ var ProductFunnelWizardDeliveryModeEnum;
     ProductFunnelWizardDeliveryModeEnum["SERVICE"] = "service";
 })(ProductFunnelWizardDeliveryModeEnum || (exports.ProductFunnelWizardDeliveryModeEnum = ProductFunnelWizardDeliveryModeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ProductFunnelWizardTemplateTypeEnum;
 (function (ProductFunnelWizardTemplateTypeEnum) {
     ProductFunnelWizardTemplateTypeEnum["BASIC"] = "basic";
@@ -145,9 +117,9 @@ var ProductFunnelWizardTemplateTypeEnum;
     ProductFunnelWizardTemplateTypeEnum["ENTERPRISE"] = "enterprise";
 })(ProductFunnelWizardTemplateTypeEnum || (exports.ProductFunnelWizardTemplateTypeEnum = ProductFunnelWizardTemplateTypeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ProductFunnelWizardWizardStatusEnum;
 (function (ProductFunnelWizardWizardStatusEnum) {
     ProductFunnelWizardWizardStatusEnum["DRAFT"] = "draft";

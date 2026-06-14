@@ -35,58 +35,30 @@ const _1 = require("./");
 function DeploymentSpecFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        applicationId: !(0, runtime_1.exists)(json, "applicationId")
-            ? undefined
-            : json["applicationId"],
-        buildArtifactId: !(0, runtime_1.exists)(json, "buildArtifactId")
-            ? undefined
-            : json["buildArtifactId"],
-        instanceName: !(0, runtime_1.exists)(json, "instanceName")
-            ? undefined
-            : json["instanceName"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        cloudProvider: !(0, runtime_1.exists)(json, "cloudProvider")
-            ? undefined
-            : (0, _1.CloudProviderFromJSON)(json["cloudProvider"]),
-        cpu: !(0, runtime_1.exists)(json, "cpu") ? undefined : json["cpu"],
-        memory: !(0, runtime_1.exists)(json, "memory") ? undefined : json["memory"],
-        containerPort: !(0, runtime_1.exists)(json, "containerPort")
-            ? undefined
-            : json["containerPort"],
-        environmentVariables: !(0, runtime_1.exists)(json, "environmentVariables")
-            ? undefined
-            : json["environmentVariables"],
-        secrets: !(0, runtime_1.exists)(json, "secrets") ? undefined : json["secrets"],
-        healthCheckPath: !(0, runtime_1.exists)(json, "healthCheckPath")
-            ? undefined
-            : json["healthCheckPath"],
-        autoScale: !(0, runtime_1.exists)(json, "autoScale") ? undefined : json["autoScale"],
-        minInstances: !(0, runtime_1.exists)(json, "minInstances")
-            ? undefined
-            : json["minInstances"],
-        maxInstances: !(0, runtime_1.exists)(json, "maxInstances")
-            ? undefined
-            : json["maxInstances"],
-        tags: !(0, runtime_1.exists)(json, "tags") ? undefined : json["tags"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'applicationId': !(0, runtime_1.exists)(json, 'applicationId') ? undefined : json['applicationId'],
+        'buildArtifactId': !(0, runtime_1.exists)(json, 'buildArtifactId') ? undefined : json['buildArtifactId'],
+        'instanceName': !(0, runtime_1.exists)(json, 'instanceName') ? undefined : json['instanceName'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'cloudProvider': !(0, runtime_1.exists)(json, 'cloudProvider') ? undefined : (0, _1.CloudProviderFromJSON)(json['cloudProvider']),
+        'cpu': !(0, runtime_1.exists)(json, 'cpu') ? undefined : json['cpu'],
+        'memory': !(0, runtime_1.exists)(json, 'memory') ? undefined : json['memory'],
+        'containerPort': !(0, runtime_1.exists)(json, 'containerPort') ? undefined : json['containerPort'],
+        'environmentVariables': !(0, runtime_1.exists)(json, 'environmentVariables') ? undefined : json['environmentVariables'],
+        'secrets': !(0, runtime_1.exists)(json, 'secrets') ? undefined : json['secrets'],
+        'healthCheckPath': !(0, runtime_1.exists)(json, 'healthCheckPath') ? undefined : json['healthCheckPath'],
+        'autoScale': !(0, runtime_1.exists)(json, 'autoScale') ? undefined : json['autoScale'],
+        'minInstances': !(0, runtime_1.exists)(json, 'minInstances') ? undefined : json['minInstances'],
+        'maxInstances': !(0, runtime_1.exists)(json, 'maxInstances') ? undefined : json['maxInstances'],
+        'tags': !(0, runtime_1.exists)(json, 'tags') ? undefined : json['tags'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function DeploymentSpecToJSON(value) {
@@ -95,22 +67,22 @@ function DeploymentSpecToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        applicationId: value.applicationId,
-        buildArtifactId: value.buildArtifactId,
-        instanceName: value.instanceName,
-        description: value.description,
-        cloudProvider: (0, _1.CloudProviderToJSON)(value.cloudProvider),
-        cpu: value.cpu,
-        memory: value.memory,
-        containerPort: value.containerPort,
-        environmentVariables: value.environmentVariables,
-        secrets: value.secrets,
-        healthCheckPath: value.healthCheckPath,
-        autoScale: value.autoScale,
-        minInstances: value.minInstances,
-        maxInstances: value.maxInstances,
-        tags: value.tags,
-        trashed: value.trashed,
+        'applicationId': value.applicationId,
+        'buildArtifactId': value.buildArtifactId,
+        'instanceName': value.instanceName,
+        'description': value.description,
+        'cloudProvider': (0, _1.CloudProviderToJSON)(value.cloudProvider),
+        'cpu': value.cpu,
+        'memory': value.memory,
+        'containerPort': value.containerPort,
+        'environmentVariables': value.environmentVariables,
+        'secrets': value.secrets,
+        'healthCheckPath': value.healthCheckPath,
+        'autoScale': value.autoScale,
+        'minInstances': value.minInstances,
+        'maxInstances': value.maxInstances,
+        'tags': value.tags,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=DeploymentSpec.js.map

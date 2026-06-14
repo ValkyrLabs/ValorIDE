@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,128 +36,118 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface OasInfo
  */
-export type OasInfo = DataObject & {
-  /**
-   *
-   * @type {string}
-   * @memberof OasInfo
-   */
-  oasOpenAPISpecId?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof OasInfo
-   */
-  title?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof OasInfo
-   */
-  description?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof OasInfo
-   */
-  version?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof OasInfo
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof OasInfo
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof OasInfo
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof OasInfo
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof OasInfo
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof OasInfo
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof OasInfo
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof OasInfo
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof OasInfo
-   */
-  trashed?: boolean;
-};
+export type OasInfo  = DataObject & {
+    /**
+     * 
+     * @type {string}
+     * @memberof OasInfo
+     */
+    oasOpenAPISpecId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof OasInfo
+     */
+    title?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof OasInfo
+     */
+    description?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof OasInfo
+     */
+    version?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof OasInfo
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof OasInfo
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof OasInfo
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof OasInfo
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof OasInfo
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof OasInfo
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof OasInfo
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof OasInfo
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof OasInfo
+     */
+    trashed?: boolean;
+}
 
 export function OasInfoFromJSON(json: any): OasInfo {
-  return {
-    ...DataObjectFromJSON(json),
-    oasOpenAPISpecId: !exists(json, "oasOpenAPISpecId")
-      ? undefined
-      : json["oasOpenAPISpecId"],
-    title: !exists(json, "title") ? undefined : json["title"],
-    description: !exists(json, "description") ? undefined : json["description"],
-    version: !exists(json, "version") ? undefined : json["version"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'oasOpenAPISpecId': !exists(json, 'oasOpenAPISpecId') ? undefined : json['oasOpenAPISpecId'],
+        'title': !exists(json, 'title') ? undefined : json['title'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'version': !exists(json, 'version') ? undefined : json['version'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function OasInfoToJSON(value?: OasInfo): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    oasOpenAPISpecId: value.oasOpenAPISpecId,
-    title: value.title,
-    description: value.description,
-    version: value.version,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'oasOpenAPISpecId': value.oasOpenAPISpecId,
+        'title': value.title,
+        'description': value.description,
+        'version': value.version,
+        'trashed': value.trashed,
+    };
 }
+
+

@@ -34,32 +34,18 @@ const DataObject_1 = require("./DataObject");
 function GoalDependencyFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        goalId: !(0, runtime_1.exists)(json, "goalId") ? undefined : json["goalId"],
-        dependencyOrder: !(0, runtime_1.exists)(json, "dependencyOrder")
-            ? undefined
-            : json["dependencyOrder"],
-        dependencyName: !(0, runtime_1.exists)(json, "dependencyName")
-            ? undefined
-            : json["dependencyName"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'goalId': !(0, runtime_1.exists)(json, 'goalId') ? undefined : json['goalId'],
+        'dependencyOrder': !(0, runtime_1.exists)(json, 'dependencyOrder') ? undefined : json['dependencyOrder'],
+        'dependencyName': !(0, runtime_1.exists)(json, 'dependencyName') ? undefined : json['dependencyName'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function GoalDependencyToJSON(value) {
@@ -68,10 +54,10 @@ function GoalDependencyToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        goalId: value.goalId,
-        dependencyOrder: value.dependencyOrder,
-        dependencyName: value.dependencyName,
-        trashed: value.trashed,
+        'goalId': value.goalId,
+        'dependencyOrder': value.dependencyOrder,
+        'dependencyName': value.dependencyName,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=GoalDependency.js.map

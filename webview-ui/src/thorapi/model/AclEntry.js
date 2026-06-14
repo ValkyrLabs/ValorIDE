@@ -35,41 +35,23 @@ const _1 = require("./");
 function AclEntryFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        aclObjectIdentity: !(0, runtime_1.exists)(json, "aclObjectIdentity")
-            ? undefined
-            : (0, _1.AclObjectIdentityFromJSON)(json["aclObjectIdentity"]),
-        aceOrder: !(0, runtime_1.exists)(json, "aceOrder") ? undefined : json["aceOrder"],
-        aclSid: !(0, runtime_1.exists)(json, "aclSid")
-            ? undefined
-            : (0, _1.AclSidFromJSON)(json["aclSid"]),
-        mask: !(0, runtime_1.exists)(json, "mask") ? undefined : json["mask"],
-        granting: !(0, runtime_1.exists)(json, "granting") ? undefined : json["granting"],
-        auditSuccess: !(0, runtime_1.exists)(json, "auditSuccess")
-            ? undefined
-            : json["auditSuccess"],
-        auditFailure: !(0, runtime_1.exists)(json, "auditFailure")
-            ? undefined
-            : json["auditFailure"],
-        sid: !(0, runtime_1.exists)(json, "sid") ? undefined : json["sid"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'aclObjectIdentity': !(0, runtime_1.exists)(json, 'aclObjectIdentity') ? undefined : (0, _1.AclObjectIdentityFromJSON)(json['aclObjectIdentity']),
+        'aceOrder': !(0, runtime_1.exists)(json, 'aceOrder') ? undefined : json['aceOrder'],
+        'aclSid': !(0, runtime_1.exists)(json, 'aclSid') ? undefined : (0, _1.AclSidFromJSON)(json['aclSid']),
+        'mask': !(0, runtime_1.exists)(json, 'mask') ? undefined : json['mask'],
+        'granting': !(0, runtime_1.exists)(json, 'granting') ? undefined : json['granting'],
+        'auditSuccess': !(0, runtime_1.exists)(json, 'auditSuccess') ? undefined : json['auditSuccess'],
+        'auditFailure': !(0, runtime_1.exists)(json, 'auditFailure') ? undefined : json['auditFailure'],
+        'sid': !(0, runtime_1.exists)(json, 'sid') ? undefined : json['sid'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function AclEntryToJSON(value) {
@@ -78,15 +60,15 @@ function AclEntryToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        aclObjectIdentity: (0, _1.AclObjectIdentityToJSON)(value.aclObjectIdentity),
-        aceOrder: value.aceOrder,
-        aclSid: (0, _1.AclSidToJSON)(value.aclSid),
-        mask: value.mask,
-        granting: value.granting,
-        auditSuccess: value.auditSuccess,
-        auditFailure: value.auditFailure,
-        sid: value.sid,
-        trashed: value.trashed,
+        'aclObjectIdentity': (0, _1.AclObjectIdentityToJSON)(value.aclObjectIdentity),
+        'aceOrder': value.aceOrder,
+        'aclSid': (0, _1.AclSidToJSON)(value.aclSid),
+        'mask': value.mask,
+        'granting': value.granting,
+        'auditSuccess': value.auditSuccess,
+        'auditFailure': value.auditFailure,
+        'sid': value.sid,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=AclEntry.js.map

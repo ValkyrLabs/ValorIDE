@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { IntegrationAccount } from "@thorapi/model/IntegrationAccount";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { IntegrationAccount } from '@thorapi/model/IntegrationAccount'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type IntegrationAccountResponse = IntegrationAccount[];
+type IntegrationAccountResponse = IntegrationAccount[]
+type IntegrationAccountPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<IntegrationAccount>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toIntegrationAccountList = (
-  result: unknown,
-): IntegrationAccountResponse => {
+type IntegrationAccountListQueryArg = {
+  example?: Partial<IntegrationAccount>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toIntegrationAccountList = (result: unknown): IntegrationAccountResponse => {
   if (Array.isArray(result)) {
-    return result as IntegrationAccountResponse;
+    return result as IntegrationAccountResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as IntegrationAccountResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as IntegrationAccountResponse) : []
+}
 
 export const IntegrationAccountService = createApi({
-  reducerPath: "IntegrationAccount", // This should remain unique
+  reducerPath: 'IntegrationAccount', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["IntegrationAccount"],
+  tagTypes: ['IntegrationAccount'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getIntegrationAccountsPaged: build.query<
-      IntegrationAccountResponse,
-      { page: number; size?: number; example?: Partial<IntegrationAccount> }
-    >({
+    getIntegrationAccountsPaged: build.query<IntegrationAccountResponse, IntegrationAccountPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `IntegrationAccount?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `IntegrationAccount?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toIntegrationAccountList(result);
+        const rows = toIntegrationAccountList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "IntegrationAccount" as const, id })),
-          { type: "IntegrationAccount", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'IntegrationAccount' as const, id })),
+          { type: 'IntegrationAccount', id: `PAGE_${page}` },
+          { type: 'IntegrationAccount', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getIntegrationAccounts: build.query<
-      IntegrationAccountResponse,
-      { example?: Partial<IntegrationAccount> } | void
-    >({
+    getIntegrationAccounts: build.query<IntegrationAccountResponse, IntegrationAccountListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,112 +82,86 @@ export const IntegrationAccountService = createApi({
         return `IntegrationAccount`;
       },
       providesTags: (result) => {
-        const rows = toIntegrationAccountList(result);
+        const rows = toIntegrationAccountList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "IntegrationAccount" as const, id })),
-          { type: "IntegrationAccount", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'IntegrationAccount' as const, id })),
+          { type: 'IntegrationAccount', id: 'LIST' },
+          { type: 'IntegrationAccount', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addIntegrationAccount: build.mutation<
-      IntegrationAccount,
-      Partial<IntegrationAccount>
-    >({
+    addIntegrationAccount: build.mutation<IntegrationAccount, Partial<IntegrationAccount>>({
       query: (body) => ({
         url: `IntegrationAccount`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "IntegrationAccount", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'IntegrationAccount', id: 'LIST' },
+        { type: 'IntegrationAccount', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getIntegrationAccount: build.query<IntegrationAccount, string>({
       query: (id) => `IntegrationAccount/${id}`,
-      providesTags: (result, error, id) => [{ type: "IntegrationAccount", id }],
+      providesTags: (result, error, id) => [{ type: 'IntegrationAccount', id }],
     }),
 
     // 5) Update
-    updateIntegrationAccount: build.mutation<
-      void,
-      Pick<IntegrationAccount, "id"> & Partial<IntegrationAccount>
-    >({
+    updateIntegrationAccount: build.mutation<IntegrationAccount, Pick<IntegrationAccount, 'id'> & Partial<IntegrationAccount>>({
       query: ({ id, ...patch }) => ({
         url: `IntegrationAccount/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            IntegrationAccountService.util.updateQueryData(
-              "getIntegrationAccount",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<IntegrationAccount, "id">,
-      ) => [
-        { type: "IntegrationAccount", id },
-        { type: "IntegrationAccount", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<IntegrationAccount, 'id'>) => [
+        { type: 'IntegrationAccount', id },
+        { type: 'IntegrationAccount', id: 'LIST' },
+        { type: 'IntegrationAccount', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteIntegrationAccount: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteIntegrationAccount: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `IntegrationAccount/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "IntegrationAccount", id },
+        { type: 'IntegrationAccount', id },
+        { type: 'IntegrationAccount', id: 'LIST' },
+        { type: 'IntegrationAccount', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteIntegrationAccountCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteIntegrationAccountCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `IntegrationAccount/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "IntegrationAccount", id },
-        { type: "IntegrationAccount", id: "LIST" },
+        { type: 'IntegrationAccount', id },
+        { type: 'IntegrationAccount', id: 'LIST' },
+        { type: 'IntegrationAccount', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetIntegrationAccountsPagedQuery`
 export const {
-  useGetIntegrationAccountsPagedQuery, // immediate fetch
+  useGetIntegrationAccountsPagedQuery,     // immediate fetch
   useLazyGetIntegrationAccountsPagedQuery, // lazy fetch
   useGetIntegrationAccountQuery,
   useGetIntegrationAccountsQuery,
@@ -190,4 +169,4 @@ export const {
   useUpdateIntegrationAccountMutation,
   useDeleteIntegrationAccountMutation,
   useDeleteIntegrationAccountCascadeMutation,
-} = IntegrationAccountService;
+} = IntegrationAccountService

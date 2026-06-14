@@ -39,6 +39,8 @@ const READABLE_AUTH_COOKIE_NAMES = [
   "XSRF-TOKEN",
 ] as const;
 
+const COOKIE_PRESERVE_DURING_AUTH_CLEAR = new Set(["cart"]);
+
 type ClearBrowserAuthStorageOptions = {
   preserveSessionKeys?: string[];
 };
@@ -104,7 +106,10 @@ const getCookieNames = (): string[] => {
   const readableCookieNames = document.cookie
     .split(";")
     .map((cookie) => cookie.split("=")[0]?.trim())
-    .filter((name): name is string => Boolean(name));
+    .filter(
+      (name): name is string =>
+        Boolean(name) && !COOKIE_PRESERVE_DURING_AUTH_CLEAR.has(name),
+    );
   return Array.from(
     new Set([...readableCookieNames, ...READABLE_AUTH_COOKIE_NAMES]),
   );

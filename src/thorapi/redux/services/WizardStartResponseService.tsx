@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { WizardStartResponse } from "@thorapi/model/WizardStartResponse";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { WizardStartResponse } from '@thorapi/model/WizardStartResponse'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type WizardStartResponseResponse = WizardStartResponse[];
+type WizardStartResponseResponse = WizardStartResponse[]
+type WizardStartResponsePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<WizardStartResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toWizardStartResponseList = (
-  result: unknown,
-): WizardStartResponseResponse => {
+type WizardStartResponseListQueryArg = {
+  example?: Partial<WizardStartResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toWizardStartResponseList = (result: unknown): WizardStartResponseResponse => {
   if (Array.isArray(result)) {
-    return result as WizardStartResponseResponse;
+    return result as WizardStartResponseResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as WizardStartResponseResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as WizardStartResponseResponse) : []
+}
 
 export const WizardStartResponseService = createApi({
-  reducerPath: "WizardStartResponse", // This should remain unique
+  reducerPath: 'WizardStartResponse', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["WizardStartResponse"],
+  tagTypes: ['WizardStartResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getWizardStartResponsesPaged: build.query<
-      WizardStartResponseResponse,
-      { page: number; size?: number; example?: Partial<WizardStartResponse> }
-    >({
+    getWizardStartResponsesPaged: build.query<WizardStartResponseResponse, WizardStartResponsePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `WizardStartResponse?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `WizardStartResponse?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toWizardStartResponseList(result);
+        const rows = toWizardStartResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "WizardStartResponse" as const, id })),
-          { type: "WizardStartResponse", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'WizardStartResponse' as const, id })),
+          { type: 'WizardStartResponse', id: `PAGE_${page}` },
+          { type: 'WizardStartResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getWizardStartResponses: build.query<
-      WizardStartResponseResponse,
-      { example?: Partial<WizardStartResponse> } | void
-    >({
+    getWizardStartResponses: build.query<WizardStartResponseResponse, WizardStartResponseListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,114 +82,86 @@ export const WizardStartResponseService = createApi({
         return `WizardStartResponse`;
       },
       providesTags: (result) => {
-        const rows = toWizardStartResponseList(result);
+        const rows = toWizardStartResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "WizardStartResponse" as const, id })),
-          { type: "WizardStartResponse", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'WizardStartResponse' as const, id })),
+          { type: 'WizardStartResponse', id: 'LIST' },
+          { type: 'WizardStartResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addWizardStartResponse: build.mutation<
-      WizardStartResponse,
-      Partial<WizardStartResponse>
-    >({
+    addWizardStartResponse: build.mutation<WizardStartResponse, Partial<WizardStartResponse>>({
       query: (body) => ({
         url: `WizardStartResponse`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "WizardStartResponse", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'WizardStartResponse', id: 'LIST' },
+        { type: 'WizardStartResponse', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getWizardStartResponse: build.query<WizardStartResponse, string>({
       query: (id) => `WizardStartResponse/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "WizardStartResponse", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'WizardStartResponse', id }],
     }),
 
     // 5) Update
-    updateWizardStartResponse: build.mutation<
-      void,
-      Pick<WizardStartResponse, "id"> & Partial<WizardStartResponse>
-    >({
+    updateWizardStartResponse: build.mutation<WizardStartResponse, Pick<WizardStartResponse, 'id'> & Partial<WizardStartResponse>>({
       query: ({ id, ...patch }) => ({
         url: `WizardStartResponse/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            WizardStartResponseService.util.updateQueryData(
-              "getWizardStartResponse",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<WizardStartResponse, "id">,
-      ) => [
-        { type: "WizardStartResponse", id },
-        { type: "WizardStartResponse", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<WizardStartResponse, 'id'>) => [
+        { type: 'WizardStartResponse', id },
+        { type: 'WizardStartResponse', id: 'LIST' },
+        { type: 'WizardStartResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteWizardStartResponse: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteWizardStartResponse: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `WizardStartResponse/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "WizardStartResponse", id },
+        { type: 'WizardStartResponse', id },
+        { type: 'WizardStartResponse', id: 'LIST' },
+        { type: 'WizardStartResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteWizardStartResponseCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteWizardStartResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `WizardStartResponse/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "WizardStartResponse", id },
-        { type: "WizardStartResponse", id: "LIST" },
+        { type: 'WizardStartResponse', id },
+        { type: 'WizardStartResponse', id: 'LIST' },
+        { type: 'WizardStartResponse', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetWizardStartResponsesPagedQuery`
 export const {
-  useGetWizardStartResponsesPagedQuery, // immediate fetch
+  useGetWizardStartResponsesPagedQuery,     // immediate fetch
   useLazyGetWizardStartResponsesPagedQuery, // lazy fetch
   useGetWizardStartResponseQuery,
   useGetWizardStartResponsesQuery,
@@ -192,4 +169,4 @@ export const {
   useUpdateWizardStartResponseMutation,
   useDeleteWizardStartResponseMutation,
   useDeleteWizardStartResponseCascadeMutation,
-} = WizardStartResponseService;
+} = WizardStartResponseService

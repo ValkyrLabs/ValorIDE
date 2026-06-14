@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { Deployment } from "@thorapi/model/Deployment";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { Deployment } from '@thorapi/model/Deployment'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type DeploymentResponse = Deployment[];
+type DeploymentResponse = Deployment[]
+type DeploymentPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<Deployment>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type DeploymentListQueryArg = {
+  example?: Partial<Deployment>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toDeploymentList = (result: unknown): DeploymentResponse => {
   if (Array.isArray(result)) {
-    return result as DeploymentResponse;
+    return result as DeploymentResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as DeploymentResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as DeploymentResponse) : []
+}
 
 export const DeploymentService = createApi({
-  reducerPath: "Deployment", // This should remain unique
+  reducerPath: 'Deployment', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["Deployment"],
+  tagTypes: ['Deployment'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getDeploymentsPaged: build.query<
-      DeploymentResponse,
-      { page: number; size?: number; example?: Partial<Deployment> }
-    >({
+    getDeploymentsPaged: build.query<DeploymentResponse, DeploymentPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Deployment?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Deployment?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toDeploymentList(result);
+        const rows = toDeploymentList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Deployment" as const, id })),
-          { type: "Deployment", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'Deployment' as const, id })),
+          { type: 'Deployment', id: `PAGE_${page}` },
+          { type: 'Deployment', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getDeployments: build.query<
-      DeploymentResponse,
-      { example?: Partial<Deployment> } | void
-    >({
+    getDeployments: build.query<DeploymentResponse, DeploymentListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const DeploymentService = createApi({
         return `Deployment`;
       },
       providesTags: (result) => {
-        const rows = toDeploymentList(result);
+        const rows = toDeploymentList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Deployment" as const, id })),
-          { type: "Deployment", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'Deployment' as const, id })),
+          { type: 'Deployment', id: 'LIST' },
+          { type: 'Deployment', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,49 +97,32 @@ export const DeploymentService = createApi({
     addDeployment: build.mutation<Deployment, Partial<Deployment>>({
       query: (body) => ({
         url: `Deployment`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "Deployment", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'Deployment', id: 'LIST' },
+        { type: 'Deployment', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getDeployment: build.query<Deployment, string>({
       query: (id) => `Deployment/${id}`,
-      providesTags: (result, error, id) => [{ type: "Deployment", id }],
+      providesTags: (result, error, id) => [{ type: 'Deployment', id }],
     }),
 
     // 5) Update
-    updateDeployment: build.mutation<
-      void,
-      Pick<Deployment, "id"> & Partial<Deployment>
-    >({
+    updateDeployment: build.mutation<Deployment, Pick<Deployment, 'id'> & Partial<Deployment>>({
       query: ({ id, ...patch }) => ({
         url: `Deployment/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            DeploymentService.util.updateQueryData(
-              "getDeployment",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<Deployment, "id">) => [
-        { type: "Deployment", id },
-        { type: "Deployment", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<Deployment, 'id'>) => [
+        { type: 'Deployment', id },
+        { type: 'Deployment', id: 'LIST' },
+        { type: 'Deployment', id: 'PARTIAL-LIST' },
       ],
     }),
 
@@ -138,35 +131,37 @@ export const DeploymentService = createApi({
       query(id) {
         return {
           url: `Deployment/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "Deployment", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'Deployment', id },
+        { type: 'Deployment', id: 'LIST' },
+        { type: 'Deployment', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteDeploymentCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteDeploymentCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `Deployment/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "Deployment", id },
-        { type: "Deployment", id: "LIST" },
+        { type: 'Deployment', id },
+        { type: 'Deployment', id: 'LIST' },
+        { type: 'Deployment', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetDeploymentsPagedQuery`
 export const {
-  useGetDeploymentsPagedQuery, // immediate fetch
+  useGetDeploymentsPagedQuery,     // immediate fetch
   useLazyGetDeploymentsPagedQuery, // lazy fetch
   useGetDeploymentQuery,
   useGetDeploymentsQuery,
@@ -174,4 +169,4 @@ export const {
   useUpdateDeploymentMutation,
   useDeleteDeploymentMutation,
   useDeleteDeploymentCascadeMutation,
-} = DeploymentService;
+} = DeploymentService

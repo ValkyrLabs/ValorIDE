@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_PRODUCTFEATURE_REQUEST,
-  FETCH_PRODUCTFEATURE_REQUEST,
-  LIST_PRODUCTFEATURE_REQUEST,
-  UPDATE_PRODUCTFEATURE_REQUEST,
-  DELETE_PRODUCTFEATURE_REQUEST,
-  addProductFeatureFailure,
-  addProductFeatureSuccess,
-  fetchProductFeatureFailure,
-  fetchProductFeatureSuccess,
-  listProductFeatureFailure,
-  listProductFeatureSuccess,
-  updateProductFeatureFailure,
-  updateProductFeatureSuccess,
-  deleteProductFeatureFailure,
-  deleteProductFeatureSuccess,
-} from "../actions/ProductFeatureApiAction";
+
+    ADD_PRODUCTFEATURE_REQUEST,
+    FETCH_PRODUCTFEATURE_REQUEST,
+    LIST_PRODUCTFEATURE_REQUEST,
+    UPDATE_PRODUCTFEATURE_REQUEST,
+    DELETE_PRODUCTFEATURE_REQUEST,
+
+    addProductFeatureFailure,
+    addProductFeatureSuccess,
+
+    fetchProductFeatureFailure,
+    fetchProductFeatureSuccess,
+    
+    listProductFeatureFailure,
+    listProductFeatureSuccess,
+
+    updateProductFeatureFailure,
+    updateProductFeatureSuccess,
+    
+    deleteProductFeatureFailure,
+    deleteProductFeatureSuccess,
+    
+} from '../actions/ProductFeatureApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: ProductFeature
 */
 
-export const ProductFeatureMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("ProductFeature MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const ProductFeatureMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("ProductFeature MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

@@ -34,36 +34,22 @@ const DataObject_1 = require("./DataObject");
 function MetricsFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        endpoint: !(0, runtime_1.exists)(json, "endpoint") ? undefined : json["endpoint"],
-        method: !(0, runtime_1.exists)(json, "method") ? undefined : json["method"],
-        count: !(0, runtime_1.exists)(json, "count") ? undefined : json["count"],
-        errorCount: !(0, runtime_1.exists)(json, "errorCount") ? undefined : json["errorCount"],
-        averageLatencyMs: !(0, runtime_1.exists)(json, "averageLatencyMs")
-            ? undefined
-            : json["averageLatencyMs"],
-        maxLatencyMs: !(0, runtime_1.exists)(json, "maxLatencyMs")
-            ? undefined
-            : json["maxLatencyMs"],
-        lastStatus: !(0, runtime_1.exists)(json, "lastStatus") ? undefined : json["lastStatus"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'endpoint': !(0, runtime_1.exists)(json, 'endpoint') ? undefined : json['endpoint'],
+        'method': !(0, runtime_1.exists)(json, 'method') ? undefined : json['method'],
+        'count': !(0, runtime_1.exists)(json, 'count') ? undefined : json['count'],
+        'errorCount': !(0, runtime_1.exists)(json, 'errorCount') ? undefined : json['errorCount'],
+        'averageLatencyMs': !(0, runtime_1.exists)(json, 'averageLatencyMs') ? undefined : json['averageLatencyMs'],
+        'maxLatencyMs': !(0, runtime_1.exists)(json, 'maxLatencyMs') ? undefined : json['maxLatencyMs'],
+        'lastStatus': !(0, runtime_1.exists)(json, 'lastStatus') ? undefined : json['lastStatus'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function MetricsToJSON(value) {
@@ -72,14 +58,14 @@ function MetricsToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        endpoint: value.endpoint,
-        method: value.method,
-        count: value.count,
-        errorCount: value.errorCount,
-        averageLatencyMs: value.averageLatencyMs,
-        maxLatencyMs: value.maxLatencyMs,
-        lastStatus: value.lastStatus,
-        trashed: value.trashed,
+        'endpoint': value.endpoint,
+        'method': value.method,
+        'count': value.count,
+        'errorCount': value.errorCount,
+        'averageLatencyMs': value.averageLatencyMs,
+        'maxLatencyMs': value.maxLatencyMs,
+        'lastStatus': value.lastStatus,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=Metrics.js.map

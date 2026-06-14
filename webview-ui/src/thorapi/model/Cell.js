@@ -35,40 +35,24 @@ const _1 = require("./");
 function CellFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        sheetId: !(0, runtime_1.exists)(json, "sheetId") ? undefined : json["sheetId"],
-        comment: !(0, runtime_1.exists)(json, "comment") ? undefined : json["comment"],
-        hyperlink: !(0, runtime_1.exists)(json, "hyperlink") ? undefined : json["hyperlink"],
-        row: !(0, runtime_1.exists)(json, "row") ? undefined : (0, _1.SheetRowFromJSON)(json["row"]),
-        column: !(0, runtime_1.exists)(json, "column")
-            ? undefined
-            : (0, _1.SheetColumnFromJSON)(json["column"]),
-        stringValue: !(0, runtime_1.exists)(json, "stringValue") ? undefined : json["stringValue"],
-        numberValue: !(0, runtime_1.exists)(json, "numberValue") ? undefined : json["numberValue"],
-        formula: !(0, runtime_1.exists)(json, "formula")
-            ? undefined
-            : (0, _1.FormulaFromJSON)(json["formula"]),
-        format: !(0, runtime_1.exists)(json, "format")
-            ? undefined
-            : (0, _1.FormatFromJSON)(json["format"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'sheetId': !(0, runtime_1.exists)(json, 'sheetId') ? undefined : json['sheetId'],
+        'comment': !(0, runtime_1.exists)(json, 'comment') ? undefined : json['comment'],
+        'hyperlink': !(0, runtime_1.exists)(json, 'hyperlink') ? undefined : json['hyperlink'],
+        'row': !(0, runtime_1.exists)(json, 'row') ? undefined : (0, _1.SheetRowFromJSON)(json['row']),
+        'column': !(0, runtime_1.exists)(json, 'column') ? undefined : (0, _1.SheetColumnFromJSON)(json['column']),
+        'stringValue': !(0, runtime_1.exists)(json, 'stringValue') ? undefined : json['stringValue'],
+        'numberValue': !(0, runtime_1.exists)(json, 'numberValue') ? undefined : json['numberValue'],
+        'formula': !(0, runtime_1.exists)(json, 'formula') ? undefined : (0, _1.FormulaFromJSON)(json['formula']),
+        'format': !(0, runtime_1.exists)(json, 'format') ? undefined : (0, _1.FormatFromJSON)(json['format']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function CellToJSON(value) {
@@ -77,16 +61,16 @@ function CellToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        sheetId: value.sheetId,
-        comment: value.comment,
-        hyperlink: value.hyperlink,
-        row: (0, _1.SheetRowToJSON)(value.row),
-        column: (0, _1.SheetColumnToJSON)(value.column),
-        stringValue: value.stringValue,
-        numberValue: value.numberValue,
-        formula: (0, _1.FormulaToJSON)(value.formula),
-        format: (0, _1.FormatToJSON)(value.format),
-        trashed: value.trashed,
+        'sheetId': value.sheetId,
+        'comment': value.comment,
+        'hyperlink': value.hyperlink,
+        'row': (0, _1.SheetRowToJSON)(value.row),
+        'column': (0, _1.SheetColumnToJSON)(value.column),
+        'stringValue': value.stringValue,
+        'numberValue': value.numberValue,
+        'formula': (0, _1.FormulaToJSON)(value.formula),
+        'format': (0, _1.FormatToJSON)(value.format),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=Cell.js.map

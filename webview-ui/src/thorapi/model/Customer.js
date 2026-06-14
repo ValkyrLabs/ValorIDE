@@ -36,30 +36,18 @@ const _1 = require("./");
 function CustomerFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        principal: !(0, runtime_1.exists)(json, "principal")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["principal"]),
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        role: !(0, runtime_1.exists)(json, "role") ? undefined : json["role"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'principal': !(0, runtime_1.exists)(json, 'principal') ? undefined : (0, _1.PrincipalFromJSON)(json['principal']),
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'role': !(0, runtime_1.exists)(json, 'role') ? undefined : json['role'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function CustomerToJSON(value) {
@@ -68,16 +56,16 @@ function CustomerToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        principal: (0, _1.PrincipalToJSON)(value.principal),
-        status: value.status,
-        role: value.role,
-        trashed: value.trashed,
+        'principal': (0, _1.PrincipalToJSON)(value.principal),
+        'status': value.status,
+        'role': value.role,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var CustomerStatusEnum;
 (function (CustomerStatusEnum) {
     CustomerStatusEnum["ACTIVE"] = "active";
@@ -85,9 +73,9 @@ var CustomerStatusEnum;
     CustomerStatusEnum["PROSPECT"] = "prospect";
 })(CustomerStatusEnum || (exports.CustomerStatusEnum = CustomerStatusEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var CustomerRoleEnum;
 (function (CustomerRoleEnum) {
     CustomerRoleEnum["CXO"] = "cxo";

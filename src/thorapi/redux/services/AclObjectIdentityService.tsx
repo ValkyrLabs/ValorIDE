@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { AclObjectIdentity } from "@thorapi/model/AclObjectIdentity";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { AclObjectIdentity } from '@thorapi/model/AclObjectIdentity'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type AclObjectIdentityResponse = AclObjectIdentity[];
+type AclObjectIdentityResponse = AclObjectIdentity[]
+type AclObjectIdentityPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<AclObjectIdentity>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toAclObjectIdentityList = (
-  result: unknown,
-): AclObjectIdentityResponse => {
+type AclObjectIdentityListQueryArg = {
+  example?: Partial<AclObjectIdentity>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toAclObjectIdentityList = (result: unknown): AclObjectIdentityResponse => {
   if (Array.isArray(result)) {
-    return result as AclObjectIdentityResponse;
+    return result as AclObjectIdentityResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as AclObjectIdentityResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as AclObjectIdentityResponse) : []
+}
 
 export const AclObjectIdentityService = createApi({
-  reducerPath: "AclObjectIdentity", // This should remain unique
+  reducerPath: 'AclObjectIdentity', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["AclObjectIdentity"],
+  tagTypes: ['AclObjectIdentity'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getAclObjectIdentitysPaged: build.query<
-      AclObjectIdentityResponse,
-      { page: number; size?: number; example?: Partial<AclObjectIdentity> }
-    >({
+    getAclObjectIdentitysPaged: build.query<AclObjectIdentityResponse, AclObjectIdentityPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `AclObjectIdentity?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `AclObjectIdentity?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toAclObjectIdentityList(result);
+        const rows = toAclObjectIdentityList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "AclObjectIdentity" as const, id })),
-          { type: "AclObjectIdentity", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'AclObjectIdentity' as const, id })),
+          { type: 'AclObjectIdentity', id: `PAGE_${page}` },
+          { type: 'AclObjectIdentity', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getAclObjectIdentitys: build.query<
-      AclObjectIdentityResponse,
-      { example?: Partial<AclObjectIdentity> } | void
-    >({
+    getAclObjectIdentitys: build.query<AclObjectIdentityResponse, AclObjectIdentityListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,112 +82,86 @@ export const AclObjectIdentityService = createApi({
         return `AclObjectIdentity`;
       },
       providesTags: (result) => {
-        const rows = toAclObjectIdentityList(result);
+        const rows = toAclObjectIdentityList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "AclObjectIdentity" as const, id })),
-          { type: "AclObjectIdentity", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'AclObjectIdentity' as const, id })),
+          { type: 'AclObjectIdentity', id: 'LIST' },
+          { type: 'AclObjectIdentity', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addAclObjectIdentity: build.mutation<
-      AclObjectIdentity,
-      Partial<AclObjectIdentity>
-    >({
+    addAclObjectIdentity: build.mutation<AclObjectIdentity, Partial<AclObjectIdentity>>({
       query: (body) => ({
         url: `AclObjectIdentity`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "AclObjectIdentity", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'AclObjectIdentity', id: 'LIST' },
+        { type: 'AclObjectIdentity', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getAclObjectIdentity: build.query<AclObjectIdentity, string>({
       query: (id) => `AclObjectIdentity/${id}`,
-      providesTags: (result, error, id) => [{ type: "AclObjectIdentity", id }],
+      providesTags: (result, error, id) => [{ type: 'AclObjectIdentity', id }],
     }),
 
     // 5) Update
-    updateAclObjectIdentity: build.mutation<
-      void,
-      Pick<AclObjectIdentity, "id"> & Partial<AclObjectIdentity>
-    >({
+    updateAclObjectIdentity: build.mutation<AclObjectIdentity, Pick<AclObjectIdentity, 'id'> & Partial<AclObjectIdentity>>({
       query: ({ id, ...patch }) => ({
         url: `AclObjectIdentity/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            AclObjectIdentityService.util.updateQueryData(
-              "getAclObjectIdentity",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<AclObjectIdentity, "id">,
-      ) => [
-        { type: "AclObjectIdentity", id },
-        { type: "AclObjectIdentity", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<AclObjectIdentity, 'id'>) => [
+        { type: 'AclObjectIdentity', id },
+        { type: 'AclObjectIdentity', id: 'LIST' },
+        { type: 'AclObjectIdentity', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteAclObjectIdentity: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteAclObjectIdentity: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `AclObjectIdentity/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "AclObjectIdentity", id },
+        { type: 'AclObjectIdentity', id },
+        { type: 'AclObjectIdentity', id: 'LIST' },
+        { type: 'AclObjectIdentity', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteAclObjectIdentityCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteAclObjectIdentityCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `AclObjectIdentity/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "AclObjectIdentity", id },
-        { type: "AclObjectIdentity", id: "LIST" },
+        { type: 'AclObjectIdentity', id },
+        { type: 'AclObjectIdentity', id: 'LIST' },
+        { type: 'AclObjectIdentity', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetAclObjectIdentitysPagedQuery`
 export const {
-  useGetAclObjectIdentitysPagedQuery, // immediate fetch
+  useGetAclObjectIdentitysPagedQuery,     // immediate fetch
   useLazyGetAclObjectIdentitysPagedQuery, // lazy fetch
   useGetAclObjectIdentityQuery,
   useGetAclObjectIdentitysQuery,
@@ -190,4 +169,4 @@ export const {
   useUpdateAclObjectIdentityMutation,
   useDeleteAclObjectIdentityMutation,
   useDeleteAclObjectIdentityCascadeMutation,
-} = AclObjectIdentityService;
+} = AclObjectIdentityService

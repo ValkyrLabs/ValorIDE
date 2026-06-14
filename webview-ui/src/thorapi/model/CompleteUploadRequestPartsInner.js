@@ -34,8 +34,8 @@ const DataObject_1 = require("./DataObject");
 function CompleteUploadRequestPartsInnerFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        partNumber: !(0, runtime_1.exists)(json, "partNumber") ? undefined : json["partNumber"],
-        etag: !(0, runtime_1.exists)(json, "etag") ? undefined : json["etag"],
+        'partNumber': !(0, runtime_1.exists)(json, 'partNumber') ? undefined : json['partNumber'],
+        'etag': !(0, runtime_1.exists)(json, 'etag') ? undefined : json['etag'],
     };
 }
 function CompleteUploadRequestPartsInnerToJSON(value) {
@@ -44,8 +44,8 @@ function CompleteUploadRequestPartsInnerToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        partNumber: value.partNumber,
-        etag: value.etag,
+        'partNumber': value.partNumber,
+        'etag': value.etag,
     };
 }
 //# sourceMappingURL=CompleteUploadRequestPartsInner.js.map

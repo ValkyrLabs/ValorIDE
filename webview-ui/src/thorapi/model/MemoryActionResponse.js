@@ -36,37 +36,21 @@ const _1 = require("./");
 function MemoryActionResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        action: !(0, runtime_1.exists)(json, "action") ? undefined : json["action"],
-        success: !(0, runtime_1.exists)(json, "success") ? undefined : json["success"],
-        creditsCharged: !(0, runtime_1.exists)(json, "creditsCharged")
-            ? undefined
-            : json["creditsCharged"],
-        entriesAffected: !(0, runtime_1.exists)(json, "entriesAffected")
-            ? undefined
-            : json["entriesAffected"],
-        message: !(0, runtime_1.exists)(json, "message") ? undefined : json["message"],
-        updatedStats: !(0, runtime_1.exists)(json, "updatedStats")
-            ? undefined
-            : (0, _1.MemoryStatsFromJSON)(json["updatedStats"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'action': !(0, runtime_1.exists)(json, 'action') ? undefined : json['action'],
+        'success': !(0, runtime_1.exists)(json, 'success') ? undefined : json['success'],
+        'creditsCharged': !(0, runtime_1.exists)(json, 'creditsCharged') ? undefined : json['creditsCharged'],
+        'entriesAffected': !(0, runtime_1.exists)(json, 'entriesAffected') ? undefined : json['entriesAffected'],
+        'message': !(0, runtime_1.exists)(json, 'message') ? undefined : json['message'],
+        'updatedStats': !(0, runtime_1.exists)(json, 'updatedStats') ? undefined : (0, _1.MemoryStatsFromJSON)(json['updatedStats']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function MemoryActionResponseToJSON(value) {
@@ -75,19 +59,19 @@ function MemoryActionResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        action: value.action,
-        success: value.success,
-        creditsCharged: value.creditsCharged,
-        entriesAffected: value.entriesAffected,
-        message: value.message,
-        updatedStats: (0, _1.MemoryStatsToJSON)(value.updatedStats),
-        trashed: value.trashed,
+        'action': value.action,
+        'success': value.success,
+        'creditsCharged': value.creditsCharged,
+        'entriesAffected': value.entriesAffected,
+        'message': value.message,
+        'updatedStats': (0, _1.MemoryStatsToJSON)(value.updatedStats),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var MemoryActionResponseActionEnum;
 (function (MemoryActionResponseActionEnum) {
     MemoryActionResponseActionEnum["COMPACT"] = "compact";

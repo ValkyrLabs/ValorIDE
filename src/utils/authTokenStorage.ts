@@ -90,7 +90,7 @@ const clearStorage = (
     }
   }
 
-  for (const [key, value] of preservedValues) {
+  for (const [key, value] of Array.from(preservedValues.entries())) {
     try {
       storage.setItem(key, value);
     } catch {
@@ -145,7 +145,7 @@ export const clearReadableAuthCookies = (): void => {
   }
 
   for (const name of getCookieNames()) {
-    for (const path of paths) {
+    for (const path of Array.from(paths)) {
       for (const domain of getCookieDomains()) {
         const domainPart = domain ? `; domain=${domain}` : "";
         document.cookie = `${name}=; Max-Age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=${path}${domainPart}; SameSite=Lax`;

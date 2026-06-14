@@ -36,51 +36,25 @@ const _1 = require("./");
 function QuotaFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        principal: !(0, runtime_1.exists)(json, "principal")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["principal"]),
-        resourceType: !(0, runtime_1.exists)(json, "resourceType")
-            ? undefined
-            : json["resourceType"],
-        maxConcurrent: !(0, runtime_1.exists)(json, "maxConcurrent")
-            ? undefined
-            : json["maxConcurrent"],
-        maxPerHour: !(0, runtime_1.exists)(json, "maxPerHour") ? undefined : json["maxPerHour"],
-        maxPerDay: !(0, runtime_1.exists)(json, "maxPerDay") ? undefined : json["maxPerDay"],
-        currentConcurrent: !(0, runtime_1.exists)(json, "currentConcurrent")
-            ? undefined
-            : json["currentConcurrent"],
-        currentHourCount: !(0, runtime_1.exists)(json, "currentHourCount")
-            ? undefined
-            : json["currentHourCount"],
-        currentDayCount: !(0, runtime_1.exists)(json, "currentDayCount")
-            ? undefined
-            : json["currentDayCount"],
-        hourResetAt: !(0, runtime_1.exists)(json, "hourResetAt")
-            ? undefined
-            : new Date(json["hourResetAt"]),
-        dayResetAt: !(0, runtime_1.exists)(json, "dayResetAt")
-            ? undefined
-            : new Date(json["dayResetAt"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'principal': !(0, runtime_1.exists)(json, 'principal') ? undefined : (0, _1.PrincipalFromJSON)(json['principal']),
+        'resourceType': !(0, runtime_1.exists)(json, 'resourceType') ? undefined : json['resourceType'],
+        'maxConcurrent': !(0, runtime_1.exists)(json, 'maxConcurrent') ? undefined : json['maxConcurrent'],
+        'maxPerHour': !(0, runtime_1.exists)(json, 'maxPerHour') ? undefined : json['maxPerHour'],
+        'maxPerDay': !(0, runtime_1.exists)(json, 'maxPerDay') ? undefined : json['maxPerDay'],
+        'currentConcurrent': !(0, runtime_1.exists)(json, 'currentConcurrent') ? undefined : json['currentConcurrent'],
+        'currentHourCount': !(0, runtime_1.exists)(json, 'currentHourCount') ? undefined : json['currentHourCount'],
+        'currentDayCount': !(0, runtime_1.exists)(json, 'currentDayCount') ? undefined : json['currentDayCount'],
+        'hourResetAt': !(0, runtime_1.exists)(json, 'hourResetAt') ? undefined : new Date(json['hourResetAt']),
+        'dayResetAt': !(0, runtime_1.exists)(json, 'dayResetAt') ? undefined : new Date(json['dayResetAt']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function QuotaToJSON(value) {
@@ -89,27 +63,23 @@ function QuotaToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        principal: (0, _1.PrincipalToJSON)(value.principal),
-        resourceType: value.resourceType,
-        maxConcurrent: value.maxConcurrent,
-        maxPerHour: value.maxPerHour,
-        maxPerDay: value.maxPerDay,
-        currentConcurrent: value.currentConcurrent,
-        currentHourCount: value.currentHourCount,
-        currentDayCount: value.currentDayCount,
-        hourResetAt: value.hourResetAt === undefined
-            ? undefined
-            : value.hourResetAt.toISOString(),
-        dayResetAt: value.dayResetAt === undefined
-            ? undefined
-            : value.dayResetAt.toISOString(),
-        trashed: value.trashed,
+        'principal': (0, _1.PrincipalToJSON)(value.principal),
+        'resourceType': value.resourceType,
+        'maxConcurrent': value.maxConcurrent,
+        'maxPerHour': value.maxPerHour,
+        'maxPerDay': value.maxPerDay,
+        'currentConcurrent': value.currentConcurrent,
+        'currentHourCount': value.currentHourCount,
+        'currentDayCount': value.currentDayCount,
+        'hourResetAt': value.hourResetAt === undefined ? undefined : value.hourResetAt.toISOString(),
+        'dayResetAt': value.dayResetAt === undefined ? undefined : value.dayResetAt.toISOString(),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var QuotaResourceTypeEnum;
 (function (QuotaResourceTypeEnum) {
     QuotaResourceTypeEnum["WORKFLOWEXECUTION"] = "workflow_execution";

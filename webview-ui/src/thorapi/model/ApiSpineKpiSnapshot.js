@@ -34,41 +34,23 @@ const DataObject_1 = require("./DataObject");
 function ApiSpineKpiSnapshotFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        customerId: !(0, runtime_1.exists)(json, "customerId") ? undefined : json["customerId"],
-        organizationId: !(0, runtime_1.exists)(json, "organizationId")
-            ? undefined
-            : json["organizationId"],
-        spineKey: !(0, runtime_1.exists)(json, "spineKey") ? undefined : json["spineKey"],
-        requestCount: !(0, runtime_1.exists)(json, "requestCount")
-            ? undefined
-            : json["requestCount"],
-        errorCount: !(0, runtime_1.exists)(json, "errorCount") ? undefined : json["errorCount"],
-        avgLatencyMs: !(0, runtime_1.exists)(json, "avgLatencyMs")
-            ? undefined
-            : json["avgLatencyMs"],
-        maxLatencyMs: !(0, runtime_1.exists)(json, "maxLatencyMs")
-            ? undefined
-            : json["maxLatencyMs"],
-        errorRate: !(0, runtime_1.exists)(json, "errorRate") ? undefined : json["errorRate"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'customerId': !(0, runtime_1.exists)(json, 'customerId') ? undefined : json['customerId'],
+        'organizationId': !(0, runtime_1.exists)(json, 'organizationId') ? undefined : json['organizationId'],
+        'spineKey': !(0, runtime_1.exists)(json, 'spineKey') ? undefined : json['spineKey'],
+        'requestCount': !(0, runtime_1.exists)(json, 'requestCount') ? undefined : json['requestCount'],
+        'errorCount': !(0, runtime_1.exists)(json, 'errorCount') ? undefined : json['errorCount'],
+        'avgLatencyMs': !(0, runtime_1.exists)(json, 'avgLatencyMs') ? undefined : json['avgLatencyMs'],
+        'maxLatencyMs': !(0, runtime_1.exists)(json, 'maxLatencyMs') ? undefined : json['maxLatencyMs'],
+        'errorRate': !(0, runtime_1.exists)(json, 'errorRate') ? undefined : json['errorRate'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ApiSpineKpiSnapshotToJSON(value) {
@@ -77,15 +59,15 @@ function ApiSpineKpiSnapshotToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        customerId: value.customerId,
-        organizationId: value.organizationId,
-        spineKey: value.spineKey,
-        requestCount: value.requestCount,
-        errorCount: value.errorCount,
-        avgLatencyMs: value.avgLatencyMs,
-        maxLatencyMs: value.maxLatencyMs,
-        errorRate: value.errorRate,
-        trashed: value.trashed,
+        'customerId': value.customerId,
+        'organizationId': value.organizationId,
+        'spineKey': value.spineKey,
+        'requestCount': value.requestCount,
+        'errorCount': value.errorCount,
+        'avgLatencyMs': value.avgLatencyMs,
+        'maxLatencyMs': value.maxLatencyMs,
+        'errorRate': value.errorRate,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=ApiSpineKpiSnapshot.js.map

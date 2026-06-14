@@ -36,50 +36,28 @@ const _1 = require("./");
 function FormatFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        workbookId: !(0, runtime_1.exists)(json, "workbookId") ? undefined : json["workbookId"],
-        fontWeight: !(0, runtime_1.exists)(json, "fontWeight") ? undefined : json["fontWeight"],
-        fontSize: !(0, runtime_1.exists)(json, "fontSize") ? undefined : json["fontSize"],
-        fontFace: !(0, runtime_1.exists)(json, "fontFace") ? undefined : json["fontFace"],
-        underline: !(0, runtime_1.exists)(json, "underline") ? undefined : json["underline"],
-        color: !(0, runtime_1.exists)(json, "color") ? undefined : json["color"],
-        alignmentHorizontal: !(0, runtime_1.exists)(json, "alignment-horizontal")
-            ? undefined
-            : json["alignment-horizontal"],
-        alignmentVertical: !(0, runtime_1.exists)(json, "alignment-vertical")
-            ? undefined
-            : json["alignment-vertical"],
-        pattern: !(0, runtime_1.exists)(json, "pattern") ? undefined : json["pattern"],
-        borderLeft: !(0, runtime_1.exists)(json, "border-left")
-            ? undefined
-            : (0, _1.BorderFromJSON)(json["border-left"]),
-        borderRight: !(0, runtime_1.exists)(json, "border-right")
-            ? undefined
-            : (0, _1.BorderFromJSON)(json["border-right"]),
-        borderTop: !(0, runtime_1.exists)(json, "border-top")
-            ? undefined
-            : (0, _1.BorderFromJSON)(json["border-top"]),
-        borderBottom: !(0, runtime_1.exists)(json, "border-bottom")
-            ? undefined
-            : (0, _1.BorderFromJSON)(json["border-bottom"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'workbookId': !(0, runtime_1.exists)(json, 'workbookId') ? undefined : json['workbookId'],
+        'fontWeight': !(0, runtime_1.exists)(json, 'fontWeight') ? undefined : json['fontWeight'],
+        'fontSize': !(0, runtime_1.exists)(json, 'fontSize') ? undefined : json['fontSize'],
+        'fontFace': !(0, runtime_1.exists)(json, 'fontFace') ? undefined : json['fontFace'],
+        'underline': !(0, runtime_1.exists)(json, 'underline') ? undefined : json['underline'],
+        'color': !(0, runtime_1.exists)(json, 'color') ? undefined : json['color'],
+        'alignmentHorizontal': !(0, runtime_1.exists)(json, 'alignment-horizontal') ? undefined : json['alignment-horizontal'],
+        'alignmentVertical': !(0, runtime_1.exists)(json, 'alignment-vertical') ? undefined : json['alignment-vertical'],
+        'pattern': !(0, runtime_1.exists)(json, 'pattern') ? undefined : json['pattern'],
+        'borderLeft': !(0, runtime_1.exists)(json, 'border-left') ? undefined : (0, _1.BorderFromJSON)(json['border-left']),
+        'borderRight': !(0, runtime_1.exists)(json, 'border-right') ? undefined : (0, _1.BorderFromJSON)(json['border-right']),
+        'borderTop': !(0, runtime_1.exists)(json, 'border-top') ? undefined : (0, _1.BorderFromJSON)(json['border-top']),
+        'borderBottom': !(0, runtime_1.exists)(json, 'border-bottom') ? undefined : (0, _1.BorderFromJSON)(json['border-bottom']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function FormatToJSON(value) {
@@ -88,26 +66,26 @@ function FormatToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        workbookId: value.workbookId,
-        fontWeight: value.fontWeight,
-        fontSize: value.fontSize,
-        fontFace: value.fontFace,
-        underline: value.underline,
-        color: value.color,
-        "alignment-horizontal": value.alignmentHorizontal,
-        "alignment-vertical": value.alignmentVertical,
-        pattern: value.pattern,
-        "border-left": (0, _1.BorderToJSON)(value.borderLeft),
-        "border-right": (0, _1.BorderToJSON)(value.borderRight),
-        "border-top": (0, _1.BorderToJSON)(value.borderTop),
-        "border-bottom": (0, _1.BorderToJSON)(value.borderBottom),
-        trashed: value.trashed,
+        'workbookId': value.workbookId,
+        'fontWeight': value.fontWeight,
+        'fontSize': value.fontSize,
+        'fontFace': value.fontFace,
+        'underline': value.underline,
+        'color': value.color,
+        'alignment-horizontal': value.alignmentHorizontal,
+        'alignment-vertical': value.alignmentVertical,
+        'pattern': value.pattern,
+        'border-left': (0, _1.BorderToJSON)(value.borderLeft),
+        'border-right': (0, _1.BorderToJSON)(value.borderRight),
+        'border-top': (0, _1.BorderToJSON)(value.borderTop),
+        'border-bottom': (0, _1.BorderToJSON)(value.borderBottom),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var FormatFontWeightEnum;
 (function (FormatFontWeightEnum) {
     FormatFontWeightEnum[FormatFontWeightEnum["FONTWEIGHTLIGHT"] = 200] = "FONTWEIGHTLIGHT";
@@ -115,9 +93,9 @@ var FormatFontWeightEnum;
     FormatFontWeightEnum[FormatFontWeightEnum["FONTWEIGHTBOLD"] = 700] = "FONTWEIGHTBOLD";
 })(FormatFontWeightEnum || (exports.FormatFontWeightEnum = FormatFontWeightEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var FormatUnderlineEnum;
 (function (FormatUnderlineEnum) {
     FormatUnderlineEnum[FormatUnderlineEnum["UNDERLINENONE"] = 0] = "UNDERLINENONE";
@@ -127,9 +105,9 @@ var FormatUnderlineEnum;
     FormatUnderlineEnum[FormatUnderlineEnum["UNDERLINEDOUBLEACCOUNTING"] = 22] = "UNDERLINEDOUBLEACCOUNTING";
 })(FormatUnderlineEnum || (exports.FormatUnderlineEnum = FormatUnderlineEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var FormatColorEnum;
 (function (FormatColorEnum) {
     FormatColorEnum["COLORBLACK"] = "black";
@@ -150,9 +128,9 @@ var FormatColorEnum;
     FormatColorEnum["COLORGRAY80"] = "gray80";
 })(FormatColorEnum || (exports.FormatColorEnum = FormatColorEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var FormatAlignmentHorizontalEnum;
 (function (FormatAlignmentHorizontalEnum) {
     FormatAlignmentHorizontalEnum["ALIGNLEFT"] = "left";
@@ -163,9 +141,9 @@ var FormatAlignmentHorizontalEnum;
     FormatAlignmentHorizontalEnum["ALIGNCENTERACROSSSELECTION"] = "centeracrossselection";
 })(FormatAlignmentHorizontalEnum || (exports.FormatAlignmentHorizontalEnum = FormatAlignmentHorizontalEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var FormatAlignmentVerticalEnum;
 (function (FormatAlignmentVerticalEnum) {
     FormatAlignmentVerticalEnum["ALIGNTOP"] = "top";
@@ -174,9 +152,9 @@ var FormatAlignmentVerticalEnum;
     FormatAlignmentVerticalEnum["ALIGNJUSTIFY"] = "justify";
 })(FormatAlignmentVerticalEnum || (exports.FormatAlignmentVerticalEnum = FormatAlignmentVerticalEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var FormatPatternEnum;
 (function (FormatPatternEnum) {
     FormatPatternEnum[FormatPatternEnum["PATTERNNONE"] = 0] = "PATTERNNONE";

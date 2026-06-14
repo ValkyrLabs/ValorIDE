@@ -34,35 +34,21 @@ const DataObject_1 = require("./DataObject");
 function CircuitBreakerConfigFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        failureThreshold: !(0, runtime_1.exists)(json, "failureThreshold")
-            ? undefined
-            : json["failureThreshold"],
-        successThreshold: !(0, runtime_1.exists)(json, "successThreshold")
-            ? undefined
-            : json["successThreshold"],
-        timeoutMs: !(0, runtime_1.exists)(json, "timeoutMs") ? undefined : json["timeoutMs"],
-        windowMs: !(0, runtime_1.exists)(json, "windowMs") ? undefined : json["windowMs"],
-        enabled: !(0, runtime_1.exists)(json, "enabled") ? undefined : json["enabled"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'failureThreshold': !(0, runtime_1.exists)(json, 'failureThreshold') ? undefined : json['failureThreshold'],
+        'successThreshold': !(0, runtime_1.exists)(json, 'successThreshold') ? undefined : json['successThreshold'],
+        'timeoutMs': !(0, runtime_1.exists)(json, 'timeoutMs') ? undefined : json['timeoutMs'],
+        'windowMs': !(0, runtime_1.exists)(json, 'windowMs') ? undefined : json['windowMs'],
+        'enabled': !(0, runtime_1.exists)(json, 'enabled') ? undefined : json['enabled'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function CircuitBreakerConfigToJSON(value) {
@@ -71,13 +57,13 @@ function CircuitBreakerConfigToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        name: value.name,
-        failureThreshold: value.failureThreshold,
-        successThreshold: value.successThreshold,
-        timeoutMs: value.timeoutMs,
-        windowMs: value.windowMs,
-        enabled: value.enabled,
-        trashed: value.trashed,
+        'name': value.name,
+        'failureThreshold': value.failureThreshold,
+        'successThreshold': value.successThreshold,
+        'timeoutMs': value.timeoutMs,
+        'windowMs': value.windowMs,
+        'enabled': value.enabled,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=CircuitBreakerConfig.js.map

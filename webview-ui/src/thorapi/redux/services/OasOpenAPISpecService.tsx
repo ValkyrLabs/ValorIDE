@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { OasOpenAPISpec } from "@thorapi/model/OasOpenAPISpec";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { OasOpenAPISpec } from '@thorapi/model/OasOpenAPISpec'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type OasOpenAPISpecResponse = OasOpenAPISpec[];
+type OasOpenAPISpecResponse = OasOpenAPISpec[]
+type OasOpenAPISpecPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<OasOpenAPISpec>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type OasOpenAPISpecListQueryArg = {
+  example?: Partial<OasOpenAPISpec>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toOasOpenAPISpecList = (result: unknown): OasOpenAPISpecResponse => {
   if (Array.isArray(result)) {
-    return result as OasOpenAPISpecResponse;
+    return result as OasOpenAPISpecResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as OasOpenAPISpecResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as OasOpenAPISpecResponse) : []
+}
 
 export const OasOpenAPISpecService = createApi({
-  reducerPath: "OasOpenAPISpec", // This should remain unique
+  reducerPath: 'OasOpenAPISpec', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["OasOpenAPISpec"],
+  tagTypes: ['OasOpenAPISpec'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getOasOpenAPISpecsPaged: build.query<
-      OasOpenAPISpecResponse,
-      { page: number; size?: number; example?: Partial<OasOpenAPISpec> }
-    >({
+    getOasOpenAPISpecsPaged: build.query<OasOpenAPISpecResponse, OasOpenAPISpecPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `OasOpenAPISpec?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `OasOpenAPISpec?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toOasOpenAPISpecList(result);
+        const rows = toOasOpenAPISpecList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "OasOpenAPISpec" as const, id })),
-          { type: "OasOpenAPISpec", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'OasOpenAPISpec' as const, id })),
+          { type: 'OasOpenAPISpec', id: `PAGE_${page}` },
+          { type: 'OasOpenAPISpec', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOasOpenAPISpecs: build.query<
-      OasOpenAPISpecResponse,
-      { example?: Partial<OasOpenAPISpec> } | void
-    >({
+    getOasOpenAPISpecs: build.query<OasOpenAPISpecResponse, OasOpenAPISpecListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const OasOpenAPISpecService = createApi({
         return `OasOpenAPISpec`;
       },
       providesTags: (result) => {
-        const rows = toOasOpenAPISpecList(result);
+        const rows = toOasOpenAPISpecList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "OasOpenAPISpec" as const, id })),
-          { type: "OasOpenAPISpec", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'OasOpenAPISpec' as const, id })),
+          { type: 'OasOpenAPISpec', id: 'LIST' },
+          { type: 'OasOpenAPISpec', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,89 +97,71 @@ export const OasOpenAPISpecService = createApi({
     addOasOpenAPISpec: build.mutation<OasOpenAPISpec, Partial<OasOpenAPISpec>>({
       query: (body) => ({
         url: `OasOpenAPISpec`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "OasOpenAPISpec", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'OasOpenAPISpec', id: 'LIST' },
+        { type: 'OasOpenAPISpec', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getOasOpenAPISpec: build.query<OasOpenAPISpec, string>({
       query: (id) => `OasOpenAPISpec/${id}`,
-      providesTags: (result, error, id) => [{ type: "OasOpenAPISpec", id }],
+      providesTags: (result, error, id) => [{ type: 'OasOpenAPISpec', id }],
     }),
 
     // 5) Update
-    updateOasOpenAPISpec: build.mutation<
-      void,
-      Pick<OasOpenAPISpec, "id"> & Partial<OasOpenAPISpec>
-    >({
+    updateOasOpenAPISpec: build.mutation<OasOpenAPISpec, Pick<OasOpenAPISpec, 'id'> & Partial<OasOpenAPISpec>>({
       query: ({ id, ...patch }) => ({
         url: `OasOpenAPISpec/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            OasOpenAPISpecService.util.updateQueryData(
-              "getOasOpenAPISpec",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<OasOpenAPISpec, "id">) => [
-        { type: "OasOpenAPISpec", id },
-        { type: "OasOpenAPISpec", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<OasOpenAPISpec, 'id'>) => [
+        { type: 'OasOpenAPISpec', id },
+        { type: 'OasOpenAPISpec', id: 'LIST' },
+        { type: 'OasOpenAPISpec', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteOasOpenAPISpec: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteOasOpenAPISpec: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `OasOpenAPISpec/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "OasOpenAPISpec", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'OasOpenAPISpec', id },
+        { type: 'OasOpenAPISpec', id: 'LIST' },
+        { type: 'OasOpenAPISpec', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteOasOpenAPISpecCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteOasOpenAPISpecCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `OasOpenAPISpec/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "OasOpenAPISpec", id },
-        { type: "OasOpenAPISpec", id: "LIST" },
+        { type: 'OasOpenAPISpec', id },
+        { type: 'OasOpenAPISpec', id: 'LIST' },
+        { type: 'OasOpenAPISpec', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetOasOpenAPISpecsPagedQuery`
 export const {
-  useGetOasOpenAPISpecsPagedQuery, // immediate fetch
+  useGetOasOpenAPISpecsPagedQuery,     // immediate fetch
   useLazyGetOasOpenAPISpecsPagedQuery, // lazy fetch
   useGetOasOpenAPISpecQuery,
   useGetOasOpenAPISpecsQuery,
@@ -177,4 +169,4 @@ export const {
   useUpdateOasOpenAPISpecMutation,
   useDeleteOasOpenAPISpecMutation,
   useDeleteOasOpenAPISpecCascadeMutation,
-} = OasOpenAPISpecService;
+} = OasOpenAPISpecService

@@ -36,43 +36,27 @@ const _1 = require("./");
 function AddressFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        hasWifi: !(0, runtime_1.exists)(json, "hasWifi") ? undefined : json["hasWifi"],
-        principal: !(0, runtime_1.exists)(json, "principal")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["principal"]),
-        addressType: !(0, runtime_1.exists)(json, "addressType") ? undefined : json["addressType"],
-        gpsCoordinateLat: !(0, runtime_1.exists)(json, "gps_coordinate_lat")
-            ? undefined
-            : json["gps_coordinate_lat"],
-        gpsCoordinateLong: !(0, runtime_1.exists)(json, "gps_coordinate_long")
-            ? undefined
-            : json["gps_coordinate_long"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        street1: !(0, runtime_1.exists)(json, "street1") ? undefined : json["street1"],
-        street2: !(0, runtime_1.exists)(json, "street2") ? undefined : json["street2"],
-        city: !(0, runtime_1.exists)(json, "city") ? undefined : json["city"],
-        state: !(0, runtime_1.exists)(json, "state") ? undefined : json["state"],
-        country: !(0, runtime_1.exists)(json, "country") ? undefined : json["country"],
-        postalCode: !(0, runtime_1.exists)(json, "postal_code") ? undefined : json["postal_code"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'hasWifi': !(0, runtime_1.exists)(json, 'hasWifi') ? undefined : json['hasWifi'],
+        'principal': !(0, runtime_1.exists)(json, 'principal') ? undefined : (0, _1.PrincipalFromJSON)(json['principal']),
+        'addressType': !(0, runtime_1.exists)(json, 'addressType') ? undefined : json['addressType'],
+        'gpsCoordinateLat': !(0, runtime_1.exists)(json, 'gpsCoordinateLat') ? undefined : json['gpsCoordinateLat'],
+        'gpsCoordinateLong': !(0, runtime_1.exists)(json, 'gpsCoordinateLong') ? undefined : json['gpsCoordinateLong'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'street1': !(0, runtime_1.exists)(json, 'street1') ? undefined : json['street1'],
+        'street2': !(0, runtime_1.exists)(json, 'street2') ? undefined : json['street2'],
+        'city': !(0, runtime_1.exists)(json, 'city') ? undefined : json['city'],
+        'state': !(0, runtime_1.exists)(json, 'state') ? undefined : json['state'],
+        'country': !(0, runtime_1.exists)(json, 'country') ? undefined : json['country'],
+        'postalCode': !(0, runtime_1.exists)(json, 'postalCode') ? undefined : json['postalCode'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function AddressToJSON(value) {
@@ -81,25 +65,25 @@ function AddressToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        hasWifi: value.hasWifi,
-        principal: (0, _1.PrincipalToJSON)(value.principal),
-        addressType: value.addressType,
-        gps_coordinate_lat: value.gpsCoordinateLat,
-        gps_coordinate_long: value.gpsCoordinateLong,
-        name: value.name,
-        street1: value.street1,
-        street2: value.street2,
-        city: value.city,
-        state: value.state,
-        country: value.country,
-        postal_code: value.postalCode,
-        trashed: value.trashed,
+        'hasWifi': value.hasWifi,
+        'principal': (0, _1.PrincipalToJSON)(value.principal),
+        'addressType': value.addressType,
+        'gpsCoordinateLat': value.gpsCoordinateLat,
+        'gpsCoordinateLong': value.gpsCoordinateLong,
+        'name': value.name,
+        'street1': value.street1,
+        'street2': value.street2,
+        'city': value.city,
+        'state': value.state,
+        'country': value.country,
+        'postalCode': value.postalCode,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var AddressAddressTypeEnum;
 (function (AddressAddressTypeEnum) {
     AddressAddressTypeEnum["HOME"] = "home";

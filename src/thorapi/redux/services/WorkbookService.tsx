@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { Workbook } from "@thorapi/model/Workbook";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { Workbook } from '@thorapi/model/Workbook'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type WorkbookResponse = Workbook[];
+type WorkbookResponse = Workbook[]
+type WorkbookPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<Workbook>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type WorkbookListQueryArg = {
+  example?: Partial<Workbook>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toWorkbookList = (result: unknown): WorkbookResponse => {
   if (Array.isArray(result)) {
-    return result as WorkbookResponse;
+    return result as WorkbookResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as WorkbookResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as WorkbookResponse) : []
+}
 
 export const WorkbookService = createApi({
-  reducerPath: "Workbook", // This should remain unique
+  reducerPath: 'Workbook', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["Workbook"],
+  tagTypes: ['Workbook'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getWorkbooksPaged: build.query<
-      WorkbookResponse,
-      { page: number; size?: number; example?: Partial<Workbook> }
-    >({
+    getWorkbooksPaged: build.query<WorkbookResponse, WorkbookPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Workbook?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Workbook?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toWorkbookList(result);
+        const rows = toWorkbookList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Workbook" as const, id })),
-          { type: "Workbook", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'Workbook' as const, id })),
+          { type: 'Workbook', id: `PAGE_${page}` },
+          { type: 'Workbook', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getWorkbooks: build.query<
-      WorkbookResponse,
-      { example?: Partial<Workbook> } | void
-    >({
+    getWorkbooks: build.query<WorkbookResponse, WorkbookListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const WorkbookService = createApi({
         return `Workbook`;
       },
       providesTags: (result) => {
-        const rows = toWorkbookList(result);
+        const rows = toWorkbookList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Workbook" as const, id })),
-          { type: "Workbook", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'Workbook' as const, id })),
+          { type: 'Workbook', id: 'LIST' },
+          { type: 'Workbook', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,45 +97,32 @@ export const WorkbookService = createApi({
     addWorkbook: build.mutation<Workbook, Partial<Workbook>>({
       query: (body) => ({
         url: `Workbook`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "Workbook", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'Workbook', id: 'LIST' },
+        { type: 'Workbook', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getWorkbook: build.query<Workbook, string>({
       query: (id) => `Workbook/${id}`,
-      providesTags: (result, error, id) => [{ type: "Workbook", id }],
+      providesTags: (result, error, id) => [{ type: 'Workbook', id }],
     }),
 
     // 5) Update
-    updateWorkbook: build.mutation<
-      void,
-      Pick<Workbook, "id"> & Partial<Workbook>
-    >({
+    updateWorkbook: build.mutation<Workbook, Pick<Workbook, 'id'> & Partial<Workbook>>({
       query: ({ id, ...patch }) => ({
         url: `Workbook/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            WorkbookService.util.updateQueryData("getWorkbook", id, (draft) => {
-              Object.assign(draft, patch);
-            }),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<Workbook, "id">) => [
-        { type: "Workbook", id },
-        { type: "Workbook", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<Workbook, 'id'>) => [
+        { type: 'Workbook', id },
+        { type: 'Workbook', id: 'LIST' },
+        { type: 'Workbook', id: 'PARTIAL-LIST' },
       ],
     }),
 
@@ -134,35 +131,37 @@ export const WorkbookService = createApi({
       query(id) {
         return {
           url: `Workbook/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "Workbook", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'Workbook', id },
+        { type: 'Workbook', id: 'LIST' },
+        { type: 'Workbook', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteWorkbookCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteWorkbookCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `Workbook/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "Workbook", id },
-        { type: "Workbook", id: "LIST" },
+        { type: 'Workbook', id },
+        { type: 'Workbook', id: 'LIST' },
+        { type: 'Workbook', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetWorkbooksPagedQuery`
 export const {
-  useGetWorkbooksPagedQuery, // immediate fetch
+  useGetWorkbooksPagedQuery,     // immediate fetch
   useLazyGetWorkbooksPagedQuery, // lazy fetch
   useGetWorkbookQuery,
   useGetWorkbooksQuery,
@@ -170,4 +169,4 @@ export const {
   useUpdateWorkbookMutation,
   useDeleteWorkbookMutation,
   useDeleteWorkbookCascadeMutation,
-} = WorkbookService;
+} = WorkbookService

@@ -35,40 +35,24 @@ const _1 = require("./");
 function FileUploadSessionFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        uploadId: json["uploadId"],
-        storageDriverId: json["storageDriverId"],
-        storageKey: json["storageKey"],
-        expiresAt: new Date(json["expiresAt"]),
-        file: !(0, runtime_1.exists)(json, "file") ? undefined : (0, _1.FileRecordFromJSON)(json["file"]),
-        initiatedBy: !(0, runtime_1.exists)(json, "initiatedBy")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["initiatedBy"]),
-        completedAt: !(0, runtime_1.exists)(json, "completedAt")
-            ? undefined
-            : new Date(json["completedAt"]),
-        partSizeBytes: !(0, runtime_1.exists)(json, "partSizeBytes")
-            ? undefined
-            : json["partSizeBytes"],
-        metadata: !(0, runtime_1.exists)(json, "metadata") ? undefined : json["metadata"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'uploadId': json['uploadId'],
+        'storageDriverId': json['storageDriverId'],
+        'storageKey': json['storageKey'],
+        'expiresAt': new Date(json['expiresAt']),
+        'file': !(0, runtime_1.exists)(json, 'file') ? undefined : (0, _1.FileRecordFromJSON)(json['file']),
+        'initiatedBy': !(0, runtime_1.exists)(json, 'initiatedBy') ? undefined : (0, _1.PrincipalFromJSON)(json['initiatedBy']),
+        'completedAt': !(0, runtime_1.exists)(json, 'completedAt') ? undefined : new Date(json['completedAt']),
+        'partSizeBytes': !(0, runtime_1.exists)(json, 'partSizeBytes') ? undefined : json['partSizeBytes'],
+        'metadata': !(0, runtime_1.exists)(json, 'metadata') ? undefined : json['metadata'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function FileUploadSessionToJSON(value) {
@@ -77,18 +61,16 @@ function FileUploadSessionToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        uploadId: value.uploadId,
-        storageDriverId: value.storageDriverId,
-        storageKey: value.storageKey,
-        expiresAt: value.expiresAt.toISOString(),
-        file: (0, _1.FileRecordToJSON)(value.file),
-        initiatedBy: (0, _1.PrincipalToJSON)(value.initiatedBy),
-        completedAt: value.completedAt === undefined
-            ? undefined
-            : value.completedAt.toISOString(),
-        partSizeBytes: value.partSizeBytes,
-        metadata: value.metadata,
-        trashed: value.trashed,
+        'uploadId': value.uploadId,
+        'storageDriverId': value.storageDriverId,
+        'storageKey': value.storageKey,
+        'expiresAt': value.expiresAt.toISOString(),
+        'file': (0, _1.FileRecordToJSON)(value.file),
+        'initiatedBy': (0, _1.PrincipalToJSON)(value.initiatedBy),
+        'completedAt': value.completedAt === undefined ? undefined : value.completedAt.toISOString(),
+        'partSizeBytes': value.partSizeBytes,
+        'metadata': value.metadata,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=FileUploadSession.js.map

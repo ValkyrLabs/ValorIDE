@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { GraphLink } from "@thorapi/model/GraphLink";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { GraphLink } from '@thorapi/model/GraphLink'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type GraphLinkResponse = GraphLink[];
+type GraphLinkResponse = GraphLink[]
+type GraphLinkPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<GraphLink>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type GraphLinkListQueryArg = {
+  example?: Partial<GraphLink>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toGraphLinkList = (result: unknown): GraphLinkResponse => {
   if (Array.isArray(result)) {
-    return result as GraphLinkResponse;
+    return result as GraphLinkResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as GraphLinkResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as GraphLinkResponse) : []
+}
 
 export const GraphLinkService = createApi({
-  reducerPath: "GraphLink", // This should remain unique
+  reducerPath: 'GraphLink', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["GraphLink"],
+  tagTypes: ['GraphLink'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getGraphLinksPaged: build.query<
-      GraphLinkResponse,
-      { page: number; size?: number; example?: Partial<GraphLink> }
-    >({
+    getGraphLinksPaged: build.query<GraphLinkResponse, GraphLinkPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `GraphLink?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `GraphLink?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toGraphLinkList(result);
+        const rows = toGraphLinkList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "GraphLink" as const, id })),
-          { type: "GraphLink", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'GraphLink' as const, id })),
+          { type: 'GraphLink', id: `PAGE_${page}` },
+          { type: 'GraphLink', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getGraphLinks: build.query<
-      GraphLinkResponse,
-      { example?: Partial<GraphLink> } | void
-    >({
+    getGraphLinks: build.query<GraphLinkResponse, GraphLinkListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const GraphLinkService = createApi({
         return `GraphLink`;
       },
       providesTags: (result) => {
-        const rows = toGraphLinkList(result);
+        const rows = toGraphLinkList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "GraphLink" as const, id })),
-          { type: "GraphLink", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'GraphLink' as const, id })),
+          { type: 'GraphLink', id: 'LIST' },
+          { type: 'GraphLink', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,49 +97,32 @@ export const GraphLinkService = createApi({
     addGraphLink: build.mutation<GraphLink, Partial<GraphLink>>({
       query: (body) => ({
         url: `GraphLink`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "GraphLink", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'GraphLink', id: 'LIST' },
+        { type: 'GraphLink', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getGraphLink: build.query<GraphLink, string>({
       query: (id) => `GraphLink/${id}`,
-      providesTags: (result, error, id) => [{ type: "GraphLink", id }],
+      providesTags: (result, error, id) => [{ type: 'GraphLink', id }],
     }),
 
     // 5) Update
-    updateGraphLink: build.mutation<
-      void,
-      Pick<GraphLink, "id"> & Partial<GraphLink>
-    >({
+    updateGraphLink: build.mutation<GraphLink, Pick<GraphLink, 'id'> & Partial<GraphLink>>({
       query: ({ id, ...patch }) => ({
         url: `GraphLink/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            GraphLinkService.util.updateQueryData(
-              "getGraphLink",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<GraphLink, "id">) => [
-        { type: "GraphLink", id },
-        { type: "GraphLink", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<GraphLink, 'id'>) => [
+        { type: 'GraphLink', id },
+        { type: 'GraphLink', id: 'LIST' },
+        { type: 'GraphLink', id: 'PARTIAL-LIST' },
       ],
     }),
 
@@ -138,35 +131,37 @@ export const GraphLinkService = createApi({
       query(id) {
         return {
           url: `GraphLink/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "GraphLink", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'GraphLink', id },
+        { type: 'GraphLink', id: 'LIST' },
+        { type: 'GraphLink', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteGraphLinkCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteGraphLinkCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `GraphLink/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "GraphLink", id },
-        { type: "GraphLink", id: "LIST" },
+        { type: 'GraphLink', id },
+        { type: 'GraphLink', id: 'LIST' },
+        { type: 'GraphLink', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetGraphLinksPagedQuery`
 export const {
-  useGetGraphLinksPagedQuery, // immediate fetch
+  useGetGraphLinksPagedQuery,     // immediate fetch
   useLazyGetGraphLinksPagedQuery, // lazy fetch
   useGetGraphLinkQuery,
   useGetGraphLinksQuery,
@@ -174,4 +169,4 @@ export const {
   useUpdateGraphLinkMutation,
   useDeleteGraphLinkMutation,
   useDeleteGraphLinkCascadeMutation,
-} = GraphLinkService;
+} = GraphLinkService

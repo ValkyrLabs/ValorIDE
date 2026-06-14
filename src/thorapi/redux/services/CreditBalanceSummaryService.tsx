@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { CreditBalanceSummary } from "@thorapi/model/CreditBalanceSummary";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { CreditBalanceSummary } from '@thorapi/model/CreditBalanceSummary'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type CreditBalanceSummaryResponse = CreditBalanceSummary[];
+type CreditBalanceSummaryResponse = CreditBalanceSummary[]
+type CreditBalanceSummaryPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<CreditBalanceSummary>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toCreditBalanceSummaryList = (
-  result: unknown,
-): CreditBalanceSummaryResponse => {
+type CreditBalanceSummaryListQueryArg = {
+  example?: Partial<CreditBalanceSummary>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toCreditBalanceSummaryList = (result: unknown): CreditBalanceSummaryResponse => {
   if (Array.isArray(result)) {
-    return result as CreditBalanceSummaryResponse;
+    return result as CreditBalanceSummaryResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as CreditBalanceSummaryResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as CreditBalanceSummaryResponse) : []
+}
 
 export const CreditBalanceSummaryService = createApi({
-  reducerPath: "CreditBalanceSummary", // This should remain unique
+  reducerPath: 'CreditBalanceSummary', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["CreditBalanceSummary"],
+  tagTypes: ['CreditBalanceSummary'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getCreditBalanceSummarysPaged: build.query<
-      CreditBalanceSummaryResponse,
-      { page: number; size?: number; example?: Partial<CreditBalanceSummary> }
-    >({
+    getCreditBalanceSummarysPaged: build.query<CreditBalanceSummaryResponse, CreditBalanceSummaryPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `CreditBalanceSummary?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `CreditBalanceSummary?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toCreditBalanceSummaryList(result);
+        const rows = toCreditBalanceSummaryList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "CreditBalanceSummary" as const, id })),
-          { type: "CreditBalanceSummary", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'CreditBalanceSummary' as const, id })),
+          { type: 'CreditBalanceSummary', id: `PAGE_${page}` },
+          { type: 'CreditBalanceSummary', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getCreditBalanceSummarys: build.query<
-      CreditBalanceSummaryResponse,
-      { example?: Partial<CreditBalanceSummary> } | void
-    >({
+    getCreditBalanceSummarys: build.query<CreditBalanceSummaryResponse, CreditBalanceSummaryListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,114 +82,86 @@ export const CreditBalanceSummaryService = createApi({
         return `CreditBalanceSummary`;
       },
       providesTags: (result) => {
-        const rows = toCreditBalanceSummaryList(result);
+        const rows = toCreditBalanceSummaryList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "CreditBalanceSummary" as const, id })),
-          { type: "CreditBalanceSummary", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'CreditBalanceSummary' as const, id })),
+          { type: 'CreditBalanceSummary', id: 'LIST' },
+          { type: 'CreditBalanceSummary', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addCreditBalanceSummary: build.mutation<
-      CreditBalanceSummary,
-      Partial<CreditBalanceSummary>
-    >({
+    addCreditBalanceSummary: build.mutation<CreditBalanceSummary, Partial<CreditBalanceSummary>>({
       query: (body) => ({
         url: `CreditBalanceSummary`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "CreditBalanceSummary", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'CreditBalanceSummary', id: 'LIST' },
+        { type: 'CreditBalanceSummary', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getCreditBalanceSummary: build.query<CreditBalanceSummary, string>({
       query: (id) => `CreditBalanceSummary/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "CreditBalanceSummary", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'CreditBalanceSummary', id }],
     }),
 
     // 5) Update
-    updateCreditBalanceSummary: build.mutation<
-      void,
-      Pick<CreditBalanceSummary, "id"> & Partial<CreditBalanceSummary>
-    >({
+    updateCreditBalanceSummary: build.mutation<CreditBalanceSummary, Pick<CreditBalanceSummary, 'id'> & Partial<CreditBalanceSummary>>({
       query: ({ id, ...patch }) => ({
         url: `CreditBalanceSummary/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            CreditBalanceSummaryService.util.updateQueryData(
-              "getCreditBalanceSummary",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<CreditBalanceSummary, "id">,
-      ) => [
-        { type: "CreditBalanceSummary", id },
-        { type: "CreditBalanceSummary", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<CreditBalanceSummary, 'id'>) => [
+        { type: 'CreditBalanceSummary', id },
+        { type: 'CreditBalanceSummary', id: 'LIST' },
+        { type: 'CreditBalanceSummary', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteCreditBalanceSummary: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteCreditBalanceSummary: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `CreditBalanceSummary/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "CreditBalanceSummary", id },
+        { type: 'CreditBalanceSummary', id },
+        { type: 'CreditBalanceSummary', id: 'LIST' },
+        { type: 'CreditBalanceSummary', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteCreditBalanceSummaryCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteCreditBalanceSummaryCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `CreditBalanceSummary/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "CreditBalanceSummary", id },
-        { type: "CreditBalanceSummary", id: "LIST" },
+        { type: 'CreditBalanceSummary', id },
+        { type: 'CreditBalanceSummary', id: 'LIST' },
+        { type: 'CreditBalanceSummary', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetCreditBalanceSummarysPagedQuery`
 export const {
-  useGetCreditBalanceSummarysPagedQuery, // immediate fetch
+  useGetCreditBalanceSummarysPagedQuery,     // immediate fetch
   useLazyGetCreditBalanceSummarysPagedQuery, // lazy fetch
   useGetCreditBalanceSummaryQuery,
   useGetCreditBalanceSummarysQuery,
@@ -192,4 +169,4 @@ export const {
   useUpdateCreditBalanceSummaryMutation,
   useDeleteCreditBalanceSummaryMutation,
   useDeleteCreditBalanceSummaryCascadeMutation,
-} = CreditBalanceSummaryService;
+} = CreditBalanceSummaryService

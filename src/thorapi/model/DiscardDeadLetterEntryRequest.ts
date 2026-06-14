@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,126 +36,114 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface DiscardDeadLetterEntryRequest
  */
-export type DiscardDeadLetterEntryRequest = DataObject & {
-  /**
-   * Operator notes explaining why the entry was discarded
-   * @type {string}
-   * @memberof DiscardDeadLetterEntryRequest
-   */
-  notes?: string;
-  /**
-   * Categorized reason for discarding the entry
-   * @type {string}
-   * @memberof DiscardDeadLetterEntryRequest
-   */
-  reason?: DiscardDeadLetterEntryRequestReasonEnum;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof DiscardDeadLetterEntryRequest
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof DiscardDeadLetterEntryRequest
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof DiscardDeadLetterEntryRequest
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof DiscardDeadLetterEntryRequest
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof DiscardDeadLetterEntryRequest
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof DiscardDeadLetterEntryRequest
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof DiscardDeadLetterEntryRequest
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof DiscardDeadLetterEntryRequest
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof DiscardDeadLetterEntryRequest
-   */
-  trashed?: boolean;
-};
-
-export function DiscardDeadLetterEntryRequestFromJSON(
-  json: any,
-): DiscardDeadLetterEntryRequest {
-  return {
-    ...DataObjectFromJSON(json),
-    notes: !exists(json, "notes") ? undefined : json["notes"],
-    reason: !exists(json, "reason") ? undefined : json["reason"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+export type DiscardDeadLetterEntryRequest  = DataObject & {
+    /**
+     * Operator notes explaining why the entry was discarded
+     * @type {string}
+     * @memberof DiscardDeadLetterEntryRequest
+     */
+    notes?: string;
+    /**
+     * Categorized reason for discarding the entry
+     * @type {string}
+     * @memberof DiscardDeadLetterEntryRequest
+     */
+    reason?: DiscardDeadLetterEntryRequestReasonEnum;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof DiscardDeadLetterEntryRequest
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof DiscardDeadLetterEntryRequest
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof DiscardDeadLetterEntryRequest
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof DiscardDeadLetterEntryRequest
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof DiscardDeadLetterEntryRequest
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof DiscardDeadLetterEntryRequest
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof DiscardDeadLetterEntryRequest
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof DiscardDeadLetterEntryRequest
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof DiscardDeadLetterEntryRequest
+     */
+    trashed?: boolean;
 }
 
-export function DiscardDeadLetterEntryRequestToJSON(
-  value?: DiscardDeadLetterEntryRequest,
-): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    notes: value.notes,
-    reason: value.reason,
-    trashed: value.trashed,
-  };
+export function DiscardDeadLetterEntryRequestFromJSON(json: any): DiscardDeadLetterEntryRequest {
+    return {
+        ...DataObjectFromJSON(json),
+        'notes': !exists(json, 'notes') ? undefined : json['notes'],
+        'reason': !exists(json, 'reason') ? undefined : json['reason'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
+}
+
+export function DiscardDeadLetterEntryRequestToJSON(value?: DiscardDeadLetterEntryRequest): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'notes': value.notes,
+        'reason': value.reason,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum DiscardDeadLetterEntryRequestReasonEnum {
-  DUPLICATE = "duplicate",
-  INVALIDDATA = "invalid_data",
-  NOLONGERRELEVANT = "no_longer_relevant",
-  FIXEDMANUALLY = "fixed_manually",
-  OTHER = "other",
+    DUPLICATE = 'duplicate',
+    INVALIDDATA = 'invalid_data',
+    NOLONGERRELEVANT = 'no_longer_relevant',
+    FIXEDMANUALLY = 'fixed_manually',
+    OTHER = 'other'
 }
+
+

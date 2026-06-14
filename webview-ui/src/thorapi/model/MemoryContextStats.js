@@ -34,28 +34,18 @@ const DataObject_1 = require("./DataObject");
 function MemoryContextStatsFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        usedPct: !(0, runtime_1.exists)(json, "usedPct") ? undefined : json["usedPct"],
-        relevantPct: !(0, runtime_1.exists)(json, "relevantPct") ? undefined : json["relevantPct"],
-        wastePct: !(0, runtime_1.exists)(json, "wastePct") ? undefined : json["wastePct"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'usedPct': !(0, runtime_1.exists)(json, 'usedPct') ? undefined : json['usedPct'],
+        'relevantPct': !(0, runtime_1.exists)(json, 'relevantPct') ? undefined : json['relevantPct'],
+        'wastePct': !(0, runtime_1.exists)(json, 'wastePct') ? undefined : json['wastePct'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function MemoryContextStatsToJSON(value) {
@@ -64,10 +54,10 @@ function MemoryContextStatsToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        usedPct: value.usedPct,
-        relevantPct: value.relevantPct,
-        wastePct: value.wastePct,
-        trashed: value.trashed,
+        'usedPct': value.usedPct,
+        'relevantPct': value.relevantPct,
+        'wastePct': value.wastePct,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=MemoryContextStats.js.map

@@ -35,50 +35,28 @@ const DataObject_1 = require("./DataObject");
 function DeadLetterQueueFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        runId: !(0, runtime_1.exists)(json, "runId") ? undefined : json["runId"],
-        executionId: !(0, runtime_1.exists)(json, "executionId") ? undefined : json["executionId"],
-        taskId: !(0, runtime_1.exists)(json, "taskId") ? undefined : json["taskId"],
-        failureReason: !(0, runtime_1.exists)(json, "failureReason")
-            ? undefined
-            : json["failureReason"],
-        failureType: !(0, runtime_1.exists)(json, "failureType") ? undefined : json["failureType"],
-        originalInputs: !(0, runtime_1.exists)(json, "originalInputs")
-            ? undefined
-            : json["originalInputs"],
-        originalConfig: !(0, runtime_1.exists)(json, "originalConfig")
-            ? undefined
-            : json["originalConfig"],
-        quarantinedAt: !(0, runtime_1.exists)(json, "quarantinedAt")
-            ? undefined
-            : new Date(json["quarantinedAt"]),
-        reviewedBy: !(0, runtime_1.exists)(json, "reviewedBy") ? undefined : json["reviewedBy"],
-        resolution: !(0, runtime_1.exists)(json, "resolution") ? undefined : json["resolution"],
-        resolvedAt: !(0, runtime_1.exists)(json, "resolvedAt")
-            ? undefined
-            : new Date(json["resolvedAt"]),
-        notes: !(0, runtime_1.exists)(json, "notes") ? undefined : json["notes"],
-        requeuedAsRunId: !(0, runtime_1.exists)(json, "requeuedAsRunId")
-            ? undefined
-            : json["requeuedAsRunId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'runId': !(0, runtime_1.exists)(json, 'runId') ? undefined : json['runId'],
+        'executionId': !(0, runtime_1.exists)(json, 'executionId') ? undefined : json['executionId'],
+        'taskId': !(0, runtime_1.exists)(json, 'taskId') ? undefined : json['taskId'],
+        'failureReason': !(0, runtime_1.exists)(json, 'failureReason') ? undefined : json['failureReason'],
+        'failureType': !(0, runtime_1.exists)(json, 'failureType') ? undefined : json['failureType'],
+        'originalInputs': !(0, runtime_1.exists)(json, 'originalInputs') ? undefined : json['originalInputs'],
+        'originalConfig': !(0, runtime_1.exists)(json, 'originalConfig') ? undefined : json['originalConfig'],
+        'quarantinedAt': !(0, runtime_1.exists)(json, 'quarantinedAt') ? undefined : new Date(json['quarantinedAt']),
+        'reviewedBy': !(0, runtime_1.exists)(json, 'reviewedBy') ? undefined : json['reviewedBy'],
+        'resolution': !(0, runtime_1.exists)(json, 'resolution') ? undefined : json['resolution'],
+        'resolvedAt': !(0, runtime_1.exists)(json, 'resolvedAt') ? undefined : new Date(json['resolvedAt']),
+        'notes': !(0, runtime_1.exists)(json, 'notes') ? undefined : json['notes'],
+        'requeuedAsRunId': !(0, runtime_1.exists)(json, 'requeuedAsRunId') ? undefined : json['requeuedAsRunId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function DeadLetterQueueToJSON(value) {
@@ -87,30 +65,26 @@ function DeadLetterQueueToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        runId: value.runId,
-        executionId: value.executionId,
-        taskId: value.taskId,
-        failureReason: value.failureReason,
-        failureType: value.failureType,
-        originalInputs: value.originalInputs,
-        originalConfig: value.originalConfig,
-        quarantinedAt: value.quarantinedAt === undefined
-            ? undefined
-            : value.quarantinedAt.toISOString(),
-        reviewedBy: value.reviewedBy,
-        resolution: value.resolution,
-        resolvedAt: value.resolvedAt === undefined
-            ? undefined
-            : value.resolvedAt.toISOString(),
-        notes: value.notes,
-        requeuedAsRunId: value.requeuedAsRunId,
-        trashed: value.trashed,
+        'runId': value.runId,
+        'executionId': value.executionId,
+        'taskId': value.taskId,
+        'failureReason': value.failureReason,
+        'failureType': value.failureType,
+        'originalInputs': value.originalInputs,
+        'originalConfig': value.originalConfig,
+        'quarantinedAt': value.quarantinedAt === undefined ? undefined : value.quarantinedAt.toISOString(),
+        'reviewedBy': value.reviewedBy,
+        'resolution': value.resolution,
+        'resolvedAt': value.resolvedAt === undefined ? undefined : value.resolvedAt.toISOString(),
+        'notes': value.notes,
+        'requeuedAsRunId': value.requeuedAsRunId,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var DeadLetterQueueFailureTypeEnum;
 (function (DeadLetterQueueFailureTypeEnum) {
     DeadLetterQueueFailureTypeEnum["MAXRETRIES"] = "max_retries";
@@ -119,9 +93,9 @@ var DeadLetterQueueFailureTypeEnum;
     DeadLetterQueueFailureTypeEnum["MANUAL"] = "manual";
 })(DeadLetterQueueFailureTypeEnum || (exports.DeadLetterQueueFailureTypeEnum = DeadLetterQueueFailureTypeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var DeadLetterQueueResolutionEnum;
 (function (DeadLetterQueueResolutionEnum) {
     DeadLetterQueueResolutionEnum["PENDING"] = "pending";

@@ -35,29 +35,19 @@ const DataObject_1 = require("./DataObject");
 function PtgRefFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        sheetId: !(0, runtime_1.exists)(json, "sheetId") ? undefined : json["sheetId"],
-        formulaId: !(0, runtime_1.exists)(json, "formulaId") ? undefined : json["formulaId"],
-        reference: !(0, runtime_1.exists)(json, "reference") ? undefined : json["reference"],
-        type: !(0, runtime_1.exists)(json, "type") ? undefined : json["type"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'sheetId': !(0, runtime_1.exists)(json, 'sheetId') ? undefined : json['sheetId'],
+        'formulaId': !(0, runtime_1.exists)(json, 'formulaId') ? undefined : json['formulaId'],
+        'reference': !(0, runtime_1.exists)(json, 'reference') ? undefined : json['reference'],
+        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function PtgRefToJSON(value) {
@@ -66,17 +56,17 @@ function PtgRefToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        sheetId: value.sheetId,
-        formulaId: value.formulaId,
-        reference: value.reference,
-        type: value.type,
-        trashed: value.trashed,
+        'sheetId': value.sheetId,
+        'formulaId': value.formulaId,
+        'reference': value.reference,
+        'type': value.type,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var PtgRefTypeEnum;
 (function (PtgRefTypeEnum) {
     PtgRefTypeEnum["PTGADD"] = "ptgadd";

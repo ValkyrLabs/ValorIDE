@@ -36,36 +36,22 @@ const _1 = require("./");
 function ThorapiRuleFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: json["name"],
-        severity: json["severity"],
-        checkText: json["checkText"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        fix: !(0, runtime_1.exists)(json, "fix") ? undefined : json["fix"],
-        examples: !(0, runtime_1.exists)(json, "examples")
-            ? undefined
-            : json["examples"].map(_1.ArrayStringItemFromJSON),
-        sources: !(0, runtime_1.exists)(json, "sources")
-            ? undefined
-            : json["sources"].map(_1.ArrayStringItemFromJSON),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'name': json['name'],
+        'severity': json['severity'],
+        'checkText': json['checkText'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'fix': !(0, runtime_1.exists)(json, 'fix') ? undefined : json['fix'],
+        'examples': !(0, runtime_1.exists)(json, 'examples') ? undefined : json['examples'].map(_1.ArrayStringItemFromJSON),
+        'sources': !(0, runtime_1.exists)(json, 'sources') ? undefined : json['sources'].map(_1.ArrayStringItemFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ThorapiRuleToJSON(value) {
@@ -74,24 +60,20 @@ function ThorapiRuleToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        name: value.name,
-        severity: value.severity,
-        checkText: value.checkText,
-        description: value.description,
-        fix: value.fix,
-        examples: value.examples === undefined
-            ? undefined
-            : value.examples.map(_1.ArrayStringItemToJSON),
-        sources: value.sources === undefined
-            ? undefined
-            : value.sources.map(_1.ArrayStringItemToJSON),
-        trashed: value.trashed,
+        'name': value.name,
+        'severity': value.severity,
+        'checkText': value.checkText,
+        'description': value.description,
+        'fix': value.fix,
+        'examples': value.examples === undefined ? undefined : value.examples.map(_1.ArrayStringItemToJSON),
+        'sources': value.sources === undefined ? undefined : value.sources.map(_1.ArrayStringItemToJSON),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ThorapiRuleSeverityEnum;
 (function (ThorapiRuleSeverityEnum) {
     ThorapiRuleSeverityEnum["INFO"] = "info";

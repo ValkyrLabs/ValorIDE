@@ -35,38 +35,24 @@ const DataObject_1 = require("./DataObject");
 function HostInstanceFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        domain: !(0, runtime_1.exists)(json, "domain") ? undefined : json["domain"],
-        cluste: !(0, runtime_1.exists)(json, "cluste") ? undefined : json["cluste"],
-        serviceArn: !(0, runtime_1.exists)(json, "serviceArn") ? undefined : json["serviceArn"],
-        targetGroupArn: !(0, runtime_1.exists)(json, "targetGroupArn")
-            ? undefined
-            : json["targetGroupArn"],
-        listenerRuleArn: !(0, runtime_1.exists)(json, "listenerRuleArn")
-            ? undefined
-            : json["listenerRuleArn"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        cpus: !(0, runtime_1.exists)(json, "cpus") ? undefined : json["cpus"],
-        memory: !(0, runtime_1.exists)(json, "memory") ? undefined : json["memory"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'domain': !(0, runtime_1.exists)(json, 'domain') ? undefined : json['domain'],
+        'cluste': !(0, runtime_1.exists)(json, 'cluste') ? undefined : json['cluste'],
+        'serviceArn': !(0, runtime_1.exists)(json, 'serviceArn') ? undefined : json['serviceArn'],
+        'targetGroupArn': !(0, runtime_1.exists)(json, 'targetGroupArn') ? undefined : json['targetGroupArn'],
+        'listenerRuleArn': !(0, runtime_1.exists)(json, 'listenerRuleArn') ? undefined : json['listenerRuleArn'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'cpus': !(0, runtime_1.exists)(json, 'cpus') ? undefined : json['cpus'],
+        'memory': !(0, runtime_1.exists)(json, 'memory') ? undefined : json['memory'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function HostInstanceToJSON(value) {
@@ -75,22 +61,22 @@ function HostInstanceToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        name: value.name,
-        domain: value.domain,
-        cluste: value.cluste,
-        serviceArn: value.serviceArn,
-        targetGroupArn: value.targetGroupArn,
-        listenerRuleArn: value.listenerRuleArn,
-        status: value.status,
-        cpus: value.cpus,
-        memory: value.memory,
-        trashed: value.trashed,
+        'name': value.name,
+        'domain': value.domain,
+        'cluste': value.cluste,
+        'serviceArn': value.serviceArn,
+        'targetGroupArn': value.targetGroupArn,
+        'listenerRuleArn': value.listenerRuleArn,
+        'status': value.status,
+        'cpus': value.cpus,
+        'memory': value.memory,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var HostInstanceStatusEnum;
 (function (HostInstanceStatusEnum) {
     HostInstanceStatusEnum["STARTING"] = "starting";

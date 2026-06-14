@@ -13,60 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { SubscriptionPlan } from "@thorapi/model/SubscriptionPlan";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { SubscriptionPlan } from '@thorapi/model/SubscriptionPlan'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type SubscriptionPlanResponse = SubscriptionPlan[];
+type SubscriptionPlanResponse = SubscriptionPlan[]
+type SubscriptionPlanPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<SubscriptionPlan>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type SubscriptionPlanListQueryArg = {
+  example?: Partial<SubscriptionPlan>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toSubscriptionPlanList = (result: unknown): SubscriptionPlanResponse => {
   if (Array.isArray(result)) {
-    return result as SubscriptionPlanResponse;
+    return result as SubscriptionPlanResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as SubscriptionPlanResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as SubscriptionPlanResponse) : []
+}
 
 export const SubscriptionPlanService = createApi({
-  reducerPath: "SubscriptionPlan", // This should remain unique
+  reducerPath: 'SubscriptionPlan', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["SubscriptionPlan"],
+  tagTypes: ['SubscriptionPlan'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSubscriptionPlansPaged: build.query<
-      SubscriptionPlanResponse,
-      { page: number; size?: number; example?: Partial<SubscriptionPlan> }
-    >({
+    getSubscriptionPlansPaged: build.query<SubscriptionPlanResponse, SubscriptionPlanPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SubscriptionPlan?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SubscriptionPlan?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toSubscriptionPlanList(result);
+        const rows = toSubscriptionPlanList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SubscriptionPlan" as const, id })),
-          { type: "SubscriptionPlan", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'SubscriptionPlan' as const, id })),
+          { type: 'SubscriptionPlan', id: `PAGE_${page}` },
+          { type: 'SubscriptionPlan', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSubscriptionPlans: build.query<
-      SubscriptionPlanResponse,
-      { example?: Partial<SubscriptionPlan> } | void
-    >({
+    getSubscriptionPlans: build.query<SubscriptionPlanResponse, SubscriptionPlanListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -75,112 +82,86 @@ export const SubscriptionPlanService = createApi({
         return `SubscriptionPlan`;
       },
       providesTags: (result) => {
-        const rows = toSubscriptionPlanList(result);
+        const rows = toSubscriptionPlanList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SubscriptionPlan" as const, id })),
-          { type: "SubscriptionPlan", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'SubscriptionPlan' as const, id })),
+          { type: 'SubscriptionPlan', id: 'LIST' },
+          { type: 'SubscriptionPlan', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addSubscriptionPlan: build.mutation<
-      SubscriptionPlan,
-      Partial<SubscriptionPlan>
-    >({
+    addSubscriptionPlan: build.mutation<SubscriptionPlan, Partial<SubscriptionPlan>>({
       query: (body) => ({
         url: `SubscriptionPlan`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "SubscriptionPlan", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'SubscriptionPlan', id: 'LIST' },
+        { type: 'SubscriptionPlan', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getSubscriptionPlan: build.query<SubscriptionPlan, string>({
       query: (id) => `SubscriptionPlan/${id}`,
-      providesTags: (result, error, id) => [{ type: "SubscriptionPlan", id }],
+      providesTags: (result, error, id) => [{ type: 'SubscriptionPlan', id }],
     }),
 
     // 5) Update
-    updateSubscriptionPlan: build.mutation<
-      void,
-      Pick<SubscriptionPlan, "id"> & Partial<SubscriptionPlan>
-    >({
+    updateSubscriptionPlan: build.mutation<SubscriptionPlan, Pick<SubscriptionPlan, 'id'> & Partial<SubscriptionPlan>>({
       query: ({ id, ...patch }) => ({
         url: `SubscriptionPlan/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            SubscriptionPlanService.util.updateQueryData(
-              "getSubscriptionPlan",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<SubscriptionPlan, "id">,
-      ) => [
-        { type: "SubscriptionPlan", id },
-        { type: "SubscriptionPlan", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<SubscriptionPlan, 'id'>) => [
+        { type: 'SubscriptionPlan', id },
+        { type: 'SubscriptionPlan', id: 'LIST' },
+        { type: 'SubscriptionPlan', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteSubscriptionPlan: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteSubscriptionPlan: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `SubscriptionPlan/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "SubscriptionPlan", id },
+        { type: 'SubscriptionPlan', id },
+        { type: 'SubscriptionPlan', id: 'LIST' },
+        { type: 'SubscriptionPlan', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSubscriptionPlanCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteSubscriptionPlanCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `SubscriptionPlan/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "SubscriptionPlan", id },
-        { type: "SubscriptionPlan", id: "LIST" },
+        { type: 'SubscriptionPlan', id },
+        { type: 'SubscriptionPlan', id: 'LIST' },
+        { type: 'SubscriptionPlan', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetSubscriptionPlansPagedQuery`
 export const {
-  useGetSubscriptionPlansPagedQuery, // immediate fetch
+  useGetSubscriptionPlansPagedQuery,     // immediate fetch
   useLazyGetSubscriptionPlansPagedQuery, // lazy fetch
   useGetSubscriptionPlanQuery,
   useGetSubscriptionPlansQuery,
@@ -188,4 +169,4 @@ export const {
   useUpdateSubscriptionPlanMutation,
   useDeleteSubscriptionPlanMutation,
   useDeleteSubscriptionPlanCascadeMutation,
-} = SubscriptionPlanService;
+} = SubscriptionPlanService

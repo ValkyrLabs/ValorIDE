@@ -34,29 +34,17 @@ const DataObject_1 = require("./DataObject");
 function ActivateAgent200ResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        scheduled: !(0, runtime_1.exists)(json, "scheduled") ? undefined : json["scheduled"],
-        triggersRegistered: !(0, runtime_1.exists)(json, "triggersRegistered")
-            ? undefined
-            : json["triggersRegistered"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'scheduled': !(0, runtime_1.exists)(json, 'scheduled') ? undefined : json['scheduled'],
+        'triggersRegistered': !(0, runtime_1.exists)(json, 'triggersRegistered') ? undefined : json['triggersRegistered'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ActivateAgent200ResponseToJSON(value) {
@@ -65,9 +53,9 @@ function ActivateAgent200ResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        scheduled: value.scheduled,
-        triggersRegistered: value.triggersRegistered,
-        trashed: value.trashed,
+        'scheduled': value.scheduled,
+        'triggersRegistered': value.triggersRegistered,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=ActivateAgent200Response.js.map

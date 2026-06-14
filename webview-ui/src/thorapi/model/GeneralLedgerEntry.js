@@ -35,40 +35,22 @@ const DataObject_1 = require("./DataObject");
 function GeneralLedgerEntryFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        entryDate: !(0, runtime_1.exists)(json, "entryDate")
-            ? undefined
-            : new Date(json["entryDate"]),
-        debitAccount: !(0, runtime_1.exists)(json, "debitAccount")
-            ? undefined
-            : json["debitAccount"],
-        creditAccount: !(0, runtime_1.exists)(json, "creditAccount")
-            ? undefined
-            : json["creditAccount"],
-        amount: !(0, runtime_1.exists)(json, "amount") ? undefined : json["amount"],
-        referenceType: !(0, runtime_1.exists)(json, "referenceType")
-            ? undefined
-            : json["referenceType"],
-        referenceId: !(0, runtime_1.exists)(json, "referenceId") ? undefined : json["referenceId"],
-        notes: !(0, runtime_1.exists)(json, "notes") ? undefined : json["notes"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'entryDate': !(0, runtime_1.exists)(json, 'entryDate') ? undefined : new Date(json['entryDate']),
+        'debitAccount': !(0, runtime_1.exists)(json, 'debitAccount') ? undefined : json['debitAccount'],
+        'creditAccount': !(0, runtime_1.exists)(json, 'creditAccount') ? undefined : json['creditAccount'],
+        'amount': !(0, runtime_1.exists)(json, 'amount') ? undefined : json['amount'],
+        'referenceType': !(0, runtime_1.exists)(json, 'referenceType') ? undefined : json['referenceType'],
+        'referenceId': !(0, runtime_1.exists)(json, 'referenceId') ? undefined : json['referenceId'],
+        'notes': !(0, runtime_1.exists)(json, 'notes') ? undefined : json['notes'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function GeneralLedgerEntryToJSON(value) {
@@ -77,20 +59,20 @@ function GeneralLedgerEntryToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        entryDate: value.entryDate === undefined ? undefined : value.entryDate.toISOString(),
-        debitAccount: value.debitAccount,
-        creditAccount: value.creditAccount,
-        amount: value.amount,
-        referenceType: value.referenceType,
-        referenceId: value.referenceId,
-        notes: value.notes,
-        trashed: value.trashed,
+        'entryDate': value.entryDate === undefined ? undefined : value.entryDate.toISOString(),
+        'debitAccount': value.debitAccount,
+        'creditAccount': value.creditAccount,
+        'amount': value.amount,
+        'referenceType': value.referenceType,
+        'referenceId': value.referenceId,
+        'notes': value.notes,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var GeneralLedgerEntryReferenceTypeEnum;
 (function (GeneralLedgerEntryReferenceTypeEnum) {
     GeneralLedgerEntryReferenceTypeEnum["PAYMENTTRANSACTION"] = "paymenttransaction";

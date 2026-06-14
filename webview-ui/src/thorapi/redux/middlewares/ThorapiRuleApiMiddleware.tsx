@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_THORAPIRULE_REQUEST,
-  FETCH_THORAPIRULE_REQUEST,
-  LIST_THORAPIRULE_REQUEST,
-  UPDATE_THORAPIRULE_REQUEST,
-  DELETE_THORAPIRULE_REQUEST,
-  addThorapiRuleFailure,
-  addThorapiRuleSuccess,
-  fetchThorapiRuleFailure,
-  fetchThorapiRuleSuccess,
-  listThorapiRuleFailure,
-  listThorapiRuleSuccess,
-  updateThorapiRuleFailure,
-  updateThorapiRuleSuccess,
-  deleteThorapiRuleFailure,
-  deleteThorapiRuleSuccess,
-} from "../actions/ThorapiRuleApiAction";
+
+    ADD_THORAPIRULE_REQUEST,
+    FETCH_THORAPIRULE_REQUEST,
+    LIST_THORAPIRULE_REQUEST,
+    UPDATE_THORAPIRULE_REQUEST,
+    DELETE_THORAPIRULE_REQUEST,
+
+    addThorapiRuleFailure,
+    addThorapiRuleSuccess,
+
+    fetchThorapiRuleFailure,
+    fetchThorapiRuleSuccess,
+    
+    listThorapiRuleFailure,
+    listThorapiRuleSuccess,
+
+    updateThorapiRuleFailure,
+    updateThorapiRuleSuccess,
+    
+    deleteThorapiRuleFailure,
+    deleteThorapiRuleSuccess,
+    
+} from '../actions/ThorapiRuleApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: ThorapiRule
 */
 
-export const ThorapiRuleMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("ThorapiRule MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const ThorapiRuleMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("ThorapiRule MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

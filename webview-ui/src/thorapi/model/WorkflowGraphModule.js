@@ -35,33 +35,21 @@ const _1 = require("./");
 function WorkflowGraphModuleFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        moduleId: !(0, runtime_1.exists)(json, "moduleId") ? undefined : json["moduleId"],
-        nodeId: !(0, runtime_1.exists)(json, "nodeId") ? undefined : json["nodeId"],
-        className: !(0, runtime_1.exists)(json, "className") ? undefined : json["className"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        displayName: !(0, runtime_1.exists)(json, "displayName") ? undefined : json["displayName"],
-        execModuleConfig: !(0, runtime_1.exists)(json, "execModuleConfig")
-            ? undefined
-            : (0, _1.ExecModuleConfigFromJSON)(json["execModuleConfig"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'moduleId': !(0, runtime_1.exists)(json, 'moduleId') ? undefined : json['moduleId'],
+        'nodeId': !(0, runtime_1.exists)(json, 'nodeId') ? undefined : json['nodeId'],
+        'className': !(0, runtime_1.exists)(json, 'className') ? undefined : json['className'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'displayName': !(0, runtime_1.exists)(json, 'displayName') ? undefined : json['displayName'],
+        'execModuleConfig': !(0, runtime_1.exists)(json, 'execModuleConfig') ? undefined : (0, _1.ExecModuleConfigFromJSON)(json['execModuleConfig']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function WorkflowGraphModuleToJSON(value) {
@@ -70,13 +58,13 @@ function WorkflowGraphModuleToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        moduleId: value.moduleId,
-        nodeId: value.nodeId,
-        className: value.className,
-        name: value.name,
-        displayName: value.displayName,
-        execModuleConfig: (0, _1.ExecModuleConfigToJSON)(value.execModuleConfig),
-        trashed: value.trashed,
+        'moduleId': value.moduleId,
+        'nodeId': value.nodeId,
+        'className': value.className,
+        'name': value.name,
+        'displayName': value.displayName,
+        'execModuleConfig': (0, _1.ExecModuleConfigToJSON)(value.execModuleConfig),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=WorkflowGraphModule.js.map

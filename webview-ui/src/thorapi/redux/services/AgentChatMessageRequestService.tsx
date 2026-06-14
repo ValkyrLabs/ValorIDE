@@ -13,69 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { AgentChatMessageRequest } from "@thorapi/model/AgentChatMessageRequest";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { AgentChatMessageRequest } from '@thorapi/model/AgentChatMessageRequest'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type AgentChatMessageRequestResponse = AgentChatMessageRequest[];
+type AgentChatMessageRequestResponse = AgentChatMessageRequest[]
+type AgentChatMessageRequestPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<AgentChatMessageRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toAgentChatMessageRequestList = (
-  result: unknown,
-): AgentChatMessageRequestResponse => {
+type AgentChatMessageRequestListQueryArg = {
+  example?: Partial<AgentChatMessageRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toAgentChatMessageRequestList = (result: unknown): AgentChatMessageRequestResponse => {
   if (Array.isArray(result)) {
-    return result as AgentChatMessageRequestResponse;
+    return result as AgentChatMessageRequestResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as AgentChatMessageRequestResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as AgentChatMessageRequestResponse) : []
+}
 
 export const AgentChatMessageRequestService = createApi({
-  reducerPath: "AgentChatMessageRequest", // This should remain unique
+  reducerPath: 'AgentChatMessageRequest', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["AgentChatMessageRequest"],
+  tagTypes: ['AgentChatMessageRequest'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getAgentChatMessageRequestsPaged: build.query<
-      AgentChatMessageRequestResponse,
-      {
-        page: number;
-        size?: number;
-        example?: Partial<AgentChatMessageRequest>;
-      }
-    >({
+    getAgentChatMessageRequestsPaged: build.query<AgentChatMessageRequestResponse, AgentChatMessageRequestPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `AgentChatMessageRequest?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `AgentChatMessageRequest?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toAgentChatMessageRequestList(result);
+        const rows = toAgentChatMessageRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "AgentChatMessageRequest" as const,
-              id,
-            })),
-          { type: "AgentChatMessageRequest", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'AgentChatMessageRequest' as const, id })),
+          { type: 'AgentChatMessageRequest', id: `PAGE_${page}` },
+          { type: 'AgentChatMessageRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getAgentChatMessageRequests: build.query<
-      AgentChatMessageRequestResponse,
-      { example?: Partial<AgentChatMessageRequest> } | void
-    >({
+    getAgentChatMessageRequests: build.query<AgentChatMessageRequestResponse, AgentChatMessageRequestListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -84,117 +82,86 @@ export const AgentChatMessageRequestService = createApi({
         return `AgentChatMessageRequest`;
       },
       providesTags: (result) => {
-        const rows = toAgentChatMessageRequestList(result);
+        const rows = toAgentChatMessageRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "AgentChatMessageRequest" as const,
-              id,
-            })),
-          { type: "AgentChatMessageRequest", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'AgentChatMessageRequest' as const, id })),
+          { type: 'AgentChatMessageRequest', id: 'LIST' },
+          { type: 'AgentChatMessageRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addAgentChatMessageRequest: build.mutation<
-      AgentChatMessageRequest,
-      Partial<AgentChatMessageRequest>
-    >({
+    addAgentChatMessageRequest: build.mutation<AgentChatMessageRequest, Partial<AgentChatMessageRequest>>({
       query: (body) => ({
         url: `AgentChatMessageRequest`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "AgentChatMessageRequest", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'AgentChatMessageRequest', id: 'LIST' },
+        { type: 'AgentChatMessageRequest', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getAgentChatMessageRequest: build.query<AgentChatMessageRequest, string>({
       query: (id) => `AgentChatMessageRequest/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "AgentChatMessageRequest", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'AgentChatMessageRequest', id }],
     }),
 
     // 5) Update
-    updateAgentChatMessageRequest: build.mutation<
-      void,
-      Pick<AgentChatMessageRequest, "id"> & Partial<AgentChatMessageRequest>
-    >({
+    updateAgentChatMessageRequest: build.mutation<AgentChatMessageRequest, Pick<AgentChatMessageRequest, 'id'> & Partial<AgentChatMessageRequest>>({
       query: ({ id, ...patch }) => ({
         url: `AgentChatMessageRequest/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            AgentChatMessageRequestService.util.updateQueryData(
-              "getAgentChatMessageRequest",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<AgentChatMessageRequest, "id">,
-      ) => [
-        { type: "AgentChatMessageRequest", id },
-        { type: "AgentChatMessageRequest", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<AgentChatMessageRequest, 'id'>) => [
+        { type: 'AgentChatMessageRequest', id },
+        { type: 'AgentChatMessageRequest', id: 'LIST' },
+        { type: 'AgentChatMessageRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteAgentChatMessageRequest: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteAgentChatMessageRequest: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `AgentChatMessageRequest/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "AgentChatMessageRequest", id },
+        { type: 'AgentChatMessageRequest', id },
+        { type: 'AgentChatMessageRequest', id: 'LIST' },
+        { type: 'AgentChatMessageRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteAgentChatMessageRequestCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteAgentChatMessageRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `AgentChatMessageRequest/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "AgentChatMessageRequest", id },
-        { type: "AgentChatMessageRequest", id: "LIST" },
+        { type: 'AgentChatMessageRequest', id },
+        { type: 'AgentChatMessageRequest', id: 'LIST' },
+        { type: 'AgentChatMessageRequest', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetAgentChatMessageRequestsPagedQuery`
 export const {
-  useGetAgentChatMessageRequestsPagedQuery, // immediate fetch
+  useGetAgentChatMessageRequestsPagedQuery,     // immediate fetch
   useLazyGetAgentChatMessageRequestsPagedQuery, // lazy fetch
   useGetAgentChatMessageRequestQuery,
   useGetAgentChatMessageRequestsQuery,
@@ -202,4 +169,4 @@ export const {
   useUpdateAgentChatMessageRequestMutation,
   useDeleteAgentChatMessageRequestMutation,
   useDeleteAgentChatMessageRequestCascadeMutation,
-} = AgentChatMessageRequestService;
+} = AgentChatMessageRequestService

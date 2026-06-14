@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_MERGERANGE_REQUEST,
-  FETCH_MERGERANGE_REQUEST,
-  LIST_MERGERANGE_REQUEST,
-  UPDATE_MERGERANGE_REQUEST,
-  DELETE_MERGERANGE_REQUEST,
-  addMergeRangeFailure,
-  addMergeRangeSuccess,
-  fetchMergeRangeFailure,
-  fetchMergeRangeSuccess,
-  listMergeRangeFailure,
-  listMergeRangeSuccess,
-  updateMergeRangeFailure,
-  updateMergeRangeSuccess,
-  deleteMergeRangeFailure,
-  deleteMergeRangeSuccess,
-} from "../actions/MergeRangeApiAction";
+
+    ADD_MERGERANGE_REQUEST,
+    FETCH_MERGERANGE_REQUEST,
+    LIST_MERGERANGE_REQUEST,
+    UPDATE_MERGERANGE_REQUEST,
+    DELETE_MERGERANGE_REQUEST,
+
+    addMergeRangeFailure,
+    addMergeRangeSuccess,
+
+    fetchMergeRangeFailure,
+    fetchMergeRangeSuccess,
+    
+    listMergeRangeFailure,
+    listMergeRangeSuccess,
+
+    updateMergeRangeFailure,
+    updateMergeRangeSuccess,
+    
+    deleteMergeRangeFailure,
+    deleteMergeRangeSuccess,
+    
+} from '../actions/MergeRangeApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: MergeRange
 */
 
-export const MergeRangeMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("MergeRange MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const MergeRangeMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("MergeRange MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

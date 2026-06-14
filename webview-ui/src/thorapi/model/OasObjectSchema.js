@@ -35,40 +35,22 @@ const _1 = require("./");
 function OasObjectSchemaFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        oasComponentId: !(0, runtime_1.exists)(json, "oasComponentId")
-            ? undefined
-            : json["oasComponentId"],
-        oasParameterId: !(0, runtime_1.exists)(json, "oasParameterId")
-            ? undefined
-            : json["oasParameterId"],
-        oasResponseId: !(0, runtime_1.exists)(json, "oasResponseId")
-            ? undefined
-            : json["oasResponseId"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        type: !(0, runtime_1.exists)(json, "type") ? undefined : json["type"],
-        format: !(0, runtime_1.exists)(json, "format") ? undefined : json["format"],
-        oasEnum: !(0, runtime_1.exists)(json, "oasEnum")
-            ? undefined
-            : json["oasEnum"].map(_1.OasEnumFromJSON),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'oasComponentId': !(0, runtime_1.exists)(json, 'oasComponentId') ? undefined : json['oasComponentId'],
+        'oasParameterId': !(0, runtime_1.exists)(json, 'oasParameterId') ? undefined : json['oasParameterId'],
+        'oasResponseId': !(0, runtime_1.exists)(json, 'oasResponseId') ? undefined : json['oasResponseId'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
+        'format': !(0, runtime_1.exists)(json, 'format') ? undefined : json['format'],
+        'oasEnum': !(0, runtime_1.exists)(json, 'oasEnum') ? undefined : json['oasEnum'].map(_1.OasEnumFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function OasObjectSchemaToJSON(value) {
@@ -77,16 +59,14 @@ function OasObjectSchemaToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        oasComponentId: value.oasComponentId,
-        oasParameterId: value.oasParameterId,
-        oasResponseId: value.oasResponseId,
-        description: value.description,
-        type: value.type,
-        format: value.format,
-        oasEnum: value.oasEnum === undefined
-            ? undefined
-            : value.oasEnum.map(_1.OasEnumToJSON),
-        trashed: value.trashed,
+        'oasComponentId': value.oasComponentId,
+        'oasParameterId': value.oasParameterId,
+        'oasResponseId': value.oasResponseId,
+        'description': value.description,
+        'type': value.type,
+        'format': value.format,
+        'oasEnum': value.oasEnum === undefined ? undefined : value.oasEnum.map(_1.OasEnumToJSON),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=OasObjectSchema.js.map

@@ -34,44 +34,24 @@ const DataObject_1 = require("./DataObject");
 function PaymentTransactionFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        customerId: !(0, runtime_1.exists)(json, "customerId") ? undefined : json["customerId"],
-        paidAt: !(0, runtime_1.exists)(json, "paidAt") ? undefined : new Date(json["paidAt"]),
-        amountCents: !(0, runtime_1.exists)(json, "amountCents") ? undefined : json["amountCents"],
-        credits: !(0, runtime_1.exists)(json, "credits") ? undefined : json["credits"],
-        stripeCustomerId: !(0, runtime_1.exists)(json, "stripeCustomerId")
-            ? undefined
-            : json["stripeCustomerId"],
-        stripePaymentIntentId: !(0, runtime_1.exists)(json, "stripePaymentIntentId")
-            ? undefined
-            : json["stripePaymentIntentId"],
-        stripeCheckoutSessionId: !(0, runtime_1.exists)(json, "stripeCheckoutSessionId")
-            ? undefined
-            : json["stripeCheckoutSessionId"],
-        paymentStatus: !(0, runtime_1.exists)(json, "paymentStatus")
-            ? undefined
-            : json["paymentStatus"],
-        idempotencyKey: !(0, runtime_1.exists)(json, "idempotencyKey")
-            ? undefined
-            : json["idempotencyKey"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'customerId': !(0, runtime_1.exists)(json, 'customerId') ? undefined : json['customerId'],
+        'paidAt': !(0, runtime_1.exists)(json, 'paidAt') ? undefined : new Date(json['paidAt']),
+        'amountCents': !(0, runtime_1.exists)(json, 'amountCents') ? undefined : json['amountCents'],
+        'credits': !(0, runtime_1.exists)(json, 'credits') ? undefined : json['credits'],
+        'stripeCustomerId': !(0, runtime_1.exists)(json, 'stripeCustomerId') ? undefined : json['stripeCustomerId'],
+        'stripePaymentIntentId': !(0, runtime_1.exists)(json, 'stripePaymentIntentId') ? undefined : json['stripePaymentIntentId'],
+        'stripeCheckoutSessionId': !(0, runtime_1.exists)(json, 'stripeCheckoutSessionId') ? undefined : json['stripeCheckoutSessionId'],
+        'paymentStatus': !(0, runtime_1.exists)(json, 'paymentStatus') ? undefined : json['paymentStatus'],
+        'idempotencyKey': !(0, runtime_1.exists)(json, 'idempotencyKey') ? undefined : json['idempotencyKey'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function PaymentTransactionToJSON(value) {
@@ -80,16 +60,16 @@ function PaymentTransactionToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        customerId: value.customerId,
-        paidAt: value.paidAt === undefined ? undefined : value.paidAt.toISOString(),
-        amountCents: value.amountCents,
-        credits: value.credits,
-        stripeCustomerId: value.stripeCustomerId,
-        stripePaymentIntentId: value.stripePaymentIntentId,
-        stripeCheckoutSessionId: value.stripeCheckoutSessionId,
-        paymentStatus: value.paymentStatus,
-        idempotencyKey: value.idempotencyKey,
-        trashed: value.trashed,
+        'customerId': value.customerId,
+        'paidAt': value.paidAt === undefined ? undefined : value.paidAt.toISOString(),
+        'amountCents': value.amountCents,
+        'credits': value.credits,
+        'stripeCustomerId': value.stripeCustomerId,
+        'stripePaymentIntentId': value.stripePaymentIntentId,
+        'stripeCheckoutSessionId': value.stripeCheckoutSessionId,
+        'paymentStatus': value.paymentStatus,
+        'idempotencyKey': value.idempotencyKey,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=PaymentTransaction.js.map

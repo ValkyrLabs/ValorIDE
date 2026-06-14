@@ -35,45 +35,23 @@ const DataObject_1 = require("./DataObject");
 function CircuitBreakerStateFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        target: !(0, runtime_1.exists)(json, "target") ? undefined : json["target"],
-        state: !(0, runtime_1.exists)(json, "state") ? undefined : json["state"],
-        failureCount: !(0, runtime_1.exists)(json, "failureCount")
-            ? undefined
-            : json["failureCount"],
-        successCount: !(0, runtime_1.exists)(json, "successCount")
-            ? undefined
-            : json["successCount"],
-        lastFailureAt: !(0, runtime_1.exists)(json, "lastFailureAt")
-            ? undefined
-            : new Date(json["lastFailureAt"]),
-        openedAt: !(0, runtime_1.exists)(json, "openedAt")
-            ? undefined
-            : new Date(json["openedAt"]),
-        nextRetryAt: !(0, runtime_1.exists)(json, "nextRetryAt")
-            ? undefined
-            : new Date(json["nextRetryAt"]),
-        windowStartAt: !(0, runtime_1.exists)(json, "windowStartAt")
-            ? undefined
-            : new Date(json["windowStartAt"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'target': !(0, runtime_1.exists)(json, 'target') ? undefined : json['target'],
+        'state': !(0, runtime_1.exists)(json, 'state') ? undefined : json['state'],
+        'failureCount': !(0, runtime_1.exists)(json, 'failureCount') ? undefined : json['failureCount'],
+        'successCount': !(0, runtime_1.exists)(json, 'successCount') ? undefined : json['successCount'],
+        'lastFailureAt': !(0, runtime_1.exists)(json, 'lastFailureAt') ? undefined : new Date(json['lastFailureAt']),
+        'openedAt': !(0, runtime_1.exists)(json, 'openedAt') ? undefined : new Date(json['openedAt']),
+        'nextRetryAt': !(0, runtime_1.exists)(json, 'nextRetryAt') ? undefined : new Date(json['nextRetryAt']),
+        'windowStartAt': !(0, runtime_1.exists)(json, 'windowStartAt') ? undefined : new Date(json['windowStartAt']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function CircuitBreakerStateToJSON(value) {
@@ -82,27 +60,21 @@ function CircuitBreakerStateToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        target: value.target,
-        state: value.state,
-        failureCount: value.failureCount,
-        successCount: value.successCount,
-        lastFailureAt: value.lastFailureAt === undefined
-            ? undefined
-            : value.lastFailureAt.toISOString(),
-        openedAt: value.openedAt === undefined ? undefined : value.openedAt.toISOString(),
-        nextRetryAt: value.nextRetryAt === undefined
-            ? undefined
-            : value.nextRetryAt.toISOString(),
-        windowStartAt: value.windowStartAt === undefined
-            ? undefined
-            : value.windowStartAt.toISOString(),
-        trashed: value.trashed,
+        'target': value.target,
+        'state': value.state,
+        'failureCount': value.failureCount,
+        'successCount': value.successCount,
+        'lastFailureAt': value.lastFailureAt === undefined ? undefined : value.lastFailureAt.toISOString(),
+        'openedAt': value.openedAt === undefined ? undefined : value.openedAt.toISOString(),
+        'nextRetryAt': value.nextRetryAt === undefined ? undefined : value.nextRetryAt.toISOString(),
+        'windowStartAt': value.windowStartAt === undefined ? undefined : value.windowStartAt.toISOString(),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var CircuitBreakerStateStateEnum;
 (function (CircuitBreakerStateStateEnum) {
     CircuitBreakerStateStateEnum["CLOSED"] = "closed";

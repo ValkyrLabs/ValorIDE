@@ -26,16 +26,19 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 import {
-  ArrayIntegerItem,
-  ArrayIntegerItemFromJSON,
-  ArrayIntegerItemToJSON,
-  OasObjectSchema,
-  OasObjectSchemaFromJSON,
-  OasObjectSchemaToJSON,
-} from "./";
+
+
+    ArrayIntegerItem,
+    ArrayIntegerItemFromJSON,
+    ArrayIntegerItemToJSON,
+    OasObjectSchema,
+    OasObjectSchemaFromJSON,
+    OasObjectSchemaToJSON,
+} from './';
+
 
 // thorapi
 
@@ -44,304 +47,262 @@ import {
  * @export
  * @interface ExecModuleIOConfig
  */
-export type ExecModuleIOConfig = DataObject & {
-  /**
-   *
-   * @type {OasObjectSchema}
-   * @memberof ExecModuleIOConfig
-   */
-  inputSchema?: OasObjectSchema;
-  /**
-   *
-   * @type {OasObjectSchema}
-   * @memberof ExecModuleIOConfig
-   */
-  outputSchema?: OasObjectSchema;
-  /**
-   *
-   * @type {string}
-   * @memberof ExecModuleIOConfig
-   */
-  inputMapping?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof ExecModuleIOConfig
-   */
-  outputMapping?: string;
-  /**
-   * JSONPath mappings for contact fields
-   * @type {string}
-   * @memberof ExecModuleIOConfig
-   */
-  contactMapping?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof ExecModuleIOConfig
-   */
-  field?: string;
-  /**
-   * Flatten output structure
-   * @type {boolean}
-   * @memberof ExecModuleIOConfig
-   */
-  flattenOutput?: boolean;
-  /**
-   * Optional grouping field
-   * @type {string}
-   * @memberof ExecModuleIOConfig
-   */
-  groupBy?: string;
-  /**
-   * Output image shape (default [28,28,1])
-   * @type {Array<ArrayIntegerItem>}
-   * @memberof ExecModuleIOConfig
-   */
-  imageShape?: Array<ArrayIntegerItem>;
-  /**
-   * Input shape [height, width, channels] (default [224,224,3])
-   * @type {Array<ArrayIntegerItem>}
-   * @memberof ExecModuleIOConfig
-   */
-  inputShape?: Array<ArrayIntegerItem>;
-  /**
-   * Number of output classes (default 10)
-   * @type {number}
-   * @memberof ExecModuleIOConfig
-   */
-  numClasses?: number;
-  /**
-   * Override operation from input (useful for fixed workflows)
-   * @type {string}
-   * @memberof ExecModuleIOConfig
-   */
-  operationMode?: string;
-  /**
-   * Number of output classes
-   * @type {number}
-   * @memberof ExecModuleIOConfig
-   */
-  outputClasses?: number;
-  /**
-   * Output mode: \'last\' (default), \'all\', \'sequence\'
-   * @type {string}
-   * @memberof ExecModuleIOConfig
-   */
-  outputMode?: string;
-  /**
-   * Output field name
-   * @type {string}
-   * @memberof ExecModuleIOConfig
-   */
-  outputField?: string;
-  /**
-   * Format output JSON
-   * @type {boolean}
-   * @memberof ExecModuleIOConfig
-   */
-  prettyPrint?: boolean;
-  /**
-   *
-   * @type {string}
-   * @memberof ExecModuleIOConfig
-   */
-  projection?: string;
-  /**
-   * Validation schema
-   * @type {string}
-   * @memberof ExecModuleIOConfig
-   */
-  schema?: string;
-  /**
-   * Schema registry URL
-   * @type {string}
-   * @memberof ExecModuleIOConfig
-   */
-  schemaRegistryUrl?: string;
-  /**
-   * Field containing data to validate
-   * @type {string}
-   * @memberof ExecModuleIOConfig
-   */
-  sourcePath?: string;
-  /**
-   * Field containing timestamp
-   * @type {string}
-   * @memberof ExecModuleIOConfig
-   */
-  timestampField?: string;
-  /**
-   * Field to aggregate
-   * @type {string}
-   * @memberof ExecModuleIOConfig
-   */
-  valueField?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof ExecModuleIOConfig
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof ExecModuleIOConfig
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof ExecModuleIOConfig
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof ExecModuleIOConfig
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof ExecModuleIOConfig
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof ExecModuleIOConfig
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof ExecModuleIOConfig
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof ExecModuleIOConfig
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof ExecModuleIOConfig
-   */
-  trashed?: boolean;
-};
+export type ExecModuleIOConfig  = DataObject & {
+    /**
+     * 
+     * @type {OasObjectSchema}
+     * @memberof ExecModuleIOConfig
+     */
+    inputSchema?: OasObjectSchema;
+    /**
+     * 
+     * @type {OasObjectSchema}
+     * @memberof ExecModuleIOConfig
+     */
+    outputSchema?: OasObjectSchema;
+    /**
+     * 
+     * @type {string}
+     * @memberof ExecModuleIOConfig
+     */
+    inputMapping?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ExecModuleIOConfig
+     */
+    outputMapping?: string;
+    /**
+     * JSONPath mappings for contact fields
+     * @type {string}
+     * @memberof ExecModuleIOConfig
+     */
+    contactMapping?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ExecModuleIOConfig
+     */
+    field?: string;
+    /**
+     * Flatten output structure
+     * @type {boolean}
+     * @memberof ExecModuleIOConfig
+     */
+    flattenOutput?: boolean;
+    /**
+     * Optional grouping field
+     * @type {string}
+     * @memberof ExecModuleIOConfig
+     */
+    groupBy?: string;
+    /**
+     * Output image shape (default [28,28,1])
+     * @type {Array<ArrayIntegerItem>}
+     * @memberof ExecModuleIOConfig
+     */
+    imageShape?: Array<ArrayIntegerItem>;
+    /**
+     * Input shape [height, width, channels] (default [224,224,3])
+     * @type {Array<ArrayIntegerItem>}
+     * @memberof ExecModuleIOConfig
+     */
+    inputShape?: Array<ArrayIntegerItem>;
+    /**
+     * Number of output classes (default 10)
+     * @type {number}
+     * @memberof ExecModuleIOConfig
+     */
+    numClasses?: number;
+    /**
+     * Override operation from input (useful for fixed workflows)
+     * @type {string}
+     * @memberof ExecModuleIOConfig
+     */
+    operationMode?: string;
+    /**
+     * Number of output classes
+     * @type {number}
+     * @memberof ExecModuleIOConfig
+     */
+    outputClasses?: number;
+    /**
+     * Output mode: \'last\' (default), \'all\', \'sequence\'
+     * @type {string}
+     * @memberof ExecModuleIOConfig
+     */
+    outputMode?: string;
+    /**
+     * Output field name
+     * @type {string}
+     * @memberof ExecModuleIOConfig
+     */
+    outputField?: string;
+    /**
+     * Format output JSON
+     * @type {boolean}
+     * @memberof ExecModuleIOConfig
+     */
+    prettyPrint?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof ExecModuleIOConfig
+     */
+    projection?: string;
+    /**
+     * Validation schema
+     * @type {string}
+     * @memberof ExecModuleIOConfig
+     */
+    schema?: string;
+    /**
+     * Schema registry URL
+     * @type {string}
+     * @memberof ExecModuleIOConfig
+     */
+    schemaRegistryUrl?: string;
+    /**
+     * Field containing data to validate
+     * @type {string}
+     * @memberof ExecModuleIOConfig
+     */
+    sourcePath?: string;
+    /**
+     * Field containing timestamp
+     * @type {string}
+     * @memberof ExecModuleIOConfig
+     */
+    timestampField?: string;
+    /**
+     * Field to aggregate
+     * @type {string}
+     * @memberof ExecModuleIOConfig
+     */
+    valueField?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof ExecModuleIOConfig
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof ExecModuleIOConfig
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof ExecModuleIOConfig
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof ExecModuleIOConfig
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof ExecModuleIOConfig
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof ExecModuleIOConfig
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof ExecModuleIOConfig
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof ExecModuleIOConfig
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof ExecModuleIOConfig
+     */
+    trashed?: boolean;
+}
 
 export function ExecModuleIOConfigFromJSON(json: any): ExecModuleIOConfig {
-  return {
-    ...DataObjectFromJSON(json),
-    inputSchema: !exists(json, "inputSchema")
-      ? undefined
-      : OasObjectSchemaFromJSON(json["inputSchema"]),
-    outputSchema: !exists(json, "outputSchema")
-      ? undefined
-      : OasObjectSchemaFromJSON(json["outputSchema"]),
-    inputMapping: !exists(json, "inputMapping")
-      ? undefined
-      : json["inputMapping"],
-    outputMapping: !exists(json, "outputMapping")
-      ? undefined
-      : json["outputMapping"],
-    contactMapping: !exists(json, "contactMapping")
-      ? undefined
-      : json["contactMapping"],
-    field: !exists(json, "field") ? undefined : json["field"],
-    flattenOutput: !exists(json, "flatten_output")
-      ? undefined
-      : json["flatten_output"],
-    groupBy: !exists(json, "group_by") ? undefined : json["group_by"],
-    imageShape: !exists(json, "imageShape")
-      ? undefined
-      : (json["imageShape"] as Array<any>).map(ArrayIntegerItemFromJSON),
-    inputShape: !exists(json, "inputShape")
-      ? undefined
-      : (json["inputShape"] as Array<any>).map(ArrayIntegerItemFromJSON),
-    numClasses: !exists(json, "numClasses") ? undefined : json["numClasses"],
-    operationMode: !exists(json, "operation_mode")
-      ? undefined
-      : json["operation_mode"],
-    outputClasses: !exists(json, "outputClasses")
-      ? undefined
-      : json["outputClasses"],
-    outputMode: !exists(json, "outputMode") ? undefined : json["outputMode"],
-    outputField: !exists(json, "output_field")
-      ? undefined
-      : json["output_field"],
-    prettyPrint: !exists(json, "pretty_print")
-      ? undefined
-      : json["pretty_print"],
-    projection: !exists(json, "projection") ? undefined : json["projection"],
-    schema: !exists(json, "schema") ? undefined : json["schema"],
-    schemaRegistryUrl: !exists(json, "schema_registry_url")
-      ? undefined
-      : json["schema_registry_url"],
-    sourcePath: !exists(json, "source_path") ? undefined : json["source_path"],
-    timestampField: !exists(json, "timestamp_field")
-      ? undefined
-      : json["timestamp_field"],
-    valueField: !exists(json, "value_field") ? undefined : json["value_field"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'inputSchema': !exists(json, 'inputSchema') ? undefined : OasObjectSchemaFromJSON(json['inputSchema']),
+        'outputSchema': !exists(json, 'outputSchema') ? undefined : OasObjectSchemaFromJSON(json['outputSchema']),
+        'inputMapping': !exists(json, 'inputMapping') ? undefined : json['inputMapping'],
+        'outputMapping': !exists(json, 'outputMapping') ? undefined : json['outputMapping'],
+        'contactMapping': !exists(json, 'contactMapping') ? undefined : json['contactMapping'],
+        'field': !exists(json, 'field') ? undefined : json['field'],
+        'flattenOutput': !exists(json, 'flattenOutput') ? undefined : json['flattenOutput'],
+        'groupBy': !exists(json, 'groupBy') ? undefined : json['groupBy'],
+        'imageShape': !exists(json, 'imageShape') ? undefined : (json['imageShape'] as Array<any>).map(ArrayIntegerItemFromJSON),
+        'inputShape': !exists(json, 'inputShape') ? undefined : (json['inputShape'] as Array<any>).map(ArrayIntegerItemFromJSON),
+        'numClasses': !exists(json, 'numClasses') ? undefined : json['numClasses'],
+        'operationMode': !exists(json, 'operationMode') ? undefined : json['operationMode'],
+        'outputClasses': !exists(json, 'outputClasses') ? undefined : json['outputClasses'],
+        'outputMode': !exists(json, 'outputMode') ? undefined : json['outputMode'],
+        'outputField': !exists(json, 'outputField') ? undefined : json['outputField'],
+        'prettyPrint': !exists(json, 'prettyPrint') ? undefined : json['prettyPrint'],
+        'projection': !exists(json, 'projection') ? undefined : json['projection'],
+        'schema': !exists(json, 'schema') ? undefined : json['schema'],
+        'schemaRegistryUrl': !exists(json, 'schemaRegistryUrl') ? undefined : json['schemaRegistryUrl'],
+        'sourcePath': !exists(json, 'sourcePath') ? undefined : json['sourcePath'],
+        'timestampField': !exists(json, 'timestampField') ? undefined : json['timestampField'],
+        'valueField': !exists(json, 'valueField') ? undefined : json['valueField'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function ExecModuleIOConfigToJSON(value?: ExecModuleIOConfig): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    inputSchema: OasObjectSchemaToJSON(value.inputSchema),
-    outputSchema: OasObjectSchemaToJSON(value.outputSchema),
-    inputMapping: value.inputMapping,
-    outputMapping: value.outputMapping,
-    contactMapping: value.contactMapping,
-    field: value.field,
-    flatten_output: value.flattenOutput,
-    group_by: value.groupBy,
-    imageShape:
-      value.imageShape === undefined
-        ? undefined
-        : (value.imageShape as Array<any>).map(ArrayIntegerItemToJSON),
-    inputShape:
-      value.inputShape === undefined
-        ? undefined
-        : (value.inputShape as Array<any>).map(ArrayIntegerItemToJSON),
-    numClasses: value.numClasses,
-    operation_mode: value.operationMode,
-    outputClasses: value.outputClasses,
-    outputMode: value.outputMode,
-    output_field: value.outputField,
-    pretty_print: value.prettyPrint,
-    projection: value.projection,
-    schema: value.schema,
-    schema_registry_url: value.schemaRegistryUrl,
-    source_path: value.sourcePath,
-    timestamp_field: value.timestampField,
-    value_field: value.valueField,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'inputSchema': OasObjectSchemaToJSON(value.inputSchema),
+        'outputSchema': OasObjectSchemaToJSON(value.outputSchema),
+        'inputMapping': value.inputMapping,
+        'outputMapping': value.outputMapping,
+        'contactMapping': value.contactMapping,
+        'field': value.field,
+        'flattenOutput': value.flattenOutput,
+        'groupBy': value.groupBy,
+        'imageShape': value.imageShape === undefined ? undefined : (value.imageShape as Array<any>).map(ArrayIntegerItemToJSON),
+        'inputShape': value.inputShape === undefined ? undefined : (value.inputShape as Array<any>).map(ArrayIntegerItemToJSON),
+        'numClasses': value.numClasses,
+        'operationMode': value.operationMode,
+        'outputClasses': value.outputClasses,
+        'outputMode': value.outputMode,
+        'outputField': value.outputField,
+        'prettyPrint': value.prettyPrint,
+        'projection': value.projection,
+        'schema': value.schema,
+        'schemaRegistryUrl': value.schemaRegistryUrl,
+        'sourcePath': value.sourcePath,
+        'timestampField': value.timestampField,
+        'valueField': value.valueField,
+        'trashed': value.trashed,
+    };
 }
+
+

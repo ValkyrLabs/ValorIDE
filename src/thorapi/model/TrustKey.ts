@@ -26,16 +26,19 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 import {
-  TrustKeyProvider,
-  TrustKeyProviderFromJSON,
-  TrustKeyProviderToJSON,
-  TrustKeyVersion,
-  TrustKeyVersionFromJSON,
-  TrustKeyVersionToJSON,
-} from "./";
+
+
+    TrustKeyProvider,
+    TrustKeyProviderFromJSON,
+    TrustKeyProviderToJSON,
+    TrustKeyVersion,
+    TrustKeyVersionFromJSON,
+    TrustKeyVersionToJSON,
+} from './';
+
 
 // thorapi
 
@@ -44,183 +47,169 @@ import {
  * @export
  * @interface TrustKey
  */
-export type TrustKey = DataObject & {
-  /**
-   *
-   * @type {string}
-   * @memberof TrustKey
-   */
-  name?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof TrustKey
-   */
-  keyPurpose?: TrustKeyKeyPurposeEnum;
-  /**
-   *
-   * @type {string}
-   * @memberof TrustKey
-   */
-  keyStatus?: TrustKeyKeyStatusEnum;
-  /**
-   *
-   * @type {TrustKeyProvider}
-   * @memberof TrustKey
-   */
-  provider?: TrustKeyProvider;
-  /**
-   *
-   * @type {TrustKeyVersion}
-   * @memberof TrustKey
-   */
-  activeVersion?: TrustKeyVersion;
-  /**
-   *
-   * @type {number}
-   * @memberof TrustKey
-   */
-  rotationPeriodDays?: number;
-  /**
-   *
-   * @type {string}
-   * @memberof TrustKey
-   */
-  tenantId?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof TrustKey
-   */
-  ownerId?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof TrustKey
-   */
-  readonly id?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof TrustKey
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof TrustKey
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof TrustKey
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof TrustKey
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof TrustKey
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof TrustKey
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof TrustKey
-   */
-  trashed?: boolean;
-};
+export type TrustKey  = DataObject & {
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustKey
+     */
+    name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustKey
+     */
+    keyPurpose?: TrustKeyKeyPurposeEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustKey
+     */
+    keyStatus?: TrustKeyKeyStatusEnum;
+    /**
+     * 
+     * @type {TrustKeyProvider}
+     * @memberof TrustKey
+     */
+    provider?: TrustKeyProvider;
+    /**
+     * 
+     * @type {TrustKeyVersion}
+     * @memberof TrustKey
+     */
+    activeVersion?: TrustKeyVersion;
+    /**
+     * 
+     * @type {number}
+     * @memberof TrustKey
+     */
+    rotationPeriodDays?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustKey
+     */
+    tenantId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustKey
+     */
+    ownerId?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof TrustKey
+     */
+    readonly id?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof TrustKey
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof TrustKey
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof TrustKey
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof TrustKey
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof TrustKey
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof TrustKey
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof TrustKey
+     */
+    trashed?: boolean;
+}
 
 export function TrustKeyFromJSON(json: any): TrustKey {
-  return {
-    ...DataObjectFromJSON(json),
-    name: !exists(json, "name") ? undefined : json["name"],
-    keyPurpose: !exists(json, "keyPurpose") ? undefined : json["keyPurpose"],
-    keyStatus: !exists(json, "keyStatus") ? undefined : json["keyStatus"],
-    provider: !exists(json, "provider")
-      ? undefined
-      : TrustKeyProviderFromJSON(json["provider"]),
-    activeVersion: !exists(json, "activeVersion")
-      ? undefined
-      : TrustKeyVersionFromJSON(json["activeVersion"]),
-    rotationPeriodDays: !exists(json, "rotationPeriodDays")
-      ? undefined
-      : json["rotationPeriodDays"],
-    tenantId: !exists(json, "tenantId") ? undefined : json["tenantId"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'keyPurpose': !exists(json, 'keyPurpose') ? undefined : json['keyPurpose'],
+        'keyStatus': !exists(json, 'keyStatus') ? undefined : json['keyStatus'],
+        'provider': !exists(json, 'provider') ? undefined : TrustKeyProviderFromJSON(json['provider']),
+        'activeVersion': !exists(json, 'activeVersion') ? undefined : TrustKeyVersionFromJSON(json['activeVersion']),
+        'rotationPeriodDays': !exists(json, 'rotationPeriodDays') ? undefined : json['rotationPeriodDays'],
+        'tenantId': !exists(json, 'tenantId') ? undefined : json['tenantId'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function TrustKeyToJSON(value?: TrustKey): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    name: value.name,
-    keyPurpose: value.keyPurpose,
-    keyStatus: value.keyStatus,
-    provider: TrustKeyProviderToJSON(value.provider),
-    activeVersion: TrustKeyVersionToJSON(value.activeVersion),
-    rotationPeriodDays: value.rotationPeriodDays,
-    tenantId: value.tenantId,
-    ownerId: value.ownerId,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'name': value.name,
+        'keyPurpose': value.keyPurpose,
+        'keyStatus': value.keyStatus,
+        'provider': TrustKeyProviderToJSON(value.provider),
+        'activeVersion': TrustKeyVersionToJSON(value.activeVersion),
+        'rotationPeriodDays': value.rotationPeriodDays,
+        'tenantId': value.tenantId,
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum TrustKeyKeyPurposeEnum {
-  FIELDENCRYPTION = "field_encryption",
-  EVENTSIGNING = "event_signing",
-  PROOFSIGNING = "proof_signing",
-  TOKENSIGNING = "token_signing",
-  ATTESTATIONSIGNING = "attestation_signing",
-  DEKWRAPPING = "dek_wrapping",
+    FIELDENCRYPTION = 'field_encryption',
+    EVENTSIGNING = 'event_signing',
+    PROOFSIGNING = 'proof_signing',
+    TOKENSIGNING = 'token_signing',
+    ATTESTATIONSIGNING = 'attestation_signing',
+    DEKWRAPPING = 'dek_wrapping'
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum TrustKeyKeyStatusEnum {
-  PENDINGACTIVATION = "pending_activation",
-  ACTIVE = "active",
-  DECRYPTONLY = "decrypt_only",
-  SUSPENDED = "suspended",
-  RETIRED = "retired",
-  DESTROYSCHEDULED = "destroy_scheduled",
-  DESTROYED = "destroyed",
+    PENDINGACTIVATION = 'pending_activation',
+    ACTIVE = 'active',
+    DECRYPTONLY = 'decrypt_only',
+    SUSPENDED = 'suspended',
+    RETIRED = 'retired',
+    DESTROYSCHEDULED = 'destroy_scheduled',
+    DESTROYED = 'destroyed'
 }
+
+

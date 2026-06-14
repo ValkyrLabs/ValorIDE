@@ -18,431 +18,359 @@ Template file: typescript-redux-query/apis.mustache
 Description: ContentMediaLinkApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import {
-  ContentMediaLink,
-  ContentMediaLinkFromJSON,
-  ContentMediaLinkToJSON,
-} from "../model";
+    ContentMediaLink,
+    ContentMediaLinkFromJSON,
+    ContentMediaLinkToJSON,
+} from '../model';
 
 export interface DeleteContentMediaLinkApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetContentMediaLinkApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetContentMediaLinkListApiRequest {
-  page?: number;
-  size?: number;
-  sort?: Array<string>;
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
+    example?: string;
 }
 
 export interface PatchContentMediaLinkByIdApiRequest {
-  id: string;
-  contentMediaLink: ContentMediaLink;
+    id: string;
+    contentMediaLink: ContentMediaLink;
 }
 
 export interface PostContentMediaLinkApiRequest {
-  contentMediaLink: ContentMediaLink;
+    contentMediaLink: ContentMediaLink;
 }
 
 export interface UpdateContentMediaLinkApiRequest {
-  id: string;
-  contentMediaLink: ContentMediaLink;
+    id: string;
+    contentMediaLink: ContentMediaLink;
 }
+
 
 /**
  * Deletes a specific ContentMediaLink.
  * Delete a ContentMediaLink.
  */
-function deleteContentMediaLinkRaw<T>(
-  requestParameters: DeleteContentMediaLinkApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteContentMediaLink.",
-    );
-  }
+function deleteContentMediaLinkRaw<T>(requestParameters: DeleteContentMediaLinkApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteContentMediaLink.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ContentMediaLink/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ContentMediaLink/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific ContentMediaLink.
- * Delete a ContentMediaLink.
- */
-export function deleteContentMediaLink<T>(
-  requestParameters: DeleteContentMediaLinkApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteContentMediaLinkRaw(requestParameters, requestConfig);
+* Deletes a specific ContentMediaLink.
+* Delete a ContentMediaLink.
+*/
+export function deleteContentMediaLink<T>(requestParameters: DeleteContentMediaLinkApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteContentMediaLinkRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single ContentMediaLink for a specific uid.
  * Retrieve a single ContentMediaLink
  */
-function getContentMediaLinkRaw<T>(
-  requestParameters: GetContentMediaLinkApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, ContentMediaLink> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getContentMediaLink.",
-    );
-  }
+function getContentMediaLinkRaw<T>(requestParameters: GetContentMediaLinkApiRequest, requestConfig: runtime.TypedQueryConfig<T, ContentMediaLink> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getContentMediaLink.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ContentMediaLink/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(ContentMediaLinkFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ContentMediaLink/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ContentMediaLinkFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single ContentMediaLink for a specific uid.
- * Retrieve a single ContentMediaLink
- */
-export function getContentMediaLink<T>(
-  requestParameters: GetContentMediaLinkApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, ContentMediaLink>,
-): QueryConfig<T> {
-  return getContentMediaLinkRaw(requestParameters, requestConfig);
+* Retrieves a single ContentMediaLink for a specific uid.
+* Retrieve a single ContentMediaLink
+*/
+export function getContentMediaLink<T>(requestParameters: GetContentMediaLinkApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ContentMediaLink>): QueryConfig<T> {
+    return getContentMediaLinkRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of ContentMediaLinks.
  * Retrieve a list of ContentMediaLinks
  */
-function getContentMediaLinkListRaw<T>(
-  requestParameters: GetContentMediaLinkListApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Array<ContentMediaLink>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getContentMediaLinkListRaw<T>(requestParameters: GetContentMediaLinkListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<ContentMediaLink>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  queryParameters = {};
+    queryParameters = {};
 
-  if (requestParameters.page !== undefined) {
-    queryParameters["page"] = requestParameters.page;
-  }
 
-  if (requestParameters.size !== undefined) {
-    queryParameters["size"] = requestParameters.size;
-  }
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  if (requestParameters.sort) {
-    queryParameters["sort"] = requestParameters.sort;
-  }
 
-  const headerParameters: runtime.HttpHeaders = {};
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ContentMediaLink`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(ContentMediaLinkFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.example !== undefined) {
+        queryParameters['example'] = requestParameters.example;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ContentMediaLink`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(ContentMediaLinkFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of ContentMediaLinks.
- * Retrieve a list of ContentMediaLinks
- */
-export function getContentMediaLinkList<T>(
-  requestParameters: GetContentMediaLinkListApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Array<ContentMediaLink>>,
-): QueryConfig<T> {
-  return getContentMediaLinkListRaw(requestParameters, requestConfig);
-}
-
-/**
- * Updates an existing ContentMediaLink.
- * Partially update an existing ContentMediaLink
- */
-function patchContentMediaLinkByIdRaw<T>(
-  requestParameters: PatchContentMediaLinkByIdApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, ContentMediaLink> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling patchContentMediaLinkById.",
-    );
-  }
-
-  if (
-    requestParameters.contentMediaLink === null ||
-    requestParameters.contentMediaLink === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "contentMediaLink",
-      "Required parameter requestParameters.contentMediaLink was null or undefined when calling patchContentMediaLinkById.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/merge-patch+json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ContentMediaLink/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PATCH",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      ContentMediaLinkToJSON(requestParameters.contentMediaLink),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(ContentMediaLinkFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of ContentMediaLinks.
+* Retrieve a list of ContentMediaLinks
+*/
+export function getContentMediaLinkList<T>(requestParameters: GetContentMediaLinkListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<ContentMediaLink>>): QueryConfig<T> {
+    return getContentMediaLinkListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing ContentMediaLink.
  * Partially update an existing ContentMediaLink
  */
-export function patchContentMediaLinkById<T>(
-  requestParameters: PatchContentMediaLinkByIdApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, ContentMediaLink>,
-): QueryConfig<T> {
-  return patchContentMediaLinkByIdRaw(requestParameters, requestConfig);
+function patchContentMediaLinkByIdRaw<T>(requestParameters: PatchContentMediaLinkByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, ContentMediaLink> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchContentMediaLinkById.');
+    }
+
+    if (requestParameters.contentMediaLink === null || requestParameters.contentMediaLink === undefined) {
+        throw new runtime.RequiredError('contentMediaLink','Required parameter requestParameters.contentMediaLink was null or undefined when calling patchContentMediaLinkById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ContentMediaLink/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || ContentMediaLinkToJSON(requestParameters.contentMediaLink),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ContentMediaLinkFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing ContentMediaLink.
+* Partially update an existing ContentMediaLink
+*/
+export function patchContentMediaLinkById<T>(requestParameters: PatchContentMediaLinkByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ContentMediaLink>): QueryConfig<T> {
+    return patchContentMediaLinkByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new ContentMediaLink.
  * Create a new ContentMediaLink
  */
-function postContentMediaLinkRaw<T>(
-  requestParameters: PostContentMediaLinkApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, ContentMediaLink> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.contentMediaLink === null ||
-    requestParameters.contentMediaLink === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "contentMediaLink",
-      "Required parameter requestParameters.contentMediaLink was null or undefined when calling postContentMediaLink.",
-    );
-  }
+function postContentMediaLinkRaw<T>(requestParameters: PostContentMediaLinkApiRequest, requestConfig: runtime.TypedQueryConfig<T, ContentMediaLink> = {}): QueryConfig<T> {
+    if (requestParameters.contentMediaLink === null || requestParameters.contentMediaLink === undefined) {
+        throw new runtime.RequiredError('contentMediaLink','Required parameter requestParameters.contentMediaLink was null or undefined when calling postContentMediaLink.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ContentMediaLink`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      ContentMediaLinkToJSON(requestParameters.contentMediaLink),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(ContentMediaLinkFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ContentMediaLink`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || ContentMediaLinkToJSON(requestParameters.contentMediaLink),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ContentMediaLinkFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Creates a new ContentMediaLink.
- * Create a new ContentMediaLink
- */
-export function postContentMediaLink<T>(
-  requestParameters: PostContentMediaLinkApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, ContentMediaLink>,
-): QueryConfig<T> {
-  return postContentMediaLinkRaw(requestParameters, requestConfig);
+* Creates a new ContentMediaLink.
+* Create a new ContentMediaLink
+*/
+export function postContentMediaLink<T>(requestParameters: PostContentMediaLinkApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ContentMediaLink>): QueryConfig<T> {
+    return postContentMediaLinkRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing ContentMediaLink.
  * Update an existing ContentMediaLink
  */
-function updateContentMediaLinkRaw<T>(
-  requestParameters: UpdateContentMediaLinkApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, ContentMediaLink> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateContentMediaLink.",
-    );
-  }
+function updateContentMediaLinkRaw<T>(requestParameters: UpdateContentMediaLinkApiRequest, requestConfig: runtime.TypedQueryConfig<T, ContentMediaLink> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateContentMediaLink.');
+    }
 
-  if (
-    requestParameters.contentMediaLink === null ||
-    requestParameters.contentMediaLink === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "contentMediaLink",
-      "Required parameter requestParameters.contentMediaLink was null or undefined when calling updateContentMediaLink.",
-    );
-  }
+    if (requestParameters.contentMediaLink === null || requestParameters.contentMediaLink === undefined) {
+        throw new runtime.RequiredError('contentMediaLink','Required parameter requestParameters.contentMediaLink was null or undefined when calling updateContentMediaLink.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ContentMediaLink/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      ContentMediaLinkToJSON(requestParameters.contentMediaLink),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(ContentMediaLinkFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ContentMediaLink/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || ContentMediaLinkToJSON(requestParameters.contentMediaLink),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ContentMediaLinkFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing ContentMediaLink.
- * Update an existing ContentMediaLink
- */
-export function updateContentMediaLink<T>(
-  requestParameters: UpdateContentMediaLinkApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, ContentMediaLink>,
-): QueryConfig<T> {
-  return updateContentMediaLinkRaw(requestParameters, requestConfig);
+* Updates an existing ContentMediaLink.
+* Update an existing ContentMediaLink
+*/
+export function updateContentMediaLink<T>(requestParameters: UpdateContentMediaLinkApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ContentMediaLink>): QueryConfig<T> {
+    return updateContentMediaLinkRaw(requestParameters, requestConfig);
 }
+

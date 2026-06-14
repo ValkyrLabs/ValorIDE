@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_STRATEGICPRIORITY_REQUEST,
-  FETCH_STRATEGICPRIORITY_REQUEST,
-  LIST_STRATEGICPRIORITY_REQUEST,
-  UPDATE_STRATEGICPRIORITY_REQUEST,
-  DELETE_STRATEGICPRIORITY_REQUEST,
-  addStrategicPriorityFailure,
-  addStrategicPrioritySuccess,
-  fetchStrategicPriorityFailure,
-  fetchStrategicPrioritySuccess,
-  listStrategicPriorityFailure,
-  listStrategicPrioritySuccess,
-  updateStrategicPriorityFailure,
-  updateStrategicPrioritySuccess,
-  deleteStrategicPriorityFailure,
-  deleteStrategicPrioritySuccess,
-} from "../actions/StrategicPriorityApiAction";
+
+    ADD_STRATEGICPRIORITY_REQUEST,
+    FETCH_STRATEGICPRIORITY_REQUEST,
+    LIST_STRATEGICPRIORITY_REQUEST,
+    UPDATE_STRATEGICPRIORITY_REQUEST,
+    DELETE_STRATEGICPRIORITY_REQUEST,
+
+    addStrategicPriorityFailure,
+    addStrategicPrioritySuccess,
+
+    fetchStrategicPriorityFailure,
+    fetchStrategicPrioritySuccess,
+    
+    listStrategicPriorityFailure,
+    listStrategicPrioritySuccess,
+
+    updateStrategicPriorityFailure,
+    updateStrategicPrioritySuccess,
+    
+    deleteStrategicPriorityFailure,
+    deleteStrategicPrioritySuccess,
+    
+} from '../actions/StrategicPriorityApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: StrategicPriority
 */
 
-export const StrategicPriorityMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("StrategicPriority MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const StrategicPriorityMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("StrategicPriority MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

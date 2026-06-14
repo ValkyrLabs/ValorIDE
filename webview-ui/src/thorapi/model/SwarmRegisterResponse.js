@@ -34,31 +34,19 @@ const DataObject_1 = require("./DataObject");
 function SwarmRegisterResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        instanceId: !(0, runtime_1.exists)(json, "instanceId") ? undefined : json["instanceId"],
-        lastSeen: !(0, runtime_1.exists)(json, "lastSeen")
-            ? undefined
-            : new Date(json["lastSeen"]),
-        metadata: !(0, runtime_1.exists)(json, "metadata") ? undefined : json["metadata"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'instanceId': !(0, runtime_1.exists)(json, 'instanceId') ? undefined : json['instanceId'],
+        'lastSeen': !(0, runtime_1.exists)(json, 'lastSeen') ? undefined : new Date(json['lastSeen']),
+        'metadata': !(0, runtime_1.exists)(json, 'metadata') ? undefined : json['metadata'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function SwarmRegisterResponseToJSON(value) {
@@ -67,11 +55,11 @@ function SwarmRegisterResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        status: value.status,
-        instanceId: value.instanceId,
-        lastSeen: value.lastSeen === undefined ? undefined : value.lastSeen.toISOString(),
-        metadata: value.metadata,
-        trashed: value.trashed,
+        'status': value.status,
+        'instanceId': value.instanceId,
+        'lastSeen': value.lastSeen === undefined ? undefined : value.lastSeen.toISOString(),
+        'metadata': value.metadata,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=SwarmRegisterResponse.js.map

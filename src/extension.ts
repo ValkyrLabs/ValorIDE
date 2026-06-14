@@ -22,6 +22,7 @@ import {
   parseLegacyAuthCallbackCredentials,
   summarizeAuthCallback,
 } from "./security/authCallback";
+import { buildAuthCallbackDiagnostics } from "./utils/authCallback";
 import { initializePromptService } from "./services/promptService";
 import { initializeMemoryBankLoader } from "./services/memoryBankLoader";
 import { initializeLLMContextInjector } from "./services/llmContextInjector";
@@ -568,14 +569,8 @@ export function activate(context: vscode.ExtensionContext) {
   // URI Handler
   const handleUri = async (uri: vscode.Uri) => {
     const path = uri.path;
-<<<<<<< HEAD
     const query = parseAuthCallbackQuery(uri.query);
-=======
-    // Guard against missing query to avoid calling replace on undefined
-    const rawQuery = uri.query || "";
-    const query = new URLSearchParams(rawQuery.replace(/\+/g, "%2B"));
     Logger.log("URI callback received: " + buildAuthCallbackDiagnostics(path, query));
->>>>>>> 02544f65 (fix(core): cleanup wip)
     const visibleWebview = WebviewProvider.getVisibleInstance();
 
     Logger.log(

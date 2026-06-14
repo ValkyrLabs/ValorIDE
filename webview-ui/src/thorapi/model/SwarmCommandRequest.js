@@ -35,31 +35,17 @@ const _1 = require("./");
 function SwarmCommandRequestFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        targetInstanceId: !(0, runtime_1.exists)(json, "targetInstanceId")
-            ? undefined
-            : json["targetInstanceId"],
-        message: !(0, runtime_1.exists)(json, "message")
-            ? undefined
-            : (0, _1.SwarmMessageFromJSON)(json["message"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'targetInstanceId': !(0, runtime_1.exists)(json, 'targetInstanceId') ? undefined : json['targetInstanceId'],
+        'message': !(0, runtime_1.exists)(json, 'message') ? undefined : (0, _1.SwarmMessageFromJSON)(json['message']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function SwarmCommandRequestToJSON(value) {
@@ -68,9 +54,9 @@ function SwarmCommandRequestToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        targetInstanceId: value.targetInstanceId,
-        message: (0, _1.SwarmMessageToJSON)(value.message),
-        trashed: value.trashed,
+        'targetInstanceId': value.targetInstanceId,
+        'message': (0, _1.SwarmMessageToJSON)(value.message),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=SwarmCommandRequest.js.map

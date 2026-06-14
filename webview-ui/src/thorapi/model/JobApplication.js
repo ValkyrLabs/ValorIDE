@@ -35,55 +35,27 @@ const DataObject_1 = require("./DataObject");
 function JobApplicationFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        jobSeekerId: !(0, runtime_1.exists)(json, "jobSeekerId") ? undefined : json["jobSeekerId"],
-        opportunityId: !(0, runtime_1.exists)(json, "opportunityId")
-            ? undefined
-            : json["opportunityId"],
-        appliedDate: !(0, runtime_1.exists)(json, "appliedDate")
-            ? undefined
-            : new Date(json["appliedDate"]),
-        resumeAttachmentUrl: !(0, runtime_1.exists)(json, "resumeAttachmentUrl")
-            ? undefined
-            : json["resumeAttachmentUrl"],
-        coverLetterText: !(0, runtime_1.exists)(json, "coverLetterText")
-            ? undefined
-            : json["coverLetterText"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        matchScore: !(0, runtime_1.exists)(json, "matchScore") ? undefined : json["matchScore"],
-        matchReasons: !(0, runtime_1.exists)(json, "matchReasons")
-            ? undefined
-            : json["matchReasons"],
-        recommendedNextSteps: !(0, runtime_1.exists)(json, "recommendedNextSteps")
-            ? undefined
-            : json["recommendedNextSteps"],
-        assignedRecruiter: !(0, runtime_1.exists)(json, "assignedRecruiter")
-            ? undefined
-            : json["assignedRecruiter"],
-        internalNotes: !(0, runtime_1.exists)(json, "internalNotes")
-            ? undefined
-            : json["internalNotes"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        updatedDate: !(0, runtime_1.exists)(json, "updatedDate")
-            ? undefined
-            : new Date(json["updatedDate"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'jobSeekerId': !(0, runtime_1.exists)(json, 'jobSeekerId') ? undefined : json['jobSeekerId'],
+        'opportunityId': !(0, runtime_1.exists)(json, 'opportunityId') ? undefined : json['opportunityId'],
+        'appliedDate': !(0, runtime_1.exists)(json, 'appliedDate') ? undefined : new Date(json['appliedDate']),
+        'resumeAttachmentUrl': !(0, runtime_1.exists)(json, 'resumeAttachmentUrl') ? undefined : json['resumeAttachmentUrl'],
+        'coverLetterText': !(0, runtime_1.exists)(json, 'coverLetterText') ? undefined : json['coverLetterText'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'matchScore': !(0, runtime_1.exists)(json, 'matchScore') ? undefined : json['matchScore'],
+        'matchReasons': !(0, runtime_1.exists)(json, 'matchReasons') ? undefined : json['matchReasons'],
+        'recommendedNextSteps': !(0, runtime_1.exists)(json, 'recommendedNextSteps') ? undefined : json['recommendedNextSteps'],
+        'assignedRecruiter': !(0, runtime_1.exists)(json, 'assignedRecruiter') ? undefined : json['assignedRecruiter'],
+        'internalNotes': !(0, runtime_1.exists)(json, 'internalNotes') ? undefined : json['internalNotes'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'updatedDate': !(0, runtime_1.exists)(json, 'updatedDate') ? undefined : new Date(json['updatedDate']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function JobApplicationToJSON(value) {
@@ -92,32 +64,26 @@ function JobApplicationToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        jobSeekerId: value.jobSeekerId,
-        opportunityId: value.opportunityId,
-        appliedDate: value.appliedDate === undefined
-            ? undefined
-            : value.appliedDate.toISOString(),
-        resumeAttachmentUrl: value.resumeAttachmentUrl,
-        coverLetterText: value.coverLetterText,
-        status: value.status,
-        matchScore: value.matchScore,
-        matchReasons: value.matchReasons,
-        recommendedNextSteps: value.recommendedNextSteps,
-        assignedRecruiter: value.assignedRecruiter,
-        internalNotes: value.internalNotes,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        updatedDate: value.updatedDate === undefined
-            ? undefined
-            : value.updatedDate.toISOString(),
-        trashed: value.trashed,
+        'jobSeekerId': value.jobSeekerId,
+        'opportunityId': value.opportunityId,
+        'appliedDate': value.appliedDate === undefined ? undefined : value.appliedDate.toISOString(),
+        'resumeAttachmentUrl': value.resumeAttachmentUrl,
+        'coverLetterText': value.coverLetterText,
+        'status': value.status,
+        'matchScore': value.matchScore,
+        'matchReasons': value.matchReasons,
+        'recommendedNextSteps': value.recommendedNextSteps,
+        'assignedRecruiter': value.assignedRecruiter,
+        'internalNotes': value.internalNotes,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
+        'updatedDate': value.updatedDate === undefined ? undefined : value.updatedDate.toISOString(),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var JobApplicationStatusEnum;
 (function (JobApplicationStatusEnum) {
     JobApplicationStatusEnum["SUBMITTED"] = "submitted";

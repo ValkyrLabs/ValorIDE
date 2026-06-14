@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { CompleteUploadRequest } from "@thorapi/model/CompleteUploadRequest";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { CompleteUploadRequest } from '@thorapi/model/CompleteUploadRequest'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type CompleteUploadRequestResponse = CompleteUploadRequest[];
+type CompleteUploadRequestResponse = CompleteUploadRequest[]
+type CompleteUploadRequestPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<CompleteUploadRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toCompleteUploadRequestList = (
-  result: unknown,
-): CompleteUploadRequestResponse => {
+type CompleteUploadRequestListQueryArg = {
+  example?: Partial<CompleteUploadRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toCompleteUploadRequestList = (result: unknown): CompleteUploadRequestResponse => {
   if (Array.isArray(result)) {
-    return result as CompleteUploadRequestResponse;
+    return result as CompleteUploadRequestResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as CompleteUploadRequestResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as CompleteUploadRequestResponse) : []
+}
 
 export const CompleteUploadRequestService = createApi({
-  reducerPath: "CompleteUploadRequest", // This should remain unique
+  reducerPath: 'CompleteUploadRequest', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["CompleteUploadRequest"],
+  tagTypes: ['CompleteUploadRequest'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getCompleteUploadRequestsPaged: build.query<
-      CompleteUploadRequestResponse,
-      { page: number; size?: number; example?: Partial<CompleteUploadRequest> }
-    >({
+    getCompleteUploadRequestsPaged: build.query<CompleteUploadRequestResponse, CompleteUploadRequestPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `CompleteUploadRequest?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `CompleteUploadRequest?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toCompleteUploadRequestList(result);
+        const rows = toCompleteUploadRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "CompleteUploadRequest" as const, id })),
-          { type: "CompleteUploadRequest", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'CompleteUploadRequest' as const, id })),
+          { type: 'CompleteUploadRequest', id: `PAGE_${page}` },
+          { type: 'CompleteUploadRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getCompleteUploadRequests: build.query<
-      CompleteUploadRequestResponse,
-      { example?: Partial<CompleteUploadRequest> } | void
-    >({
+    getCompleteUploadRequests: build.query<CompleteUploadRequestResponse, CompleteUploadRequestListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,114 +82,86 @@ export const CompleteUploadRequestService = createApi({
         return `CompleteUploadRequest`;
       },
       providesTags: (result) => {
-        const rows = toCompleteUploadRequestList(result);
+        const rows = toCompleteUploadRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "CompleteUploadRequest" as const, id })),
-          { type: "CompleteUploadRequest", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'CompleteUploadRequest' as const, id })),
+          { type: 'CompleteUploadRequest', id: 'LIST' },
+          { type: 'CompleteUploadRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addCompleteUploadRequest: build.mutation<
-      CompleteUploadRequest,
-      Partial<CompleteUploadRequest>
-    >({
+    addCompleteUploadRequest: build.mutation<CompleteUploadRequest, Partial<CompleteUploadRequest>>({
       query: (body) => ({
         url: `CompleteUploadRequest`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "CompleteUploadRequest", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'CompleteUploadRequest', id: 'LIST' },
+        { type: 'CompleteUploadRequest', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getCompleteUploadRequest: build.query<CompleteUploadRequest, string>({
       query: (id) => `CompleteUploadRequest/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "CompleteUploadRequest", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'CompleteUploadRequest', id }],
     }),
 
     // 5) Update
-    updateCompleteUploadRequest: build.mutation<
-      void,
-      Pick<CompleteUploadRequest, "id"> & Partial<CompleteUploadRequest>
-    >({
+    updateCompleteUploadRequest: build.mutation<CompleteUploadRequest, Pick<CompleteUploadRequest, 'id'> & Partial<CompleteUploadRequest>>({
       query: ({ id, ...patch }) => ({
         url: `CompleteUploadRequest/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            CompleteUploadRequestService.util.updateQueryData(
-              "getCompleteUploadRequest",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<CompleteUploadRequest, "id">,
-      ) => [
-        { type: "CompleteUploadRequest", id },
-        { type: "CompleteUploadRequest", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<CompleteUploadRequest, 'id'>) => [
+        { type: 'CompleteUploadRequest', id },
+        { type: 'CompleteUploadRequest', id: 'LIST' },
+        { type: 'CompleteUploadRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteCompleteUploadRequest: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteCompleteUploadRequest: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `CompleteUploadRequest/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "CompleteUploadRequest", id },
+        { type: 'CompleteUploadRequest', id },
+        { type: 'CompleteUploadRequest', id: 'LIST' },
+        { type: 'CompleteUploadRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteCompleteUploadRequestCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteCompleteUploadRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `CompleteUploadRequest/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "CompleteUploadRequest", id },
-        { type: "CompleteUploadRequest", id: "LIST" },
+        { type: 'CompleteUploadRequest', id },
+        { type: 'CompleteUploadRequest', id: 'LIST' },
+        { type: 'CompleteUploadRequest', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetCompleteUploadRequestsPagedQuery`
 export const {
-  useGetCompleteUploadRequestsPagedQuery, // immediate fetch
+  useGetCompleteUploadRequestsPagedQuery,     // immediate fetch
   useLazyGetCompleteUploadRequestsPagedQuery, // lazy fetch
   useGetCompleteUploadRequestQuery,
   useGetCompleteUploadRequestsQuery,
@@ -192,4 +169,4 @@ export const {
   useUpdateCompleteUploadRequestMutation,
   useDeleteCompleteUploadRequestMutation,
   useDeleteCompleteUploadRequestCascadeMutation,
-} = CompleteUploadRequestService;
+} = CompleteUploadRequestService

@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,140 +36,130 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface Trust
  */
-export type Trust = DataObject & {
-  /**
-   *
-   * @type {string}
-   * @memberof Trust
-   */
-  name?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof Trust
-   */
-  trustStatus?: TrustTrustStatusEnum;
-  /**
-   *
-   * @type {string}
-   * @memberof Trust
-   */
-  apiSpecHash?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof Trust
-   */
-  generatedSourceHash?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof Trust
-   */
-  ownerId?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof Trust
-   */
-  readonly id?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof Trust
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof Trust
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof Trust
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof Trust
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof Trust
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof Trust
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof Trust
-   */
-  trashed?: boolean;
-};
+export type Trust  = DataObject & {
+    /**
+     * 
+     * @type {string}
+     * @memberof Trust
+     */
+    name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Trust
+     */
+    trustStatus?: TrustTrustStatusEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof Trust
+     */
+    apiSpecHash?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Trust
+     */
+    generatedSourceHash?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Trust
+     */
+    ownerId?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof Trust
+     */
+    readonly id?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof Trust
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof Trust
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof Trust
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof Trust
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof Trust
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof Trust
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof Trust
+     */
+    trashed?: boolean;
+}
 
 export function TrustFromJSON(json: any): Trust {
-  return {
-    ...DataObjectFromJSON(json),
-    name: !exists(json, "name") ? undefined : json["name"],
-    trustStatus: !exists(json, "trustStatus") ? undefined : json["trustStatus"],
-    apiSpecHash: !exists(json, "apiSpecHash") ? undefined : json["apiSpecHash"],
-    generatedSourceHash: !exists(json, "generatedSourceHash")
-      ? undefined
-      : json["generatedSourceHash"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'trustStatus': !exists(json, 'trustStatus') ? undefined : json['trustStatus'],
+        'apiSpecHash': !exists(json, 'apiSpecHash') ? undefined : json['apiSpecHash'],
+        'generatedSourceHash': !exists(json, 'generatedSourceHash') ? undefined : json['generatedSourceHash'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function TrustToJSON(value?: Trust): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    name: value.name,
-    trustStatus: value.trustStatus,
-    apiSpecHash: value.apiSpecHash,
-    generatedSourceHash: value.generatedSourceHash,
-    ownerId: value.ownerId,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'name': value.name,
+        'trustStatus': value.trustStatus,
+        'apiSpecHash': value.apiSpecHash,
+        'generatedSourceHash': value.generatedSourceHash,
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum TrustTrustStatusEnum {
-  VERIFIED = "verified",
-  DEGRADED = "degraded",
-  CRITICAL = "critical",
-  UNCONFIGURED = "unconfigured",
+    VERIFIED = 'verified',
+    DEGRADED = 'degraded',
+    CRITICAL = 'critical',
+    UNCONFIGURED = 'unconfigured'
 }
+
+

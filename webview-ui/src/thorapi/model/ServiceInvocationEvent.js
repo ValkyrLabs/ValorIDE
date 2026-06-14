@@ -36,42 +36,22 @@ const _1 = require("./");
 function ServiceInvocationEventFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        service: !(0, runtime_1.exists)(json, "service")
-            ? undefined
-            : (0, _1.ManagedMcpServiceFromJSON)(json["service"]),
-        consumer: !(0, runtime_1.exists)(json, "consumer")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["consumer"]),
-        creator: !(0, runtime_1.exists)(json, "creator")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["creator"]),
-        cost: !(0, runtime_1.exists)(json, "cost") ? undefined : json["cost"],
-        executionTimeMs: !(0, runtime_1.exists)(json, "executionTimeMs")
-            ? undefined
-            : json["executionTimeMs"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        errorMessage: !(0, runtime_1.exists)(json, "errorMessage")
-            ? undefined
-            : json["errorMessage"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'service': !(0, runtime_1.exists)(json, 'service') ? undefined : (0, _1.ManagedMcpServiceFromJSON)(json['service']),
+        'consumer': !(0, runtime_1.exists)(json, 'consumer') ? undefined : (0, _1.PrincipalFromJSON)(json['consumer']),
+        'creator': !(0, runtime_1.exists)(json, 'creator') ? undefined : (0, _1.PrincipalFromJSON)(json['creator']),
+        'cost': !(0, runtime_1.exists)(json, 'cost') ? undefined : json['cost'],
+        'executionTimeMs': !(0, runtime_1.exists)(json, 'executionTimeMs') ? undefined : json['executionTimeMs'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'errorMessage': !(0, runtime_1.exists)(json, 'errorMessage') ? undefined : json['errorMessage'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ServiceInvocationEventToJSON(value) {
@@ -80,20 +60,20 @@ function ServiceInvocationEventToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        service: (0, _1.ManagedMcpServiceToJSON)(value.service),
-        consumer: (0, _1.PrincipalToJSON)(value.consumer),
-        creator: (0, _1.PrincipalToJSON)(value.creator),
-        cost: value.cost,
-        executionTimeMs: value.executionTimeMs,
-        status: value.status,
-        errorMessage: value.errorMessage,
-        trashed: value.trashed,
+        'service': (0, _1.ManagedMcpServiceToJSON)(value.service),
+        'consumer': (0, _1.PrincipalToJSON)(value.consumer),
+        'creator': (0, _1.PrincipalToJSON)(value.creator),
+        'cost': value.cost,
+        'executionTimeMs': value.executionTimeMs,
+        'status': value.status,
+        'errorMessage': value.errorMessage,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ServiceInvocationEventStatusEnum;
 (function (ServiceInvocationEventStatusEnum) {
     ServiceInvocationEventStatusEnum["SUCCESS"] = "success";

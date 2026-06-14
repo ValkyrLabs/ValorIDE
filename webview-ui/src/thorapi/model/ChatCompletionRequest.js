@@ -35,32 +35,20 @@ const _1 = require("./");
 function ChatCompletionRequestFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        model: !(0, runtime_1.exists)(json, "model") ? undefined : json["model"],
-        prompt: !(0, runtime_1.exists)(json, "prompt") ? undefined : json["prompt"],
-        messages: !(0, runtime_1.exists)(json, "messages")
-            ? undefined
-            : json["messages"].map(_1.ChatMessageFromJSON),
-        temperature: !(0, runtime_1.exists)(json, "temperature") ? undefined : json["temperature"],
-        stream: !(0, runtime_1.exists)(json, "stream") ? undefined : json["stream"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'model': !(0, runtime_1.exists)(json, 'model') ? undefined : json['model'],
+        'prompt': !(0, runtime_1.exists)(json, 'prompt') ? undefined : json['prompt'],
+        'messages': !(0, runtime_1.exists)(json, 'messages') ? undefined : json['messages'].map(_1.ChatMessageFromJSON),
+        'temperature': !(0, runtime_1.exists)(json, 'temperature') ? undefined : json['temperature'],
+        'stream': !(0, runtime_1.exists)(json, 'stream') ? undefined : json['stream'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ChatCompletionRequestToJSON(value) {
@@ -69,14 +57,12 @@ function ChatCompletionRequestToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        model: value.model,
-        prompt: value.prompt,
-        messages: value.messages === undefined
-            ? undefined
-            : value.messages.map(_1.ChatMessageToJSON),
-        temperature: value.temperature,
-        stream: value.stream,
-        trashed: value.trashed,
+        'model': value.model,
+        'prompt': value.prompt,
+        'messages': value.messages === undefined ? undefined : value.messages.map(_1.ChatMessageToJSON),
+        'temperature': value.temperature,
+        'stream': value.stream,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=ChatCompletionRequest.js.map

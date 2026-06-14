@@ -35,30 +35,18 @@ const DataObject_1 = require("./DataObject");
 function PresignRequestFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        ttlSeconds: !(0, runtime_1.exists)(json, "ttlSeconds") ? undefined : json["ttlSeconds"],
-        disposition: !(0, runtime_1.exists)(json, "disposition") ? undefined : json["disposition"],
-        downloadFilename: !(0, runtime_1.exists)(json, "downloadFilename")
-            ? undefined
-            : json["downloadFilename"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'ttlSeconds': !(0, runtime_1.exists)(json, 'ttlSeconds') ? undefined : json['ttlSeconds'],
+        'disposition': !(0, runtime_1.exists)(json, 'disposition') ? undefined : json['disposition'],
+        'downloadFilename': !(0, runtime_1.exists)(json, 'downloadFilename') ? undefined : json['downloadFilename'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function PresignRequestToJSON(value) {
@@ -67,16 +55,16 @@ function PresignRequestToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        ttlSeconds: value.ttlSeconds,
-        disposition: value.disposition,
-        downloadFilename: value.downloadFilename,
-        trashed: value.trashed,
+        'ttlSeconds': value.ttlSeconds,
+        'disposition': value.disposition,
+        'downloadFilename': value.downloadFilename,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var PresignRequestDispositionEnum;
 (function (PresignRequestDispositionEnum) {
     PresignRequestDispositionEnum["INLINE"] = "inline";

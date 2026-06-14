@@ -35,34 +35,20 @@ const _1 = require("./");
 function AgentHierarchyFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        agentId: !(0, runtime_1.exists)(json, "agentId") ? undefined : json["agentId"],
-        parentAgentId: !(0, runtime_1.exists)(json, "parentAgentId")
-            ? undefined
-            : json["parentAgentId"],
-        childAgents: !(0, runtime_1.exists)(json, "childAgents")
-            ? undefined
-            : json["childAgents"].map(_1.AgentFromJSON),
-        depth: !(0, runtime_1.exists)(json, "depth") ? undefined : json["depth"],
-        maxChildren: !(0, runtime_1.exists)(json, "maxChildren") ? undefined : json["maxChildren"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'agentId': !(0, runtime_1.exists)(json, 'agentId') ? undefined : json['agentId'],
+        'parentAgentId': !(0, runtime_1.exists)(json, 'parentAgentId') ? undefined : json['parentAgentId'],
+        'childAgents': !(0, runtime_1.exists)(json, 'childAgents') ? undefined : json['childAgents'].map(_1.AgentFromJSON),
+        'depth': !(0, runtime_1.exists)(json, 'depth') ? undefined : json['depth'],
+        'maxChildren': !(0, runtime_1.exists)(json, 'maxChildren') ? undefined : json['maxChildren'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function AgentHierarchyToJSON(value) {
@@ -71,17 +57,13 @@ function AgentHierarchyToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        agentId: value.agentId,
-        parentAgentId: value.parentAgentId,
-        childAgents: value.childAgents === undefined
-            ? undefined
-            : value.childAgents.map(_1.AgentToJSON),
-        depth: value.depth,
-        maxChildren: value.maxChildren,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        trashed: value.trashed,
+        'agentId': value.agentId,
+        'parentAgentId': value.parentAgentId,
+        'childAgents': value.childAgents === undefined ? undefined : value.childAgents.map(_1.AgentToJSON),
+        'depth': value.depth,
+        'maxChildren': value.maxChildren,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=AgentHierarchy.js.map

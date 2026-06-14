@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { SwarmPayload } from "@thorapi/model/SwarmPayload";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { SwarmPayload } from '@thorapi/model/SwarmPayload'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type SwarmPayloadResponse = SwarmPayload[];
+type SwarmPayloadResponse = SwarmPayload[]
+type SwarmPayloadPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<SwarmPayload>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type SwarmPayloadListQueryArg = {
+  example?: Partial<SwarmPayload>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toSwarmPayloadList = (result: unknown): SwarmPayloadResponse => {
   if (Array.isArray(result)) {
-    return result as SwarmPayloadResponse;
+    return result as SwarmPayloadResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as SwarmPayloadResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as SwarmPayloadResponse) : []
+}
 
 export const SwarmPayloadService = createApi({
-  reducerPath: "SwarmPayload", // This should remain unique
+  reducerPath: 'SwarmPayload', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["SwarmPayload"],
+  tagTypes: ['SwarmPayload'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSwarmPayloadsPaged: build.query<
-      SwarmPayloadResponse,
-      { page: number; size?: number; example?: Partial<SwarmPayload> }
-    >({
+    getSwarmPayloadsPaged: build.query<SwarmPayloadResponse, SwarmPayloadPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SwarmPayload?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SwarmPayload?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toSwarmPayloadList(result);
+        const rows = toSwarmPayloadList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SwarmPayload" as const, id })),
-          { type: "SwarmPayload", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'SwarmPayload' as const, id })),
+          { type: 'SwarmPayload', id: `PAGE_${page}` },
+          { type: 'SwarmPayload', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSwarmPayloads: build.query<
-      SwarmPayloadResponse,
-      { example?: Partial<SwarmPayload> } | void
-    >({
+    getSwarmPayloads: build.query<SwarmPayloadResponse, SwarmPayloadListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const SwarmPayloadService = createApi({
         return `SwarmPayload`;
       },
       providesTags: (result) => {
-        const rows = toSwarmPayloadList(result);
+        const rows = toSwarmPayloadList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SwarmPayload" as const, id })),
-          { type: "SwarmPayload", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'SwarmPayload' as const, id })),
+          { type: 'SwarmPayload', id: 'LIST' },
+          { type: 'SwarmPayload', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,89 +97,71 @@ export const SwarmPayloadService = createApi({
     addSwarmPayload: build.mutation<SwarmPayload, Partial<SwarmPayload>>({
       query: (body) => ({
         url: `SwarmPayload`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "SwarmPayload", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'SwarmPayload', id: 'LIST' },
+        { type: 'SwarmPayload', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getSwarmPayload: build.query<SwarmPayload, string>({
       query: (id) => `SwarmPayload/${id}`,
-      providesTags: (result, error, id) => [{ type: "SwarmPayload", id }],
+      providesTags: (result, error, id) => [{ type: 'SwarmPayload', id }],
     }),
 
     // 5) Update
-    updateSwarmPayload: build.mutation<
-      void,
-      Pick<SwarmPayload, "id"> & Partial<SwarmPayload>
-    >({
+    updateSwarmPayload: build.mutation<SwarmPayload, Pick<SwarmPayload, 'id'> & Partial<SwarmPayload>>({
       query: ({ id, ...patch }) => ({
         url: `SwarmPayload/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            SwarmPayloadService.util.updateQueryData(
-              "getSwarmPayload",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<SwarmPayload, "id">) => [
-        { type: "SwarmPayload", id },
-        { type: "SwarmPayload", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<SwarmPayload, 'id'>) => [
+        { type: 'SwarmPayload', id },
+        { type: 'SwarmPayload', id: 'LIST' },
+        { type: 'SwarmPayload', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteSwarmPayload: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteSwarmPayload: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `SwarmPayload/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "SwarmPayload", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'SwarmPayload', id },
+        { type: 'SwarmPayload', id: 'LIST' },
+        { type: 'SwarmPayload', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSwarmPayloadCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteSwarmPayloadCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `SwarmPayload/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "SwarmPayload", id },
-        { type: "SwarmPayload", id: "LIST" },
+        { type: 'SwarmPayload', id },
+        { type: 'SwarmPayload', id: 'LIST' },
+        { type: 'SwarmPayload', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetSwarmPayloadsPagedQuery`
 export const {
-  useGetSwarmPayloadsPagedQuery, // immediate fetch
+  useGetSwarmPayloadsPagedQuery,     // immediate fetch
   useLazyGetSwarmPayloadsPagedQuery, // lazy fetch
   useGetSwarmPayloadQuery,
   useGetSwarmPayloadsQuery,
@@ -177,4 +169,4 @@ export const {
   useUpdateSwarmPayloadMutation,
   useDeleteSwarmPayloadMutation,
   useDeleteSwarmPayloadCascadeMutation,
-} = SwarmPayloadService;
+} = SwarmPayloadService

@@ -35,37 +35,21 @@ const _1 = require("./");
 function BuildOutputFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        applicationId: !(0, runtime_1.exists)(json, "applicationId")
-            ? undefined
-            : json["applicationId"],
-        buildId: !(0, runtime_1.exists)(json, "buildId") ? undefined : json["buildId"],
-        lastSuccessfulRun: !(0, runtime_1.exists)(json, "lastSuccessfulRun")
-            ? undefined
-            : new Date(json["lastSuccessfulRun"]),
-        success: !(0, runtime_1.exists)(json, "success") ? undefined : json["success"],
-        output: !(0, runtime_1.exists)(json, "output") ? undefined : json["output"],
-        solutions: !(0, runtime_1.exists)(json, "solutions")
-            ? undefined
-            : json["solutions"].map(_1.SolutionFromJSON),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'applicationId': !(0, runtime_1.exists)(json, 'applicationId') ? undefined : json['applicationId'],
+        'buildId': !(0, runtime_1.exists)(json, 'buildId') ? undefined : json['buildId'],
+        'lastSuccessfulRun': !(0, runtime_1.exists)(json, 'lastSuccessfulRun') ? undefined : new Date(json['lastSuccessfulRun']),
+        'success': !(0, runtime_1.exists)(json, 'success') ? undefined : json['success'],
+        'output': !(0, runtime_1.exists)(json, 'output') ? undefined : json['output'],
+        'solutions': !(0, runtime_1.exists)(json, 'solutions') ? undefined : json['solutions'].map(_1.SolutionFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function BuildOutputToJSON(value) {
@@ -74,17 +58,13 @@ function BuildOutputToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        applicationId: value.applicationId,
-        buildId: value.buildId,
-        lastSuccessfulRun: value.lastSuccessfulRun === undefined
-            ? undefined
-            : value.lastSuccessfulRun.toISOString(),
-        success: value.success,
-        output: value.output,
-        solutions: value.solutions === undefined
-            ? undefined
-            : value.solutions.map(_1.SolutionToJSON),
-        trashed: value.trashed,
+        'applicationId': value.applicationId,
+        'buildId': value.buildId,
+        'lastSuccessfulRun': value.lastSuccessfulRun === undefined ? undefined : value.lastSuccessfulRun.toISOString(),
+        'success': value.success,
+        'output': value.output,
+        'solutions': value.solutions === undefined ? undefined : value.solutions.map(_1.SolutionToJSON),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=BuildOutput.js.map

@@ -35,54 +35,26 @@ const DataObject_1 = require("./DataObject");
 function ConsultingProfileFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        jobSeekerId: !(0, runtime_1.exists)(json, "jobSeekerId") ? undefined : json["jobSeekerId"],
-        consultingType: !(0, runtime_1.exists)(json, "consultingType")
-            ? undefined
-            : json["consultingType"],
-        expertiseAreas: !(0, runtime_1.exists)(json, "expertiseAreas")
-            ? undefined
-            : json["expertiseAreas"],
-        maximumHourlyRate: !(0, runtime_1.exists)(json, "maximumHourlyRate")
-            ? undefined
-            : json["maximumHourlyRate"],
-        minimumMonthlyCommitment: !(0, runtime_1.exists)(json, "minimumMonthlyCommitment")
-            ? undefined
-            : json["minimumMonthlyCommitment"],
-        geographicFocus: !(0, runtime_1.exists)(json, "geographicFocus")
-            ? undefined
-            : json["geographicFocus"],
-        projectPortfolio: !(0, runtime_1.exists)(json, "projectPortfolio")
-            ? undefined
-            : json["projectPortfolio"],
-        profileCompletionScore: !(0, runtime_1.exists)(json, "profileCompletionScore")
-            ? undefined
-            : json["profileCompletionScore"],
-        isAvailable: !(0, runtime_1.exists)(json, "isAvailable") ? undefined : json["isAvailable"],
-        availableStartDate: !(0, runtime_1.exists)(json, "availableStartDate")
-            ? undefined
-            : new Date(json["availableStartDate"]),
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        updatedDate: !(0, runtime_1.exists)(json, "updatedDate")
-            ? undefined
-            : new Date(json["updatedDate"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'jobSeekerId': !(0, runtime_1.exists)(json, 'jobSeekerId') ? undefined : json['jobSeekerId'],
+        'consultingType': !(0, runtime_1.exists)(json, 'consultingType') ? undefined : json['consultingType'],
+        'expertiseAreas': !(0, runtime_1.exists)(json, 'expertiseAreas') ? undefined : json['expertiseAreas'],
+        'maximumHourlyRate': !(0, runtime_1.exists)(json, 'maximumHourlyRate') ? undefined : json['maximumHourlyRate'],
+        'minimumMonthlyCommitment': !(0, runtime_1.exists)(json, 'minimumMonthlyCommitment') ? undefined : json['minimumMonthlyCommitment'],
+        'geographicFocus': !(0, runtime_1.exists)(json, 'geographicFocus') ? undefined : json['geographicFocus'],
+        'projectPortfolio': !(0, runtime_1.exists)(json, 'projectPortfolio') ? undefined : json['projectPortfolio'],
+        'profileCompletionScore': !(0, runtime_1.exists)(json, 'profileCompletionScore') ? undefined : json['profileCompletionScore'],
+        'isAvailable': !(0, runtime_1.exists)(json, 'isAvailable') ? undefined : json['isAvailable'],
+        'availableStartDate': !(0, runtime_1.exists)(json, 'availableStartDate') ? undefined : new Date(json['availableStartDate']),
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'updatedDate': !(0, runtime_1.exists)(json, 'updatedDate') ? undefined : new Date(json['updatedDate']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ConsultingProfileToJSON(value) {
@@ -91,31 +63,25 @@ function ConsultingProfileToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        jobSeekerId: value.jobSeekerId,
-        consultingType: value.consultingType,
-        expertiseAreas: value.expertiseAreas,
-        maximumHourlyRate: value.maximumHourlyRate,
-        minimumMonthlyCommitment: value.minimumMonthlyCommitment,
-        geographicFocus: value.geographicFocus,
-        projectPortfolio: value.projectPortfolio,
-        profileCompletionScore: value.profileCompletionScore,
-        isAvailable: value.isAvailable,
-        availableStartDate: value.availableStartDate === undefined
-            ? undefined
-            : value.availableStartDate.toISOString(),
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        updatedDate: value.updatedDate === undefined
-            ? undefined
-            : value.updatedDate.toISOString(),
-        trashed: value.trashed,
+        'jobSeekerId': value.jobSeekerId,
+        'consultingType': value.consultingType,
+        'expertiseAreas': value.expertiseAreas,
+        'maximumHourlyRate': value.maximumHourlyRate,
+        'minimumMonthlyCommitment': value.minimumMonthlyCommitment,
+        'geographicFocus': value.geographicFocus,
+        'projectPortfolio': value.projectPortfolio,
+        'profileCompletionScore': value.profileCompletionScore,
+        'isAvailable': value.isAvailable,
+        'availableStartDate': value.availableStartDate === undefined ? undefined : value.availableStartDate.toISOString(),
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
+        'updatedDate': value.updatedDate === undefined ? undefined : value.updatedDate.toISOString(),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ConsultingProfileConsultingTypeEnum;
 (function (ConsultingProfileConsultingTypeEnum) {
     ConsultingProfileConsultingTypeEnum["INDEPENDENT_CONSULTANT"] = "independent_consultant";

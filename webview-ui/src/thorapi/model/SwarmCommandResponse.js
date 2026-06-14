@@ -34,32 +34,31 @@ const DataObject_1 = require("./DataObject");
 function SwarmCommandResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        targetInstanceId: !(0, runtime_1.exists)(json, "targetInstanceId")
-            ? undefined
-            : json["targetInstanceId"],
-        issuedAt: !(0, runtime_1.exists)(json, "issuedAt")
-            ? undefined
-            : new Date(json["issuedAt"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'targetInstanceId': !(0, runtime_1.exists)(json, 'targetInstanceId') ? undefined : json['targetInstanceId'],
+        'issuedAt': !(0, runtime_1.exists)(json, 'issuedAt') ? undefined : new Date(json['issuedAt']),
+        'commandId': !(0, runtime_1.exists)(json, 'commandId') ? undefined : json['commandId'],
+        'rejectionCode': !(0, runtime_1.exists)(json, 'rejectionCode') ? undefined : json['rejectionCode'],
+        'receiptRef': !(0, runtime_1.exists)(json, 'receiptRef') ? undefined : json['receiptRef'],
+        'traceId': !(0, runtime_1.exists)(json, 'traceId') ? undefined : json['traceId'],
+        'contextPageRef': !(0, runtime_1.exists)(json, 'contextPageRef') ? undefined : json['contextPageRef'],
+        'skillOptReceiptRef': !(0, runtime_1.exists)(json, 'skillOptReceiptRef') ? undefined : json['skillOptReceiptRef'],
+        'workflowExecutionRef': !(0, runtime_1.exists)(json, 'workflowExecutionRef') ? undefined : json['workflowExecutionRef'],
+        'workflowDispatchJson': !(0, runtime_1.exists)(json, 'workflowDispatchJson') ? undefined : json['workflowDispatchJson'],
+        'commandPayloadJson': !(0, runtime_1.exists)(json, 'commandPayloadJson') ? undefined : json['commandPayloadJson'],
+        'retryCount': !(0, runtime_1.exists)(json, 'retryCount') ? undefined : json['retryCount'],
+        'nextRetryAt': !(0, runtime_1.exists)(json, 'nextRetryAt') ? undefined : new Date(json['nextRetryAt']),
+        'leaseOwner': !(0, runtime_1.exists)(json, 'leaseOwner') ? undefined : json['leaseOwner'],
+        'leaseUntil': !(0, runtime_1.exists)(json, 'leaseUntil') ? undefined : new Date(json['leaseUntil']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function SwarmCommandResponseToJSON(value) {
@@ -68,10 +67,23 @@ function SwarmCommandResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        status: value.status,
-        targetInstanceId: value.targetInstanceId,
-        issuedAt: value.issuedAt === undefined ? undefined : value.issuedAt.toISOString(),
-        trashed: value.trashed,
+        'status': value.status,
+        'targetInstanceId': value.targetInstanceId,
+        'issuedAt': value.issuedAt === undefined ? undefined : value.issuedAt.toISOString(),
+        'commandId': value.commandId,
+        'rejectionCode': value.rejectionCode,
+        'receiptRef': value.receiptRef,
+        'traceId': value.traceId,
+        'contextPageRef': value.contextPageRef,
+        'skillOptReceiptRef': value.skillOptReceiptRef,
+        'workflowExecutionRef': value.workflowExecutionRef,
+        'workflowDispatchJson': value.workflowDispatchJson,
+        'commandPayloadJson': value.commandPayloadJson,
+        'retryCount': value.retryCount,
+        'nextRetryAt': value.nextRetryAt === undefined ? undefined : value.nextRetryAt.toISOString(),
+        'leaseOwner': value.leaseOwner,
+        'leaseUntil': value.leaseUntil === undefined ? undefined : value.leaseUntil.toISOString(),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=SwarmCommandResponse.js.map

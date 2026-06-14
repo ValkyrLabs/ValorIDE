@@ -26,22 +26,25 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 import {
-  WorkflowGraphEdge,
-  WorkflowGraphEdgeFromJSON,
-  WorkflowGraphEdgeToJSON,
-  WorkflowGraphModule,
-  WorkflowGraphModuleFromJSON,
-  WorkflowGraphModuleToJSON,
-  WorkflowGraphNode,
-  WorkflowGraphNodeFromJSON,
-  WorkflowGraphNodeToJSON,
-  WorkflowGraphWorkflowData,
-  WorkflowGraphWorkflowDataFromJSON,
-  WorkflowGraphWorkflowDataToJSON,
-} from "./";
+
+
+    WorkflowGraphEdge,
+    WorkflowGraphEdgeFromJSON,
+    WorkflowGraphEdgeToJSON,
+    WorkflowGraphModule,
+    WorkflowGraphModuleFromJSON,
+    WorkflowGraphModuleToJSON,
+    WorkflowGraphNode,
+    WorkflowGraphNodeFromJSON,
+    WorkflowGraphNodeToJSON,
+    WorkflowGraphWorkflowData,
+    WorkflowGraphWorkflowDataFromJSON,
+    WorkflowGraphWorkflowDataToJSON,
+} from './';
+
 
 // thorapi
 
@@ -50,159 +53,134 @@ import {
  * @export
  * @interface WorkflowGraphRequest
  */
-export type WorkflowGraphRequest = DataObject & {
-  /**
-   *
-   * @type {WorkflowGraphWorkflowData}
-   * @memberof WorkflowGraphRequest
-   */
-  workflow?: WorkflowGraphWorkflowData;
-  /**
-   *
-   * @type {Array<WorkflowGraphNode>}
-   * @memberof WorkflowGraphRequest
-   */
-  nodes?: Array<WorkflowGraphNode>;
-  /**
-   *
-   * @type {Array<WorkflowGraphEdge>}
-   * @memberof WorkflowGraphRequest
-   */
-  edges?: Array<WorkflowGraphEdge>;
-  /**
-   *
-   * @type {Array<WorkflowGraphModule>}
-   * @memberof WorkflowGraphRequest
-   */
-  modules?: Array<WorkflowGraphModule>;
-  /**
-   *
-   * @type {string}
-   * @memberof WorkflowGraphRequest
-   */
-  meta?: string;
-  /**
-   *
-   * @type {number}
-   * @memberof WorkflowGraphRequest
-   */
-  version?: number;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof WorkflowGraphRequest
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof WorkflowGraphRequest
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof WorkflowGraphRequest
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof WorkflowGraphRequest
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof WorkflowGraphRequest
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof WorkflowGraphRequest
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof WorkflowGraphRequest
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof WorkflowGraphRequest
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof WorkflowGraphRequest
-   */
-  trashed?: boolean;
-};
+export type WorkflowGraphRequest  = DataObject & {
+    /**
+     * 
+     * @type {WorkflowGraphWorkflowData}
+     * @memberof WorkflowGraphRequest
+     */
+    workflow?: WorkflowGraphWorkflowData;
+    /**
+     * 
+     * @type {Array<WorkflowGraphNode>}
+     * @memberof WorkflowGraphRequest
+     */
+    nodes?: Array<WorkflowGraphNode>;
+    /**
+     * 
+     * @type {Array<WorkflowGraphEdge>}
+     * @memberof WorkflowGraphRequest
+     */
+    edges?: Array<WorkflowGraphEdge>;
+    /**
+     * 
+     * @type {Array<WorkflowGraphModule>}
+     * @memberof WorkflowGraphRequest
+     */
+    modules?: Array<WorkflowGraphModule>;
+    /**
+     * 
+     * @type {string}
+     * @memberof WorkflowGraphRequest
+     */
+    meta?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof WorkflowGraphRequest
+     */
+    version?: number;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof WorkflowGraphRequest
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof WorkflowGraphRequest
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof WorkflowGraphRequest
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof WorkflowGraphRequest
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof WorkflowGraphRequest
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof WorkflowGraphRequest
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof WorkflowGraphRequest
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof WorkflowGraphRequest
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof WorkflowGraphRequest
+     */
+    trashed?: boolean;
+}
 
 export function WorkflowGraphRequestFromJSON(json: any): WorkflowGraphRequest {
-  return {
-    ...DataObjectFromJSON(json),
-    workflow: !exists(json, "workflow")
-      ? undefined
-      : WorkflowGraphWorkflowDataFromJSON(json["workflow"]),
-    nodes: !exists(json, "nodes")
-      ? undefined
-      : (json["nodes"] as Array<any>).map(WorkflowGraphNodeFromJSON),
-    edges: !exists(json, "edges")
-      ? undefined
-      : (json["edges"] as Array<any>).map(WorkflowGraphEdgeFromJSON),
-    modules: !exists(json, "modules")
-      ? undefined
-      : (json["modules"] as Array<any>).map(WorkflowGraphModuleFromJSON),
-    meta: !exists(json, "meta") ? undefined : json["meta"],
-    version: !exists(json, "version") ? undefined : json["version"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'workflow': !exists(json, 'workflow') ? undefined : WorkflowGraphWorkflowDataFromJSON(json['workflow']),
+        'nodes': !exists(json, 'nodes') ? undefined : (json['nodes'] as Array<any>).map(WorkflowGraphNodeFromJSON),
+        'edges': !exists(json, 'edges') ? undefined : (json['edges'] as Array<any>).map(WorkflowGraphEdgeFromJSON),
+        'modules': !exists(json, 'modules') ? undefined : (json['modules'] as Array<any>).map(WorkflowGraphModuleFromJSON),
+        'meta': !exists(json, 'meta') ? undefined : json['meta'],
+        'version': !exists(json, 'version') ? undefined : json['version'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function WorkflowGraphRequestToJSON(value?: WorkflowGraphRequest): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    workflow: WorkflowGraphWorkflowDataToJSON(value.workflow),
-    nodes:
-      value.nodes === undefined
-        ? undefined
-        : (value.nodes as Array<any>).map(WorkflowGraphNodeToJSON),
-    edges:
-      value.edges === undefined
-        ? undefined
-        : (value.edges as Array<any>).map(WorkflowGraphEdgeToJSON),
-    modules:
-      value.modules === undefined
-        ? undefined
-        : (value.modules as Array<any>).map(WorkflowGraphModuleToJSON),
-    meta: value.meta,
-    version: value.version,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'workflow': WorkflowGraphWorkflowDataToJSON(value.workflow),
+        'nodes': value.nodes === undefined ? undefined : (value.nodes as Array<any>).map(WorkflowGraphNodeToJSON),
+        'edges': value.edges === undefined ? undefined : (value.edges as Array<any>).map(WorkflowGraphEdgeToJSON),
+        'modules': value.modules === undefined ? undefined : (value.modules as Array<any>).map(WorkflowGraphModuleToJSON),
+        'meta': value.meta,
+        'version': value.version,
+        'trashed': value.trashed,
+    };
 }
+
+

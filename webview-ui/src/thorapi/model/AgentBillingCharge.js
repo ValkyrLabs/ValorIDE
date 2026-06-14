@@ -35,40 +35,24 @@ const DataObject_1 = require("./DataObject");
 function AgentBillingChargeFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        agentId: !(0, runtime_1.exists)(json, "agentId") ? undefined : json["agentId"],
-        organizationId: !(0, runtime_1.exists)(json, "organizationId")
-            ? undefined
-            : json["organizationId"],
-        chargeType: !(0, runtime_1.exists)(json, "chargeType") ? undefined : json["chargeType"],
-        amount: !(0, runtime_1.exists)(json, "amount") ? undefined : json["amount"],
-        currency: !(0, runtime_1.exists)(json, "currency") ? undefined : json["currency"],
-        billingPeriod: !(0, runtime_1.exists)(json, "billingPeriod")
-            ? undefined
-            : new Date(json["billingPeriod"]),
-        chargedDate: !(0, runtime_1.exists)(json, "chargedDate")
-            ? undefined
-            : new Date(json["chargedDate"]),
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        notes: !(0, runtime_1.exists)(json, "notes") ? undefined : json["notes"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'agentId': !(0, runtime_1.exists)(json, 'agentId') ? undefined : json['agentId'],
+        'organizationId': !(0, runtime_1.exists)(json, 'organizationId') ? undefined : json['organizationId'],
+        'chargeType': !(0, runtime_1.exists)(json, 'chargeType') ? undefined : json['chargeType'],
+        'amount': !(0, runtime_1.exists)(json, 'amount') ? undefined : json['amount'],
+        'currency': !(0, runtime_1.exists)(json, 'currency') ? undefined : json['currency'],
+        'billingPeriod': !(0, runtime_1.exists)(json, 'billingPeriod') ? undefined : new Date(json['billingPeriod']),
+        'chargedDate': !(0, runtime_1.exists)(json, 'chargedDate') ? undefined : new Date(json['chargedDate']),
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'notes': !(0, runtime_1.exists)(json, 'notes') ? undefined : json['notes'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function AgentBillingChargeToJSON(value) {
@@ -77,26 +61,22 @@ function AgentBillingChargeToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        agentId: value.agentId,
-        organizationId: value.organizationId,
-        chargeType: value.chargeType,
-        amount: value.amount,
-        currency: value.currency,
-        billingPeriod: value.billingPeriod === undefined
-            ? undefined
-            : value.billingPeriod.toISOString().substring(0, 10),
-        chargedDate: value.chargedDate === undefined
-            ? undefined
-            : value.chargedDate.toISOString(),
-        status: value.status,
-        notes: value.notes,
-        trashed: value.trashed,
+        'agentId': value.agentId,
+        'organizationId': value.organizationId,
+        'chargeType': value.chargeType,
+        'amount': value.amount,
+        'currency': value.currency,
+        'billingPeriod': value.billingPeriod === undefined ? undefined : value.billingPeriod.toISOString().substring(0, 10),
+        'chargedDate': value.chargedDate === undefined ? undefined : value.chargedDate.toISOString(),
+        'status': value.status,
+        'notes': value.notes,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var AgentBillingChargeChargeTypeEnum;
 (function (AgentBillingChargeChargeTypeEnum) {
     AgentBillingChargeChargeTypeEnum["INSTANTIATION"] = "instantiation";
@@ -104,9 +84,9 @@ var AgentBillingChargeChargeTypeEnum;
     AgentBillingChargeChargeTypeEnum["OVERAGE"] = "overage";
 })(AgentBillingChargeChargeTypeEnum || (exports.AgentBillingChargeChargeTypeEnum = AgentBillingChargeChargeTypeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var AgentBillingChargeStatusEnum;
 (function (AgentBillingChargeStatusEnum) {
     AgentBillingChargeStatusEnum["PENDING"] = "pending";

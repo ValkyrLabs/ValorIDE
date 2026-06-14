@@ -35,31 +35,17 @@ const _1 = require("./");
 function GenerateTrustKeyResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        trustKey: !(0, runtime_1.exists)(json, "trustKey")
-            ? undefined
-            : (0, _1.TrustKeyFromJSON)(json["trustKey"]),
-        activeVersion: !(0, runtime_1.exists)(json, "activeVersion")
-            ? undefined
-            : (0, _1.TrustKeyVersionFromJSON)(json["activeVersion"]),
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'trustKey': !(0, runtime_1.exists)(json, 'trustKey') ? undefined : (0, _1.TrustKeyFromJSON)(json['trustKey']),
+        'activeVersion': !(0, runtime_1.exists)(json, 'activeVersion') ? undefined : (0, _1.TrustKeyVersionFromJSON)(json['activeVersion']),
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function GenerateTrustKeyResponseToJSON(value) {
@@ -68,10 +54,10 @@ function GenerateTrustKeyResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        trustKey: (0, _1.TrustKeyToJSON)(value.trustKey),
-        activeVersion: (0, _1.TrustKeyVersionToJSON)(value.activeVersion),
-        ownerId: value.ownerId,
-        trashed: value.trashed,
+        'trustKey': (0, _1.TrustKeyToJSON)(value.trustKey),
+        'activeVersion': (0, _1.TrustKeyVersionToJSON)(value.activeVersion),
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=GenerateTrustKeyResponse.js.map

@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { SalesActivity } from "@thorapi/model/SalesActivity";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { SalesActivity } from '@thorapi/model/SalesActivity'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type SalesActivityResponse = SalesActivity[];
+type SalesActivityResponse = SalesActivity[]
+type SalesActivityPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<SalesActivity>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type SalesActivityListQueryArg = {
+  example?: Partial<SalesActivity>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toSalesActivityList = (result: unknown): SalesActivityResponse => {
   if (Array.isArray(result)) {
-    return result as SalesActivityResponse;
+    return result as SalesActivityResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as SalesActivityResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as SalesActivityResponse) : []
+}
 
 export const SalesActivityService = createApi({
-  reducerPath: "SalesActivity", // This should remain unique
+  reducerPath: 'SalesActivity', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["SalesActivity"],
+  tagTypes: ['SalesActivity'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSalesActivitysPaged: build.query<
-      SalesActivityResponse,
-      { page: number; size?: number; example?: Partial<SalesActivity> }
-    >({
+    getSalesActivitysPaged: build.query<SalesActivityResponse, SalesActivityPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SalesActivity?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SalesActivity?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toSalesActivityList(result);
+        const rows = toSalesActivityList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SalesActivity" as const, id })),
-          { type: "SalesActivity", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'SalesActivity' as const, id })),
+          { type: 'SalesActivity', id: `PAGE_${page}` },
+          { type: 'SalesActivity', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSalesActivitys: build.query<
-      SalesActivityResponse,
-      { example?: Partial<SalesActivity> } | void
-    >({
+    getSalesActivitys: build.query<SalesActivityResponse, SalesActivityListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const SalesActivityService = createApi({
         return `SalesActivity`;
       },
       providesTags: (result) => {
-        const rows = toSalesActivityList(result);
+        const rows = toSalesActivityList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SalesActivity" as const, id })),
-          { type: "SalesActivity", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'SalesActivity' as const, id })),
+          { type: 'SalesActivity', id: 'LIST' },
+          { type: 'SalesActivity', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,89 +97,71 @@ export const SalesActivityService = createApi({
     addSalesActivity: build.mutation<SalesActivity, Partial<SalesActivity>>({
       query: (body) => ({
         url: `SalesActivity`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "SalesActivity", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'SalesActivity', id: 'LIST' },
+        { type: 'SalesActivity', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getSalesActivity: build.query<SalesActivity, string>({
       query: (id) => `SalesActivity/${id}`,
-      providesTags: (result, error, id) => [{ type: "SalesActivity", id }],
+      providesTags: (result, error, id) => [{ type: 'SalesActivity', id }],
     }),
 
     // 5) Update
-    updateSalesActivity: build.mutation<
-      void,
-      Pick<SalesActivity, "id"> & Partial<SalesActivity>
-    >({
+    updateSalesActivity: build.mutation<SalesActivity, Pick<SalesActivity, 'id'> & Partial<SalesActivity>>({
       query: ({ id, ...patch }) => ({
         url: `SalesActivity/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            SalesActivityService.util.updateQueryData(
-              "getSalesActivity",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<SalesActivity, "id">) => [
-        { type: "SalesActivity", id },
-        { type: "SalesActivity", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<SalesActivity, 'id'>) => [
+        { type: 'SalesActivity', id },
+        { type: 'SalesActivity', id: 'LIST' },
+        { type: 'SalesActivity', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteSalesActivity: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteSalesActivity: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `SalesActivity/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "SalesActivity", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'SalesActivity', id },
+        { type: 'SalesActivity', id: 'LIST' },
+        { type: 'SalesActivity', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSalesActivityCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteSalesActivityCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `SalesActivity/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "SalesActivity", id },
-        { type: "SalesActivity", id: "LIST" },
+        { type: 'SalesActivity', id },
+        { type: 'SalesActivity', id: 'LIST' },
+        { type: 'SalesActivity', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetSalesActivitysPagedQuery`
 export const {
-  useGetSalesActivitysPagedQuery, // immediate fetch
+  useGetSalesActivitysPagedQuery,     // immediate fetch
   useLazyGetSalesActivitysPagedQuery, // lazy fetch
   useGetSalesActivityQuery,
   useGetSalesActivitysQuery,
@@ -177,4 +169,4 @@ export const {
   useUpdateSalesActivityMutation,
   useDeleteSalesActivityMutation,
   useDeleteSalesActivityCascadeMutation,
-} = SalesActivityService;
+} = SalesActivityService

@@ -35,32 +35,18 @@ const _1 = require("./");
 function MergeRangeFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        sheetId: !(0, runtime_1.exists)(json, "sheetId") ? undefined : json["sheetId"],
-        startCell: !(0, runtime_1.exists)(json, "startCell")
-            ? undefined
-            : (0, _1.CellFromJSON)(json["startCell"]),
-        endCell: !(0, runtime_1.exists)(json, "endCell")
-            ? undefined
-            : (0, _1.CellFromJSON)(json["endCell"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'sheetId': !(0, runtime_1.exists)(json, 'sheetId') ? undefined : json['sheetId'],
+        'startCell': !(0, runtime_1.exists)(json, 'startCell') ? undefined : (0, _1.CellFromJSON)(json['startCell']),
+        'endCell': !(0, runtime_1.exists)(json, 'endCell') ? undefined : (0, _1.CellFromJSON)(json['endCell']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function MergeRangeToJSON(value) {
@@ -69,10 +55,10 @@ function MergeRangeToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        sheetId: value.sheetId,
-        startCell: (0, _1.CellToJSON)(value.startCell),
-        endCell: (0, _1.CellToJSON)(value.endCell),
-        trashed: value.trashed,
+        'sheetId': value.sheetId,
+        'startCell': (0, _1.CellToJSON)(value.startCell),
+        'endCell': (0, _1.CellToJSON)(value.endCell),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=MergeRange.js.map

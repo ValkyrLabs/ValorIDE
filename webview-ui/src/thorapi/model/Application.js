@@ -36,39 +36,23 @@ const _1 = require("./");
 function ApplicationFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        isTemplate: !(0, runtime_1.exists)(json, "isTemplate") ? undefined : json["isTemplate"],
-        type: !(0, runtime_1.exists)(json, "type") ? undefined : json["type"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        entrypointUrl: !(0, runtime_1.exists)(json, "entrypointUrl")
-            ? undefined
-            : json["entrypointUrl"],
-        contentMedia: !(0, runtime_1.exists)(json, "contentMedia")
-            ? undefined
-            : json["contentMedia"].map(_1.ContentMediaLinkFromJSON),
-        openAPISpec: !(0, runtime_1.exists)(json, "openAPISpec")
-            ? undefined
-            : (0, _1.OasOpenAPISpecFromJSON)(json["openAPISpec"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'isTemplate': !(0, runtime_1.exists)(json, 'isTemplate') ? undefined : json['isTemplate'],
+        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'entrypointUrl': !(0, runtime_1.exists)(json, 'entrypointUrl') ? undefined : json['entrypointUrl'],
+        'contentMedia': !(0, runtime_1.exists)(json, 'contentMedia') ? undefined : json['contentMedia'].map(_1.ContentMediaLinkFromJSON),
+        'openAPISpec': !(0, runtime_1.exists)(json, 'openAPISpec') ? undefined : (0, _1.OasOpenAPISpecFromJSON)(json['openAPISpec']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ApplicationToJSON(value) {
@@ -77,23 +61,21 @@ function ApplicationToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        name: value.name,
-        description: value.description,
-        isTemplate: value.isTemplate,
-        type: value.type,
-        status: value.status,
-        entrypointUrl: value.entrypointUrl,
-        contentMedia: value.contentMedia === undefined
-            ? undefined
-            : value.contentMedia.map(_1.ContentMediaLinkToJSON),
-        openAPISpec: (0, _1.OasOpenAPISpecToJSON)(value.openAPISpec),
-        trashed: value.trashed,
+        'name': value.name,
+        'description': value.description,
+        'isTemplate': value.isTemplate,
+        'type': value.type,
+        'status': value.status,
+        'entrypointUrl': value.entrypointUrl,
+        'contentMedia': value.contentMedia === undefined ? undefined : value.contentMedia.map(_1.ContentMediaLinkToJSON),
+        'openAPISpec': (0, _1.OasOpenAPISpecToJSON)(value.openAPISpec),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ApplicationTypeEnum;
 (function (ApplicationTypeEnum) {
     ApplicationTypeEnum["FULLSTACK"] = "full-stack";
@@ -106,9 +88,9 @@ var ApplicationTypeEnum;
     ApplicationTypeEnum["LAMBDA"] = "lambda";
 })(ApplicationTypeEnum || (exports.ApplicationTypeEnum = ApplicationTypeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ApplicationStatusEnum;
 (function (ApplicationStatusEnum) {
     ApplicationStatusEnum["READY"] = "ready";

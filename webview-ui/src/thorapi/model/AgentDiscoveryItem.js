@@ -35,34 +35,22 @@ const DataObject_1 = require("./DataObject");
 function AgentDiscoveryItemFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        agentId: !(0, runtime_1.exists)(json, "agentId") ? undefined : json["agentId"],
-        instanceId: !(0, runtime_1.exists)(json, "instanceId") ? undefined : json["instanceId"],
-        username: !(0, runtime_1.exists)(json, "username") ? undefined : json["username"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        lastSeen: !(0, runtime_1.exists)(json, "lastSeen")
-            ? undefined
-            : new Date(json["lastSeen"]),
-        location: !(0, runtime_1.exists)(json, "location") ? undefined : json["location"],
-        metadata: !(0, runtime_1.exists)(json, "metadata") ? undefined : json["metadata"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'agentId': !(0, runtime_1.exists)(json, 'agentId') ? undefined : json['agentId'],
+        'instanceId': !(0, runtime_1.exists)(json, 'instanceId') ? undefined : json['instanceId'],
+        'username': !(0, runtime_1.exists)(json, 'username') ? undefined : json['username'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'lastSeen': !(0, runtime_1.exists)(json, 'lastSeen') ? undefined : new Date(json['lastSeen']),
+        'location': !(0, runtime_1.exists)(json, 'location') ? undefined : json['location'],
+        'metadata': !(0, runtime_1.exists)(json, 'metadata') ? undefined : json['metadata'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function AgentDiscoveryItemToJSON(value) {
@@ -71,20 +59,20 @@ function AgentDiscoveryItemToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        agentId: value.agentId,
-        instanceId: value.instanceId,
-        username: value.username,
-        status: value.status,
-        lastSeen: value.lastSeen === undefined ? undefined : value.lastSeen.toISOString(),
-        location: value.location,
-        metadata: value.metadata,
-        trashed: value.trashed,
+        'agentId': value.agentId,
+        'instanceId': value.instanceId,
+        'username': value.username,
+        'status': value.status,
+        'lastSeen': value.lastSeen === undefined ? undefined : value.lastSeen.toISOString(),
+        'location': value.location,
+        'metadata': value.metadata,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var AgentDiscoveryItemStatusEnum;
 (function (AgentDiscoveryItemStatusEnum) {
     AgentDiscoveryItemStatusEnum["ONLINE"] = "online";

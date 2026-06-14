@@ -26,218 +26,204 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 import {
-  SalesOrder,
-  SalesOrderFromJSON,
-  SalesOrderToJSON,
-  Workflow,
-  WorkflowFromJSON,
-  WorkflowToJSON,
-} from "./";
+
+
+    SalesOrder,
+    SalesOrderFromJSON,
+    SalesOrderToJSON,
+    Workflow,
+    WorkflowFromJSON,
+    WorkflowToJSON,
+} from './';
+
 
 // thorapi
 
 /**
- * Represents a fulfillment action on a SalesOrder or LineItem. Used by ValkyrAI workflows to track digital delivery, invoice generation, and post-order actions. Links order → fulfillment state → workflow execution. One OrderFulfillmentTask per fulfillable LineItem; may trigger DownloadAccess creation.
+ * Represents a fulfillment action on a SalesOrder or LineItem. Used by ValkyrAI workflows to track digital delivery, invoice generation, and post-order actions. Links order → fulfillment state → workflow execution. One OrderFulfillmentTask per fulfillable LineItem; may trigger DownloadAccess creation. 
  * @export
  * @interface OrderFulfillmentTask
  */
-export type OrderFulfillmentTask = DataObject & {
-  /**
-   * Fulfillment action type.
-   * @type {string}
-   * @memberof OrderFulfillmentTask
-   */
-  fulfillmentType: OrderFulfillmentTaskFulfillmentTypeEnum;
-  /**
-   *
-   * @type {SalesOrder}
-   * @memberof OrderFulfillmentTask
-   */
-  salesOrder?: SalesOrder;
-  /**
-   * Current fulfillment lifecycle state.
-   * @type {string}
-   * @memberof OrderFulfillmentTask
-   */
-  status?: OrderFulfillmentTaskStatusEnum;
-  /**
-   *
-   * @type {Workflow}
-   * @memberof OrderFulfillmentTask
-   */
-  workflow?: Workflow;
-  /**
-   * Staff member assigned to this fulfillment task (if manual).
-   * @type {string}
-   * @memberof OrderFulfillmentTask
-   */
-  assignedTo?: string;
-  /**
-   * Number of fulfillment attempts.
-   * @type {number}
-   * @memberof OrderFulfillmentTask
-   */
-  attempts?: number;
-  /**
-   * Error message from most recent failed attempt.
-   * @type {string}
-   * @memberof OrderFulfillmentTask
-   */
-  lastError?: string;
-  /**
-   * When fulfillment completed successfully.
-   * @type {Date}
-   * @memberof OrderFulfillmentTask
-   */
-  completedAt?: Date;
-  /**
-   * Context data for the fulfillment (e.g., shipping address, tracking ID, email delivery status, download link validity period).
-   * @type {string}
-   * @memberof OrderFulfillmentTask
-   */
-  metadata?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof OrderFulfillmentTask
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof OrderFulfillmentTask
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof OrderFulfillmentTask
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof OrderFulfillmentTask
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof OrderFulfillmentTask
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof OrderFulfillmentTask
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof OrderFulfillmentTask
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof OrderFulfillmentTask
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof OrderFulfillmentTask
-   */
-  trashed?: boolean;
-};
+export type OrderFulfillmentTask  = DataObject & {
+    /**
+     * Fulfillment action type.
+     * @type {string}
+     * @memberof OrderFulfillmentTask
+     */
+    fulfillmentType: OrderFulfillmentTaskFulfillmentTypeEnum;
+    /**
+     * 
+     * @type {SalesOrder}
+     * @memberof OrderFulfillmentTask
+     */
+    salesOrder?: SalesOrder;
+    /**
+     * Current fulfillment lifecycle state.
+     * @type {string}
+     * @memberof OrderFulfillmentTask
+     */
+    status?: OrderFulfillmentTaskStatusEnum;
+    /**
+     * 
+     * @type {Workflow}
+     * @memberof OrderFulfillmentTask
+     */
+    workflow?: Workflow;
+    /**
+     * Staff member assigned to this fulfillment task (if manual).
+     * @type {string}
+     * @memberof OrderFulfillmentTask
+     */
+    assignedTo?: string;
+    /**
+     * Number of fulfillment attempts.
+     * @type {number}
+     * @memberof OrderFulfillmentTask
+     */
+    attempts?: number;
+    /**
+     * Error message from most recent failed attempt.
+     * @type {string}
+     * @memberof OrderFulfillmentTask
+     */
+    lastError?: string;
+    /**
+     * When fulfillment completed successfully.
+     * @type {Date}
+     * @memberof OrderFulfillmentTask
+     */
+    completedAt?: Date;
+    /**
+     * Context data for the fulfillment (e.g., shipping address, tracking ID, email delivery status, download link validity period). 
+     * @type {string}
+     * @memberof OrderFulfillmentTask
+     */
+    metadata?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof OrderFulfillmentTask
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof OrderFulfillmentTask
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof OrderFulfillmentTask
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof OrderFulfillmentTask
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof OrderFulfillmentTask
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof OrderFulfillmentTask
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof OrderFulfillmentTask
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof OrderFulfillmentTask
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof OrderFulfillmentTask
+     */
+    trashed?: boolean;
+}
 
 export function OrderFulfillmentTaskFromJSON(json: any): OrderFulfillmentTask {
-  return {
-    ...DataObjectFromJSON(json),
-    fulfillmentType: json["fulfillmentType"],
-    salesOrder: !exists(json, "salesOrder")
-      ? undefined
-      : SalesOrderFromJSON(json["salesOrder"]),
-    status: !exists(json, "status") ? undefined : json["status"],
-    workflow: !exists(json, "workflow")
-      ? undefined
-      : WorkflowFromJSON(json["workflow"]),
-    assignedTo: !exists(json, "assignedTo") ? undefined : json["assignedTo"],
-    attempts: !exists(json, "attempts") ? undefined : json["attempts"],
-    lastError: !exists(json, "lastError") ? undefined : json["lastError"],
-    completedAt: !exists(json, "completedAt")
-      ? undefined
-      : new Date(json["completedAt"]),
-    metadata: !exists(json, "metadata") ? undefined : json["metadata"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'fulfillmentType': json['fulfillmentType'],
+        'salesOrder': !exists(json, 'salesOrder') ? undefined : SalesOrderFromJSON(json['salesOrder']),
+        'status': !exists(json, 'status') ? undefined : json['status'],
+        'workflow': !exists(json, 'workflow') ? undefined : WorkflowFromJSON(json['workflow']),
+        'assignedTo': !exists(json, 'assignedTo') ? undefined : json['assignedTo'],
+        'attempts': !exists(json, 'attempts') ? undefined : json['attempts'],
+        'lastError': !exists(json, 'lastError') ? undefined : json['lastError'],
+        'completedAt': !exists(json, 'completedAt') ? undefined : new Date(json['completedAt']),
+        'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function OrderFulfillmentTaskToJSON(value?: OrderFulfillmentTask): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    fulfillmentType: value.fulfillmentType,
-    salesOrder: SalesOrderToJSON(value.salesOrder),
-    status: value.status,
-    workflow: WorkflowToJSON(value.workflow),
-    assignedTo: value.assignedTo,
-    attempts: value.attempts,
-    lastError: value.lastError,
-    completedAt:
-      value.completedAt === undefined
-        ? undefined
-        : value.completedAt.toISOString(),
-    metadata: value.metadata,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'fulfillmentType': value.fulfillmentType,
+        'salesOrder': SalesOrderToJSON(value.salesOrder),
+        'status': value.status,
+        'workflow': WorkflowToJSON(value.workflow),
+        'assignedTo': value.assignedTo,
+        'attempts': value.attempts,
+        'lastError': value.lastError,
+        'completedAt': value.completedAt === undefined ? undefined : value.completedAt.toISOString(),
+        'metadata': value.metadata,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum OrderFulfillmentTaskFulfillmentTypeEnum {
-  DIGITALDELIVERY = "digital_delivery",
-  PHYSICALSHIPMENT = "physical_shipment",
-  SERVICEACTIVATION = "service_activation",
-  INVOICEGENERATION = "invoice_generation",
-  SUBSCRIPTIONPROVISION = "subscription_provision",
-  ENTITLEMENTGRANT = "entitlement_grant",
-  OTHER = "other",
+    DIGITALDELIVERY = 'digital_delivery',
+    PHYSICALSHIPMENT = 'physical_shipment',
+    SERVICEACTIVATION = 'service_activation',
+    INVOICEGENERATION = 'invoice_generation',
+    SUBSCRIPTIONPROVISION = 'subscription_provision',
+    ENTITLEMENTGRANT = 'entitlement_grant',
+    OTHER = 'other'
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum OrderFulfillmentTaskStatusEnum {
-  PENDING = "pending",
-  INPROGRESS = "in_progress",
-  COMPLETED = "completed",
-  FAILED = "failed",
-  CANCELED = "canceled",
+    PENDING = 'pending',
+    INPROGRESS = 'in_progress',
+    COMPLETED = 'completed',
+    FAILED = 'failed',
+    CANCELED = 'canceled'
 }
+
+

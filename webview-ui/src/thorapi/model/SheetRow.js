@@ -35,35 +35,21 @@ const _1 = require("./");
 function SheetRowFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        sheetId: !(0, runtime_1.exists)(json, "sheetId") ? undefined : json["sheetId"],
-        rowIndex: !(0, runtime_1.exists)(json, "rowIndex") ? undefined : json["rowIndex"],
-        hidden: !(0, runtime_1.exists)(json, "hidden") ? undefined : json["hidden"],
-        collapsed: !(0, runtime_1.exists)(json, "collapsed") ? undefined : json["collapsed"],
-        outlineLevel: !(0, runtime_1.exists)(json, "outlineLevel")
-            ? undefined
-            : json["outlineLevel"],
-        cells: !(0, runtime_1.exists)(json, "cells")
-            ? undefined
-            : json["cells"].map(_1.CellFromJSON),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'sheetId': !(0, runtime_1.exists)(json, 'sheetId') ? undefined : json['sheetId'],
+        'rowIndex': !(0, runtime_1.exists)(json, 'rowIndex') ? undefined : json['rowIndex'],
+        'hidden': !(0, runtime_1.exists)(json, 'hidden') ? undefined : json['hidden'],
+        'collapsed': !(0, runtime_1.exists)(json, 'collapsed') ? undefined : json['collapsed'],
+        'outlineLevel': !(0, runtime_1.exists)(json, 'outlineLevel') ? undefined : json['outlineLevel'],
+        'cells': !(0, runtime_1.exists)(json, 'cells') ? undefined : json['cells'].map(_1.CellFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function SheetRowToJSON(value) {
@@ -72,15 +58,13 @@ function SheetRowToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        sheetId: value.sheetId,
-        rowIndex: value.rowIndex,
-        hidden: value.hidden,
-        collapsed: value.collapsed,
-        outlineLevel: value.outlineLevel,
-        cells: value.cells === undefined
-            ? undefined
-            : value.cells.map(_1.CellToJSON),
-        trashed: value.trashed,
+        'sheetId': value.sheetId,
+        'rowIndex': value.rowIndex,
+        'hidden': value.hidden,
+        'collapsed': value.collapsed,
+        'outlineLevel': value.outlineLevel,
+        'cells': value.cells === undefined ? undefined : value.cells.map(_1.CellToJSON),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=SheetRow.js.map

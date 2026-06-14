@@ -36,48 +36,24 @@ const _1 = require("./");
 function TrustPolicyManifestFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        policyStatus: !(0, runtime_1.exists)(json, "policyStatus")
-            ? undefined
-            : json["policyStatus"],
-        apiSpecHash: !(0, runtime_1.exists)(json, "apiSpecHash") ? undefined : json["apiSpecHash"],
-        generatedSourceHash: !(0, runtime_1.exists)(json, "generatedSourceHash")
-            ? undefined
-            : json["generatedSourceHash"],
-        runtimeImageHash: !(0, runtime_1.exists)(json, "runtimeImageHash")
-            ? undefined
-            : json["runtimeImageHash"],
-        canonicalManifestHash: !(0, runtime_1.exists)(json, "canonicalManifestHash")
-            ? undefined
-            : json["canonicalManifestHash"],
-        allowedModelRefs: !(0, runtime_1.exists)(json, "allowedModelRefs")
-            ? undefined
-            : json["allowedModelRefs"],
-        requiredKeyRefs: !(0, runtime_1.exists)(json, "requiredKeyRefs")
-            ? undefined
-            : json["requiredKeyRefs"],
-        signingKeyVersion: !(0, runtime_1.exists)(json, "signingKeyVersion")
-            ? undefined
-            : (0, _1.TrustKeyVersionFromJSON)(json["signingKeyVersion"]),
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'policyStatus': !(0, runtime_1.exists)(json, 'policyStatus') ? undefined : json['policyStatus'],
+        'apiSpecHash': !(0, runtime_1.exists)(json, 'apiSpecHash') ? undefined : json['apiSpecHash'],
+        'generatedSourceHash': !(0, runtime_1.exists)(json, 'generatedSourceHash') ? undefined : json['generatedSourceHash'],
+        'runtimeImageHash': !(0, runtime_1.exists)(json, 'runtimeImageHash') ? undefined : json['runtimeImageHash'],
+        'canonicalManifestHash': !(0, runtime_1.exists)(json, 'canonicalManifestHash') ? undefined : json['canonicalManifestHash'],
+        'allowedModelRefs': !(0, runtime_1.exists)(json, 'allowedModelRefs') ? undefined : json['allowedModelRefs'],
+        'requiredKeyRefs': !(0, runtime_1.exists)(json, 'requiredKeyRefs') ? undefined : json['requiredKeyRefs'],
+        'signingKeyVersion': !(0, runtime_1.exists)(json, 'signingKeyVersion') ? undefined : (0, _1.TrustKeyVersionFromJSON)(json['signingKeyVersion']),
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function TrustPolicyManifestToJSON(value) {
@@ -86,23 +62,23 @@ function TrustPolicyManifestToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        name: value.name,
-        policyStatus: value.policyStatus,
-        apiSpecHash: value.apiSpecHash,
-        generatedSourceHash: value.generatedSourceHash,
-        runtimeImageHash: value.runtimeImageHash,
-        canonicalManifestHash: value.canonicalManifestHash,
-        allowedModelRefs: value.allowedModelRefs,
-        requiredKeyRefs: value.requiredKeyRefs,
-        signingKeyVersion: (0, _1.TrustKeyVersionToJSON)(value.signingKeyVersion),
-        ownerId: value.ownerId,
-        trashed: value.trashed,
+        'name': value.name,
+        'policyStatus': value.policyStatus,
+        'apiSpecHash': value.apiSpecHash,
+        'generatedSourceHash': value.generatedSourceHash,
+        'runtimeImageHash': value.runtimeImageHash,
+        'canonicalManifestHash': value.canonicalManifestHash,
+        'allowedModelRefs': value.allowedModelRefs,
+        'requiredKeyRefs': value.requiredKeyRefs,
+        'signingKeyVersion': (0, _1.TrustKeyVersionToJSON)(value.signingKeyVersion),
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustPolicyManifestPolicyStatusEnum;
 (function (TrustPolicyManifestPolicyStatusEnum) {
     TrustPolicyManifestPolicyStatusEnum["DRAFT"] = "draft";

@@ -36,38 +36,24 @@ const _1 = require("./");
 function WorkflowFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        role: !(0, runtime_1.exists)(json, "role") ? undefined : json["role"],
-        schedule: !(0, runtime_1.exists)(json, "schedule") ? undefined : json["schedule"],
-        meta: !(0, runtime_1.exists)(json, "meta") ? undefined : json["meta"],
-        version: !(0, runtime_1.exists)(json, "version") ? undefined : json["version"],
-        tasks: !(0, runtime_1.exists)(json, "tasks")
-            ? undefined
-            : json["tasks"].map(_1.TaskFromJSON),
-        workflowState: !(0, runtime_1.exists)(json, "workflow_state")
-            ? undefined
-            : json["workflow_state"].map(_1.WorkflowStateFromJSON),
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'role': !(0, runtime_1.exists)(json, 'role') ? undefined : json['role'],
+        'schedule': !(0, runtime_1.exists)(json, 'schedule') ? undefined : json['schedule'],
+        'meta': !(0, runtime_1.exists)(json, 'meta') ? undefined : json['meta'],
+        'version': !(0, runtime_1.exists)(json, 'version') ? undefined : json['version'],
+        'tasks': !(0, runtime_1.exists)(json, 'tasks') ? undefined : json['tasks'].map(_1.TaskFromJSON),
+        'workflowState': !(0, runtime_1.exists)(json, 'workflowState') ? undefined : json['workflowState'].map(_1.WorkflowStateFromJSON),
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function WorkflowToJSON(value) {
@@ -76,25 +62,21 @@ function WorkflowToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        name: value.name,
-        description: value.description,
-        role: value.role,
-        schedule: value.schedule,
-        meta: value.meta,
-        tasks: value.tasks === undefined
-            ? undefined
-            : value.tasks.map(_1.TaskToJSON),
-        workflow_state: value.workflowState === undefined
-            ? undefined
-            : value.workflowState.map(_1.WorkflowStateToJSON),
-        status: value.status,
-        trashed: value.trashed,
+        'name': value.name,
+        'description': value.description,
+        'role': value.role,
+        'schedule': value.schedule,
+        'meta': value.meta,
+        'tasks': value.tasks === undefined ? undefined : value.tasks.map(_1.TaskToJSON),
+        'workflowState': value.workflowState === undefined ? undefined : value.workflowState.map(_1.WorkflowStateToJSON),
+        'status': value.status,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var WorkflowRoleEnum;
 (function (WorkflowRoleEnum) {
     WorkflowRoleEnum["USER"] = "user";
@@ -102,9 +84,9 @@ var WorkflowRoleEnum;
     WorkflowRoleEnum["SYSTEM"] = "system";
 })(WorkflowRoleEnum || (exports.WorkflowRoleEnum = WorkflowRoleEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var WorkflowStatusEnum;
 (function (WorkflowStatusEnum) {
     WorkflowStatusEnum["READY"] = "ready";

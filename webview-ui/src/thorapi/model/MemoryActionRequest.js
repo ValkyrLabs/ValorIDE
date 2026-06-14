@@ -35,28 +35,18 @@ const DataObject_1 = require("./DataObject");
 function MemoryActionRequestFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        workflowId: !(0, runtime_1.exists)(json, "workflowId") ? undefined : json["workflowId"],
-        entryTypes: !(0, runtime_1.exists)(json, "entryTypes") ? undefined : json["entryTypes"],
-        dryRun: !(0, runtime_1.exists)(json, "dryRun") ? undefined : json["dryRun"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'workflowId': !(0, runtime_1.exists)(json, 'workflowId') ? undefined : json['workflowId'],
+        'entryTypes': !(0, runtime_1.exists)(json, 'entryTypes') ? undefined : json['entryTypes'],
+        'dryRun': !(0, runtime_1.exists)(json, 'dryRun') ? undefined : json['dryRun'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function MemoryActionRequestToJSON(value) {
@@ -65,16 +55,16 @@ function MemoryActionRequestToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        workflowId: value.workflowId,
-        entryTypes: value.entryTypes,
-        dryRun: value.dryRun,
-        trashed: value.trashed,
+        'workflowId': value.workflowId,
+        'entryTypes': value.entryTypes,
+        'dryRun': value.dryRun,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var MemoryActionRequestEntryTypesEnum;
 (function (MemoryActionRequestEntryTypesEnum) {
     MemoryActionRequestEntryTypesEnum["PREFERENCE"] = "preference";

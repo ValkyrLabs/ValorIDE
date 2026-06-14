@@ -13,69 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { OrganizationAddonSubscription } from "@thorapi/model/OrganizationAddonSubscription";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { OrganizationAddonSubscription } from '@thorapi/model/OrganizationAddonSubscription'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type OrganizationAddonSubscriptionResponse = OrganizationAddonSubscription[];
+type OrganizationAddonSubscriptionResponse = OrganizationAddonSubscription[]
+type OrganizationAddonSubscriptionPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<OrganizationAddonSubscription>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toOrganizationAddonSubscriptionList = (
-  result: unknown,
-): OrganizationAddonSubscriptionResponse => {
+type OrganizationAddonSubscriptionListQueryArg = {
+  example?: Partial<OrganizationAddonSubscription>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toOrganizationAddonSubscriptionList = (result: unknown): OrganizationAddonSubscriptionResponse => {
   if (Array.isArray(result)) {
-    return result as OrganizationAddonSubscriptionResponse;
+    return result as OrganizationAddonSubscriptionResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as OrganizationAddonSubscriptionResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as OrganizationAddonSubscriptionResponse) : []
+}
 
 export const OrganizationAddonSubscriptionService = createApi({
-  reducerPath: "OrganizationAddonSubscription", // This should remain unique
+  reducerPath: 'OrganizationAddonSubscription', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["OrganizationAddonSubscription"],
+  tagTypes: ['OrganizationAddonSubscription'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getOrganizationAddonSubscriptionsPaged: build.query<
-      OrganizationAddonSubscriptionResponse,
-      {
-        page: number;
-        size?: number;
-        example?: Partial<OrganizationAddonSubscription>;
-      }
-    >({
+    getOrganizationAddonSubscriptionsPaged: build.query<OrganizationAddonSubscriptionResponse, OrganizationAddonSubscriptionPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `OrganizationAddonSubscription?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `OrganizationAddonSubscription?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toOrganizationAddonSubscriptionList(result);
+        const rows = toOrganizationAddonSubscriptionList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "OrganizationAddonSubscription" as const,
-              id,
-            })),
-          { type: "OrganizationAddonSubscription", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'OrganizationAddonSubscription' as const, id })),
+          { type: 'OrganizationAddonSubscription', id: `PAGE_${page}` },
+          { type: 'OrganizationAddonSubscription', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOrganizationAddonSubscriptions: build.query<
-      OrganizationAddonSubscriptionResponse,
-      { example?: Partial<OrganizationAddonSubscription> } | void
-    >({
+    getOrganizationAddonSubscriptions: build.query<OrganizationAddonSubscriptionResponse, OrganizationAddonSubscriptionListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -84,121 +82,86 @@ export const OrganizationAddonSubscriptionService = createApi({
         return `OrganizationAddonSubscription`;
       },
       providesTags: (result) => {
-        const rows = toOrganizationAddonSubscriptionList(result);
+        const rows = toOrganizationAddonSubscriptionList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "OrganizationAddonSubscription" as const,
-              id,
-            })),
-          { type: "OrganizationAddonSubscription", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'OrganizationAddonSubscription' as const, id })),
+          { type: 'OrganizationAddonSubscription', id: 'LIST' },
+          { type: 'OrganizationAddonSubscription', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addOrganizationAddonSubscription: build.mutation<
-      OrganizationAddonSubscription,
-      Partial<OrganizationAddonSubscription>
-    >({
+    addOrganizationAddonSubscription: build.mutation<OrganizationAddonSubscription, Partial<OrganizationAddonSubscription>>({
       query: (body) => ({
         url: `OrganizationAddonSubscription`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "OrganizationAddonSubscription", id: "LIST" }],
-    }),
-
-    // 4) Get single by ID
-    getOrganizationAddonSubscription: build.query<
-      OrganizationAddonSubscription,
-      string
-    >({
-      query: (id) => `OrganizationAddonSubscription/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "OrganizationAddonSubscription", id },
+      invalidatesTags: [
+        { type: 'OrganizationAddonSubscription', id: 'LIST' },
+        { type: 'OrganizationAddonSubscription', id: 'PARTIAL-LIST' },
       ],
     }),
 
+    // 4) Get single by ID
+    getOrganizationAddonSubscription: build.query<OrganizationAddonSubscription, string>({
+      query: (id) => `OrganizationAddonSubscription/${id}`,
+      providesTags: (result, error, id) => [{ type: 'OrganizationAddonSubscription', id }],
+    }),
+
     // 5) Update
-    updateOrganizationAddonSubscription: build.mutation<
-      void,
-      Pick<OrganizationAddonSubscription, "id"> &
-        Partial<OrganizationAddonSubscription>
-    >({
+    updateOrganizationAddonSubscription: build.mutation<OrganizationAddonSubscription, Pick<OrganizationAddonSubscription, 'id'> & Partial<OrganizationAddonSubscription>>({
       query: ({ id, ...patch }) => ({
         url: `OrganizationAddonSubscription/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            OrganizationAddonSubscriptionService.util.updateQueryData(
-              "getOrganizationAddonSubscription",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<OrganizationAddonSubscription, "id">,
-      ) => [
-        { type: "OrganizationAddonSubscription", id },
-        { type: "OrganizationAddonSubscription", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<OrganizationAddonSubscription, 'id'>) => [
+        { type: 'OrganizationAddonSubscription', id },
+        { type: 'OrganizationAddonSubscription', id: 'LIST' },
+        { type: 'OrganizationAddonSubscription', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteOrganizationAddonSubscription: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteOrganizationAddonSubscription: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `OrganizationAddonSubscription/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "OrganizationAddonSubscription", id },
+        { type: 'OrganizationAddonSubscription', id },
+        { type: 'OrganizationAddonSubscription', id: 'LIST' },
+        { type: 'OrganizationAddonSubscription', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteOrganizationAddonSubscriptionCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteOrganizationAddonSubscriptionCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `OrganizationAddonSubscription/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "OrganizationAddonSubscription", id },
-        { type: "OrganizationAddonSubscription", id: "LIST" },
+        { type: 'OrganizationAddonSubscription', id },
+        { type: 'OrganizationAddonSubscription', id: 'LIST' },
+        { type: 'OrganizationAddonSubscription', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetOrganizationAddonSubscriptionsPagedQuery`
 export const {
-  useGetOrganizationAddonSubscriptionsPagedQuery, // immediate fetch
+  useGetOrganizationAddonSubscriptionsPagedQuery,     // immediate fetch
   useLazyGetOrganizationAddonSubscriptionsPagedQuery, // lazy fetch
   useGetOrganizationAddonSubscriptionQuery,
   useGetOrganizationAddonSubscriptionsQuery,
@@ -206,4 +169,4 @@ export const {
   useUpdateOrganizationAddonSubscriptionMutation,
   useDeleteOrganizationAddonSubscriptionMutation,
   useDeleteOrganizationAddonSubscriptionCascadeMutation,
-} = OrganizationAddonSubscriptionService;
+} = OrganizationAddonSubscriptionService

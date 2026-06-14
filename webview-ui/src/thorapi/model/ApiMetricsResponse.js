@@ -35,40 +35,20 @@ const _1 = require("./");
 function ApiMetricsResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        endpoints: !(0, runtime_1.exists)(json, "endpoints")
-            ? undefined
-            : json["endpoints"].map(_1.ApiMetricSnapshotFromJSON),
-        recent: !(0, runtime_1.exists)(json, "recent")
-            ? undefined
-            : json["recent"].map(_1.ApiTrafficEventFromJSON),
-        customerKpis: !(0, runtime_1.exists)(json, "customerKpis")
-            ? undefined
-            : json["customerKpis"].map(_1.ApiIdentityKpiSnapshotFromJSON),
-        organizationKpis: !(0, runtime_1.exists)(json, "organizationKpis")
-            ? undefined
-            : json["organizationKpis"].map(_1.ApiIdentityKpiSnapshotFromJSON),
-        spineKpis: !(0, runtime_1.exists)(json, "spineKpis")
-            ? undefined
-            : json["spineKpis"].map(_1.ApiSpineKpiSnapshotFromJSON),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'endpoints': !(0, runtime_1.exists)(json, 'endpoints') ? undefined : json['endpoints'].map(_1.ApiMetricSnapshotFromJSON),
+        'recent': !(0, runtime_1.exists)(json, 'recent') ? undefined : json['recent'].map(_1.ApiTrafficEventFromJSON),
+        'customerKpis': !(0, runtime_1.exists)(json, 'customerKpis') ? undefined : json['customerKpis'].map(_1.ApiIdentityKpiSnapshotFromJSON),
+        'organizationKpis': !(0, runtime_1.exists)(json, 'organizationKpis') ? undefined : json['organizationKpis'].map(_1.ApiIdentityKpiSnapshotFromJSON),
+        'spineKpis': !(0, runtime_1.exists)(json, 'spineKpis') ? undefined : json['spineKpis'].map(_1.ApiSpineKpiSnapshotFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ApiMetricsResponseToJSON(value) {
@@ -77,22 +57,12 @@ function ApiMetricsResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        endpoints: value.endpoints === undefined
-            ? undefined
-            : value.endpoints.map(_1.ApiMetricSnapshotToJSON),
-        recent: value.recent === undefined
-            ? undefined
-            : value.recent.map(_1.ApiTrafficEventToJSON),
-        customerKpis: value.customerKpis === undefined
-            ? undefined
-            : value.customerKpis.map(_1.ApiIdentityKpiSnapshotToJSON),
-        organizationKpis: value.organizationKpis === undefined
-            ? undefined
-            : value.organizationKpis.map(_1.ApiIdentityKpiSnapshotToJSON),
-        spineKpis: value.spineKpis === undefined
-            ? undefined
-            : value.spineKpis.map(_1.ApiSpineKpiSnapshotToJSON),
-        trashed: value.trashed,
+        'endpoints': value.endpoints === undefined ? undefined : value.endpoints.map(_1.ApiMetricSnapshotToJSON),
+        'recent': value.recent === undefined ? undefined : value.recent.map(_1.ApiTrafficEventToJSON),
+        'customerKpis': value.customerKpis === undefined ? undefined : value.customerKpis.map(_1.ApiIdentityKpiSnapshotToJSON),
+        'organizationKpis': value.organizationKpis === undefined ? undefined : value.organizationKpis.map(_1.ApiIdentityKpiSnapshotToJSON),
+        'spineKpis': value.spineKpis === undefined ? undefined : value.spineKpis.map(_1.ApiSpineKpiSnapshotToJSON),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=ApiMetricsResponse.js.map

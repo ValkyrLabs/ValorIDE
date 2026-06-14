@@ -35,38 +35,22 @@ const DataObject_1 = require("./DataObject");
 function RetryPolicyFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        maxAttempts: !(0, runtime_1.exists)(json, "maxAttempts") ? undefined : json["maxAttempts"],
-        backoffStrategy: !(0, runtime_1.exists)(json, "backoffStrategy")
-            ? undefined
-            : json["backoffStrategy"],
-        initialDelayMs: !(0, runtime_1.exists)(json, "initialDelayMs")
-            ? undefined
-            : json["initialDelayMs"],
-        maxDelayMs: !(0, runtime_1.exists)(json, "maxDelayMs") ? undefined : json["maxDelayMs"],
-        multiplier: !(0, runtime_1.exists)(json, "multiplier") ? undefined : json["multiplier"],
-        jitter: !(0, runtime_1.exists)(json, "jitter") ? undefined : json["jitter"],
-        retryableErrors: !(0, runtime_1.exists)(json, "retryableErrors")
-            ? undefined
-            : json["retryableErrors"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'maxAttempts': !(0, runtime_1.exists)(json, 'maxAttempts') ? undefined : json['maxAttempts'],
+        'backoffStrategy': !(0, runtime_1.exists)(json, 'backoffStrategy') ? undefined : json['backoffStrategy'],
+        'initialDelayMs': !(0, runtime_1.exists)(json, 'initialDelayMs') ? undefined : json['initialDelayMs'],
+        'maxDelayMs': !(0, runtime_1.exists)(json, 'maxDelayMs') ? undefined : json['maxDelayMs'],
+        'multiplier': !(0, runtime_1.exists)(json, 'multiplier') ? undefined : json['multiplier'],
+        'jitter': !(0, runtime_1.exists)(json, 'jitter') ? undefined : json['jitter'],
+        'retryableErrors': !(0, runtime_1.exists)(json, 'retryableErrors') ? undefined : json['retryableErrors'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function RetryPolicyToJSON(value) {
@@ -75,20 +59,20 @@ function RetryPolicyToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        maxAttempts: value.maxAttempts,
-        backoffStrategy: value.backoffStrategy,
-        initialDelayMs: value.initialDelayMs,
-        maxDelayMs: value.maxDelayMs,
-        multiplier: value.multiplier,
-        jitter: value.jitter,
-        retryableErrors: value.retryableErrors,
-        trashed: value.trashed,
+        'maxAttempts': value.maxAttempts,
+        'backoffStrategy': value.backoffStrategy,
+        'initialDelayMs': value.initialDelayMs,
+        'maxDelayMs': value.maxDelayMs,
+        'multiplier': value.multiplier,
+        'jitter': value.jitter,
+        'retryableErrors': value.retryableErrors,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var RetryPolicyBackoffStrategyEnum;
 (function (RetryPolicyBackoffStrategyEnum) {
     RetryPolicyBackoffStrategyEnum["FIXED"] = "fixed";

@@ -13,70 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { CompleteUploadRequestPartsInner } from "@thorapi/model/CompleteUploadRequestPartsInner";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { CompleteUploadRequestPartsInner } from '@thorapi/model/CompleteUploadRequestPartsInner'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type CompleteUploadRequestPartsInnerResponse =
-  CompleteUploadRequestPartsInner[];
+type CompleteUploadRequestPartsInnerResponse = CompleteUploadRequestPartsInner[]
+type CompleteUploadRequestPartsInnerPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<CompleteUploadRequestPartsInner>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toCompleteUploadRequestPartsInnerList = (
-  result: unknown,
-): CompleteUploadRequestPartsInnerResponse => {
+type CompleteUploadRequestPartsInnerListQueryArg = {
+  example?: Partial<CompleteUploadRequestPartsInner>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toCompleteUploadRequestPartsInnerList = (result: unknown): CompleteUploadRequestPartsInnerResponse => {
   if (Array.isArray(result)) {
-    return result as CompleteUploadRequestPartsInnerResponse;
+    return result as CompleteUploadRequestPartsInnerResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as CompleteUploadRequestPartsInnerResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as CompleteUploadRequestPartsInnerResponse) : []
+}
 
 export const CompleteUploadRequestPartsInnerService = createApi({
-  reducerPath: "CompleteUploadRequestPartsInner", // This should remain unique
+  reducerPath: 'CompleteUploadRequestPartsInner', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["CompleteUploadRequestPartsInner"],
+  tagTypes: ['CompleteUploadRequestPartsInner'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getCompleteUploadRequestPartsInnersPaged: build.query<
-      CompleteUploadRequestPartsInnerResponse,
-      {
-        page: number;
-        size?: number;
-        example?: Partial<CompleteUploadRequestPartsInner>;
-      }
-    >({
+    getCompleteUploadRequestPartsInnersPaged: build.query<CompleteUploadRequestPartsInnerResponse, CompleteUploadRequestPartsInnerPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `CompleteUploadRequestPartsInner?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `CompleteUploadRequestPartsInner?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toCompleteUploadRequestPartsInnerList(result);
+        const rows = toCompleteUploadRequestPartsInnerList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "CompleteUploadRequestPartsInner" as const,
-              id,
-            })),
-          { type: "CompleteUploadRequestPartsInner", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'CompleteUploadRequestPartsInner' as const, id })),
+          { type: 'CompleteUploadRequestPartsInner', id: `PAGE_${page}` },
+          { type: 'CompleteUploadRequestPartsInner', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getCompleteUploadRequestPartsInners: build.query<
-      CompleteUploadRequestPartsInnerResponse,
-      { example?: Partial<CompleteUploadRequestPartsInner> } | void
-    >({
+    getCompleteUploadRequestPartsInners: build.query<CompleteUploadRequestPartsInnerResponse, CompleteUploadRequestPartsInnerListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -85,123 +82,86 @@ export const CompleteUploadRequestPartsInnerService = createApi({
         return `CompleteUploadRequestPartsInner`;
       },
       providesTags: (result) => {
-        const rows = toCompleteUploadRequestPartsInnerList(result);
+        const rows = toCompleteUploadRequestPartsInnerList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "CompleteUploadRequestPartsInner" as const,
-              id,
-            })),
-          { type: "CompleteUploadRequestPartsInner", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'CompleteUploadRequestPartsInner' as const, id })),
+          { type: 'CompleteUploadRequestPartsInner', id: 'LIST' },
+          { type: 'CompleteUploadRequestPartsInner', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addCompleteUploadRequestPartsInner: build.mutation<
-      CompleteUploadRequestPartsInner,
-      Partial<CompleteUploadRequestPartsInner>
-    >({
+    addCompleteUploadRequestPartsInner: build.mutation<CompleteUploadRequestPartsInner, Partial<CompleteUploadRequestPartsInner>>({
       query: (body) => ({
         url: `CompleteUploadRequestPartsInner`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
       invalidatesTags: [
-        { type: "CompleteUploadRequestPartsInner", id: "LIST" },
+        { type: 'CompleteUploadRequestPartsInner', id: 'LIST' },
+        { type: 'CompleteUploadRequestPartsInner', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 4) Get single by ID
-    getCompleteUploadRequestPartsInner: build.query<
-      CompleteUploadRequestPartsInner,
-      string
-    >({
+    getCompleteUploadRequestPartsInner: build.query<CompleteUploadRequestPartsInner, string>({
       query: (id) => `CompleteUploadRequestPartsInner/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "CompleteUploadRequestPartsInner", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'CompleteUploadRequestPartsInner', id }],
     }),
 
     // 5) Update
-    updateCompleteUploadRequestPartsInner: build.mutation<
-      void,
-      Pick<CompleteUploadRequestPartsInner, "id"> &
-        Partial<CompleteUploadRequestPartsInner>
-    >({
+    updateCompleteUploadRequestPartsInner: build.mutation<CompleteUploadRequestPartsInner, Pick<CompleteUploadRequestPartsInner, 'id'> & Partial<CompleteUploadRequestPartsInner>>({
       query: ({ id, ...patch }) => ({
         url: `CompleteUploadRequestPartsInner/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            CompleteUploadRequestPartsInnerService.util.updateQueryData(
-              "getCompleteUploadRequestPartsInner",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<CompleteUploadRequestPartsInner, "id">,
-      ) => [
-        { type: "CompleteUploadRequestPartsInner", id },
-        { type: "CompleteUploadRequestPartsInner", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<CompleteUploadRequestPartsInner, 'id'>) => [
+        { type: 'CompleteUploadRequestPartsInner', id },
+        { type: 'CompleteUploadRequestPartsInner', id: 'LIST' },
+        { type: 'CompleteUploadRequestPartsInner', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteCompleteUploadRequestPartsInner: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteCompleteUploadRequestPartsInner: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `CompleteUploadRequestPartsInner/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "CompleteUploadRequestPartsInner", id },
+        { type: 'CompleteUploadRequestPartsInner', id },
+        { type: 'CompleteUploadRequestPartsInner', id: 'LIST' },
+        { type: 'CompleteUploadRequestPartsInner', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteCompleteUploadRequestPartsInnerCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteCompleteUploadRequestPartsInnerCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `CompleteUploadRequestPartsInner/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "CompleteUploadRequestPartsInner", id },
-        { type: "CompleteUploadRequestPartsInner", id: "LIST" },
+        { type: 'CompleteUploadRequestPartsInner', id },
+        { type: 'CompleteUploadRequestPartsInner', id: 'LIST' },
+        { type: 'CompleteUploadRequestPartsInner', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetCompleteUploadRequestPartsInnersPagedQuery`
 export const {
-  useGetCompleteUploadRequestPartsInnersPagedQuery, // immediate fetch
+  useGetCompleteUploadRequestPartsInnersPagedQuery,     // immediate fetch
   useLazyGetCompleteUploadRequestPartsInnersPagedQuery, // lazy fetch
   useGetCompleteUploadRequestPartsInnerQuery,
   useGetCompleteUploadRequestPartsInnersQuery,
@@ -209,4 +169,4 @@ export const {
   useUpdateCompleteUploadRequestPartsInnerMutation,
   useDeleteCompleteUploadRequestPartsInnerMutation,
   useDeleteCompleteUploadRequestPartsInnerCascadeMutation,
-} = CompleteUploadRequestPartsInnerService;
+} = CompleteUploadRequestPartsInnerService

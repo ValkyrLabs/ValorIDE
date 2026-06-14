@@ -26,156 +26,144 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
 /**
- * Static configuration for circuit breaker behavior applied to ExecModule execution. Runtime state is tracked separately via CircuitBreakerState.
+ * Static configuration for circuit breaker behavior applied to ExecModule execution. Runtime state is tracked separately via CircuitBreakerState. 
  * @export
  * @interface CircuitBreakerConfig
  */
-export type CircuitBreakerConfig = DataObject & {
-  /**
-   * Optional human-readable identifier for this circuit breaker
-   * @type {string}
-   * @memberof CircuitBreakerConfig
-   */
-  name?: string;
-  /**
-   * Number of consecutive failures required to OPEN the circuit
-   * @type {number}
-   * @memberof CircuitBreakerConfig
-   */
-  failureThreshold?: number;
-  /**
-   * Number of consecutive successes required to CLOSE the circuit from HALF_OPEN
-   * @type {number}
-   * @memberof CircuitBreakerConfig
-   */
-  successThreshold?: number;
-  /**
-   * Duration the circuit remains OPEN before transitioning to HALF_OPEN
-   * @type {number}
-   * @memberof CircuitBreakerConfig
-   */
-  timeoutMs?: number;
-  /**
-   * Rolling time window for evaluating failures/successes
-   * @type {number}
-   * @memberof CircuitBreakerConfig
-   */
-  windowMs?: number;
-  /**
-   * Whether the circuit breaker is active
-   * @type {boolean}
-   * @memberof CircuitBreakerConfig
-   */
-  enabled?: boolean;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof CircuitBreakerConfig
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof CircuitBreakerConfig
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof CircuitBreakerConfig
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof CircuitBreakerConfig
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof CircuitBreakerConfig
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof CircuitBreakerConfig
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof CircuitBreakerConfig
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof CircuitBreakerConfig
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof CircuitBreakerConfig
-   */
-  trashed?: boolean;
-};
+export type CircuitBreakerConfig  = DataObject & {
+    /**
+     * Optional human-readable identifier for this circuit breaker
+     * @type {string}
+     * @memberof CircuitBreakerConfig
+     */
+    name?: string;
+    /**
+     * Number of consecutive failures required to OPEN the circuit 
+     * @type {number}
+     * @memberof CircuitBreakerConfig
+     */
+    failureThreshold?: number;
+    /**
+     * Number of consecutive successes required to CLOSE the circuit from HALF_OPEN 
+     * @type {number}
+     * @memberof CircuitBreakerConfig
+     */
+    successThreshold?: number;
+    /**
+     * Duration the circuit remains OPEN before transitioning to HALF_OPEN 
+     * @type {number}
+     * @memberof CircuitBreakerConfig
+     */
+    timeoutMs?: number;
+    /**
+     * Rolling time window for evaluating failures/successes 
+     * @type {number}
+     * @memberof CircuitBreakerConfig
+     */
+    windowMs?: number;
+    /**
+     * Whether the circuit breaker is active
+     * @type {boolean}
+     * @memberof CircuitBreakerConfig
+     */
+    enabled?: boolean;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof CircuitBreakerConfig
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof CircuitBreakerConfig
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof CircuitBreakerConfig
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof CircuitBreakerConfig
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof CircuitBreakerConfig
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof CircuitBreakerConfig
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof CircuitBreakerConfig
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof CircuitBreakerConfig
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof CircuitBreakerConfig
+     */
+    trashed?: boolean;
+}
 
 export function CircuitBreakerConfigFromJSON(json: any): CircuitBreakerConfig {
-  return {
-    ...DataObjectFromJSON(json),
-    name: !exists(json, "name") ? undefined : json["name"],
-    failureThreshold: !exists(json, "failureThreshold")
-      ? undefined
-      : json["failureThreshold"],
-    successThreshold: !exists(json, "successThreshold")
-      ? undefined
-      : json["successThreshold"],
-    timeoutMs: !exists(json, "timeoutMs") ? undefined : json["timeoutMs"],
-    windowMs: !exists(json, "windowMs") ? undefined : json["windowMs"],
-    enabled: !exists(json, "enabled") ? undefined : json["enabled"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'failureThreshold': !exists(json, 'failureThreshold') ? undefined : json['failureThreshold'],
+        'successThreshold': !exists(json, 'successThreshold') ? undefined : json['successThreshold'],
+        'timeoutMs': !exists(json, 'timeoutMs') ? undefined : json['timeoutMs'],
+        'windowMs': !exists(json, 'windowMs') ? undefined : json['windowMs'],
+        'enabled': !exists(json, 'enabled') ? undefined : json['enabled'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function CircuitBreakerConfigToJSON(value?: CircuitBreakerConfig): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    name: value.name,
-    failureThreshold: value.failureThreshold,
-    successThreshold: value.successThreshold,
-    timeoutMs: value.timeoutMs,
-    windowMs: value.windowMs,
-    enabled: value.enabled,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'name': value.name,
+        'failureThreshold': value.failureThreshold,
+        'successThreshold': value.successThreshold,
+        'timeoutMs': value.timeoutMs,
+        'windowMs': value.windowMs,
+        'enabled': value.enabled,
+        'trashed': value.trashed,
+    };
 }
+
+

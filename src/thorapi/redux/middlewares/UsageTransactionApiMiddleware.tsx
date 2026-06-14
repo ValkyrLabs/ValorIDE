@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_USAGETRANSACTION_REQUEST,
-  FETCH_USAGETRANSACTION_REQUEST,
-  LIST_USAGETRANSACTION_REQUEST,
-  UPDATE_USAGETRANSACTION_REQUEST,
-  DELETE_USAGETRANSACTION_REQUEST,
-  addUsageTransactionFailure,
-  addUsageTransactionSuccess,
-  fetchUsageTransactionFailure,
-  fetchUsageTransactionSuccess,
-  listUsageTransactionFailure,
-  listUsageTransactionSuccess,
-  updateUsageTransactionFailure,
-  updateUsageTransactionSuccess,
-  deleteUsageTransactionFailure,
-  deleteUsageTransactionSuccess,
-} from "../actions/UsageTransactionApiAction";
+
+    ADD_USAGETRANSACTION_REQUEST,
+    FETCH_USAGETRANSACTION_REQUEST,
+    LIST_USAGETRANSACTION_REQUEST,
+    UPDATE_USAGETRANSACTION_REQUEST,
+    DELETE_USAGETRANSACTION_REQUEST,
+
+    addUsageTransactionFailure,
+    addUsageTransactionSuccess,
+
+    fetchUsageTransactionFailure,
+    fetchUsageTransactionSuccess,
+    
+    listUsageTransactionFailure,
+    listUsageTransactionSuccess,
+
+    updateUsageTransactionFailure,
+    updateUsageTransactionSuccess,
+    
+    deleteUsageTransactionFailure,
+    deleteUsageTransactionSuccess,
+    
+} from '../actions/UsageTransactionApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: UsageTransaction
 */
 
-export const UsageTransactionMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("UsageTransaction MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const UsageTransactionMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("UsageTransaction MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

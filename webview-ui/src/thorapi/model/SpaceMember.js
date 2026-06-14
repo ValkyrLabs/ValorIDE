@@ -36,39 +36,21 @@ const _1 = require("./");
 function SpaceMemberFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        role: json["role"],
-        space: !(0, runtime_1.exists)(json, "space") ? undefined : (0, _1.SpaceFromJSON)(json["space"]),
-        principal: !(0, runtime_1.exists)(json, "principal")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["principal"]),
-        invitedBy: !(0, runtime_1.exists)(json, "invitedBy")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["invitedBy"]),
-        invitedAt: !(0, runtime_1.exists)(json, "invitedAt")
-            ? undefined
-            : new Date(json["invitedAt"]),
-        acceptedAt: !(0, runtime_1.exists)(json, "acceptedAt")
-            ? undefined
-            : new Date(json["acceptedAt"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'role': json['role'],
+        'space': !(0, runtime_1.exists)(json, 'space') ? undefined : (0, _1.SpaceFromJSON)(json['space']),
+        'principal': !(0, runtime_1.exists)(json, 'principal') ? undefined : (0, _1.PrincipalFromJSON)(json['principal']),
+        'invitedBy': !(0, runtime_1.exists)(json, 'invitedBy') ? undefined : (0, _1.PrincipalFromJSON)(json['invitedBy']),
+        'invitedAt': !(0, runtime_1.exists)(json, 'invitedAt') ? undefined : new Date(json['invitedAt']),
+        'acceptedAt': !(0, runtime_1.exists)(json, 'acceptedAt') ? undefined : new Date(json['acceptedAt']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function SpaceMemberToJSON(value) {
@@ -77,21 +59,19 @@ function SpaceMemberToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        role: value.role,
-        space: (0, _1.SpaceToJSON)(value.space),
-        principal: (0, _1.PrincipalToJSON)(value.principal),
-        invitedBy: (0, _1.PrincipalToJSON)(value.invitedBy),
-        invitedAt: value.invitedAt === undefined ? undefined : value.invitedAt.toISOString(),
-        acceptedAt: value.acceptedAt === undefined
-            ? undefined
-            : value.acceptedAt.toISOString(),
-        trashed: value.trashed,
+        'role': value.role,
+        'space': (0, _1.SpaceToJSON)(value.space),
+        'principal': (0, _1.PrincipalToJSON)(value.principal),
+        'invitedBy': (0, _1.PrincipalToJSON)(value.invitedBy),
+        'invitedAt': value.invitedAt === undefined ? undefined : value.invitedAt.toISOString(),
+        'acceptedAt': value.acceptedAt === undefined ? undefined : value.acceptedAt.toISOString(),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var SpaceMemberRoleEnum;
 (function (SpaceMemberRoleEnum) {
     SpaceMemberRoleEnum["VIEWER"] = "viewer";

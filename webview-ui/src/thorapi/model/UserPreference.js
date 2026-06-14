@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserPreferencePreferenceTypeEnum = void 0;
+exports.UserPreferencePersonaComplexityEnum = exports.UserPreferencePersonaModeEnum = exports.UserPreferencePreferenceTypeEnum = void 0;
 exports.UserPreferenceFromJSON = UserPreferenceFromJSON;
 exports.UserPreferenceToJSON = UserPreferenceToJSON;
 // tslint:disable
@@ -36,32 +36,20 @@ const _1 = require("./");
 function UserPreferenceFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        principal: !(0, runtime_1.exists)(json, "principal")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["principal"]),
-        preference: !(0, runtime_1.exists)(json, "preference") ? undefined : json["preference"],
-        preferenceType: !(0, runtime_1.exists)(json, "preferenceType")
-            ? undefined
-            : json["preferenceType"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'principal': !(0, runtime_1.exists)(json, 'principal') ? undefined : (0, _1.PrincipalFromJSON)(json['principal']),
+        'preference': !(0, runtime_1.exists)(json, 'preference') ? undefined : json['preference'],
+        'preferenceType': !(0, runtime_1.exists)(json, 'preferenceType') ? undefined : json['preferenceType'],
+        'personaMode': !(0, runtime_1.exists)(json, 'personaMode') ? undefined : json['personaMode'],
+        'personaComplexity': !(0, runtime_1.exists)(json, 'personaComplexity') ? undefined : json['personaComplexity'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function UserPreferenceToJSON(value) {
@@ -70,22 +58,50 @@ function UserPreferenceToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        principal: (0, _1.PrincipalToJSON)(value.principal),
-        preference: value.preference,
-        preferenceType: value.preferenceType,
-        trashed: value.trashed,
+        'principal': (0, _1.PrincipalToJSON)(value.principal),
+        'preference': value.preference,
+        'preferenceType': value.preferenceType,
+        'personaMode': value.personaMode,
+        'personaComplexity': value.personaComplexity,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var UserPreferencePreferenceTypeEnum;
 (function (UserPreferencePreferenceTypeEnum) {
     UserPreferencePreferenceTypeEnum["UXLAYOUT"] = "ux-layout";
     UserPreferencePreferenceTypeEnum["UXMODE"] = "ux-mode";
+    UserPreferencePreferenceTypeEnum["PERSONAMODE"] = "persona-mode";
     UserPreferencePreferenceTypeEnum["UXTHEME"] = "ux-theme";
     UserPreferencePreferenceTypeEnum["MEASUREMENT"] = "measurement";
     UserPreferencePreferenceTypeEnum["CHATMEMORY"] = "chatmemory";
 })(UserPreferencePreferenceTypeEnum || (exports.UserPreferencePreferenceTypeEnum = UserPreferencePreferenceTypeEnum = {}));
+/**
+* @export
+* @enum {string}
+*/
+var UserPreferencePersonaModeEnum;
+(function (UserPreferencePersonaModeEnum) {
+    UserPreferencePersonaModeEnum["CXO"] = "cxo";
+    UserPreferencePersonaModeEnum["SOLOPRENEUR"] = "solopreneur";
+    UserPreferencePersonaModeEnum["ENGINEER"] = "engineer";
+    UserPreferencePersonaModeEnum["STUDENT"] = "student";
+    UserPreferencePersonaModeEnum["RESELLER"] = "reseller";
+    UserPreferencePersonaModeEnum["CONTENT_PUBLISHER"] = "content_publisher";
+    UserPreferencePersonaModeEnum["WORKFLOW_DESIGNER"] = "workflow_designer";
+    UserPreferencePersonaModeEnum["GRAYMATTER_USER"] = "graymatter_user";
+})(UserPreferencePersonaModeEnum || (exports.UserPreferencePersonaModeEnum = UserPreferencePersonaModeEnum = {}));
+/**
+* @export
+* @enum {string}
+*/
+var UserPreferencePersonaComplexityEnum;
+(function (UserPreferencePersonaComplexityEnum) {
+    UserPreferencePersonaComplexityEnum["GUIDED"] = "guided";
+    UserPreferencePersonaComplexityEnum["BALANCED"] = "balanced";
+    UserPreferencePersonaComplexityEnum["EXPERT"] = "expert";
+})(UserPreferencePersonaComplexityEnum || (exports.UserPreferencePersonaComplexityEnum = UserPreferencePersonaComplexityEnum = {}));
 //# sourceMappingURL=UserPreference.js.map

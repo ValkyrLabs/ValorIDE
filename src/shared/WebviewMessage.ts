@@ -8,6 +8,7 @@ import { ChatContent } from "./ChatContent";
 import { TelemetrySetting } from "./TelemetrySetting";
 import { LlmDetailsSummary } from "./llm";
 import { McpViewTab } from "./mcp";
+import type { RemoteCodingCommand } from "../services/communication/RemoteCodingSessionOrchestrator";
 
 export interface WebviewMessage {
   type:
@@ -96,6 +97,7 @@ export interface WebviewMessage {
   | "displayVSCodeWarning"
   | "displayVSCodeError"
   | "accountLoginSuccess"
+  | "accountLoginRequest"
   | "streamToThorapi"
   | "openFileExplorerTab"
   | "getThorapiFolderContents"
@@ -105,9 +107,12 @@ export interface WebviewMessage {
   | "uploadOpenAPISpec"
   | "uploadOpenAPISpecResult"
   | "openFile"
-  | "trackFunnelEvent";
+  | "trackFunnelEvent"
+  | "remoteCodingSessionCommand";
 
   // | "relaunchChromeDebugMode"
+  event?: string;
+  payload?: Record<string, unknown>;
   text?: string;
   uris?: string[]; // Used for getRelativePaths
   disabled?: boolean;
@@ -135,6 +140,9 @@ export interface WebviewMessage {
   user?: { id: string; name: string } | null; // Replace with the actual structure of Principal
   customToken?: string;
   authenticatedPrincipal?: any;
+  requestId?: string;
+  username?: string;
+  password?: string;
   // For openInBrowser
   url?: string;
   planActSeparateModelsSetting?: boolean;
@@ -185,6 +193,7 @@ export interface WebviewMessage {
   llmDetails?: LlmDetailsSummary;
   taskIntent?: string;
   valkyraiHost?: string;
+  remoteCodingCommand?: RemoteCodingCommand;
 }
 
 export type ValorIDEAskResponse =

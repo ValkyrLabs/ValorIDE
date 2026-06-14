@@ -36,42 +36,22 @@ const _1 = require("./");
 function TrustRuntimeExecutionFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        policyManifest: !(0, runtime_1.exists)(json, "policyManifest")
-            ? undefined
-            : (0, _1.TrustPolicyManifestFromJSON)(json["policyManifest"]),
-        actorId: !(0, runtime_1.exists)(json, "actorId") ? undefined : json["actorId"],
-        serviceAccountId: !(0, runtime_1.exists)(json, "serviceAccountId")
-            ? undefined
-            : json["serviceAccountId"],
-        workflowId: !(0, runtime_1.exists)(json, "workflowId") ? undefined : json["workflowId"],
-        executionStatus: !(0, runtime_1.exists)(json, "executionStatus")
-            ? undefined
-            : json["executionStatus"],
-        firstEventHash: !(0, runtime_1.exists)(json, "firstEventHash")
-            ? undefined
-            : json["firstEventHash"],
-        lastEventHash: !(0, runtime_1.exists)(json, "lastEventHash")
-            ? undefined
-            : json["lastEventHash"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'policyManifest': !(0, runtime_1.exists)(json, 'policyManifest') ? undefined : (0, _1.TrustPolicyManifestFromJSON)(json['policyManifest']),
+        'actorId': !(0, runtime_1.exists)(json, 'actorId') ? undefined : json['actorId'],
+        'serviceAccountId': !(0, runtime_1.exists)(json, 'serviceAccountId') ? undefined : json['serviceAccountId'],
+        'workflowId': !(0, runtime_1.exists)(json, 'workflowId') ? undefined : json['workflowId'],
+        'executionStatus': !(0, runtime_1.exists)(json, 'executionStatus') ? undefined : json['executionStatus'],
+        'firstEventHash': !(0, runtime_1.exists)(json, 'firstEventHash') ? undefined : json['firstEventHash'],
+        'lastEventHash': !(0, runtime_1.exists)(json, 'lastEventHash') ? undefined : json['lastEventHash'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function TrustRuntimeExecutionToJSON(value) {
@@ -80,21 +60,21 @@ function TrustRuntimeExecutionToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        policyManifest: (0, _1.TrustPolicyManifestToJSON)(value.policyManifest),
-        actorId: value.actorId,
-        serviceAccountId: value.serviceAccountId,
-        workflowId: value.workflowId,
-        executionStatus: value.executionStatus,
-        firstEventHash: value.firstEventHash,
-        lastEventHash: value.lastEventHash,
-        ownerId: value.ownerId,
-        trashed: value.trashed,
+        'policyManifest': (0, _1.TrustPolicyManifestToJSON)(value.policyManifest),
+        'actorId': value.actorId,
+        'serviceAccountId': value.serviceAccountId,
+        'workflowId': value.workflowId,
+        'executionStatus': value.executionStatus,
+        'firstEventHash': value.firstEventHash,
+        'lastEventHash': value.lastEventHash,
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustRuntimeExecutionExecutionStatusEnum;
 (function (TrustRuntimeExecutionExecutionStatusEnum) {
     TrustRuntimeExecutionExecutionStatusEnum["STARTED"] = "started";

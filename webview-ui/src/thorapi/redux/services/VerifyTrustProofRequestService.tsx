@@ -13,69 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { VerifyTrustProofRequest } from "@thorapi/model/VerifyTrustProofRequest";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { VerifyTrustProofRequest } from '@thorapi/model/VerifyTrustProofRequest'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type VerifyTrustProofRequestResponse = VerifyTrustProofRequest[];
+type VerifyTrustProofRequestResponse = VerifyTrustProofRequest[]
+type VerifyTrustProofRequestPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<VerifyTrustProofRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toVerifyTrustProofRequestList = (
-  result: unknown,
-): VerifyTrustProofRequestResponse => {
+type VerifyTrustProofRequestListQueryArg = {
+  example?: Partial<VerifyTrustProofRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toVerifyTrustProofRequestList = (result: unknown): VerifyTrustProofRequestResponse => {
   if (Array.isArray(result)) {
-    return result as VerifyTrustProofRequestResponse;
+    return result as VerifyTrustProofRequestResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as VerifyTrustProofRequestResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as VerifyTrustProofRequestResponse) : []
+}
 
 export const VerifyTrustProofRequestService = createApi({
-  reducerPath: "VerifyTrustProofRequest", // This should remain unique
+  reducerPath: 'VerifyTrustProofRequest', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["VerifyTrustProofRequest"],
+  tagTypes: ['VerifyTrustProofRequest'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getVerifyTrustProofRequestsPaged: build.query<
-      VerifyTrustProofRequestResponse,
-      {
-        page: number;
-        size?: number;
-        example?: Partial<VerifyTrustProofRequest>;
-      }
-    >({
+    getVerifyTrustProofRequestsPaged: build.query<VerifyTrustProofRequestResponse, VerifyTrustProofRequestPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `VerifyTrustProofRequest?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `VerifyTrustProofRequest?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toVerifyTrustProofRequestList(result);
+        const rows = toVerifyTrustProofRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "VerifyTrustProofRequest" as const,
-              id,
-            })),
-          { type: "VerifyTrustProofRequest", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'VerifyTrustProofRequest' as const, id })),
+          { type: 'VerifyTrustProofRequest', id: `PAGE_${page}` },
+          { type: 'VerifyTrustProofRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getVerifyTrustProofRequests: build.query<
-      VerifyTrustProofRequestResponse,
-      { example?: Partial<VerifyTrustProofRequest> } | void
-    >({
+    getVerifyTrustProofRequests: build.query<VerifyTrustProofRequestResponse, VerifyTrustProofRequestListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -84,117 +82,86 @@ export const VerifyTrustProofRequestService = createApi({
         return `VerifyTrustProofRequest`;
       },
       providesTags: (result) => {
-        const rows = toVerifyTrustProofRequestList(result);
+        const rows = toVerifyTrustProofRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "VerifyTrustProofRequest" as const,
-              id,
-            })),
-          { type: "VerifyTrustProofRequest", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'VerifyTrustProofRequest' as const, id })),
+          { type: 'VerifyTrustProofRequest', id: 'LIST' },
+          { type: 'VerifyTrustProofRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addVerifyTrustProofRequest: build.mutation<
-      VerifyTrustProofRequest,
-      Partial<VerifyTrustProofRequest>
-    >({
+    addVerifyTrustProofRequest: build.mutation<VerifyTrustProofRequest, Partial<VerifyTrustProofRequest>>({
       query: (body) => ({
         url: `VerifyTrustProofRequest`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "VerifyTrustProofRequest", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'VerifyTrustProofRequest', id: 'LIST' },
+        { type: 'VerifyTrustProofRequest', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getVerifyTrustProofRequest: build.query<VerifyTrustProofRequest, string>({
       query: (id) => `VerifyTrustProofRequest/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "VerifyTrustProofRequest", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'VerifyTrustProofRequest', id }],
     }),
 
     // 5) Update
-    updateVerifyTrustProofRequest: build.mutation<
-      void,
-      Pick<VerifyTrustProofRequest, "id"> & Partial<VerifyTrustProofRequest>
-    >({
+    updateVerifyTrustProofRequest: build.mutation<VerifyTrustProofRequest, Pick<VerifyTrustProofRequest, 'id'> & Partial<VerifyTrustProofRequest>>({
       query: ({ id, ...patch }) => ({
         url: `VerifyTrustProofRequest/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            VerifyTrustProofRequestService.util.updateQueryData(
-              "getVerifyTrustProofRequest",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<VerifyTrustProofRequest, "id">,
-      ) => [
-        { type: "VerifyTrustProofRequest", id },
-        { type: "VerifyTrustProofRequest", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<VerifyTrustProofRequest, 'id'>) => [
+        { type: 'VerifyTrustProofRequest', id },
+        { type: 'VerifyTrustProofRequest', id: 'LIST' },
+        { type: 'VerifyTrustProofRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteVerifyTrustProofRequest: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteVerifyTrustProofRequest: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `VerifyTrustProofRequest/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "VerifyTrustProofRequest", id },
+        { type: 'VerifyTrustProofRequest', id },
+        { type: 'VerifyTrustProofRequest', id: 'LIST' },
+        { type: 'VerifyTrustProofRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteVerifyTrustProofRequestCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteVerifyTrustProofRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `VerifyTrustProofRequest/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "VerifyTrustProofRequest", id },
-        { type: "VerifyTrustProofRequest", id: "LIST" },
+        { type: 'VerifyTrustProofRequest', id },
+        { type: 'VerifyTrustProofRequest', id: 'LIST' },
+        { type: 'VerifyTrustProofRequest', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetVerifyTrustProofRequestsPagedQuery`
 export const {
-  useGetVerifyTrustProofRequestsPagedQuery, // immediate fetch
+  useGetVerifyTrustProofRequestsPagedQuery,     // immediate fetch
   useLazyGetVerifyTrustProofRequestsPagedQuery, // lazy fetch
   useGetVerifyTrustProofRequestQuery,
   useGetVerifyTrustProofRequestsQuery,
@@ -202,4 +169,4 @@ export const {
   useUpdateVerifyTrustProofRequestMutation,
   useDeleteVerifyTrustProofRequestMutation,
   useDeleteVerifyTrustProofRequestCascadeMutation,
-} = VerifyTrustProofRequestService;
+} = VerifyTrustProofRequestService

@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { Discount } from "@thorapi/model/Discount";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { Discount } from '@thorapi/model/Discount'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type DiscountResponse = Discount[];
+type DiscountResponse = Discount[]
+type DiscountPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<Discount>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type DiscountListQueryArg = {
+  example?: Partial<Discount>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toDiscountList = (result: unknown): DiscountResponse => {
   if (Array.isArray(result)) {
-    return result as DiscountResponse;
+    return result as DiscountResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as DiscountResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as DiscountResponse) : []
+}
 
 export const DiscountService = createApi({
-  reducerPath: "Discount", // This should remain unique
+  reducerPath: 'Discount', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["Discount"],
+  tagTypes: ['Discount'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getDiscountsPaged: build.query<
-      DiscountResponse,
-      { page: number; size?: number; example?: Partial<Discount> }
-    >({
+    getDiscountsPaged: build.query<DiscountResponse, DiscountPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Discount?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Discount?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toDiscountList(result);
+        const rows = toDiscountList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Discount" as const, id })),
-          { type: "Discount", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'Discount' as const, id })),
+          { type: 'Discount', id: `PAGE_${page}` },
+          { type: 'Discount', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getDiscounts: build.query<
-      DiscountResponse,
-      { example?: Partial<Discount> } | void
-    >({
+    getDiscounts: build.query<DiscountResponse, DiscountListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const DiscountService = createApi({
         return `Discount`;
       },
       providesTags: (result) => {
-        const rows = toDiscountList(result);
+        const rows = toDiscountList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Discount" as const, id })),
-          { type: "Discount", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'Discount' as const, id })),
+          { type: 'Discount', id: 'LIST' },
+          { type: 'Discount', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,45 +97,32 @@ export const DiscountService = createApi({
     addDiscount: build.mutation<Discount, Partial<Discount>>({
       query: (body) => ({
         url: `Discount`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "Discount", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'Discount', id: 'LIST' },
+        { type: 'Discount', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getDiscount: build.query<Discount, string>({
       query: (id) => `Discount/${id}`,
-      providesTags: (result, error, id) => [{ type: "Discount", id }],
+      providesTags: (result, error, id) => [{ type: 'Discount', id }],
     }),
 
     // 5) Update
-    updateDiscount: build.mutation<
-      void,
-      Pick<Discount, "id"> & Partial<Discount>
-    >({
+    updateDiscount: build.mutation<Discount, Pick<Discount, 'id'> & Partial<Discount>>({
       query: ({ id, ...patch }) => ({
         url: `Discount/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            DiscountService.util.updateQueryData("getDiscount", id, (draft) => {
-              Object.assign(draft, patch);
-            }),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<Discount, "id">) => [
-        { type: "Discount", id },
-        { type: "Discount", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<Discount, 'id'>) => [
+        { type: 'Discount', id },
+        { type: 'Discount', id: 'LIST' },
+        { type: 'Discount', id: 'PARTIAL-LIST' },
       ],
     }),
 
@@ -134,35 +131,37 @@ export const DiscountService = createApi({
       query(id) {
         return {
           url: `Discount/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "Discount", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'Discount', id },
+        { type: 'Discount', id: 'LIST' },
+        { type: 'Discount', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteDiscountCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteDiscountCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `Discount/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "Discount", id },
-        { type: "Discount", id: "LIST" },
+        { type: 'Discount', id },
+        { type: 'Discount', id: 'LIST' },
+        { type: 'Discount', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetDiscountsPagedQuery`
 export const {
-  useGetDiscountsPagedQuery, // immediate fetch
+  useGetDiscountsPagedQuery,     // immediate fetch
   useLazyGetDiscountsPagedQuery, // lazy fetch
   useGetDiscountQuery,
   useGetDiscountsQuery,
@@ -170,4 +169,4 @@ export const {
   useUpdateDiscountMutation,
   useDeleteDiscountMutation,
   useDeleteDiscountCascadeMutation,
-} = DiscountService;
+} = DiscountService

@@ -18,431 +18,359 @@ Template file: typescript-redux-query/apis.mustache
 Description: AgentEventTriggerApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import {
-  AgentEventTrigger,
-  AgentEventTriggerFromJSON,
-  AgentEventTriggerToJSON,
-} from "../model";
+    AgentEventTrigger,
+    AgentEventTriggerFromJSON,
+    AgentEventTriggerToJSON,
+} from '../model';
 
 export interface DeleteAgentEventTriggerApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetAgentEventTriggerApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetAgentEventTriggerListApiRequest {
-  page?: number;
-  size?: number;
-  sort?: Array<string>;
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
+    example?: string;
 }
 
 export interface PatchAgentEventTriggerByIdApiRequest {
-  id: string;
-  agentEventTrigger: AgentEventTrigger;
+    id: string;
+    agentEventTrigger: AgentEventTrigger;
 }
 
 export interface PostAgentEventTriggerApiRequest {
-  agentEventTrigger: AgentEventTrigger;
+    agentEventTrigger: AgentEventTrigger;
 }
 
 export interface UpdateAgentEventTriggerApiRequest {
-  id: string;
-  agentEventTrigger: AgentEventTrigger;
+    id: string;
+    agentEventTrigger: AgentEventTrigger;
 }
+
 
 /**
  * Deletes a specific AgentEventTrigger.
  * Delete a AgentEventTrigger.
  */
-function deleteAgentEventTriggerRaw<T>(
-  requestParameters: DeleteAgentEventTriggerApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteAgentEventTrigger.",
-    );
-  }
+function deleteAgentEventTriggerRaw<T>(requestParameters: DeleteAgentEventTriggerApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteAgentEventTrigger.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/AgentEventTrigger/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/AgentEventTrigger/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific AgentEventTrigger.
- * Delete a AgentEventTrigger.
- */
-export function deleteAgentEventTrigger<T>(
-  requestParameters: DeleteAgentEventTriggerApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteAgentEventTriggerRaw(requestParameters, requestConfig);
+* Deletes a specific AgentEventTrigger.
+* Delete a AgentEventTrigger.
+*/
+export function deleteAgentEventTrigger<T>(requestParameters: DeleteAgentEventTriggerApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteAgentEventTriggerRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single AgentEventTrigger for a specific uid.
  * Retrieve a single AgentEventTrigger
  */
-function getAgentEventTriggerRaw<T>(
-  requestParameters: GetAgentEventTriggerApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, AgentEventTrigger> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getAgentEventTrigger.",
-    );
-  }
+function getAgentEventTriggerRaw<T>(requestParameters: GetAgentEventTriggerApiRequest, requestConfig: runtime.TypedQueryConfig<T, AgentEventTrigger> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getAgentEventTrigger.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/AgentEventTrigger/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(AgentEventTriggerFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/AgentEventTrigger/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(AgentEventTriggerFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single AgentEventTrigger for a specific uid.
- * Retrieve a single AgentEventTrigger
- */
-export function getAgentEventTrigger<T>(
-  requestParameters: GetAgentEventTriggerApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, AgentEventTrigger>,
-): QueryConfig<T> {
-  return getAgentEventTriggerRaw(requestParameters, requestConfig);
+* Retrieves a single AgentEventTrigger for a specific uid.
+* Retrieve a single AgentEventTrigger
+*/
+export function getAgentEventTrigger<T>(requestParameters: GetAgentEventTriggerApiRequest, requestConfig?: runtime.TypedQueryConfig<T, AgentEventTrigger>): QueryConfig<T> {
+    return getAgentEventTriggerRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of AgentEventTriggers.
  * Retrieve a list of AgentEventTriggers
  */
-function getAgentEventTriggerListRaw<T>(
-  requestParameters: GetAgentEventTriggerListApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Array<AgentEventTrigger>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getAgentEventTriggerListRaw<T>(requestParameters: GetAgentEventTriggerListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<AgentEventTrigger>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  queryParameters = {};
+    queryParameters = {};
 
-  if (requestParameters.page !== undefined) {
-    queryParameters["page"] = requestParameters.page;
-  }
 
-  if (requestParameters.size !== undefined) {
-    queryParameters["size"] = requestParameters.size;
-  }
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  if (requestParameters.sort) {
-    queryParameters["sort"] = requestParameters.sort;
-  }
 
-  const headerParameters: runtime.HttpHeaders = {};
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/AgentEventTrigger`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(AgentEventTriggerFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.example !== undefined) {
+        queryParameters['example'] = requestParameters.example;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/AgentEventTrigger`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(AgentEventTriggerFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of AgentEventTriggers.
- * Retrieve a list of AgentEventTriggers
- */
-export function getAgentEventTriggerList<T>(
-  requestParameters: GetAgentEventTriggerListApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Array<AgentEventTrigger>>,
-): QueryConfig<T> {
-  return getAgentEventTriggerListRaw(requestParameters, requestConfig);
-}
-
-/**
- * Updates an existing AgentEventTrigger.
- * Partially update an existing AgentEventTrigger
- */
-function patchAgentEventTriggerByIdRaw<T>(
-  requestParameters: PatchAgentEventTriggerByIdApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, AgentEventTrigger> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling patchAgentEventTriggerById.",
-    );
-  }
-
-  if (
-    requestParameters.agentEventTrigger === null ||
-    requestParameters.agentEventTrigger === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "agentEventTrigger",
-      "Required parameter requestParameters.agentEventTrigger was null or undefined when calling patchAgentEventTriggerById.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/merge-patch+json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/AgentEventTrigger/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PATCH",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      AgentEventTriggerToJSON(requestParameters.agentEventTrigger),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(AgentEventTriggerFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of AgentEventTriggers.
+* Retrieve a list of AgentEventTriggers
+*/
+export function getAgentEventTriggerList<T>(requestParameters: GetAgentEventTriggerListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<AgentEventTrigger>>): QueryConfig<T> {
+    return getAgentEventTriggerListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing AgentEventTrigger.
  * Partially update an existing AgentEventTrigger
  */
-export function patchAgentEventTriggerById<T>(
-  requestParameters: PatchAgentEventTriggerByIdApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, AgentEventTrigger>,
-): QueryConfig<T> {
-  return patchAgentEventTriggerByIdRaw(requestParameters, requestConfig);
+function patchAgentEventTriggerByIdRaw<T>(requestParameters: PatchAgentEventTriggerByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, AgentEventTrigger> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchAgentEventTriggerById.');
+    }
+
+    if (requestParameters.agentEventTrigger === null || requestParameters.agentEventTrigger === undefined) {
+        throw new runtime.RequiredError('agentEventTrigger','Required parameter requestParameters.agentEventTrigger was null or undefined when calling patchAgentEventTriggerById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/AgentEventTrigger/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || AgentEventTriggerToJSON(requestParameters.agentEventTrigger),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(AgentEventTriggerFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing AgentEventTrigger.
+* Partially update an existing AgentEventTrigger
+*/
+export function patchAgentEventTriggerById<T>(requestParameters: PatchAgentEventTriggerByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, AgentEventTrigger>): QueryConfig<T> {
+    return patchAgentEventTriggerByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new AgentEventTrigger.
  * Create a new AgentEventTrigger
  */
-function postAgentEventTriggerRaw<T>(
-  requestParameters: PostAgentEventTriggerApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, AgentEventTrigger> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.agentEventTrigger === null ||
-    requestParameters.agentEventTrigger === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "agentEventTrigger",
-      "Required parameter requestParameters.agentEventTrigger was null or undefined when calling postAgentEventTrigger.",
-    );
-  }
+function postAgentEventTriggerRaw<T>(requestParameters: PostAgentEventTriggerApiRequest, requestConfig: runtime.TypedQueryConfig<T, AgentEventTrigger> = {}): QueryConfig<T> {
+    if (requestParameters.agentEventTrigger === null || requestParameters.agentEventTrigger === undefined) {
+        throw new runtime.RequiredError('agentEventTrigger','Required parameter requestParameters.agentEventTrigger was null or undefined when calling postAgentEventTrigger.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/AgentEventTrigger`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      AgentEventTriggerToJSON(requestParameters.agentEventTrigger),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(AgentEventTriggerFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/AgentEventTrigger`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || AgentEventTriggerToJSON(requestParameters.agentEventTrigger),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(AgentEventTriggerFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Creates a new AgentEventTrigger.
- * Create a new AgentEventTrigger
- */
-export function postAgentEventTrigger<T>(
-  requestParameters: PostAgentEventTriggerApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, AgentEventTrigger>,
-): QueryConfig<T> {
-  return postAgentEventTriggerRaw(requestParameters, requestConfig);
+* Creates a new AgentEventTrigger.
+* Create a new AgentEventTrigger
+*/
+export function postAgentEventTrigger<T>(requestParameters: PostAgentEventTriggerApiRequest, requestConfig?: runtime.TypedQueryConfig<T, AgentEventTrigger>): QueryConfig<T> {
+    return postAgentEventTriggerRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing AgentEventTrigger.
  * Update an existing AgentEventTrigger
  */
-function updateAgentEventTriggerRaw<T>(
-  requestParameters: UpdateAgentEventTriggerApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, AgentEventTrigger> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateAgentEventTrigger.",
-    );
-  }
+function updateAgentEventTriggerRaw<T>(requestParameters: UpdateAgentEventTriggerApiRequest, requestConfig: runtime.TypedQueryConfig<T, AgentEventTrigger> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateAgentEventTrigger.');
+    }
 
-  if (
-    requestParameters.agentEventTrigger === null ||
-    requestParameters.agentEventTrigger === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "agentEventTrigger",
-      "Required parameter requestParameters.agentEventTrigger was null or undefined when calling updateAgentEventTrigger.",
-    );
-  }
+    if (requestParameters.agentEventTrigger === null || requestParameters.agentEventTrigger === undefined) {
+        throw new runtime.RequiredError('agentEventTrigger','Required parameter requestParameters.agentEventTrigger was null or undefined when calling updateAgentEventTrigger.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/AgentEventTrigger/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      AgentEventTriggerToJSON(requestParameters.agentEventTrigger),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(AgentEventTriggerFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/AgentEventTrigger/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || AgentEventTriggerToJSON(requestParameters.agentEventTrigger),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(AgentEventTriggerFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing AgentEventTrigger.
- * Update an existing AgentEventTrigger
- */
-export function updateAgentEventTrigger<T>(
-  requestParameters: UpdateAgentEventTriggerApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, AgentEventTrigger>,
-): QueryConfig<T> {
-  return updateAgentEventTriggerRaw(requestParameters, requestConfig);
+* Updates an existing AgentEventTrigger.
+* Update an existing AgentEventTrigger
+*/
+export function updateAgentEventTrigger<T>(requestParameters: UpdateAgentEventTriggerApiRequest, requestConfig?: runtime.TypedQueryConfig<T, AgentEventTrigger>): QueryConfig<T> {
+    return updateAgentEventTriggerRaw(requestParameters, requestConfig);
 }
+

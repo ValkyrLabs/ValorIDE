@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { BackupConfig } from "@thorapi/model/BackupConfig";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { BackupConfig } from '@thorapi/model/BackupConfig'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type BackupConfigResponse = BackupConfig[];
+type BackupConfigResponse = BackupConfig[]
+type BackupConfigPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<BackupConfig>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type BackupConfigListQueryArg = {
+  example?: Partial<BackupConfig>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toBackupConfigList = (result: unknown): BackupConfigResponse => {
   if (Array.isArray(result)) {
-    return result as BackupConfigResponse;
+    return result as BackupConfigResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as BackupConfigResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as BackupConfigResponse) : []
+}
 
 export const BackupConfigService = createApi({
-  reducerPath: "BackupConfig", // This should remain unique
+  reducerPath: 'BackupConfig', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["BackupConfig"],
+  tagTypes: ['BackupConfig'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getBackupConfigsPaged: build.query<
-      BackupConfigResponse,
-      { page: number; size?: number; example?: Partial<BackupConfig> }
-    >({
+    getBackupConfigsPaged: build.query<BackupConfigResponse, BackupConfigPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `BackupConfig?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `BackupConfig?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toBackupConfigList(result);
+        const rows = toBackupConfigList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "BackupConfig" as const, id })),
-          { type: "BackupConfig", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'BackupConfig' as const, id })),
+          { type: 'BackupConfig', id: `PAGE_${page}` },
+          { type: 'BackupConfig', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getBackupConfigs: build.query<
-      BackupConfigResponse,
-      { example?: Partial<BackupConfig> } | void
-    >({
+    getBackupConfigs: build.query<BackupConfigResponse, BackupConfigListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const BackupConfigService = createApi({
         return `BackupConfig`;
       },
       providesTags: (result) => {
-        const rows = toBackupConfigList(result);
+        const rows = toBackupConfigList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "BackupConfig" as const, id })),
-          { type: "BackupConfig", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'BackupConfig' as const, id })),
+          { type: 'BackupConfig', id: 'LIST' },
+          { type: 'BackupConfig', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,89 +97,71 @@ export const BackupConfigService = createApi({
     addBackupConfig: build.mutation<BackupConfig, Partial<BackupConfig>>({
       query: (body) => ({
         url: `BackupConfig`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "BackupConfig", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'BackupConfig', id: 'LIST' },
+        { type: 'BackupConfig', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getBackupConfig: build.query<BackupConfig, string>({
       query: (id) => `BackupConfig/${id}`,
-      providesTags: (result, error, id) => [{ type: "BackupConfig", id }],
+      providesTags: (result, error, id) => [{ type: 'BackupConfig', id }],
     }),
 
     // 5) Update
-    updateBackupConfig: build.mutation<
-      void,
-      Pick<BackupConfig, "id"> & Partial<BackupConfig>
-    >({
+    updateBackupConfig: build.mutation<BackupConfig, Pick<BackupConfig, 'id'> & Partial<BackupConfig>>({
       query: ({ id, ...patch }) => ({
         url: `BackupConfig/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            BackupConfigService.util.updateQueryData(
-              "getBackupConfig",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<BackupConfig, "id">) => [
-        { type: "BackupConfig", id },
-        { type: "BackupConfig", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<BackupConfig, 'id'>) => [
+        { type: 'BackupConfig', id },
+        { type: 'BackupConfig', id: 'LIST' },
+        { type: 'BackupConfig', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteBackupConfig: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteBackupConfig: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `BackupConfig/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "BackupConfig", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'BackupConfig', id },
+        { type: 'BackupConfig', id: 'LIST' },
+        { type: 'BackupConfig', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteBackupConfigCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteBackupConfigCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `BackupConfig/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "BackupConfig", id },
-        { type: "BackupConfig", id: "LIST" },
+        { type: 'BackupConfig', id },
+        { type: 'BackupConfig', id: 'LIST' },
+        { type: 'BackupConfig', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetBackupConfigsPagedQuery`
 export const {
-  useGetBackupConfigsPagedQuery, // immediate fetch
+  useGetBackupConfigsPagedQuery,     // immediate fetch
   useLazyGetBackupConfigsPagedQuery, // lazy fetch
   useGetBackupConfigQuery,
   useGetBackupConfigsQuery,
@@ -177,4 +169,4 @@ export const {
   useUpdateBackupConfigMutation,
   useDeleteBackupConfigMutation,
   useDeleteBackupConfigCascadeMutation,
-} = BackupConfigService;
+} = BackupConfigService

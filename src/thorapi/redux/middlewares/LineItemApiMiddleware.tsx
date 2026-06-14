@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_LINEITEM_REQUEST,
-  FETCH_LINEITEM_REQUEST,
-  LIST_LINEITEM_REQUEST,
-  UPDATE_LINEITEM_REQUEST,
-  DELETE_LINEITEM_REQUEST,
-  addLineItemFailure,
-  addLineItemSuccess,
-  fetchLineItemFailure,
-  fetchLineItemSuccess,
-  listLineItemFailure,
-  listLineItemSuccess,
-  updateLineItemFailure,
-  updateLineItemSuccess,
-  deleteLineItemFailure,
-  deleteLineItemSuccess,
-} from "../actions/LineItemApiAction";
+
+    ADD_LINEITEM_REQUEST,
+    FETCH_LINEITEM_REQUEST,
+    LIST_LINEITEM_REQUEST,
+    UPDATE_LINEITEM_REQUEST,
+    DELETE_LINEITEM_REQUEST,
+
+    addLineItemFailure,
+    addLineItemSuccess,
+
+    fetchLineItemFailure,
+    fetchLineItemSuccess,
+    
+    listLineItemFailure,
+    listLineItemSuccess,
+
+    updateLineItemFailure,
+    updateLineItemSuccess,
+    
+    deleteLineItemFailure,
+    deleteLineItemSuccess,
+    
+} from '../actions/LineItemApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: LineItem
 */
 
-export const LineItemMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("LineItem MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const LineItemMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("LineItem MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

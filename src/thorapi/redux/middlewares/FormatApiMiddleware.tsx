@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_FORMAT_REQUEST,
-  FETCH_FORMAT_REQUEST,
-  LIST_FORMAT_REQUEST,
-  UPDATE_FORMAT_REQUEST,
-  DELETE_FORMAT_REQUEST,
-  addFormatFailure,
-  addFormatSuccess,
-  fetchFormatFailure,
-  fetchFormatSuccess,
-  listFormatFailure,
-  listFormatSuccess,
-  updateFormatFailure,
-  updateFormatSuccess,
-  deleteFormatFailure,
-  deleteFormatSuccess,
-} from "../actions/FormatApiAction";
+
+    ADD_FORMAT_REQUEST,
+    FETCH_FORMAT_REQUEST,
+    LIST_FORMAT_REQUEST,
+    UPDATE_FORMAT_REQUEST,
+    DELETE_FORMAT_REQUEST,
+
+    addFormatFailure,
+    addFormatSuccess,
+
+    fetchFormatFailure,
+    fetchFormatSuccess,
+    
+    listFormatFailure,
+    listFormatSuccess,
+
+    updateFormatFailure,
+    updateFormatSuccess,
+    
+    deleteFormatFailure,
+    deleteFormatSuccess,
+    
+} from '../actions/FormatApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Format
 */
 
-export const FormatMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Format MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const FormatMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("Format MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

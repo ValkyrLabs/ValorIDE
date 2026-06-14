@@ -36,35 +36,21 @@ const _1 = require("./");
 function InvoiceFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        customerId: !(0, runtime_1.exists)(json, "customerId") ? undefined : json["customerId"],
-        salesOrder: !(0, runtime_1.exists)(json, "salesOrder")
-            ? undefined
-            : (0, _1.SalesOrderFromJSON)(json["salesOrder"]),
-        invoiceDate: !(0, runtime_1.exists)(json, "invoiceDate")
-            ? undefined
-            : new Date(json["invoiceDate"]),
-        dueDate: !(0, runtime_1.exists)(json, "dueDate") ? undefined : new Date(json["dueDate"]),
-        amount: !(0, runtime_1.exists)(json, "amount") ? undefined : json["amount"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'customerId': !(0, runtime_1.exists)(json, 'customerId') ? undefined : json['customerId'],
+        'salesOrder': !(0, runtime_1.exists)(json, 'salesOrder') ? undefined : (0, _1.SalesOrderFromJSON)(json['salesOrder']),
+        'invoiceDate': !(0, runtime_1.exists)(json, 'invoiceDate') ? undefined : new Date(json['invoiceDate']),
+        'dueDate': !(0, runtime_1.exists)(json, 'dueDate') ? undefined : new Date(json['dueDate']),
+        'amount': !(0, runtime_1.exists)(json, 'amount') ? undefined : json['amount'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function InvoiceToJSON(value) {
@@ -73,21 +59,19 @@ function InvoiceToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        customerId: value.customerId,
-        salesOrder: (0, _1.SalesOrderToJSON)(value.salesOrder),
-        invoiceDate: value.invoiceDate === undefined
-            ? undefined
-            : value.invoiceDate.toISOString(),
-        dueDate: value.dueDate === undefined ? undefined : value.dueDate.toISOString(),
-        amount: value.amount,
-        status: value.status,
-        trashed: value.trashed,
+        'customerId': value.customerId,
+        'salesOrder': (0, _1.SalesOrderToJSON)(value.salesOrder),
+        'invoiceDate': value.invoiceDate === undefined ? undefined : value.invoiceDate.toISOString(),
+        'dueDate': value.dueDate === undefined ? undefined : value.dueDate.toISOString(),
+        'amount': value.amount,
+        'status': value.status,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var InvoiceStatusEnum;
 (function (InvoiceStatusEnum) {
     InvoiceStatusEnum["DRAFT"] = "draft";

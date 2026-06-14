@@ -18,421 +18,359 @@ Template file: typescript-redux-query/apis.mustache
 Description: LineItemApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import { LineItem, LineItemFromJSON, LineItemToJSON } from "../model";
+    LineItem,
+    LineItemFromJSON,
+    LineItemToJSON,
+} from '../model';
 
 export interface DeleteLineItemApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetLineItemApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetLineItemListApiRequest {
-  page?: number;
-  size?: number;
-  sort?: Array<string>;
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
+    example?: string;
 }
 
 export interface PatchLineItemByIdApiRequest {
-  id: string;
-  lineItem: LineItem;
+    id: string;
+    lineItem: LineItem;
 }
 
 export interface PostLineItemApiRequest {
-  lineItem: LineItem;
+    lineItem: LineItem;
 }
 
 export interface UpdateLineItemApiRequest {
-  id: string;
-  lineItem: LineItem;
+    id: string;
+    lineItem: LineItem;
 }
+
 
 /**
  * Deletes a specific LineItem.
  * Delete a LineItem.
  */
-function deleteLineItemRaw<T>(
-  requestParameters: DeleteLineItemApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteLineItem.",
-    );
-  }
+function deleteLineItemRaw<T>(requestParameters: DeleteLineItemApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteLineItem.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/LineItem/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/LineItem/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific LineItem.
- * Delete a LineItem.
- */
-export function deleteLineItem<T>(
-  requestParameters: DeleteLineItemApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteLineItemRaw(requestParameters, requestConfig);
+* Deletes a specific LineItem.
+* Delete a LineItem.
+*/
+export function deleteLineItem<T>(requestParameters: DeleteLineItemApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteLineItemRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single LineItem for a specific uid.
  * Retrieve a single LineItem
  */
-function getLineItemRaw<T>(
-  requestParameters: GetLineItemApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, LineItem> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getLineItem.",
-    );
-  }
+function getLineItemRaw<T>(requestParameters: GetLineItemApiRequest, requestConfig: runtime.TypedQueryConfig<T, LineItem> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getLineItem.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/LineItem/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(LineItemFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/LineItem/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(LineItemFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single LineItem for a specific uid.
- * Retrieve a single LineItem
- */
-export function getLineItem<T>(
-  requestParameters: GetLineItemApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, LineItem>,
-): QueryConfig<T> {
-  return getLineItemRaw(requestParameters, requestConfig);
+* Retrieves a single LineItem for a specific uid.
+* Retrieve a single LineItem
+*/
+export function getLineItem<T>(requestParameters: GetLineItemApiRequest, requestConfig?: runtime.TypedQueryConfig<T, LineItem>): QueryConfig<T> {
+    return getLineItemRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of LineItems.
  * Retrieve a list of LineItems
  */
-function getLineItemListRaw<T>(
-  requestParameters: GetLineItemListApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Array<LineItem>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getLineItemListRaw<T>(requestParameters: GetLineItemListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<LineItem>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  queryParameters = {};
+    queryParameters = {};
 
-  if (requestParameters.page !== undefined) {
-    queryParameters["page"] = requestParameters.page;
-  }
 
-  if (requestParameters.size !== undefined) {
-    queryParameters["size"] = requestParameters.size;
-  }
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  if (requestParameters.sort) {
-    queryParameters["sort"] = requestParameters.sort;
-  }
 
-  const headerParameters: runtime.HttpHeaders = {};
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/LineItem`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(LineItemFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.example !== undefined) {
+        queryParameters['example'] = requestParameters.example;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/LineItem`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(LineItemFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of LineItems.
- * Retrieve a list of LineItems
- */
-export function getLineItemList<T>(
-  requestParameters: GetLineItemListApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Array<LineItem>>,
-): QueryConfig<T> {
-  return getLineItemListRaw(requestParameters, requestConfig);
-}
-
-/**
- * Updates an existing LineItem.
- * Partially update an existing LineItem
- */
-function patchLineItemByIdRaw<T>(
-  requestParameters: PatchLineItemByIdApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, LineItem> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling patchLineItemById.",
-    );
-  }
-
-  if (
-    requestParameters.lineItem === null ||
-    requestParameters.lineItem === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "lineItem",
-      "Required parameter requestParameters.lineItem was null or undefined when calling patchLineItemById.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/merge-patch+json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/LineItem/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PATCH",
-      headers: headerParameters,
-    },
-    body: queryParameters || LineItemToJSON(requestParameters.lineItem),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(LineItemFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of LineItems.
+* Retrieve a list of LineItems
+*/
+export function getLineItemList<T>(requestParameters: GetLineItemListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<LineItem>>): QueryConfig<T> {
+    return getLineItemListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing LineItem.
  * Partially update an existing LineItem
  */
-export function patchLineItemById<T>(
-  requestParameters: PatchLineItemByIdApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, LineItem>,
-): QueryConfig<T> {
-  return patchLineItemByIdRaw(requestParameters, requestConfig);
+function patchLineItemByIdRaw<T>(requestParameters: PatchLineItemByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, LineItem> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchLineItemById.');
+    }
+
+    if (requestParameters.lineItem === null || requestParameters.lineItem === undefined) {
+        throw new runtime.RequiredError('lineItem','Required parameter requestParameters.lineItem was null or undefined when calling patchLineItemById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/LineItem/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || LineItemToJSON(requestParameters.lineItem),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(LineItemFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing LineItem.
+* Partially update an existing LineItem
+*/
+export function patchLineItemById<T>(requestParameters: PatchLineItemByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, LineItem>): QueryConfig<T> {
+    return patchLineItemByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new LineItem.
  * Create a new LineItem
  */
-function postLineItemRaw<T>(
-  requestParameters: PostLineItemApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, LineItem> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.lineItem === null ||
-    requestParameters.lineItem === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "lineItem",
-      "Required parameter requestParameters.lineItem was null or undefined when calling postLineItem.",
-    );
-  }
+function postLineItemRaw<T>(requestParameters: PostLineItemApiRequest, requestConfig: runtime.TypedQueryConfig<T, LineItem> = {}): QueryConfig<T> {
+    if (requestParameters.lineItem === null || requestParameters.lineItem === undefined) {
+        throw new runtime.RequiredError('lineItem','Required parameter requestParameters.lineItem was null or undefined when calling postLineItem.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/LineItem`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body: queryParameters || LineItemToJSON(requestParameters.lineItem),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(LineItemFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/LineItem`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || LineItemToJSON(requestParameters.lineItem),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(LineItemFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Creates a new LineItem.
- * Create a new LineItem
- */
-export function postLineItem<T>(
-  requestParameters: PostLineItemApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, LineItem>,
-): QueryConfig<T> {
-  return postLineItemRaw(requestParameters, requestConfig);
+* Creates a new LineItem.
+* Create a new LineItem
+*/
+export function postLineItem<T>(requestParameters: PostLineItemApiRequest, requestConfig?: runtime.TypedQueryConfig<T, LineItem>): QueryConfig<T> {
+    return postLineItemRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing LineItem.
  * Update an existing LineItem
  */
-function updateLineItemRaw<T>(
-  requestParameters: UpdateLineItemApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, LineItem> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateLineItem.",
-    );
-  }
+function updateLineItemRaw<T>(requestParameters: UpdateLineItemApiRequest, requestConfig: runtime.TypedQueryConfig<T, LineItem> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateLineItem.');
+    }
 
-  if (
-    requestParameters.lineItem === null ||
-    requestParameters.lineItem === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "lineItem",
-      "Required parameter requestParameters.lineItem was null or undefined when calling updateLineItem.",
-    );
-  }
+    if (requestParameters.lineItem === null || requestParameters.lineItem === undefined) {
+        throw new runtime.RequiredError('lineItem','Required parameter requestParameters.lineItem was null or undefined when calling updateLineItem.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/LineItem/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body: queryParameters || LineItemToJSON(requestParameters.lineItem),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(LineItemFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/LineItem/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || LineItemToJSON(requestParameters.lineItem),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(LineItemFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing LineItem.
- * Update an existing LineItem
- */
-export function updateLineItem<T>(
-  requestParameters: UpdateLineItemApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, LineItem>,
-): QueryConfig<T> {
-  return updateLineItemRaw(requestParameters, requestConfig);
+* Updates an existing LineItem.
+* Update an existing LineItem
+*/
+export function updateLineItem<T>(requestParameters: UpdateLineItemApiRequest, requestConfig?: runtime.TypedQueryConfig<T, LineItem>): QueryConfig<T> {
+    return updateLineItemRaw(requestParameters, requestConfig);
 }
+

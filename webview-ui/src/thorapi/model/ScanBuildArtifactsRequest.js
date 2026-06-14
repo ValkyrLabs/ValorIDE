@@ -34,8 +34,8 @@ const DataObject_1 = require("./DataObject");
 function ScanBuildArtifactsRequestFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        applicationId: json["applicationId"],
-        searchPath: !(0, runtime_1.exists)(json, "searchPath") ? undefined : json["searchPath"],
+        'applicationId': json['applicationId'],
+        'searchPath': !(0, runtime_1.exists)(json, 'searchPath') ? undefined : json['searchPath'],
     };
 }
 function ScanBuildArtifactsRequestToJSON(value) {
@@ -44,8 +44,8 @@ function ScanBuildArtifactsRequestToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        applicationId: value.applicationId,
-        searchPath: value.searchPath,
+        'applicationId': value.applicationId,
+        'searchPath': value.searchPath,
     };
 }
 //# sourceMappingURL=ScanBuildArtifactsRequest.js.map

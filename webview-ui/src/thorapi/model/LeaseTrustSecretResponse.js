@@ -35,30 +35,18 @@ const _1 = require("./");
 function LeaseTrustSecretResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        lease: !(0, runtime_1.exists)(json, "lease")
-            ? undefined
-            : (0, _1.TrustSecretLeaseFromJSON)(json["lease"]),
-        allowed: !(0, runtime_1.exists)(json, "allowed") ? undefined : json["allowed"],
-        reasonCode: !(0, runtime_1.exists)(json, "reasonCode") ? undefined : json["reasonCode"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'lease': !(0, runtime_1.exists)(json, 'lease') ? undefined : (0, _1.TrustSecretLeaseFromJSON)(json['lease']),
+        'allowed': !(0, runtime_1.exists)(json, 'allowed') ? undefined : json['allowed'],
+        'reasonCode': !(0, runtime_1.exists)(json, 'reasonCode') ? undefined : json['reasonCode'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function LeaseTrustSecretResponseToJSON(value) {
@@ -67,10 +55,10 @@ function LeaseTrustSecretResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        lease: (0, _1.TrustSecretLeaseToJSON)(value.lease),
-        allowed: value.allowed,
-        reasonCode: value.reasonCode,
-        trashed: value.trashed,
+        'lease': (0, _1.TrustSecretLeaseToJSON)(value.lease),
+        'allowed': value.allowed,
+        'reasonCode': value.reasonCode,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=LeaseTrustSecretResponse.js.map

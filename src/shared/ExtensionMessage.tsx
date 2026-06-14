@@ -23,6 +23,7 @@ import type {
 import { ValorIDERulesToggles } from "./valoride-rules";
 import type { GrayMatterSessionState } from "./GrayMatterSession";
 import type { AgenticCapabilityCommandCenterState } from "./AgenticState";
+import type { RemoteCodingCommandResult } from "../services/communication/RemoteCodingSessionOrchestrator";
 
 export interface RemoteCommand {
   id: string;
@@ -46,80 +47,83 @@ export interface WidgetCommandEnvelope {
 // webview will hold state
 export interface ExtensionMessage {
   type:
-  | "action"
-  | "state"
-  | "selectedImages"
-  | "ollamaModels"
-  | "lmStudioModels"
-  | "theme"
-  | "workspaceUpdated"
-  | "invoke"
-  | "partialMessage"
-  | "openRouterModels"
-  | "openAiModels"
-  | "requestyModels"
-  | "llmDetailsUpdated"
-  | "mcpServers"
-  | "relinquishControl"
-  | "vsCodeLmModels"
-  | "requestVsCodeLmModels"
-  | "authCallback"
-  | "mcpMarketplaceCatalog"
-  | "mcpDownloadDetails"
-  | "commitSearchResults"
-  | "openGraphData"
-  | "isImageUrlResult"
-  | "didUpdateSettings"
-  | "addRemoteServerResult"
-  | "userCreditsBalance"
-  | "userCreditsUsage"
-  | "userCreditsPayments"
-  | "totalTasksSize"
-  | "addToInput"
-  | "browserConnectionResult"
-  | "detectedChromePath"
-  | "scrollToSettings"
-  | "browserRelaunchResult"
-  | "relativePathsResponse" // Handles single and multiple path responses
-  | "fileSearchResults"
-  | "grpc_response" // New type for gRPC responses
-  | "loginSuccess"
-  | "clearClientAuthState"
-  | "streamToThorapiResult"
-  | "openFileExplorerResult"
-  | "workspaceFiles"
-  | "contentData"
-  | "LIST_APPLICATION_SUCCESS"
-  | "agenticState"
-  | "remoteCommand"
-  | "uploadOpenAPISpecResult"
-  | "swarm:task-assignment"
-  | "swarm:task-cancelled"
-  | "swarm:remote-command"
-  | "swarm:widget-command"
-  | "swarm:broadcast"
-  | "valkyraiHostTestResult"
-  | "swarm:private-message"
-  | "taskCompletionFilePreview"
-  | "webviewError"
-  | "serverConsoleNewMessage";
+    | "action"
+    | "state"
+    | "selectedImages"
+    | "ollamaModels"
+    | "lmStudioModels"
+    | "theme"
+    | "workspaceUpdated"
+    | "invoke"
+    | "partialMessage"
+    | "openRouterModels"
+    | "openAiModels"
+    | "requestyModels"
+    | "llmDetailsUpdated"
+    | "mcpServers"
+    | "relinquishControl"
+    | "vsCodeLmModels"
+    | "requestVsCodeLmModels"
+    | "authCallback"
+    | "mcpMarketplaceCatalog"
+    | "mcpDownloadDetails"
+    | "commitSearchResults"
+    | "openGraphData"
+    | "isImageUrlResult"
+    | "didUpdateSettings"
+    | "addRemoteServerResult"
+    | "userCreditsBalance"
+    | "userCreditsUsage"
+    | "userCreditsPayments"
+    | "totalTasksSize"
+    | "addToInput"
+    | "browserConnectionResult"
+    | "detectedChromePath"
+    | "scrollToSettings"
+    | "browserRelaunchResult"
+    | "relativePathsResponse" // Handles single and multiple path responses
+    | "fileSearchResults"
+    | "grpc_response" // New type for gRPC responses
+    | "loginSuccess"
+    | "accountLoginResult"
+    | "clearClientAuthState"
+    | "streamToThorapiResult"
+    | "openFileExplorerResult"
+    | "workspaceFiles"
+    | "contentData"
+    | "LIST_APPLICATION_SUCCESS"
+    | "agenticState"
+    | "remoteCommand"
+    | "uploadOpenAPISpecResult"
+    | "swarm:task-assignment"
+    | "swarm:task-cancelled"
+    | "swarm:remote-command"
+    | "swarm:widget-command"
+    | "swarm:command-response"
+    | "swarm:broadcast"
+    | "valkyraiHostTestResult"
+    | "swarm:private-message"
+    | "taskCompletionFilePreview"
+    | "webviewError"
+    | "remoteCodingSessionEvent"
+    | "serverConsoleNewMessage";
   text?: string;
   path?: string; // Used for openFileExplorerResult
   paths?: (string | null)[]; // Used for relativePathsResponse
   number?: number; // task completion file index
   seeNewChangesSinceLastTaskCompletion?: boolean;
   action?:
-  | "chatButtonClicked"
-  | "mcpButtonClicked"
-  | "settingsButtonClicked"
-  | "historyButtonClicked"
-  | "didBecomeVisible"
-  | "accountLoginClicked"
-  | "accountLogoutClicked"
-  | "accountButtonClicked"
-  | "focusChatInput"
-  | "generatedFilesButtonClicked"
-  | "serverConsoleButtonClicked";
+    | "chatButtonClicked"
+    | "mcpButtonClicked"
+    | "settingsButtonClicked"
+    | "historyButtonClicked"
+    | "didBecomeVisible"
+    | "accountLoginClicked"
+    | "accountLogoutClicked"
+    | "accountButtonClicked"
+    | "focusChatInput"
+    | "generatedFilesButtonClicked"
+    | "serverConsoleButtonClicked";
 
   invoke?: Invoke;
   state?: ExtensionState;
@@ -144,6 +148,8 @@ export interface ExtensionMessage {
   customToken?: string;
   token?: string; // JWT token for authentication
   authenticatedPrincipal?: string; // JSON string of authenticated principal
+  requestId?: string;
+  success?: boolean;
   mcpMarketplaceCatalog?: McpMarketplaceCatalog;
   error?: string;
   mcpDownloadDetails?: McpDownloadResponse;
@@ -167,7 +173,6 @@ export interface ExtensionMessage {
   userCreditsUsage?: UsageTransaction[];
   userCreditsPayments?: PaymentTransaction[];
   totalTasksSize?: number | null;
-  success?: boolean;
   endpoint?: string;
   isBundled?: boolean;
   isConnected?: boolean;
@@ -224,7 +229,9 @@ export interface ExtensionMessage {
   specPath?: string;
   message?: string;
   widgetCommand?: WidgetCommandEnvelope;
+  swarmCommandResponse?: Record<string, unknown>;
   agenticState?: AgenticCapabilityCommandCenterState;
+  remoteCodingSessionEvent?: RemoteCodingCommandResult;
 }
 
 export type Invoke =
@@ -377,14 +384,14 @@ export type ValorIDESay =
 
 export interface ValorIDESayTool {
   tool:
-  | "editedExistingFile"
-  | "newFileCreated"
-  | "readFile"
-  | "listFilesTopLevel"
-  | "listFilesRecursive"
-  | "listCodeDefinitionNames"
-  | "searchFiles"
-  | "precisionSearchAndReplace";
+    | "editedExistingFile"
+    | "newFileCreated"
+    | "readFile"
+    | "listFilesTopLevel"
+    | "listFilesRecursive"
+    | "listCodeDefinitionNames"
+    | "searchFiles"
+    | "precisionSearchAndReplace";
   path?: string;
   diff?: string;
   content?: string;

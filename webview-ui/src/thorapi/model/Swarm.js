@@ -36,31 +36,19 @@ const _1 = require("./");
 function SwarmFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        instanceId: !(0, runtime_1.exists)(json, "instanceId") ? undefined : json["instanceId"],
-        swarmType: !(0, runtime_1.exists)(json, "swarmType") ? undefined : json["swarmType"],
-        principal: !(0, runtime_1.exists)(json, "principal")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["principal"]),
-        username: !(0, runtime_1.exists)(json, "username") ? undefined : json["username"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'instanceId': !(0, runtime_1.exists)(json, 'instanceId') ? undefined : json['instanceId'],
+        'swarmType': !(0, runtime_1.exists)(json, 'swarmType') ? undefined : json['swarmType'],
+        'principal': !(0, runtime_1.exists)(json, 'principal') ? undefined : (0, _1.PrincipalFromJSON)(json['principal']),
+        'username': !(0, runtime_1.exists)(json, 'username') ? undefined : json['username'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function SwarmToJSON(value) {
@@ -69,17 +57,17 @@ function SwarmToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        instanceId: value.instanceId,
-        swarmType: value.swarmType,
-        principal: (0, _1.PrincipalToJSON)(value.principal),
-        username: value.username,
-        trashed: value.trashed,
+        'instanceId': value.instanceId,
+        'swarmType': value.swarmType,
+        'principal': (0, _1.PrincipalToJSON)(value.principal),
+        'username': value.username,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var SwarmSwarmTypeEnum;
 (function (SwarmSwarmTypeEnum) {
     SwarmSwarmTypeEnum["AGENT"] = "agent";

@@ -4,8 +4,10 @@ import { render, screen } from "@testing-library/react";
 import { fireEvent } from "@testing-library/react";
 
 const mockUseGetAccountBalanceQuery = vi.fn();
+const mockReceiptQuery = vi.fn();
 const mockUseGetUsageTransactionsQuery = vi.fn();
 const mockUseGetPaymentTransactionsQuery = vi.fn();
+const mockPostMessage = vi.fn();
 const baseExtensionState = {
   userInfo: { id: "user-123" },
   authenticatedUser: { id: "user-123" },
@@ -83,6 +85,42 @@ vi.mock("react-bootstrap", () => {
 vi.mock("@thorapi/services/creditsApi", () => ({
   useGetAccountBalanceQuery: (...args: any[]) =>
     mockUseGetAccountBalanceQuery(...args),
+  useGetAppGenerationTraceQuery: (...args: any[]) => mockReceiptQuery(...args),
+  useGetSkilloptRouteReceiptQuery: (...args: any[]) =>
+    mockReceiptQuery(...args),
+  useListSkilloptRouteReceiptsQuery: (...args: any[]) =>
+    mockReceiptQuery(...args),
+  useGetCreditDebitReceiptByReceiptRefQuery: (...args: any[]) =>
+    mockReceiptQuery(...args),
+  useListCreditDebitReceiptsQuery: (...args: any[]) =>
+    mockReceiptQuery(...args),
+  useCreateAppGenerationRequestMutation: () => [
+    vi.fn(() => ({ unwrap: vi.fn().mockResolvedValue({}) })),
+    { isLoading: false, error: undefined },
+  ],
+  useCompileContextPageMutation: () => [
+    vi.fn(() => ({ unwrap: vi.fn().mockResolvedValue({}) })),
+    { isLoading: false, error: undefined },
+  ],
+  useRunAppGenerationRequestMutation: () => [
+    vi.fn(() => ({ unwrap: vi.fn().mockResolvedValue({}) })),
+    { isLoading: false, error: undefined },
+  ],
+  useGetAppGenerationRequestQuery: (...args: any[]) =>
+    mockReceiptQuery(...args),
+  useGetContextPageQuery: (...args: any[]) => mockReceiptQuery(...args),
+  useHydrateContextPageMutation: () => [
+    vi.fn(() => ({ unwrap: vi.fn().mockResolvedValue({}) })),
+    { isLoading: false, error: undefined },
+  ],
+  useRecompressContextPageMutation: () => [
+    vi.fn(() => ({ unwrap: vi.fn().mockResolvedValue({}) })),
+    { isLoading: false, error: undefined },
+  ],
+  useTraverseContextPageMutation: () => [
+    vi.fn(() => ({ unwrap: vi.fn().mockResolvedValue({}) })),
+    { isLoading: false, error: undefined },
+  ],
   useRecordPaymentTransactionMutation: () => [
     vi.fn(() => ({ unwrap: vi.fn().mockResolvedValue({}) })),
   ],
@@ -119,7 +157,9 @@ vi.mock("@thorapi/context/CommunicationServiceContext", () => ({
   }),
 }));
 
-vi.mock("@thorapi/utils/vscode", () => ({ vscode: { postMessage: vi.fn() } }));
+vi.mock("@thorapi/utils/vscode", () => ({
+  vscode: { postMessage: mockPostMessage },
+}));
 
 vi.mock("@shared/getApiMetrics", () => ({
   getApiMetrics: () => ({ totalCost: 0 }),
@@ -150,6 +190,11 @@ vi.mock("./UserPreferences", () => ({
   default: () => <div data-testid="user-preferences" />,
 }));
 
+vi.mock("../ServerConsole", () => ({
+  __esModule: true,
+  default: () => <div data-testid="server-console" />,
+}));
+
 vi.mock("./ContentFlipCard", () => ({
   __esModule: true,
   default: () => <div data-testid="content-flip-card" />,
@@ -175,6 +220,14 @@ describe("AccountView - Buy Credits button integration", () => {
     ({ default: AccountView } = await import("./AccountView"));
     mockExtensionState = { ...baseExtensionState };
     mockUseGetAccountBalanceQuery.mockClear();
+    mockReceiptQuery.mockClear();
+    mockReceiptQuery.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isFetching: false,
+      error: undefined,
+      refetch: vi.fn(),
+    });
     mockUseGetAccountBalanceQuery.mockReturnValue({
       data: { currentBalance: 25 },
       isLoading: false,
@@ -197,25 +250,23 @@ describe("AccountView - Buy Credits button integration", () => {
   });
 
   it("renders the Buy Credits button and triggers openInBrowser message", () => {
-    const { vscode } = require("@thorapi/utils/vscode");
-    const postMessage = vi.spyOn(vscode, "postMessage");
+    mockPostMessage.mockClear();
     render(
       <AccountView
         {...({
-          onDone: () => { },
+          onDone: () => {},
           serverConsoleNeedsAttention: false,
-          onClearServerConsoleNeedsAttention: () => { },
+          onClearServerConsoleNeedsAttention: () => {},
         } as any)}
       />,
     );
     const btn = screen.getByTestId("buy-credits-btn");
     expect(btn).toBeInTheDocument();
     btn.click();
-    expect(postMessage).toHaveBeenCalledWith({
+    expect(mockPostMessage).toHaveBeenCalledWith({
       type: "openInBrowser",
       url: "https://valkyrlabs.com/buy-credits",
     });
-    postMessage.mockRestore();
   });
 
   it("adds a 'needs-attention' class on the Server Console tab when flagged and clears it on click", () => {
@@ -223,7 +274,7 @@ describe("AccountView - Buy Credits button integration", () => {
     render(
       <AccountView
         {...({
-          onDone: () => { },
+          onDone: () => {},
           serverConsoleNeedsAttention: true,
           onClearServerConsoleNeedsAttention: onClear,
         } as any)}
@@ -241,9 +292,9 @@ describe("AccountView - Buy Credits button integration", () => {
     render(
       <AccountView
         {...({
-          onDone: () => { },
+          onDone: () => {},
           serverConsoleNeedsAttention: false,
-          onClearServerConsoleNeedsAttention: () => { },
+          onClearServerConsoleNeedsAttention: () => {},
           initialActiveTab: "serverConsole",
         } as any)}
       />,
@@ -251,6 +302,91 @@ describe("AccountView - Buy Credits button integration", () => {
     // The server console should now be the active tab
     const serverTab = screen.getByTitle(/server console/i);
     expect(serverTab.className).toMatch(/active/);
+  });
+
+  it("activates the Receipts tab when initialActiveTab prop is provided", () => {
+    render(
+      <AccountView
+        {...({
+          onDone: () => {},
+          serverConsoleNeedsAttention: false,
+          onClearServerConsoleNeedsAttention: () => {},
+          initialActiveTab: "receipts",
+        } as any)}
+      />,
+    );
+
+    const receiptsTab = screen.getByTitle(/receipts/i);
+    expect(receiptsTab.className).toMatch(/active/);
+    expect(screen.getByText("Receipts")).toBeInTheDocument();
+  });
+
+  it("preloads SWARM command evidence in the Receipts tab", async () => {
+    render(
+      <AccountView
+        {...({
+          onDone: () => {},
+          serverConsoleNeedsAttention: false,
+          onClearServerConsoleNeedsAttention: () => {},
+          initialActiveTab: "receipts",
+          initialSwarmCommandResponse: {
+            status: "accepted",
+            commandId: "cmd-auto-1",
+            receiptRef: "swarm-command:cmd-auto-1",
+            traceId: "swarm-trace:auto-1",
+            contextPageRef: "ctx-auto-1",
+            skillOptReceiptRef: "skillopt-auto-1",
+            workflowExecutionRef: "workflow_execution:auto-1",
+            workflowDispatchJson: JSON.stringify({
+              workflowId: "workflow-auto-1",
+              secretToken: "nope",
+            }),
+          },
+        } as any)}
+      />,
+    );
+
+    expect(await screen.findByText("SWARM Command")).toBeInTheDocument();
+    expect(screen.getAllByText("cmd-auto-1").length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByText("swarm-command:cmd-auto-1").length,
+    ).toBeGreaterThan(0);
+    expect(screen.getAllByText("ctx-auto-1").length).toBeGreaterThan(0);
+    expect(screen.queryByText(/nope/)).not.toBeInTheDocument();
+  });
+
+  it("activates the App Generation tab when initialActiveTab prop is provided", () => {
+    render(
+      <AccountView
+        {...({
+          onDone: () => {},
+          serverConsoleNeedsAttention: false,
+          onClearServerConsoleNeedsAttention: () => {},
+          initialActiveTab: "appGeneration",
+        } as any)}
+      />,
+    );
+
+    const appGenerationTab = screen.getByTitle(/app generation/i);
+    expect(appGenerationTab.className).toMatch(/active/);
+    expect(screen.getByText("Tenant App Generation")).toBeInTheDocument();
+  });
+
+  it("activates the Context Pages tab when initialActiveTab prop is provided", () => {
+    render(
+      <AccountView
+        {...({
+          onDone: () => {},
+          serverConsoleNeedsAttention: false,
+          onClearServerConsoleNeedsAttention: () => {},
+          initialActiveTab: "contextPage",
+        } as any)}
+      />,
+    );
+
+    const contextTab = screen.getByTitle(/context pages/i);
+    expect(contextTab.className).toMatch(/active/);
+    expect(screen.getByText("ContextPage")).toBeInTheDocument();
   });
 
   it("fetches balance using userInfo when authenticatedUser is missing", () => {
@@ -262,9 +398,9 @@ describe("AccountView - Buy Credits button integration", () => {
 
     render(
       <AccountView
-        onDone={() => { }}
+        onDone={() => {}}
         serverConsoleNeedsAttention={false}
-        onClearServerConsoleNeedsAttention={() => { }}
+        onClearServerConsoleNeedsAttention={() => {}}
       />,
     );
 
@@ -316,9 +452,9 @@ describe("AccountView - BuyCredits visibility", () => {
 
     render(
       <AccountView
-        onDone={() => { }}
+        onDone={() => {}}
         serverConsoleNeedsAttention={false}
-        onClearServerConsoleNeedsAttention={() => { }}
+        onClearServerConsoleNeedsAttention={() => {}}
       />,
     );
 
@@ -335,9 +471,9 @@ describe("AccountView - BuyCredits visibility", () => {
 
     render(
       <AccountView
-        onDone={() => { }}
+        onDone={() => {}}
         serverConsoleNeedsAttention={false}
-        onClearServerConsoleNeedsAttention={() => { }}
+        onClearServerConsoleNeedsAttention={() => {}}
       />,
     );
 
@@ -354,9 +490,9 @@ describe("AccountView - BuyCredits visibility", () => {
 
     render(
       <AccountView
-        onDone={() => { }}
+        onDone={() => {}}
         serverConsoleNeedsAttention={false}
-        onClearServerConsoleNeedsAttention={() => { }}
+        onClearServerConsoleNeedsAttention={() => {}}
         creditIntent={{
           actionName: "Continue current request",
           requiredCredits: 2,

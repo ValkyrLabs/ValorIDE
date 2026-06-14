@@ -35,41 +35,25 @@ const _1 = require("./");
 function FileVersionFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        versionNumber: json["versionNumber"],
-        storageKey: json["storageKey"],
-        sizeBytes: json["sizeBytes"],
-        file: !(0, runtime_1.exists)(json, "file") ? undefined : (0, _1.FileRecordFromJSON)(json["file"]),
-        storageDriverId: !(0, runtime_1.exists)(json, "storageDriverId")
-            ? undefined
-            : json["storageDriverId"],
-        checksumSha256: !(0, runtime_1.exists)(json, "checksumSha256")
-            ? undefined
-            : json["checksumSha256"],
-        contentType: !(0, runtime_1.exists)(json, "contentType") ? undefined : json["contentType"],
-        createdBy: !(0, runtime_1.exists)(json, "createdBy")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["createdBy"]),
-        changeLog: !(0, runtime_1.exists)(json, "changeLog") ? undefined : json["changeLog"],
-        isCurrent: !(0, runtime_1.exists)(json, "isCurrent") ? undefined : json["isCurrent"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'versionNumber': json['versionNumber'],
+        'storageKey': json['storageKey'],
+        'sizeBytes': json['sizeBytes'],
+        'file': !(0, runtime_1.exists)(json, 'file') ? undefined : (0, _1.FileRecordFromJSON)(json['file']),
+        'storageDriverId': !(0, runtime_1.exists)(json, 'storageDriverId') ? undefined : json['storageDriverId'],
+        'checksumSha256': !(0, runtime_1.exists)(json, 'checksumSha256') ? undefined : json['checksumSha256'],
+        'contentType': !(0, runtime_1.exists)(json, 'contentType') ? undefined : json['contentType'],
+        'createdBy': !(0, runtime_1.exists)(json, 'createdBy') ? undefined : (0, _1.PrincipalFromJSON)(json['createdBy']),
+        'changeLog': !(0, runtime_1.exists)(json, 'changeLog') ? undefined : json['changeLog'],
+        'isCurrent': !(0, runtime_1.exists)(json, 'isCurrent') ? undefined : json['isCurrent'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function FileVersionToJSON(value) {
@@ -78,17 +62,17 @@ function FileVersionToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        versionNumber: value.versionNumber,
-        storageKey: value.storageKey,
-        sizeBytes: value.sizeBytes,
-        file: (0, _1.FileRecordToJSON)(value.file),
-        storageDriverId: value.storageDriverId,
-        checksumSha256: value.checksumSha256,
-        contentType: value.contentType,
-        createdBy: (0, _1.PrincipalToJSON)(value.createdBy),
-        changeLog: value.changeLog,
-        isCurrent: value.isCurrent,
-        trashed: value.trashed,
+        'versionNumber': value.versionNumber,
+        'storageKey': value.storageKey,
+        'sizeBytes': value.sizeBytes,
+        'file': (0, _1.FileRecordToJSON)(value.file),
+        'storageDriverId': value.storageDriverId,
+        'checksumSha256': value.checksumSha256,
+        'contentType': value.contentType,
+        'createdBy': (0, _1.PrincipalToJSON)(value.createdBy),
+        'changeLog': value.changeLog,
+        'isCurrent': value.isCurrent,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=FileVersion.js.map

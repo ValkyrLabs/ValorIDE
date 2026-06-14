@@ -36,36 +36,22 @@ const _1 = require("./");
 function LoginAuditFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        loginStatus: json["loginStatus"],
-        loginMethod: json["loginMethod"],
-        principal: !(0, runtime_1.exists)(json, "principal")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["principal"]),
-        ipAddress: !(0, runtime_1.exists)(json, "ipAddress") ? undefined : json["ipAddress"],
-        userAgent: !(0, runtime_1.exists)(json, "userAgent") ? undefined : json["userAgent"],
-        deviceFingerprint: !(0, runtime_1.exists)(json, "deviceFingerprint")
-            ? undefined
-            : json["deviceFingerprint"],
-        geoLocation: !(0, runtime_1.exists)(json, "geoLocation") ? undefined : json["geoLocation"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'loginStatus': json['loginStatus'],
+        'loginMethod': json['loginMethod'],
+        'principal': !(0, runtime_1.exists)(json, 'principal') ? undefined : (0, _1.PrincipalFromJSON)(json['principal']),
+        'ipAddress': !(0, runtime_1.exists)(json, 'ipAddress') ? undefined : json['ipAddress'],
+        'userAgent': !(0, runtime_1.exists)(json, 'userAgent') ? undefined : json['userAgent'],
+        'deviceFingerprint': !(0, runtime_1.exists)(json, 'deviceFingerprint') ? undefined : json['deviceFingerprint'],
+        'geoLocation': !(0, runtime_1.exists)(json, 'geoLocation') ? undefined : json['geoLocation'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function LoginAuditToJSON(value) {
@@ -74,20 +60,20 @@ function LoginAuditToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        loginStatus: value.loginStatus,
-        loginMethod: value.loginMethod,
-        principal: (0, _1.PrincipalToJSON)(value.principal),
-        ipAddress: value.ipAddress,
-        userAgent: value.userAgent,
-        deviceFingerprint: value.deviceFingerprint,
-        geoLocation: value.geoLocation,
-        trashed: value.trashed,
+        'loginStatus': value.loginStatus,
+        'loginMethod': value.loginMethod,
+        'principal': (0, _1.PrincipalToJSON)(value.principal),
+        'ipAddress': value.ipAddress,
+        'userAgent': value.userAgent,
+        'deviceFingerprint': value.deviceFingerprint,
+        'geoLocation': value.geoLocation,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var LoginAuditLoginStatusEnum;
 (function (LoginAuditLoginStatusEnum) {
     LoginAuditLoginStatusEnum["SUCCESS"] = "success";
@@ -99,9 +85,9 @@ var LoginAuditLoginStatusEnum;
     LoginAuditLoginStatusEnum["SUCCESS_2FA_VERIFIED"] = "success_2fa_verified";
 })(LoginAuditLoginStatusEnum || (exports.LoginAuditLoginStatusEnum = LoginAuditLoginStatusEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var LoginAuditLoginMethodEnum;
 (function (LoginAuditLoginMethodEnum) {
     LoginAuditLoginMethodEnum["USERNAME_PASSWORD"] = "username_password";

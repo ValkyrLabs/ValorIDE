@@ -32,6 +32,7 @@ import { searchWorkspaceFiles } from "@services/search/file-search";
 import { getLLMPromptService } from "@services/llmPromptService";
 import { getSwarmPromptBroadcaster } from "@services/swarmPromptBroadcaster";
 import { StartupAuthService } from "@services/auth/StartupAuthService";
+import { ValoridePasswordLoginService } from "@services/auth/ValoridePasswordLoginService";
 import { createGrayMatterSessionState } from "@services/graymatter/GrayMatterSessionService";
 import { GrayMatterMcpBridge } from "@services/graymatter/GrayMatterMcpBridge";
 import { getStatusBarService } from "@services/StatusBarService";
@@ -566,6 +567,65 @@ export class Controller {
         );
         await this.postStateToWebview();
         break;
+      case "accountLoginRequest": {
+        const requestId = message.requestId;
+        const username = message.username?.trim();
+        const password = message.password;
+
+        if (!requestId || !username || !password) {
+          await this.postMessageToWebview({
+            type: "accountLoginResult",
+            requestId,
+            success: false,
+            error: "Username and password are required.",
+          });
+          break;
+        }
+
+        try {
+          const loginResult = await new ValoridePasswordLoginService().login({
+            username,
+            password,
+          });
+          const startupAuthService = StartupAuthService.getInstance(
+            this.context,
+          );
+          await startupAuthService.handleSuccessfulLogin(
+            loginResult.tokens,
+            loginResult.user,
+          );
+          await this.refreshGrayMatterSessionState(
+            loginResult.tokens.jwtToken,
+          );
+          await this.postMessageToWebview({
+            type: "accountLoginResult",
+            requestId,
+            success: true,
+            token: loginResult.tokens.jwtToken,
+            authenticatedPrincipal: loginResult.user
+              ? JSON.stringify(loginResult.user)
+              : undefined,
+          });
+          await this.postMessageToWebview({
+            type: "loginSuccess",
+            token: loginResult.tokens.jwtToken,
+            authenticatedPrincipal: loginResult.user
+              ? JSON.stringify(loginResult.user)
+              : undefined,
+          });
+          await this.postStateToWebview();
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
+          await this.postMessageToWebview({
+            type: "accountLoginResult",
+            requestId,
+            success: false,
+            error: errorMessage,
+          });
+        }
+        break;
+      }
       case "accountLoginSuccess": {
         const customToken = message.customToken?.trim();
         if (customToken) {

@@ -36,40 +36,22 @@ const _1 = require("./");
 function LineItemFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        salesOrderId: !(0, runtime_1.exists)(json, "salesOrderId")
-            ? undefined
-            : json["salesOrderId"],
-        product: !(0, runtime_1.exists)(json, "product")
-            ? undefined
-            : (0, _1.ProductFromJSON)(json["product"]),
-        lineItemAmount: !(0, runtime_1.exists)(json, "lineItemAmount")
-            ? undefined
-            : json["lineItemAmount"],
-        taxRate: !(0, runtime_1.exists)(json, "taxRate") ? undefined : json["taxRate"],
-        discount: !(0, runtime_1.exists)(json, "discount")
-            ? undefined
-            : (0, _1.DiscountFromJSON)(json["discount"]),
-        quantity: !(0, runtime_1.exists)(json, "quantity") ? undefined : json["quantity"],
-        type: !(0, runtime_1.exists)(json, "type") ? undefined : json["type"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'salesOrderId': !(0, runtime_1.exists)(json, 'salesOrderId') ? undefined : json['salesOrderId'],
+        'product': !(0, runtime_1.exists)(json, 'product') ? undefined : (0, _1.ProductFromJSON)(json['product']),
+        'lineItemAmount': !(0, runtime_1.exists)(json, 'lineItemAmount') ? undefined : json['lineItemAmount'],
+        'taxRate': !(0, runtime_1.exists)(json, 'taxRate') ? undefined : json['taxRate'],
+        'discount': !(0, runtime_1.exists)(json, 'discount') ? undefined : (0, _1.DiscountFromJSON)(json['discount']),
+        'quantity': !(0, runtime_1.exists)(json, 'quantity') ? undefined : json['quantity'],
+        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function LineItemToJSON(value) {
@@ -78,20 +60,20 @@ function LineItemToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        salesOrderId: value.salesOrderId,
-        product: (0, _1.ProductToJSON)(value.product),
-        lineItemAmount: value.lineItemAmount,
-        taxRate: value.taxRate,
-        discount: (0, _1.DiscountToJSON)(value.discount),
-        quantity: value.quantity,
-        type: value.type,
-        trashed: value.trashed,
+        'salesOrderId': value.salesOrderId,
+        'product': (0, _1.ProductToJSON)(value.product),
+        'lineItemAmount': value.lineItemAmount,
+        'taxRate': value.taxRate,
+        'discount': (0, _1.DiscountToJSON)(value.discount),
+        'quantity': value.quantity,
+        'type': value.type,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var LineItemTypeEnum;
 (function (LineItemTypeEnum) {
     LineItemTypeEnum["PRODUCT"] = "product";

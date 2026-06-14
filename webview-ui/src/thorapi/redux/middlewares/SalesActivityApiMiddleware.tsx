@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_SALESACTIVITY_REQUEST,
-  FETCH_SALESACTIVITY_REQUEST,
-  LIST_SALESACTIVITY_REQUEST,
-  UPDATE_SALESACTIVITY_REQUEST,
-  DELETE_SALESACTIVITY_REQUEST,
-  addSalesActivityFailure,
-  addSalesActivitySuccess,
-  fetchSalesActivityFailure,
-  fetchSalesActivitySuccess,
-  listSalesActivityFailure,
-  listSalesActivitySuccess,
-  updateSalesActivityFailure,
-  updateSalesActivitySuccess,
-  deleteSalesActivityFailure,
-  deleteSalesActivitySuccess,
-} from "../actions/SalesActivityApiAction";
+
+    ADD_SALESACTIVITY_REQUEST,
+    FETCH_SALESACTIVITY_REQUEST,
+    LIST_SALESACTIVITY_REQUEST,
+    UPDATE_SALESACTIVITY_REQUEST,
+    DELETE_SALESACTIVITY_REQUEST,
+
+    addSalesActivityFailure,
+    addSalesActivitySuccess,
+
+    fetchSalesActivityFailure,
+    fetchSalesActivitySuccess,
+    
+    listSalesActivityFailure,
+    listSalesActivitySuccess,
+
+    updateSalesActivityFailure,
+    updateSalesActivitySuccess,
+    
+    deleteSalesActivityFailure,
+    deleteSalesActivitySuccess,
+    
+} from '../actions/SalesActivityApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: SalesActivity
 */
 
-export const SalesActivityMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("SalesActivity MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const SalesActivityMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("SalesActivity MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { DigitalAsset } from "@thorapi/model/DigitalAsset";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { DigitalAsset } from '@thorapi/model/DigitalAsset'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type DigitalAssetResponse = DigitalAsset[];
+type DigitalAssetResponse = DigitalAsset[]
+type DigitalAssetPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<DigitalAsset>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type DigitalAssetListQueryArg = {
+  example?: Partial<DigitalAsset>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toDigitalAssetList = (result: unknown): DigitalAssetResponse => {
   if (Array.isArray(result)) {
-    return result as DigitalAssetResponse;
+    return result as DigitalAssetResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as DigitalAssetResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as DigitalAssetResponse) : []
+}
 
 export const DigitalAssetService = createApi({
-  reducerPath: "DigitalAsset", // This should remain unique
+  reducerPath: 'DigitalAsset', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["DigitalAsset"],
+  tagTypes: ['DigitalAsset'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getDigitalAssetsPaged: build.query<
-      DigitalAssetResponse,
-      { page: number; size?: number; example?: Partial<DigitalAsset> }
-    >({
+    getDigitalAssetsPaged: build.query<DigitalAssetResponse, DigitalAssetPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `DigitalAsset?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `DigitalAsset?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toDigitalAssetList(result);
+        const rows = toDigitalAssetList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "DigitalAsset" as const, id })),
-          { type: "DigitalAsset", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'DigitalAsset' as const, id })),
+          { type: 'DigitalAsset', id: `PAGE_${page}` },
+          { type: 'DigitalAsset', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getDigitalAssets: build.query<
-      DigitalAssetResponse,
-      { example?: Partial<DigitalAsset> } | void
-    >({
+    getDigitalAssets: build.query<DigitalAssetResponse, DigitalAssetListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const DigitalAssetService = createApi({
         return `DigitalAsset`;
       },
       providesTags: (result) => {
-        const rows = toDigitalAssetList(result);
+        const rows = toDigitalAssetList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "DigitalAsset" as const, id })),
-          { type: "DigitalAsset", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'DigitalAsset' as const, id })),
+          { type: 'DigitalAsset', id: 'LIST' },
+          { type: 'DigitalAsset', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,89 +97,71 @@ export const DigitalAssetService = createApi({
     addDigitalAsset: build.mutation<DigitalAsset, Partial<DigitalAsset>>({
       query: (body) => ({
         url: `DigitalAsset`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "DigitalAsset", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'DigitalAsset', id: 'LIST' },
+        { type: 'DigitalAsset', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getDigitalAsset: build.query<DigitalAsset, string>({
       query: (id) => `DigitalAsset/${id}`,
-      providesTags: (result, error, id) => [{ type: "DigitalAsset", id }],
+      providesTags: (result, error, id) => [{ type: 'DigitalAsset', id }],
     }),
 
     // 5) Update
-    updateDigitalAsset: build.mutation<
-      void,
-      Pick<DigitalAsset, "id"> & Partial<DigitalAsset>
-    >({
+    updateDigitalAsset: build.mutation<DigitalAsset, Pick<DigitalAsset, 'id'> & Partial<DigitalAsset>>({
       query: ({ id, ...patch }) => ({
         url: `DigitalAsset/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            DigitalAssetService.util.updateQueryData(
-              "getDigitalAsset",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<DigitalAsset, "id">) => [
-        { type: "DigitalAsset", id },
-        { type: "DigitalAsset", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<DigitalAsset, 'id'>) => [
+        { type: 'DigitalAsset', id },
+        { type: 'DigitalAsset', id: 'LIST' },
+        { type: 'DigitalAsset', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteDigitalAsset: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteDigitalAsset: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `DigitalAsset/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "DigitalAsset", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'DigitalAsset', id },
+        { type: 'DigitalAsset', id: 'LIST' },
+        { type: 'DigitalAsset', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteDigitalAssetCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteDigitalAssetCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `DigitalAsset/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "DigitalAsset", id },
-        { type: "DigitalAsset", id: "LIST" },
+        { type: 'DigitalAsset', id },
+        { type: 'DigitalAsset', id: 'LIST' },
+        { type: 'DigitalAsset', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetDigitalAssetsPagedQuery`
 export const {
-  useGetDigitalAssetsPagedQuery, // immediate fetch
+  useGetDigitalAssetsPagedQuery,     // immediate fetch
   useLazyGetDigitalAssetsPagedQuery, // lazy fetch
   useGetDigitalAssetQuery,
   useGetDigitalAssetsQuery,
@@ -177,4 +169,4 @@ export const {
   useUpdateDigitalAssetMutation,
   useDeleteDigitalAssetMutation,
   useDeleteDigitalAssetCascadeMutation,
-} = DigitalAssetService;
+} = DigitalAssetService

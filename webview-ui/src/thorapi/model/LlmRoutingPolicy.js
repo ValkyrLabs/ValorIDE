@@ -35,38 +35,20 @@ const DataObject_1 = require("./DataObject");
 function LlmRoutingPolicyFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        strategy: !(0, runtime_1.exists)(json, "strategy") ? undefined : json["strategy"],
-        primaryProvider: !(0, runtime_1.exists)(json, "primaryProvider")
-            ? undefined
-            : json["primaryProvider"],
-        fallbackProviders: !(0, runtime_1.exists)(json, "fallbackProviders")
-            ? undefined
-            : json["fallbackProviders"],
-        allowedProviders: !(0, runtime_1.exists)(json, "allowedProviders")
-            ? undefined
-            : json["allowedProviders"],
-        maxFallbackAttempts: !(0, runtime_1.exists)(json, "maxFallbackAttempts")
-            ? undefined
-            : json["maxFallbackAttempts"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'strategy': !(0, runtime_1.exists)(json, 'strategy') ? undefined : json['strategy'],
+        'primaryProvider': !(0, runtime_1.exists)(json, 'primaryProvider') ? undefined : json['primaryProvider'],
+        'fallbackProviders': !(0, runtime_1.exists)(json, 'fallbackProviders') ? undefined : json['fallbackProviders'],
+        'allowedProviders': !(0, runtime_1.exists)(json, 'allowedProviders') ? undefined : json['allowedProviders'],
+        'maxFallbackAttempts': !(0, runtime_1.exists)(json, 'maxFallbackAttempts') ? undefined : json['maxFallbackAttempts'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function LlmRoutingPolicyToJSON(value) {
@@ -75,27 +57,27 @@ function LlmRoutingPolicyToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        strategy: value.strategy,
-        primaryProvider: value.primaryProvider,
-        fallbackProviders: value.fallbackProviders,
-        allowedProviders: value.allowedProviders,
-        maxFallbackAttempts: value.maxFallbackAttempts,
-        trashed: value.trashed,
+        'strategy': value.strategy,
+        'primaryProvider': value.primaryProvider,
+        'fallbackProviders': value.fallbackProviders,
+        'allowedProviders': value.allowedProviders,
+        'maxFallbackAttempts': value.maxFallbackAttempts,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var LlmRoutingPolicyStrategyEnum;
 (function (LlmRoutingPolicyStrategyEnum) {
     LlmRoutingPolicyStrategyEnum["SINGLEPROVIDER"] = "single_provider";
     LlmRoutingPolicyStrategyEnum["FALLBACKCHAIN"] = "fallback_chain";
 })(LlmRoutingPolicyStrategyEnum || (exports.LlmRoutingPolicyStrategyEnum = LlmRoutingPolicyStrategyEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var LlmRoutingPolicyPrimaryProviderEnum;
 (function (LlmRoutingPolicyPrimaryProviderEnum) {
     LlmRoutingPolicyPrimaryProviderEnum["VALKYRAI"] = "valkyrai";
@@ -110,9 +92,9 @@ var LlmRoutingPolicyPrimaryProviderEnum;
     LlmRoutingPolicyPrimaryProviderEnum["CHATGPTPASSTHROUGH"] = "chatgpt_pass_through";
 })(LlmRoutingPolicyPrimaryProviderEnum || (exports.LlmRoutingPolicyPrimaryProviderEnum = LlmRoutingPolicyPrimaryProviderEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var LlmRoutingPolicyFallbackProvidersEnum;
 (function (LlmRoutingPolicyFallbackProvidersEnum) {
     LlmRoutingPolicyFallbackProvidersEnum["VALKYRAI"] = "valkyrai";
@@ -127,9 +109,9 @@ var LlmRoutingPolicyFallbackProvidersEnum;
     LlmRoutingPolicyFallbackProvidersEnum["CHATGPTPASSTHROUGH"] = "chatgpt_pass_through";
 })(LlmRoutingPolicyFallbackProvidersEnum || (exports.LlmRoutingPolicyFallbackProvidersEnum = LlmRoutingPolicyFallbackProvidersEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var LlmRoutingPolicyAllowedProvidersEnum;
 (function (LlmRoutingPolicyAllowedProvidersEnum) {
     LlmRoutingPolicyAllowedProvidersEnum["VALKYRAI"] = "valkyrai";

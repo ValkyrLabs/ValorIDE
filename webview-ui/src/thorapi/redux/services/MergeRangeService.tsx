@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { MergeRange } from "@thorapi/model/MergeRange";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { MergeRange } from '@thorapi/model/MergeRange'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type MergeRangeResponse = MergeRange[];
+type MergeRangeResponse = MergeRange[]
+type MergeRangePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<MergeRange>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type MergeRangeListQueryArg = {
+  example?: Partial<MergeRange>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toMergeRangeList = (result: unknown): MergeRangeResponse => {
   if (Array.isArray(result)) {
-    return result as MergeRangeResponse;
+    return result as MergeRangeResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as MergeRangeResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as MergeRangeResponse) : []
+}
 
 export const MergeRangeService = createApi({
-  reducerPath: "MergeRange", // This should remain unique
+  reducerPath: 'MergeRange', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["MergeRange"],
+  tagTypes: ['MergeRange'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getMergeRangesPaged: build.query<
-      MergeRangeResponse,
-      { page: number; size?: number; example?: Partial<MergeRange> }
-    >({
+    getMergeRangesPaged: build.query<MergeRangeResponse, MergeRangePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `MergeRange?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `MergeRange?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toMergeRangeList(result);
+        const rows = toMergeRangeList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "MergeRange" as const, id })),
-          { type: "MergeRange", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'MergeRange' as const, id })),
+          { type: 'MergeRange', id: `PAGE_${page}` },
+          { type: 'MergeRange', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getMergeRanges: build.query<
-      MergeRangeResponse,
-      { example?: Partial<MergeRange> } | void
-    >({
+    getMergeRanges: build.query<MergeRangeResponse, MergeRangeListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const MergeRangeService = createApi({
         return `MergeRange`;
       },
       providesTags: (result) => {
-        const rows = toMergeRangeList(result);
+        const rows = toMergeRangeList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "MergeRange" as const, id })),
-          { type: "MergeRange", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'MergeRange' as const, id })),
+          { type: 'MergeRange', id: 'LIST' },
+          { type: 'MergeRange', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,49 +97,32 @@ export const MergeRangeService = createApi({
     addMergeRange: build.mutation<MergeRange, Partial<MergeRange>>({
       query: (body) => ({
         url: `MergeRange`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "MergeRange", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'MergeRange', id: 'LIST' },
+        { type: 'MergeRange', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getMergeRange: build.query<MergeRange, string>({
       query: (id) => `MergeRange/${id}`,
-      providesTags: (result, error, id) => [{ type: "MergeRange", id }],
+      providesTags: (result, error, id) => [{ type: 'MergeRange', id }],
     }),
 
     // 5) Update
-    updateMergeRange: build.mutation<
-      void,
-      Pick<MergeRange, "id"> & Partial<MergeRange>
-    >({
+    updateMergeRange: build.mutation<MergeRange, Pick<MergeRange, 'id'> & Partial<MergeRange>>({
       query: ({ id, ...patch }) => ({
         url: `MergeRange/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            MergeRangeService.util.updateQueryData(
-              "getMergeRange",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<MergeRange, "id">) => [
-        { type: "MergeRange", id },
-        { type: "MergeRange", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<MergeRange, 'id'>) => [
+        { type: 'MergeRange', id },
+        { type: 'MergeRange', id: 'LIST' },
+        { type: 'MergeRange', id: 'PARTIAL-LIST' },
       ],
     }),
 
@@ -138,35 +131,37 @@ export const MergeRangeService = createApi({
       query(id) {
         return {
           url: `MergeRange/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "MergeRange", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'MergeRange', id },
+        { type: 'MergeRange', id: 'LIST' },
+        { type: 'MergeRange', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteMergeRangeCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteMergeRangeCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `MergeRange/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "MergeRange", id },
-        { type: "MergeRange", id: "LIST" },
+        { type: 'MergeRange', id },
+        { type: 'MergeRange', id: 'LIST' },
+        { type: 'MergeRange', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetMergeRangesPagedQuery`
 export const {
-  useGetMergeRangesPagedQuery, // immediate fetch
+  useGetMergeRangesPagedQuery,     // immediate fetch
   useLazyGetMergeRangesPagedQuery, // lazy fetch
   useGetMergeRangeQuery,
   useGetMergeRangesQuery,
@@ -174,4 +169,4 @@ export const {
   useUpdateMergeRangeMutation,
   useDeleteMergeRangeMutation,
   useDeleteMergeRangeCascadeMutation,
-} = MergeRangeService;
+} = MergeRangeService

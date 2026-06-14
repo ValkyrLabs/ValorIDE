@@ -36,36 +36,22 @@ const _1 = require("./");
 function GenerateTrustKeyRequestFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        keyPurpose: !(0, runtime_1.exists)(json, "keyPurpose") ? undefined : json["keyPurpose"],
-        keyStatus: !(0, runtime_1.exists)(json, "keyStatus") ? undefined : json["keyStatus"],
-        algorithm: !(0, runtime_1.exists)(json, "algorithm") ? undefined : json["algorithm"],
-        provider: !(0, runtime_1.exists)(json, "provider")
-            ? undefined
-            : (0, _1.TrustKeyProviderFromJSON)(json["provider"]),
-        rotationPeriodDays: !(0, runtime_1.exists)(json, "rotationPeriodDays")
-            ? undefined
-            : json["rotationPeriodDays"],
-        tenantId: !(0, runtime_1.exists)(json, "tenantId") ? undefined : json["tenantId"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'keyPurpose': !(0, runtime_1.exists)(json, 'keyPurpose') ? undefined : json['keyPurpose'],
+        'keyStatus': !(0, runtime_1.exists)(json, 'keyStatus') ? undefined : json['keyStatus'],
+        'algorithm': !(0, runtime_1.exists)(json, 'algorithm') ? undefined : json['algorithm'],
+        'provider': !(0, runtime_1.exists)(json, 'provider') ? undefined : (0, _1.TrustKeyProviderFromJSON)(json['provider']),
+        'rotationPeriodDays': !(0, runtime_1.exists)(json, 'rotationPeriodDays') ? undefined : json['rotationPeriodDays'],
+        'tenantId': !(0, runtime_1.exists)(json, 'tenantId') ? undefined : json['tenantId'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function GenerateTrustKeyRequestToJSON(value) {
@@ -74,21 +60,21 @@ function GenerateTrustKeyRequestToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        name: value.name,
-        keyPurpose: value.keyPurpose,
-        keyStatus: value.keyStatus,
-        algorithm: value.algorithm,
-        provider: (0, _1.TrustKeyProviderToJSON)(value.provider),
-        rotationPeriodDays: value.rotationPeriodDays,
-        tenantId: value.tenantId,
-        ownerId: value.ownerId,
-        trashed: value.trashed,
+        'name': value.name,
+        'keyPurpose': value.keyPurpose,
+        'keyStatus': value.keyStatus,
+        'algorithm': value.algorithm,
+        'provider': (0, _1.TrustKeyProviderToJSON)(value.provider),
+        'rotationPeriodDays': value.rotationPeriodDays,
+        'tenantId': value.tenantId,
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var GenerateTrustKeyRequestKeyPurposeEnum;
 (function (GenerateTrustKeyRequestKeyPurposeEnum) {
     GenerateTrustKeyRequestKeyPurposeEnum["FIELDENCRYPTION"] = "field_encryption";
@@ -99,9 +85,9 @@ var GenerateTrustKeyRequestKeyPurposeEnum;
     GenerateTrustKeyRequestKeyPurposeEnum["DEKWRAPPING"] = "dek_wrapping";
 })(GenerateTrustKeyRequestKeyPurposeEnum || (exports.GenerateTrustKeyRequestKeyPurposeEnum = GenerateTrustKeyRequestKeyPurposeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var GenerateTrustKeyRequestKeyStatusEnum;
 (function (GenerateTrustKeyRequestKeyStatusEnum) {
     GenerateTrustKeyRequestKeyStatusEnum["PENDINGACTIVATION"] = "pending_activation";

@@ -35,34 +35,20 @@ const DataObject_1 = require("./DataObject");
 function MediaObjectFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        sheetId: !(0, runtime_1.exists)(json, "sheetId") ? undefined : json["sheetId"],
-        type: !(0, runtime_1.exists)(json, "type") ? undefined : json["type"],
-        url: !(0, runtime_1.exists)(json, "url") ? undefined : json["url"],
-        positionRow: !(0, runtime_1.exists)(json, "position:-row")
-            ? undefined
-            : json["position:-row"],
-        positionCol: !(0, runtime_1.exists)(json, "position-col")
-            ? undefined
-            : json["position-col"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'sheetId': !(0, runtime_1.exists)(json, 'sheetId') ? undefined : json['sheetId'],
+        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
+        'url': !(0, runtime_1.exists)(json, 'url') ? undefined : json['url'],
+        'positionRow': !(0, runtime_1.exists)(json, 'position:-row') ? undefined : json['position:-row'],
+        'positionCol': !(0, runtime_1.exists)(json, 'position-col') ? undefined : json['position-col'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function MediaObjectToJSON(value) {
@@ -71,18 +57,18 @@ function MediaObjectToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        sheetId: value.sheetId,
-        type: value.type,
-        url: value.url,
-        "position:-row": value.positionRow,
-        "position-col": value.positionCol,
-        trashed: value.trashed,
+        'sheetId': value.sheetId,
+        'type': value.type,
+        'url': value.url,
+        'position:-row': value.positionRow,
+        'position-col': value.positionCol,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var MediaObjectTypeEnum;
 (function (MediaObjectTypeEnum) {
     MediaObjectTypeEnum["MEDIAIMAGE"] = "image";

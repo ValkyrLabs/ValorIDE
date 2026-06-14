@@ -34,38 +34,24 @@ const DataObject_1 = require("./DataObject");
 function GraphLinkFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        fromType: json["fromType"],
-        fromId: json["fromId"],
-        toType: json["toType"],
-        toId: json["toId"],
-        relationType: json["relationType"],
-        weight: !(0, runtime_1.exists)(json, "weight") ? undefined : json["weight"],
-        sourceChannel: !(0, runtime_1.exists)(json, "sourceChannel")
-            ? undefined
-            : json["sourceChannel"],
-        sourceMessageId: !(0, runtime_1.exists)(json, "sourceMessageId")
-            ? undefined
-            : json["sourceMessageId"],
-        sourceUrl: !(0, runtime_1.exists)(json, "sourceUrl") ? undefined : json["sourceUrl"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'fromType': json['fromType'],
+        'fromId': json['fromId'],
+        'toType': json['toType'],
+        'toId': json['toId'],
+        'relationType': json['relationType'],
+        'weight': !(0, runtime_1.exists)(json, 'weight') ? undefined : json['weight'],
+        'sourceChannel': !(0, runtime_1.exists)(json, 'sourceChannel') ? undefined : json['sourceChannel'],
+        'sourceMessageId': !(0, runtime_1.exists)(json, 'sourceMessageId') ? undefined : json['sourceMessageId'],
+        'sourceUrl': !(0, runtime_1.exists)(json, 'sourceUrl') ? undefined : json['sourceUrl'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function GraphLinkToJSON(value) {
@@ -74,16 +60,16 @@ function GraphLinkToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        fromType: value.fromType,
-        fromId: value.fromId,
-        toType: value.toType,
-        toId: value.toId,
-        relationType: value.relationType,
-        weight: value.weight,
-        sourceChannel: value.sourceChannel,
-        sourceMessageId: value.sourceMessageId,
-        sourceUrl: value.sourceUrl,
-        trashed: value.trashed,
+        'fromType': value.fromType,
+        'fromId': value.fromId,
+        'toType': value.toType,
+        'toId': value.toId,
+        'relationType': value.relationType,
+        'weight': value.weight,
+        'sourceChannel': value.sourceChannel,
+        'sourceMessageId': value.sourceMessageId,
+        'sourceUrl': value.sourceUrl,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=GraphLink.js.map

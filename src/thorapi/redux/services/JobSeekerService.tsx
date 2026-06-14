@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { JobSeeker } from "@thorapi/model/JobSeeker";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { JobSeeker } from '@thorapi/model/JobSeeker'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type JobSeekerResponse = JobSeeker[];
+type JobSeekerResponse = JobSeeker[]
+type JobSeekerPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<JobSeeker>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type JobSeekerListQueryArg = {
+  example?: Partial<JobSeeker>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toJobSeekerList = (result: unknown): JobSeekerResponse => {
   if (Array.isArray(result)) {
-    return result as JobSeekerResponse;
+    return result as JobSeekerResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as JobSeekerResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as JobSeekerResponse) : []
+}
 
 export const JobSeekerService = createApi({
-  reducerPath: "JobSeeker", // This should remain unique
+  reducerPath: 'JobSeeker', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["JobSeeker"],
+  tagTypes: ['JobSeeker'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getJobSeekersPaged: build.query<
-      JobSeekerResponse,
-      { page: number; size?: number; example?: Partial<JobSeeker> }
-    >({
+    getJobSeekersPaged: build.query<JobSeekerResponse, JobSeekerPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `JobSeeker?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `JobSeeker?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toJobSeekerList(result);
+        const rows = toJobSeekerList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "JobSeeker" as const, id })),
-          { type: "JobSeeker", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'JobSeeker' as const, id })),
+          { type: 'JobSeeker', id: `PAGE_${page}` },
+          { type: 'JobSeeker', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getJobSeekers: build.query<
-      JobSeekerResponse,
-      { example?: Partial<JobSeeker> } | void
-    >({
+    getJobSeekers: build.query<JobSeekerResponse, JobSeekerListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const JobSeekerService = createApi({
         return `JobSeeker`;
       },
       providesTags: (result) => {
-        const rows = toJobSeekerList(result);
+        const rows = toJobSeekerList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "JobSeeker" as const, id })),
-          { type: "JobSeeker", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'JobSeeker' as const, id })),
+          { type: 'JobSeeker', id: 'LIST' },
+          { type: 'JobSeeker', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,49 +97,32 @@ export const JobSeekerService = createApi({
     addJobSeeker: build.mutation<JobSeeker, Partial<JobSeeker>>({
       query: (body) => ({
         url: `JobSeeker`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "JobSeeker", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'JobSeeker', id: 'LIST' },
+        { type: 'JobSeeker', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getJobSeeker: build.query<JobSeeker, string>({
       query: (id) => `JobSeeker/${id}`,
-      providesTags: (result, error, id) => [{ type: "JobSeeker", id }],
+      providesTags: (result, error, id) => [{ type: 'JobSeeker', id }],
     }),
 
     // 5) Update
-    updateJobSeeker: build.mutation<
-      void,
-      Pick<JobSeeker, "id"> & Partial<JobSeeker>
-    >({
+    updateJobSeeker: build.mutation<JobSeeker, Pick<JobSeeker, 'id'> & Partial<JobSeeker>>({
       query: ({ id, ...patch }) => ({
         url: `JobSeeker/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            JobSeekerService.util.updateQueryData(
-              "getJobSeeker",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<JobSeeker, "id">) => [
-        { type: "JobSeeker", id },
-        { type: "JobSeeker", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<JobSeeker, 'id'>) => [
+        { type: 'JobSeeker', id },
+        { type: 'JobSeeker', id: 'LIST' },
+        { type: 'JobSeeker', id: 'PARTIAL-LIST' },
       ],
     }),
 
@@ -138,35 +131,37 @@ export const JobSeekerService = createApi({
       query(id) {
         return {
           url: `JobSeeker/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "JobSeeker", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'JobSeeker', id },
+        { type: 'JobSeeker', id: 'LIST' },
+        { type: 'JobSeeker', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteJobSeekerCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteJobSeekerCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `JobSeeker/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "JobSeeker", id },
-        { type: "JobSeeker", id: "LIST" },
+        { type: 'JobSeeker', id },
+        { type: 'JobSeeker', id: 'LIST' },
+        { type: 'JobSeeker', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetJobSeekersPagedQuery`
 export const {
-  useGetJobSeekersPagedQuery, // immediate fetch
+  useGetJobSeekersPagedQuery,     // immediate fetch
   useLazyGetJobSeekersPagedQuery, // lazy fetch
   useGetJobSeekerQuery,
   useGetJobSeekersQuery,
@@ -174,4 +169,4 @@ export const {
   useUpdateJobSeekerMutation,
   useDeleteJobSeekerMutation,
   useDeleteJobSeekerCascadeMutation,
-} = JobSeekerService;
+} = JobSeekerService

@@ -34,28 +34,18 @@ const DataObject_1 = require("./DataObject");
 function ConfirmPasswordResetResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        success: !(0, runtime_1.exists)(json, "success") ? undefined : json["success"],
-        message: !(0, runtime_1.exists)(json, "message") ? undefined : json["message"],
-        redirectUrl: !(0, runtime_1.exists)(json, "redirectUrl") ? undefined : json["redirectUrl"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'success': !(0, runtime_1.exists)(json, 'success') ? undefined : json['success'],
+        'message': !(0, runtime_1.exists)(json, 'message') ? undefined : json['message'],
+        'redirectUrl': !(0, runtime_1.exists)(json, 'redirectUrl') ? undefined : json['redirectUrl'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ConfirmPasswordResetResponseToJSON(value) {
@@ -64,10 +54,10 @@ function ConfirmPasswordResetResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        success: value.success,
-        message: value.message,
-        redirectUrl: value.redirectUrl,
-        trashed: value.trashed,
+        'success': value.success,
+        'message': value.message,
+        'redirectUrl': value.redirectUrl,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=ConfirmPasswordResetResponse.js.map

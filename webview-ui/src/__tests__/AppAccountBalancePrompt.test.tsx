@@ -1,9 +1,26 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
+
+const appTestHarness = vi.hoisted(() => ({
+  accountProps: vi.fn(),
+  apiErrors: {
+    creditIntent: undefined as any,
+    showAccountBalance: true,
+  },
+}));
 
 vi.mock("../components/account/AccountView", () => ({
   __esModule: true,
-  default: () => <div data-testid="account-view" />,
+  default: (props: any) => {
+    appTestHarness.accountProps(props);
+    return (
+      <div
+        data-initial-active-tab={props.initialActiveTab || ""}
+        data-swarm-receipt={props.initialSwarmCommandResponse?.receiptRef || ""}
+        data-testid="account-view"
+      />
+    );
+  },
 }));
 
 vi.mock("../components/chat/ChatView", () => ({
@@ -24,6 +41,29 @@ vi.mock("../components/settings/SettingsView", () => ({
 vi.mock("../components/mcp/configuration/McpConfigurationView", () => ({
   __esModule: true,
   default: () => <div data-testid="mcp-view" />,
+}));
+
+vi.mock("../context/MothershipContext", () => ({
+  MothershipProvider: ({ children }: { children: any }) => children,
+}));
+
+vi.mock("../components/chat/ChatMothershipProvider", () => ({
+  ChatMothershipProvider: ({ children }: { children: any }) => children,
+}));
+
+vi.mock("../hooks/useValorIDEMothership", () => ({
+  __esModule: true,
+  default: () => ({
+    instanceId: null,
+    isConnected: false,
+    sendChatAction: vi.fn(),
+    trackChatMessage: vi.fn(),
+    trackCommandExecute: vi.fn(),
+    trackFileEdit: vi.fn(),
+    trackTaskComplete: vi.fn(),
+    trackTaskStart: vi.fn(),
+    trackToolUse: vi.fn(),
+  }),
 }));
 
 vi.mock("../components/ApplicationProgress/ApplicationProgress", () => ({
@@ -48,7 +88,7 @@ vi.mock("../components/usage-tracking/StartupDebit", () => ({
 
 vi.mock("react-redux", () => ({
   useSelector: (selector: any) =>
-    selector({ apiErrors: { showAccountBalance: true } }),
+    selector({ apiErrors: appTestHarness.apiErrors }),
   useDispatch: () => vi.fn(),
 }));
 
@@ -83,6 +123,9 @@ const mockStorage = () => {
 
 describe("App account balance prompt", () => {
   beforeEach(() => {
+    appTestHarness.accountProps.mockClear();
+    appTestHarness.apiErrors.showAccountBalance = true;
+    appTestHarness.apiErrors.creditIntent = undefined;
     (globalThis as any).localStorage = mockStorage();
     (globalThis as any).sessionStorage = mockStorage();
     (globalThis as any).acquireVsCodeApi = () => ({
@@ -105,6 +148,46 @@ describe("App account balance prompt", () => {
 
     await waitFor(() =>
       expect(screen.getByTestId("account-view")).toBeInTheDocument(),
+    );
+  });
+
+  it("opens account receipts when a SWARM command response arrives", async () => {
+    appTestHarness.apiErrors.showAccountBalance = false;
+    const { default: App } = await import("../App");
+
+    render(<App />);
+
+    act(() => {
+      window.dispatchEvent(
+        new MessageEvent("message", {
+          data: {
+            type: "swarm:command-response",
+            swarmCommandResponse: {
+              status: "accepted",
+              commandId: "cmd-app-1",
+              receiptRef: "swarm-command:cmd-app-1",
+              traceId: "swarm-trace:app-1",
+              contextPageRef: "ctx-app-1",
+              skillOptReceiptRef: "skillopt-app-1",
+              workflowExecutionRef: "workflow_execution:app-1",
+            },
+          },
+        }),
+      );
+    });
+
+    await waitFor(() =>
+      expect(screen.getByTestId("account-view")).toBeInTheDocument(),
+    );
+    expect(appTestHarness.accountProps).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        initialActiveTab: "receipts",
+        initialSwarmCommandResponse: expect.objectContaining({
+          receiptRef: "swarm-command:cmd-app-1",
+          traceId: "swarm-trace:app-1",
+          commandId: "cmd-app-1",
+        }),
+      }),
     );
   });
 });

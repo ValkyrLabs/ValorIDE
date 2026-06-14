@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { DeploymentTemplate } from "@thorapi/model/DeploymentTemplate";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { DeploymentTemplate } from '@thorapi/model/DeploymentTemplate'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type DeploymentTemplateResponse = DeploymentTemplate[];
+type DeploymentTemplateResponse = DeploymentTemplate[]
+type DeploymentTemplatePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<DeploymentTemplate>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toDeploymentTemplateList = (
-  result: unknown,
-): DeploymentTemplateResponse => {
+type DeploymentTemplateListQueryArg = {
+  example?: Partial<DeploymentTemplate>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toDeploymentTemplateList = (result: unknown): DeploymentTemplateResponse => {
   if (Array.isArray(result)) {
-    return result as DeploymentTemplateResponse;
+    return result as DeploymentTemplateResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as DeploymentTemplateResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as DeploymentTemplateResponse) : []
+}
 
 export const DeploymentTemplateService = createApi({
-  reducerPath: "DeploymentTemplate", // This should remain unique
+  reducerPath: 'DeploymentTemplate', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["DeploymentTemplate"],
+  tagTypes: ['DeploymentTemplate'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getDeploymentTemplatesPaged: build.query<
-      DeploymentTemplateResponse,
-      { page: number; size?: number; example?: Partial<DeploymentTemplate> }
-    >({
+    getDeploymentTemplatesPaged: build.query<DeploymentTemplateResponse, DeploymentTemplatePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `DeploymentTemplate?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `DeploymentTemplate?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toDeploymentTemplateList(result);
+        const rows = toDeploymentTemplateList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "DeploymentTemplate" as const, id })),
-          { type: "DeploymentTemplate", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'DeploymentTemplate' as const, id })),
+          { type: 'DeploymentTemplate', id: `PAGE_${page}` },
+          { type: 'DeploymentTemplate', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getDeploymentTemplates: build.query<
-      DeploymentTemplateResponse,
-      { example?: Partial<DeploymentTemplate> } | void
-    >({
+    getDeploymentTemplates: build.query<DeploymentTemplateResponse, DeploymentTemplateListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,112 +82,86 @@ export const DeploymentTemplateService = createApi({
         return `DeploymentTemplate`;
       },
       providesTags: (result) => {
-        const rows = toDeploymentTemplateList(result);
+        const rows = toDeploymentTemplateList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "DeploymentTemplate" as const, id })),
-          { type: "DeploymentTemplate", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'DeploymentTemplate' as const, id })),
+          { type: 'DeploymentTemplate', id: 'LIST' },
+          { type: 'DeploymentTemplate', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addDeploymentTemplate: build.mutation<
-      DeploymentTemplate,
-      Partial<DeploymentTemplate>
-    >({
+    addDeploymentTemplate: build.mutation<DeploymentTemplate, Partial<DeploymentTemplate>>({
       query: (body) => ({
         url: `DeploymentTemplate`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "DeploymentTemplate", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'DeploymentTemplate', id: 'LIST' },
+        { type: 'DeploymentTemplate', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getDeploymentTemplate: build.query<DeploymentTemplate, string>({
       query: (id) => `DeploymentTemplate/${id}`,
-      providesTags: (result, error, id) => [{ type: "DeploymentTemplate", id }],
+      providesTags: (result, error, id) => [{ type: 'DeploymentTemplate', id }],
     }),
 
     // 5) Update
-    updateDeploymentTemplate: build.mutation<
-      void,
-      Pick<DeploymentTemplate, "id"> & Partial<DeploymentTemplate>
-    >({
+    updateDeploymentTemplate: build.mutation<DeploymentTemplate, Pick<DeploymentTemplate, 'id'> & Partial<DeploymentTemplate>>({
       query: ({ id, ...patch }) => ({
         url: `DeploymentTemplate/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            DeploymentTemplateService.util.updateQueryData(
-              "getDeploymentTemplate",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<DeploymentTemplate, "id">,
-      ) => [
-        { type: "DeploymentTemplate", id },
-        { type: "DeploymentTemplate", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<DeploymentTemplate, 'id'>) => [
+        { type: 'DeploymentTemplate', id },
+        { type: 'DeploymentTemplate', id: 'LIST' },
+        { type: 'DeploymentTemplate', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteDeploymentTemplate: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteDeploymentTemplate: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `DeploymentTemplate/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "DeploymentTemplate", id },
+        { type: 'DeploymentTemplate', id },
+        { type: 'DeploymentTemplate', id: 'LIST' },
+        { type: 'DeploymentTemplate', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteDeploymentTemplateCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteDeploymentTemplateCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `DeploymentTemplate/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "DeploymentTemplate", id },
-        { type: "DeploymentTemplate", id: "LIST" },
+        { type: 'DeploymentTemplate', id },
+        { type: 'DeploymentTemplate', id: 'LIST' },
+        { type: 'DeploymentTemplate', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetDeploymentTemplatesPagedQuery`
 export const {
-  useGetDeploymentTemplatesPagedQuery, // immediate fetch
+  useGetDeploymentTemplatesPagedQuery,     // immediate fetch
   useLazyGetDeploymentTemplatesPagedQuery, // lazy fetch
   useGetDeploymentTemplateQuery,
   useGetDeploymentTemplatesQuery,
@@ -190,4 +169,4 @@ export const {
   useUpdateDeploymentTemplateMutation,
   useDeleteDeploymentTemplateMutation,
   useDeleteDeploymentTemplateCascadeMutation,
-} = DeploymentTemplateService;
+} = DeploymentTemplateService

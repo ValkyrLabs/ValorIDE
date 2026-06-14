@@ -35,34 +35,20 @@ const _1 = require("./");
 function FormulaFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        workbookId: !(0, runtime_1.exists)(json, "workbookId") ? undefined : json["workbookId"],
-        sheetId: !(0, runtime_1.exists)(json, "sheetId") ? undefined : json["sheetId"],
-        expression: !(0, runtime_1.exists)(json, "expression") ? undefined : json["expression"],
-        ptgRefs: !(0, runtime_1.exists)(json, "ptgRefs")
-            ? undefined
-            : json["ptgRefs"].map(_1.PtgRefFromJSON),
-        calculatingPtgs: !(0, runtime_1.exists)(json, "calculatingPtgs")
-            ? undefined
-            : json["calculatingPtgs"].map(_1.PtgFromJSON),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'workbookId': !(0, runtime_1.exists)(json, 'workbookId') ? undefined : json['workbookId'],
+        'sheetId': !(0, runtime_1.exists)(json, 'sheetId') ? undefined : json['sheetId'],
+        'expression': !(0, runtime_1.exists)(json, 'expression') ? undefined : json['expression'],
+        'ptgRefs': !(0, runtime_1.exists)(json, 'ptgRefs') ? undefined : json['ptgRefs'].map(_1.PtgRefFromJSON),
+        'calculatingPtgs': !(0, runtime_1.exists)(json, 'calculatingPtgs') ? undefined : json['calculatingPtgs'].map(_1.PtgFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function FormulaToJSON(value) {
@@ -71,16 +57,12 @@ function FormulaToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        workbookId: value.workbookId,
-        sheetId: value.sheetId,
-        expression: value.expression,
-        ptgRefs: value.ptgRefs === undefined
-            ? undefined
-            : value.ptgRefs.map(_1.PtgRefToJSON),
-        calculatingPtgs: value.calculatingPtgs === undefined
-            ? undefined
-            : value.calculatingPtgs.map(_1.PtgToJSON),
-        trashed: value.trashed,
+        'workbookId': value.workbookId,
+        'sheetId': value.sheetId,
+        'expression': value.expression,
+        'ptgRefs': value.ptgRefs === undefined ? undefined : value.ptgRefs.map(_1.PtgRefToJSON),
+        'calculatingPtgs': value.calculatingPtgs === undefined ? undefined : value.calculatingPtgs.map(_1.PtgToJSON),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=Formula.js.map

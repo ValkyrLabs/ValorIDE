@@ -36,54 +36,26 @@ const _1 = require("./");
 function BudgetFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        principal: !(0, runtime_1.exists)(json, "principal")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["principal"]),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        periodStart: !(0, runtime_1.exists)(json, "periodStart")
-            ? undefined
-            : new Date(json["periodStart"]),
-        periodEnd: !(0, runtime_1.exists)(json, "periodEnd")
-            ? undefined
-            : new Date(json["periodEnd"]),
-        maxCostTokens: !(0, runtime_1.exists)(json, "maxCostTokens")
-            ? undefined
-            : json["maxCostTokens"],
-        maxExecutions: !(0, runtime_1.exists)(json, "maxExecutions")
-            ? undefined
-            : json["maxExecutions"],
-        currentCostTokens: !(0, runtime_1.exists)(json, "currentCostTokens")
-            ? undefined
-            : json["currentCostTokens"],
-        currentExecutions: !(0, runtime_1.exists)(json, "currentExecutions")
-            ? undefined
-            : json["currentExecutions"],
-        alertThreshold: !(0, runtime_1.exists)(json, "alertThreshold")
-            ? undefined
-            : json["alertThreshold"],
-        killSwitchEnabled: !(0, runtime_1.exists)(json, "killSwitchEnabled")
-            ? undefined
-            : json["killSwitchEnabled"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'principal': !(0, runtime_1.exists)(json, 'principal') ? undefined : (0, _1.PrincipalFromJSON)(json['principal']),
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'periodStart': !(0, runtime_1.exists)(json, 'periodStart') ? undefined : new Date(json['periodStart']),
+        'periodEnd': !(0, runtime_1.exists)(json, 'periodEnd') ? undefined : new Date(json['periodEnd']),
+        'maxCostTokens': !(0, runtime_1.exists)(json, 'maxCostTokens') ? undefined : json['maxCostTokens'],
+        'maxExecutions': !(0, runtime_1.exists)(json, 'maxExecutions') ? undefined : json['maxExecutions'],
+        'currentCostTokens': !(0, runtime_1.exists)(json, 'currentCostTokens') ? undefined : json['currentCostTokens'],
+        'currentExecutions': !(0, runtime_1.exists)(json, 'currentExecutions') ? undefined : json['currentExecutions'],
+        'alertThreshold': !(0, runtime_1.exists)(json, 'alertThreshold') ? undefined : json['alertThreshold'],
+        'killSwitchEnabled': !(0, runtime_1.exists)(json, 'killSwitchEnabled') ? undefined : json['killSwitchEnabled'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function BudgetToJSON(value) {
@@ -92,26 +64,24 @@ function BudgetToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        principal: (0, _1.PrincipalToJSON)(value.principal),
-        name: value.name,
-        periodStart: value.periodStart === undefined
-            ? undefined
-            : value.periodStart.toISOString(),
-        periodEnd: value.periodEnd === undefined ? undefined : value.periodEnd.toISOString(),
-        maxCostTokens: value.maxCostTokens,
-        maxExecutions: value.maxExecutions,
-        currentCostTokens: value.currentCostTokens,
-        currentExecutions: value.currentExecutions,
-        alertThreshold: value.alertThreshold,
-        killSwitchEnabled: value.killSwitchEnabled,
-        status: value.status,
-        trashed: value.trashed,
+        'principal': (0, _1.PrincipalToJSON)(value.principal),
+        'name': value.name,
+        'periodStart': value.periodStart === undefined ? undefined : value.periodStart.toISOString(),
+        'periodEnd': value.periodEnd === undefined ? undefined : value.periodEnd.toISOString(),
+        'maxCostTokens': value.maxCostTokens,
+        'maxExecutions': value.maxExecutions,
+        'currentCostTokens': value.currentCostTokens,
+        'currentExecutions': value.currentExecutions,
+        'alertThreshold': value.alertThreshold,
+        'killSwitchEnabled': value.killSwitchEnabled,
+        'status': value.status,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var BudgetStatusEnum;
 (function (BudgetStatusEnum) {
     BudgetStatusEnum["ACTIVE"] = "active";

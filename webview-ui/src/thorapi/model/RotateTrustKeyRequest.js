@@ -35,33 +35,19 @@ const DataObject_1 = require("./DataObject");
 function RotateTrustKeyRequestFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        rotationType: !(0, runtime_1.exists)(json, "rotationType")
-            ? undefined
-            : json["rotationType"],
-        targetProviderId: !(0, runtime_1.exists)(json, "targetProviderId")
-            ? undefined
-            : json["targetProviderId"],
-        algorithm: !(0, runtime_1.exists)(json, "algorithm") ? undefined : json["algorithm"],
-        reason: !(0, runtime_1.exists)(json, "reason") ? undefined : json["reason"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'rotationType': !(0, runtime_1.exists)(json, 'rotationType') ? undefined : json['rotationType'],
+        'targetProviderId': !(0, runtime_1.exists)(json, 'targetProviderId') ? undefined : json['targetProviderId'],
+        'algorithm': !(0, runtime_1.exists)(json, 'algorithm') ? undefined : json['algorithm'],
+        'reason': !(0, runtime_1.exists)(json, 'reason') ? undefined : json['reason'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function RotateTrustKeyRequestToJSON(value) {
@@ -70,17 +56,17 @@ function RotateTrustKeyRequestToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        rotationType: value.rotationType,
-        targetProviderId: value.targetProviderId,
-        algorithm: value.algorithm,
-        reason: value.reason,
-        trashed: value.trashed,
+        'rotationType': value.rotationType,
+        'targetProviderId': value.targetProviderId,
+        'algorithm': value.algorithm,
+        'reason': value.reason,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var RotateTrustKeyRequestRotationTypeEnum;
 (function (RotateTrustKeyRequestRotationTypeEnum) {
     RotateTrustKeyRequestRotationTypeEnum["SCHEDULED"] = "scheduled";

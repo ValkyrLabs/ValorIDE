@@ -18,421 +18,359 @@ Template file: typescript-redux-query/apis.mustache
 Description: ThorapiRuleApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import { ThorapiRule, ThorapiRuleFromJSON, ThorapiRuleToJSON } from "../model";
+    ThorapiRule,
+    ThorapiRuleFromJSON,
+    ThorapiRuleToJSON,
+} from '../model';
 
 export interface DeleteThorapiRuleApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetThorapiRuleApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetThorapiRuleListApiRequest {
-  page?: number;
-  size?: number;
-  sort?: Array<string>;
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
+    example?: string;
 }
 
 export interface PatchThorapiRuleByIdApiRequest {
-  id: string;
-  thorapiRule: ThorapiRule;
+    id: string;
+    thorapiRule: ThorapiRule;
 }
 
 export interface PostThorapiRuleApiRequest {
-  thorapiRule: ThorapiRule;
+    thorapiRule: ThorapiRule;
 }
 
 export interface UpdateThorapiRuleApiRequest {
-  id: string;
-  thorapiRule: ThorapiRule;
+    id: string;
+    thorapiRule: ThorapiRule;
 }
+
 
 /**
  * Deletes a specific ThorapiRule.
  * Delete a ThorapiRule.
  */
-function deleteThorapiRuleRaw<T>(
-  requestParameters: DeleteThorapiRuleApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteThorapiRule.",
-    );
-  }
+function deleteThorapiRuleRaw<T>(requestParameters: DeleteThorapiRuleApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteThorapiRule.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ThorapiRule/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ThorapiRule/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific ThorapiRule.
- * Delete a ThorapiRule.
- */
-export function deleteThorapiRule<T>(
-  requestParameters: DeleteThorapiRuleApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteThorapiRuleRaw(requestParameters, requestConfig);
+* Deletes a specific ThorapiRule.
+* Delete a ThorapiRule.
+*/
+export function deleteThorapiRule<T>(requestParameters: DeleteThorapiRuleApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteThorapiRuleRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single ThorapiRule for a specific uid.
  * Retrieve a single ThorapiRule
  */
-function getThorapiRuleRaw<T>(
-  requestParameters: GetThorapiRuleApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, ThorapiRule> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getThorapiRule.",
-    );
-  }
+function getThorapiRuleRaw<T>(requestParameters: GetThorapiRuleApiRequest, requestConfig: runtime.TypedQueryConfig<T, ThorapiRule> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getThorapiRule.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ThorapiRule/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(ThorapiRuleFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ThorapiRule/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ThorapiRuleFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single ThorapiRule for a specific uid.
- * Retrieve a single ThorapiRule
- */
-export function getThorapiRule<T>(
-  requestParameters: GetThorapiRuleApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, ThorapiRule>,
-): QueryConfig<T> {
-  return getThorapiRuleRaw(requestParameters, requestConfig);
+* Retrieves a single ThorapiRule for a specific uid.
+* Retrieve a single ThorapiRule
+*/
+export function getThorapiRule<T>(requestParameters: GetThorapiRuleApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ThorapiRule>): QueryConfig<T> {
+    return getThorapiRuleRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of ThorapiRules.
  * Retrieve a list of ThorapiRules
  */
-function getThorapiRuleListRaw<T>(
-  requestParameters: GetThorapiRuleListApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Array<ThorapiRule>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getThorapiRuleListRaw<T>(requestParameters: GetThorapiRuleListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<ThorapiRule>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  queryParameters = {};
+    queryParameters = {};
 
-  if (requestParameters.page !== undefined) {
-    queryParameters["page"] = requestParameters.page;
-  }
 
-  if (requestParameters.size !== undefined) {
-    queryParameters["size"] = requestParameters.size;
-  }
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  if (requestParameters.sort) {
-    queryParameters["sort"] = requestParameters.sort;
-  }
 
-  const headerParameters: runtime.HttpHeaders = {};
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ThorapiRule`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(ThorapiRuleFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.example !== undefined) {
+        queryParameters['example'] = requestParameters.example;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ThorapiRule`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(ThorapiRuleFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of ThorapiRules.
- * Retrieve a list of ThorapiRules
- */
-export function getThorapiRuleList<T>(
-  requestParameters: GetThorapiRuleListApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Array<ThorapiRule>>,
-): QueryConfig<T> {
-  return getThorapiRuleListRaw(requestParameters, requestConfig);
-}
-
-/**
- * Updates an existing ThorapiRule.
- * Partially update an existing ThorapiRule
- */
-function patchThorapiRuleByIdRaw<T>(
-  requestParameters: PatchThorapiRuleByIdApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, ThorapiRule> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling patchThorapiRuleById.",
-    );
-  }
-
-  if (
-    requestParameters.thorapiRule === null ||
-    requestParameters.thorapiRule === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "thorapiRule",
-      "Required parameter requestParameters.thorapiRule was null or undefined when calling patchThorapiRuleById.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/merge-patch+json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ThorapiRule/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PATCH",
-      headers: headerParameters,
-    },
-    body: queryParameters || ThorapiRuleToJSON(requestParameters.thorapiRule),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(ThorapiRuleFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of ThorapiRules.
+* Retrieve a list of ThorapiRules
+*/
+export function getThorapiRuleList<T>(requestParameters: GetThorapiRuleListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<ThorapiRule>>): QueryConfig<T> {
+    return getThorapiRuleListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing ThorapiRule.
  * Partially update an existing ThorapiRule
  */
-export function patchThorapiRuleById<T>(
-  requestParameters: PatchThorapiRuleByIdApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, ThorapiRule>,
-): QueryConfig<T> {
-  return patchThorapiRuleByIdRaw(requestParameters, requestConfig);
+function patchThorapiRuleByIdRaw<T>(requestParameters: PatchThorapiRuleByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, ThorapiRule> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchThorapiRuleById.');
+    }
+
+    if (requestParameters.thorapiRule === null || requestParameters.thorapiRule === undefined) {
+        throw new runtime.RequiredError('thorapiRule','Required parameter requestParameters.thorapiRule was null or undefined when calling patchThorapiRuleById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ThorapiRule/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || ThorapiRuleToJSON(requestParameters.thorapiRule),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ThorapiRuleFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing ThorapiRule.
+* Partially update an existing ThorapiRule
+*/
+export function patchThorapiRuleById<T>(requestParameters: PatchThorapiRuleByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ThorapiRule>): QueryConfig<T> {
+    return patchThorapiRuleByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new ThorapiRule.
  * Create a new ThorapiRule
  */
-function postThorapiRuleRaw<T>(
-  requestParameters: PostThorapiRuleApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, ThorapiRule> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.thorapiRule === null ||
-    requestParameters.thorapiRule === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "thorapiRule",
-      "Required parameter requestParameters.thorapiRule was null or undefined when calling postThorapiRule.",
-    );
-  }
+function postThorapiRuleRaw<T>(requestParameters: PostThorapiRuleApiRequest, requestConfig: runtime.TypedQueryConfig<T, ThorapiRule> = {}): QueryConfig<T> {
+    if (requestParameters.thorapiRule === null || requestParameters.thorapiRule === undefined) {
+        throw new runtime.RequiredError('thorapiRule','Required parameter requestParameters.thorapiRule was null or undefined when calling postThorapiRule.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ThorapiRule`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body: queryParameters || ThorapiRuleToJSON(requestParameters.thorapiRule),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(ThorapiRuleFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ThorapiRule`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || ThorapiRuleToJSON(requestParameters.thorapiRule),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ThorapiRuleFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Creates a new ThorapiRule.
- * Create a new ThorapiRule
- */
-export function postThorapiRule<T>(
-  requestParameters: PostThorapiRuleApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, ThorapiRule>,
-): QueryConfig<T> {
-  return postThorapiRuleRaw(requestParameters, requestConfig);
+* Creates a new ThorapiRule.
+* Create a new ThorapiRule
+*/
+export function postThorapiRule<T>(requestParameters: PostThorapiRuleApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ThorapiRule>): QueryConfig<T> {
+    return postThorapiRuleRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing ThorapiRule.
  * Update an existing ThorapiRule
  */
-function updateThorapiRuleRaw<T>(
-  requestParameters: UpdateThorapiRuleApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, ThorapiRule> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateThorapiRule.",
-    );
-  }
+function updateThorapiRuleRaw<T>(requestParameters: UpdateThorapiRuleApiRequest, requestConfig: runtime.TypedQueryConfig<T, ThorapiRule> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateThorapiRule.');
+    }
 
-  if (
-    requestParameters.thorapiRule === null ||
-    requestParameters.thorapiRule === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "thorapiRule",
-      "Required parameter requestParameters.thorapiRule was null or undefined when calling updateThorapiRule.",
-    );
-  }
+    if (requestParameters.thorapiRule === null || requestParameters.thorapiRule === undefined) {
+        throw new runtime.RequiredError('thorapiRule','Required parameter requestParameters.thorapiRule was null or undefined when calling updateThorapiRule.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ThorapiRule/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body: queryParameters || ThorapiRuleToJSON(requestParameters.thorapiRule),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(ThorapiRuleFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ThorapiRule/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || ThorapiRuleToJSON(requestParameters.thorapiRule),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ThorapiRuleFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing ThorapiRule.
- * Update an existing ThorapiRule
- */
-export function updateThorapiRule<T>(
-  requestParameters: UpdateThorapiRuleApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, ThorapiRule>,
-): QueryConfig<T> {
-  return updateThorapiRuleRaw(requestParameters, requestConfig);
+* Updates an existing ThorapiRule.
+* Update an existing ThorapiRule
+*/
+export function updateThorapiRule<T>(requestParameters: UpdateThorapiRuleApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ThorapiRule>): QueryConfig<T> {
+    return updateThorapiRuleRaw(requestParameters, requestConfig);
 }
+

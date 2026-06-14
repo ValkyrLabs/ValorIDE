@@ -36,51 +36,25 @@ const _1 = require("./");
 function TrustKeyRotationFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        trustKey: !(0, runtime_1.exists)(json, "trustKey")
-            ? undefined
-            : (0, _1.TrustKeyFromJSON)(json["trustKey"]),
-        fromVersion: !(0, runtime_1.exists)(json, "fromVersion")
-            ? undefined
-            : (0, _1.TrustKeyVersionFromJSON)(json["fromVersion"]),
-        toVersion: !(0, runtime_1.exists)(json, "toVersion")
-            ? undefined
-            : (0, _1.TrustKeyVersionFromJSON)(json["toVersion"]),
-        rotationType: !(0, runtime_1.exists)(json, "rotationType")
-            ? undefined
-            : json["rotationType"],
-        rotationStatus: !(0, runtime_1.exists)(json, "rotationStatus")
-            ? undefined
-            : json["rotationStatus"],
-        requestedBy: !(0, runtime_1.exists)(json, "requestedBy") ? undefined : json["requestedBy"],
-        approvedBy: !(0, runtime_1.exists)(json, "approvedBy") ? undefined : json["approvedBy"],
-        startedAt: !(0, runtime_1.exists)(json, "startedAt")
-            ? undefined
-            : new Date(json["startedAt"]),
-        completedAt: !(0, runtime_1.exists)(json, "completedAt")
-            ? undefined
-            : new Date(json["completedAt"]),
-        proof: !(0, runtime_1.exists)(json, "proof")
-            ? undefined
-            : (0, _1.TrustProofFromJSON)(json["proof"]),
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'trustKey': !(0, runtime_1.exists)(json, 'trustKey') ? undefined : (0, _1.TrustKeyFromJSON)(json['trustKey']),
+        'fromVersion': !(0, runtime_1.exists)(json, 'fromVersion') ? undefined : (0, _1.TrustKeyVersionFromJSON)(json['fromVersion']),
+        'toVersion': !(0, runtime_1.exists)(json, 'toVersion') ? undefined : (0, _1.TrustKeyVersionFromJSON)(json['toVersion']),
+        'rotationType': !(0, runtime_1.exists)(json, 'rotationType') ? undefined : json['rotationType'],
+        'rotationStatus': !(0, runtime_1.exists)(json, 'rotationStatus') ? undefined : json['rotationStatus'],
+        'requestedBy': !(0, runtime_1.exists)(json, 'requestedBy') ? undefined : json['requestedBy'],
+        'approvedBy': !(0, runtime_1.exists)(json, 'approvedBy') ? undefined : json['approvedBy'],
+        'startedAt': !(0, runtime_1.exists)(json, 'startedAt') ? undefined : new Date(json['startedAt']),
+        'completedAt': !(0, runtime_1.exists)(json, 'completedAt') ? undefined : new Date(json['completedAt']),
+        'proof': !(0, runtime_1.exists)(json, 'proof') ? undefined : (0, _1.TrustProofFromJSON)(json['proof']),
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function TrustKeyRotationToJSON(value) {
@@ -89,26 +63,24 @@ function TrustKeyRotationToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        trustKey: (0, _1.TrustKeyToJSON)(value.trustKey),
-        fromVersion: (0, _1.TrustKeyVersionToJSON)(value.fromVersion),
-        toVersion: (0, _1.TrustKeyVersionToJSON)(value.toVersion),
-        rotationType: value.rotationType,
-        rotationStatus: value.rotationStatus,
-        requestedBy: value.requestedBy,
-        approvedBy: value.approvedBy,
-        startedAt: value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
-        completedAt: value.completedAt === undefined
-            ? undefined
-            : value.completedAt.toISOString(),
-        proof: (0, _1.TrustProofToJSON)(value.proof),
-        ownerId: value.ownerId,
-        trashed: value.trashed,
+        'trustKey': (0, _1.TrustKeyToJSON)(value.trustKey),
+        'fromVersion': (0, _1.TrustKeyVersionToJSON)(value.fromVersion),
+        'toVersion': (0, _1.TrustKeyVersionToJSON)(value.toVersion),
+        'rotationType': value.rotationType,
+        'rotationStatus': value.rotationStatus,
+        'requestedBy': value.requestedBy,
+        'approvedBy': value.approvedBy,
+        'startedAt': value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
+        'completedAt': value.completedAt === undefined ? undefined : value.completedAt.toISOString(),
+        'proof': (0, _1.TrustProofToJSON)(value.proof),
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustKeyRotationRotationTypeEnum;
 (function (TrustKeyRotationRotationTypeEnum) {
     TrustKeyRotationRotationTypeEnum["SCHEDULED"] = "scheduled";
@@ -118,9 +90,9 @@ var TrustKeyRotationRotationTypeEnum;
     TrustKeyRotationRotationTypeEnum["ALGORITHMMIGRATION"] = "algorithm_migration";
 })(TrustKeyRotationRotationTypeEnum || (exports.TrustKeyRotationRotationTypeEnum = TrustKeyRotationRotationTypeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustKeyRotationRotationStatusEnum;
 (function (TrustKeyRotationRotationStatusEnum) {
     TrustKeyRotationRotationStatusEnum["REQUESTED"] = "requested";

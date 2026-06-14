@@ -13,69 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { DiscardDeadLetterEntryResponse } from "@thorapi/model/DiscardDeadLetterEntryResponse";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { DiscardDeadLetterEntryResponse } from '@thorapi/model/DiscardDeadLetterEntryResponse'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type DiscardDeadLetterEntryResponseResponse = DiscardDeadLetterEntryResponse[];
+type DiscardDeadLetterEntryResponseResponse = DiscardDeadLetterEntryResponse[]
+type DiscardDeadLetterEntryResponsePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<DiscardDeadLetterEntryResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toDiscardDeadLetterEntryResponseList = (
-  result: unknown,
-): DiscardDeadLetterEntryResponseResponse => {
+type DiscardDeadLetterEntryResponseListQueryArg = {
+  example?: Partial<DiscardDeadLetterEntryResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toDiscardDeadLetterEntryResponseList = (result: unknown): DiscardDeadLetterEntryResponseResponse => {
   if (Array.isArray(result)) {
-    return result as DiscardDeadLetterEntryResponseResponse;
+    return result as DiscardDeadLetterEntryResponseResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as DiscardDeadLetterEntryResponseResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as DiscardDeadLetterEntryResponseResponse) : []
+}
 
 export const DiscardDeadLetterEntryResponseService = createApi({
-  reducerPath: "DiscardDeadLetterEntryResponse", // This should remain unique
+  reducerPath: 'DiscardDeadLetterEntryResponse', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["DiscardDeadLetterEntryResponse"],
+  tagTypes: ['DiscardDeadLetterEntryResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getDiscardDeadLetterEntryResponsesPaged: build.query<
-      DiscardDeadLetterEntryResponseResponse,
-      {
-        page: number;
-        size?: number;
-        example?: Partial<DiscardDeadLetterEntryResponse>;
-      }
-    >({
+    getDiscardDeadLetterEntryResponsesPaged: build.query<DiscardDeadLetterEntryResponseResponse, DiscardDeadLetterEntryResponsePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `DiscardDeadLetterEntryResponse?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `DiscardDeadLetterEntryResponse?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toDiscardDeadLetterEntryResponseList(result);
+        const rows = toDiscardDeadLetterEntryResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "DiscardDeadLetterEntryResponse" as const,
-              id,
-            })),
-          { type: "DiscardDeadLetterEntryResponse", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'DiscardDeadLetterEntryResponse' as const, id })),
+          { type: 'DiscardDeadLetterEntryResponse', id: `PAGE_${page}` },
+          { type: 'DiscardDeadLetterEntryResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getDiscardDeadLetterEntryResponses: build.query<
-      DiscardDeadLetterEntryResponseResponse,
-      { example?: Partial<DiscardDeadLetterEntryResponse> } | void
-    >({
+    getDiscardDeadLetterEntryResponses: build.query<DiscardDeadLetterEntryResponseResponse, DiscardDeadLetterEntryResponseListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -84,121 +82,86 @@ export const DiscardDeadLetterEntryResponseService = createApi({
         return `DiscardDeadLetterEntryResponse`;
       },
       providesTags: (result) => {
-        const rows = toDiscardDeadLetterEntryResponseList(result);
+        const rows = toDiscardDeadLetterEntryResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "DiscardDeadLetterEntryResponse" as const,
-              id,
-            })),
-          { type: "DiscardDeadLetterEntryResponse", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'DiscardDeadLetterEntryResponse' as const, id })),
+          { type: 'DiscardDeadLetterEntryResponse', id: 'LIST' },
+          { type: 'DiscardDeadLetterEntryResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addDiscardDeadLetterEntryResponse: build.mutation<
-      DiscardDeadLetterEntryResponse,
-      Partial<DiscardDeadLetterEntryResponse>
-    >({
+    addDiscardDeadLetterEntryResponse: build.mutation<DiscardDeadLetterEntryResponse, Partial<DiscardDeadLetterEntryResponse>>({
       query: (body) => ({
         url: `DiscardDeadLetterEntryResponse`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "DiscardDeadLetterEntryResponse", id: "LIST" }],
-    }),
-
-    // 4) Get single by ID
-    getDiscardDeadLetterEntryResponse: build.query<
-      DiscardDeadLetterEntryResponse,
-      string
-    >({
-      query: (id) => `DiscardDeadLetterEntryResponse/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "DiscardDeadLetterEntryResponse", id },
+      invalidatesTags: [
+        { type: 'DiscardDeadLetterEntryResponse', id: 'LIST' },
+        { type: 'DiscardDeadLetterEntryResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
+    // 4) Get single by ID
+    getDiscardDeadLetterEntryResponse: build.query<DiscardDeadLetterEntryResponse, string>({
+      query: (id) => `DiscardDeadLetterEntryResponse/${id}`,
+      providesTags: (result, error, id) => [{ type: 'DiscardDeadLetterEntryResponse', id }],
+    }),
+
     // 5) Update
-    updateDiscardDeadLetterEntryResponse: build.mutation<
-      void,
-      Pick<DiscardDeadLetterEntryResponse, "id"> &
-        Partial<DiscardDeadLetterEntryResponse>
-    >({
+    updateDiscardDeadLetterEntryResponse: build.mutation<DiscardDeadLetterEntryResponse, Pick<DiscardDeadLetterEntryResponse, 'id'> & Partial<DiscardDeadLetterEntryResponse>>({
       query: ({ id, ...patch }) => ({
         url: `DiscardDeadLetterEntryResponse/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            DiscardDeadLetterEntryResponseService.util.updateQueryData(
-              "getDiscardDeadLetterEntryResponse",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<DiscardDeadLetterEntryResponse, "id">,
-      ) => [
-        { type: "DiscardDeadLetterEntryResponse", id },
-        { type: "DiscardDeadLetterEntryResponse", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<DiscardDeadLetterEntryResponse, 'id'>) => [
+        { type: 'DiscardDeadLetterEntryResponse', id },
+        { type: 'DiscardDeadLetterEntryResponse', id: 'LIST' },
+        { type: 'DiscardDeadLetterEntryResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteDiscardDeadLetterEntryResponse: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteDiscardDeadLetterEntryResponse: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `DiscardDeadLetterEntryResponse/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "DiscardDeadLetterEntryResponse", id },
+        { type: 'DiscardDeadLetterEntryResponse', id },
+        { type: 'DiscardDeadLetterEntryResponse', id: 'LIST' },
+        { type: 'DiscardDeadLetterEntryResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteDiscardDeadLetterEntryResponseCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteDiscardDeadLetterEntryResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `DiscardDeadLetterEntryResponse/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "DiscardDeadLetterEntryResponse", id },
-        { type: "DiscardDeadLetterEntryResponse", id: "LIST" },
+        { type: 'DiscardDeadLetterEntryResponse', id },
+        { type: 'DiscardDeadLetterEntryResponse', id: 'LIST' },
+        { type: 'DiscardDeadLetterEntryResponse', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetDiscardDeadLetterEntryResponsesPagedQuery`
 export const {
-  useGetDiscardDeadLetterEntryResponsesPagedQuery, // immediate fetch
+  useGetDiscardDeadLetterEntryResponsesPagedQuery,     // immediate fetch
   useLazyGetDiscardDeadLetterEntryResponsesPagedQuery, // lazy fetch
   useGetDiscardDeadLetterEntryResponseQuery,
   useGetDiscardDeadLetterEntryResponsesQuery,
@@ -206,4 +169,4 @@ export const {
   useUpdateDiscardDeadLetterEntryResponseMutation,
   useDeleteDiscardDeadLetterEntryResponseMutation,
   useDeleteDiscardDeadLetterEntryResponseCascadeMutation,
-} = DiscardDeadLetterEntryResponseService;
+} = DiscardDeadLetterEntryResponseService

@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_GOALDEPENDENCY_REQUEST,
-  FETCH_GOALDEPENDENCY_REQUEST,
-  LIST_GOALDEPENDENCY_REQUEST,
-  UPDATE_GOALDEPENDENCY_REQUEST,
-  DELETE_GOALDEPENDENCY_REQUEST,
-  addGoalDependencyFailure,
-  addGoalDependencySuccess,
-  fetchGoalDependencyFailure,
-  fetchGoalDependencySuccess,
-  listGoalDependencyFailure,
-  listGoalDependencySuccess,
-  updateGoalDependencyFailure,
-  updateGoalDependencySuccess,
-  deleteGoalDependencyFailure,
-  deleteGoalDependencySuccess,
-} from "../actions/GoalDependencyApiAction";
+
+    ADD_GOALDEPENDENCY_REQUEST,
+    FETCH_GOALDEPENDENCY_REQUEST,
+    LIST_GOALDEPENDENCY_REQUEST,
+    UPDATE_GOALDEPENDENCY_REQUEST,
+    DELETE_GOALDEPENDENCY_REQUEST,
+
+    addGoalDependencyFailure,
+    addGoalDependencySuccess,
+
+    fetchGoalDependencyFailure,
+    fetchGoalDependencySuccess,
+    
+    listGoalDependencyFailure,
+    listGoalDependencySuccess,
+
+    updateGoalDependencyFailure,
+    updateGoalDependencySuccess,
+    
+    deleteGoalDependencyFailure,
+    deleteGoalDependencySuccess,
+    
+} from '../actions/GoalDependencyApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: GoalDependency
 */
 
-export const GoalDependencyMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("GoalDependency MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const GoalDependencyMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("GoalDependency MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

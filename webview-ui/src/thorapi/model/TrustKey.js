@@ -36,38 +36,22 @@ const _1 = require("./");
 function TrustKeyFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        keyPurpose: !(0, runtime_1.exists)(json, "keyPurpose") ? undefined : json["keyPurpose"],
-        keyStatus: !(0, runtime_1.exists)(json, "keyStatus") ? undefined : json["keyStatus"],
-        provider: !(0, runtime_1.exists)(json, "provider")
-            ? undefined
-            : (0, _1.TrustKeyProviderFromJSON)(json["provider"]),
-        activeVersion: !(0, runtime_1.exists)(json, "activeVersion")
-            ? undefined
-            : (0, _1.TrustKeyVersionFromJSON)(json["activeVersion"]),
-        rotationPeriodDays: !(0, runtime_1.exists)(json, "rotationPeriodDays")
-            ? undefined
-            : json["rotationPeriodDays"],
-        tenantId: !(0, runtime_1.exists)(json, "tenantId") ? undefined : json["tenantId"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'keyPurpose': !(0, runtime_1.exists)(json, 'keyPurpose') ? undefined : json['keyPurpose'],
+        'keyStatus': !(0, runtime_1.exists)(json, 'keyStatus') ? undefined : json['keyStatus'],
+        'provider': !(0, runtime_1.exists)(json, 'provider') ? undefined : (0, _1.TrustKeyProviderFromJSON)(json['provider']),
+        'activeVersion': !(0, runtime_1.exists)(json, 'activeVersion') ? undefined : (0, _1.TrustKeyVersionFromJSON)(json['activeVersion']),
+        'rotationPeriodDays': !(0, runtime_1.exists)(json, 'rotationPeriodDays') ? undefined : json['rotationPeriodDays'],
+        'tenantId': !(0, runtime_1.exists)(json, 'tenantId') ? undefined : json['tenantId'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function TrustKeyToJSON(value) {
@@ -76,21 +60,21 @@ function TrustKeyToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        name: value.name,
-        keyPurpose: value.keyPurpose,
-        keyStatus: value.keyStatus,
-        provider: (0, _1.TrustKeyProviderToJSON)(value.provider),
-        activeVersion: (0, _1.TrustKeyVersionToJSON)(value.activeVersion),
-        rotationPeriodDays: value.rotationPeriodDays,
-        tenantId: value.tenantId,
-        ownerId: value.ownerId,
-        trashed: value.trashed,
+        'name': value.name,
+        'keyPurpose': value.keyPurpose,
+        'keyStatus': value.keyStatus,
+        'provider': (0, _1.TrustKeyProviderToJSON)(value.provider),
+        'activeVersion': (0, _1.TrustKeyVersionToJSON)(value.activeVersion),
+        'rotationPeriodDays': value.rotationPeriodDays,
+        'tenantId': value.tenantId,
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustKeyKeyPurposeEnum;
 (function (TrustKeyKeyPurposeEnum) {
     TrustKeyKeyPurposeEnum["FIELDENCRYPTION"] = "field_encryption";
@@ -101,9 +85,9 @@ var TrustKeyKeyPurposeEnum;
     TrustKeyKeyPurposeEnum["DEKWRAPPING"] = "dek_wrapping";
 })(TrustKeyKeyPurposeEnum || (exports.TrustKeyKeyPurposeEnum = TrustKeyKeyPurposeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustKeyKeyStatusEnum;
 (function (TrustKeyKeyStatusEnum) {
     TrustKeyKeyStatusEnum["PENDINGACTIVATION"] = "pending_activation";

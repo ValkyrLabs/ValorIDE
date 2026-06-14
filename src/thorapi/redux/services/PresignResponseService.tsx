@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { PresignResponse } from "@thorapi/model/PresignResponse";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { PresignResponse } from '@thorapi/model/PresignResponse'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type PresignResponseResponse = PresignResponse[];
+type PresignResponseResponse = PresignResponse[]
+type PresignResponsePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<PresignResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type PresignResponseListQueryArg = {
+  example?: Partial<PresignResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toPresignResponseList = (result: unknown): PresignResponseResponse => {
   if (Array.isArray(result)) {
-    return result as PresignResponseResponse;
+    return result as PresignResponseResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as PresignResponseResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as PresignResponseResponse) : []
+}
 
 export const PresignResponseService = createApi({
-  reducerPath: "PresignResponse", // This should remain unique
+  reducerPath: 'PresignResponse', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["PresignResponse"],
+  tagTypes: ['PresignResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getPresignResponsesPaged: build.query<
-      PresignResponseResponse,
-      { page: number; size?: number; example?: Partial<PresignResponse> }
-    >({
+    getPresignResponsesPaged: build.query<PresignResponseResponse, PresignResponsePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `PresignResponse?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `PresignResponse?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toPresignResponseList(result);
+        const rows = toPresignResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "PresignResponse" as const, id })),
-          { type: "PresignResponse", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'PresignResponse' as const, id })),
+          { type: 'PresignResponse', id: `PAGE_${page}` },
+          { type: 'PresignResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getPresignResponses: build.query<
-      PresignResponseResponse,
-      { example?: Partial<PresignResponse> } | void
-    >({
+    getPresignResponses: build.query<PresignResponseResponse, PresignResponseListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,106 +82,86 @@ export const PresignResponseService = createApi({
         return `PresignResponse`;
       },
       providesTags: (result) => {
-        const rows = toPresignResponseList(result);
+        const rows = toPresignResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "PresignResponse" as const, id })),
-          { type: "PresignResponse", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'PresignResponse' as const, id })),
+          { type: 'PresignResponse', id: 'LIST' },
+          { type: 'PresignResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addPresignResponse: build.mutation<
-      PresignResponse,
-      Partial<PresignResponse>
-    >({
+    addPresignResponse: build.mutation<PresignResponse, Partial<PresignResponse>>({
       query: (body) => ({
         url: `PresignResponse`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "PresignResponse", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'PresignResponse', id: 'LIST' },
+        { type: 'PresignResponse', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getPresignResponse: build.query<PresignResponse, string>({
       query: (id) => `PresignResponse/${id}`,
-      providesTags: (result, error, id) => [{ type: "PresignResponse", id }],
+      providesTags: (result, error, id) => [{ type: 'PresignResponse', id }],
     }),
 
     // 5) Update
-    updatePresignResponse: build.mutation<
-      void,
-      Pick<PresignResponse, "id"> & Partial<PresignResponse>
-    >({
+    updatePresignResponse: build.mutation<PresignResponse, Pick<PresignResponse, 'id'> & Partial<PresignResponse>>({
       query: ({ id, ...patch }) => ({
         url: `PresignResponse/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            PresignResponseService.util.updateQueryData(
-              "getPresignResponse",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<PresignResponse, "id">) => [
-        { type: "PresignResponse", id },
-        { type: "PresignResponse", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<PresignResponse, 'id'>) => [
+        { type: 'PresignResponse', id },
+        { type: 'PresignResponse', id: 'LIST' },
+        { type: 'PresignResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deletePresignResponse: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deletePresignResponse: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `PresignResponse/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "PresignResponse", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'PresignResponse', id },
+        { type: 'PresignResponse', id: 'LIST' },
+        { type: 'PresignResponse', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deletePresignResponseCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deletePresignResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `PresignResponse/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "PresignResponse", id },
-        { type: "PresignResponse", id: "LIST" },
+        { type: 'PresignResponse', id },
+        { type: 'PresignResponse', id: 'LIST' },
+        { type: 'PresignResponse', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetPresignResponsesPagedQuery`
 export const {
-  useGetPresignResponsesPagedQuery, // immediate fetch
+  useGetPresignResponsesPagedQuery,     // immediate fetch
   useLazyGetPresignResponsesPagedQuery, // lazy fetch
   useGetPresignResponseQuery,
   useGetPresignResponsesQuery,
@@ -180,4 +169,4 @@ export const {
   useUpdatePresignResponseMutation,
   useDeletePresignResponseMutation,
   useDeletePresignResponseCascadeMutation,
-} = PresignResponseService;
+} = PresignResponseService

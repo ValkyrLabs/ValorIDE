@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { AgentDiscoveryItem } from "@thorapi/model/AgentDiscoveryItem";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { AgentDiscoveryItem } from '@thorapi/model/AgentDiscoveryItem'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type AgentDiscoveryItemResponse = AgentDiscoveryItem[];
+type AgentDiscoveryItemResponse = AgentDiscoveryItem[]
+type AgentDiscoveryItemPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<AgentDiscoveryItem>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toAgentDiscoveryItemList = (
-  result: unknown,
-): AgentDiscoveryItemResponse => {
+type AgentDiscoveryItemListQueryArg = {
+  example?: Partial<AgentDiscoveryItem>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toAgentDiscoveryItemList = (result: unknown): AgentDiscoveryItemResponse => {
   if (Array.isArray(result)) {
-    return result as AgentDiscoveryItemResponse;
+    return result as AgentDiscoveryItemResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as AgentDiscoveryItemResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as AgentDiscoveryItemResponse) : []
+}
 
 export const AgentDiscoveryItemService = createApi({
-  reducerPath: "AgentDiscoveryItem", // This should remain unique
+  reducerPath: 'AgentDiscoveryItem', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["AgentDiscoveryItem"],
+  tagTypes: ['AgentDiscoveryItem'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getAgentDiscoveryItemsPaged: build.query<
-      AgentDiscoveryItemResponse,
-      { page: number; size?: number; example?: Partial<AgentDiscoveryItem> }
-    >({
+    getAgentDiscoveryItemsPaged: build.query<AgentDiscoveryItemResponse, AgentDiscoveryItemPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `AgentDiscoveryItem?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `AgentDiscoveryItem?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toAgentDiscoveryItemList(result);
+        const rows = toAgentDiscoveryItemList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "AgentDiscoveryItem" as const, id })),
-          { type: "AgentDiscoveryItem", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'AgentDiscoveryItem' as const, id })),
+          { type: 'AgentDiscoveryItem', id: `PAGE_${page}` },
+          { type: 'AgentDiscoveryItem', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getAgentDiscoveryItems: build.query<
-      AgentDiscoveryItemResponse,
-      { example?: Partial<AgentDiscoveryItem> } | void
-    >({
+    getAgentDiscoveryItems: build.query<AgentDiscoveryItemResponse, AgentDiscoveryItemListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,112 +82,86 @@ export const AgentDiscoveryItemService = createApi({
         return `AgentDiscoveryItem`;
       },
       providesTags: (result) => {
-        const rows = toAgentDiscoveryItemList(result);
+        const rows = toAgentDiscoveryItemList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "AgentDiscoveryItem" as const, id })),
-          { type: "AgentDiscoveryItem", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'AgentDiscoveryItem' as const, id })),
+          { type: 'AgentDiscoveryItem', id: 'LIST' },
+          { type: 'AgentDiscoveryItem', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addAgentDiscoveryItem: build.mutation<
-      AgentDiscoveryItem,
-      Partial<AgentDiscoveryItem>
-    >({
+    addAgentDiscoveryItem: build.mutation<AgentDiscoveryItem, Partial<AgentDiscoveryItem>>({
       query: (body) => ({
         url: `AgentDiscoveryItem`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "AgentDiscoveryItem", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'AgentDiscoveryItem', id: 'LIST' },
+        { type: 'AgentDiscoveryItem', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getAgentDiscoveryItem: build.query<AgentDiscoveryItem, string>({
       query: (id) => `AgentDiscoveryItem/${id}`,
-      providesTags: (result, error, id) => [{ type: "AgentDiscoveryItem", id }],
+      providesTags: (result, error, id) => [{ type: 'AgentDiscoveryItem', id }],
     }),
 
     // 5) Update
-    updateAgentDiscoveryItem: build.mutation<
-      void,
-      Pick<AgentDiscoveryItem, "id"> & Partial<AgentDiscoveryItem>
-    >({
+    updateAgentDiscoveryItem: build.mutation<AgentDiscoveryItem, Pick<AgentDiscoveryItem, 'id'> & Partial<AgentDiscoveryItem>>({
       query: ({ id, ...patch }) => ({
         url: `AgentDiscoveryItem/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            AgentDiscoveryItemService.util.updateQueryData(
-              "getAgentDiscoveryItem",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<AgentDiscoveryItem, "id">,
-      ) => [
-        { type: "AgentDiscoveryItem", id },
-        { type: "AgentDiscoveryItem", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<AgentDiscoveryItem, 'id'>) => [
+        { type: 'AgentDiscoveryItem', id },
+        { type: 'AgentDiscoveryItem', id: 'LIST' },
+        { type: 'AgentDiscoveryItem', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteAgentDiscoveryItem: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteAgentDiscoveryItem: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `AgentDiscoveryItem/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "AgentDiscoveryItem", id },
+        { type: 'AgentDiscoveryItem', id },
+        { type: 'AgentDiscoveryItem', id: 'LIST' },
+        { type: 'AgentDiscoveryItem', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteAgentDiscoveryItemCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteAgentDiscoveryItemCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `AgentDiscoveryItem/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "AgentDiscoveryItem", id },
-        { type: "AgentDiscoveryItem", id: "LIST" },
+        { type: 'AgentDiscoveryItem', id },
+        { type: 'AgentDiscoveryItem', id: 'LIST' },
+        { type: 'AgentDiscoveryItem', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetAgentDiscoveryItemsPagedQuery`
 export const {
-  useGetAgentDiscoveryItemsPagedQuery, // immediate fetch
+  useGetAgentDiscoveryItemsPagedQuery,     // immediate fetch
   useLazyGetAgentDiscoveryItemsPagedQuery, // lazy fetch
   useGetAgentDiscoveryItemQuery,
   useGetAgentDiscoveryItemsQuery,
@@ -190,4 +169,4 @@ export const {
   useUpdateAgentDiscoveryItemMutation,
   useDeleteAgentDiscoveryItemMutation,
   useDeleteAgentDiscoveryItemCascadeMutation,
-} = AgentDiscoveryItemService;
+} = AgentDiscoveryItemService

@@ -36,67 +36,39 @@ const _1 = require("./");
 function SemanticIndexEntryFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        targetType: json["targetType"],
-        targetId: json["targetId"],
-        sourceHash: json["sourceHash"],
-        compressionStrategy: json["compressionStrategy"],
-        embeddingProvider: json["embeddingProvider"],
-        embeddingModel: json["embeddingModel"],
-        embeddingDimensions: json["embeddingDimensions"],
-        embeddingVector: json["embeddingVector"],
-        embeddingChecksum: json["embeddingChecksum"],
-        vectorEncoding: json["vectorEncoding"],
-        status: json["status"],
-        indexedAt: new Date(json["indexedAt"]),
-        principal: !(0, runtime_1.exists)(json, "principal")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["principal"]),
-        organization: !(0, runtime_1.exists)(json, "organization")
-            ? undefined
-            : (0, _1.OrganizationFromJSON)(json["organization"]),
-        memoryEntry: !(0, runtime_1.exists)(json, "memoryEntry")
-            ? undefined
-            : (0, _1.MemoryEntryFromJSON)(json["memoryEntry"]),
-        tenantScope: !(0, runtime_1.exists)(json, "tenantScope") ? undefined : json["tenantScope"],
-        summaryText: !(0, runtime_1.exists)(json, "summaryText") ? undefined : json["summaryText"],
-        keywordsText: !(0, runtime_1.exists)(json, "keywordsText")
-            ? undefined
-            : json["keywordsText"],
-        contentChars: !(0, runtime_1.exists)(json, "contentChars")
-            ? undefined
-            : json["contentChars"],
-        estimatedTokens: !(0, runtime_1.exists)(json, "estimatedTokens")
-            ? undefined
-            : json["estimatedTokens"],
-        relevanceScore: !(0, runtime_1.exists)(json, "relevanceScore")
-            ? undefined
-            : json["relevanceScore"],
-        hitCount: !(0, runtime_1.exists)(json, "hitCount") ? undefined : json["hitCount"],
-        lastHitAt: !(0, runtime_1.exists)(json, "lastHitAt")
-            ? undefined
-            : new Date(json["lastHitAt"]),
-        semanticDeletedAt: !(0, runtime_1.exists)(json, "semanticDeletedAt")
-            ? undefined
-            : new Date(json["semanticDeletedAt"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'targetType': json['targetType'],
+        'targetId': json['targetId'],
+        'sourceHash': json['sourceHash'],
+        'compressionStrategy': json['compressionStrategy'],
+        'embeddingProvider': json['embeddingProvider'],
+        'embeddingModel': json['embeddingModel'],
+        'embeddingDimensions': json['embeddingDimensions'],
+        'embeddingVector': json['embeddingVector'],
+        'embeddingChecksum': json['embeddingChecksum'],
+        'vectorEncoding': json['vectorEncoding'],
+        'status': json['status'],
+        'indexedAt': new Date(json['indexedAt']),
+        'principal': !(0, runtime_1.exists)(json, 'principal') ? undefined : (0, _1.PrincipalFromJSON)(json['principal']),
+        'organization': !(0, runtime_1.exists)(json, 'organization') ? undefined : (0, _1.OrganizationFromJSON)(json['organization']),
+        'memoryEntry': !(0, runtime_1.exists)(json, 'memoryEntry') ? undefined : (0, _1.MemoryEntryFromJSON)(json['memoryEntry']),
+        'tenantScope': !(0, runtime_1.exists)(json, 'tenantScope') ? undefined : json['tenantScope'],
+        'summaryText': !(0, runtime_1.exists)(json, 'summaryText') ? undefined : json['summaryText'],
+        'keywordsText': !(0, runtime_1.exists)(json, 'keywordsText') ? undefined : json['keywordsText'],
+        'contentChars': !(0, runtime_1.exists)(json, 'contentChars') ? undefined : json['contentChars'],
+        'estimatedTokens': !(0, runtime_1.exists)(json, 'estimatedTokens') ? undefined : json['estimatedTokens'],
+        'relevanceScore': !(0, runtime_1.exists)(json, 'relevanceScore') ? undefined : json['relevanceScore'],
+        'hitCount': !(0, runtime_1.exists)(json, 'hitCount') ? undefined : json['hitCount'],
+        'lastHitAt': !(0, runtime_1.exists)(json, 'lastHitAt') ? undefined : new Date(json['lastHitAt']),
+        'semanticDeletedAt': !(0, runtime_1.exists)(json, 'semanticDeletedAt') ? undefined : new Date(json['semanticDeletedAt']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function SemanticIndexEntryToJSON(value) {
@@ -105,39 +77,37 @@ function SemanticIndexEntryToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        targetType: value.targetType,
-        targetId: value.targetId,
-        sourceHash: value.sourceHash,
-        compressionStrategy: value.compressionStrategy,
-        embeddingProvider: value.embeddingProvider,
-        embeddingModel: value.embeddingModel,
-        embeddingDimensions: value.embeddingDimensions,
-        embeddingVector: value.embeddingVector,
-        embeddingChecksum: value.embeddingChecksum,
-        vectorEncoding: value.vectorEncoding,
-        status: value.status,
-        indexedAt: value.indexedAt.toISOString(),
-        principal: (0, _1.PrincipalToJSON)(value.principal),
-        organization: (0, _1.OrganizationToJSON)(value.organization),
-        memoryEntry: (0, _1.MemoryEntryToJSON)(value.memoryEntry),
-        tenantScope: value.tenantScope,
-        summaryText: value.summaryText,
-        keywordsText: value.keywordsText,
-        contentChars: value.contentChars,
-        estimatedTokens: value.estimatedTokens,
-        relevanceScore: value.relevanceScore,
-        hitCount: value.hitCount,
-        lastHitAt: value.lastHitAt === undefined ? undefined : value.lastHitAt.toISOString(),
-        semanticDeletedAt: value.semanticDeletedAt === undefined
-            ? undefined
-            : value.semanticDeletedAt.toISOString(),
-        trashed: value.trashed,
+        'targetType': value.targetType,
+        'targetId': value.targetId,
+        'sourceHash': value.sourceHash,
+        'compressionStrategy': value.compressionStrategy,
+        'embeddingProvider': value.embeddingProvider,
+        'embeddingModel': value.embeddingModel,
+        'embeddingDimensions': value.embeddingDimensions,
+        'embeddingVector': value.embeddingVector,
+        'embeddingChecksum': value.embeddingChecksum,
+        'vectorEncoding': value.vectorEncoding,
+        'status': value.status,
+        'indexedAt': value.indexedAt.toISOString(),
+        'principal': (0, _1.PrincipalToJSON)(value.principal),
+        'organization': (0, _1.OrganizationToJSON)(value.organization),
+        'memoryEntry': (0, _1.MemoryEntryToJSON)(value.memoryEntry),
+        'tenantScope': value.tenantScope,
+        'summaryText': value.summaryText,
+        'keywordsText': value.keywordsText,
+        'contentChars': value.contentChars,
+        'estimatedTokens': value.estimatedTokens,
+        'relevanceScore': value.relevanceScore,
+        'hitCount': value.hitCount,
+        'lastHitAt': value.lastHitAt === undefined ? undefined : value.lastHitAt.toISOString(),
+        'semanticDeletedAt': value.semanticDeletedAt === undefined ? undefined : value.semanticDeletedAt.toISOString(),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var SemanticIndexEntryCompressionStrategyEnum;
 (function (SemanticIndexEntryCompressionStrategyEnum) {
     SemanticIndexEntryCompressionStrategyEnum["NONE"] = "none";
@@ -145,9 +115,9 @@ var SemanticIndexEntryCompressionStrategyEnum;
     SemanticIndexEntryCompressionStrategyEnum["HIERARCHICALSUMMARYV1"] = "hierarchical_summary_v1";
 })(SemanticIndexEntryCompressionStrategyEnum || (exports.SemanticIndexEntryCompressionStrategyEnum = SemanticIndexEntryCompressionStrategyEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var SemanticIndexEntryVectorEncodingEnum;
 (function (SemanticIndexEntryVectorEncodingEnum) {
     SemanticIndexEntryVectorEncodingEnum["FLOAT32LE"] = "float32_le";
@@ -155,9 +125,9 @@ var SemanticIndexEntryVectorEncodingEnum;
     SemanticIndexEntryVectorEncodingEnum["SUMMARYONLY"] = "summary_only";
 })(SemanticIndexEntryVectorEncodingEnum || (exports.SemanticIndexEntryVectorEncodingEnum = SemanticIndexEntryVectorEncodingEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var SemanticIndexEntryStatusEnum;
 (function (SemanticIndexEntryStatusEnum) {
     SemanticIndexEntryStatusEnum["ACTIVE"] = "active";

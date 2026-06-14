@@ -26,13 +26,16 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 import {
-  ArrayStringItem,
-  ArrayStringItemFromJSON,
-  ArrayStringItemToJSON,
-} from "./";
+
+
+    ArrayStringItem,
+    ArrayStringItemFromJSON,
+    ArrayStringItemToJSON,
+} from './';
+
 
 // thorapi
 
@@ -41,170 +44,152 @@ import {
  * @export
  * @interface ThorapiRule
  */
-export type ThorapiRule = DataObject & {
-  /**
-   *
-   * @type {string}
-   * @memberof ThorapiRule
-   */
-  name: string;
-  /**
-   * One of \'info\', \'warning\', \'error\'
-   * @type {string}
-   * @memberof ThorapiRule
-   */
-  severity: ThorapiRuleSeverityEnum;
-  /**
-   * Short description of the predicate to evaluate
-   * @type {string}
-   * @memberof ThorapiRule
-   */
-  checkText: string;
-  /**
-   *
-   * @type {string}
-   * @memberof ThorapiRule
-   */
-  description?: string;
-  /**
-   * Suggested remediation
-   * @type {string}
-   * @memberof ThorapiRule
-   */
-  fix?: string;
-  /**
-   * Example code snippets
-   * @type {Array<ArrayStringItem>}
-   * @memberof ThorapiRule
-   */
-  examples?: Array<ArrayStringItem>;
-  /**
-   *
-   * @type {Array<ArrayStringItem>}
-   * @memberof ThorapiRule
-   */
-  sources?: Array<ArrayStringItem>;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof ThorapiRule
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof ThorapiRule
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof ThorapiRule
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof ThorapiRule
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof ThorapiRule
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof ThorapiRule
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof ThorapiRule
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof ThorapiRule
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof ThorapiRule
-   */
-  trashed?: boolean;
-};
+export type ThorapiRule  = DataObject & {
+    /**
+     * 
+     * @type {string}
+     * @memberof ThorapiRule
+     */
+    name: string;
+    /**
+     * One of \'info\', \'warning\', \'error\'
+     * @type {string}
+     * @memberof ThorapiRule
+     */
+    severity: ThorapiRuleSeverityEnum;
+    /**
+     * Short description of the predicate to evaluate
+     * @type {string}
+     * @memberof ThorapiRule
+     */
+    checkText: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ThorapiRule
+     */
+    description?: string;
+    /**
+     * Suggested remediation
+     * @type {string}
+     * @memberof ThorapiRule
+     */
+    fix?: string;
+    /**
+     * Example code snippets
+     * @type {Array<ArrayStringItem>}
+     * @memberof ThorapiRule
+     */
+    examples?: Array<ArrayStringItem>;
+    /**
+     * 
+     * @type {Array<ArrayStringItem>}
+     * @memberof ThorapiRule
+     */
+    sources?: Array<ArrayStringItem>;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof ThorapiRule
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof ThorapiRule
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof ThorapiRule
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof ThorapiRule
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof ThorapiRule
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof ThorapiRule
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof ThorapiRule
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof ThorapiRule
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof ThorapiRule
+     */
+    trashed?: boolean;
+}
 
 export function ThorapiRuleFromJSON(json: any): ThorapiRule {
-  return {
-    ...DataObjectFromJSON(json),
-    name: json["name"],
-    severity: json["severity"],
-    checkText: json["checkText"],
-    description: !exists(json, "description") ? undefined : json["description"],
-    fix: !exists(json, "fix") ? undefined : json["fix"],
-    examples: !exists(json, "examples")
-      ? undefined
-      : (json["examples"] as Array<any>).map(ArrayStringItemFromJSON),
-    sources: !exists(json, "sources")
-      ? undefined
-      : (json["sources"] as Array<any>).map(ArrayStringItemFromJSON),
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'name': json['name'],
+        'severity': json['severity'],
+        'checkText': json['checkText'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'fix': !exists(json, 'fix') ? undefined : json['fix'],
+        'examples': !exists(json, 'examples') ? undefined : (json['examples'] as Array<any>).map(ArrayStringItemFromJSON),
+        'sources': !exists(json, 'sources') ? undefined : (json['sources'] as Array<any>).map(ArrayStringItemFromJSON),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function ThorapiRuleToJSON(value?: ThorapiRule): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    name: value.name,
-    severity: value.severity,
-    checkText: value.checkText,
-    description: value.description,
-    fix: value.fix,
-    examples:
-      value.examples === undefined
-        ? undefined
-        : (value.examples as Array<any>).map(ArrayStringItemToJSON),
-    sources:
-      value.sources === undefined
-        ? undefined
-        : (value.sources as Array<any>).map(ArrayStringItemToJSON),
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'name': value.name,
+        'severity': value.severity,
+        'checkText': value.checkText,
+        'description': value.description,
+        'fix': value.fix,
+        'examples': value.examples === undefined ? undefined : (value.examples as Array<any>).map(ArrayStringItemToJSON),
+        'sources': value.sources === undefined ? undefined : (value.sources as Array<any>).map(ArrayStringItemToJSON),
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum ThorapiRuleSeverityEnum {
-  INFO = "info",
-  WARNING = "warning",
-  ERROR = "error",
+    INFO = 'info',
+    WARNING = 'warning',
+    ERROR = 'error'
 }
+
+

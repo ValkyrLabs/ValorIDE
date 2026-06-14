@@ -36,41 +36,23 @@ const _1 = require("./");
 function BuildFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        applicationId: !(0, runtime_1.exists)(json, "applicationId")
-            ? undefined
-            : json["applicationId"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        projectPath: !(0, runtime_1.exists)(json, "projectPath") ? undefined : json["projectPath"],
-        testEnumCodegen: !(0, runtime_1.exists)(json, "testEnumCodegen")
-            ? undefined
-            : json["testEnumCodegen"],
-        mavenHome: !(0, runtime_1.exists)(json, "mavenHome") ? undefined : json["mavenHome"],
-        outputs: !(0, runtime_1.exists)(json, "outputs")
-            ? undefined
-            : json["outputs"].map(_1.BuildOutputFromJSON),
-        dependencies: !(0, runtime_1.exists)(json, "dependencies")
-            ? undefined
-            : json["dependencies"].map(_1.DependFromJSON),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'applicationId': !(0, runtime_1.exists)(json, 'applicationId') ? undefined : json['applicationId'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'projectPath': !(0, runtime_1.exists)(json, 'projectPath') ? undefined : json['projectPath'],
+        'testEnumCodegen': !(0, runtime_1.exists)(json, 'testEnumCodegen') ? undefined : json['testEnumCodegen'],
+        'mavenHome': !(0, runtime_1.exists)(json, 'mavenHome') ? undefined : json['mavenHome'],
+        'outputs': !(0, runtime_1.exists)(json, 'outputs') ? undefined : json['outputs'].map(_1.BuildOutputFromJSON),
+        'dependencies': !(0, runtime_1.exists)(json, 'dependencies') ? undefined : json['dependencies'].map(_1.DependFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function BuildToJSON(value) {
@@ -79,25 +61,21 @@ function BuildToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        name: value.name,
-        applicationId: value.applicationId,
-        status: value.status,
-        projectPath: value.projectPath,
-        testEnumCodegen: value.testEnumCodegen,
-        mavenHome: value.mavenHome,
-        outputs: value.outputs === undefined
-            ? undefined
-            : value.outputs.map(_1.BuildOutputToJSON),
-        dependencies: value.dependencies === undefined
-            ? undefined
-            : value.dependencies.map(_1.DependToJSON),
-        trashed: value.trashed,
+        'name': value.name,
+        'applicationId': value.applicationId,
+        'status': value.status,
+        'projectPath': value.projectPath,
+        'testEnumCodegen': value.testEnumCodegen,
+        'mavenHome': value.mavenHome,
+        'outputs': value.outputs === undefined ? undefined : value.outputs.map(_1.BuildOutputToJSON),
+        'dependencies': value.dependencies === undefined ? undefined : value.dependencies.map(_1.DependToJSON),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var BuildStatusEnum;
 (function (BuildStatusEnum) {
     BuildStatusEnum["PENDING"] = "pending";
@@ -106,9 +84,9 @@ var BuildStatusEnum;
     BuildStatusEnum["FAILURE"] = "failure";
 })(BuildStatusEnum || (exports.BuildStatusEnum = BuildStatusEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var BuildTestEnumCodegenEnum;
 (function (BuildTestEnumCodegenEnum) {
     BuildTestEnumCodegenEnum[BuildTestEnumCodegenEnum["BROKE"] = 0] = "BROKE";

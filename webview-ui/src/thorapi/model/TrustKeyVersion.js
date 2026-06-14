@@ -36,53 +36,25 @@ const _1 = require("./");
 function TrustKeyVersionFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        trustKey: !(0, runtime_1.exists)(json, "trustKey")
-            ? undefined
-            : (0, _1.TrustKeyFromJSON)(json["trustKey"]),
-        versionNumber: !(0, runtime_1.exists)(json, "versionNumber")
-            ? undefined
-            : json["versionNumber"],
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        publicKeyMaterial: !(0, runtime_1.exists)(json, "publicKeyMaterial")
-            ? undefined
-            : json["publicKeyMaterial"],
-        wrappedKeyMaterial: !(0, runtime_1.exists)(json, "wrappedKeyMaterial")
-            ? undefined
-            : json["wrappedKeyMaterial"],
-        wrappingKeyRef: !(0, runtime_1.exists)(json, "wrappingKeyRef")
-            ? undefined
-            : json["wrappingKeyRef"],
-        providerKeyRef: !(0, runtime_1.exists)(json, "providerKeyRef")
-            ? undefined
-            : json["providerKeyRef"],
-        algorithm: !(0, runtime_1.exists)(json, "algorithm") ? undefined : json["algorithm"],
-        versionStatus: !(0, runtime_1.exists)(json, "versionStatus")
-            ? undefined
-            : json["versionStatus"],
-        notBefore: !(0, runtime_1.exists)(json, "notBefore")
-            ? undefined
-            : new Date(json["notBefore"]),
-        notAfter: !(0, runtime_1.exists)(json, "notAfter")
-            ? undefined
-            : new Date(json["notAfter"]),
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'trustKey': !(0, runtime_1.exists)(json, 'trustKey') ? undefined : (0, _1.TrustKeyFromJSON)(json['trustKey']),
+        'versionNumber': !(0, runtime_1.exists)(json, 'versionNumber') ? undefined : json['versionNumber'],
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'publicKeyMaterial': !(0, runtime_1.exists)(json, 'publicKeyMaterial') ? undefined : json['publicKeyMaterial'],
+        'wrappedKeyMaterial': !(0, runtime_1.exists)(json, 'wrappedKeyMaterial') ? undefined : json['wrappedKeyMaterial'],
+        'wrappingKeyRef': !(0, runtime_1.exists)(json, 'wrappingKeyRef') ? undefined : json['wrappingKeyRef'],
+        'providerKeyRef': !(0, runtime_1.exists)(json, 'providerKeyRef') ? undefined : json['providerKeyRef'],
+        'algorithm': !(0, runtime_1.exists)(json, 'algorithm') ? undefined : json['algorithm'],
+        'versionStatus': !(0, runtime_1.exists)(json, 'versionStatus') ? undefined : json['versionStatus'],
+        'notBefore': !(0, runtime_1.exists)(json, 'notBefore') ? undefined : new Date(json['notBefore']),
+        'notAfter': !(0, runtime_1.exists)(json, 'notAfter') ? undefined : new Date(json['notAfter']),
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function TrustKeyVersionToJSON(value) {
@@ -91,25 +63,25 @@ function TrustKeyVersionToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        trustKey: (0, _1.TrustKeyToJSON)(value.trustKey),
-        versionNumber: value.versionNumber,
-        keyHash: value.keyHash,
-        publicKeyMaterial: value.publicKeyMaterial,
-        wrappedKeyMaterial: value.wrappedKeyMaterial,
-        wrappingKeyRef: value.wrappingKeyRef,
-        providerKeyRef: value.providerKeyRef,
-        algorithm: value.algorithm,
-        versionStatus: value.versionStatus,
-        notBefore: value.notBefore === undefined ? undefined : value.notBefore.toISOString(),
-        notAfter: value.notAfter === undefined ? undefined : value.notAfter.toISOString(),
-        ownerId: value.ownerId,
-        trashed: value.trashed,
+        'trustKey': (0, _1.TrustKeyToJSON)(value.trustKey),
+        'versionNumber': value.versionNumber,
+        'keyHash': value.keyHash,
+        'publicKeyMaterial': value.publicKeyMaterial,
+        'wrappedKeyMaterial': value.wrappedKeyMaterial,
+        'wrappingKeyRef': value.wrappingKeyRef,
+        'providerKeyRef': value.providerKeyRef,
+        'algorithm': value.algorithm,
+        'versionStatus': value.versionStatus,
+        'notBefore': value.notBefore === undefined ? undefined : value.notBefore.toISOString(),
+        'notAfter': value.notAfter === undefined ? undefined : value.notAfter.toISOString(),
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustKeyVersionAlgorithmEnum;
 (function (TrustKeyVersionAlgorithmEnum) {
     TrustKeyVersionAlgorithmEnum["AES256GCM"] = "aes_256_gcm";
@@ -119,9 +91,9 @@ var TrustKeyVersionAlgorithmEnum;
     TrustKeyVersionAlgorithmEnum["RSAOAEP3072"] = "rsa_oaep_3072";
 })(TrustKeyVersionAlgorithmEnum || (exports.TrustKeyVersionAlgorithmEnum = TrustKeyVersionAlgorithmEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustKeyVersionVersionStatusEnum;
 (function (TrustKeyVersionVersionStatusEnum) {
     TrustKeyVersionVersionStatusEnum["PENDINGACTIVATION"] = "pending_activation";

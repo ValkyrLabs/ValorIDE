@@ -34,29 +34,19 @@ const DataObject_1 = require("./DataObject");
 function KeyMetricFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        goalId: !(0, runtime_1.exists)(json, "goalId") ? undefined : json["goalId"],
-        metricName: !(0, runtime_1.exists)(json, "metricName") ? undefined : json["metricName"],
-        metricValue: !(0, runtime_1.exists)(json, "metricValue") ? undefined : json["metricValue"],
-        targetValue: !(0, runtime_1.exists)(json, "targetValue") ? undefined : json["targetValue"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'goalId': !(0, runtime_1.exists)(json, 'goalId') ? undefined : json['goalId'],
+        'metricName': !(0, runtime_1.exists)(json, 'metricName') ? undefined : json['metricName'],
+        'metricValue': !(0, runtime_1.exists)(json, 'metricValue') ? undefined : json['metricValue'],
+        'targetValue': !(0, runtime_1.exists)(json, 'targetValue') ? undefined : json['targetValue'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function KeyMetricToJSON(value) {
@@ -65,11 +55,11 @@ function KeyMetricToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        goalId: value.goalId,
-        metricName: value.metricName,
-        metricValue: value.metricValue,
-        targetValue: value.targetValue,
-        trashed: value.trashed,
+        'goalId': value.goalId,
+        'metricName': value.metricName,
+        'metricValue': value.metricValue,
+        'targetValue': value.targetValue,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=KeyMetric.js.map

@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { CreatorEarnings } from "@thorapi/model/CreatorEarnings";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { CreatorEarnings } from '@thorapi/model/CreatorEarnings'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type CreatorEarningsResponse = CreatorEarnings[];
+type CreatorEarningsResponse = CreatorEarnings[]
+type CreatorEarningsPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<CreatorEarnings>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type CreatorEarningsListQueryArg = {
+  example?: Partial<CreatorEarnings>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toCreatorEarningsList = (result: unknown): CreatorEarningsResponse => {
   if (Array.isArray(result)) {
-    return result as CreatorEarningsResponse;
+    return result as CreatorEarningsResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as CreatorEarningsResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as CreatorEarningsResponse) : []
+}
 
 export const CreatorEarningsService = createApi({
-  reducerPath: "CreatorEarnings", // This should remain unique
+  reducerPath: 'CreatorEarnings', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["CreatorEarnings"],
+  tagTypes: ['CreatorEarnings'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getCreatorEarningssPaged: build.query<
-      CreatorEarningsResponse,
-      { page: number; size?: number; example?: Partial<CreatorEarnings> }
-    >({
+    getCreatorEarningssPaged: build.query<CreatorEarningsResponse, CreatorEarningsPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `CreatorEarnings?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `CreatorEarnings?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toCreatorEarningsList(result);
+        const rows = toCreatorEarningsList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "CreatorEarnings" as const, id })),
-          { type: "CreatorEarnings", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'CreatorEarnings' as const, id })),
+          { type: 'CreatorEarnings', id: `PAGE_${page}` },
+          { type: 'CreatorEarnings', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getCreatorEarningss: build.query<
-      CreatorEarningsResponse,
-      { example?: Partial<CreatorEarnings> } | void
-    >({
+    getCreatorEarningss: build.query<CreatorEarningsResponse, CreatorEarningsListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,106 +82,86 @@ export const CreatorEarningsService = createApi({
         return `CreatorEarnings`;
       },
       providesTags: (result) => {
-        const rows = toCreatorEarningsList(result);
+        const rows = toCreatorEarningsList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "CreatorEarnings" as const, id })),
-          { type: "CreatorEarnings", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'CreatorEarnings' as const, id })),
+          { type: 'CreatorEarnings', id: 'LIST' },
+          { type: 'CreatorEarnings', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addCreatorEarnings: build.mutation<
-      CreatorEarnings,
-      Partial<CreatorEarnings>
-    >({
+    addCreatorEarnings: build.mutation<CreatorEarnings, Partial<CreatorEarnings>>({
       query: (body) => ({
         url: `CreatorEarnings`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "CreatorEarnings", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'CreatorEarnings', id: 'LIST' },
+        { type: 'CreatorEarnings', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getCreatorEarnings: build.query<CreatorEarnings, string>({
       query: (id) => `CreatorEarnings/${id}`,
-      providesTags: (result, error, id) => [{ type: "CreatorEarnings", id }],
+      providesTags: (result, error, id) => [{ type: 'CreatorEarnings', id }],
     }),
 
     // 5) Update
-    updateCreatorEarnings: build.mutation<
-      void,
-      Pick<CreatorEarnings, "id"> & Partial<CreatorEarnings>
-    >({
+    updateCreatorEarnings: build.mutation<CreatorEarnings, Pick<CreatorEarnings, 'id'> & Partial<CreatorEarnings>>({
       query: ({ id, ...patch }) => ({
         url: `CreatorEarnings/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            CreatorEarningsService.util.updateQueryData(
-              "getCreatorEarnings",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<CreatorEarnings, "id">) => [
-        { type: "CreatorEarnings", id },
-        { type: "CreatorEarnings", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<CreatorEarnings, 'id'>) => [
+        { type: 'CreatorEarnings', id },
+        { type: 'CreatorEarnings', id: 'LIST' },
+        { type: 'CreatorEarnings', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteCreatorEarnings: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteCreatorEarnings: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `CreatorEarnings/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "CreatorEarnings", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'CreatorEarnings', id },
+        { type: 'CreatorEarnings', id: 'LIST' },
+        { type: 'CreatorEarnings', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteCreatorEarningsCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteCreatorEarningsCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `CreatorEarnings/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "CreatorEarnings", id },
-        { type: "CreatorEarnings", id: "LIST" },
+        { type: 'CreatorEarnings', id },
+        { type: 'CreatorEarnings', id: 'LIST' },
+        { type: 'CreatorEarnings', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetCreatorEarningssPagedQuery`
 export const {
-  useGetCreatorEarningssPagedQuery, // immediate fetch
+  useGetCreatorEarningssPagedQuery,     // immediate fetch
   useLazyGetCreatorEarningssPagedQuery, // lazy fetch
   useGetCreatorEarningsQuery,
   useGetCreatorEarningssQuery,
@@ -180,4 +169,4 @@ export const {
   useUpdateCreatorEarningsMutation,
   useDeleteCreatorEarningsMutation,
   useDeleteCreatorEarningsCascadeMutation,
-} = CreatorEarningsService;
+} = CreatorEarningsService

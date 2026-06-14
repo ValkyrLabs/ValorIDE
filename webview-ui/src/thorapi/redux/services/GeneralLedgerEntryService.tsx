@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { GeneralLedgerEntry } from "@thorapi/model/GeneralLedgerEntry";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { GeneralLedgerEntry } from '@thorapi/model/GeneralLedgerEntry'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type GeneralLedgerEntryResponse = GeneralLedgerEntry[];
+type GeneralLedgerEntryResponse = GeneralLedgerEntry[]
+type GeneralLedgerEntryPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<GeneralLedgerEntry>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toGeneralLedgerEntryList = (
-  result: unknown,
-): GeneralLedgerEntryResponse => {
+type GeneralLedgerEntryListQueryArg = {
+  example?: Partial<GeneralLedgerEntry>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toGeneralLedgerEntryList = (result: unknown): GeneralLedgerEntryResponse => {
   if (Array.isArray(result)) {
-    return result as GeneralLedgerEntryResponse;
+    return result as GeneralLedgerEntryResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as GeneralLedgerEntryResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as GeneralLedgerEntryResponse) : []
+}
 
 export const GeneralLedgerEntryService = createApi({
-  reducerPath: "GeneralLedgerEntry", // This should remain unique
+  reducerPath: 'GeneralLedgerEntry', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["GeneralLedgerEntry"],
+  tagTypes: ['GeneralLedgerEntry'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getGeneralLedgerEntrysPaged: build.query<
-      GeneralLedgerEntryResponse,
-      { page: number; size?: number; example?: Partial<GeneralLedgerEntry> }
-    >({
+    getGeneralLedgerEntrysPaged: build.query<GeneralLedgerEntryResponse, GeneralLedgerEntryPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `GeneralLedgerEntry?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `GeneralLedgerEntry?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toGeneralLedgerEntryList(result);
+        const rows = toGeneralLedgerEntryList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "GeneralLedgerEntry" as const, id })),
-          { type: "GeneralLedgerEntry", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'GeneralLedgerEntry' as const, id })),
+          { type: 'GeneralLedgerEntry', id: `PAGE_${page}` },
+          { type: 'GeneralLedgerEntry', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getGeneralLedgerEntrys: build.query<
-      GeneralLedgerEntryResponse,
-      { example?: Partial<GeneralLedgerEntry> } | void
-    >({
+    getGeneralLedgerEntrys: build.query<GeneralLedgerEntryResponse, GeneralLedgerEntryListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,112 +82,86 @@ export const GeneralLedgerEntryService = createApi({
         return `GeneralLedgerEntry`;
       },
       providesTags: (result) => {
-        const rows = toGeneralLedgerEntryList(result);
+        const rows = toGeneralLedgerEntryList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "GeneralLedgerEntry" as const, id })),
-          { type: "GeneralLedgerEntry", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'GeneralLedgerEntry' as const, id })),
+          { type: 'GeneralLedgerEntry', id: 'LIST' },
+          { type: 'GeneralLedgerEntry', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addGeneralLedgerEntry: build.mutation<
-      GeneralLedgerEntry,
-      Partial<GeneralLedgerEntry>
-    >({
+    addGeneralLedgerEntry: build.mutation<GeneralLedgerEntry, Partial<GeneralLedgerEntry>>({
       query: (body) => ({
         url: `GeneralLedgerEntry`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "GeneralLedgerEntry", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'GeneralLedgerEntry', id: 'LIST' },
+        { type: 'GeneralLedgerEntry', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getGeneralLedgerEntry: build.query<GeneralLedgerEntry, string>({
       query: (id) => `GeneralLedgerEntry/${id}`,
-      providesTags: (result, error, id) => [{ type: "GeneralLedgerEntry", id }],
+      providesTags: (result, error, id) => [{ type: 'GeneralLedgerEntry', id }],
     }),
 
     // 5) Update
-    updateGeneralLedgerEntry: build.mutation<
-      void,
-      Pick<GeneralLedgerEntry, "id"> & Partial<GeneralLedgerEntry>
-    >({
+    updateGeneralLedgerEntry: build.mutation<GeneralLedgerEntry, Pick<GeneralLedgerEntry, 'id'> & Partial<GeneralLedgerEntry>>({
       query: ({ id, ...patch }) => ({
         url: `GeneralLedgerEntry/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            GeneralLedgerEntryService.util.updateQueryData(
-              "getGeneralLedgerEntry",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<GeneralLedgerEntry, "id">,
-      ) => [
-        { type: "GeneralLedgerEntry", id },
-        { type: "GeneralLedgerEntry", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<GeneralLedgerEntry, 'id'>) => [
+        { type: 'GeneralLedgerEntry', id },
+        { type: 'GeneralLedgerEntry', id: 'LIST' },
+        { type: 'GeneralLedgerEntry', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteGeneralLedgerEntry: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteGeneralLedgerEntry: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `GeneralLedgerEntry/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "GeneralLedgerEntry", id },
+        { type: 'GeneralLedgerEntry', id },
+        { type: 'GeneralLedgerEntry', id: 'LIST' },
+        { type: 'GeneralLedgerEntry', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteGeneralLedgerEntryCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteGeneralLedgerEntryCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `GeneralLedgerEntry/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "GeneralLedgerEntry", id },
-        { type: "GeneralLedgerEntry", id: "LIST" },
+        { type: 'GeneralLedgerEntry', id },
+        { type: 'GeneralLedgerEntry', id: 'LIST' },
+        { type: 'GeneralLedgerEntry', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetGeneralLedgerEntrysPagedQuery`
 export const {
-  useGetGeneralLedgerEntrysPagedQuery, // immediate fetch
+  useGetGeneralLedgerEntrysPagedQuery,     // immediate fetch
   useLazyGetGeneralLedgerEntrysPagedQuery, // lazy fetch
   useGetGeneralLedgerEntryQuery,
   useGetGeneralLedgerEntrysQuery,
@@ -190,4 +169,4 @@ export const {
   useUpdateGeneralLedgerEntryMutation,
   useDeleteGeneralLedgerEntryMutation,
   useDeleteGeneralLedgerEntryCascadeMutation,
-} = GeneralLedgerEntryService;
+} = GeneralLedgerEntryService

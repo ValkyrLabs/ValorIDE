@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_PRINCIPAL_REQUEST,
-  FETCH_PRINCIPAL_REQUEST,
-  LIST_PRINCIPAL_REQUEST,
-  UPDATE_PRINCIPAL_REQUEST,
-  DELETE_PRINCIPAL_REQUEST,
-  addPrincipalFailure,
-  addPrincipalSuccess,
-  fetchPrincipalFailure,
-  fetchPrincipalSuccess,
-  listPrincipalFailure,
-  listPrincipalSuccess,
-  updatePrincipalFailure,
-  updatePrincipalSuccess,
-  deletePrincipalFailure,
-  deletePrincipalSuccess,
-} from "../actions/PrincipalApiAction";
+
+    ADD_PRINCIPAL_REQUEST,
+    FETCH_PRINCIPAL_REQUEST,
+    LIST_PRINCIPAL_REQUEST,
+    UPDATE_PRINCIPAL_REQUEST,
+    DELETE_PRINCIPAL_REQUEST,
+
+    addPrincipalFailure,
+    addPrincipalSuccess,
+
+    fetchPrincipalFailure,
+    fetchPrincipalSuccess,
+    
+    listPrincipalFailure,
+    listPrincipalSuccess,
+
+    updatePrincipalFailure,
+    updatePrincipalSuccess,
+    
+    deletePrincipalFailure,
+    deletePrincipalSuccess,
+    
+} from '../actions/PrincipalApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Principal
 */
 
-export const PrincipalMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Principal MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const PrincipalMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("Principal MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

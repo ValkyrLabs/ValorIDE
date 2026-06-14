@@ -36,18 +36,12 @@ const _1 = require("./");
 function OrganizationAddonSubscriptionFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        organization: !(0, runtime_1.exists)(json, "organization")
-            ? undefined
-            : (0, _1.OrganizationFromJSON)(json["organization"]),
-        planTier: !(0, runtime_1.exists)(json, "planTier") ? undefined : json["planTier"],
-        monthlyPriceCredits: !(0, runtime_1.exists)(json, "monthlyPriceCredits")
-            ? undefined
-            : json["monthlyPriceCredits"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        cancelledAt: !(0, runtime_1.exists)(json, "cancelledAt")
-            ? undefined
-            : new Date(json["cancelledAt"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
+        'organization': !(0, runtime_1.exists)(json, 'organization') ? undefined : (0, _1.OrganizationFromJSON)(json['organization']),
+        'planTier': !(0, runtime_1.exists)(json, 'planTier') ? undefined : json['planTier'],
+        'monthlyPriceCredits': !(0, runtime_1.exists)(json, 'monthlyPriceCredits') ? undefined : json['monthlyPriceCredits'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'cancelledAt': !(0, runtime_1.exists)(json, 'cancelledAt') ? undefined : new Date(json['cancelledAt']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
     };
 }
 function OrganizationAddonSubscriptionToJSON(value) {
@@ -56,19 +50,17 @@ function OrganizationAddonSubscriptionToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        organization: (0, _1.OrganizationToJSON)(value.organization),
-        planTier: value.planTier,
-        monthlyPriceCredits: value.monthlyPriceCredits,
-        status: value.status,
-        cancelledAt: value.cancelledAt === undefined
-            ? undefined
-            : value.cancelledAt.toISOString(),
+        'organization': (0, _1.OrganizationToJSON)(value.organization),
+        'planTier': value.planTier,
+        'monthlyPriceCredits': value.monthlyPriceCredits,
+        'status': value.status,
+        'cancelledAt': value.cancelledAt === undefined ? undefined : value.cancelledAt.toISOString(),
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var OrganizationAddonSubscriptionPlanTierEnum;
 (function (OrganizationAddonSubscriptionPlanTierEnum) {
     OrganizationAddonSubscriptionPlanTierEnum["FREE"] = "free";
@@ -79,9 +71,9 @@ var OrganizationAddonSubscriptionPlanTierEnum;
     OrganizationAddonSubscriptionPlanTierEnum["ENTERPRISE"] = "enterprise";
 })(OrganizationAddonSubscriptionPlanTierEnum || (exports.OrganizationAddonSubscriptionPlanTierEnum = OrganizationAddonSubscriptionPlanTierEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var OrganizationAddonSubscriptionStatusEnum;
 (function (OrganizationAddonSubscriptionStatusEnum) {
     OrganizationAddonSubscriptionStatusEnum["ACTIVE"] = "active";

@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { Logout } from "@thorapi/model/Logout";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { Logout } from '@thorapi/model/Logout'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type LogoutResponse = Logout[];
+type LogoutResponse = Logout[]
+type LogoutPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<Logout>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type LogoutListQueryArg = {
+  example?: Partial<Logout>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toLogoutList = (result: unknown): LogoutResponse => {
   if (Array.isArray(result)) {
-    return result as LogoutResponse;
+    return result as LogoutResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as LogoutResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as LogoutResponse) : []
+}
 
 export const LogoutService = createApi({
-  reducerPath: "Logout", // This should remain unique
+  reducerPath: 'Logout', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["Logout"],
+  tagTypes: ['Logout'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getLogoutsPaged: build.query<
-      LogoutResponse,
-      { page: number; size?: number; example?: Partial<Logout> }
-    >({
+    getLogoutsPaged: build.query<LogoutResponse, LogoutPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Logout?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Logout?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toLogoutList(result);
+        const rows = toLogoutList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Logout" as const, id })),
-          { type: "Logout", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'Logout' as const, id })),
+          { type: 'Logout', id: `PAGE_${page}` },
+          { type: 'Logout', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getLogouts: build.query<
-      LogoutResponse,
-      { example?: Partial<Logout> } | void
-    >({
+    getLogouts: build.query<LogoutResponse, LogoutListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const LogoutService = createApi({
         return `Logout`;
       },
       providesTags: (result) => {
-        const rows = toLogoutList(result);
+        const rows = toLogoutList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Logout" as const, id })),
-          { type: "Logout", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'Logout' as const, id })),
+          { type: 'Logout', id: 'LIST' },
+          { type: 'Logout', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,42 +97,32 @@ export const LogoutService = createApi({
     addLogout: build.mutation<Logout, Partial<Logout>>({
       query: (body) => ({
         url: `Logout`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "Logout", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'Logout', id: 'LIST' },
+        { type: 'Logout', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getLogout: build.query<Logout, string>({
       query: (id) => `Logout/${id}`,
-      providesTags: (result, error, id) => [{ type: "Logout", id }],
+      providesTags: (result, error, id) => [{ type: 'Logout', id }],
     }),
 
     // 5) Update
-    updateLogout: build.mutation<void, Pick<Logout, "id"> & Partial<Logout>>({
+    updateLogout: build.mutation<Logout, Pick<Logout, 'id'> & Partial<Logout>>({
       query: ({ id, ...patch }) => ({
         url: `Logout/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            LogoutService.util.updateQueryData("getLogout", id, (draft) => {
-              Object.assign(draft, patch);
-            }),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<Logout, "id">) => [
-        { type: "Logout", id },
-        { type: "Logout", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<Logout, 'id'>) => [
+        { type: 'Logout', id },
+        { type: 'Logout', id: 'LIST' },
+        { type: 'Logout', id: 'PARTIAL-LIST' },
       ],
     }),
 
@@ -131,35 +131,37 @@ export const LogoutService = createApi({
       query(id) {
         return {
           url: `Logout/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "Logout", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'Logout', id },
+        { type: 'Logout', id: 'LIST' },
+        { type: 'Logout', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteLogoutCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteLogoutCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `Logout/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "Logout", id },
-        { type: "Logout", id: "LIST" },
+        { type: 'Logout', id },
+        { type: 'Logout', id: 'LIST' },
+        { type: 'Logout', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetLogoutsPagedQuery`
 export const {
-  useGetLogoutsPagedQuery, // immediate fetch
+  useGetLogoutsPagedQuery,     // immediate fetch
   useLazyGetLogoutsPagedQuery, // lazy fetch
   useGetLogoutQuery,
   useGetLogoutsQuery,
@@ -167,4 +169,4 @@ export const {
   useUpdateLogoutMutation,
   useDeleteLogoutMutation,
   useDeleteLogoutCascadeMutation,
-} = LogoutService;
+} = LogoutService

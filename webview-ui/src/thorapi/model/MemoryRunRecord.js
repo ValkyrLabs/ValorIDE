@@ -35,44 +35,24 @@ const DataObject_1 = require("./DataObject");
 function MemoryRunRecordFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        runNumber: !(0, runtime_1.exists)(json, "runNumber") ? undefined : json["runNumber"],
-        workflowId: !(0, runtime_1.exists)(json, "workflowId") ? undefined : json["workflowId"],
-        workflowName: !(0, runtime_1.exists)(json, "workflowName")
-            ? undefined
-            : json["workflowName"],
-        creditsBurned: !(0, runtime_1.exists)(json, "creditsBurned")
-            ? undefined
-            : json["creditsBurned"],
-        qualitySignal: !(0, runtime_1.exists)(json, "qualitySignal")
-            ? undefined
-            : json["qualitySignal"],
-        contextUsedPct: !(0, runtime_1.exists)(json, "contextUsedPct")
-            ? undefined
-            : json["contextUsedPct"],
-        wastedPct: !(0, runtime_1.exists)(json, "wastedPct") ? undefined : json["wastedPct"],
-        memoriesUsed: !(0, runtime_1.exists)(json, "memoriesUsed")
-            ? undefined
-            : json["memoriesUsed"],
-        runAt: !(0, runtime_1.exists)(json, "runAt") ? undefined : new Date(json["runAt"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'runNumber': !(0, runtime_1.exists)(json, 'runNumber') ? undefined : json['runNumber'],
+        'workflowId': !(0, runtime_1.exists)(json, 'workflowId') ? undefined : json['workflowId'],
+        'workflowName': !(0, runtime_1.exists)(json, 'workflowName') ? undefined : json['workflowName'],
+        'creditsBurned': !(0, runtime_1.exists)(json, 'creditsBurned') ? undefined : json['creditsBurned'],
+        'qualitySignal': !(0, runtime_1.exists)(json, 'qualitySignal') ? undefined : json['qualitySignal'],
+        'contextUsedPct': !(0, runtime_1.exists)(json, 'contextUsedPct') ? undefined : json['contextUsedPct'],
+        'wastedPct': !(0, runtime_1.exists)(json, 'wastedPct') ? undefined : json['wastedPct'],
+        'memoriesUsed': !(0, runtime_1.exists)(json, 'memoriesUsed') ? undefined : json['memoriesUsed'],
+        'runAt': !(0, runtime_1.exists)(json, 'runAt') ? undefined : new Date(json['runAt']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function MemoryRunRecordToJSON(value) {
@@ -81,22 +61,22 @@ function MemoryRunRecordToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        runNumber: value.runNumber,
-        workflowId: value.workflowId,
-        workflowName: value.workflowName,
-        creditsBurned: value.creditsBurned,
-        qualitySignal: value.qualitySignal,
-        contextUsedPct: value.contextUsedPct,
-        wastedPct: value.wastedPct,
-        memoriesUsed: value.memoriesUsed,
-        runAt: value.runAt === undefined ? undefined : value.runAt.toISOString(),
-        trashed: value.trashed,
+        'runNumber': value.runNumber,
+        'workflowId': value.workflowId,
+        'workflowName': value.workflowName,
+        'creditsBurned': value.creditsBurned,
+        'qualitySignal': value.qualitySignal,
+        'contextUsedPct': value.contextUsedPct,
+        'wastedPct': value.wastedPct,
+        'memoriesUsed': value.memoriesUsed,
+        'runAt': value.runAt === undefined ? undefined : value.runAt.toISOString(),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var MemoryRunRecordQualitySignalEnum;
 (function (MemoryRunRecordQualitySignalEnum) {
     MemoryRunRecordQualitySignalEnum["GOOD"] = "good";

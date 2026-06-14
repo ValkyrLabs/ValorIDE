@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductFeaturePlanTierEnum = exports.ProductFeatureValueTypeEnum = exports.ProductFeatureFeatureScopeEnum = exports.ProductFeatureTypeEnum = void 0;
+exports.ProductFeatureValueTypeEnum = exports.ProductFeatureFeatureScopeEnum = exports.ProductFeatureTypeEnum = void 0;
 exports.ProductFeatureFromJSON = ProductFeatureFromJSON;
 exports.ProductFeatureToJSON = ProductFeatureToJSON;
 // tslint:disable
@@ -32,45 +32,32 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 const runtime_1 = require("../src/runtime");
 const DataObject_1 = require("./DataObject");
+const _1 = require("./");
 function ProductFeatureFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        productId: !(0, runtime_1.exists)(json, "productId") ? undefined : json["productId"],
-        price: !(0, runtime_1.exists)(json, "price") ? undefined : json["price"],
-        type: !(0, runtime_1.exists)(json, "type") ? undefined : json["type"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        featureKey: !(0, runtime_1.exists)(json, "featureKey") ? undefined : json["featureKey"],
-        featureScope: !(0, runtime_1.exists)(json, "featureScope")
-            ? undefined
-            : json["featureScope"],
-        valueType: !(0, runtime_1.exists)(json, "valueType") ? undefined : json["valueType"],
-        limitValue: !(0, runtime_1.exists)(json, "limitValue") ? undefined : json["limitValue"],
-        booleanValue: !(0, runtime_1.exists)(json, "booleanValue")
-            ? undefined
-            : json["booleanValue"],
-        stringValue: !(0, runtime_1.exists)(json, "stringValue") ? undefined : json["stringValue"],
-        enabled: !(0, runtime_1.exists)(json, "enabled") ? undefined : json["enabled"],
-        planTier: !(0, runtime_1.exists)(json, "planTier") ? undefined : json["planTier"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'productId': !(0, runtime_1.exists)(json, 'productId') ? undefined : json['productId'],
+        'price': !(0, runtime_1.exists)(json, 'price') ? undefined : json['price'],
+        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'featureKey': !(0, runtime_1.exists)(json, 'featureKey') ? undefined : json['featureKey'],
+        'featureScope': !(0, runtime_1.exists)(json, 'featureScope') ? undefined : json['featureScope'],
+        'valueType': !(0, runtime_1.exists)(json, 'valueType') ? undefined : json['valueType'],
+        'limitValue': !(0, runtime_1.exists)(json, 'limitValue') ? undefined : json['limitValue'],
+        'booleanValue': !(0, runtime_1.exists)(json, 'booleanValue') ? undefined : json['booleanValue'],
+        'stringValue': !(0, runtime_1.exists)(json, 'stringValue') ? undefined : json['stringValue'],
+        'enabled': !(0, runtime_1.exists)(json, 'enabled') ? undefined : json['enabled'],
+        'planTierId': !(0, runtime_1.exists)(json, 'planTierId') ? undefined : (0, _1.AccountPlanFromJSON)(json['planTierId']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ProductFeatureToJSON(value) {
@@ -79,37 +66,38 @@ function ProductFeatureToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        productId: value.productId,
-        price: value.price,
-        type: value.type,
-        name: value.name,
-        description: value.description,
-        featureKey: value.featureKey,
-        featureScope: value.featureScope,
-        valueType: value.valueType,
-        limitValue: value.limitValue,
-        booleanValue: value.booleanValue,
-        stringValue: value.stringValue,
-        enabled: value.enabled,
-        planTier: value.planTier,
-        trashed: value.trashed,
+        'productId': value.productId,
+        'price': value.price,
+        'type': value.type,
+        'name': value.name,
+        'description': value.description,
+        'featureKey': value.featureKey,
+        'featureScope': value.featureScope,
+        'valueType': value.valueType,
+        'limitValue': value.limitValue,
+        'booleanValue': value.booleanValue,
+        'stringValue': value.stringValue,
+        'enabled': value.enabled,
+        'planTierId': (0, _1.AccountPlanToJSON)(value.planTierId),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ProductFeatureTypeEnum;
 (function (ProductFeatureTypeEnum) {
     ProductFeatureTypeEnum["PERCENTAGE"] = "percentage";
     ProductFeatureTypeEnum["FIXED"] = "fixed";
 })(ProductFeatureTypeEnum || (exports.ProductFeatureTypeEnum = ProductFeatureTypeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ProductFeatureFeatureScopeEnum;
 (function (ProductFeatureFeatureScopeEnum) {
+    ProductFeatureFeatureScopeEnum["CREDITS"] = "credits";
     ProductFeatureFeatureScopeEnum["PLATFORM"] = "platform";
     ProductFeatureFeatureScopeEnum["ORGANIZATION"] = "organization";
     ProductFeatureFeatureScopeEnum["APPLICATION"] = "application";
@@ -118,26 +106,13 @@ var ProductFeatureFeatureScopeEnum;
     ProductFeatureFeatureScopeEnum["UX"] = "ux";
 })(ProductFeatureFeatureScopeEnum || (exports.ProductFeatureFeatureScopeEnum = ProductFeatureFeatureScopeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ProductFeatureValueTypeEnum;
 (function (ProductFeatureValueTypeEnum) {
     ProductFeatureValueTypeEnum["NUMBER"] = "number";
     ProductFeatureValueTypeEnum["BOOLEAN"] = "boolean";
     ProductFeatureValueTypeEnum["STRING"] = "string";
 })(ProductFeatureValueTypeEnum || (exports.ProductFeatureValueTypeEnum = ProductFeatureValueTypeEnum = {}));
-/**
- * @export
- * @enum {string}
- */
-var ProductFeaturePlanTierEnum;
-(function (ProductFeaturePlanTierEnum) {
-    ProductFeaturePlanTierEnum["FREE"] = "free";
-    ProductFeaturePlanTierEnum["SOLO"] = "solo";
-    ProductFeaturePlanTierEnum["PRO"] = "pro";
-    ProductFeaturePlanTierEnum["TEAM"] = "team";
-    ProductFeaturePlanTierEnum["RESELLER"] = "reseller";
-    ProductFeaturePlanTierEnum["ENTERPRISE"] = "enterprise";
-})(ProductFeaturePlanTierEnum || (exports.ProductFeaturePlanTierEnum = ProductFeaturePlanTierEnum = {}));
 //# sourceMappingURL=ProductFeature.js.map

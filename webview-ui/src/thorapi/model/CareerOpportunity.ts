@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,214 +36,188 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface CareerOpportunity
  */
-export type CareerOpportunity = DataObject & {
-  /**
-   * Opportunity title (e.g., \"ThorAPI Implementation Engineer\")
-   * @type {string}
-   * @memberof CareerOpportunity
-   */
-  title?: string;
-  /**
-   * Type of opportunity
-   * @type {string}
-   * @memberof CareerOpportunity
-   */
-  opportunityType?: CareerOpportunityOpportunityTypeEnum;
-  /**
-   * Full description of the role/engagement
-   * @type {string}
-   * @memberof CareerOpportunity
-   */
-  description?: string;
-  /**
-   * JSON array (stored as string) of must-have technical skills
-   * @type {string}
-   * @memberof CareerOpportunity
-   */
-  requiredSkills?: string;
-  /**
-   * JSON array (stored as string) of nice-to-have skills
-   * @type {string}
-   * @memberof CareerOpportunity
-   */
-  preferredSkills?: string;
-  /**
-   * Minimum years of relevant experience
-   * @type {number}
-   * @memberof CareerOpportunity
-   */
-  experienceYearsMin?: number;
-  /**
-   * Maximum years (e.g., for junior roles)
-   * @type {number}
-   * @memberof CareerOpportunity
-   */
-  experienceYearsMax?: number;
-  /**
-   * Employment/engagement type
-   * @type {string}
-   * @memberof CareerOpportunity
-   */
-  commitment?: CareerOpportunityCommitmentEnum;
-  /**
-   * Whether opportunity is currently open
-   * @type {boolean}
-   * @memberof CareerOpportunity
-   */
-  isActive?: boolean;
-  /**
-   * When opportunity was posted
-   * @type {Date}
-   * @memberof CareerOpportunity
-   */
-  createdDate?: Date;
-  /**
-   * Last update time
-   * @type {Date}
-   * @memberof CareerOpportunity
-   */
-  updatedDate?: Date;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof CareerOpportunity
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof CareerOpportunity
-   */
-  readonly ownerId?: string;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof CareerOpportunity
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof CareerOpportunity
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof CareerOpportunity
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof CareerOpportunity
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof CareerOpportunity
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof CareerOpportunity
-   */
-  trashed?: boolean;
-};
+export type CareerOpportunity  = DataObject & {
+    /**
+     * Opportunity title (e.g., \"ThorAPI Implementation Engineer\")
+     * @type {string}
+     * @memberof CareerOpportunity
+     */
+    title?: string;
+    /**
+     * Type of opportunity
+     * @type {string}
+     * @memberof CareerOpportunity
+     */
+    opportunityType?: CareerOpportunityOpportunityTypeEnum;
+    /**
+     * Full description of the role/engagement
+     * @type {string}
+     * @memberof CareerOpportunity
+     */
+    description?: string;
+    /**
+     * JSON array (stored as string) of must-have technical skills
+     * @type {string}
+     * @memberof CareerOpportunity
+     */
+    requiredSkills?: string;
+    /**
+     * JSON array (stored as string) of nice-to-have skills
+     * @type {string}
+     * @memberof CareerOpportunity
+     */
+    preferredSkills?: string;
+    /**
+     * Minimum years of relevant experience
+     * @type {number}
+     * @memberof CareerOpportunity
+     */
+    experienceYearsMin?: number;
+    /**
+     * Maximum years (e.g., for junior roles)
+     * @type {number}
+     * @memberof CareerOpportunity
+     */
+    experienceYearsMax?: number;
+    /**
+     * Employment/engagement type
+     * @type {string}
+     * @memberof CareerOpportunity
+     */
+    commitment?: CareerOpportunityCommitmentEnum;
+    /**
+     * Whether opportunity is currently open
+     * @type {boolean}
+     * @memberof CareerOpportunity
+     */
+    isActive?: boolean;
+    /**
+     * When opportunity was posted
+     * @type {Date}
+     * @memberof CareerOpportunity
+     */
+    createdDate?: Date;
+    /**
+     * Last update time
+     * @type {Date}
+     * @memberof CareerOpportunity
+     */
+    updatedDate?: Date;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof CareerOpportunity
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof CareerOpportunity
+     */
+    readonly ownerId?: string;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof CareerOpportunity
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof CareerOpportunity
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof CareerOpportunity
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof CareerOpportunity
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof CareerOpportunity
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof CareerOpportunity
+     */
+    trashed?: boolean;
+}
 
 export function CareerOpportunityFromJSON(json: any): CareerOpportunity {
-  return {
-    ...DataObjectFromJSON(json),
-    title: !exists(json, "title") ? undefined : json["title"],
-    opportunityType: !exists(json, "opportunityType")
-      ? undefined
-      : json["opportunityType"],
-    description: !exists(json, "description") ? undefined : json["description"],
-    requiredSkills: !exists(json, "requiredSkills")
-      ? undefined
-      : json["requiredSkills"],
-    preferredSkills: !exists(json, "preferredSkills")
-      ? undefined
-      : json["preferredSkills"],
-    experienceYearsMin: !exists(json, "experienceYearsMin")
-      ? undefined
-      : json["experienceYearsMin"],
-    experienceYearsMax: !exists(json, "experienceYearsMax")
-      ? undefined
-      : json["experienceYearsMax"],
-    commitment: !exists(json, "commitment") ? undefined : json["commitment"],
-    isActive: !exists(json, "isActive") ? undefined : json["isActive"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    updatedDate: !exists(json, "updatedDate")
-      ? undefined
-      : new Date(json["updatedDate"]),
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'title': !exists(json, 'title') ? undefined : json['title'],
+        'opportunityType': !exists(json, 'opportunityType') ? undefined : json['opportunityType'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'requiredSkills': !exists(json, 'requiredSkills') ? undefined : json['requiredSkills'],
+        'preferredSkills': !exists(json, 'preferredSkills') ? undefined : json['preferredSkills'],
+        'experienceYearsMin': !exists(json, 'experienceYearsMin') ? undefined : json['experienceYearsMin'],
+        'experienceYearsMax': !exists(json, 'experienceYearsMax') ? undefined : json['experienceYearsMax'],
+        'commitment': !exists(json, 'commitment') ? undefined : json['commitment'],
+        'isActive': !exists(json, 'isActive') ? undefined : json['isActive'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'updatedDate': !exists(json, 'updatedDate') ? undefined : new Date(json['updatedDate']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function CareerOpportunityToJSON(value?: CareerOpportunity): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    title: value.title,
-    opportunityType: value.opportunityType,
-    description: value.description,
-    requiredSkills: value.requiredSkills,
-    preferredSkills: value.preferredSkills,
-    experienceYearsMin: value.experienceYearsMin,
-    experienceYearsMax: value.experienceYearsMax,
-    commitment: value.commitment,
-    isActive: value.isActive,
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
-    updatedDate:
-      value.updatedDate === undefined
-        ? undefined
-        : value.updatedDate.toISOString(),
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'title': value.title,
+        'opportunityType': value.opportunityType,
+        'description': value.description,
+        'requiredSkills': value.requiredSkills,
+        'preferredSkills': value.preferredSkills,
+        'experienceYearsMin': value.experienceYearsMin,
+        'experienceYearsMax': value.experienceYearsMax,
+        'commitment': value.commitment,
+        'isActive': value.isActive,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
+        'updatedDate': value.updatedDate === undefined ? undefined : value.updatedDate.toISOString(),
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum CareerOpportunityOpportunityTypeEnum {
-  DIRECT_HIRE = "direct_hire",
-  CONSULTING_ENGAGEMENT = "consulting_engagement",
-  RESELLER_PARTNER = "reseller_partner",
-  OPEN_SOURCE_CONTRIBUTOR = "open_source_contributor",
+    DIRECT_HIRE = 'direct_hire',
+    CONSULTING_ENGAGEMENT = 'consulting_engagement',
+    RESELLER_PARTNER = 'reseller_partner',
+    OPEN_SOURCE_CONTRIBUTOR = 'open_source_contributor'
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum CareerOpportunityCommitmentEnum {
-  FULL_TIME = "full_time",
-  PART_TIME = "part_time",
-  CONTRACT = "contract",
-  HOURLY = "hourly",
+    FULL_TIME = 'full_time',
+    PART_TIME = 'part_time',
+    CONTRACT = 'contract',
+    HOURLY = 'hourly'
 }
+
+

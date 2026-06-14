@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { WorkflowGraphEdge } from "@thorapi/model/WorkflowGraphEdge";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { WorkflowGraphEdge } from '@thorapi/model/WorkflowGraphEdge'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type WorkflowGraphEdgeResponse = WorkflowGraphEdge[];
+type WorkflowGraphEdgeResponse = WorkflowGraphEdge[]
+type WorkflowGraphEdgePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<WorkflowGraphEdge>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toWorkflowGraphEdgeList = (
-  result: unknown,
-): WorkflowGraphEdgeResponse => {
+type WorkflowGraphEdgeListQueryArg = {
+  example?: Partial<WorkflowGraphEdge>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toWorkflowGraphEdgeList = (result: unknown): WorkflowGraphEdgeResponse => {
   if (Array.isArray(result)) {
-    return result as WorkflowGraphEdgeResponse;
+    return result as WorkflowGraphEdgeResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as WorkflowGraphEdgeResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as WorkflowGraphEdgeResponse) : []
+}
 
 export const WorkflowGraphEdgeService = createApi({
-  reducerPath: "WorkflowGraphEdge", // This should remain unique
+  reducerPath: 'WorkflowGraphEdge', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["WorkflowGraphEdge"],
+  tagTypes: ['WorkflowGraphEdge'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getWorkflowGraphEdgesPaged: build.query<
-      WorkflowGraphEdgeResponse,
-      { page: number; size?: number; example?: Partial<WorkflowGraphEdge> }
-    >({
+    getWorkflowGraphEdgesPaged: build.query<WorkflowGraphEdgeResponse, WorkflowGraphEdgePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `WorkflowGraphEdge?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `WorkflowGraphEdge?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toWorkflowGraphEdgeList(result);
+        const rows = toWorkflowGraphEdgeList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "WorkflowGraphEdge" as const, id })),
-          { type: "WorkflowGraphEdge", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'WorkflowGraphEdge' as const, id })),
+          { type: 'WorkflowGraphEdge', id: `PAGE_${page}` },
+          { type: 'WorkflowGraphEdge', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getWorkflowGraphEdges: build.query<
-      WorkflowGraphEdgeResponse,
-      { example?: Partial<WorkflowGraphEdge> } | void
-    >({
+    getWorkflowGraphEdges: build.query<WorkflowGraphEdgeResponse, WorkflowGraphEdgeListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,112 +82,86 @@ export const WorkflowGraphEdgeService = createApi({
         return `WorkflowGraphEdge`;
       },
       providesTags: (result) => {
-        const rows = toWorkflowGraphEdgeList(result);
+        const rows = toWorkflowGraphEdgeList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "WorkflowGraphEdge" as const, id })),
-          { type: "WorkflowGraphEdge", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'WorkflowGraphEdge' as const, id })),
+          { type: 'WorkflowGraphEdge', id: 'LIST' },
+          { type: 'WorkflowGraphEdge', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addWorkflowGraphEdge: build.mutation<
-      WorkflowGraphEdge,
-      Partial<WorkflowGraphEdge>
-    >({
+    addWorkflowGraphEdge: build.mutation<WorkflowGraphEdge, Partial<WorkflowGraphEdge>>({
       query: (body) => ({
         url: `WorkflowGraphEdge`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "WorkflowGraphEdge", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'WorkflowGraphEdge', id: 'LIST' },
+        { type: 'WorkflowGraphEdge', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getWorkflowGraphEdge: build.query<WorkflowGraphEdge, string>({
       query: (id) => `WorkflowGraphEdge/${id}`,
-      providesTags: (result, error, id) => [{ type: "WorkflowGraphEdge", id }],
+      providesTags: (result, error, id) => [{ type: 'WorkflowGraphEdge', id }],
     }),
 
     // 5) Update
-    updateWorkflowGraphEdge: build.mutation<
-      void,
-      Pick<WorkflowGraphEdge, "id"> & Partial<WorkflowGraphEdge>
-    >({
+    updateWorkflowGraphEdge: build.mutation<WorkflowGraphEdge, Pick<WorkflowGraphEdge, 'id'> & Partial<WorkflowGraphEdge>>({
       query: ({ id, ...patch }) => ({
         url: `WorkflowGraphEdge/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            WorkflowGraphEdgeService.util.updateQueryData(
-              "getWorkflowGraphEdge",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<WorkflowGraphEdge, "id">,
-      ) => [
-        { type: "WorkflowGraphEdge", id },
-        { type: "WorkflowGraphEdge", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<WorkflowGraphEdge, 'id'>) => [
+        { type: 'WorkflowGraphEdge', id },
+        { type: 'WorkflowGraphEdge', id: 'LIST' },
+        { type: 'WorkflowGraphEdge', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteWorkflowGraphEdge: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteWorkflowGraphEdge: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `WorkflowGraphEdge/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "WorkflowGraphEdge", id },
+        { type: 'WorkflowGraphEdge', id },
+        { type: 'WorkflowGraphEdge', id: 'LIST' },
+        { type: 'WorkflowGraphEdge', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteWorkflowGraphEdgeCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteWorkflowGraphEdgeCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `WorkflowGraphEdge/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "WorkflowGraphEdge", id },
-        { type: "WorkflowGraphEdge", id: "LIST" },
+        { type: 'WorkflowGraphEdge', id },
+        { type: 'WorkflowGraphEdge', id: 'LIST' },
+        { type: 'WorkflowGraphEdge', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetWorkflowGraphEdgesPagedQuery`
 export const {
-  useGetWorkflowGraphEdgesPagedQuery, // immediate fetch
+  useGetWorkflowGraphEdgesPagedQuery,     // immediate fetch
   useLazyGetWorkflowGraphEdgesPagedQuery, // lazy fetch
   useGetWorkflowGraphEdgeQuery,
   useGetWorkflowGraphEdgesQuery,
@@ -190,4 +169,4 @@ export const {
   useUpdateWorkflowGraphEdgeMutation,
   useDeleteWorkflowGraphEdgeMutation,
   useDeleteWorkflowGraphEdgeCascadeMutation,
-} = WorkflowGraphEdgeService;
+} = WorkflowGraphEdgeService

@@ -18,421 +18,359 @@ Template file: typescript-redux-query/apis.mustache
 Description: LogoutApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import { Logout, LogoutFromJSON, LogoutToJSON } from "../model";
+    Logout,
+    LogoutFromJSON,
+    LogoutToJSON,
+} from '../model';
 
 export interface DeleteLogoutApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetLogoutApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetLogoutListApiRequest {
-  page?: number;
-  size?: number;
-  sort?: Array<string>;
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
+    example?: string;
 }
 
 export interface PatchLogoutByIdApiRequest {
-  id: string;
-  logout: Logout;
+    id: string;
+    logout: Logout;
 }
 
 export interface PostLogoutApiRequest {
-  logout: Logout;
+    logout: Logout;
 }
 
 export interface UpdateLogoutApiRequest {
-  id: string;
-  logout: Logout;
+    id: string;
+    logout: Logout;
 }
+
 
 /**
  * Deletes a specific Logout.
  * Delete a Logout.
  */
-function deleteLogoutRaw<T>(
-  requestParameters: DeleteLogoutApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteLogout.",
-    );
-  }
+function deleteLogoutRaw<T>(requestParameters: DeleteLogoutApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteLogout.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Logout/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Logout/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific Logout.
- * Delete a Logout.
- */
-export function deleteLogout<T>(
-  requestParameters: DeleteLogoutApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteLogoutRaw(requestParameters, requestConfig);
+* Deletes a specific Logout.
+* Delete a Logout.
+*/
+export function deleteLogout<T>(requestParameters: DeleteLogoutApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteLogoutRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single Logout for a specific uid.
  * Retrieve a single Logout
  */
-function getLogoutRaw<T>(
-  requestParameters: GetLogoutApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Logout> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getLogout.",
-    );
-  }
+function getLogoutRaw<T>(requestParameters: GetLogoutApiRequest, requestConfig: runtime.TypedQueryConfig<T, Logout> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getLogout.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Logout/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(LogoutFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Logout/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(LogoutFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single Logout for a specific uid.
- * Retrieve a single Logout
- */
-export function getLogout<T>(
-  requestParameters: GetLogoutApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Logout>,
-): QueryConfig<T> {
-  return getLogoutRaw(requestParameters, requestConfig);
+* Retrieves a single Logout for a specific uid.
+* Retrieve a single Logout
+*/
+export function getLogout<T>(requestParameters: GetLogoutApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Logout>): QueryConfig<T> {
+    return getLogoutRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Logouts.
  * Retrieve a list of Logouts
  */
-function getLogoutListRaw<T>(
-  requestParameters: GetLogoutListApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Array<Logout>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getLogoutListRaw<T>(requestParameters: GetLogoutListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<Logout>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  queryParameters = {};
+    queryParameters = {};
 
-  if (requestParameters.page !== undefined) {
-    queryParameters["page"] = requestParameters.page;
-  }
 
-  if (requestParameters.size !== undefined) {
-    queryParameters["size"] = requestParameters.size;
-  }
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  if (requestParameters.sort) {
-    queryParameters["sort"] = requestParameters.sort;
-  }
 
-  const headerParameters: runtime.HttpHeaders = {};
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Logout`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(LogoutFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.example !== undefined) {
+        queryParameters['example'] = requestParameters.example;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Logout`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(LogoutFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of Logouts.
- * Retrieve a list of Logouts
- */
-export function getLogoutList<T>(
-  requestParameters: GetLogoutListApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Array<Logout>>,
-): QueryConfig<T> {
-  return getLogoutListRaw(requestParameters, requestConfig);
-}
-
-/**
- * Updates an existing Logout.
- * Partially update an existing Logout
- */
-function patchLogoutByIdRaw<T>(
-  requestParameters: PatchLogoutByIdApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Logout> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling patchLogoutById.",
-    );
-  }
-
-  if (
-    requestParameters.logout === null ||
-    requestParameters.logout === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "logout",
-      "Required parameter requestParameters.logout was null or undefined when calling patchLogoutById.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/merge-patch+json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Logout/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PATCH",
-      headers: headerParameters,
-    },
-    body: queryParameters || LogoutToJSON(requestParameters.logout),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(LogoutFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of Logouts.
+* Retrieve a list of Logouts
+*/
+export function getLogoutList<T>(requestParameters: GetLogoutListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Logout>>): QueryConfig<T> {
+    return getLogoutListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing Logout.
  * Partially update an existing Logout
  */
-export function patchLogoutById<T>(
-  requestParameters: PatchLogoutByIdApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Logout>,
-): QueryConfig<T> {
-  return patchLogoutByIdRaw(requestParameters, requestConfig);
+function patchLogoutByIdRaw<T>(requestParameters: PatchLogoutByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, Logout> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchLogoutById.');
+    }
+
+    if (requestParameters.logout === null || requestParameters.logout === undefined) {
+        throw new runtime.RequiredError('logout','Required parameter requestParameters.logout was null or undefined when calling patchLogoutById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Logout/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || LogoutToJSON(requestParameters.logout),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(LogoutFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing Logout.
+* Partially update an existing Logout
+*/
+export function patchLogoutById<T>(requestParameters: PatchLogoutByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Logout>): QueryConfig<T> {
+    return patchLogoutByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new Logout.
  * Create a new Logout
  */
-function postLogoutRaw<T>(
-  requestParameters: PostLogoutApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Logout> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.logout === null ||
-    requestParameters.logout === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "logout",
-      "Required parameter requestParameters.logout was null or undefined when calling postLogout.",
-    );
-  }
+function postLogoutRaw<T>(requestParameters: PostLogoutApiRequest, requestConfig: runtime.TypedQueryConfig<T, Logout> = {}): QueryConfig<T> {
+    if (requestParameters.logout === null || requestParameters.logout === undefined) {
+        throw new runtime.RequiredError('logout','Required parameter requestParameters.logout was null or undefined when calling postLogout.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Logout`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body: queryParameters || LogoutToJSON(requestParameters.logout),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(LogoutFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Logout`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || LogoutToJSON(requestParameters.logout),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(LogoutFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Creates a new Logout.
- * Create a new Logout
- */
-export function postLogout<T>(
-  requestParameters: PostLogoutApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Logout>,
-): QueryConfig<T> {
-  return postLogoutRaw(requestParameters, requestConfig);
+* Creates a new Logout.
+* Create a new Logout
+*/
+export function postLogout<T>(requestParameters: PostLogoutApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Logout>): QueryConfig<T> {
+    return postLogoutRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing Logout.
  * Update an existing Logout
  */
-function updateLogoutRaw<T>(
-  requestParameters: UpdateLogoutApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Logout> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateLogout.",
-    );
-  }
+function updateLogoutRaw<T>(requestParameters: UpdateLogoutApiRequest, requestConfig: runtime.TypedQueryConfig<T, Logout> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateLogout.');
+    }
 
-  if (
-    requestParameters.logout === null ||
-    requestParameters.logout === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "logout",
-      "Required parameter requestParameters.logout was null or undefined when calling updateLogout.",
-    );
-  }
+    if (requestParameters.logout === null || requestParameters.logout === undefined) {
+        throw new runtime.RequiredError('logout','Required parameter requestParameters.logout was null or undefined when calling updateLogout.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Logout/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body: queryParameters || LogoutToJSON(requestParameters.logout),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(LogoutFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Logout/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || LogoutToJSON(requestParameters.logout),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(LogoutFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing Logout.
- * Update an existing Logout
- */
-export function updateLogout<T>(
-  requestParameters: UpdateLogoutApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Logout>,
-): QueryConfig<T> {
-  return updateLogoutRaw(requestParameters, requestConfig);
+* Updates an existing Logout.
+* Update an existing Logout
+*/
+export function updateLogout<T>(requestParameters: UpdateLogoutApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Logout>): QueryConfig<T> {
+    return updateLogoutRaw(requestParameters, requestConfig);
 }
+

@@ -34,29 +34,19 @@ const DataObject_1 = require("./DataObject");
 function InitUploadResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        sessionId: !(0, runtime_1.exists)(json, "sessionId") ? undefined : json["sessionId"],
-        uploadId: !(0, runtime_1.exists)(json, "uploadId") ? undefined : json["uploadId"],
-        uploadUrl: !(0, runtime_1.exists)(json, "uploadUrl") ? undefined : json["uploadUrl"],
-        storageKey: !(0, runtime_1.exists)(json, "storageKey") ? undefined : json["storageKey"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'sessionId': !(0, runtime_1.exists)(json, 'sessionId') ? undefined : json['sessionId'],
+        'uploadId': !(0, runtime_1.exists)(json, 'uploadId') ? undefined : json['uploadId'],
+        'uploadUrl': !(0, runtime_1.exists)(json, 'uploadUrl') ? undefined : json['uploadUrl'],
+        'storageKey': !(0, runtime_1.exists)(json, 'storageKey') ? undefined : json['storageKey'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function InitUploadResponseToJSON(value) {
@@ -65,11 +55,11 @@ function InitUploadResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        sessionId: value.sessionId,
-        uploadId: value.uploadId,
-        uploadUrl: value.uploadUrl,
-        storageKey: value.storageKey,
-        trashed: value.trashed,
+        'sessionId': value.sessionId,
+        'uploadId': value.uploadId,
+        'uploadUrl': value.uploadUrl,
+        'storageKey': value.storageKey,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=InitUploadResponse.js.map

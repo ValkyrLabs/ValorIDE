@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,124 +36,110 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface MemoryRetentionPolicy
  */
-export type MemoryRetentionPolicy = DataObject & {
-  /**
-   * Workspace/principal owner for this retention policy.
-   * @type {string}
-   * @memberof MemoryRetentionPolicy
-   */
-  workspaceId: string;
-  /**
-   * Number of days to retain memory entries.
-   * @type {number}
-   * @memberof MemoryRetentionPolicy
-   */
-  retentionDays: number;
-  /**
-   * Whether retention cleanup performs hard deletion.
-   * @type {boolean}
-   * @memberof MemoryRetentionPolicy
-   */
-  hardDeleteEnabled?: boolean;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof MemoryRetentionPolicy
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof MemoryRetentionPolicy
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof MemoryRetentionPolicy
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof MemoryRetentionPolicy
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof MemoryRetentionPolicy
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof MemoryRetentionPolicy
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof MemoryRetentionPolicy
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof MemoryRetentionPolicy
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof MemoryRetentionPolicy
-   */
-  trashed?: boolean;
-};
-
-export function MemoryRetentionPolicyFromJSON(
-  json: any,
-): MemoryRetentionPolicy {
-  return {
-    ...DataObjectFromJSON(json),
-    workspaceId: json["workspaceId"],
-    retentionDays: json["retentionDays"],
-    hardDeleteEnabled: !exists(json, "hardDeleteEnabled")
-      ? undefined
-      : json["hardDeleteEnabled"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+export type MemoryRetentionPolicy  = DataObject & {
+    /**
+     * Workspace/principal owner for this retention policy.
+     * @type {string}
+     * @memberof MemoryRetentionPolicy
+     */
+    workspaceId: string;
+    /**
+     * Number of days to retain memory entries.
+     * @type {number}
+     * @memberof MemoryRetentionPolicy
+     */
+    retentionDays: number;
+    /**
+     * Whether retention cleanup performs hard deletion.
+     * @type {boolean}
+     * @memberof MemoryRetentionPolicy
+     */
+    hardDeleteEnabled?: boolean;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof MemoryRetentionPolicy
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof MemoryRetentionPolicy
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof MemoryRetentionPolicy
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof MemoryRetentionPolicy
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof MemoryRetentionPolicy
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof MemoryRetentionPolicy
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof MemoryRetentionPolicy
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof MemoryRetentionPolicy
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof MemoryRetentionPolicy
+     */
+    trashed?: boolean;
 }
 
-export function MemoryRetentionPolicyToJSON(
-  value?: MemoryRetentionPolicy,
-): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    workspaceId: value.workspaceId,
-    retentionDays: value.retentionDays,
-    hardDeleteEnabled: value.hardDeleteEnabled,
-    trashed: value.trashed,
-  };
+export function MemoryRetentionPolicyFromJSON(json: any): MemoryRetentionPolicy {
+    return {
+        ...DataObjectFromJSON(json),
+        'workspaceId': json['workspaceId'],
+        'retentionDays': json['retentionDays'],
+        'hardDeleteEnabled': !exists(json, 'hardDeleteEnabled') ? undefined : json['hardDeleteEnabled'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
+
+export function MemoryRetentionPolicyToJSON(value?: MemoryRetentionPolicy): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'workspaceId': value.workspaceId,
+        'retentionDays': value.retentionDays,
+        'hardDeleteEnabled': value.hardDeleteEnabled,
+        'trashed': value.trashed,
+    };
+}
+
+

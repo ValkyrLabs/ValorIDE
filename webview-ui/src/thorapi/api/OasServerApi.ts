@@ -18,421 +18,359 @@ Template file: typescript-redux-query/apis.mustache
 Description: OasServerApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import { OasServer, OasServerFromJSON, OasServerToJSON } from "../model";
+    OasServer,
+    OasServerFromJSON,
+    OasServerToJSON,
+} from '../model';
 
 export interface DeleteOasServerApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetOasServerApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetOasServerListApiRequest {
-  page?: number;
-  size?: number;
-  sort?: Array<string>;
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
+    example?: string;
 }
 
 export interface PatchOasServerByIdApiRequest {
-  id: string;
-  oasServer: OasServer;
+    id: string;
+    oasServer: OasServer;
 }
 
 export interface PostOasServerApiRequest {
-  oasServer: OasServer;
+    oasServer: OasServer;
 }
 
 export interface UpdateOasServerApiRequest {
-  id: string;
-  oasServer: OasServer;
+    id: string;
+    oasServer: OasServer;
 }
+
 
 /**
  * Deletes a specific OasServer.
  * Delete a OasServer.
  */
-function deleteOasServerRaw<T>(
-  requestParameters: DeleteOasServerApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteOasServer.",
-    );
-  }
+function deleteOasServerRaw<T>(requestParameters: DeleteOasServerApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteOasServer.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/OasServer/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/OasServer/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific OasServer.
- * Delete a OasServer.
- */
-export function deleteOasServer<T>(
-  requestParameters: DeleteOasServerApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteOasServerRaw(requestParameters, requestConfig);
+* Deletes a specific OasServer.
+* Delete a OasServer.
+*/
+export function deleteOasServer<T>(requestParameters: DeleteOasServerApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteOasServerRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single OasServer for a specific uid.
  * Retrieve a single OasServer
  */
-function getOasServerRaw<T>(
-  requestParameters: GetOasServerApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, OasServer> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getOasServer.",
-    );
-  }
+function getOasServerRaw<T>(requestParameters: GetOasServerApiRequest, requestConfig: runtime.TypedQueryConfig<T, OasServer> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getOasServer.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/OasServer/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(OasServerFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/OasServer/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OasServerFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single OasServer for a specific uid.
- * Retrieve a single OasServer
- */
-export function getOasServer<T>(
-  requestParameters: GetOasServerApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, OasServer>,
-): QueryConfig<T> {
-  return getOasServerRaw(requestParameters, requestConfig);
+* Retrieves a single OasServer for a specific uid.
+* Retrieve a single OasServer
+*/
+export function getOasServer<T>(requestParameters: GetOasServerApiRequest, requestConfig?: runtime.TypedQueryConfig<T, OasServer>): QueryConfig<T> {
+    return getOasServerRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of OasServers.
  * Retrieve a list of OasServers
  */
-function getOasServerListRaw<T>(
-  requestParameters: GetOasServerListApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Array<OasServer>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getOasServerListRaw<T>(requestParameters: GetOasServerListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<OasServer>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  queryParameters = {};
+    queryParameters = {};
 
-  if (requestParameters.page !== undefined) {
-    queryParameters["page"] = requestParameters.page;
-  }
 
-  if (requestParameters.size !== undefined) {
-    queryParameters["size"] = requestParameters.size;
-  }
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  if (requestParameters.sort) {
-    queryParameters["sort"] = requestParameters.sort;
-  }
 
-  const headerParameters: runtime.HttpHeaders = {};
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/OasServer`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(OasServerFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.example !== undefined) {
+        queryParameters['example'] = requestParameters.example;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/OasServer`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(OasServerFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of OasServers.
- * Retrieve a list of OasServers
- */
-export function getOasServerList<T>(
-  requestParameters: GetOasServerListApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Array<OasServer>>,
-): QueryConfig<T> {
-  return getOasServerListRaw(requestParameters, requestConfig);
-}
-
-/**
- * Updates an existing OasServer.
- * Partially update an existing OasServer
- */
-function patchOasServerByIdRaw<T>(
-  requestParameters: PatchOasServerByIdApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, OasServer> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling patchOasServerById.",
-    );
-  }
-
-  if (
-    requestParameters.oasServer === null ||
-    requestParameters.oasServer === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "oasServer",
-      "Required parameter requestParameters.oasServer was null or undefined when calling patchOasServerById.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/merge-patch+json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/OasServer/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PATCH",
-      headers: headerParameters,
-    },
-    body: queryParameters || OasServerToJSON(requestParameters.oasServer),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(OasServerFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of OasServers.
+* Retrieve a list of OasServers
+*/
+export function getOasServerList<T>(requestParameters: GetOasServerListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<OasServer>>): QueryConfig<T> {
+    return getOasServerListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing OasServer.
  * Partially update an existing OasServer
  */
-export function patchOasServerById<T>(
-  requestParameters: PatchOasServerByIdApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, OasServer>,
-): QueryConfig<T> {
-  return patchOasServerByIdRaw(requestParameters, requestConfig);
+function patchOasServerByIdRaw<T>(requestParameters: PatchOasServerByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, OasServer> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchOasServerById.');
+    }
+
+    if (requestParameters.oasServer === null || requestParameters.oasServer === undefined) {
+        throw new runtime.RequiredError('oasServer','Required parameter requestParameters.oasServer was null or undefined when calling patchOasServerById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/OasServer/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || OasServerToJSON(requestParameters.oasServer),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OasServerFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing OasServer.
+* Partially update an existing OasServer
+*/
+export function patchOasServerById<T>(requestParameters: PatchOasServerByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, OasServer>): QueryConfig<T> {
+    return patchOasServerByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new OasServer.
  * Create a new OasServer
  */
-function postOasServerRaw<T>(
-  requestParameters: PostOasServerApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, OasServer> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.oasServer === null ||
-    requestParameters.oasServer === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "oasServer",
-      "Required parameter requestParameters.oasServer was null or undefined when calling postOasServer.",
-    );
-  }
+function postOasServerRaw<T>(requestParameters: PostOasServerApiRequest, requestConfig: runtime.TypedQueryConfig<T, OasServer> = {}): QueryConfig<T> {
+    if (requestParameters.oasServer === null || requestParameters.oasServer === undefined) {
+        throw new runtime.RequiredError('oasServer','Required parameter requestParameters.oasServer was null or undefined when calling postOasServer.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/OasServer`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body: queryParameters || OasServerToJSON(requestParameters.oasServer),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(OasServerFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/OasServer`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || OasServerToJSON(requestParameters.oasServer),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OasServerFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Creates a new OasServer.
- * Create a new OasServer
- */
-export function postOasServer<T>(
-  requestParameters: PostOasServerApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, OasServer>,
-): QueryConfig<T> {
-  return postOasServerRaw(requestParameters, requestConfig);
+* Creates a new OasServer.
+* Create a new OasServer
+*/
+export function postOasServer<T>(requestParameters: PostOasServerApiRequest, requestConfig?: runtime.TypedQueryConfig<T, OasServer>): QueryConfig<T> {
+    return postOasServerRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing OasServer.
  * Update an existing OasServer
  */
-function updateOasServerRaw<T>(
-  requestParameters: UpdateOasServerApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, OasServer> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateOasServer.",
-    );
-  }
+function updateOasServerRaw<T>(requestParameters: UpdateOasServerApiRequest, requestConfig: runtime.TypedQueryConfig<T, OasServer> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateOasServer.');
+    }
 
-  if (
-    requestParameters.oasServer === null ||
-    requestParameters.oasServer === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "oasServer",
-      "Required parameter requestParameters.oasServer was null or undefined when calling updateOasServer.",
-    );
-  }
+    if (requestParameters.oasServer === null || requestParameters.oasServer === undefined) {
+        throw new runtime.RequiredError('oasServer','Required parameter requestParameters.oasServer was null or undefined when calling updateOasServer.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/OasServer/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body: queryParameters || OasServerToJSON(requestParameters.oasServer),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(OasServerFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/OasServer/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || OasServerToJSON(requestParameters.oasServer),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OasServerFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing OasServer.
- * Update an existing OasServer
- */
-export function updateOasServer<T>(
-  requestParameters: UpdateOasServerApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, OasServer>,
-): QueryConfig<T> {
-  return updateOasServerRaw(requestParameters, requestConfig);
+* Updates an existing OasServer.
+* Update an existing OasServer
+*/
+export function updateOasServer<T>(requestParameters: UpdateOasServerApiRequest, requestConfig?: runtime.TypedQueryConfig<T, OasServer>): QueryConfig<T> {
+    return updateOasServerRaw(requestParameters, requestConfig);
 }
+

@@ -34,36 +34,22 @@ const DataObject_1 = require("./DataObject");
 function ApiTrafficEventFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        method: !(0, runtime_1.exists)(json, "method") ? undefined : json["method"],
-        path: !(0, runtime_1.exists)(json, "path") ? undefined : json["path"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        durationMs: !(0, runtime_1.exists)(json, "durationMs") ? undefined : json["durationMs"],
-        customerId: !(0, runtime_1.exists)(json, "customerId") ? undefined : json["customerId"],
-        organizationId: !(0, runtime_1.exists)(json, "organizationId")
-            ? undefined
-            : json["organizationId"],
-        timestamp: !(0, runtime_1.exists)(json, "timestamp")
-            ? undefined
-            : new Date(json["timestamp"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'method': !(0, runtime_1.exists)(json, 'method') ? undefined : json['method'],
+        'path': !(0, runtime_1.exists)(json, 'path') ? undefined : json['path'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'durationMs': !(0, runtime_1.exists)(json, 'durationMs') ? undefined : json['durationMs'],
+        'customerId': !(0, runtime_1.exists)(json, 'customerId') ? undefined : json['customerId'],
+        'organizationId': !(0, runtime_1.exists)(json, 'organizationId') ? undefined : json['organizationId'],
+        'timestamp': !(0, runtime_1.exists)(json, 'timestamp') ? undefined : new Date(json['timestamp']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ApiTrafficEventToJSON(value) {
@@ -72,14 +58,14 @@ function ApiTrafficEventToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        method: value.method,
-        path: value.path,
-        status: value.status,
-        durationMs: value.durationMs,
-        customerId: value.customerId,
-        organizationId: value.organizationId,
-        timestamp: value.timestamp === undefined ? undefined : value.timestamp.toISOString(),
-        trashed: value.trashed,
+        'method': value.method,
+        'path': value.path,
+        'status': value.status,
+        'durationMs': value.durationMs,
+        'customerId': value.customerId,
+        'organizationId': value.organizationId,
+        'timestamp': value.timestamp === undefined ? undefined : value.timestamp.toISOString(),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=ApiTrafficEvent.js.map

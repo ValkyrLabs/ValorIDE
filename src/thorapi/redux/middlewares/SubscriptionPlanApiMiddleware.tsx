@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_SUBSCRIPTIONPLAN_REQUEST,
-  FETCH_SUBSCRIPTIONPLAN_REQUEST,
-  LIST_SUBSCRIPTIONPLAN_REQUEST,
-  UPDATE_SUBSCRIPTIONPLAN_REQUEST,
-  DELETE_SUBSCRIPTIONPLAN_REQUEST,
-  addSubscriptionPlanFailure,
-  addSubscriptionPlanSuccess,
-  fetchSubscriptionPlanFailure,
-  fetchSubscriptionPlanSuccess,
-  listSubscriptionPlanFailure,
-  listSubscriptionPlanSuccess,
-  updateSubscriptionPlanFailure,
-  updateSubscriptionPlanSuccess,
-  deleteSubscriptionPlanFailure,
-  deleteSubscriptionPlanSuccess,
-} from "../actions/SubscriptionPlanApiAction";
+
+    ADD_SUBSCRIPTIONPLAN_REQUEST,
+    FETCH_SUBSCRIPTIONPLAN_REQUEST,
+    LIST_SUBSCRIPTIONPLAN_REQUEST,
+    UPDATE_SUBSCRIPTIONPLAN_REQUEST,
+    DELETE_SUBSCRIPTIONPLAN_REQUEST,
+
+    addSubscriptionPlanFailure,
+    addSubscriptionPlanSuccess,
+
+    fetchSubscriptionPlanFailure,
+    fetchSubscriptionPlanSuccess,
+    
+    listSubscriptionPlanFailure,
+    listSubscriptionPlanSuccess,
+
+    updateSubscriptionPlanFailure,
+    updateSubscriptionPlanSuccess,
+    
+    deleteSubscriptionPlanFailure,
+    deleteSubscriptionPlanSuccess,
+    
+} from '../actions/SubscriptionPlanApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: SubscriptionPlan
 */
 
-export const SubscriptionPlanMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("SubscriptionPlan MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const SubscriptionPlanMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("SubscriptionPlan MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

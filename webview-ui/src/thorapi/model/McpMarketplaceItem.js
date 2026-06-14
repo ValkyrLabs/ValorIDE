@@ -35,58 +35,32 @@ const _1 = require("./");
 function McpMarketplaceItemFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        mcpMarketplaceCatalogId: !(0, runtime_1.exists)(json, "mcpMarketplaceCatalogId")
-            ? undefined
-            : json["mcpMarketplaceCatalogId"],
-        mcpServerId: !(0, runtime_1.exists)(json, "mcpServerId") ? undefined : json["mcpServerId"],
-        githubUrl: !(0, runtime_1.exists)(json, "githubUrl") ? undefined : json["githubUrl"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        author: !(0, runtime_1.exists)(json, "author") ? undefined : json["author"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        codiconIcon: !(0, runtime_1.exists)(json, "codiconIcon") ? undefined : json["codiconIcon"],
-        logoUrl: !(0, runtime_1.exists)(json, "logoUrl") ? undefined : json["logoUrl"],
-        category: !(0, runtime_1.exists)(json, "category") ? undefined : json["category"],
-        tags: !(0, runtime_1.exists)(json, "tags")
-            ? undefined
-            : json["tags"].map(_1.McpMarketplaceItemTagFromJSON),
-        requiresApiKey: !(0, runtime_1.exists)(json, "requiresApiKey")
-            ? undefined
-            : json["requiresApiKey"],
-        readmeContent: !(0, runtime_1.exists)(json, "readmeContent")
-            ? undefined
-            : json["readmeContent"],
-        llmsInstallationContent: !(0, runtime_1.exists)(json, "llmsInstallationContent")
-            ? undefined
-            : json["llmsInstallationContent"],
-        isRecommended: !(0, runtime_1.exists)(json, "isRecommended")
-            ? undefined
-            : json["isRecommended"],
-        githubStars: !(0, runtime_1.exists)(json, "githubStars") ? undefined : json["githubStars"],
-        downloadCount: !(0, runtime_1.exists)(json, "downloadCount")
-            ? undefined
-            : json["downloadCount"],
-        lastGithubSync: !(0, runtime_1.exists)(json, "lastGithubSync")
-            ? undefined
-            : new Date(json["lastGithubSync"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'mcpMarketplaceCatalogId': !(0, runtime_1.exists)(json, 'mcpMarketplaceCatalogId') ? undefined : json['mcpMarketplaceCatalogId'],
+        'mcpServerId': !(0, runtime_1.exists)(json, 'mcpServerId') ? undefined : json['mcpServerId'],
+        'githubUrl': !(0, runtime_1.exists)(json, 'githubUrl') ? undefined : json['githubUrl'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'author': !(0, runtime_1.exists)(json, 'author') ? undefined : json['author'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'codiconIcon': !(0, runtime_1.exists)(json, 'codiconIcon') ? undefined : json['codiconIcon'],
+        'logoUrl': !(0, runtime_1.exists)(json, 'logoUrl') ? undefined : json['logoUrl'],
+        'category': !(0, runtime_1.exists)(json, 'category') ? undefined : json['category'],
+        'tags': !(0, runtime_1.exists)(json, 'tags') ? undefined : json['tags'].map(_1.McpMarketplaceItemTagFromJSON),
+        'requiresApiKey': !(0, runtime_1.exists)(json, 'requiresApiKey') ? undefined : json['requiresApiKey'],
+        'readmeContent': !(0, runtime_1.exists)(json, 'readmeContent') ? undefined : json['readmeContent'],
+        'llmsInstallationContent': !(0, runtime_1.exists)(json, 'llmsInstallationContent') ? undefined : json['llmsInstallationContent'],
+        'isRecommended': !(0, runtime_1.exists)(json, 'isRecommended') ? undefined : json['isRecommended'],
+        'githubStars': !(0, runtime_1.exists)(json, 'githubStars') ? undefined : json['githubStars'],
+        'downloadCount': !(0, runtime_1.exists)(json, 'downloadCount') ? undefined : json['downloadCount'],
+        'lastGithubSync': !(0, runtime_1.exists)(json, 'lastGithubSync') ? undefined : new Date(json['lastGithubSync']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function McpMarketplaceItemToJSON(value) {
@@ -95,28 +69,24 @@ function McpMarketplaceItemToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        mcpMarketplaceCatalogId: value.mcpMarketplaceCatalogId,
-        mcpServerId: value.mcpServerId,
-        githubUrl: value.githubUrl,
-        name: value.name,
-        author: value.author,
-        description: value.description,
-        codiconIcon: value.codiconIcon,
-        logoUrl: value.logoUrl,
-        category: value.category,
-        tags: value.tags === undefined
-            ? undefined
-            : value.tags.map(_1.McpMarketplaceItemTagToJSON),
-        requiresApiKey: value.requiresApiKey,
-        readmeContent: value.readmeContent,
-        llmsInstallationContent: value.llmsInstallationContent,
-        isRecommended: value.isRecommended,
-        githubStars: value.githubStars,
-        downloadCount: value.downloadCount,
-        lastGithubSync: value.lastGithubSync === undefined
-            ? undefined
-            : value.lastGithubSync.toISOString(),
-        trashed: value.trashed,
+        'mcpMarketplaceCatalogId': value.mcpMarketplaceCatalogId,
+        'mcpServerId': value.mcpServerId,
+        'githubUrl': value.githubUrl,
+        'name': value.name,
+        'author': value.author,
+        'description': value.description,
+        'codiconIcon': value.codiconIcon,
+        'logoUrl': value.logoUrl,
+        'category': value.category,
+        'tags': value.tags === undefined ? undefined : value.tags.map(_1.McpMarketplaceItemTagToJSON),
+        'requiresApiKey': value.requiresApiKey,
+        'readmeContent': value.readmeContent,
+        'llmsInstallationContent': value.llmsInstallationContent,
+        'isRecommended': value.isRecommended,
+        'githubStars': value.githubStars,
+        'downloadCount': value.downloadCount,
+        'lastGithubSync': value.lastGithubSync === undefined ? undefined : value.lastGithubSync.toISOString(),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=McpMarketplaceItem.js.map

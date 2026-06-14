@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,134 +36,120 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface RequestPasswordResetResponse
  */
-export type RequestPasswordResetResponse = DataObject & {
-  /**
-   * Status of the reset request
-   * @type {string}
-   * @memberof RequestPasswordResetResponse
-   */
-  status?: RequestPasswordResetResponseStatusEnum;
-  /**
-   * Message for user
-   * @type {string}
-   * @memberof RequestPasswordResetResponse
-   */
-  message?: string;
-  /**
-   * If true, user must verify phone before resetting
-   * @type {boolean}
-   * @memberof RequestPasswordResetResponse
-   */
-  requiresPhoneVerification?: boolean;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof RequestPasswordResetResponse
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof RequestPasswordResetResponse
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof RequestPasswordResetResponse
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof RequestPasswordResetResponse
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof RequestPasswordResetResponse
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof RequestPasswordResetResponse
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof RequestPasswordResetResponse
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof RequestPasswordResetResponse
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof RequestPasswordResetResponse
-   */
-  trashed?: boolean;
-};
-
-export function RequestPasswordResetResponseFromJSON(
-  json: any,
-): RequestPasswordResetResponse {
-  return {
-    ...DataObjectFromJSON(json),
-    status: !exists(json, "status") ? undefined : json["status"],
-    message: !exists(json, "message") ? undefined : json["message"],
-    requiresPhoneVerification: !exists(json, "requiresPhoneVerification")
-      ? undefined
-      : json["requiresPhoneVerification"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+export type RequestPasswordResetResponse  = DataObject & {
+    /**
+     * Status of the reset request
+     * @type {string}
+     * @memberof RequestPasswordResetResponse
+     */
+    status?: RequestPasswordResetResponseStatusEnum;
+    /**
+     * Message for user
+     * @type {string}
+     * @memberof RequestPasswordResetResponse
+     */
+    message?: string;
+    /**
+     * If true, user must verify phone before resetting
+     * @type {boolean}
+     * @memberof RequestPasswordResetResponse
+     */
+    requiresPhoneVerification?: boolean;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof RequestPasswordResetResponse
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof RequestPasswordResetResponse
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof RequestPasswordResetResponse
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof RequestPasswordResetResponse
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof RequestPasswordResetResponse
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof RequestPasswordResetResponse
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof RequestPasswordResetResponse
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof RequestPasswordResetResponse
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof RequestPasswordResetResponse
+     */
+    trashed?: boolean;
 }
 
-export function RequestPasswordResetResponseToJSON(
-  value?: RequestPasswordResetResponse,
-): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    status: value.status,
-    message: value.message,
-    requiresPhoneVerification: value.requiresPhoneVerification,
-    trashed: value.trashed,
-  };
+export function RequestPasswordResetResponseFromJSON(json: any): RequestPasswordResetResponse {
+    return {
+        ...DataObjectFromJSON(json),
+        'status': !exists(json, 'status') ? undefined : json['status'],
+        'message': !exists(json, 'message') ? undefined : json['message'],
+        'requiresPhoneVerification': !exists(json, 'requiresPhoneVerification') ? undefined : json['requiresPhoneVerification'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
+}
+
+export function RequestPasswordResetResponseToJSON(value?: RequestPasswordResetResponse): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'status': value.status,
+        'message': value.message,
+        'requiresPhoneVerification': value.requiresPhoneVerification,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum RequestPasswordResetResponseStatusEnum {
-  SENT = "sent",
-  USERNOTFOUND = "user_not_found",
-  ACCOUNTLOCKED = "account_locked",
+    SENT = 'sent',
+    USERNOTFOUND = 'user_not_found',
+    ACCOUNTLOCKED = 'account_locked'
 }
+
+

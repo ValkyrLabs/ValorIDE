@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RatingTargetTypeEnum = void 0;
+exports.RatingStatusEnum = exports.RatingRatingTypeEnum = exports.RatingRaterTypeEnum = exports.RatingTargetTypeEnum = void 0;
 exports.RatingFromJSON = RatingFromJSON;
 exports.RatingToJSON = RatingToJSON;
 // tslint:disable
@@ -35,30 +35,27 @@ const DataObject_1 = require("./DataObject");
 function RatingFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        targetType: !(0, runtime_1.exists)(json, "targetType") ? undefined : json["targetType"],
-        contentId: !(0, runtime_1.exists)(json, "contentId") ? undefined : json["contentId"],
-        comments: !(0, runtime_1.exists)(json, "comments") ? undefined : json["comments"],
-        url: !(0, runtime_1.exists)(json, "url") ? undefined : json["url"],
-        rating: !(0, runtime_1.exists)(json, "rating") ? undefined : json["rating"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'targetType': !(0, runtime_1.exists)(json, 'targetType') ? undefined : json['targetType'],
+        'contentId': !(0, runtime_1.exists)(json, 'contentId') ? undefined : json['contentId'],
+        'rating': !(0, runtime_1.exists)(json, 'rating') ? undefined : json['rating'],
+        'comments': !(0, runtime_1.exists)(json, 'comments') ? undefined : json['comments'],
+        'url': !(0, runtime_1.exists)(json, 'url') ? undefined : json['url'],
+        'raterType': !(0, runtime_1.exists)(json, 'raterType') ? undefined : json['raterType'],
+        'raterId': !(0, runtime_1.exists)(json, 'raterId') ? undefined : json['raterId'],
+        'sessionId': !(0, runtime_1.exists)(json, 'sessionId') ? undefined : json['sessionId'],
+        'runId': !(0, runtime_1.exists)(json, 'runId') ? undefined : json['runId'],
+        'ratingType': !(0, runtime_1.exists)(json, 'ratingType') ? undefined : json['ratingType'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'metadata': !(0, runtime_1.exists)(json, 'metadata') ? undefined : json['metadata'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function RatingToJSON(value) {
@@ -67,18 +64,25 @@ function RatingToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        targetType: value.targetType,
-        contentId: value.contentId,
-        comments: value.comments,
-        url: value.url,
-        rating: value.rating,
-        trashed: value.trashed,
+        'targetType': value.targetType,
+        'contentId': value.contentId,
+        'rating': value.rating,
+        'comments': value.comments,
+        'url': value.url,
+        'raterType': value.raterType,
+        'raterId': value.raterId,
+        'sessionId': value.sessionId,
+        'runId': value.runId,
+        'ratingType': value.ratingType,
+        'status': value.status,
+        'metadata': value.metadata,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var RatingTargetTypeEnum;
 (function (RatingTargetTypeEnum) {
     RatingTargetTypeEnum["HOMEPAGE"] = "homepage";
@@ -89,11 +93,58 @@ var RatingTargetTypeEnum;
     RatingTargetTypeEnum["SERVICE"] = "service";
     RatingTargetTypeEnum["CONTENT"] = "content";
     RatingTargetTypeEnum["SCHEMA"] = "schema";
-    RatingTargetTypeEnum["APPLICATION2"] = "application";
     RatingTargetTypeEnum["FEATURE"] = "feature";
     RatingTargetTypeEnum["HELPFULNESS"] = "helpfulness";
     RatingTargetTypeEnum["SATISFACTION"] = "satisfaction";
     RatingTargetTypeEnum["PRODUCT"] = "product";
+    RatingTargetTypeEnum["WORKFLOW"] = "workflow";
+    RatingTargetTypeEnum["WORKFLOWRUN"] = "workflow_run";
+    RatingTargetTypeEnum["CHATMESSAGE"] = "chat_message";
+    RatingTargetTypeEnum["AGENTTASK"] = "agent_task";
+    RatingTargetTypeEnum["GENERATEDCODE"] = "generated_code";
+    RatingTargetTypeEnum["SKILLARTIFACT"] = "skill_artifact";
+    RatingTargetTypeEnum["MEMORYENTRY"] = "memory_entry";
     RatingTargetTypeEnum["NONE"] = "none";
 })(RatingTargetTypeEnum || (exports.RatingTargetTypeEnum = RatingTargetTypeEnum = {}));
+/**
+* @export
+* @enum {string}
+*/
+var RatingRaterTypeEnum;
+(function (RatingRaterTypeEnum) {
+    RatingRaterTypeEnum["USER"] = "user";
+    RatingRaterTypeEnum["AGENT"] = "agent";
+    RatingRaterTypeEnum["SYSTEM"] = "system";
+    RatingRaterTypeEnum["EVALUATOR"] = "evaluator";
+    RatingRaterTypeEnum["TEST"] = "test";
+    RatingRaterTypeEnum["NONE"] = "none";
+})(RatingRaterTypeEnum || (exports.RatingRaterTypeEnum = RatingRaterTypeEnum = {}));
+/**
+* @export
+* @enum {string}
+*/
+var RatingRatingTypeEnum;
+(function (RatingRatingTypeEnum) {
+    RatingRatingTypeEnum["USERFEEDBACK"] = "user_feedback";
+    RatingRatingTypeEnum["AGENTOBSERVATION"] = "agent_observation";
+    RatingRatingTypeEnum["ERRORREPORT"] = "error_report";
+    RatingRatingTypeEnum["VALIDATIONRESULT"] = "validation_result";
+    RatingRatingTypeEnum["QUALITYSCORE"] = "quality_score";
+    RatingRatingTypeEnum["SATISFACTIONSCORE"] = "satisfaction_score";
+    RatingRatingTypeEnum["HELPFULNESSSCORE"] = "helpfulness_score";
+    RatingRatingTypeEnum["NONE"] = "none";
+})(RatingRatingTypeEnum || (exports.RatingRatingTypeEnum = RatingRatingTypeEnum = {}));
+/**
+* @export
+* @enum {string}
+*/
+var RatingStatusEnum;
+(function (RatingStatusEnum) {
+    RatingStatusEnum["NEW"] = "new";
+    RatingStatusEnum["ANALYZED"] = "analyzed";
+    RatingStatusEnum["ACTIONPROPOSED"] = "action_proposed";
+    RatingStatusEnum["ACTIONAPPLIED"] = "action_applied";
+    RatingStatusEnum["IGNORED"] = "ignored";
+    RatingStatusEnum["ARCHIVED"] = "archived";
+})(RatingStatusEnum || (exports.RatingStatusEnum = RatingStatusEnum = {}));
 //# sourceMappingURL=Rating.js.map

@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { WorkflowExecution } from "@thorapi/model/WorkflowExecution";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { WorkflowExecution } from '@thorapi/model/WorkflowExecution'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type WorkflowExecutionResponse = WorkflowExecution[];
+type WorkflowExecutionResponse = WorkflowExecution[]
+type WorkflowExecutionPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<WorkflowExecution>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toWorkflowExecutionList = (
-  result: unknown,
-): WorkflowExecutionResponse => {
+type WorkflowExecutionListQueryArg = {
+  example?: Partial<WorkflowExecution>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toWorkflowExecutionList = (result: unknown): WorkflowExecutionResponse => {
   if (Array.isArray(result)) {
-    return result as WorkflowExecutionResponse;
+    return result as WorkflowExecutionResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as WorkflowExecutionResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as WorkflowExecutionResponse) : []
+}
 
 export const WorkflowExecutionService = createApi({
-  reducerPath: "WorkflowExecution", // This should remain unique
+  reducerPath: 'WorkflowExecution', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["WorkflowExecution"],
+  tagTypes: ['WorkflowExecution'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getWorkflowExecutionsPaged: build.query<
-      WorkflowExecutionResponse,
-      { page: number; size?: number; example?: Partial<WorkflowExecution> }
-    >({
+    getWorkflowExecutionsPaged: build.query<WorkflowExecutionResponse, WorkflowExecutionPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `WorkflowExecution?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `WorkflowExecution?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toWorkflowExecutionList(result);
+        const rows = toWorkflowExecutionList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "WorkflowExecution" as const, id })),
-          { type: "WorkflowExecution", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'WorkflowExecution' as const, id })),
+          { type: 'WorkflowExecution', id: `PAGE_${page}` },
+          { type: 'WorkflowExecution', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getWorkflowExecutions: build.query<
-      WorkflowExecutionResponse,
-      { example?: Partial<WorkflowExecution> } | void
-    >({
+    getWorkflowExecutions: build.query<WorkflowExecutionResponse, WorkflowExecutionListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,112 +82,86 @@ export const WorkflowExecutionService = createApi({
         return `WorkflowExecution`;
       },
       providesTags: (result) => {
-        const rows = toWorkflowExecutionList(result);
+        const rows = toWorkflowExecutionList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "WorkflowExecution" as const, id })),
-          { type: "WorkflowExecution", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'WorkflowExecution' as const, id })),
+          { type: 'WorkflowExecution', id: 'LIST' },
+          { type: 'WorkflowExecution', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addWorkflowExecution: build.mutation<
-      WorkflowExecution,
-      Partial<WorkflowExecution>
-    >({
+    addWorkflowExecution: build.mutation<WorkflowExecution, Partial<WorkflowExecution>>({
       query: (body) => ({
         url: `WorkflowExecution`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "WorkflowExecution", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'WorkflowExecution', id: 'LIST' },
+        { type: 'WorkflowExecution', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getWorkflowExecution: build.query<WorkflowExecution, string>({
       query: (id) => `WorkflowExecution/${id}`,
-      providesTags: (result, error, id) => [{ type: "WorkflowExecution", id }],
+      providesTags: (result, error, id) => [{ type: 'WorkflowExecution', id }],
     }),
 
     // 5) Update
-    updateWorkflowExecution: build.mutation<
-      void,
-      Pick<WorkflowExecution, "id"> & Partial<WorkflowExecution>
-    >({
+    updateWorkflowExecution: build.mutation<WorkflowExecution, Pick<WorkflowExecution, 'id'> & Partial<WorkflowExecution>>({
       query: ({ id, ...patch }) => ({
         url: `WorkflowExecution/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            WorkflowExecutionService.util.updateQueryData(
-              "getWorkflowExecution",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<WorkflowExecution, "id">,
-      ) => [
-        { type: "WorkflowExecution", id },
-        { type: "WorkflowExecution", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<WorkflowExecution, 'id'>) => [
+        { type: 'WorkflowExecution', id },
+        { type: 'WorkflowExecution', id: 'LIST' },
+        { type: 'WorkflowExecution', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteWorkflowExecution: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteWorkflowExecution: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `WorkflowExecution/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "WorkflowExecution", id },
+        { type: 'WorkflowExecution', id },
+        { type: 'WorkflowExecution', id: 'LIST' },
+        { type: 'WorkflowExecution', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteWorkflowExecutionCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteWorkflowExecutionCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `WorkflowExecution/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "WorkflowExecution", id },
-        { type: "WorkflowExecution", id: "LIST" },
+        { type: 'WorkflowExecution', id },
+        { type: 'WorkflowExecution', id: 'LIST' },
+        { type: 'WorkflowExecution', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetWorkflowExecutionsPagedQuery`
 export const {
-  useGetWorkflowExecutionsPagedQuery, // immediate fetch
+  useGetWorkflowExecutionsPagedQuery,     // immediate fetch
   useLazyGetWorkflowExecutionsPagedQuery, // lazy fetch
   useGetWorkflowExecutionQuery,
   useGetWorkflowExecutionsQuery,
@@ -190,4 +169,4 @@ export const {
   useUpdateWorkflowExecutionMutation,
   useDeleteWorkflowExecutionMutation,
   useDeleteWorkflowExecutionCascadeMutation,
-} = WorkflowExecutionService;
+} = WorkflowExecutionService

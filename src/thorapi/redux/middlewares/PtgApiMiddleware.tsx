@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_PTG_REQUEST,
-  FETCH_PTG_REQUEST,
-  LIST_PTG_REQUEST,
-  UPDATE_PTG_REQUEST,
-  DELETE_PTG_REQUEST,
-  addPtgFailure,
-  addPtgSuccess,
-  fetchPtgFailure,
-  fetchPtgSuccess,
-  listPtgFailure,
-  listPtgSuccess,
-  updatePtgFailure,
-  updatePtgSuccess,
-  deletePtgFailure,
-  deletePtgSuccess,
-} from "../actions/PtgApiAction";
+
+    ADD_PTG_REQUEST,
+    FETCH_PTG_REQUEST,
+    LIST_PTG_REQUEST,
+    UPDATE_PTG_REQUEST,
+    DELETE_PTG_REQUEST,
+
+    addPtgFailure,
+    addPtgSuccess,
+
+    fetchPtgFailure,
+    fetchPtgSuccess,
+    
+    listPtgFailure,
+    listPtgSuccess,
+
+    updatePtgFailure,
+    updatePtgSuccess,
+    
+    deletePtgFailure,
+    deletePtgSuccess,
+    
+} from '../actions/PtgApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Ptg
 */
 
-export const PtgMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Ptg MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const PtgMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("Ptg MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

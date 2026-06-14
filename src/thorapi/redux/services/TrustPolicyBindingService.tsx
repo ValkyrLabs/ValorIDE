@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { TrustPolicyBinding } from "@thorapi/model/TrustPolicyBinding";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { TrustPolicyBinding } from '@thorapi/model/TrustPolicyBinding'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type TrustPolicyBindingResponse = TrustPolicyBinding[];
+type TrustPolicyBindingResponse = TrustPolicyBinding[]
+type TrustPolicyBindingPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<TrustPolicyBinding>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toTrustPolicyBindingList = (
-  result: unknown,
-): TrustPolicyBindingResponse => {
+type TrustPolicyBindingListQueryArg = {
+  example?: Partial<TrustPolicyBinding>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toTrustPolicyBindingList = (result: unknown): TrustPolicyBindingResponse => {
   if (Array.isArray(result)) {
-    return result as TrustPolicyBindingResponse;
+    return result as TrustPolicyBindingResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as TrustPolicyBindingResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as TrustPolicyBindingResponse) : []
+}
 
 export const TrustPolicyBindingService = createApi({
-  reducerPath: "TrustPolicyBinding", // This should remain unique
+  reducerPath: 'TrustPolicyBinding', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["TrustPolicyBinding"],
+  tagTypes: ['TrustPolicyBinding'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getTrustPolicyBindingsPaged: build.query<
-      TrustPolicyBindingResponse,
-      { page: number; size?: number; example?: Partial<TrustPolicyBinding> }
-    >({
+    getTrustPolicyBindingsPaged: build.query<TrustPolicyBindingResponse, TrustPolicyBindingPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `TrustPolicyBinding?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `TrustPolicyBinding?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toTrustPolicyBindingList(result);
+        const rows = toTrustPolicyBindingList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "TrustPolicyBinding" as const, id })),
-          { type: "TrustPolicyBinding", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'TrustPolicyBinding' as const, id })),
+          { type: 'TrustPolicyBinding', id: `PAGE_${page}` },
+          { type: 'TrustPolicyBinding', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getTrustPolicyBindings: build.query<
-      TrustPolicyBindingResponse,
-      { example?: Partial<TrustPolicyBinding> } | void
-    >({
+    getTrustPolicyBindings: build.query<TrustPolicyBindingResponse, TrustPolicyBindingListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,112 +82,86 @@ export const TrustPolicyBindingService = createApi({
         return `TrustPolicyBinding`;
       },
       providesTags: (result) => {
-        const rows = toTrustPolicyBindingList(result);
+        const rows = toTrustPolicyBindingList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "TrustPolicyBinding" as const, id })),
-          { type: "TrustPolicyBinding", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'TrustPolicyBinding' as const, id })),
+          { type: 'TrustPolicyBinding', id: 'LIST' },
+          { type: 'TrustPolicyBinding', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addTrustPolicyBinding: build.mutation<
-      TrustPolicyBinding,
-      Partial<TrustPolicyBinding>
-    >({
+    addTrustPolicyBinding: build.mutation<TrustPolicyBinding, Partial<TrustPolicyBinding>>({
       query: (body) => ({
         url: `TrustPolicyBinding`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "TrustPolicyBinding", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'TrustPolicyBinding', id: 'LIST' },
+        { type: 'TrustPolicyBinding', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getTrustPolicyBinding: build.query<TrustPolicyBinding, string>({
       query: (id) => `TrustPolicyBinding/${id}`,
-      providesTags: (result, error, id) => [{ type: "TrustPolicyBinding", id }],
+      providesTags: (result, error, id) => [{ type: 'TrustPolicyBinding', id }],
     }),
 
     // 5) Update
-    updateTrustPolicyBinding: build.mutation<
-      void,
-      Pick<TrustPolicyBinding, "id"> & Partial<TrustPolicyBinding>
-    >({
+    updateTrustPolicyBinding: build.mutation<TrustPolicyBinding, Pick<TrustPolicyBinding, 'id'> & Partial<TrustPolicyBinding>>({
       query: ({ id, ...patch }) => ({
         url: `TrustPolicyBinding/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            TrustPolicyBindingService.util.updateQueryData(
-              "getTrustPolicyBinding",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<TrustPolicyBinding, "id">,
-      ) => [
-        { type: "TrustPolicyBinding", id },
-        { type: "TrustPolicyBinding", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<TrustPolicyBinding, 'id'>) => [
+        { type: 'TrustPolicyBinding', id },
+        { type: 'TrustPolicyBinding', id: 'LIST' },
+        { type: 'TrustPolicyBinding', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteTrustPolicyBinding: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteTrustPolicyBinding: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `TrustPolicyBinding/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "TrustPolicyBinding", id },
+        { type: 'TrustPolicyBinding', id },
+        { type: 'TrustPolicyBinding', id: 'LIST' },
+        { type: 'TrustPolicyBinding', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteTrustPolicyBindingCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteTrustPolicyBindingCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `TrustPolicyBinding/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "TrustPolicyBinding", id },
-        { type: "TrustPolicyBinding", id: "LIST" },
+        { type: 'TrustPolicyBinding', id },
+        { type: 'TrustPolicyBinding', id: 'LIST' },
+        { type: 'TrustPolicyBinding', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetTrustPolicyBindingsPagedQuery`
 export const {
-  useGetTrustPolicyBindingsPagedQuery, // immediate fetch
+  useGetTrustPolicyBindingsPagedQuery,     // immediate fetch
   useLazyGetTrustPolicyBindingsPagedQuery, // lazy fetch
   useGetTrustPolicyBindingQuery,
   useGetTrustPolicyBindingsQuery,
@@ -190,4 +169,4 @@ export const {
   useUpdateTrustPolicyBindingMutation,
   useDeleteTrustPolicyBindingMutation,
   useDeleteTrustPolicyBindingCascadeMutation,
-} = TrustPolicyBindingService;
+} = TrustPolicyBindingService

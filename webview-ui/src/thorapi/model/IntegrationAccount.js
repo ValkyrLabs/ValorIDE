@@ -35,32 +35,22 @@ const DataObject_1 = require("./DataObject");
 function IntegrationAccountFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        accountName: !(0, runtime_1.exists)(json, "accountName") ? undefined : json["accountName"],
-        username: !(0, runtime_1.exists)(json, "username") ? undefined : json["username"],
-        password: !(0, runtime_1.exists)(json, "password") ? undefined : json["password"],
-        apiKey: !(0, runtime_1.exists)(json, "apiKey") ? undefined : json["apiKey"],
-        accountId: !(0, runtime_1.exists)(json, "accountId") ? undefined : json["accountId"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        verified: !(0, runtime_1.exists)(json, "verified") ? undefined : json["verified"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'accountName': !(0, runtime_1.exists)(json, 'accountName') ? undefined : json['accountName'],
+        'username': !(0, runtime_1.exists)(json, 'username') ? undefined : json['username'],
+        'password': !(0, runtime_1.exists)(json, 'password') ? undefined : json['password'],
+        'apiKey': !(0, runtime_1.exists)(json, 'apiKey') ? undefined : json['apiKey'],
+        'accountId': !(0, runtime_1.exists)(json, 'accountId') ? undefined : json['accountId'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'verified': !(0, runtime_1.exists)(json, 'verified') ? undefined : json['verified'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function IntegrationAccountToJSON(value) {
@@ -69,20 +59,20 @@ function IntegrationAccountToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        accountName: value.accountName,
-        username: value.username,
-        password: value.password,
-        apiKey: value.apiKey,
-        accountId: value.accountId,
-        status: value.status,
-        verified: value.verified,
-        trashed: value.trashed,
+        'accountName': value.accountName,
+        'username': value.username,
+        'password': value.password,
+        'apiKey': value.apiKey,
+        'accountId': value.accountId,
+        'status': value.status,
+        'verified': value.verified,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var IntegrationAccountStatusEnum;
 (function (IntegrationAccountStatusEnum) {
     IntegrationAccountStatusEnum["READY"] = "ready";

@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { RotateTrustKeyRequest } from "@thorapi/model/RotateTrustKeyRequest";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { RotateTrustKeyRequest } from '@thorapi/model/RotateTrustKeyRequest'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type RotateTrustKeyRequestResponse = RotateTrustKeyRequest[];
+type RotateTrustKeyRequestResponse = RotateTrustKeyRequest[]
+type RotateTrustKeyRequestPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<RotateTrustKeyRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toRotateTrustKeyRequestList = (
-  result: unknown,
-): RotateTrustKeyRequestResponse => {
+type RotateTrustKeyRequestListQueryArg = {
+  example?: Partial<RotateTrustKeyRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toRotateTrustKeyRequestList = (result: unknown): RotateTrustKeyRequestResponse => {
   if (Array.isArray(result)) {
-    return result as RotateTrustKeyRequestResponse;
+    return result as RotateTrustKeyRequestResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as RotateTrustKeyRequestResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as RotateTrustKeyRequestResponse) : []
+}
 
 export const RotateTrustKeyRequestService = createApi({
-  reducerPath: "RotateTrustKeyRequest", // This should remain unique
+  reducerPath: 'RotateTrustKeyRequest', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["RotateTrustKeyRequest"],
+  tagTypes: ['RotateTrustKeyRequest'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getRotateTrustKeyRequestsPaged: build.query<
-      RotateTrustKeyRequestResponse,
-      { page: number; size?: number; example?: Partial<RotateTrustKeyRequest> }
-    >({
+    getRotateTrustKeyRequestsPaged: build.query<RotateTrustKeyRequestResponse, RotateTrustKeyRequestPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `RotateTrustKeyRequest?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `RotateTrustKeyRequest?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toRotateTrustKeyRequestList(result);
+        const rows = toRotateTrustKeyRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "RotateTrustKeyRequest" as const, id })),
-          { type: "RotateTrustKeyRequest", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'RotateTrustKeyRequest' as const, id })),
+          { type: 'RotateTrustKeyRequest', id: `PAGE_${page}` },
+          { type: 'RotateTrustKeyRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getRotateTrustKeyRequests: build.query<
-      RotateTrustKeyRequestResponse,
-      { example?: Partial<RotateTrustKeyRequest> } | void
-    >({
+    getRotateTrustKeyRequests: build.query<RotateTrustKeyRequestResponse, RotateTrustKeyRequestListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,114 +82,86 @@ export const RotateTrustKeyRequestService = createApi({
         return `RotateTrustKeyRequest`;
       },
       providesTags: (result) => {
-        const rows = toRotateTrustKeyRequestList(result);
+        const rows = toRotateTrustKeyRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "RotateTrustKeyRequest" as const, id })),
-          { type: "RotateTrustKeyRequest", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'RotateTrustKeyRequest' as const, id })),
+          { type: 'RotateTrustKeyRequest', id: 'LIST' },
+          { type: 'RotateTrustKeyRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addRotateTrustKeyRequest: build.mutation<
-      RotateTrustKeyRequest,
-      Partial<RotateTrustKeyRequest>
-    >({
+    addRotateTrustKeyRequest: build.mutation<RotateTrustKeyRequest, Partial<RotateTrustKeyRequest>>({
       query: (body) => ({
         url: `RotateTrustKeyRequest`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "RotateTrustKeyRequest", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'RotateTrustKeyRequest', id: 'LIST' },
+        { type: 'RotateTrustKeyRequest', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getRotateTrustKeyRequest: build.query<RotateTrustKeyRequest, string>({
       query: (id) => `RotateTrustKeyRequest/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "RotateTrustKeyRequest", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'RotateTrustKeyRequest', id }],
     }),
 
     // 5) Update
-    updateRotateTrustKeyRequest: build.mutation<
-      void,
-      Pick<RotateTrustKeyRequest, "id"> & Partial<RotateTrustKeyRequest>
-    >({
+    updateRotateTrustKeyRequest: build.mutation<RotateTrustKeyRequest, Pick<RotateTrustKeyRequest, 'id'> & Partial<RotateTrustKeyRequest>>({
       query: ({ id, ...patch }) => ({
         url: `RotateTrustKeyRequest/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            RotateTrustKeyRequestService.util.updateQueryData(
-              "getRotateTrustKeyRequest",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<RotateTrustKeyRequest, "id">,
-      ) => [
-        { type: "RotateTrustKeyRequest", id },
-        { type: "RotateTrustKeyRequest", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<RotateTrustKeyRequest, 'id'>) => [
+        { type: 'RotateTrustKeyRequest', id },
+        { type: 'RotateTrustKeyRequest', id: 'LIST' },
+        { type: 'RotateTrustKeyRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteRotateTrustKeyRequest: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteRotateTrustKeyRequest: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `RotateTrustKeyRequest/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "RotateTrustKeyRequest", id },
+        { type: 'RotateTrustKeyRequest', id },
+        { type: 'RotateTrustKeyRequest', id: 'LIST' },
+        { type: 'RotateTrustKeyRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteRotateTrustKeyRequestCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteRotateTrustKeyRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `RotateTrustKeyRequest/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "RotateTrustKeyRequest", id },
-        { type: "RotateTrustKeyRequest", id: "LIST" },
+        { type: 'RotateTrustKeyRequest', id },
+        { type: 'RotateTrustKeyRequest', id: 'LIST' },
+        { type: 'RotateTrustKeyRequest', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetRotateTrustKeyRequestsPagedQuery`
 export const {
-  useGetRotateTrustKeyRequestsPagedQuery, // immediate fetch
+  useGetRotateTrustKeyRequestsPagedQuery,     // immediate fetch
   useLazyGetRotateTrustKeyRequestsPagedQuery, // lazy fetch
   useGetRotateTrustKeyRequestQuery,
   useGetRotateTrustKeyRequestsQuery,
@@ -192,4 +169,4 @@ export const {
   useUpdateRotateTrustKeyRequestMutation,
   useDeleteRotateTrustKeyRequestMutation,
   useDeleteRotateTrustKeyRequestCascadeMutation,
-} = RotateTrustKeyRequestService;
+} = RotateTrustKeyRequestService

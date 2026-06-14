@@ -35,34 +35,22 @@ const DataObject_1 = require("./DataObject");
 function CampaignFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        campaignId: !(0, runtime_1.exists)(json, "campaignId") ? undefined : json["campaignId"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        notes: !(0, runtime_1.exists)(json, "notes") ? undefined : json["notes"],
-        startDate: !(0, runtime_1.exists)(json, "startDate")
-            ? undefined
-            : new Date(json["startDate"]),
-        endDate: !(0, runtime_1.exists)(json, "endDate") ? undefined : new Date(json["endDate"]),
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        budget: !(0, runtime_1.exists)(json, "budget") ? undefined : json["budget"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'campaignId': !(0, runtime_1.exists)(json, 'campaignId') ? undefined : json['campaignId'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'notes': !(0, runtime_1.exists)(json, 'notes') ? undefined : json['notes'],
+        'startDate': !(0, runtime_1.exists)(json, 'startDate') ? undefined : new Date(json['startDate']),
+        'endDate': !(0, runtime_1.exists)(json, 'endDate') ? undefined : new Date(json['endDate']),
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'budget': !(0, runtime_1.exists)(json, 'budget') ? undefined : json['budget'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function CampaignToJSON(value) {
@@ -71,20 +59,20 @@ function CampaignToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        campaignId: value.campaignId,
-        name: value.name,
-        notes: value.notes,
-        startDate: value.startDate === undefined ? undefined : value.startDate.toISOString(),
-        endDate: value.endDate === undefined ? undefined : value.endDate.toISOString(),
-        status: value.status,
-        budget: value.budget,
-        trashed: value.trashed,
+        'campaignId': value.campaignId,
+        'name': value.name,
+        'notes': value.notes,
+        'startDate': value.startDate === undefined ? undefined : value.startDate.toISOString(),
+        'endDate': value.endDate === undefined ? undefined : value.endDate.toISOString(),
+        'status': value.status,
+        'budget': value.budget,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var CampaignStatusEnum;
 (function (CampaignStatusEnum) {
     CampaignStatusEnum["PLANNED"] = "planned";

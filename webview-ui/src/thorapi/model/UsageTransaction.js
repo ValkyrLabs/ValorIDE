@@ -34,46 +34,26 @@ const DataObject_1 = require("./DataObject");
 function UsageTransactionFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        customerId: !(0, runtime_1.exists)(json, "customerId") ? undefined : json["customerId"],
-        spentAt: !(0, runtime_1.exists)(json, "spentAt") ? undefined : new Date(json["spentAt"]),
-        credits: !(0, runtime_1.exists)(json, "credits") ? undefined : json["credits"],
-        usageType: !(0, runtime_1.exists)(json, "usageType") ? undefined : json["usageType"],
-        meteredUnits: !(0, runtime_1.exists)(json, "meteredUnits")
-            ? undefined
-            : json["meteredUnits"],
-        meterName: !(0, runtime_1.exists)(json, "meterName") ? undefined : json["meterName"],
-        modelProvider: !(0, runtime_1.exists)(json, "modelProvider")
-            ? undefined
-            : json["modelProvider"],
-        model: !(0, runtime_1.exists)(json, "model") ? undefined : json["model"],
-        promptTokens: !(0, runtime_1.exists)(json, "promptTokens")
-            ? undefined
-            : json["promptTokens"],
-        completionTokens: !(0, runtime_1.exists)(json, "completionTokens")
-            ? undefined
-            : json["completionTokens"],
-        idempotencyKey: !(0, runtime_1.exists)(json, "idempotencyKey")
-            ? undefined
-            : json["idempotencyKey"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'customerId': !(0, runtime_1.exists)(json, 'customerId') ? undefined : json['customerId'],
+        'spentAt': !(0, runtime_1.exists)(json, 'spentAt') ? undefined : new Date(json['spentAt']),
+        'credits': !(0, runtime_1.exists)(json, 'credits') ? undefined : json['credits'],
+        'usageType': !(0, runtime_1.exists)(json, 'usageType') ? undefined : json['usageType'],
+        'meteredUnits': !(0, runtime_1.exists)(json, 'meteredUnits') ? undefined : json['meteredUnits'],
+        'meterName': !(0, runtime_1.exists)(json, 'meterName') ? undefined : json['meterName'],
+        'modelProvider': !(0, runtime_1.exists)(json, 'modelProvider') ? undefined : json['modelProvider'],
+        'model': !(0, runtime_1.exists)(json, 'model') ? undefined : json['model'],
+        'promptTokens': !(0, runtime_1.exists)(json, 'promptTokens') ? undefined : json['promptTokens'],
+        'completionTokens': !(0, runtime_1.exists)(json, 'completionTokens') ? undefined : json['completionTokens'],
+        'idempotencyKey': !(0, runtime_1.exists)(json, 'idempotencyKey') ? undefined : json['idempotencyKey'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function UsageTransactionToJSON(value) {
@@ -82,18 +62,18 @@ function UsageTransactionToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        customerId: value.customerId,
-        spentAt: value.spentAt === undefined ? undefined : value.spentAt.toISOString(),
-        credits: value.credits,
-        usageType: value.usageType,
-        meteredUnits: value.meteredUnits,
-        meterName: value.meterName,
-        modelProvider: value.modelProvider,
-        model: value.model,
-        promptTokens: value.promptTokens,
-        completionTokens: value.completionTokens,
-        idempotencyKey: value.idempotencyKey,
-        trashed: value.trashed,
+        'customerId': value.customerId,
+        'spentAt': value.spentAt === undefined ? undefined : value.spentAt.toISOString(),
+        'credits': value.credits,
+        'usageType': value.usageType,
+        'meteredUnits': value.meteredUnits,
+        'meterName': value.meterName,
+        'modelProvider': value.modelProvider,
+        'model': value.model,
+        'promptTokens': value.promptTokens,
+        'completionTokens': value.completionTokens,
+        'idempotencyKey': value.idempotencyKey,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=UsageTransaction.js.map

@@ -36,44 +36,24 @@ const _1 = require("./");
 function TrustRuntimeEventFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        execution: !(0, runtime_1.exists)(json, "execution")
-            ? undefined
-            : (0, _1.TrustRuntimeExecutionFromJSON)(json["execution"]),
-        sequenceNumber: !(0, runtime_1.exists)(json, "sequenceNumber")
-            ? undefined
-            : json["sequenceNumber"],
-        eventType: !(0, runtime_1.exists)(json, "eventType") ? undefined : json["eventType"],
-        previousEventHash: !(0, runtime_1.exists)(json, "previousEventHash")
-            ? undefined
-            : json["previousEventHash"],
-        payloadHash: !(0, runtime_1.exists)(json, "payloadHash") ? undefined : json["payloadHash"],
-        redactionPolicy: !(0, runtime_1.exists)(json, "redactionPolicy")
-            ? undefined
-            : json["redactionPolicy"],
-        eventHash: !(0, runtime_1.exists)(json, "eventHash") ? undefined : json["eventHash"],
-        signature: !(0, runtime_1.exists)(json, "signature") ? undefined : json["signature"],
-        signingKeyVersion: !(0, runtime_1.exists)(json, "signingKeyVersion")
-            ? undefined
-            : (0, _1.TrustKeyVersionFromJSON)(json["signingKeyVersion"]),
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'execution': !(0, runtime_1.exists)(json, 'execution') ? undefined : (0, _1.TrustRuntimeExecutionFromJSON)(json['execution']),
+        'sequenceNumber': !(0, runtime_1.exists)(json, 'sequenceNumber') ? undefined : json['sequenceNumber'],
+        'eventType': !(0, runtime_1.exists)(json, 'eventType') ? undefined : json['eventType'],
+        'previousEventHash': !(0, runtime_1.exists)(json, 'previousEventHash') ? undefined : json['previousEventHash'],
+        'payloadHash': !(0, runtime_1.exists)(json, 'payloadHash') ? undefined : json['payloadHash'],
+        'redactionPolicy': !(0, runtime_1.exists)(json, 'redactionPolicy') ? undefined : json['redactionPolicy'],
+        'eventHash': !(0, runtime_1.exists)(json, 'eventHash') ? undefined : json['eventHash'],
+        'signature': !(0, runtime_1.exists)(json, 'signature') ? undefined : json['signature'],
+        'signingKeyVersion': !(0, runtime_1.exists)(json, 'signingKeyVersion') ? undefined : (0, _1.TrustKeyVersionFromJSON)(json['signingKeyVersion']),
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function TrustRuntimeEventToJSON(value) {
@@ -82,23 +62,23 @@ function TrustRuntimeEventToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        execution: (0, _1.TrustRuntimeExecutionToJSON)(value.execution),
-        sequenceNumber: value.sequenceNumber,
-        eventType: value.eventType,
-        previousEventHash: value.previousEventHash,
-        payloadHash: value.payloadHash,
-        redactionPolicy: value.redactionPolicy,
-        eventHash: value.eventHash,
-        signature: value.signature,
-        signingKeyVersion: (0, _1.TrustKeyVersionToJSON)(value.signingKeyVersion),
-        ownerId: value.ownerId,
-        trashed: value.trashed,
+        'execution': (0, _1.TrustRuntimeExecutionToJSON)(value.execution),
+        'sequenceNumber': value.sequenceNumber,
+        'eventType': value.eventType,
+        'previousEventHash': value.previousEventHash,
+        'payloadHash': value.payloadHash,
+        'redactionPolicy': value.redactionPolicy,
+        'eventHash': value.eventHash,
+        'signature': value.signature,
+        'signingKeyVersion': (0, _1.TrustKeyVersionToJSON)(value.signingKeyVersion),
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustRuntimeEventEventTypeEnum;
 (function (TrustRuntimeEventEventTypeEnum) {
     TrustRuntimeEventEventTypeEnum["EXECUTIONSTARTED"] = "execution_started";

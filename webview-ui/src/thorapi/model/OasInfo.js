@@ -34,31 +34,19 @@ const DataObject_1 = require("./DataObject");
 function OasInfoFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        oasOpenAPISpecId: !(0, runtime_1.exists)(json, "oasOpenAPISpecId")
-            ? undefined
-            : json["oasOpenAPISpecId"],
-        title: !(0, runtime_1.exists)(json, "title") ? undefined : json["title"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        version: !(0, runtime_1.exists)(json, "version") ? undefined : json["version"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'oasOpenAPISpecId': !(0, runtime_1.exists)(json, 'oasOpenAPISpecId') ? undefined : json['oasOpenAPISpecId'],
+        'title': !(0, runtime_1.exists)(json, 'title') ? undefined : json['title'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'version': !(0, runtime_1.exists)(json, 'version') ? undefined : json['version'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function OasInfoToJSON(value) {
@@ -67,11 +55,11 @@ function OasInfoToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        oasOpenAPISpecId: value.oasOpenAPISpecId,
-        title: value.title,
-        description: value.description,
-        version: value.version,
-        trashed: value.trashed,
+        'oasOpenAPISpecId': value.oasOpenAPISpecId,
+        'title': value.title,
+        'description': value.description,
+        'version': value.version,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=OasInfo.js.map

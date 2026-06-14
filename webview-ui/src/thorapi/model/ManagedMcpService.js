@@ -36,49 +36,27 @@ const _1 = require("./");
 function ManagedMcpServiceFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        application: !(0, runtime_1.exists)(json, "application")
-            ? undefined
-            : (0, _1.ApplicationFromJSON)(json["application"]),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        creator: !(0, runtime_1.exists)(json, "creator")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["creator"]),
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        pricingModel: !(0, runtime_1.exists)(json, "pricingModel")
-            ? undefined
-            : json["pricingModel"],
-        costPerCall: !(0, runtime_1.exists)(json, "costPerCall") ? undefined : json["costPerCall"],
-        costPerMonth: !(0, runtime_1.exists)(json, "costPerMonth")
-            ? undefined
-            : json["costPerMonth"],
-        tierName: !(0, runtime_1.exists)(json, "tierName") ? undefined : json["tierName"],
-        hideFromMarketplace: !(0, runtime_1.exists)(json, "hideFromMarketplace")
-            ? undefined
-            : json["hideFromMarketplace"],
-        isMonetized: !(0, runtime_1.exists)(json, "isMonetized") ? undefined : json["isMonetized"],
-        pricingMetadata: !(0, runtime_1.exists)(json, "pricingMetadata")
-            ? undefined
-            : json["pricingMetadata"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'application': !(0, runtime_1.exists)(json, 'application') ? undefined : (0, _1.ApplicationFromJSON)(json['application']),
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'creator': !(0, runtime_1.exists)(json, 'creator') ? undefined : (0, _1.PrincipalFromJSON)(json['creator']),
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'pricingModel': !(0, runtime_1.exists)(json, 'pricingModel') ? undefined : json['pricingModel'],
+        'costPerCall': !(0, runtime_1.exists)(json, 'costPerCall') ? undefined : json['costPerCall'],
+        'costPerMonth': !(0, runtime_1.exists)(json, 'costPerMonth') ? undefined : json['costPerMonth'],
+        'tierName': !(0, runtime_1.exists)(json, 'tierName') ? undefined : json['tierName'],
+        'hideFromMarketplace': !(0, runtime_1.exists)(json, 'hideFromMarketplace') ? undefined : json['hideFromMarketplace'],
+        'isMonetized': !(0, runtime_1.exists)(json, 'isMonetized') ? undefined : json['isMonetized'],
+        'pricingMetadata': !(0, runtime_1.exists)(json, 'pricingMetadata') ? undefined : json['pricingMetadata'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ManagedMcpServiceToJSON(value) {
@@ -87,25 +65,25 @@ function ManagedMcpServiceToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        application: (0, _1.ApplicationToJSON)(value.application),
-        name: value.name,
-        description: value.description,
-        creator: (0, _1.PrincipalToJSON)(value.creator),
-        status: value.status,
-        pricingModel: value.pricingModel,
-        costPerCall: value.costPerCall,
-        costPerMonth: value.costPerMonth,
-        tierName: value.tierName,
-        hideFromMarketplace: value.hideFromMarketplace,
-        isMonetized: value.isMonetized,
-        pricingMetadata: value.pricingMetadata,
-        trashed: value.trashed,
+        'application': (0, _1.ApplicationToJSON)(value.application),
+        'name': value.name,
+        'description': value.description,
+        'creator': (0, _1.PrincipalToJSON)(value.creator),
+        'status': value.status,
+        'pricingModel': value.pricingModel,
+        'costPerCall': value.costPerCall,
+        'costPerMonth': value.costPerMonth,
+        'tierName': value.tierName,
+        'hideFromMarketplace': value.hideFromMarketplace,
+        'isMonetized': value.isMonetized,
+        'pricingMetadata': value.pricingMetadata,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ManagedMcpServiceStatusEnum;
 (function (ManagedMcpServiceStatusEnum) {
     ManagedMcpServiceStatusEnum["DRAFT"] = "draft";
@@ -114,9 +92,9 @@ var ManagedMcpServiceStatusEnum;
     ManagedMcpServiceStatusEnum["SUSPENDED"] = "suspended";
 })(ManagedMcpServiceStatusEnum || (exports.ManagedMcpServiceStatusEnum = ManagedMcpServiceStatusEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ManagedMcpServicePricingModelEnum;
 (function (ManagedMcpServicePricingModelEnum) {
     ManagedMcpServicePricingModelEnum["PER_CALL"] = "per_call";
@@ -125,9 +103,9 @@ var ManagedMcpServicePricingModelEnum;
     ManagedMcpServicePricingModelEnum["USAGE_BASED"] = "usage_based";
 })(ManagedMcpServicePricingModelEnum || (exports.ManagedMcpServicePricingModelEnum = ManagedMcpServicePricingModelEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ManagedMcpServiceTierNameEnum;
 (function (ManagedMcpServiceTierNameEnum) {
     ManagedMcpServiceTierNameEnum["STARTER"] = "starter";

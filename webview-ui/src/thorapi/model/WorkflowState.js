@@ -34,28 +34,18 @@ const DataObject_1 = require("./DataObject");
 function WorkflowStateFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        workflowId: !(0, runtime_1.exists)(json, "workflowId") ? undefined : json["workflowId"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        stateValue: !(0, runtime_1.exists)(json, "state_value") ? undefined : json["state_value"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'workflowId': !(0, runtime_1.exists)(json, 'workflowId') ? undefined : json['workflowId'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'stateValue': !(0, runtime_1.exists)(json, 'stateValue') ? undefined : json['stateValue'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function WorkflowStateToJSON(value) {
@@ -64,10 +54,10 @@ function WorkflowStateToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        workflowId: value.workflowId,
-        name: value.name,
-        state_value: value.stateValue,
-        trashed: value.trashed,
+        'workflowId': value.workflowId,
+        'name': value.name,
+        'stateValue': value.stateValue,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=WorkflowState.js.map

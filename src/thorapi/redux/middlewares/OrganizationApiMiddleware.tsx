@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_ORGANIZATION_REQUEST,
-  FETCH_ORGANIZATION_REQUEST,
-  LIST_ORGANIZATION_REQUEST,
-  UPDATE_ORGANIZATION_REQUEST,
-  DELETE_ORGANIZATION_REQUEST,
-  addOrganizationFailure,
-  addOrganizationSuccess,
-  fetchOrganizationFailure,
-  fetchOrganizationSuccess,
-  listOrganizationFailure,
-  listOrganizationSuccess,
-  updateOrganizationFailure,
-  updateOrganizationSuccess,
-  deleteOrganizationFailure,
-  deleteOrganizationSuccess,
-} from "../actions/OrganizationApiAction";
+
+    ADD_ORGANIZATION_REQUEST,
+    FETCH_ORGANIZATION_REQUEST,
+    LIST_ORGANIZATION_REQUEST,
+    UPDATE_ORGANIZATION_REQUEST,
+    DELETE_ORGANIZATION_REQUEST,
+
+    addOrganizationFailure,
+    addOrganizationSuccess,
+
+    fetchOrganizationFailure,
+    fetchOrganizationSuccess,
+    
+    listOrganizationFailure,
+    listOrganizationSuccess,
+
+    updateOrganizationFailure,
+    updateOrganizationSuccess,
+    
+    deleteOrganizationFailure,
+    deleteOrganizationSuccess,
+    
+} from '../actions/OrganizationApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Organization
 */
 
-export const OrganizationMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Organization MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const OrganizationMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("Organization MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

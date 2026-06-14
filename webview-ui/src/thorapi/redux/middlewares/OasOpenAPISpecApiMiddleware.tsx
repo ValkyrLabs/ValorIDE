@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_OASOPENAPISPEC_REQUEST,
-  FETCH_OASOPENAPISPEC_REQUEST,
-  LIST_OASOPENAPISPEC_REQUEST,
-  UPDATE_OASOPENAPISPEC_REQUEST,
-  DELETE_OASOPENAPISPEC_REQUEST,
-  addOasOpenAPISpecFailure,
-  addOasOpenAPISpecSuccess,
-  fetchOasOpenAPISpecFailure,
-  fetchOasOpenAPISpecSuccess,
-  listOasOpenAPISpecFailure,
-  listOasOpenAPISpecSuccess,
-  updateOasOpenAPISpecFailure,
-  updateOasOpenAPISpecSuccess,
-  deleteOasOpenAPISpecFailure,
-  deleteOasOpenAPISpecSuccess,
-} from "../actions/OasOpenAPISpecApiAction";
+
+    ADD_OASOPENAPISPEC_REQUEST,
+    FETCH_OASOPENAPISPEC_REQUEST,
+    LIST_OASOPENAPISPEC_REQUEST,
+    UPDATE_OASOPENAPISPEC_REQUEST,
+    DELETE_OASOPENAPISPEC_REQUEST,
+
+    addOasOpenAPISpecFailure,
+    addOasOpenAPISpecSuccess,
+
+    fetchOasOpenAPISpecFailure,
+    fetchOasOpenAPISpecSuccess,
+    
+    listOasOpenAPISpecFailure,
+    listOasOpenAPISpecSuccess,
+
+    updateOasOpenAPISpecFailure,
+    updateOasOpenAPISpecSuccess,
+    
+    deleteOasOpenAPISpecFailure,
+    deleteOasOpenAPISpecSuccess,
+    
+} from '../actions/OasOpenAPISpecApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: OasOpenAPISpec
 */
 
-export const OasOpenAPISpecMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("OasOpenAPISpec MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const OasOpenAPISpecMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("OasOpenAPISpec MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

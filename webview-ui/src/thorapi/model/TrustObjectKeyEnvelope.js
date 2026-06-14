@@ -36,59 +36,27 @@ const _1 = require("./");
 function TrustObjectKeyEnvelopeFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        protectedObjectType: !(0, runtime_1.exists)(json, "protectedObjectType")
-            ? undefined
-            : json["protectedObjectType"],
-        protectedObjectId: !(0, runtime_1.exists)(json, "protectedObjectId")
-            ? undefined
-            : json["protectedObjectId"],
-        protectedObjectKeyHash: !(0, runtime_1.exists)(json, "protectedObjectKeyHash")
-            ? undefined
-            : json["protectedObjectKeyHash"],
-        keyVersion: !(0, runtime_1.exists)(json, "keyVersion")
-            ? undefined
-            : (0, _1.TrustKeyVersionFromJSON)(json["keyVersion"]),
-        targetKeyVersion: !(0, runtime_1.exists)(json, "targetKeyVersion")
-            ? undefined
-            : (0, _1.TrustKeyVersionFromJSON)(json["targetKeyVersion"]),
-        keyVersionHash: !(0, runtime_1.exists)(json, "keyVersionHash")
-            ? undefined
-            : json["keyVersionHash"],
-        dekHash: !(0, runtime_1.exists)(json, "dekHash") ? undefined : json["dekHash"],
-        wrappedDekMaterial: !(0, runtime_1.exists)(json, "wrappedDekMaterial")
-            ? undefined
-            : json["wrappedDekMaterial"],
-        wrappingKeyRef: !(0, runtime_1.exists)(json, "wrappingKeyRef")
-            ? undefined
-            : json["wrappingKeyRef"],
-        providerKeyRef: !(0, runtime_1.exists)(json, "providerKeyRef")
-            ? undefined
-            : json["providerKeyRef"],
-        envelopeAlgorithm: !(0, runtime_1.exists)(json, "envelopeAlgorithm")
-            ? undefined
-            : json["envelopeAlgorithm"],
-        envelopeStatus: !(0, runtime_1.exists)(json, "envelopeStatus")
-            ? undefined
-            : json["envelopeStatus"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'protectedObjectType': !(0, runtime_1.exists)(json, 'protectedObjectType') ? undefined : json['protectedObjectType'],
+        'protectedObjectId': !(0, runtime_1.exists)(json, 'protectedObjectId') ? undefined : json['protectedObjectId'],
+        'protectedObjectKeyHash': !(0, runtime_1.exists)(json, 'protectedObjectKeyHash') ? undefined : json['protectedObjectKeyHash'],
+        'keyVersion': !(0, runtime_1.exists)(json, 'keyVersion') ? undefined : (0, _1.TrustKeyVersionFromJSON)(json['keyVersion']),
+        'targetKeyVersion': !(0, runtime_1.exists)(json, 'targetKeyVersion') ? undefined : (0, _1.TrustKeyVersionFromJSON)(json['targetKeyVersion']),
+        'keyVersionHash': !(0, runtime_1.exists)(json, 'keyVersionHash') ? undefined : json['keyVersionHash'],
+        'dekHash': !(0, runtime_1.exists)(json, 'dekHash') ? undefined : json['dekHash'],
+        'wrappedDekMaterial': !(0, runtime_1.exists)(json, 'wrappedDekMaterial') ? undefined : json['wrappedDekMaterial'],
+        'wrappingKeyRef': !(0, runtime_1.exists)(json, 'wrappingKeyRef') ? undefined : json['wrappingKeyRef'],
+        'providerKeyRef': !(0, runtime_1.exists)(json, 'providerKeyRef') ? undefined : json['providerKeyRef'],
+        'envelopeAlgorithm': !(0, runtime_1.exists)(json, 'envelopeAlgorithm') ? undefined : json['envelopeAlgorithm'],
+        'envelopeStatus': !(0, runtime_1.exists)(json, 'envelopeStatus') ? undefined : json['envelopeStatus'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function TrustObjectKeyEnvelopeToJSON(value) {
@@ -97,35 +65,35 @@ function TrustObjectKeyEnvelopeToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        protectedObjectType: value.protectedObjectType,
-        protectedObjectId: value.protectedObjectId,
-        protectedObjectKeyHash: value.protectedObjectKeyHash,
-        keyVersion: (0, _1.TrustKeyVersionToJSON)(value.keyVersion),
-        targetKeyVersion: (0, _1.TrustKeyVersionToJSON)(value.targetKeyVersion),
-        keyVersionHash: value.keyVersionHash,
-        dekHash: value.dekHash,
-        wrappedDekMaterial: value.wrappedDekMaterial,
-        wrappingKeyRef: value.wrappingKeyRef,
-        providerKeyRef: value.providerKeyRef,
-        envelopeAlgorithm: value.envelopeAlgorithm,
-        envelopeStatus: value.envelopeStatus,
-        ownerId: value.ownerId,
-        trashed: value.trashed,
+        'protectedObjectType': value.protectedObjectType,
+        'protectedObjectId': value.protectedObjectId,
+        'protectedObjectKeyHash': value.protectedObjectKeyHash,
+        'keyVersion': (0, _1.TrustKeyVersionToJSON)(value.keyVersion),
+        'targetKeyVersion': (0, _1.TrustKeyVersionToJSON)(value.targetKeyVersion),
+        'keyVersionHash': value.keyVersionHash,
+        'dekHash': value.dekHash,
+        'wrappedDekMaterial': value.wrappedDekMaterial,
+        'wrappingKeyRef': value.wrappingKeyRef,
+        'providerKeyRef': value.providerKeyRef,
+        'envelopeAlgorithm': value.envelopeAlgorithm,
+        'envelopeStatus': value.envelopeStatus,
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustObjectKeyEnvelopeEnvelopeAlgorithmEnum;
 (function (TrustObjectKeyEnvelopeEnvelopeAlgorithmEnum) {
     TrustObjectKeyEnvelopeEnvelopeAlgorithmEnum["AES256GCM"] = "aes_256_gcm";
     TrustObjectKeyEnvelopeEnvelopeAlgorithmEnum["XCHACHA20POLY1305"] = "xchacha20_poly1305";
 })(TrustObjectKeyEnvelopeEnvelopeAlgorithmEnum || (exports.TrustObjectKeyEnvelopeEnvelopeAlgorithmEnum = TrustObjectKeyEnvelopeEnvelopeAlgorithmEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustObjectKeyEnvelopeEnvelopeStatusEnum;
 (function (TrustObjectKeyEnvelopeEnvelopeStatusEnum) {
     TrustObjectKeyEnvelopeEnvelopeStatusEnum["ACTIVE"] = "active";

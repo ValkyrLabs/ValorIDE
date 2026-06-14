@@ -34,31 +34,19 @@ const DataObject_1 = require("./DataObject");
 function PersistentLoginFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        username: !(0, runtime_1.exists)(json, "username") ? undefined : json["username"],
-        series: !(0, runtime_1.exists)(json, "series") ? undefined : json["series"],
-        token: !(0, runtime_1.exists)(json, "token") ? undefined : json["token"],
-        lastUsed: !(0, runtime_1.exists)(json, "lastUsed")
-            ? undefined
-            : new Date(json["lastUsed"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'username': !(0, runtime_1.exists)(json, 'username') ? undefined : json['username'],
+        'series': !(0, runtime_1.exists)(json, 'series') ? undefined : json['series'],
+        'token': !(0, runtime_1.exists)(json, 'token') ? undefined : json['token'],
+        'lastUsed': !(0, runtime_1.exists)(json, 'lastUsed') ? undefined : new Date(json['lastUsed']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function PersistentLoginToJSON(value) {
@@ -67,11 +55,11 @@ function PersistentLoginToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        username: value.username,
-        series: value.series,
-        token: value.token,
-        lastUsed: value.lastUsed === undefined ? undefined : value.lastUsed.toISOString(),
-        trashed: value.trashed,
+        'username': value.username,
+        'series': value.series,
+        'token': value.token,
+        'lastUsed': value.lastUsed === undefined ? undefined : value.lastUsed.toISOString(),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=PersistentLogin.js.map

@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import axios from "axios";
 import { Logger } from "../logging/Logger";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
+import { buildAuthTokensFromResponse } from "./authResponse";
 
 export interface AuthTokens {
   jwtToken: string;
@@ -172,15 +173,15 @@ export class TokenStorageService {
         },
       );
 
-      if (response.status === 200 && response.data.token) {
-        const newTokens: AuthTokens = {
-          jwtToken: response.data.token,
-          apiKey: response.data.apiKey,
-          refreshToken: response.data.refreshToken || refreshToken,
-          expiresAt: response.data.expiresAt,
+      const newTokens = buildAuthTokensFromResponse(
+        response.data,
+        response.headers,
+      );
+      if (response.status === 200 && newTokens) {
+        return {
+          ...newTokens,
+          refreshToken: newTokens.refreshToken || refreshToken,
         };
-
-        return newTokens;
       }
 
       return null;

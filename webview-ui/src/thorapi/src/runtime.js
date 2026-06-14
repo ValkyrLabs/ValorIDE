@@ -15,30 +15,23 @@ Template file: typescript-redux-query/runtime.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.COLLECTION_FORMATS = exports.RequiredError = exports.getBasePath = exports.setBasePath = exports.Configuration = exports.BASE_PATH = void 0;
+exports.COLLECTION_FORMATS = exports.RequiredError = exports.setBasePath = exports.Configuration = exports.BASE_PATH = void 0;
 exports.exists = exists;
 exports.mapValues = mapValues;
-const sanitizeBasePath = (value) => {
-    const raw = (value ?? "").trim();
-    return raw ? raw.replace(/\/+$/, "") : "";
-};
-// Mutable base path so it can be overridden by runtime settings.
-exports.BASE_PATH = sanitizeBasePath(import.meta.env?.VITE_basePath ?? "");
+// un-comment for Vite apps
+exports.BASE_PATH = import.meta.env.VITE_basePath.replace(/\/+$/, "");
 // un-comment for Create REact APp apps
-// export let BASE_PATH = sanitizeBasePath(process.env.REACT_APP_BASE_PATH);
+// export let BASE_PATH = process.env.REACT_APP_BASE_PATH.replace(/\/+$/, "");
 exports.Configuration = {
     basePath: exports.BASE_PATH, // This is the value that will be prepended to all endpoints.  For compatibility with
     // previous versions, the default is an empty string.  Other generators typically use
     // BASE_PATH as the default.
 };
-const setBasePath = (value) => {
-    exports.BASE_PATH = sanitizeBasePath(value ?? import.meta.env?.VITE_basePath ?? "");
+const setBasePath = (basePath) => {
+    exports.BASE_PATH = (basePath || "").replace(/\/+$/, "");
     exports.Configuration.basePath = exports.BASE_PATH;
-    return exports.BASE_PATH;
 };
 exports.setBasePath = setBasePath;
-const getBasePath = () => exports.BASE_PATH;
-exports.getBasePath = getBasePath;
 class RequiredError extends Error {
     field;
     constructor(field, msg) {

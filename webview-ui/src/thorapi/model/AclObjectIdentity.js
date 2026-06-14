@@ -35,40 +35,20 @@ const _1 = require("./");
 function AclObjectIdentityFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        aclClass: !(0, runtime_1.exists)(json, "aclClass")
-            ? undefined
-            : (0, _1.AclClassFromJSON)(json["aclClass"]),
-        objectIdIdentity: !(0, runtime_1.exists)(json, "objectIdIdentity")
-            ? undefined
-            : json["objectIdIdentity"],
-        parentObject: !(0, runtime_1.exists)(json, "parentObject")
-            ? undefined
-            : AclObjectIdentityFromJSON(json["parentObject"]),
-        ownerSid: !(0, runtime_1.exists)(json, "ownerSid")
-            ? undefined
-            : (0, _1.AclSidFromJSON)(json["ownerSid"]),
-        entriesInheriting: !(0, runtime_1.exists)(json, "entriesInheriting")
-            ? undefined
-            : json["entriesInheriting"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'aclClass': !(0, runtime_1.exists)(json, 'aclClass') ? undefined : (0, _1.AclClassFromJSON)(json['aclClass']),
+        'objectIdIdentity': !(0, runtime_1.exists)(json, 'objectIdIdentity') ? undefined : json['objectIdIdentity'],
+        'parentObject': !(0, runtime_1.exists)(json, 'parentObject') ? undefined : AclObjectIdentityFromJSON(json['parentObject']),
+        'ownerSid': !(0, runtime_1.exists)(json, 'ownerSid') ? undefined : (0, _1.AclSidFromJSON)(json['ownerSid']),
+        'entriesInheriting': !(0, runtime_1.exists)(json, 'entriesInheriting') ? undefined : json['entriesInheriting'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function AclObjectIdentityToJSON(value) {
@@ -77,12 +57,12 @@ function AclObjectIdentityToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        aclClass: (0, _1.AclClassToJSON)(value.aclClass),
-        objectIdIdentity: value.objectIdIdentity,
-        parentObject: AclObjectIdentityToJSON(value.parentObject),
-        ownerSid: (0, _1.AclSidToJSON)(value.ownerSid),
-        entriesInheriting: value.entriesInheriting,
-        trashed: value.trashed,
+        'aclClass': (0, _1.AclClassToJSON)(value.aclClass),
+        'objectIdIdentity': value.objectIdIdentity,
+        'parentObject': AclObjectIdentityToJSON(value.parentObject),
+        'ownerSid': (0, _1.AclSidToJSON)(value.ownerSid),
+        'entriesInheriting': value.entriesInheriting,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=AclObjectIdentity.js.map

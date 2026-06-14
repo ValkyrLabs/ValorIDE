@@ -36,39 +36,23 @@ const _1 = require("./");
 function AgentChatMessageFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        agentId: !(0, runtime_1.exists)(json, "agentId") ? undefined : json["agentId"],
-        conversationId: !(0, runtime_1.exists)(json, "conversationId")
-            ? undefined
-            : json["conversationId"],
-        senderId: !(0, runtime_1.exists)(json, "senderId") ? undefined : json["senderId"],
-        senderType: !(0, runtime_1.exists)(json, "senderType") ? undefined : json["senderType"],
-        message: !(0, runtime_1.exists)(json, "message") ? undefined : json["message"],
-        attachments: !(0, runtime_1.exists)(json, "attachments") ? undefined : json["attachments"],
-        timestamp: !(0, runtime_1.exists)(json, "timestamp")
-            ? undefined
-            : new Date(json["timestamp"]),
-        readBy: !(0, runtime_1.exists)(json, "readBy")
-            ? undefined
-            : json["readBy"].map(_1.AgentFromJSON),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'agentId': !(0, runtime_1.exists)(json, 'agentId') ? undefined : json['agentId'],
+        'conversationId': !(0, runtime_1.exists)(json, 'conversationId') ? undefined : json['conversationId'],
+        'senderId': !(0, runtime_1.exists)(json, 'senderId') ? undefined : json['senderId'],
+        'senderType': !(0, runtime_1.exists)(json, 'senderType') ? undefined : json['senderType'],
+        'message': !(0, runtime_1.exists)(json, 'message') ? undefined : json['message'],
+        'attachments': !(0, runtime_1.exists)(json, 'attachments') ? undefined : json['attachments'],
+        'timestamp': !(0, runtime_1.exists)(json, 'timestamp') ? undefined : new Date(json['timestamp']),
+        'readBy': !(0, runtime_1.exists)(json, 'readBy') ? undefined : json['readBy'].map(_1.AgentFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function AgentChatMessageToJSON(value) {
@@ -77,23 +61,21 @@ function AgentChatMessageToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        agentId: value.agentId,
-        conversationId: value.conversationId,
-        senderId: value.senderId,
-        senderType: value.senderType,
-        message: value.message,
-        attachments: value.attachments,
-        timestamp: value.timestamp === undefined ? undefined : value.timestamp.toISOString(),
-        readBy: value.readBy === undefined
-            ? undefined
-            : value.readBy.map(_1.AgentToJSON),
-        trashed: value.trashed,
+        'agentId': value.agentId,
+        'conversationId': value.conversationId,
+        'senderId': value.senderId,
+        'senderType': value.senderType,
+        'message': value.message,
+        'attachments': value.attachments,
+        'timestamp': value.timestamp === undefined ? undefined : value.timestamp.toISOString(),
+        'readBy': value.readBy === undefined ? undefined : value.readBy.map(_1.AgentToJSON),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var AgentChatMessageSenderTypeEnum;
 (function (AgentChatMessageSenderTypeEnum) {
     AgentChatMessageSenderTypeEnum["AGENT"] = "agent";

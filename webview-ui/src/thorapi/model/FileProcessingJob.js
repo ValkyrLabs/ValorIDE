@@ -36,40 +36,24 @@ const _1 = require("./");
 function FileProcessingJobFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        type: !(0, runtime_1.exists)(json, "type") ? undefined : json["type"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        progress: !(0, runtime_1.exists)(json, "progress") ? undefined : json["progress"],
-        metadata: !(0, runtime_1.exists)(json, "metadata") ? undefined : json["metadata"],
-        result: !(0, runtime_1.exists)(json, "result") ? undefined : json["result"],
-        error: !(0, runtime_1.exists)(json, "error") ? undefined : json["error"],
-        relatedFiles: !(0, runtime_1.exists)(json, "relatedFiles")
-            ? undefined
-            : json["relatedFiles"].map(_1.FileRecordFromJSON),
-        startedAt: !(0, runtime_1.exists)(json, "startedAt")
-            ? undefined
-            : new Date(json["startedAt"]),
-        completedAt: !(0, runtime_1.exists)(json, "completedAt")
-            ? undefined
-            : new Date(json["completedAt"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'progress': !(0, runtime_1.exists)(json, 'progress') ? undefined : json['progress'],
+        'metadata': !(0, runtime_1.exists)(json, 'metadata') ? undefined : json['metadata'],
+        'result': !(0, runtime_1.exists)(json, 'result') ? undefined : json['result'],
+        'error': !(0, runtime_1.exists)(json, 'error') ? undefined : json['error'],
+        'relatedFiles': !(0, runtime_1.exists)(json, 'relatedFiles') ? undefined : json['relatedFiles'].map(_1.FileRecordFromJSON),
+        'startedAt': !(0, runtime_1.exists)(json, 'startedAt') ? undefined : new Date(json['startedAt']),
+        'completedAt': !(0, runtime_1.exists)(json, 'completedAt') ? undefined : new Date(json['completedAt']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function FileProcessingJobToJSON(value) {
@@ -78,26 +62,22 @@ function FileProcessingJobToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        type: value.type,
-        status: value.status,
-        progress: value.progress,
-        metadata: value.metadata,
-        result: value.result,
-        error: value.error,
-        relatedFiles: value.relatedFiles === undefined
-            ? undefined
-            : value.relatedFiles.map(_1.FileRecordToJSON),
-        startedAt: value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
-        completedAt: value.completedAt === undefined
-            ? undefined
-            : value.completedAt.toISOString(),
-        trashed: value.trashed,
+        'type': value.type,
+        'status': value.status,
+        'progress': value.progress,
+        'metadata': value.metadata,
+        'result': value.result,
+        'error': value.error,
+        'relatedFiles': value.relatedFiles === undefined ? undefined : value.relatedFiles.map(_1.FileRecordToJSON),
+        'startedAt': value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
+        'completedAt': value.completedAt === undefined ? undefined : value.completedAt.toISOString(),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var FileProcessingJobTypeEnum;
 (function (FileProcessingJobTypeEnum) {
     FileProcessingJobTypeEnum["FILEPROCESSING"] = "file_processing";
@@ -107,9 +87,9 @@ var FileProcessingJobTypeEnum;
     FileProcessingJobTypeEnum["THUMBNAILGENERATION"] = "thumbnail_generation";
 })(FileProcessingJobTypeEnum || (exports.FileProcessingJobTypeEnum = FileProcessingJobTypeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var FileProcessingJobStatusEnum;
 (function (FileProcessingJobStatusEnum) {
     FileProcessingJobStatusEnum["PENDING"] = "pending";

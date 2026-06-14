@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,130 +36,122 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface MemoryActionRequest
  */
-export type MemoryActionRequest = DataObject & {
-  /**
-   * Optional workflow scope for the operation.
-   * @type {string}
-   * @memberof MemoryActionRequest
-   */
-  workflowId?: string;
-  /**
-   * Optional subset of memory entry types to target.
-   * @type {Array<string>}
-   * @memberof MemoryActionRequest
-   */
-  entryTypes?: Array<MemoryActionRequestEntryTypesEnum>;
-  /**
-   * If true, estimate impact without mutating state.
-   * @type {boolean}
-   * @memberof MemoryActionRequest
-   */
-  dryRun?: boolean;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof MemoryActionRequest
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof MemoryActionRequest
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof MemoryActionRequest
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof MemoryActionRequest
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof MemoryActionRequest
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof MemoryActionRequest
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof MemoryActionRequest
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof MemoryActionRequest
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof MemoryActionRequest
-   */
-  trashed?: boolean;
-};
+export type MemoryActionRequest  = DataObject & {
+    /**
+     * Optional workflow scope for the operation.
+     * @type {string}
+     * @memberof MemoryActionRequest
+     */
+    workflowId?: string;
+    /**
+     * Optional subset of memory entry types to target.
+     * @type {Array<string>}
+     * @memberof MemoryActionRequest
+     */
+    entryTypes?: Array<MemoryActionRequestEntryTypesEnum>;
+    /**
+     * If true, estimate impact without mutating state.
+     * @type {boolean}
+     * @memberof MemoryActionRequest
+     */
+    dryRun?: boolean;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof MemoryActionRequest
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof MemoryActionRequest
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof MemoryActionRequest
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof MemoryActionRequest
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof MemoryActionRequest
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof MemoryActionRequest
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof MemoryActionRequest
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof MemoryActionRequest
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof MemoryActionRequest
+     */
+    trashed?: boolean;
+}
 
 export function MemoryActionRequestFromJSON(json: any): MemoryActionRequest {
-  return {
-    ...DataObjectFromJSON(json),
-    workflowId: !exists(json, "workflowId") ? undefined : json["workflowId"],
-    entryTypes: !exists(json, "entryTypes") ? undefined : json["entryTypes"],
-    dryRun: !exists(json, "dryRun") ? undefined : json["dryRun"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'workflowId': !exists(json, 'workflowId') ? undefined : json['workflowId'],
+        'entryTypes': !exists(json, 'entryTypes') ? undefined : json['entryTypes'],
+        'dryRun': !exists(json, 'dryRun') ? undefined : json['dryRun'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function MemoryActionRequestToJSON(value?: MemoryActionRequest): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    workflowId: value.workflowId,
-    entryTypes: value.entryTypes,
-    dryRun: value.dryRun,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'workflowId': value.workflowId,
+        'entryTypes': value.entryTypes,
+        'dryRun': value.dryRun,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum MemoryActionRequestEntryTypesEnum {
-  PREFERENCE = "preference",
-  DECISION = "decision",
-  TODO = "todo",
-  CONTEXT = "context",
-  ARTIFACT = "artifact",
+    PREFERENCE = 'preference',
+    DECISION = 'decision',
+    TODO = 'todo',
+    CONTEXT = 'context',
+    ARTIFACT = 'artifact'
 }
+
+

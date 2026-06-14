@@ -13,60 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { LlmRoutingPolicy } from "@thorapi/model/LlmRoutingPolicy";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { LlmRoutingPolicy } from '@thorapi/model/LlmRoutingPolicy'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type LlmRoutingPolicyResponse = LlmRoutingPolicy[];
+type LlmRoutingPolicyResponse = LlmRoutingPolicy[]
+type LlmRoutingPolicyPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<LlmRoutingPolicy>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type LlmRoutingPolicyListQueryArg = {
+  example?: Partial<LlmRoutingPolicy>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toLlmRoutingPolicyList = (result: unknown): LlmRoutingPolicyResponse => {
   if (Array.isArray(result)) {
-    return result as LlmRoutingPolicyResponse;
+    return result as LlmRoutingPolicyResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as LlmRoutingPolicyResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as LlmRoutingPolicyResponse) : []
+}
 
 export const LlmRoutingPolicyService = createApi({
-  reducerPath: "LlmRoutingPolicy", // This should remain unique
+  reducerPath: 'LlmRoutingPolicy', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["LlmRoutingPolicy"],
+  tagTypes: ['LlmRoutingPolicy'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getLlmRoutingPolicysPaged: build.query<
-      LlmRoutingPolicyResponse,
-      { page: number; size?: number; example?: Partial<LlmRoutingPolicy> }
-    >({
+    getLlmRoutingPolicysPaged: build.query<LlmRoutingPolicyResponse, LlmRoutingPolicyPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `LlmRoutingPolicy?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `LlmRoutingPolicy?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toLlmRoutingPolicyList(result);
+        const rows = toLlmRoutingPolicyList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "LlmRoutingPolicy" as const, id })),
-          { type: "LlmRoutingPolicy", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'LlmRoutingPolicy' as const, id })),
+          { type: 'LlmRoutingPolicy', id: `PAGE_${page}` },
+          { type: 'LlmRoutingPolicy', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getLlmRoutingPolicys: build.query<
-      LlmRoutingPolicyResponse,
-      { example?: Partial<LlmRoutingPolicy> } | void
-    >({
+    getLlmRoutingPolicys: build.query<LlmRoutingPolicyResponse, LlmRoutingPolicyListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -75,112 +82,86 @@ export const LlmRoutingPolicyService = createApi({
         return `LlmRoutingPolicy`;
       },
       providesTags: (result) => {
-        const rows = toLlmRoutingPolicyList(result);
+        const rows = toLlmRoutingPolicyList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "LlmRoutingPolicy" as const, id })),
-          { type: "LlmRoutingPolicy", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'LlmRoutingPolicy' as const, id })),
+          { type: 'LlmRoutingPolicy', id: 'LIST' },
+          { type: 'LlmRoutingPolicy', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addLlmRoutingPolicy: build.mutation<
-      LlmRoutingPolicy,
-      Partial<LlmRoutingPolicy>
-    >({
+    addLlmRoutingPolicy: build.mutation<LlmRoutingPolicy, Partial<LlmRoutingPolicy>>({
       query: (body) => ({
         url: `LlmRoutingPolicy`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "LlmRoutingPolicy", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'LlmRoutingPolicy', id: 'LIST' },
+        { type: 'LlmRoutingPolicy', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getLlmRoutingPolicy: build.query<LlmRoutingPolicy, string>({
       query: (id) => `LlmRoutingPolicy/${id}`,
-      providesTags: (result, error, id) => [{ type: "LlmRoutingPolicy", id }],
+      providesTags: (result, error, id) => [{ type: 'LlmRoutingPolicy', id }],
     }),
 
     // 5) Update
-    updateLlmRoutingPolicy: build.mutation<
-      void,
-      Pick<LlmRoutingPolicy, "id"> & Partial<LlmRoutingPolicy>
-    >({
+    updateLlmRoutingPolicy: build.mutation<LlmRoutingPolicy, Pick<LlmRoutingPolicy, 'id'> & Partial<LlmRoutingPolicy>>({
       query: ({ id, ...patch }) => ({
         url: `LlmRoutingPolicy/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            LlmRoutingPolicyService.util.updateQueryData(
-              "getLlmRoutingPolicy",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<LlmRoutingPolicy, "id">,
-      ) => [
-        { type: "LlmRoutingPolicy", id },
-        { type: "LlmRoutingPolicy", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<LlmRoutingPolicy, 'id'>) => [
+        { type: 'LlmRoutingPolicy', id },
+        { type: 'LlmRoutingPolicy', id: 'LIST' },
+        { type: 'LlmRoutingPolicy', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteLlmRoutingPolicy: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteLlmRoutingPolicy: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `LlmRoutingPolicy/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "LlmRoutingPolicy", id },
+        { type: 'LlmRoutingPolicy', id },
+        { type: 'LlmRoutingPolicy', id: 'LIST' },
+        { type: 'LlmRoutingPolicy', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteLlmRoutingPolicyCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteLlmRoutingPolicyCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `LlmRoutingPolicy/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "LlmRoutingPolicy", id },
-        { type: "LlmRoutingPolicy", id: "LIST" },
+        { type: 'LlmRoutingPolicy', id },
+        { type: 'LlmRoutingPolicy', id: 'LIST' },
+        { type: 'LlmRoutingPolicy', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetLlmRoutingPolicysPagedQuery`
 export const {
-  useGetLlmRoutingPolicysPagedQuery, // immediate fetch
+  useGetLlmRoutingPolicysPagedQuery,     // immediate fetch
   useLazyGetLlmRoutingPolicysPagedQuery, // lazy fetch
   useGetLlmRoutingPolicyQuery,
   useGetLlmRoutingPolicysQuery,
@@ -188,4 +169,4 @@ export const {
   useUpdateLlmRoutingPolicyMutation,
   useDeleteLlmRoutingPolicyMutation,
   useDeleteLlmRoutingPolicyCascadeMutation,
-} = LlmRoutingPolicyService;
+} = LlmRoutingPolicyService

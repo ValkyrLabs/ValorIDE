@@ -36,45 +36,23 @@ const _1 = require("./");
 function AgentFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        application: !(0, runtime_1.exists)(json, "application")
-            ? undefined
-            : (0, _1.ApplicationFromJSON)(json["application"]),
-        workflows: !(0, runtime_1.exists)(json, "workflows")
-            ? undefined
-            : json["workflows"].map(_1.WorkflowFromJSON),
-        role: !(0, runtime_1.exists)(json, "role") ? undefined : (0, _1.RoleFromJSON)(json["role"]),
-        cronSchedule: !(0, runtime_1.exists)(json, "cronSchedule")
-            ? undefined
-            : json["cronSchedule"],
-        eventTriggers: !(0, runtime_1.exists)(json, "eventTriggers")
-            ? undefined
-            : json["eventTriggers"].map(_1.AgentEventTriggerFromJSON),
-        heartbeatEnabled: !(0, runtime_1.exists)(json, "heartbeatEnabled")
-            ? undefined
-            : json["heartbeatEnabled"],
-        autonomousTableCreationLevel: !(0, runtime_1.exists)(json, "autonomousTableCreationLevel")
-            ? undefined
-            : json["autonomousTableCreationLevel"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'application': !(0, runtime_1.exists)(json, 'application') ? undefined : (0, _1.ApplicationFromJSON)(json['application']),
+        'workflows': !(0, runtime_1.exists)(json, 'workflows') ? undefined : json['workflows'].map(_1.WorkflowFromJSON),
+        'role': !(0, runtime_1.exists)(json, 'role') ? undefined : (0, _1.RoleFromJSON)(json['role']),
+        'cronSchedule': !(0, runtime_1.exists)(json, 'cronSchedule') ? undefined : json['cronSchedule'],
+        'eventTriggers': !(0, runtime_1.exists)(json, 'eventTriggers') ? undefined : json['eventTriggers'].map(_1.AgentEventTriggerFromJSON),
+        'heartbeatEnabled': !(0, runtime_1.exists)(json, 'heartbeatEnabled') ? undefined : json['heartbeatEnabled'],
+        'autonomousTableCreationLevel': !(0, runtime_1.exists)(json, 'autonomousTableCreationLevel') ? undefined : json['autonomousTableCreationLevel'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function AgentToJSON(value) {
@@ -83,25 +61,21 @@ function AgentToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        name: value.name,
-        application: (0, _1.ApplicationToJSON)(value.application),
-        workflows: value.workflows === undefined
-            ? undefined
-            : value.workflows.map(_1.WorkflowToJSON),
-        role: (0, _1.RoleToJSON)(value.role),
-        cronSchedule: value.cronSchedule,
-        eventTriggers: value.eventTriggers === undefined
-            ? undefined
-            : value.eventTriggers.map(_1.AgentEventTriggerToJSON),
-        heartbeatEnabled: value.heartbeatEnabled,
-        autonomousTableCreationLevel: value.autonomousTableCreationLevel,
-        trashed: value.trashed,
+        'name': value.name,
+        'application': (0, _1.ApplicationToJSON)(value.application),
+        'workflows': value.workflows === undefined ? undefined : value.workflows.map(_1.WorkflowToJSON),
+        'role': (0, _1.RoleToJSON)(value.role),
+        'cronSchedule': value.cronSchedule,
+        'eventTriggers': value.eventTriggers === undefined ? undefined : value.eventTriggers.map(_1.AgentEventTriggerToJSON),
+        'heartbeatEnabled': value.heartbeatEnabled,
+        'autonomousTableCreationLevel': value.autonomousTableCreationLevel,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var AgentAutonomousTableCreationLevelEnum;
 (function (AgentAutonomousTableCreationLevelEnum) {
     AgentAutonomousTableCreationLevelEnum["NONE"] = "none";

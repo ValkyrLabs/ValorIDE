@@ -35,36 +35,20 @@ const _1 = require("./");
 function SpaceFileFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        space: !(0, runtime_1.exists)(json, "space") ? undefined : (0, _1.SpaceFromJSON)(json["space"]),
-        fileRecord: !(0, runtime_1.exists)(json, "fileRecord")
-            ? undefined
-            : (0, _1.FileRecordFromJSON)(json["fileRecord"]),
-        addedDate: !(0, runtime_1.exists)(json, "addedDate")
-            ? undefined
-            : new Date(json["addedDate"]),
-        isPinned: !(0, runtime_1.exists)(json, "isPinned") ? undefined : json["isPinned"],
-        pinnedBy: !(0, runtime_1.exists)(json, "pinnedBy")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["pinnedBy"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'space': !(0, runtime_1.exists)(json, 'space') ? undefined : (0, _1.SpaceFromJSON)(json['space']),
+        'fileRecord': !(0, runtime_1.exists)(json, 'fileRecord') ? undefined : (0, _1.FileRecordFromJSON)(json['fileRecord']),
+        'addedDate': !(0, runtime_1.exists)(json, 'addedDate') ? undefined : new Date(json['addedDate']),
+        'isPinned': !(0, runtime_1.exists)(json, 'isPinned') ? undefined : json['isPinned'],
+        'pinnedBy': !(0, runtime_1.exists)(json, 'pinnedBy') ? undefined : (0, _1.PrincipalFromJSON)(json['pinnedBy']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function SpaceFileToJSON(value) {
@@ -73,12 +57,12 @@ function SpaceFileToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        space: (0, _1.SpaceToJSON)(value.space),
-        fileRecord: (0, _1.FileRecordToJSON)(value.fileRecord),
-        addedDate: value.addedDate === undefined ? undefined : value.addedDate.toISOString(),
-        isPinned: value.isPinned,
-        pinnedBy: (0, _1.PrincipalToJSON)(value.pinnedBy),
-        trashed: value.trashed,
+        'space': (0, _1.SpaceToJSON)(value.space),
+        'fileRecord': (0, _1.FileRecordToJSON)(value.fileRecord),
+        'addedDate': value.addedDate === undefined ? undefined : value.addedDate.toISOString(),
+        'isPinned': value.isPinned,
+        'pinnedBy': (0, _1.PrincipalToJSON)(value.pinnedBy),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=SpaceFile.js.map

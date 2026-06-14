@@ -35,40 +35,22 @@ const _1 = require("./");
 function PhoneVerificationFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        phoneNumber: json["phoneNumber"],
-        principal: !(0, runtime_1.exists)(json, "principal")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["principal"]),
-        verified: !(0, runtime_1.exists)(json, "verified") ? undefined : json["verified"],
-        verificationCode: !(0, runtime_1.exists)(json, "verificationCode")
-            ? undefined
-            : json["verificationCode"],
-        verificationCodeExpiresAt: !(0, runtime_1.exists)(json, "verificationCodeExpiresAt")
-            ? undefined
-            : new Date(json["verificationCodeExpiresAt"]),
-        verifiedAt: !(0, runtime_1.exists)(json, "verifiedAt")
-            ? undefined
-            : new Date(json["verifiedAt"]),
-        usedFor2FA: !(0, runtime_1.exists)(json, "usedFor2FA") ? undefined : json["usedFor2FA"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'phoneNumber': json['phoneNumber'],
+        'principal': !(0, runtime_1.exists)(json, 'principal') ? undefined : (0, _1.PrincipalFromJSON)(json['principal']),
+        'verified': !(0, runtime_1.exists)(json, 'verified') ? undefined : json['verified'],
+        'verificationCode': !(0, runtime_1.exists)(json, 'verificationCode') ? undefined : json['verificationCode'],
+        'verificationCodeExpiresAt': !(0, runtime_1.exists)(json, 'verificationCodeExpiresAt') ? undefined : new Date(json['verificationCodeExpiresAt']),
+        'verifiedAt': !(0, runtime_1.exists)(json, 'verifiedAt') ? undefined : new Date(json['verifiedAt']),
+        'usedFor2FA': !(0, runtime_1.exists)(json, 'usedFor2FA') ? undefined : json['usedFor2FA'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function PhoneVerificationToJSON(value) {
@@ -77,12 +59,12 @@ function PhoneVerificationToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        phoneNumber: value.phoneNumber,
-        principal: (0, _1.PrincipalToJSON)(value.principal),
-        verified: value.verified,
-        verificationCode: value.verificationCode,
-        usedFor2FA: value.usedFor2FA,
-        trashed: value.trashed,
+        'phoneNumber': value.phoneNumber,
+        'principal': (0, _1.PrincipalToJSON)(value.principal),
+        'verified': value.verified,
+        'verificationCode': value.verificationCode,
+        'usedFor2FA': value.usedFor2FA,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=PhoneVerification.js.map

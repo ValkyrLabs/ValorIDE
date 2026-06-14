@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { TrustRuntimeEvent } from "@thorapi/model/TrustRuntimeEvent";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { TrustRuntimeEvent } from '@thorapi/model/TrustRuntimeEvent'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type TrustRuntimeEventResponse = TrustRuntimeEvent[];
+type TrustRuntimeEventResponse = TrustRuntimeEvent[]
+type TrustRuntimeEventPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<TrustRuntimeEvent>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toTrustRuntimeEventList = (
-  result: unknown,
-): TrustRuntimeEventResponse => {
+type TrustRuntimeEventListQueryArg = {
+  example?: Partial<TrustRuntimeEvent>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toTrustRuntimeEventList = (result: unknown): TrustRuntimeEventResponse => {
   if (Array.isArray(result)) {
-    return result as TrustRuntimeEventResponse;
+    return result as TrustRuntimeEventResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as TrustRuntimeEventResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as TrustRuntimeEventResponse) : []
+}
 
 export const TrustRuntimeEventService = createApi({
-  reducerPath: "TrustRuntimeEvent", // This should remain unique
+  reducerPath: 'TrustRuntimeEvent', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["TrustRuntimeEvent"],
+  tagTypes: ['TrustRuntimeEvent'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getTrustRuntimeEventsPaged: build.query<
-      TrustRuntimeEventResponse,
-      { page: number; size?: number; example?: Partial<TrustRuntimeEvent> }
-    >({
+    getTrustRuntimeEventsPaged: build.query<TrustRuntimeEventResponse, TrustRuntimeEventPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `TrustRuntimeEvent?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `TrustRuntimeEvent?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toTrustRuntimeEventList(result);
+        const rows = toTrustRuntimeEventList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "TrustRuntimeEvent" as const, id })),
-          { type: "TrustRuntimeEvent", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'TrustRuntimeEvent' as const, id })),
+          { type: 'TrustRuntimeEvent', id: `PAGE_${page}` },
+          { type: 'TrustRuntimeEvent', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getTrustRuntimeEvents: build.query<
-      TrustRuntimeEventResponse,
-      { example?: Partial<TrustRuntimeEvent> } | void
-    >({
+    getTrustRuntimeEvents: build.query<TrustRuntimeEventResponse, TrustRuntimeEventListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,112 +82,86 @@ export const TrustRuntimeEventService = createApi({
         return `TrustRuntimeEvent`;
       },
       providesTags: (result) => {
-        const rows = toTrustRuntimeEventList(result);
+        const rows = toTrustRuntimeEventList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "TrustRuntimeEvent" as const, id })),
-          { type: "TrustRuntimeEvent", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'TrustRuntimeEvent' as const, id })),
+          { type: 'TrustRuntimeEvent', id: 'LIST' },
+          { type: 'TrustRuntimeEvent', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addTrustRuntimeEvent: build.mutation<
-      TrustRuntimeEvent,
-      Partial<TrustRuntimeEvent>
-    >({
+    addTrustRuntimeEvent: build.mutation<TrustRuntimeEvent, Partial<TrustRuntimeEvent>>({
       query: (body) => ({
         url: `TrustRuntimeEvent`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "TrustRuntimeEvent", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'TrustRuntimeEvent', id: 'LIST' },
+        { type: 'TrustRuntimeEvent', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getTrustRuntimeEvent: build.query<TrustRuntimeEvent, string>({
       query: (id) => `TrustRuntimeEvent/${id}`,
-      providesTags: (result, error, id) => [{ type: "TrustRuntimeEvent", id }],
+      providesTags: (result, error, id) => [{ type: 'TrustRuntimeEvent', id }],
     }),
 
     // 5) Update
-    updateTrustRuntimeEvent: build.mutation<
-      void,
-      Pick<TrustRuntimeEvent, "id"> & Partial<TrustRuntimeEvent>
-    >({
+    updateTrustRuntimeEvent: build.mutation<TrustRuntimeEvent, Pick<TrustRuntimeEvent, 'id'> & Partial<TrustRuntimeEvent>>({
       query: ({ id, ...patch }) => ({
         url: `TrustRuntimeEvent/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            TrustRuntimeEventService.util.updateQueryData(
-              "getTrustRuntimeEvent",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<TrustRuntimeEvent, "id">,
-      ) => [
-        { type: "TrustRuntimeEvent", id },
-        { type: "TrustRuntimeEvent", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<TrustRuntimeEvent, 'id'>) => [
+        { type: 'TrustRuntimeEvent', id },
+        { type: 'TrustRuntimeEvent', id: 'LIST' },
+        { type: 'TrustRuntimeEvent', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteTrustRuntimeEvent: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteTrustRuntimeEvent: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `TrustRuntimeEvent/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "TrustRuntimeEvent", id },
+        { type: 'TrustRuntimeEvent', id },
+        { type: 'TrustRuntimeEvent', id: 'LIST' },
+        { type: 'TrustRuntimeEvent', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteTrustRuntimeEventCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteTrustRuntimeEventCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `TrustRuntimeEvent/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "TrustRuntimeEvent", id },
-        { type: "TrustRuntimeEvent", id: "LIST" },
+        { type: 'TrustRuntimeEvent', id },
+        { type: 'TrustRuntimeEvent', id: 'LIST' },
+        { type: 'TrustRuntimeEvent', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetTrustRuntimeEventsPagedQuery`
 export const {
-  useGetTrustRuntimeEventsPagedQuery, // immediate fetch
+  useGetTrustRuntimeEventsPagedQuery,     // immediate fetch
   useLazyGetTrustRuntimeEventsPagedQuery, // lazy fetch
   useGetTrustRuntimeEventQuery,
   useGetTrustRuntimeEventsQuery,
@@ -190,4 +169,4 @@ export const {
   useUpdateTrustRuntimeEventMutation,
   useDeleteTrustRuntimeEventMutation,
   useDeleteTrustRuntimeEventCascadeMutation,
-} = TrustRuntimeEventService;
+} = TrustRuntimeEventService

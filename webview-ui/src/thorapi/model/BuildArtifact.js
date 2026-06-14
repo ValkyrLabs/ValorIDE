@@ -34,44 +34,24 @@ const DataObject_1 = require("./DataObject");
 function BuildArtifactFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        applicationId: !(0, runtime_1.exists)(json, "applicationId")
-            ? undefined
-            : json["applicationId"],
-        jarPath: !(0, runtime_1.exists)(json, "jarPath") ? undefined : json["jarPath"],
-        jarSize: !(0, runtime_1.exists)(json, "jarSize") ? undefined : json["jarSize"],
-        frontendDistPath: !(0, runtime_1.exists)(json, "frontendDistPath")
-            ? undefined
-            : json["frontendDistPath"],
-        frontendSize: !(0, runtime_1.exists)(json, "frontendSize")
-            ? undefined
-            : json["frontendSize"],
-        buildTimestamp: !(0, runtime_1.exists)(json, "buildTimestamp")
-            ? undefined
-            : new Date(json["buildTimestamp"]),
-        buildVersion: !(0, runtime_1.exists)(json, "buildVersion")
-            ? undefined
-            : json["buildVersion"],
-        builtBy: !(0, runtime_1.exists)(json, "builtBy") ? undefined : json["builtBy"],
-        verified: !(0, runtime_1.exists)(json, "verified") ? undefined : json["verified"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'applicationId': !(0, runtime_1.exists)(json, 'applicationId') ? undefined : json['applicationId'],
+        'jarPath': !(0, runtime_1.exists)(json, 'jarPath') ? undefined : json['jarPath'],
+        'jarSize': !(0, runtime_1.exists)(json, 'jarSize') ? undefined : json['jarSize'],
+        'frontendDistPath': !(0, runtime_1.exists)(json, 'frontendDistPath') ? undefined : json['frontendDistPath'],
+        'frontendSize': !(0, runtime_1.exists)(json, 'frontendSize') ? undefined : json['frontendSize'],
+        'buildTimestamp': !(0, runtime_1.exists)(json, 'buildTimestamp') ? undefined : new Date(json['buildTimestamp']),
+        'buildVersion': !(0, runtime_1.exists)(json, 'buildVersion') ? undefined : json['buildVersion'],
+        'builtBy': !(0, runtime_1.exists)(json, 'builtBy') ? undefined : json['builtBy'],
+        'verified': !(0, runtime_1.exists)(json, 'verified') ? undefined : json['verified'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function BuildArtifactToJSON(value) {
@@ -80,18 +60,16 @@ function BuildArtifactToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        applicationId: value.applicationId,
-        jarPath: value.jarPath,
-        jarSize: value.jarSize,
-        frontendDistPath: value.frontendDistPath,
-        frontendSize: value.frontendSize,
-        buildTimestamp: value.buildTimestamp === undefined
-            ? undefined
-            : value.buildTimestamp.toISOString(),
-        buildVersion: value.buildVersion,
-        builtBy: value.builtBy,
-        verified: value.verified,
-        trashed: value.trashed,
+        'applicationId': value.applicationId,
+        'jarPath': value.jarPath,
+        'jarSize': value.jarSize,
+        'frontendDistPath': value.frontendDistPath,
+        'frontendSize': value.frontendSize,
+        'buildTimestamp': value.buildTimestamp === undefined ? undefined : value.buildTimestamp.toISOString(),
+        'buildVersion': value.buildVersion,
+        'builtBy': value.builtBy,
+        'verified': value.verified,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=BuildArtifact.js.map

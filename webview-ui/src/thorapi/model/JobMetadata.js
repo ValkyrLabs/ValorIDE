@@ -35,39 +35,23 @@ const DataObject_1 = require("./DataObject");
 function JobMetadataFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        type: !(0, runtime_1.exists)(json, "type") ? undefined : json["type"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        inputJson: !(0, runtime_1.exists)(json, "inputJson") ? undefined : json["inputJson"],
-        outputJson: !(0, runtime_1.exists)(json, "outputJson") ? undefined : json["outputJson"],
-        error: !(0, runtime_1.exists)(json, "error") ? undefined : json["error"],
-        startedAt: !(0, runtime_1.exists)(json, "startedAt")
-            ? undefined
-            : new Date(json["startedAt"]),
-        finishedAt: !(0, runtime_1.exists)(json, "finishedAt")
-            ? undefined
-            : new Date(json["finishedAt"]),
-        idempotencyKey: !(0, runtime_1.exists)(json, "idempotencyKey")
-            ? undefined
-            : json["idempotencyKey"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'inputJson': !(0, runtime_1.exists)(json, 'inputJson') ? undefined : json['inputJson'],
+        'outputJson': !(0, runtime_1.exists)(json, 'outputJson') ? undefined : json['outputJson'],
+        'error': !(0, runtime_1.exists)(json, 'error') ? undefined : json['error'],
+        'startedAt': !(0, runtime_1.exists)(json, 'startedAt') ? undefined : new Date(json['startedAt']),
+        'finishedAt': !(0, runtime_1.exists)(json, 'finishedAt') ? undefined : new Date(json['finishedAt']),
+        'idempotencyKey': !(0, runtime_1.exists)(json, 'idempotencyKey') ? undefined : json['idempotencyKey'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function JobMetadataToJSON(value) {
@@ -76,23 +60,21 @@ function JobMetadataToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        type: value.type,
-        status: value.status,
-        inputJson: value.inputJson,
-        outputJson: value.outputJson,
-        error: value.error,
-        startedAt: value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
-        finishedAt: value.finishedAt === undefined
-            ? undefined
-            : value.finishedAt.toISOString(),
-        idempotencyKey: value.idempotencyKey,
-        trashed: value.trashed,
+        'type': value.type,
+        'status': value.status,
+        'inputJson': value.inputJson,
+        'outputJson': value.outputJson,
+        'error': value.error,
+        'startedAt': value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
+        'finishedAt': value.finishedAt === undefined ? undefined : value.finishedAt.toISOString(),
+        'idempotencyKey': value.idempotencyKey,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var JobMetadataStatusEnum;
 (function (JobMetadataStatusEnum) {
     JobMetadataStatusEnum["QUEUED"] = "queued";

@@ -36,34 +36,20 @@ const _1 = require("./");
 function DiscountFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        code: !(0, runtime_1.exists)(json, "code") ? undefined : json["code"],
-        lineItem: !(0, runtime_1.exists)(json, "lineItem")
-            ? undefined
-            : (0, _1.ProductFromJSON)(json["lineItem"]),
-        orderDiscount: !(0, runtime_1.exists)(json, "orderDiscount")
-            ? undefined
-            : json["orderDiscount"],
-        type: !(0, runtime_1.exists)(json, "type") ? undefined : json["type"],
-        amount: !(0, runtime_1.exists)(json, "amount") ? undefined : json["amount"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'code': !(0, runtime_1.exists)(json, 'code') ? undefined : json['code'],
+        'lineItem': !(0, runtime_1.exists)(json, 'lineItem') ? undefined : (0, _1.ProductFromJSON)(json['lineItem']),
+        'orderDiscount': !(0, runtime_1.exists)(json, 'orderDiscount') ? undefined : json['orderDiscount'],
+        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
+        'amount': !(0, runtime_1.exists)(json, 'amount') ? undefined : json['amount'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function DiscountToJSON(value) {
@@ -72,18 +58,18 @@ function DiscountToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        code: value.code,
-        lineItem: (0, _1.ProductToJSON)(value.lineItem),
-        orderDiscount: value.orderDiscount,
-        type: value.type,
-        amount: value.amount,
-        trashed: value.trashed,
+        'code': value.code,
+        'lineItem': (0, _1.ProductToJSON)(value.lineItem),
+        'orderDiscount': value.orderDiscount,
+        'type': value.type,
+        'amount': value.amount,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var DiscountTypeEnum;
 (function (DiscountTypeEnum) {
     DiscountTypeEnum["PERCENTAGE"] = "percentage";

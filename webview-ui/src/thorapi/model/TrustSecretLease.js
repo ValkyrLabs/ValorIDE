@@ -36,40 +36,22 @@ const _1 = require("./");
 function TrustSecretLeaseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        keyVersion: !(0, runtime_1.exists)(json, "keyVersion")
-            ? undefined
-            : (0, _1.TrustKeyVersionFromJSON)(json["keyVersion"]),
-        leasePurpose: !(0, runtime_1.exists)(json, "leasePurpose")
-            ? undefined
-            : json["leasePurpose"],
-        actorId: !(0, runtime_1.exists)(json, "actorId") ? undefined : json["actorId"],
-        serviceAccountId: !(0, runtime_1.exists)(json, "serviceAccountId")
-            ? undefined
-            : json["serviceAccountId"],
-        expiresAt: !(0, runtime_1.exists)(json, "expiresAt")
-            ? undefined
-            : new Date(json["expiresAt"]),
-        leaseStatus: !(0, runtime_1.exists)(json, "leaseStatus") ? undefined : json["leaseStatus"],
-        requestHash: !(0, runtime_1.exists)(json, "requestHash") ? undefined : json["requestHash"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'keyVersion': !(0, runtime_1.exists)(json, 'keyVersion') ? undefined : (0, _1.TrustKeyVersionFromJSON)(json['keyVersion']),
+        'leasePurpose': !(0, runtime_1.exists)(json, 'leasePurpose') ? undefined : json['leasePurpose'],
+        'actorId': !(0, runtime_1.exists)(json, 'actorId') ? undefined : json['actorId'],
+        'serviceAccountId': !(0, runtime_1.exists)(json, 'serviceAccountId') ? undefined : json['serviceAccountId'],
+        'expiresAt': !(0, runtime_1.exists)(json, 'expiresAt') ? undefined : new Date(json['expiresAt']),
+        'leaseStatus': !(0, runtime_1.exists)(json, 'leaseStatus') ? undefined : json['leaseStatus'],
+        'requestHash': !(0, runtime_1.exists)(json, 'requestHash') ? undefined : json['requestHash'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function TrustSecretLeaseToJSON(value) {
@@ -78,21 +60,21 @@ function TrustSecretLeaseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        keyVersion: (0, _1.TrustKeyVersionToJSON)(value.keyVersion),
-        leasePurpose: value.leasePurpose,
-        actorId: value.actorId,
-        serviceAccountId: value.serviceAccountId,
-        expiresAt: value.expiresAt === undefined ? undefined : value.expiresAt.toISOString(),
-        leaseStatus: value.leaseStatus,
-        requestHash: value.requestHash,
-        ownerId: value.ownerId,
-        trashed: value.trashed,
+        'keyVersion': (0, _1.TrustKeyVersionToJSON)(value.keyVersion),
+        'leasePurpose': value.leasePurpose,
+        'actorId': value.actorId,
+        'serviceAccountId': value.serviceAccountId,
+        'expiresAt': value.expiresAt === undefined ? undefined : value.expiresAt.toISOString(),
+        'leaseStatus': value.leaseStatus,
+        'requestHash': value.requestHash,
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustSecretLeaseLeasePurposeEnum;
 (function (TrustSecretLeaseLeasePurposeEnum) {
     TrustSecretLeaseLeasePurposeEnum["ENCRYPT"] = "encrypt";
@@ -104,9 +86,9 @@ var TrustSecretLeaseLeasePurposeEnum;
     TrustSecretLeaseLeasePurposeEnum["REWRAP"] = "rewrap";
 })(TrustSecretLeaseLeasePurposeEnum || (exports.TrustSecretLeaseLeasePurposeEnum = TrustSecretLeaseLeasePurposeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustSecretLeaseLeaseStatusEnum;
 (function (TrustSecretLeaseLeaseStatusEnum) {
     TrustSecretLeaseLeaseStatusEnum["ISSUED"] = "issued";

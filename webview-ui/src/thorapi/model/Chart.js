@@ -36,47 +36,29 @@ const _1 = require("./");
 function ChartFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        sheetId: !(0, runtime_1.exists)(json, "sheetId") ? undefined : json["sheetId"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        chartType: !(0, runtime_1.exists)(json, "chartType") ? undefined : json["chartType"],
-        title: !(0, runtime_1.exists)(json, "title") ? undefined : json["title"],
-        axisLabelX: !(0, runtime_1.exists)(json, "axisLabelX") ? undefined : json["axisLabelX"],
-        axisLabelY: !(0, runtime_1.exists)(json, "axisLabelY") ? undefined : json["axisLabelY"],
-        categoryRange: !(0, runtime_1.exists)(json, "categoryRange")
-            ? undefined
-            : json["categoryRange"],
-        dataSeries: !(0, runtime_1.exists)(json, "dataSeries")
-            ? undefined
-            : json["dataSeries"].map(_1.ChartSeriesFromJSON),
-        embedded: !(0, runtime_1.exists)(json, "embedded") ? undefined : json["embedded"],
-        anchorCell: !(0, runtime_1.exists)(json, "anchorCell") ? undefined : json["anchorCell"],
-        anchorOffsetX: !(0, runtime_1.exists)(json, "anchorOffsetX")
-            ? undefined
-            : json["anchorOffsetX"],
-        anchorOffsetY: !(0, runtime_1.exists)(json, "anchorOffsetY")
-            ? undefined
-            : json["anchorOffsetY"],
-        width: !(0, runtime_1.exists)(json, "width") ? undefined : json["width"],
-        height: !(0, runtime_1.exists)(json, "height") ? undefined : json["height"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'sheetId': !(0, runtime_1.exists)(json, 'sheetId') ? undefined : json['sheetId'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'chartType': !(0, runtime_1.exists)(json, 'chartType') ? undefined : json['chartType'],
+        'title': !(0, runtime_1.exists)(json, 'title') ? undefined : json['title'],
+        'axisLabelX': !(0, runtime_1.exists)(json, 'axisLabelX') ? undefined : json['axisLabelX'],
+        'axisLabelY': !(0, runtime_1.exists)(json, 'axisLabelY') ? undefined : json['axisLabelY'],
+        'categoryRange': !(0, runtime_1.exists)(json, 'categoryRange') ? undefined : json['categoryRange'],
+        'dataSeries': !(0, runtime_1.exists)(json, 'dataSeries') ? undefined : json['dataSeries'].map(_1.ChartSeriesFromJSON),
+        'embedded': !(0, runtime_1.exists)(json, 'embedded') ? undefined : json['embedded'],
+        'anchorCell': !(0, runtime_1.exists)(json, 'anchorCell') ? undefined : json['anchorCell'],
+        'anchorOffsetX': !(0, runtime_1.exists)(json, 'anchorOffsetX') ? undefined : json['anchorOffsetX'],
+        'anchorOffsetY': !(0, runtime_1.exists)(json, 'anchorOffsetY') ? undefined : json['anchorOffsetY'],
+        'width': !(0, runtime_1.exists)(json, 'width') ? undefined : json['width'],
+        'height': !(0, runtime_1.exists)(json, 'height') ? undefined : json['height'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ChartToJSON(value) {
@@ -85,29 +67,27 @@ function ChartToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        sheetId: value.sheetId,
-        name: value.name,
-        chartType: value.chartType,
-        title: value.title,
-        axisLabelX: value.axisLabelX,
-        axisLabelY: value.axisLabelY,
-        categoryRange: value.categoryRange,
-        dataSeries: value.dataSeries === undefined
-            ? undefined
-            : value.dataSeries.map(_1.ChartSeriesToJSON),
-        embedded: value.embedded,
-        anchorCell: value.anchorCell,
-        anchorOffsetX: value.anchorOffsetX,
-        anchorOffsetY: value.anchorOffsetY,
-        width: value.width,
-        height: value.height,
-        trashed: value.trashed,
+        'sheetId': value.sheetId,
+        'name': value.name,
+        'chartType': value.chartType,
+        'title': value.title,
+        'axisLabelX': value.axisLabelX,
+        'axisLabelY': value.axisLabelY,
+        'categoryRange': value.categoryRange,
+        'dataSeries': value.dataSeries === undefined ? undefined : value.dataSeries.map(_1.ChartSeriesToJSON),
+        'embedded': value.embedded,
+        'anchorCell': value.anchorCell,
+        'anchorOffsetX': value.anchorOffsetX,
+        'anchorOffsetY': value.anchorOffsetY,
+        'width': value.width,
+        'height': value.height,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ChartChartTypeEnum;
 (function (ChartChartTypeEnum) {
     ChartChartTypeEnum["AREA"] = "area";

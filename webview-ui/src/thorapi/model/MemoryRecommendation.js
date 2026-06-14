@@ -35,30 +35,20 @@ const DataObject_1 = require("./DataObject");
 function MemoryRecommendationFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        message: !(0, runtime_1.exists)(json, "message") ? undefined : json["message"],
-        action: !(0, runtime_1.exists)(json, "action") ? undefined : json["action"],
-        vibeLabel: !(0, runtime_1.exists)(json, "vibeLabel") ? undefined : json["vibeLabel"],
-        creditCost: !(0, runtime_1.exists)(json, "creditCost") ? undefined : json["creditCost"],
-        priority: !(0, runtime_1.exists)(json, "priority") ? undefined : json["priority"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'message': !(0, runtime_1.exists)(json, 'message') ? undefined : json['message'],
+        'action': !(0, runtime_1.exists)(json, 'action') ? undefined : json['action'],
+        'vibeLabel': !(0, runtime_1.exists)(json, 'vibeLabel') ? undefined : json['vibeLabel'],
+        'creditCost': !(0, runtime_1.exists)(json, 'creditCost') ? undefined : json['creditCost'],
+        'priority': !(0, runtime_1.exists)(json, 'priority') ? undefined : json['priority'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function MemoryRecommendationToJSON(value) {
@@ -67,18 +57,18 @@ function MemoryRecommendationToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        message: value.message,
-        action: value.action,
-        vibeLabel: value.vibeLabel,
-        creditCost: value.creditCost,
-        priority: value.priority,
-        trashed: value.trashed,
+        'message': value.message,
+        'action': value.action,
+        'vibeLabel': value.vibeLabel,
+        'creditCost': value.creditCost,
+        'priority': value.priority,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var MemoryRecommendationActionEnum;
 (function (MemoryRecommendationActionEnum) {
     MemoryRecommendationActionEnum["COMPACT"] = "compact";
@@ -87,9 +77,9 @@ var MemoryRecommendationActionEnum;
     MemoryRecommendationActionEnum["EXPAND"] = "expand";
 })(MemoryRecommendationActionEnum || (exports.MemoryRecommendationActionEnum = MemoryRecommendationActionEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var MemoryRecommendationPriorityEnum;
 (function (MemoryRecommendationPriorityEnum) {
     MemoryRecommendationPriorityEnum["LOW"] = "low";

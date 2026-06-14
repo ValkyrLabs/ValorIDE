@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_DEADLETTERQUEUE_REQUEST,
-  FETCH_DEADLETTERQUEUE_REQUEST,
-  LIST_DEADLETTERQUEUE_REQUEST,
-  UPDATE_DEADLETTERQUEUE_REQUEST,
-  DELETE_DEADLETTERQUEUE_REQUEST,
-  addDeadLetterQueueFailure,
-  addDeadLetterQueueSuccess,
-  fetchDeadLetterQueueFailure,
-  fetchDeadLetterQueueSuccess,
-  listDeadLetterQueueFailure,
-  listDeadLetterQueueSuccess,
-  updateDeadLetterQueueFailure,
-  updateDeadLetterQueueSuccess,
-  deleteDeadLetterQueueFailure,
-  deleteDeadLetterQueueSuccess,
-} from "../actions/DeadLetterQueueApiAction";
+
+    ADD_DEADLETTERQUEUE_REQUEST,
+    FETCH_DEADLETTERQUEUE_REQUEST,
+    LIST_DEADLETTERQUEUE_REQUEST,
+    UPDATE_DEADLETTERQUEUE_REQUEST,
+    DELETE_DEADLETTERQUEUE_REQUEST,
+
+    addDeadLetterQueueFailure,
+    addDeadLetterQueueSuccess,
+
+    fetchDeadLetterQueueFailure,
+    fetchDeadLetterQueueSuccess,
+    
+    listDeadLetterQueueFailure,
+    listDeadLetterQueueSuccess,
+
+    updateDeadLetterQueueFailure,
+    updateDeadLetterQueueSuccess,
+    
+    deleteDeadLetterQueueFailure,
+    deleteDeadLetterQueueSuccess,
+    
+} from '../actions/DeadLetterQueueApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: DeadLetterQueue
 */
 
-export const DeadLetterQueueMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("DeadLetterQueue MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const DeadLetterQueueMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("DeadLetterQueue MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

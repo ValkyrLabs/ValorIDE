@@ -35,38 +35,22 @@ const _1 = require("./");
 function FileDownloadTokenFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        token: json["token"],
-        expiresAt: new Date(json["expiresAt"]),
-        file: !(0, runtime_1.exists)(json, "file") ? undefined : (0, _1.FileRecordFromJSON)(json["file"]),
-        downloadCount: !(0, runtime_1.exists)(json, "downloadCount")
-            ? undefined
-            : json["downloadCount"],
-        maxDownloads: !(0, runtime_1.exists)(json, "maxDownloads")
-            ? undefined
-            : json["maxDownloads"],
-        issuedTo: !(0, runtime_1.exists)(json, "issuedTo")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["issuedTo"]),
-        ipAddress: !(0, runtime_1.exists)(json, "ipAddress") ? undefined : json["ipAddress"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'token': json['token'],
+        'expiresAt': new Date(json['expiresAt']),
+        'file': !(0, runtime_1.exists)(json, 'file') ? undefined : (0, _1.FileRecordFromJSON)(json['file']),
+        'downloadCount': !(0, runtime_1.exists)(json, 'downloadCount') ? undefined : json['downloadCount'],
+        'maxDownloads': !(0, runtime_1.exists)(json, 'maxDownloads') ? undefined : json['maxDownloads'],
+        'issuedTo': !(0, runtime_1.exists)(json, 'issuedTo') ? undefined : (0, _1.PrincipalFromJSON)(json['issuedTo']),
+        'ipAddress': !(0, runtime_1.exists)(json, 'ipAddress') ? undefined : json['ipAddress'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function FileDownloadTokenToJSON(value) {
@@ -75,14 +59,14 @@ function FileDownloadTokenToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        token: value.token,
-        expiresAt: value.expiresAt.toISOString(),
-        file: (0, _1.FileRecordToJSON)(value.file),
-        downloadCount: value.downloadCount,
-        maxDownloads: value.maxDownloads,
-        issuedTo: (0, _1.PrincipalToJSON)(value.issuedTo),
-        ipAddress: value.ipAddress,
-        trashed: value.trashed,
+        'token': value.token,
+        'expiresAt': value.expiresAt.toISOString(),
+        'file': (0, _1.FileRecordToJSON)(value.file),
+        'downloadCount': value.downloadCount,
+        'maxDownloads': value.maxDownloads,
+        'issuedTo': (0, _1.PrincipalToJSON)(value.issuedTo),
+        'ipAddress': value.ipAddress,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=FileDownloadToken.js.map

@@ -35,39 +35,25 @@ const DataObject_1 = require("./DataObject");
 function ProductLandingPageFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        productId: !(0, runtime_1.exists)(json, "productId") ? undefined : json["productId"],
-        templateId: !(0, runtime_1.exists)(json, "templateId") ? undefined : json["templateId"],
-        slug: !(0, runtime_1.exists)(json, "slug") ? undefined : json["slug"],
-        seoTitle: !(0, runtime_1.exists)(json, "seoTitle") ? undefined : json["seoTitle"],
-        seoDescription: !(0, runtime_1.exists)(json, "seoDescription")
-            ? undefined
-            : json["seoDescription"],
-        seoKeywords: !(0, runtime_1.exists)(json, "seoKeywords") ? undefined : json["seoKeywords"],
-        ogImageUrl: !(0, runtime_1.exists)(json, "ogImageUrl") ? undefined : json["ogImageUrl"],
-        isPublished: !(0, runtime_1.exists)(json, "isPublished") ? undefined : json["isPublished"],
-        publishedAt: !(0, runtime_1.exists)(json, "publishedAt")
-            ? undefined
-            : new Date(json["publishedAt"]),
-        config: !(0, runtime_1.exists)(json, "config") ? undefined : json["config"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'productId': !(0, runtime_1.exists)(json, 'productId') ? undefined : json['productId'],
+        'templateId': !(0, runtime_1.exists)(json, 'templateId') ? undefined : json['templateId'],
+        'slug': !(0, runtime_1.exists)(json, 'slug') ? undefined : json['slug'],
+        'seoTitle': !(0, runtime_1.exists)(json, 'seoTitle') ? undefined : json['seoTitle'],
+        'seoDescription': !(0, runtime_1.exists)(json, 'seoDescription') ? undefined : json['seoDescription'],
+        'seoKeywords': !(0, runtime_1.exists)(json, 'seoKeywords') ? undefined : json['seoKeywords'],
+        'ogImageUrl': !(0, runtime_1.exists)(json, 'ogImageUrl') ? undefined : json['ogImageUrl'],
+        'isPublished': !(0, runtime_1.exists)(json, 'isPublished') ? undefined : json['isPublished'],
+        'publishedAt': !(0, runtime_1.exists)(json, 'publishedAt') ? undefined : new Date(json['publishedAt']),
+        'config': !(0, runtime_1.exists)(json, 'config') ? undefined : json['config'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ProductLandingPageToJSON(value) {
@@ -76,25 +62,23 @@ function ProductLandingPageToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        productId: value.productId,
-        templateId: value.templateId,
-        slug: value.slug,
-        seoTitle: value.seoTitle,
-        seoDescription: value.seoDescription,
-        seoKeywords: value.seoKeywords,
-        ogImageUrl: value.ogImageUrl,
-        isPublished: value.isPublished,
-        publishedAt: value.publishedAt === undefined
-            ? undefined
-            : value.publishedAt.toISOString(),
-        config: value.config,
-        trashed: value.trashed,
+        'productId': value.productId,
+        'templateId': value.templateId,
+        'slug': value.slug,
+        'seoTitle': value.seoTitle,
+        'seoDescription': value.seoDescription,
+        'seoKeywords': value.seoKeywords,
+        'ogImageUrl': value.ogImageUrl,
+        'isPublished': value.isPublished,
+        'publishedAt': value.publishedAt === undefined ? undefined : value.publishedAt.toISOString(),
+        'config': value.config,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ProductLandingPageTemplateIdEnum;
 (function (ProductLandingPageTemplateIdEnum) {
     ProductLandingPageTemplateIdEnum["MINIMALCLEAN"] = "minimal_clean";

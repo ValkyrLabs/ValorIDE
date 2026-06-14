@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_SALESPIPELINE_REQUEST,
-  FETCH_SALESPIPELINE_REQUEST,
-  LIST_SALESPIPELINE_REQUEST,
-  UPDATE_SALESPIPELINE_REQUEST,
-  DELETE_SALESPIPELINE_REQUEST,
-  addSalesPipelineFailure,
-  addSalesPipelineSuccess,
-  fetchSalesPipelineFailure,
-  fetchSalesPipelineSuccess,
-  listSalesPipelineFailure,
-  listSalesPipelineSuccess,
-  updateSalesPipelineFailure,
-  updateSalesPipelineSuccess,
-  deleteSalesPipelineFailure,
-  deleteSalesPipelineSuccess,
-} from "../actions/SalesPipelineApiAction";
+
+    ADD_SALESPIPELINE_REQUEST,
+    FETCH_SALESPIPELINE_REQUEST,
+    LIST_SALESPIPELINE_REQUEST,
+    UPDATE_SALESPIPELINE_REQUEST,
+    DELETE_SALESPIPELINE_REQUEST,
+
+    addSalesPipelineFailure,
+    addSalesPipelineSuccess,
+
+    fetchSalesPipelineFailure,
+    fetchSalesPipelineSuccess,
+    
+    listSalesPipelineFailure,
+    listSalesPipelineSuccess,
+
+    updateSalesPipelineFailure,
+    updateSalesPipelineSuccess,
+    
+    deleteSalesPipelineFailure,
+    deleteSalesPipelineSuccess,
+    
+} from '../actions/SalesPipelineApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: SalesPipeline
 */
 
-export const SalesPipelineMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("SalesPipeline MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const SalesPipelineMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("SalesPipeline MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

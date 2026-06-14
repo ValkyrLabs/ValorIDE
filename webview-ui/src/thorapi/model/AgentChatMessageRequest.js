@@ -35,31 +35,19 @@ const DataObject_1 = require("./DataObject");
 function AgentChatMessageRequestFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        conversationId: !(0, runtime_1.exists)(json, "conversationId")
-            ? undefined
-            : json["conversationId"],
-        message: !(0, runtime_1.exists)(json, "message") ? undefined : json["message"],
-        attachments: !(0, runtime_1.exists)(json, "attachments") ? undefined : json["attachments"],
-        priority: !(0, runtime_1.exists)(json, "priority") ? undefined : json["priority"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'conversationId': !(0, runtime_1.exists)(json, 'conversationId') ? undefined : json['conversationId'],
+        'message': !(0, runtime_1.exists)(json, 'message') ? undefined : json['message'],
+        'attachments': !(0, runtime_1.exists)(json, 'attachments') ? undefined : json['attachments'],
+        'priority': !(0, runtime_1.exists)(json, 'priority') ? undefined : json['priority'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function AgentChatMessageRequestToJSON(value) {
@@ -68,17 +56,17 @@ function AgentChatMessageRequestToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        conversationId: value.conversationId,
-        message: value.message,
-        attachments: value.attachments,
-        priority: value.priority,
-        trashed: value.trashed,
+        'conversationId': value.conversationId,
+        'message': value.message,
+        'attachments': value.attachments,
+        'priority': value.priority,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var AgentChatMessageRequestPriorityEnum;
 (function (AgentChatMessageRequestPriorityEnum) {
     AgentChatMessageRequestPriorityEnum["LOW"] = "low";

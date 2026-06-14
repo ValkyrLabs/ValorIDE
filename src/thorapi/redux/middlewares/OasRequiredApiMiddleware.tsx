@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_OASREQUIRED_REQUEST,
-  FETCH_OASREQUIRED_REQUEST,
-  LIST_OASREQUIRED_REQUEST,
-  UPDATE_OASREQUIRED_REQUEST,
-  DELETE_OASREQUIRED_REQUEST,
-  addOasRequiredFailure,
-  addOasRequiredSuccess,
-  fetchOasRequiredFailure,
-  fetchOasRequiredSuccess,
-  listOasRequiredFailure,
-  listOasRequiredSuccess,
-  updateOasRequiredFailure,
-  updateOasRequiredSuccess,
-  deleteOasRequiredFailure,
-  deleteOasRequiredSuccess,
-} from "../actions/OasRequiredApiAction";
+
+    ADD_OASREQUIRED_REQUEST,
+    FETCH_OASREQUIRED_REQUEST,
+    LIST_OASREQUIRED_REQUEST,
+    UPDATE_OASREQUIRED_REQUEST,
+    DELETE_OASREQUIRED_REQUEST,
+
+    addOasRequiredFailure,
+    addOasRequiredSuccess,
+
+    fetchOasRequiredFailure,
+    fetchOasRequiredSuccess,
+    
+    listOasRequiredFailure,
+    listOasRequiredSuccess,
+
+    updateOasRequiredFailure,
+    updateOasRequiredSuccess,
+    
+    deleteOasRequiredFailure,
+    deleteOasRequiredSuccess,
+    
+} from '../actions/OasRequiredApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: OasRequired
 */
 
-export const OasRequiredMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("OasRequired MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const OasRequiredMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("OasRequired MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

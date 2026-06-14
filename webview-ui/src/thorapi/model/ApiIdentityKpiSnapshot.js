@@ -34,37 +34,21 @@ const DataObject_1 = require("./DataObject");
 function ApiIdentityKpiSnapshotFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        identity: !(0, runtime_1.exists)(json, "identity") ? undefined : json["identity"],
-        requestCount: !(0, runtime_1.exists)(json, "requestCount")
-            ? undefined
-            : json["requestCount"],
-        errorCount: !(0, runtime_1.exists)(json, "errorCount") ? undefined : json["errorCount"],
-        avgLatencyMs: !(0, runtime_1.exists)(json, "avgLatencyMs")
-            ? undefined
-            : json["avgLatencyMs"],
-        maxLatencyMs: !(0, runtime_1.exists)(json, "maxLatencyMs")
-            ? undefined
-            : json["maxLatencyMs"],
-        errorRate: !(0, runtime_1.exists)(json, "errorRate") ? undefined : json["errorRate"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'identity': !(0, runtime_1.exists)(json, 'identity') ? undefined : json['identity'],
+        'requestCount': !(0, runtime_1.exists)(json, 'requestCount') ? undefined : json['requestCount'],
+        'errorCount': !(0, runtime_1.exists)(json, 'errorCount') ? undefined : json['errorCount'],
+        'avgLatencyMs': !(0, runtime_1.exists)(json, 'avgLatencyMs') ? undefined : json['avgLatencyMs'],
+        'maxLatencyMs': !(0, runtime_1.exists)(json, 'maxLatencyMs') ? undefined : json['maxLatencyMs'],
+        'errorRate': !(0, runtime_1.exists)(json, 'errorRate') ? undefined : json['errorRate'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ApiIdentityKpiSnapshotToJSON(value) {
@@ -73,13 +57,13 @@ function ApiIdentityKpiSnapshotToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        identity: value.identity,
-        requestCount: value.requestCount,
-        errorCount: value.errorCount,
-        avgLatencyMs: value.avgLatencyMs,
-        maxLatencyMs: value.maxLatencyMs,
-        errorRate: value.errorRate,
-        trashed: value.trashed,
+        'identity': value.identity,
+        'requestCount': value.requestCount,
+        'errorCount': value.errorCount,
+        'avgLatencyMs': value.avgLatencyMs,
+        'maxLatencyMs': value.maxLatencyMs,
+        'errorRate': value.errorRate,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=ApiIdentityKpiSnapshot.js.map

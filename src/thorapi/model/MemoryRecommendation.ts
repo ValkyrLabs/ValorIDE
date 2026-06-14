@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,154 +36,146 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface MemoryRecommendation
  */
-export type MemoryRecommendation = DataObject & {
-  /**
-   * Human-readable recommendation message.
-   * @type {string}
-   * @memberof MemoryRecommendation
-   */
-  message?: string;
-  /**
-   * Recommended action key.
-   * @type {string}
-   * @memberof MemoryRecommendation
-   */
-  action?: MemoryRecommendationActionEnum;
-  /**
-   * UX-facing recommendation label.
-   * @type {string}
-   * @memberof MemoryRecommendation
-   */
-  vibeLabel?: string;
-  /**
-   * Estimated credit cost if action is executed.
-   * @type {number}
-   * @memberof MemoryRecommendation
-   */
-  creditCost?: number;
-  /**
-   * Relative recommendation urgency.
-   * @type {string}
-   * @memberof MemoryRecommendation
-   */
-  priority?: MemoryRecommendationPriorityEnum;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof MemoryRecommendation
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof MemoryRecommendation
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof MemoryRecommendation
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof MemoryRecommendation
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof MemoryRecommendation
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof MemoryRecommendation
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof MemoryRecommendation
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof MemoryRecommendation
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof MemoryRecommendation
-   */
-  trashed?: boolean;
-};
+export type MemoryRecommendation  = DataObject & {
+    /**
+     * Human-readable recommendation message.
+     * @type {string}
+     * @memberof MemoryRecommendation
+     */
+    message?: string;
+    /**
+     * Recommended action key.
+     * @type {string}
+     * @memberof MemoryRecommendation
+     */
+    action?: MemoryRecommendationActionEnum;
+    /**
+     * UX-facing recommendation label.
+     * @type {string}
+     * @memberof MemoryRecommendation
+     */
+    vibeLabel?: string;
+    /**
+     * Estimated credit cost if action is executed.
+     * @type {number}
+     * @memberof MemoryRecommendation
+     */
+    creditCost?: number;
+    /**
+     * Relative recommendation urgency.
+     * @type {string}
+     * @memberof MemoryRecommendation
+     */
+    priority?: MemoryRecommendationPriorityEnum;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof MemoryRecommendation
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof MemoryRecommendation
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof MemoryRecommendation
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof MemoryRecommendation
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof MemoryRecommendation
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof MemoryRecommendation
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof MemoryRecommendation
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof MemoryRecommendation
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof MemoryRecommendation
+     */
+    trashed?: boolean;
+}
 
 export function MemoryRecommendationFromJSON(json: any): MemoryRecommendation {
-  return {
-    ...DataObjectFromJSON(json),
-    message: !exists(json, "message") ? undefined : json["message"],
-    action: !exists(json, "action") ? undefined : json["action"],
-    vibeLabel: !exists(json, "vibeLabel") ? undefined : json["vibeLabel"],
-    creditCost: !exists(json, "creditCost") ? undefined : json["creditCost"],
-    priority: !exists(json, "priority") ? undefined : json["priority"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'message': !exists(json, 'message') ? undefined : json['message'],
+        'action': !exists(json, 'action') ? undefined : json['action'],
+        'vibeLabel': !exists(json, 'vibeLabel') ? undefined : json['vibeLabel'],
+        'creditCost': !exists(json, 'creditCost') ? undefined : json['creditCost'],
+        'priority': !exists(json, 'priority') ? undefined : json['priority'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function MemoryRecommendationToJSON(value?: MemoryRecommendation): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    message: value.message,
-    action: value.action,
-    vibeLabel: value.vibeLabel,
-    creditCost: value.creditCost,
-    priority: value.priority,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'message': value.message,
+        'action': value.action,
+        'vibeLabel': value.vibeLabel,
+        'creditCost': value.creditCost,
+        'priority': value.priority,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum MemoryRecommendationActionEnum {
-  COMPACT = "compact",
-  REINDEX = "reindex",
-  PRUNE = "prune",
-  EXPAND = "expand",
+    COMPACT = 'compact',
+    REINDEX = 'reindex',
+    PRUNE = 'prune',
+    EXPAND = 'expand'
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum MemoryRecommendationPriorityEnum {
-  LOW = "low",
-  MEDIUM = "medium",
-  HIGH = "high",
+    LOW = 'low',
+    MEDIUM = 'medium',
+    HIGH = 'high'
 }
+
+

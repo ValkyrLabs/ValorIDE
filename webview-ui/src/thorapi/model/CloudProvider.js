@@ -35,33 +35,21 @@ const DataObject_1 = require("./DataObject");
 function CloudProviderFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        provider: !(0, runtime_1.exists)(json, "provider") ? undefined : json["provider"],
-        region: !(0, runtime_1.exists)(json, "region") ? undefined : json["region"],
-        projectId: !(0, runtime_1.exists)(json, "projectId") ? undefined : json["projectId"],
-        resourceGroup: !(0, runtime_1.exists)(json, "resourceGroup")
-            ? undefined
-            : json["resourceGroup"],
-        vpcId: !(0, runtime_1.exists)(json, "vpcId") ? undefined : json["vpcId"],
-        subnetId: !(0, runtime_1.exists)(json, "subnetId") ? undefined : json["subnetId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'provider': !(0, runtime_1.exists)(json, 'provider') ? undefined : json['provider'],
+        'region': !(0, runtime_1.exists)(json, 'region') ? undefined : json['region'],
+        'projectId': !(0, runtime_1.exists)(json, 'projectId') ? undefined : json['projectId'],
+        'resourceGroup': !(0, runtime_1.exists)(json, 'resourceGroup') ? undefined : json['resourceGroup'],
+        'vpcId': !(0, runtime_1.exists)(json, 'vpcId') ? undefined : json['vpcId'],
+        'subnetId': !(0, runtime_1.exists)(json, 'subnetId') ? undefined : json['subnetId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function CloudProviderToJSON(value) {
@@ -70,19 +58,19 @@ function CloudProviderToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        provider: value.provider,
-        region: value.region,
-        projectId: value.projectId,
-        resourceGroup: value.resourceGroup,
-        vpcId: value.vpcId,
-        subnetId: value.subnetId,
-        trashed: value.trashed,
+        'provider': value.provider,
+        'region': value.region,
+        'projectId': value.projectId,
+        'resourceGroup': value.resourceGroup,
+        'vpcId': value.vpcId,
+        'subnetId': value.subnetId,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var CloudProviderProviderEnum;
 (function (CloudProviderProviderEnum) {
     CloudProviderProviderEnum["AWS"] = "aws";

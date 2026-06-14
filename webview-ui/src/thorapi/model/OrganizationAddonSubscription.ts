@@ -26,9 +26,16 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { Organization, OrganizationFromJSON, OrganizationToJSON } from "./";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import {
+
+
+    Organization,
+    OrganizationFromJSON,
+    OrganizationToJSON,
+} from './';
+
 
 // thorapi
 
@@ -37,101 +44,90 @@ import { Organization, OrganizationFromJSON, OrganizationToJSON } from "./";
  * @export
  * @interface OrganizationAddonSubscription
  */
-export type OrganizationAddonSubscription = DataObject & {
-  /**
-   *
-   * @type {Organization}
-   * @memberof OrganizationAddonSubscription
-   */
-  organization?: Organization;
-  /**
-   *
-   * @type {string}
-   * @memberof OrganizationAddonSubscription
-   */
-  planTier?: OrganizationAddonSubscriptionPlanTierEnum;
-  /**
-   * Monthly cost in credits
-   * @type {number}
-   * @memberof OrganizationAddonSubscription
-   */
-  monthlyPriceCredits?: number;
-  /**
-   *
-   * @type {string}
-   * @memberof OrganizationAddonSubscription
-   */
-  status?: OrganizationAddonSubscriptionStatusEnum;
-  /**
-   *
-   * @type {Date}
-   * @memberof OrganizationAddonSubscription
-   */
-  cancelledAt?: Date;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof OrganizationAddonSubscription
-   */
-  readonly id?: string;
-};
-
-export function OrganizationAddonSubscriptionFromJSON(
-  json: any,
-): OrganizationAddonSubscription {
-  return {
-    ...DataObjectFromJSON(json),
-    organization: !exists(json, "organization")
-      ? undefined
-      : OrganizationFromJSON(json["organization"]),
-    planTier: !exists(json, "planTier") ? undefined : json["planTier"],
-    monthlyPriceCredits: !exists(json, "monthlyPriceCredits")
-      ? undefined
-      : json["monthlyPriceCredits"],
-    status: !exists(json, "status") ? undefined : json["status"],
-    cancelledAt: !exists(json, "cancelledAt")
-      ? undefined
-      : new Date(json["cancelledAt"]),
-    id: !exists(json, "id") ? undefined : json["id"],
-  };
+export type OrganizationAddonSubscription  = DataObject & {
+    /**
+     * 
+     * @type {Organization}
+     * @memberof OrganizationAddonSubscription
+     */
+    organization?: Organization;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrganizationAddonSubscription
+     */
+    planTier?: OrganizationAddonSubscriptionPlanTierEnum;
+    /**
+     * Monthly cost in credits
+     * @type {number}
+     * @memberof OrganizationAddonSubscription
+     */
+    monthlyPriceCredits?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof OrganizationAddonSubscription
+     */
+    status?: OrganizationAddonSubscriptionStatusEnum;
+    /**
+     * 
+     * @type {Date}
+     * @memberof OrganizationAddonSubscription
+     */
+    cancelledAt?: Date;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof OrganizationAddonSubscription
+     */
+    readonly id?: string;
 }
 
-export function OrganizationAddonSubscriptionToJSON(
-  value?: OrganizationAddonSubscription,
-): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    organization: OrganizationToJSON(value.organization),
-    planTier: value.planTier,
-    monthlyPriceCredits: value.monthlyPriceCredits,
-    status: value.status,
-    cancelledAt:
-      value.cancelledAt === undefined
-        ? undefined
-        : value.cancelledAt.toISOString(),
-  };
+export function OrganizationAddonSubscriptionFromJSON(json: any): OrganizationAddonSubscription {
+    return {
+        ...DataObjectFromJSON(json),
+        'organization': !exists(json, 'organization') ? undefined : OrganizationFromJSON(json['organization']),
+        'planTier': !exists(json, 'planTier') ? undefined : json['planTier'],
+        'monthlyPriceCredits': !exists(json, 'monthlyPriceCredits') ? undefined : json['monthlyPriceCredits'],
+        'status': !exists(json, 'status') ? undefined : json['status'],
+        'cancelledAt': !exists(json, 'cancelledAt') ? undefined : new Date(json['cancelledAt']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+    };
+}
+
+export function OrganizationAddonSubscriptionToJSON(value?: OrganizationAddonSubscription): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'organization': OrganizationToJSON(value.organization),
+        'planTier': value.planTier,
+        'monthlyPriceCredits': value.monthlyPriceCredits,
+        'status': value.status,
+        'cancelledAt': value.cancelledAt === undefined ? undefined : value.cancelledAt.toISOString(),
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum OrganizationAddonSubscriptionPlanTierEnum {
-  FREE = "free",
-  SOLO = "solo",
-  TEAM = "team",
-  PRO = "pro",
-  RESELLER = "reseller",
-  ENTERPRISE = "enterprise",
+    FREE = 'free',
+    SOLO = 'solo',
+    TEAM = 'team',
+    PRO = 'pro',
+    RESELLER = 'reseller',
+    ENTERPRISE = 'enterprise'
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum OrganizationAddonSubscriptionStatusEnum {
-  ACTIVE = "active",
-  CANCELLED = "cancelled",
+    ACTIVE = 'active',
+    CANCELLED = 'cancelled'
 }
+
+

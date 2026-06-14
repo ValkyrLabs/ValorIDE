@@ -13,69 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { GenerateTrustKeyRequest } from "@thorapi/model/GenerateTrustKeyRequest";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { GenerateTrustKeyRequest } from '@thorapi/model/GenerateTrustKeyRequest'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type GenerateTrustKeyRequestResponse = GenerateTrustKeyRequest[];
+type GenerateTrustKeyRequestResponse = GenerateTrustKeyRequest[]
+type GenerateTrustKeyRequestPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<GenerateTrustKeyRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toGenerateTrustKeyRequestList = (
-  result: unknown,
-): GenerateTrustKeyRequestResponse => {
+type GenerateTrustKeyRequestListQueryArg = {
+  example?: Partial<GenerateTrustKeyRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toGenerateTrustKeyRequestList = (result: unknown): GenerateTrustKeyRequestResponse => {
   if (Array.isArray(result)) {
-    return result as GenerateTrustKeyRequestResponse;
+    return result as GenerateTrustKeyRequestResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as GenerateTrustKeyRequestResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as GenerateTrustKeyRequestResponse) : []
+}
 
 export const GenerateTrustKeyRequestService = createApi({
-  reducerPath: "GenerateTrustKeyRequest", // This should remain unique
+  reducerPath: 'GenerateTrustKeyRequest', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["GenerateTrustKeyRequest"],
+  tagTypes: ['GenerateTrustKeyRequest'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getGenerateTrustKeyRequestsPaged: build.query<
-      GenerateTrustKeyRequestResponse,
-      {
-        page: number;
-        size?: number;
-        example?: Partial<GenerateTrustKeyRequest>;
-      }
-    >({
+    getGenerateTrustKeyRequestsPaged: build.query<GenerateTrustKeyRequestResponse, GenerateTrustKeyRequestPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `GenerateTrustKeyRequest?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `GenerateTrustKeyRequest?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toGenerateTrustKeyRequestList(result);
+        const rows = toGenerateTrustKeyRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "GenerateTrustKeyRequest" as const,
-              id,
-            })),
-          { type: "GenerateTrustKeyRequest", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'GenerateTrustKeyRequest' as const, id })),
+          { type: 'GenerateTrustKeyRequest', id: `PAGE_${page}` },
+          { type: 'GenerateTrustKeyRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getGenerateTrustKeyRequests: build.query<
-      GenerateTrustKeyRequestResponse,
-      { example?: Partial<GenerateTrustKeyRequest> } | void
-    >({
+    getGenerateTrustKeyRequests: build.query<GenerateTrustKeyRequestResponse, GenerateTrustKeyRequestListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -84,117 +82,86 @@ export const GenerateTrustKeyRequestService = createApi({
         return `GenerateTrustKeyRequest`;
       },
       providesTags: (result) => {
-        const rows = toGenerateTrustKeyRequestList(result);
+        const rows = toGenerateTrustKeyRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "GenerateTrustKeyRequest" as const,
-              id,
-            })),
-          { type: "GenerateTrustKeyRequest", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'GenerateTrustKeyRequest' as const, id })),
+          { type: 'GenerateTrustKeyRequest', id: 'LIST' },
+          { type: 'GenerateTrustKeyRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addGenerateTrustKeyRequest: build.mutation<
-      GenerateTrustKeyRequest,
-      Partial<GenerateTrustKeyRequest>
-    >({
+    addGenerateTrustKeyRequest: build.mutation<GenerateTrustKeyRequest, Partial<GenerateTrustKeyRequest>>({
       query: (body) => ({
         url: `GenerateTrustKeyRequest`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "GenerateTrustKeyRequest", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'GenerateTrustKeyRequest', id: 'LIST' },
+        { type: 'GenerateTrustKeyRequest', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getGenerateTrustKeyRequest: build.query<GenerateTrustKeyRequest, string>({
       query: (id) => `GenerateTrustKeyRequest/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "GenerateTrustKeyRequest", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'GenerateTrustKeyRequest', id }],
     }),
 
     // 5) Update
-    updateGenerateTrustKeyRequest: build.mutation<
-      void,
-      Pick<GenerateTrustKeyRequest, "id"> & Partial<GenerateTrustKeyRequest>
-    >({
+    updateGenerateTrustKeyRequest: build.mutation<GenerateTrustKeyRequest, Pick<GenerateTrustKeyRequest, 'id'> & Partial<GenerateTrustKeyRequest>>({
       query: ({ id, ...patch }) => ({
         url: `GenerateTrustKeyRequest/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            GenerateTrustKeyRequestService.util.updateQueryData(
-              "getGenerateTrustKeyRequest",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<GenerateTrustKeyRequest, "id">,
-      ) => [
-        { type: "GenerateTrustKeyRequest", id },
-        { type: "GenerateTrustKeyRequest", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<GenerateTrustKeyRequest, 'id'>) => [
+        { type: 'GenerateTrustKeyRequest', id },
+        { type: 'GenerateTrustKeyRequest', id: 'LIST' },
+        { type: 'GenerateTrustKeyRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteGenerateTrustKeyRequest: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteGenerateTrustKeyRequest: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `GenerateTrustKeyRequest/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "GenerateTrustKeyRequest", id },
+        { type: 'GenerateTrustKeyRequest', id },
+        { type: 'GenerateTrustKeyRequest', id: 'LIST' },
+        { type: 'GenerateTrustKeyRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteGenerateTrustKeyRequestCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteGenerateTrustKeyRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `GenerateTrustKeyRequest/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "GenerateTrustKeyRequest", id },
-        { type: "GenerateTrustKeyRequest", id: "LIST" },
+        { type: 'GenerateTrustKeyRequest', id },
+        { type: 'GenerateTrustKeyRequest', id: 'LIST' },
+        { type: 'GenerateTrustKeyRequest', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetGenerateTrustKeyRequestsPagedQuery`
 export const {
-  useGetGenerateTrustKeyRequestsPagedQuery, // immediate fetch
+  useGetGenerateTrustKeyRequestsPagedQuery,     // immediate fetch
   useLazyGetGenerateTrustKeyRequestsPagedQuery, // lazy fetch
   useGetGenerateTrustKeyRequestQuery,
   useGetGenerateTrustKeyRequestsQuery,
@@ -202,4 +169,4 @@ export const {
   useUpdateGenerateTrustKeyRequestMutation,
   useDeleteGenerateTrustKeyRequestMutation,
   useDeleteGenerateTrustKeyRequestCascadeMutation,
-} = GenerateTrustKeyRequestService;
+} = GenerateTrustKeyRequestService

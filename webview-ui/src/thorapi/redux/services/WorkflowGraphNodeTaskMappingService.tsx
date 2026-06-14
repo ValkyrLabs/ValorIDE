@@ -13,69 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { WorkflowGraphNodeTaskMapping } from "@thorapi/model/WorkflowGraphNodeTaskMapping";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { WorkflowGraphNodeTaskMapping } from '@thorapi/model/WorkflowGraphNodeTaskMapping'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type WorkflowGraphNodeTaskMappingResponse = WorkflowGraphNodeTaskMapping[];
+type WorkflowGraphNodeTaskMappingResponse = WorkflowGraphNodeTaskMapping[]
+type WorkflowGraphNodeTaskMappingPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<WorkflowGraphNodeTaskMapping>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toWorkflowGraphNodeTaskMappingList = (
-  result: unknown,
-): WorkflowGraphNodeTaskMappingResponse => {
+type WorkflowGraphNodeTaskMappingListQueryArg = {
+  example?: Partial<WorkflowGraphNodeTaskMapping>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toWorkflowGraphNodeTaskMappingList = (result: unknown): WorkflowGraphNodeTaskMappingResponse => {
   if (Array.isArray(result)) {
-    return result as WorkflowGraphNodeTaskMappingResponse;
+    return result as WorkflowGraphNodeTaskMappingResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as WorkflowGraphNodeTaskMappingResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as WorkflowGraphNodeTaskMappingResponse) : []
+}
 
 export const WorkflowGraphNodeTaskMappingService = createApi({
-  reducerPath: "WorkflowGraphNodeTaskMapping", // This should remain unique
+  reducerPath: 'WorkflowGraphNodeTaskMapping', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["WorkflowGraphNodeTaskMapping"],
+  tagTypes: ['WorkflowGraphNodeTaskMapping'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getWorkflowGraphNodeTaskMappingsPaged: build.query<
-      WorkflowGraphNodeTaskMappingResponse,
-      {
-        page: number;
-        size?: number;
-        example?: Partial<WorkflowGraphNodeTaskMapping>;
-      }
-    >({
+    getWorkflowGraphNodeTaskMappingsPaged: build.query<WorkflowGraphNodeTaskMappingResponse, WorkflowGraphNodeTaskMappingPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `WorkflowGraphNodeTaskMapping?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `WorkflowGraphNodeTaskMapping?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toWorkflowGraphNodeTaskMappingList(result);
+        const rows = toWorkflowGraphNodeTaskMappingList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "WorkflowGraphNodeTaskMapping" as const,
-              id,
-            })),
-          { type: "WorkflowGraphNodeTaskMapping", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'WorkflowGraphNodeTaskMapping' as const, id })),
+          { type: 'WorkflowGraphNodeTaskMapping', id: `PAGE_${page}` },
+          { type: 'WorkflowGraphNodeTaskMapping', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getWorkflowGraphNodeTaskMappings: build.query<
-      WorkflowGraphNodeTaskMappingResponse,
-      { example?: Partial<WorkflowGraphNodeTaskMapping> } | void
-    >({
+    getWorkflowGraphNodeTaskMappings: build.query<WorkflowGraphNodeTaskMappingResponse, WorkflowGraphNodeTaskMappingListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -84,121 +82,86 @@ export const WorkflowGraphNodeTaskMappingService = createApi({
         return `WorkflowGraphNodeTaskMapping`;
       },
       providesTags: (result) => {
-        const rows = toWorkflowGraphNodeTaskMappingList(result);
+        const rows = toWorkflowGraphNodeTaskMappingList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "WorkflowGraphNodeTaskMapping" as const,
-              id,
-            })),
-          { type: "WorkflowGraphNodeTaskMapping", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'WorkflowGraphNodeTaskMapping' as const, id })),
+          { type: 'WorkflowGraphNodeTaskMapping', id: 'LIST' },
+          { type: 'WorkflowGraphNodeTaskMapping', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addWorkflowGraphNodeTaskMapping: build.mutation<
-      WorkflowGraphNodeTaskMapping,
-      Partial<WorkflowGraphNodeTaskMapping>
-    >({
+    addWorkflowGraphNodeTaskMapping: build.mutation<WorkflowGraphNodeTaskMapping, Partial<WorkflowGraphNodeTaskMapping>>({
       query: (body) => ({
         url: `WorkflowGraphNodeTaskMapping`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "WorkflowGraphNodeTaskMapping", id: "LIST" }],
-    }),
-
-    // 4) Get single by ID
-    getWorkflowGraphNodeTaskMapping: build.query<
-      WorkflowGraphNodeTaskMapping,
-      string
-    >({
-      query: (id) => `WorkflowGraphNodeTaskMapping/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "WorkflowGraphNodeTaskMapping", id },
+      invalidatesTags: [
+        { type: 'WorkflowGraphNodeTaskMapping', id: 'LIST' },
+        { type: 'WorkflowGraphNodeTaskMapping', id: 'PARTIAL-LIST' },
       ],
     }),
 
+    // 4) Get single by ID
+    getWorkflowGraphNodeTaskMapping: build.query<WorkflowGraphNodeTaskMapping, string>({
+      query: (id) => `WorkflowGraphNodeTaskMapping/${id}`,
+      providesTags: (result, error, id) => [{ type: 'WorkflowGraphNodeTaskMapping', id }],
+    }),
+
     // 5) Update
-    updateWorkflowGraphNodeTaskMapping: build.mutation<
-      void,
-      Pick<WorkflowGraphNodeTaskMapping, "id"> &
-        Partial<WorkflowGraphNodeTaskMapping>
-    >({
+    updateWorkflowGraphNodeTaskMapping: build.mutation<WorkflowGraphNodeTaskMapping, Pick<WorkflowGraphNodeTaskMapping, 'id'> & Partial<WorkflowGraphNodeTaskMapping>>({
       query: ({ id, ...patch }) => ({
         url: `WorkflowGraphNodeTaskMapping/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            WorkflowGraphNodeTaskMappingService.util.updateQueryData(
-              "getWorkflowGraphNodeTaskMapping",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<WorkflowGraphNodeTaskMapping, "id">,
-      ) => [
-        { type: "WorkflowGraphNodeTaskMapping", id },
-        { type: "WorkflowGraphNodeTaskMapping", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<WorkflowGraphNodeTaskMapping, 'id'>) => [
+        { type: 'WorkflowGraphNodeTaskMapping', id },
+        { type: 'WorkflowGraphNodeTaskMapping', id: 'LIST' },
+        { type: 'WorkflowGraphNodeTaskMapping', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteWorkflowGraphNodeTaskMapping: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteWorkflowGraphNodeTaskMapping: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `WorkflowGraphNodeTaskMapping/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "WorkflowGraphNodeTaskMapping", id },
+        { type: 'WorkflowGraphNodeTaskMapping', id },
+        { type: 'WorkflowGraphNodeTaskMapping', id: 'LIST' },
+        { type: 'WorkflowGraphNodeTaskMapping', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteWorkflowGraphNodeTaskMappingCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteWorkflowGraphNodeTaskMappingCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `WorkflowGraphNodeTaskMapping/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "WorkflowGraphNodeTaskMapping", id },
-        { type: "WorkflowGraphNodeTaskMapping", id: "LIST" },
+        { type: 'WorkflowGraphNodeTaskMapping', id },
+        { type: 'WorkflowGraphNodeTaskMapping', id: 'LIST' },
+        { type: 'WorkflowGraphNodeTaskMapping', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetWorkflowGraphNodeTaskMappingsPagedQuery`
 export const {
-  useGetWorkflowGraphNodeTaskMappingsPagedQuery, // immediate fetch
+  useGetWorkflowGraphNodeTaskMappingsPagedQuery,     // immediate fetch
   useLazyGetWorkflowGraphNodeTaskMappingsPagedQuery, // lazy fetch
   useGetWorkflowGraphNodeTaskMappingQuery,
   useGetWorkflowGraphNodeTaskMappingsQuery,
@@ -206,4 +169,4 @@ export const {
   useUpdateWorkflowGraphNodeTaskMappingMutation,
   useDeleteWorkflowGraphNodeTaskMappingMutation,
   useDeleteWorkflowGraphNodeTaskMappingCascadeMutation,
-} = WorkflowGraphNodeTaskMappingService;
+} = WorkflowGraphNodeTaskMappingService

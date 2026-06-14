@@ -20,24 +20,14 @@ exports.DataObjectToJSON = DataObjectToJSON;
 const runtime_1 = require("../src/runtime");
 function DataObjectFromJSON(json) {
     return {
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
 function DataObjectToJSON(value) {
@@ -45,20 +35,14 @@ function DataObjectToJSON(value) {
         return undefined;
     }
     return {
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        'id': value.id,
+        'ownerId': value.ownerId,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
+        'keyHash': value.keyHash,
+        'lastAccessedById': value.lastAccessedById,
+        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
+        'lastModifiedById': value.lastModifiedById,
+        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
     };
 }
 //# sourceMappingURL=DataObject.js.map

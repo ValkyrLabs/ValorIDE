@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { AgentEventTrigger } from "@thorapi/model/AgentEventTrigger";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { AgentEventTrigger } from '@thorapi/model/AgentEventTrigger'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type AgentEventTriggerResponse = AgentEventTrigger[];
+type AgentEventTriggerResponse = AgentEventTrigger[]
+type AgentEventTriggerPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<AgentEventTrigger>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toAgentEventTriggerList = (
-  result: unknown,
-): AgentEventTriggerResponse => {
+type AgentEventTriggerListQueryArg = {
+  example?: Partial<AgentEventTrigger>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toAgentEventTriggerList = (result: unknown): AgentEventTriggerResponse => {
   if (Array.isArray(result)) {
-    return result as AgentEventTriggerResponse;
+    return result as AgentEventTriggerResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as AgentEventTriggerResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as AgentEventTriggerResponse) : []
+}
 
 export const AgentEventTriggerService = createApi({
-  reducerPath: "AgentEventTrigger", // This should remain unique
+  reducerPath: 'AgentEventTrigger', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["AgentEventTrigger"],
+  tagTypes: ['AgentEventTrigger'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getAgentEventTriggersPaged: build.query<
-      AgentEventTriggerResponse,
-      { page: number; size?: number; example?: Partial<AgentEventTrigger> }
-    >({
+    getAgentEventTriggersPaged: build.query<AgentEventTriggerResponse, AgentEventTriggerPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `AgentEventTrigger?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `AgentEventTrigger?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toAgentEventTriggerList(result);
+        const rows = toAgentEventTriggerList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "AgentEventTrigger" as const, id })),
-          { type: "AgentEventTrigger", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'AgentEventTrigger' as const, id })),
+          { type: 'AgentEventTrigger', id: `PAGE_${page}` },
+          { type: 'AgentEventTrigger', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getAgentEventTriggers: build.query<
-      AgentEventTriggerResponse,
-      { example?: Partial<AgentEventTrigger> } | void
-    >({
+    getAgentEventTriggers: build.query<AgentEventTriggerResponse, AgentEventTriggerListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,112 +82,86 @@ export const AgentEventTriggerService = createApi({
         return `AgentEventTrigger`;
       },
       providesTags: (result) => {
-        const rows = toAgentEventTriggerList(result);
+        const rows = toAgentEventTriggerList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "AgentEventTrigger" as const, id })),
-          { type: "AgentEventTrigger", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'AgentEventTrigger' as const, id })),
+          { type: 'AgentEventTrigger', id: 'LIST' },
+          { type: 'AgentEventTrigger', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addAgentEventTrigger: build.mutation<
-      AgentEventTrigger,
-      Partial<AgentEventTrigger>
-    >({
+    addAgentEventTrigger: build.mutation<AgentEventTrigger, Partial<AgentEventTrigger>>({
       query: (body) => ({
         url: `AgentEventTrigger`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "AgentEventTrigger", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'AgentEventTrigger', id: 'LIST' },
+        { type: 'AgentEventTrigger', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getAgentEventTrigger: build.query<AgentEventTrigger, string>({
       query: (id) => `AgentEventTrigger/${id}`,
-      providesTags: (result, error, id) => [{ type: "AgentEventTrigger", id }],
+      providesTags: (result, error, id) => [{ type: 'AgentEventTrigger', id }],
     }),
 
     // 5) Update
-    updateAgentEventTrigger: build.mutation<
-      void,
-      Pick<AgentEventTrigger, "id"> & Partial<AgentEventTrigger>
-    >({
+    updateAgentEventTrigger: build.mutation<AgentEventTrigger, Pick<AgentEventTrigger, 'id'> & Partial<AgentEventTrigger>>({
       query: ({ id, ...patch }) => ({
         url: `AgentEventTrigger/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            AgentEventTriggerService.util.updateQueryData(
-              "getAgentEventTrigger",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<AgentEventTrigger, "id">,
-      ) => [
-        { type: "AgentEventTrigger", id },
-        { type: "AgentEventTrigger", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<AgentEventTrigger, 'id'>) => [
+        { type: 'AgentEventTrigger', id },
+        { type: 'AgentEventTrigger', id: 'LIST' },
+        { type: 'AgentEventTrigger', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteAgentEventTrigger: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteAgentEventTrigger: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `AgentEventTrigger/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "AgentEventTrigger", id },
+        { type: 'AgentEventTrigger', id },
+        { type: 'AgentEventTrigger', id: 'LIST' },
+        { type: 'AgentEventTrigger', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteAgentEventTriggerCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteAgentEventTriggerCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `AgentEventTrigger/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "AgentEventTrigger", id },
-        { type: "AgentEventTrigger", id: "LIST" },
+        { type: 'AgentEventTrigger', id },
+        { type: 'AgentEventTrigger', id: 'LIST' },
+        { type: 'AgentEventTrigger', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetAgentEventTriggersPagedQuery`
 export const {
-  useGetAgentEventTriggersPagedQuery, // immediate fetch
+  useGetAgentEventTriggersPagedQuery,     // immediate fetch
   useLazyGetAgentEventTriggersPagedQuery, // lazy fetch
   useGetAgentEventTriggerQuery,
   useGetAgentEventTriggersQuery,
@@ -190,4 +169,4 @@ export const {
   useUpdateAgentEventTriggerMutation,
   useDeleteAgentEventTriggerMutation,
   useDeleteAgentEventTriggerCascadeMutation,
-} = AgentEventTriggerService;
+} = AgentEventTriggerService

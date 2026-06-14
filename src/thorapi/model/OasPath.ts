@@ -26,9 +26,16 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { OasOperation, OasOperationFromJSON, OasOperationToJSON } from "./";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import {
+
+
+    OasOperation,
+    OasOperationFromJSON,
+    OasOperationToJSON,
+} from './';
+
 
 // thorapi
 
@@ -37,174 +44,158 @@ import { OasOperation, OasOperationFromJSON, OasOperationToJSON } from "./";
  * @export
  * @interface OasPath
  */
-export type OasPath = DataObject & {
-  /**
-   * the URI of the path (e.g., /some/path/to/object)
-   * @type {string}
-   * @memberof OasPath
-   */
-  path?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof OasPath
-   */
-  oasOpenAPISpecId?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof OasPath
-   */
-  summary?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof OasPath
-   */
-  description?: string;
-  /**
-   *
-   * @type {OasOperation}
-   * @memberof OasPath
-   */
-  get?: OasOperation;
-  /**
-   *
-   * @type {OasOperation}
-   * @memberof OasPath
-   */
-  put?: OasOperation;
-  /**
-   *
-   * @type {OasOperation}
-   * @memberof OasPath
-   */
-  post?: OasOperation;
-  /**
-   *
-   * @type {OasOperation}
-   * @memberof OasPath
-   */
-  patch?: OasOperation;
-  /**
-   *
-   * @type {OasOperation}
-   * @memberof OasPath
-   */
-  _delete?: OasOperation;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof OasPath
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof OasPath
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof OasPath
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof OasPath
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof OasPath
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof OasPath
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof OasPath
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof OasPath
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof OasPath
-   */
-  trashed?: boolean;
-};
+export type OasPath  = DataObject & {
+    /**
+     * the URI of the path (e.g., /some/path/to/object)
+     * @type {string}
+     * @memberof OasPath
+     */
+    path?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof OasPath
+     */
+    oasOpenAPISpecId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof OasPath
+     */
+    summary?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof OasPath
+     */
+    description?: string;
+    /**
+     * 
+     * @type {OasOperation}
+     * @memberof OasPath
+     */
+    get?: OasOperation;
+    /**
+     * 
+     * @type {OasOperation}
+     * @memberof OasPath
+     */
+    put?: OasOperation;
+    /**
+     * 
+     * @type {OasOperation}
+     * @memberof OasPath
+     */
+    post?: OasOperation;
+    /**
+     * 
+     * @type {OasOperation}
+     * @memberof OasPath
+     */
+    patch?: OasOperation;
+    /**
+     * 
+     * @type {OasOperation}
+     * @memberof OasPath
+     */
+    _delete?: OasOperation;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof OasPath
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof OasPath
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof OasPath
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof OasPath
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof OasPath
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof OasPath
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof OasPath
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof OasPath
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof OasPath
+     */
+    trashed?: boolean;
+}
 
 export function OasPathFromJSON(json: any): OasPath {
-  return {
-    ...DataObjectFromJSON(json),
-    path: !exists(json, "path") ? undefined : json["path"],
-    oasOpenAPISpecId: !exists(json, "oasOpenAPISpecId")
-      ? undefined
-      : json["oasOpenAPISpecId"],
-    summary: !exists(json, "summary") ? undefined : json["summary"],
-    description: !exists(json, "description") ? undefined : json["description"],
-    get: !exists(json, "get") ? undefined : OasOperationFromJSON(json["get"]),
-    put: !exists(json, "put") ? undefined : OasOperationFromJSON(json["put"]),
-    post: !exists(json, "post")
-      ? undefined
-      : OasOperationFromJSON(json["post"]),
-    patch: !exists(json, "patch")
-      ? undefined
-      : OasOperationFromJSON(json["patch"]),
-    _delete: !exists(json, "delete")
-      ? undefined
-      : OasOperationFromJSON(json["delete"]),
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'path': !exists(json, 'path') ? undefined : json['path'],
+        'oasOpenAPISpecId': !exists(json, 'oasOpenAPISpecId') ? undefined : json['oasOpenAPISpecId'],
+        'summary': !exists(json, 'summary') ? undefined : json['summary'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'get': !exists(json, 'get') ? undefined : OasOperationFromJSON(json['get']),
+        'put': !exists(json, 'put') ? undefined : OasOperationFromJSON(json['put']),
+        'post': !exists(json, 'post') ? undefined : OasOperationFromJSON(json['post']),
+        'patch': !exists(json, 'patch') ? undefined : OasOperationFromJSON(json['patch']),
+        '_delete': !exists(json, 'delete') ? undefined : OasOperationFromJSON(json['delete']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function OasPathToJSON(value?: OasPath): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    path: value.path,
-    oasOpenAPISpecId: value.oasOpenAPISpecId,
-    summary: value.summary,
-    description: value.description,
-    get: OasOperationToJSON(value.get),
-    put: OasOperationToJSON(value.put),
-    post: OasOperationToJSON(value.post),
-    patch: OasOperationToJSON(value.patch),
-    delete: OasOperationToJSON(value._delete),
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'path': value.path,
+        'oasOpenAPISpecId': value.oasOpenAPISpecId,
+        'summary': value.summary,
+        'description': value.description,
+        'get': OasOperationToJSON(value.get),
+        'put': OasOperationToJSON(value.put),
+        'post': OasOperationToJSON(value.post),
+        'patch': OasOperationToJSON(value.patch),
+        'delete': OasOperationToJSON(value._delete),
+        'trashed': value.trashed,
+    };
 }
+
+

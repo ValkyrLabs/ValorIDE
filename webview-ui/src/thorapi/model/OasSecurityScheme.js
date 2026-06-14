@@ -12,6 +12,7 @@
  * Do not edit the class manually.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.OasSecuritySchemeInEnum = exports.OasSecuritySchemeTypeEnum = void 0;
 exports.OasSecuritySchemeFromJSON = OasSecuritySchemeFromJSON;
 exports.OasSecuritySchemeToJSON = OasSecuritySchemeToJSON;
 // tslint:disable
@@ -34,29 +35,24 @@ const DataObject_1 = require("./DataObject");
 function OasSecuritySchemeFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        oasComponentId: !(0, runtime_1.exists)(json, "oasComponentId")
-            ? undefined
-            : json["oasComponentId"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'oasComponentId': !(0, runtime_1.exists)(json, 'oasComponentId') ? undefined : json['oasComponentId'],
+        'key': !(0, runtime_1.exists)(json, 'key') ? undefined : json['key'],
+        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        '_in': !(0, runtime_1.exists)(json, 'in') ? undefined : json['in'],
+        'scheme': !(0, runtime_1.exists)(json, 'scheme') ? undefined : json['scheme'],
+        'bearerFormat': !(0, runtime_1.exists)(json, 'bearerFormat') ? undefined : json['bearerFormat'],
+        'openIdConnectUrl': !(0, runtime_1.exists)(json, 'openIdConnectUrl') ? undefined : json['openIdConnectUrl'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function OasSecuritySchemeToJSON(value) {
@@ -65,9 +61,38 @@ function OasSecuritySchemeToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        oasComponentId: value.oasComponentId,
-        name: value.name,
-        trashed: value.trashed,
+        'oasComponentId': value.oasComponentId,
+        'key': value.key,
+        'type': value.type,
+        'description': value.description,
+        'name': value.name,
+        'in': value._in,
+        'scheme': value.scheme,
+        'bearerFormat': value.bearerFormat,
+        'openIdConnectUrl': value.openIdConnectUrl,
+        'trashed': value.trashed,
     };
 }
+/**
+* @export
+* @enum {string}
+*/
+var OasSecuritySchemeTypeEnum;
+(function (OasSecuritySchemeTypeEnum) {
+    OasSecuritySchemeTypeEnum["APIKEY"] = "apikey";
+    OasSecuritySchemeTypeEnum["HTTP"] = "http";
+    OasSecuritySchemeTypeEnum["MUTUALTLS"] = "mutualtls";
+    OasSecuritySchemeTypeEnum["OAUTH2"] = "oauth2";
+    OasSecuritySchemeTypeEnum["OPENIDCONNECT"] = "openidconnect";
+})(OasSecuritySchemeTypeEnum || (exports.OasSecuritySchemeTypeEnum = OasSecuritySchemeTypeEnum = {}));
+/**
+* @export
+* @enum {string}
+*/
+var OasSecuritySchemeInEnum;
+(function (OasSecuritySchemeInEnum) {
+    OasSecuritySchemeInEnum["QUERY"] = "query";
+    OasSecuritySchemeInEnum["HEADER"] = "header";
+    OasSecuritySchemeInEnum["COOKIE"] = "cookie";
+})(OasSecuritySchemeInEnum || (exports.OasSecuritySchemeInEnum = OasSecuritySchemeInEnum = {}));
 //# sourceMappingURL=OasSecurityScheme.js.map

@@ -35,41 +35,21 @@ const _1 = require("./");
 function WorkflowGraphResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        workflow: !(0, runtime_1.exists)(json, "workflow")
-            ? undefined
-            : (0, _1.WorkflowFromJSON)(json["workflow"]),
-        nodeIdToTaskId: !(0, runtime_1.exists)(json, "nodeIdToTaskId")
-            ? undefined
-            : (0, runtime_1.mapValues)(json["nodeIdToTaskId"], _1.WorkflowGraphNodeTaskMappingFromJSON),
-        edgeIdToConnectionId: !(0, runtime_1.exists)(json, "edgeIdToConnectionId")
-            ? undefined
-            : (0, runtime_1.mapValues)(json["edgeIdToConnectionId"], _1.WorkflowGraphEdgeConnectionMappingFromJSON),
-        moduleIdMapping: !(0, runtime_1.exists)(json, "moduleIdMapping")
-            ? undefined
-            : (0, runtime_1.mapValues)(json["moduleIdMapping"], _1.WorkflowGraphModuleMappingFromJSON),
-        warnings: !(0, runtime_1.exists)(json, "warnings")
-            ? undefined
-            : json["warnings"].map(_1.WorkflowGraphValidationErrorFromJSON),
-        version: !(0, runtime_1.exists)(json, "version") ? undefined : json["version"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'workflow': !(0, runtime_1.exists)(json, 'workflow') ? undefined : (0, _1.WorkflowFromJSON)(json['workflow']),
+        'nodeIdToTaskId': !(0, runtime_1.exists)(json, 'nodeIdToTaskId') ? undefined : (0, runtime_1.mapValues)(json['nodeIdToTaskId'], _1.WorkflowGraphNodeTaskMappingFromJSON),
+        'edgeIdToConnectionId': !(0, runtime_1.exists)(json, 'edgeIdToConnectionId') ? undefined : (0, runtime_1.mapValues)(json['edgeIdToConnectionId'], _1.WorkflowGraphEdgeConnectionMappingFromJSON),
+        'moduleIdMapping': !(0, runtime_1.exists)(json, 'moduleIdMapping') ? undefined : (0, runtime_1.mapValues)(json['moduleIdMapping'], _1.WorkflowGraphModuleMappingFromJSON),
+        'warnings': !(0, runtime_1.exists)(json, 'warnings') ? undefined : json['warnings'].map(_1.WorkflowGraphValidationErrorFromJSON),
+        'version': !(0, runtime_1.exists)(json, 'version') ? undefined : json['version'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function WorkflowGraphResponseToJSON(value) {
@@ -78,21 +58,13 @@ function WorkflowGraphResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        workflow: (0, _1.WorkflowToJSON)(value.workflow),
-        nodeIdToTaskId: value.nodeIdToTaskId === undefined
-            ? undefined
-            : (0, runtime_1.mapValues)(value.nodeIdToTaskId, _1.WorkflowGraphNodeTaskMappingToJSON),
-        edgeIdToConnectionId: value.edgeIdToConnectionId === undefined
-            ? undefined
-            : (0, runtime_1.mapValues)(value.edgeIdToConnectionId, _1.WorkflowGraphEdgeConnectionMappingToJSON),
-        moduleIdMapping: value.moduleIdMapping === undefined
-            ? undefined
-            : (0, runtime_1.mapValues)(value.moduleIdMapping, _1.WorkflowGraphModuleMappingToJSON),
-        warnings: value.warnings === undefined
-            ? undefined
-            : value.warnings.map(_1.WorkflowGraphValidationErrorToJSON),
-        version: value.version,
-        trashed: value.trashed,
+        'workflow': (0, _1.WorkflowToJSON)(value.workflow),
+        'nodeIdToTaskId': value.nodeIdToTaskId === undefined ? undefined : (0, runtime_1.mapValues)(value.nodeIdToTaskId, _1.WorkflowGraphNodeTaskMappingToJSON),
+        'edgeIdToConnectionId': value.edgeIdToConnectionId === undefined ? undefined : (0, runtime_1.mapValues)(value.edgeIdToConnectionId, _1.WorkflowGraphEdgeConnectionMappingToJSON),
+        'moduleIdMapping': value.moduleIdMapping === undefined ? undefined : (0, runtime_1.mapValues)(value.moduleIdMapping, _1.WorkflowGraphModuleMappingToJSON),
+        'warnings': value.warnings === undefined ? undefined : value.warnings.map(_1.WorkflowGraphValidationErrorToJSON),
+        'version': value.version,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=WorkflowGraphResponse.js.map

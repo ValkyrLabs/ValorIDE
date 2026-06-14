@@ -36,42 +36,22 @@ const _1 = require("./");
 function CreatorEarningsFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        creator: !(0, runtime_1.exists)(json, "creator")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["creator"]),
-        month: !(0, runtime_1.exists)(json, "month") ? undefined : json["month"],
-        totalEarned: !(0, runtime_1.exists)(json, "totalEarned") ? undefined : json["totalEarned"],
-        totalInvocations: !(0, runtime_1.exists)(json, "totalInvocations")
-            ? undefined
-            : json["totalInvocations"],
-        payoutStatus: !(0, runtime_1.exists)(json, "payoutStatus")
-            ? undefined
-            : json["payoutStatus"],
-        payoutMethod: !(0, runtime_1.exists)(json, "payoutMethod")
-            ? undefined
-            : json["payoutMethod"],
-        payoutDate: !(0, runtime_1.exists)(json, "payoutDate")
-            ? undefined
-            : new Date(json["payoutDate"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'creator': !(0, runtime_1.exists)(json, 'creator') ? undefined : (0, _1.PrincipalFromJSON)(json['creator']),
+        'month': !(0, runtime_1.exists)(json, 'month') ? undefined : json['month'],
+        'totalEarned': !(0, runtime_1.exists)(json, 'totalEarned') ? undefined : json['totalEarned'],
+        'totalInvocations': !(0, runtime_1.exists)(json, 'totalInvocations') ? undefined : json['totalInvocations'],
+        'payoutStatus': !(0, runtime_1.exists)(json, 'payoutStatus') ? undefined : json['payoutStatus'],
+        'payoutMethod': !(0, runtime_1.exists)(json, 'payoutMethod') ? undefined : json['payoutMethod'],
+        'payoutDate': !(0, runtime_1.exists)(json, 'payoutDate') ? undefined : new Date(json['payoutDate']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function CreatorEarningsToJSON(value) {
@@ -80,22 +60,20 @@ function CreatorEarningsToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        creator: (0, _1.PrincipalToJSON)(value.creator),
-        month: value.month,
-        totalEarned: value.totalEarned,
-        totalInvocations: value.totalInvocations,
-        payoutStatus: value.payoutStatus,
-        payoutMethod: value.payoutMethod,
-        payoutDate: value.payoutDate === undefined
-            ? undefined
-            : value.payoutDate.toISOString(),
-        trashed: value.trashed,
+        'creator': (0, _1.PrincipalToJSON)(value.creator),
+        'month': value.month,
+        'totalEarned': value.totalEarned,
+        'totalInvocations': value.totalInvocations,
+        'payoutStatus': value.payoutStatus,
+        'payoutMethod': value.payoutMethod,
+        'payoutDate': value.payoutDate === undefined ? undefined : value.payoutDate.toISOString(),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var CreatorEarningsPayoutStatusEnum;
 (function (CreatorEarningsPayoutStatusEnum) {
     CreatorEarningsPayoutStatusEnum["PENDING"] = "pending";
@@ -104,9 +82,9 @@ var CreatorEarningsPayoutStatusEnum;
     CreatorEarningsPayoutStatusEnum["FAILED"] = "failed";
 })(CreatorEarningsPayoutStatusEnum || (exports.CreatorEarningsPayoutStatusEnum = CreatorEarningsPayoutStatusEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var CreatorEarningsPayoutMethodEnum;
 (function (CreatorEarningsPayoutMethodEnum) {
     CreatorEarningsPayoutMethodEnum["STRIPE"] = "stripe";

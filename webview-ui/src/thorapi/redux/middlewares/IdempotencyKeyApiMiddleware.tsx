@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_IDEMPOTENCYKEY_REQUEST,
-  FETCH_IDEMPOTENCYKEY_REQUEST,
-  LIST_IDEMPOTENCYKEY_REQUEST,
-  UPDATE_IDEMPOTENCYKEY_REQUEST,
-  DELETE_IDEMPOTENCYKEY_REQUEST,
-  addIdempotencyKeyFailure,
-  addIdempotencyKeySuccess,
-  fetchIdempotencyKeyFailure,
-  fetchIdempotencyKeySuccess,
-  listIdempotencyKeyFailure,
-  listIdempotencyKeySuccess,
-  updateIdempotencyKeyFailure,
-  updateIdempotencyKeySuccess,
-  deleteIdempotencyKeyFailure,
-  deleteIdempotencyKeySuccess,
-} from "../actions/IdempotencyKeyApiAction";
+
+    ADD_IDEMPOTENCYKEY_REQUEST,
+    FETCH_IDEMPOTENCYKEY_REQUEST,
+    LIST_IDEMPOTENCYKEY_REQUEST,
+    UPDATE_IDEMPOTENCYKEY_REQUEST,
+    DELETE_IDEMPOTENCYKEY_REQUEST,
+
+    addIdempotencyKeyFailure,
+    addIdempotencyKeySuccess,
+
+    fetchIdempotencyKeyFailure,
+    fetchIdempotencyKeySuccess,
+    
+    listIdempotencyKeyFailure,
+    listIdempotencyKeySuccess,
+
+    updateIdempotencyKeyFailure,
+    updateIdempotencyKeySuccess,
+    
+    deleteIdempotencyKeyFailure,
+    deleteIdempotencyKeySuccess,
+    
+} from '../actions/IdempotencyKeyApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: IdempotencyKey
 */
 
-export const IdempotencyKeyMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("IdempotencyKey MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const IdempotencyKeyMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("IdempotencyKey MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

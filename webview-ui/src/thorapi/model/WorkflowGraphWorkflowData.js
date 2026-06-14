@@ -35,30 +35,20 @@ const DataObject_1 = require("./DataObject");
 function WorkflowGraphWorkflowDataFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        role: !(0, runtime_1.exists)(json, "role") ? undefined : json["role"],
-        schedule: !(0, runtime_1.exists)(json, "schedule") ? undefined : json["schedule"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'role': !(0, runtime_1.exists)(json, 'role') ? undefined : json['role'],
+        'schedule': !(0, runtime_1.exists)(json, 'schedule') ? undefined : json['schedule'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function WorkflowGraphWorkflowDataToJSON(value) {
@@ -67,18 +57,18 @@ function WorkflowGraphWorkflowDataToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        description: value.description,
-        name: value.name,
-        status: value.status,
-        role: value.role,
-        schedule: value.schedule,
-        trashed: value.trashed,
+        'description': value.description,
+        'name': value.name,
+        'status': value.status,
+        'role': value.role,
+        'schedule': value.schedule,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var WorkflowGraphWorkflowDataStatusEnum;
 (function (WorkflowGraphWorkflowDataStatusEnum) {
     WorkflowGraphWorkflowDataStatusEnum["READY"] = "ready";
@@ -90,9 +80,9 @@ var WorkflowGraphWorkflowDataStatusEnum;
     WorkflowGraphWorkflowDataStatusEnum["DISABLED"] = "disabled";
 })(WorkflowGraphWorkflowDataStatusEnum || (exports.WorkflowGraphWorkflowDataStatusEnum = WorkflowGraphWorkflowDataStatusEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var WorkflowGraphWorkflowDataRoleEnum;
 (function (WorkflowGraphWorkflowDataRoleEnum) {
     WorkflowGraphWorkflowDataRoleEnum["USER"] = "user";

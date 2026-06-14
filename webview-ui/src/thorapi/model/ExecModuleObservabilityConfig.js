@@ -35,54 +35,28 @@ const _1 = require("./");
 function ExecModuleObservabilityConfigFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        capturePayloads: !(0, runtime_1.exists)(json, "capturePayloads")
-            ? undefined
-            : json["capturePayloads"],
-        emitEvents: !(0, runtime_1.exists)(json, "emitEvents") ? undefined : json["emitEvents"],
-        logLevel: !(0, runtime_1.exists)(json, "logLevel") ? undefined : json["logLevel"],
-        auditEnabled: !(0, runtime_1.exists)(json, "audit_enabled")
-            ? undefined
-            : json["audit_enabled"],
-        channels: !(0, runtime_1.exists)(json, "channels") ? undefined : json["channels"],
-        eventType: !(0, runtime_1.exists)(json, "eventType") ? undefined : json["eventType"],
-        eventTypeMapping: !(0, runtime_1.exists)(json, "eventTypeMapping")
-            ? undefined
-            : json["eventTypeMapping"],
-        eventTypeUrl: !(0, runtime_1.exists)(json, "event_type_url")
-            ? undefined
-            : json["event_type_url"],
-        expiresAfterHours: !(0, runtime_1.exists)(json, "expiresAfterHours")
-            ? undefined
-            : json["expiresAfterHours"],
-        lookbackDays: !(0, runtime_1.exists)(json, "lookbackDays")
-            ? undefined
-            : json["lookbackDays"],
-        lookbackMinutes: !(0, runtime_1.exists)(json, "lookbackMinutes")
-            ? undefined
-            : json["lookbackMinutes"],
-        sessionGap: !(0, runtime_1.exists)(json, "session_gap") ? undefined : json["session_gap"],
-        types: !(0, runtime_1.exists)(json, "types")
-            ? undefined
-            : json["types"].map(_1.ArrayStringItemFromJSON),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'capturePayloads': !(0, runtime_1.exists)(json, 'capturePayloads') ? undefined : json['capturePayloads'],
+        'emitEvents': !(0, runtime_1.exists)(json, 'emitEvents') ? undefined : json['emitEvents'],
+        'logLevel': !(0, runtime_1.exists)(json, 'logLevel') ? undefined : json['logLevel'],
+        'auditEnabled': !(0, runtime_1.exists)(json, 'auditEnabled') ? undefined : json['auditEnabled'],
+        'channels': !(0, runtime_1.exists)(json, 'channels') ? undefined : json['channels'],
+        'eventType': !(0, runtime_1.exists)(json, 'eventType') ? undefined : json['eventType'],
+        'eventTypeMapping': !(0, runtime_1.exists)(json, 'eventTypeMapping') ? undefined : json['eventTypeMapping'],
+        'eventTypeUrl': !(0, runtime_1.exists)(json, 'eventTypeUrl') ? undefined : json['eventTypeUrl'],
+        'expiresAfterHours': !(0, runtime_1.exists)(json, 'expiresAfterHours') ? undefined : json['expiresAfterHours'],
+        'lookbackDays': !(0, runtime_1.exists)(json, 'lookbackDays') ? undefined : json['lookbackDays'],
+        'lookbackMinutes': !(0, runtime_1.exists)(json, 'lookbackMinutes') ? undefined : json['lookbackMinutes'],
+        'sessionGap': !(0, runtime_1.exists)(json, 'sessionGap') ? undefined : json['sessionGap'],
+        'types': !(0, runtime_1.exists)(json, 'types') ? undefined : json['types'].map(_1.ArrayStringItemFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ExecModuleObservabilityConfigToJSON(value) {
@@ -91,22 +65,20 @@ function ExecModuleObservabilityConfigToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        capturePayloads: value.capturePayloads,
-        emitEvents: value.emitEvents,
-        logLevel: value.logLevel,
-        audit_enabled: value.auditEnabled,
-        channels: value.channels,
-        eventType: value.eventType,
-        eventTypeMapping: value.eventTypeMapping,
-        event_type_url: value.eventTypeUrl,
-        expiresAfterHours: value.expiresAfterHours,
-        lookbackDays: value.lookbackDays,
-        lookbackMinutes: value.lookbackMinutes,
-        session_gap: value.sessionGap,
-        types: value.types === undefined
-            ? undefined
-            : value.types.map(_1.ArrayStringItemToJSON),
-        trashed: value.trashed,
+        'capturePayloads': value.capturePayloads,
+        'emitEvents': value.emitEvents,
+        'logLevel': value.logLevel,
+        'auditEnabled': value.auditEnabled,
+        'channels': value.channels,
+        'eventType': value.eventType,
+        'eventTypeMapping': value.eventTypeMapping,
+        'eventTypeUrl': value.eventTypeUrl,
+        'expiresAfterHours': value.expiresAfterHours,
+        'lookbackDays': value.lookbackDays,
+        'lookbackMinutes': value.lookbackMinutes,
+        'sessionGap': value.sessionGap,
+        'types': value.types === undefined ? undefined : value.types.map(_1.ArrayStringItemToJSON),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=ExecModuleObservabilityConfig.js.map

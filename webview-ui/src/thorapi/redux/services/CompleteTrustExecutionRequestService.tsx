@@ -13,69 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { CompleteTrustExecutionRequest } from "@thorapi/model/CompleteTrustExecutionRequest";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { CompleteTrustExecutionRequest } from '@thorapi/model/CompleteTrustExecutionRequest'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type CompleteTrustExecutionRequestResponse = CompleteTrustExecutionRequest[];
+type CompleteTrustExecutionRequestResponse = CompleteTrustExecutionRequest[]
+type CompleteTrustExecutionRequestPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<CompleteTrustExecutionRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toCompleteTrustExecutionRequestList = (
-  result: unknown,
-): CompleteTrustExecutionRequestResponse => {
+type CompleteTrustExecutionRequestListQueryArg = {
+  example?: Partial<CompleteTrustExecutionRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toCompleteTrustExecutionRequestList = (result: unknown): CompleteTrustExecutionRequestResponse => {
   if (Array.isArray(result)) {
-    return result as CompleteTrustExecutionRequestResponse;
+    return result as CompleteTrustExecutionRequestResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as CompleteTrustExecutionRequestResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as CompleteTrustExecutionRequestResponse) : []
+}
 
 export const CompleteTrustExecutionRequestService = createApi({
-  reducerPath: "CompleteTrustExecutionRequest", // This should remain unique
+  reducerPath: 'CompleteTrustExecutionRequest', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["CompleteTrustExecutionRequest"],
+  tagTypes: ['CompleteTrustExecutionRequest'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getCompleteTrustExecutionRequestsPaged: build.query<
-      CompleteTrustExecutionRequestResponse,
-      {
-        page: number;
-        size?: number;
-        example?: Partial<CompleteTrustExecutionRequest>;
-      }
-    >({
+    getCompleteTrustExecutionRequestsPaged: build.query<CompleteTrustExecutionRequestResponse, CompleteTrustExecutionRequestPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `CompleteTrustExecutionRequest?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `CompleteTrustExecutionRequest?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toCompleteTrustExecutionRequestList(result);
+        const rows = toCompleteTrustExecutionRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "CompleteTrustExecutionRequest" as const,
-              id,
-            })),
-          { type: "CompleteTrustExecutionRequest", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'CompleteTrustExecutionRequest' as const, id })),
+          { type: 'CompleteTrustExecutionRequest', id: `PAGE_${page}` },
+          { type: 'CompleteTrustExecutionRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getCompleteTrustExecutionRequests: build.query<
-      CompleteTrustExecutionRequestResponse,
-      { example?: Partial<CompleteTrustExecutionRequest> } | void
-    >({
+    getCompleteTrustExecutionRequests: build.query<CompleteTrustExecutionRequestResponse, CompleteTrustExecutionRequestListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -84,121 +82,86 @@ export const CompleteTrustExecutionRequestService = createApi({
         return `CompleteTrustExecutionRequest`;
       },
       providesTags: (result) => {
-        const rows = toCompleteTrustExecutionRequestList(result);
+        const rows = toCompleteTrustExecutionRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "CompleteTrustExecutionRequest" as const,
-              id,
-            })),
-          { type: "CompleteTrustExecutionRequest", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'CompleteTrustExecutionRequest' as const, id })),
+          { type: 'CompleteTrustExecutionRequest', id: 'LIST' },
+          { type: 'CompleteTrustExecutionRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addCompleteTrustExecutionRequest: build.mutation<
-      CompleteTrustExecutionRequest,
-      Partial<CompleteTrustExecutionRequest>
-    >({
+    addCompleteTrustExecutionRequest: build.mutation<CompleteTrustExecutionRequest, Partial<CompleteTrustExecutionRequest>>({
       query: (body) => ({
         url: `CompleteTrustExecutionRequest`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "CompleteTrustExecutionRequest", id: "LIST" }],
-    }),
-
-    // 4) Get single by ID
-    getCompleteTrustExecutionRequest: build.query<
-      CompleteTrustExecutionRequest,
-      string
-    >({
-      query: (id) => `CompleteTrustExecutionRequest/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "CompleteTrustExecutionRequest", id },
+      invalidatesTags: [
+        { type: 'CompleteTrustExecutionRequest', id: 'LIST' },
+        { type: 'CompleteTrustExecutionRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
+    // 4) Get single by ID
+    getCompleteTrustExecutionRequest: build.query<CompleteTrustExecutionRequest, string>({
+      query: (id) => `CompleteTrustExecutionRequest/${id}`,
+      providesTags: (result, error, id) => [{ type: 'CompleteTrustExecutionRequest', id }],
+    }),
+
     // 5) Update
-    updateCompleteTrustExecutionRequest: build.mutation<
-      void,
-      Pick<CompleteTrustExecutionRequest, "id"> &
-        Partial<CompleteTrustExecutionRequest>
-    >({
+    updateCompleteTrustExecutionRequest: build.mutation<CompleteTrustExecutionRequest, Pick<CompleteTrustExecutionRequest, 'id'> & Partial<CompleteTrustExecutionRequest>>({
       query: ({ id, ...patch }) => ({
         url: `CompleteTrustExecutionRequest/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            CompleteTrustExecutionRequestService.util.updateQueryData(
-              "getCompleteTrustExecutionRequest",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<CompleteTrustExecutionRequest, "id">,
-      ) => [
-        { type: "CompleteTrustExecutionRequest", id },
-        { type: "CompleteTrustExecutionRequest", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<CompleteTrustExecutionRequest, 'id'>) => [
+        { type: 'CompleteTrustExecutionRequest', id },
+        { type: 'CompleteTrustExecutionRequest', id: 'LIST' },
+        { type: 'CompleteTrustExecutionRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteCompleteTrustExecutionRequest: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteCompleteTrustExecutionRequest: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `CompleteTrustExecutionRequest/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "CompleteTrustExecutionRequest", id },
+        { type: 'CompleteTrustExecutionRequest', id },
+        { type: 'CompleteTrustExecutionRequest', id: 'LIST' },
+        { type: 'CompleteTrustExecutionRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteCompleteTrustExecutionRequestCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteCompleteTrustExecutionRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `CompleteTrustExecutionRequest/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "CompleteTrustExecutionRequest", id },
-        { type: "CompleteTrustExecutionRequest", id: "LIST" },
+        { type: 'CompleteTrustExecutionRequest', id },
+        { type: 'CompleteTrustExecutionRequest', id: 'LIST' },
+        { type: 'CompleteTrustExecutionRequest', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetCompleteTrustExecutionRequestsPagedQuery`
 export const {
-  useGetCompleteTrustExecutionRequestsPagedQuery, // immediate fetch
+  useGetCompleteTrustExecutionRequestsPagedQuery,     // immediate fetch
   useLazyGetCompleteTrustExecutionRequestsPagedQuery, // lazy fetch
   useGetCompleteTrustExecutionRequestQuery,
   useGetCompleteTrustExecutionRequestsQuery,
@@ -206,4 +169,4 @@ export const {
   useUpdateCompleteTrustExecutionRequestMutation,
   useDeleteCompleteTrustExecutionRequestMutation,
   useDeleteCompleteTrustExecutionRequestCascadeMutation,
-} = CompleteTrustExecutionRequestService;
+} = CompleteTrustExecutionRequestService

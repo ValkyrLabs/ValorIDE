@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_MCPSERVER_REQUEST,
-  FETCH_MCPSERVER_REQUEST,
-  LIST_MCPSERVER_REQUEST,
-  UPDATE_MCPSERVER_REQUEST,
-  DELETE_MCPSERVER_REQUEST,
-  addMcpServerFailure,
-  addMcpServerSuccess,
-  fetchMcpServerFailure,
-  fetchMcpServerSuccess,
-  listMcpServerFailure,
-  listMcpServerSuccess,
-  updateMcpServerFailure,
-  updateMcpServerSuccess,
-  deleteMcpServerFailure,
-  deleteMcpServerSuccess,
-} from "../actions/McpServerApiAction";
+
+    ADD_MCPSERVER_REQUEST,
+    FETCH_MCPSERVER_REQUEST,
+    LIST_MCPSERVER_REQUEST,
+    UPDATE_MCPSERVER_REQUEST,
+    DELETE_MCPSERVER_REQUEST,
+
+    addMcpServerFailure,
+    addMcpServerSuccess,
+
+    fetchMcpServerFailure,
+    fetchMcpServerSuccess,
+    
+    listMcpServerFailure,
+    listMcpServerSuccess,
+
+    updateMcpServerFailure,
+    updateMcpServerSuccess,
+    
+    deleteMcpServerFailure,
+    deleteMcpServerSuccess,
+    
+} from '../actions/McpServerApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: McpServer
 */
 
-export const McpServerMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("McpServer MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const McpServerMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("McpServer MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

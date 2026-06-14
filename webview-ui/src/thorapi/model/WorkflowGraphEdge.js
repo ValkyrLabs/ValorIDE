@@ -35,31 +35,19 @@ const _1 = require("./");
 function WorkflowGraphEdgeFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        edgeId: !(0, runtime_1.exists)(json, "edgeId") ? undefined : json["edgeId"],
-        source: !(0, runtime_1.exists)(json, "source") ? undefined : json["source"],
-        target: !(0, runtime_1.exists)(json, "target") ? undefined : json["target"],
-        config: !(0, runtime_1.exists)(json, "config")
-            ? undefined
-            : (0, _1.WorkflowGraphEdgeConfigFromJSON)(json["config"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'edgeId': !(0, runtime_1.exists)(json, 'edgeId') ? undefined : json['edgeId'],
+        'source': !(0, runtime_1.exists)(json, 'source') ? undefined : json['source'],
+        'target': !(0, runtime_1.exists)(json, 'target') ? undefined : json['target'],
+        'config': !(0, runtime_1.exists)(json, 'config') ? undefined : (0, _1.WorkflowGraphEdgeConfigFromJSON)(json['config']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function WorkflowGraphEdgeToJSON(value) {
@@ -68,11 +56,11 @@ function WorkflowGraphEdgeToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        edgeId: value.edgeId,
-        source: value.source,
-        target: value.target,
-        config: (0, _1.WorkflowGraphEdgeConfigToJSON)(value.config),
-        trashed: value.trashed,
+        'edgeId': value.edgeId,
+        'source': value.source,
+        'target': value.target,
+        'config': (0, _1.WorkflowGraphEdgeConfigToJSON)(value.config),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=WorkflowGraphEdge.js.map

@@ -34,30 +34,18 @@ const DataObject_1 = require("./DataObject");
 function VerifyTrustProofRequestFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        proofBundleRef: !(0, runtime_1.exists)(json, "proofBundleRef")
-            ? undefined
-            : json["proofBundleRef"],
-        proofHash: !(0, runtime_1.exists)(json, "proofHash") ? undefined : json["proofHash"],
-        verifierId: !(0, runtime_1.exists)(json, "verifierId") ? undefined : json["verifierId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'proofBundleRef': !(0, runtime_1.exists)(json, 'proofBundleRef') ? undefined : json['proofBundleRef'],
+        'proofHash': !(0, runtime_1.exists)(json, 'proofHash') ? undefined : json['proofHash'],
+        'verifierId': !(0, runtime_1.exists)(json, 'verifierId') ? undefined : json['verifierId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function VerifyTrustProofRequestToJSON(value) {
@@ -66,10 +54,10 @@ function VerifyTrustProofRequestToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        proofBundleRef: value.proofBundleRef,
-        proofHash: value.proofHash,
-        verifierId: value.verifierId,
-        trashed: value.trashed,
+        'proofBundleRef': value.proofBundleRef,
+        'proofHash': value.proofHash,
+        'verifierId': value.verifierId,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=VerifyTrustProofRequest.js.map

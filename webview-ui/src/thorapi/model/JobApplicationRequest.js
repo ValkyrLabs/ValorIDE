@@ -34,44 +34,26 @@ const DataObject_1 = require("./DataObject");
 function JobApplicationRequestFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        email: !(0, runtime_1.exists)(json, "email") ? undefined : json["email"],
-        fullName: !(0, runtime_1.exists)(json, "fullName") ? undefined : json["fullName"],
-        linkedinUrl: !(0, runtime_1.exists)(json, "linkedinUrl") ? undefined : json["linkedinUrl"],
-        currentRole: !(0, runtime_1.exists)(json, "currentRole") ? undefined : json["currentRole"],
-        currentCompany: !(0, runtime_1.exists)(json, "currentCompany")
-            ? undefined
-            : json["currentCompany"],
-        yearsExperience: !(0, runtime_1.exists)(json, "yearsExperience")
-            ? undefined
-            : json["yearsExperience"],
-        resume: !(0, runtime_1.exists)(json, "resume") ? undefined : json["resume"],
-        coverLetter: !(0, runtime_1.exists)(json, "coverLetter") ? undefined : json["coverLetter"],
-        opportunityId: !(0, runtime_1.exists)(json, "opportunityId")
-            ? undefined
-            : json["opportunityId"],
-        preferredRoles: !(0, runtime_1.exists)(json, "preferredRoles")
-            ? undefined
-            : json["preferredRoles"],
-        skills: !(0, runtime_1.exists)(json, "skills") ? undefined : json["skills"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'email': !(0, runtime_1.exists)(json, 'email') ? undefined : json['email'],
+        'fullName': !(0, runtime_1.exists)(json, 'fullName') ? undefined : json['fullName'],
+        'linkedinUrl': !(0, runtime_1.exists)(json, 'linkedinUrl') ? undefined : json['linkedinUrl'],
+        'currentRole': !(0, runtime_1.exists)(json, 'currentRole') ? undefined : json['currentRole'],
+        'currentCompany': !(0, runtime_1.exists)(json, 'currentCompany') ? undefined : json['currentCompany'],
+        'yearsExperience': !(0, runtime_1.exists)(json, 'yearsExperience') ? undefined : json['yearsExperience'],
+        'resume': !(0, runtime_1.exists)(json, 'resume') ? undefined : json['resume'],
+        'coverLetter': !(0, runtime_1.exists)(json, 'coverLetter') ? undefined : json['coverLetter'],
+        'opportunityId': !(0, runtime_1.exists)(json, 'opportunityId') ? undefined : json['opportunityId'],
+        'preferredRoles': !(0, runtime_1.exists)(json, 'preferredRoles') ? undefined : json['preferredRoles'],
+        'skills': !(0, runtime_1.exists)(json, 'skills') ? undefined : json['skills'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function JobApplicationRequestToJSON(value) {
@@ -80,18 +62,18 @@ function JobApplicationRequestToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        email: value.email,
-        fullName: value.fullName,
-        linkedinUrl: value.linkedinUrl,
-        currentRole: value.currentRole,
-        currentCompany: value.currentCompany,
-        yearsExperience: value.yearsExperience,
-        resume: value.resume,
-        coverLetter: value.coverLetter,
-        opportunityId: value.opportunityId,
-        preferredRoles: value.preferredRoles,
-        skills: value.skills,
-        trashed: value.trashed,
+        'email': value.email,
+        'fullName': value.fullName,
+        'linkedinUrl': value.linkedinUrl,
+        'currentRole': value.currentRole,
+        'currentCompany': value.currentCompany,
+        'yearsExperience': value.yearsExperience,
+        'resume': value.resume,
+        'coverLetter': value.coverLetter,
+        'opportunityId': value.opportunityId,
+        'preferredRoles': value.preferredRoles,
+        'skills': value.skills,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=JobApplicationRequest.js.map

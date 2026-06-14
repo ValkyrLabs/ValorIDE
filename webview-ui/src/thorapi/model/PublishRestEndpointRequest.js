@@ -34,59 +34,33 @@ const DataObject_1 = require("./DataObject");
 function PublishRestEndpointRequestFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        controllerPath: !(0, runtime_1.exists)(json, "controllerPath")
-            ? undefined
-            : json["controllerPath"],
-        endpointPath: !(0, runtime_1.exists)(json, "endpointPath")
-            ? undefined
-            : json["endpointPath"],
-        toolSlug: !(0, runtime_1.exists)(json, "toolSlug") ? undefined : json["toolSlug"],
-        displayName: !(0, runtime_1.exists)(json, "displayName") ? undefined : json["displayName"],
-        summary: !(0, runtime_1.exists)(json, "summary") ? undefined : json["summary"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        category: !(0, runtime_1.exists)(json, "category") ? undefined : json["category"],
-        marketplaceCategory: !(0, runtime_1.exists)(json, "marketplaceCategory")
-            ? undefined
-            : json["marketplaceCategory"],
-        apiBaseUrl: !(0, runtime_1.exists)(json, "apiBaseUrl") ? undefined : json["apiBaseUrl"],
-        documentationUrl: !(0, runtime_1.exists)(json, "documentationUrl")
-            ? undefined
-            : json["documentationUrl"],
-        repositoryUrl: !(0, runtime_1.exists)(json, "repositoryUrl")
-            ? undefined
-            : json["repositoryUrl"],
-        icon: !(0, runtime_1.exists)(json, "icon") ? undefined : json["icon"],
-        requiresApiKey: !(0, runtime_1.exists)(json, "requiresApiKey")
-            ? undefined
-            : json["requiresApiKey"],
-        tags: !(0, runtime_1.exists)(json, "tags") ? undefined : json["tags"],
-        marketplaceTags: !(0, runtime_1.exists)(json, "marketplaceTags")
-            ? undefined
-            : json["marketplaceTags"],
-        authorName: !(0, runtime_1.exists)(json, "authorName") ? undefined : json["authorName"],
-        autoApprove: !(0, runtime_1.exists)(json, "autoApprove") ? undefined : json["autoApprove"],
-        recommendedFor: !(0, runtime_1.exists)(json, "recommendedFor")
-            ? undefined
-            : json["recommendedFor"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'controllerPath': !(0, runtime_1.exists)(json, 'controllerPath') ? undefined : json['controllerPath'],
+        'endpointPath': !(0, runtime_1.exists)(json, 'endpointPath') ? undefined : json['endpointPath'],
+        'toolSlug': !(0, runtime_1.exists)(json, 'toolSlug') ? undefined : json['toolSlug'],
+        'displayName': !(0, runtime_1.exists)(json, 'displayName') ? undefined : json['displayName'],
+        'summary': !(0, runtime_1.exists)(json, 'summary') ? undefined : json['summary'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'category': !(0, runtime_1.exists)(json, 'category') ? undefined : json['category'],
+        'marketplaceCategory': !(0, runtime_1.exists)(json, 'marketplaceCategory') ? undefined : json['marketplaceCategory'],
+        'apiBaseUrl': !(0, runtime_1.exists)(json, 'apiBaseUrl') ? undefined : json['apiBaseUrl'],
+        'documentationUrl': !(0, runtime_1.exists)(json, 'documentationUrl') ? undefined : json['documentationUrl'],
+        'repositoryUrl': !(0, runtime_1.exists)(json, 'repositoryUrl') ? undefined : json['repositoryUrl'],
+        'icon': !(0, runtime_1.exists)(json, 'icon') ? undefined : json['icon'],
+        'requiresApiKey': !(0, runtime_1.exists)(json, 'requiresApiKey') ? undefined : json['requiresApiKey'],
+        'tags': !(0, runtime_1.exists)(json, 'tags') ? undefined : json['tags'],
+        'marketplaceTags': !(0, runtime_1.exists)(json, 'marketplaceTags') ? undefined : json['marketplaceTags'],
+        'authorName': !(0, runtime_1.exists)(json, 'authorName') ? undefined : json['authorName'],
+        'autoApprove': !(0, runtime_1.exists)(json, 'autoApprove') ? undefined : json['autoApprove'],
+        'recommendedFor': !(0, runtime_1.exists)(json, 'recommendedFor') ? undefined : json['recommendedFor'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function PublishRestEndpointRequestToJSON(value) {
@@ -95,25 +69,25 @@ function PublishRestEndpointRequestToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        controllerPath: value.controllerPath,
-        endpointPath: value.endpointPath,
-        toolSlug: value.toolSlug,
-        displayName: value.displayName,
-        summary: value.summary,
-        description: value.description,
-        category: value.category,
-        marketplaceCategory: value.marketplaceCategory,
-        apiBaseUrl: value.apiBaseUrl,
-        documentationUrl: value.documentationUrl,
-        repositoryUrl: value.repositoryUrl,
-        icon: value.icon,
-        requiresApiKey: value.requiresApiKey,
-        tags: value.tags,
-        marketplaceTags: value.marketplaceTags,
-        authorName: value.authorName,
-        autoApprove: value.autoApprove,
-        recommendedFor: value.recommendedFor,
-        trashed: value.trashed,
+        'controllerPath': value.controllerPath,
+        'endpointPath': value.endpointPath,
+        'toolSlug': value.toolSlug,
+        'displayName': value.displayName,
+        'summary': value.summary,
+        'description': value.description,
+        'category': value.category,
+        'marketplaceCategory': value.marketplaceCategory,
+        'apiBaseUrl': value.apiBaseUrl,
+        'documentationUrl': value.documentationUrl,
+        'repositoryUrl': value.repositoryUrl,
+        'icon': value.icon,
+        'requiresApiKey': value.requiresApiKey,
+        'tags': value.tags,
+        'marketplaceTags': value.marketplaceTags,
+        'authorName': value.authorName,
+        'autoApprove': value.autoApprove,
+        'recommendedFor': value.recommendedFor,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=PublishRestEndpointRequest.js.map

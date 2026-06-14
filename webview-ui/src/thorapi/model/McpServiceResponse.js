@@ -35,30 +35,20 @@ const DataObject_1 = require("./DataObject");
 function McpServiceResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        serviceId: !(0, runtime_1.exists)(json, "serviceId") ? undefined : json["serviceId"],
-        slug: !(0, runtime_1.exists)(json, "slug") ? undefined : json["slug"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        manifestUrl: !(0, runtime_1.exists)(json, "manifestUrl") ? undefined : json["manifestUrl"],
-        message: !(0, runtime_1.exists)(json, "message") ? undefined : json["message"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'serviceId': !(0, runtime_1.exists)(json, 'serviceId') ? undefined : json['serviceId'],
+        'slug': !(0, runtime_1.exists)(json, 'slug') ? undefined : json['slug'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'manifestUrl': !(0, runtime_1.exists)(json, 'manifestUrl') ? undefined : json['manifestUrl'],
+        'message': !(0, runtime_1.exists)(json, 'message') ? undefined : json['message'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function McpServiceResponseToJSON(value) {
@@ -67,18 +57,18 @@ function McpServiceResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        serviceId: value.serviceId,
-        slug: value.slug,
-        status: value.status,
-        manifestUrl: value.manifestUrl,
-        message: value.message,
-        trashed: value.trashed,
+        'serviceId': value.serviceId,
+        'slug': value.slug,
+        'status': value.status,
+        'manifestUrl': value.manifestUrl,
+        'message': value.message,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var McpServiceResponseStatusEnum;
 (function (McpServiceResponseStatusEnum) {
     McpServiceResponseStatusEnum["PUBLISHED"] = "published";

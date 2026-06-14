@@ -35,35 +35,21 @@ const DataObject_1 = require("./DataObject");
 function ContentMediaLinkFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        applicationId: !(0, runtime_1.exists)(json, "applicationId")
-            ? undefined
-            : json["applicationId"],
-        contentDataId: !(0, runtime_1.exists)(json, "contentDataId")
-            ? undefined
-            : json["contentDataId"],
-        contentUse: !(0, runtime_1.exists)(json, "contentUse") ? undefined : json["contentUse"],
-        contentType: !(0, runtime_1.exists)(json, "contentType") ? undefined : json["contentType"],
-        mediaUrl: !(0, runtime_1.exists)(json, "mediaUrl") ? undefined : json["mediaUrl"],
-        fileName: !(0, runtime_1.exists)(json, "fileName") ? undefined : json["fileName"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'applicationId': !(0, runtime_1.exists)(json, 'applicationId') ? undefined : json['applicationId'],
+        'contentDataId': !(0, runtime_1.exists)(json, 'contentDataId') ? undefined : json['contentDataId'],
+        'contentUse': !(0, runtime_1.exists)(json, 'contentUse') ? undefined : json['contentUse'],
+        'contentType': !(0, runtime_1.exists)(json, 'contentType') ? undefined : json['contentType'],
+        'mediaUrl': !(0, runtime_1.exists)(json, 'mediaUrl') ? undefined : json['mediaUrl'],
+        'fileName': !(0, runtime_1.exists)(json, 'fileName') ? undefined : json['fileName'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ContentMediaLinkToJSON(value) {
@@ -72,19 +58,19 @@ function ContentMediaLinkToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        applicationId: value.applicationId,
-        contentDataId: value.contentDataId,
-        contentUse: value.contentUse,
-        contentType: value.contentType,
-        mediaUrl: value.mediaUrl,
-        fileName: value.fileName,
-        trashed: value.trashed,
+        'applicationId': value.applicationId,
+        'contentDataId': value.contentDataId,
+        'contentUse': value.contentUse,
+        'contentType': value.contentType,
+        'mediaUrl': value.mediaUrl,
+        'fileName': value.fileName,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ContentMediaLinkContentUseEnum;
 (function (ContentMediaLinkContentUseEnum) {
     ContentMediaLinkContentUseEnum["NONE"] = "none";
@@ -103,9 +89,9 @@ var ContentMediaLinkContentUseEnum;
     ContentMediaLinkContentUseEnum["TRAINING"] = "training";
 })(ContentMediaLinkContentUseEnum || (exports.ContentMediaLinkContentUseEnum = ContentMediaLinkContentUseEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ContentMediaLinkContentTypeEnum;
 (function (ContentMediaLinkContentTypeEnum) {
     ContentMediaLinkContentTypeEnum["IMAGE"] = "image";

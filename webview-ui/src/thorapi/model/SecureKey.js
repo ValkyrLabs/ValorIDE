@@ -35,33 +35,21 @@ const DataObject_1 = require("./DataObject");
 function SecureKeyFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        notes: !(0, runtime_1.exists)(json, "notes") ? undefined : json["notes"],
-        algorithm: !(0, runtime_1.exists)(json, "algorithm") ? undefined : json["algorithm"],
-        version: !(0, runtime_1.exists)(json, "version") ? undefined : json["version"],
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        cipherWorkCost: !(0, runtime_1.exists)(json, "cipherWorkCost")
-            ? undefined
-            : json["cipherWorkCost"],
-        keyValue: !(0, runtime_1.exists)(json, "keyValue") ? undefined : json["keyValue"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'notes': !(0, runtime_1.exists)(json, 'notes') ? undefined : json['notes'],
+        'algorithm': !(0, runtime_1.exists)(json, 'algorithm') ? undefined : json['algorithm'],
+        'version': !(0, runtime_1.exists)(json, 'version') ? undefined : json['version'],
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'cipherWorkCost': !(0, runtime_1.exists)(json, 'cipherWorkCost') ? undefined : json['cipherWorkCost'],
+        'keyValue': !(0, runtime_1.exists)(json, 'keyValue') ? undefined : json['keyValue'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function SecureKeyToJSON(value) {
@@ -70,20 +58,20 @@ function SecureKeyToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        notes: value.notes,
-        algorithm: value.algorithm,
-        version: value.version,
-        keyHash: value.keyHash,
-        cipherWorkCost: value.cipherWorkCost,
-        keyValue: value.keyValue,
-        status: value.status,
-        trashed: value.trashed,
+        'notes': value.notes,
+        'algorithm': value.algorithm,
+        'version': value.version,
+        'keyHash': value.keyHash,
+        'cipherWorkCost': value.cipherWorkCost,
+        'keyValue': value.keyValue,
+        'status': value.status,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var SecureKeyStatusEnum;
 (function (SecureKeyStatusEnum) {
     SecureKeyStatusEnum["KEYACTIVE"] = "active";

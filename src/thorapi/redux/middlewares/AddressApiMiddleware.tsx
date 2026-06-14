@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_ADDRESS_REQUEST,
-  FETCH_ADDRESS_REQUEST,
-  LIST_ADDRESS_REQUEST,
-  UPDATE_ADDRESS_REQUEST,
-  DELETE_ADDRESS_REQUEST,
-  addAddressFailure,
-  addAddressSuccess,
-  fetchAddressFailure,
-  fetchAddressSuccess,
-  listAddressFailure,
-  listAddressSuccess,
-  updateAddressFailure,
-  updateAddressSuccess,
-  deleteAddressFailure,
-  deleteAddressSuccess,
-} from "../actions/AddressApiAction";
+
+    ADD_ADDRESS_REQUEST,
+    FETCH_ADDRESS_REQUEST,
+    LIST_ADDRESS_REQUEST,
+    UPDATE_ADDRESS_REQUEST,
+    DELETE_ADDRESS_REQUEST,
+
+    addAddressFailure,
+    addAddressSuccess,
+
+    fetchAddressFailure,
+    fetchAddressSuccess,
+    
+    listAddressFailure,
+    listAddressSuccess,
+
+    updateAddressFailure,
+    updateAddressSuccess,
+    
+    deleteAddressFailure,
+    deleteAddressSuccess,
+    
+} from '../actions/AddressApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Address
 */
 
-export const AddressMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Address MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const AddressMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("Address MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

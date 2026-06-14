@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { BalanceResponse } from "@thorapi/model/BalanceResponse";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { BalanceResponse } from '@thorapi/model/BalanceResponse'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type BalanceResponseResponse = BalanceResponse[];
+type BalanceResponseResponse = BalanceResponse[]
+type BalanceResponsePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<BalanceResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type BalanceResponseListQueryArg = {
+  example?: Partial<BalanceResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toBalanceResponseList = (result: unknown): BalanceResponseResponse => {
   if (Array.isArray(result)) {
-    return result as BalanceResponseResponse;
+    return result as BalanceResponseResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as BalanceResponseResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as BalanceResponseResponse) : []
+}
 
 export const BalanceResponseService = createApi({
-  reducerPath: "BalanceResponse", // This should remain unique
+  reducerPath: 'BalanceResponse', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["BalanceResponse"],
+  tagTypes: ['BalanceResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getBalanceResponsesPaged: build.query<
-      BalanceResponseResponse,
-      { page: number; size?: number; example?: Partial<BalanceResponse> }
-    >({
+    getBalanceResponsesPaged: build.query<BalanceResponseResponse, BalanceResponsePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `BalanceResponse?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `BalanceResponse?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toBalanceResponseList(result);
+        const rows = toBalanceResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "BalanceResponse" as const, id })),
-          { type: "BalanceResponse", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'BalanceResponse' as const, id })),
+          { type: 'BalanceResponse', id: `PAGE_${page}` },
+          { type: 'BalanceResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getBalanceResponses: build.query<
-      BalanceResponseResponse,
-      { example?: Partial<BalanceResponse> } | void
-    >({
+    getBalanceResponses: build.query<BalanceResponseResponse, BalanceResponseListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,106 +82,86 @@ export const BalanceResponseService = createApi({
         return `BalanceResponse`;
       },
       providesTags: (result) => {
-        const rows = toBalanceResponseList(result);
+        const rows = toBalanceResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "BalanceResponse" as const, id })),
-          { type: "BalanceResponse", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'BalanceResponse' as const, id })),
+          { type: 'BalanceResponse', id: 'LIST' },
+          { type: 'BalanceResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addBalanceResponse: build.mutation<
-      BalanceResponse,
-      Partial<BalanceResponse>
-    >({
+    addBalanceResponse: build.mutation<BalanceResponse, Partial<BalanceResponse>>({
       query: (body) => ({
         url: `BalanceResponse`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "BalanceResponse", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'BalanceResponse', id: 'LIST' },
+        { type: 'BalanceResponse', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getBalanceResponse: build.query<BalanceResponse, string>({
       query: (id) => `BalanceResponse/${id}`,
-      providesTags: (result, error, id) => [{ type: "BalanceResponse", id }],
+      providesTags: (result, error, id) => [{ type: 'BalanceResponse', id }],
     }),
 
     // 5) Update
-    updateBalanceResponse: build.mutation<
-      void,
-      Pick<BalanceResponse, "id"> & Partial<BalanceResponse>
-    >({
+    updateBalanceResponse: build.mutation<BalanceResponse, Pick<BalanceResponse, 'id'> & Partial<BalanceResponse>>({
       query: ({ id, ...patch }) => ({
         url: `BalanceResponse/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            BalanceResponseService.util.updateQueryData(
-              "getBalanceResponse",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<BalanceResponse, "id">) => [
-        { type: "BalanceResponse", id },
-        { type: "BalanceResponse", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<BalanceResponse, 'id'>) => [
+        { type: 'BalanceResponse', id },
+        { type: 'BalanceResponse', id: 'LIST' },
+        { type: 'BalanceResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteBalanceResponse: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteBalanceResponse: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `BalanceResponse/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "BalanceResponse", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'BalanceResponse', id },
+        { type: 'BalanceResponse', id: 'LIST' },
+        { type: 'BalanceResponse', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteBalanceResponseCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteBalanceResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `BalanceResponse/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "BalanceResponse", id },
-        { type: "BalanceResponse", id: "LIST" },
+        { type: 'BalanceResponse', id },
+        { type: 'BalanceResponse', id: 'LIST' },
+        { type: 'BalanceResponse', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetBalanceResponsesPagedQuery`
 export const {
-  useGetBalanceResponsesPagedQuery, // immediate fetch
+  useGetBalanceResponsesPagedQuery,     // immediate fetch
   useLazyGetBalanceResponsesPagedQuery, // lazy fetch
   useGetBalanceResponseQuery,
   useGetBalanceResponsesQuery,
@@ -180,4 +169,4 @@ export const {
   useUpdateBalanceResponseMutation,
   useDeleteBalanceResponseMutation,
   useDeleteBalanceResponseCascadeMutation,
-} = BalanceResponseService;
+} = BalanceResponseService

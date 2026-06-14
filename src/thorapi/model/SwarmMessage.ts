@@ -26,19 +26,22 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 import {
-  Swarm,
-  SwarmFromJSON,
-  SwarmToJSON,
-  SwarmPayload,
-  SwarmPayloadFromJSON,
-  SwarmPayloadToJSON,
-  SwarmSecurity,
-  SwarmSecurityFromJSON,
-  SwarmSecurityToJSON,
-} from "./";
+
+
+    Swarm,
+    SwarmFromJSON,
+    SwarmToJSON,
+    SwarmPayload,
+    SwarmPayloadFromJSON,
+    SwarmPayloadToJSON,
+    SwarmSecurity,
+    SwarmSecurityFromJSON,
+    SwarmSecurityToJSON,
+} from './';
+
 
 // thorapi
 
@@ -47,200 +50,181 @@ import {
  * @export
  * @interface SwarmMessage
  */
-export type SwarmMessage = DataObject & {
-  /**
-   * Message classification.
-   * @type {string}
-   * @memberof SwarmMessage
-   */
-  type?: SwarmMessageTypeEnum;
-  /**
-   *
-   * @type {Swarm}
-   * @memberof SwarmMessage
-   */
-  fromSwarm?: Swarm;
-  /**
-   *
-   * @type {Swarm}
-   * @memberof SwarmMessage
-   */
-  toSwarm?: Swarm;
-  /**
-   * Timestamp representing when the message was created.
-   * @type {Date}
-   * @memberof SwarmMessage
-   */
-  timestamp?: Date;
-  /**
-   * Identifier of the message being acknowledged.
-   * @type {string}
-   * @memberof SwarmMessage
-   */
-  ackId?: string;
-  /**
-   *
-   * @type {SwarmPayload}
-   * @memberof SwarmMessage
-   */
-  payload?: SwarmPayload;
-  /**
-   *
-   * @type {SwarmSecurity}
-   * @memberof SwarmMessage
-   */
-  security?: SwarmSecurity;
-  /**
-   * Optional time-to-live in milliseconds.
-   * @type {number}
-   * @memberof SwarmMessage
-   */
-  ttl?: number;
-  /**
-   * Delivery priority indicator.
-   * @type {string}
-   * @memberof SwarmMessage
-   */
-  priority?: SwarmMessagePriorityEnum;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof SwarmMessage
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof SwarmMessage
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof SwarmMessage
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof SwarmMessage
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof SwarmMessage
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof SwarmMessage
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof SwarmMessage
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof SwarmMessage
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof SwarmMessage
-   */
-  trashed?: boolean;
-};
+export type SwarmMessage  = DataObject & {
+    /**
+     * Message classification.
+     * @type {string}
+     * @memberof SwarmMessage
+     */
+    type?: SwarmMessageTypeEnum;
+    /**
+     * 
+     * @type {Swarm}
+     * @memberof SwarmMessage
+     */
+    fromSwarm?: Swarm;
+    /**
+     * 
+     * @type {Swarm}
+     * @memberof SwarmMessage
+     */
+    toSwarm?: Swarm;
+    /**
+     * Timestamp representing when the message was created.
+     * @type {Date}
+     * @memberof SwarmMessage
+     */
+    timestamp?: Date;
+    /**
+     * Identifier of the message being acknowledged.
+     * @type {string}
+     * @memberof SwarmMessage
+     */
+    ackId?: string;
+    /**
+     * 
+     * @type {SwarmPayload}
+     * @memberof SwarmMessage
+     */
+    payload?: SwarmPayload;
+    /**
+     * 
+     * @type {SwarmSecurity}
+     * @memberof SwarmMessage
+     */
+    security?: SwarmSecurity;
+    /**
+     * Optional time-to-live in milliseconds.
+     * @type {number}
+     * @memberof SwarmMessage
+     */
+    ttl?: number;
+    /**
+     * Delivery priority indicator.
+     * @type {string}
+     * @memberof SwarmMessage
+     */
+    priority?: SwarmMessagePriorityEnum;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof SwarmMessage
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof SwarmMessage
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof SwarmMessage
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof SwarmMessage
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof SwarmMessage
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof SwarmMessage
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof SwarmMessage
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof SwarmMessage
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof SwarmMessage
+     */
+    trashed?: boolean;
+}
 
 export function SwarmMessageFromJSON(json: any): SwarmMessage {
-  return {
-    ...DataObjectFromJSON(json),
-    type: !exists(json, "type") ? undefined : json["type"],
-    fromSwarm: !exists(json, "fromSwarm")
-      ? undefined
-      : SwarmFromJSON(json["fromSwarm"]),
-    toSwarm: !exists(json, "toSwarm")
-      ? undefined
-      : SwarmFromJSON(json["toSwarm"]),
-    timestamp: !exists(json, "timestamp")
-      ? undefined
-      : new Date(json["timestamp"]),
-    ackId: !exists(json, "ackId") ? undefined : json["ackId"],
-    payload: !exists(json, "payload")
-      ? undefined
-      : SwarmPayloadFromJSON(json["payload"]),
-    security: !exists(json, "security")
-      ? undefined
-      : SwarmSecurityFromJSON(json["security"]),
-    ttl: !exists(json, "ttl") ? undefined : json["ttl"],
-    priority: !exists(json, "priority") ? undefined : json["priority"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'type': !exists(json, 'type') ? undefined : json['type'],
+        'fromSwarm': !exists(json, 'fromSwarm') ? undefined : SwarmFromJSON(json['fromSwarm']),
+        'toSwarm': !exists(json, 'toSwarm') ? undefined : SwarmFromJSON(json['toSwarm']),
+        'timestamp': !exists(json, 'timestamp') ? undefined : new Date(json['timestamp']),
+        'ackId': !exists(json, 'ackId') ? undefined : json['ackId'],
+        'payload': !exists(json, 'payload') ? undefined : SwarmPayloadFromJSON(json['payload']),
+        'security': !exists(json, 'security') ? undefined : SwarmSecurityFromJSON(json['security']),
+        'ttl': !exists(json, 'ttl') ? undefined : json['ttl'],
+        'priority': !exists(json, 'priority') ? undefined : json['priority'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function SwarmMessageToJSON(value?: SwarmMessage): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    type: value.type,
-    fromSwarm: SwarmToJSON(value.fromSwarm),
-    toSwarm: SwarmToJSON(value.toSwarm),
-    timestamp:
-      value.timestamp === undefined ? undefined : value.timestamp.toISOString(),
-    ackId: value.ackId,
-    payload: SwarmPayloadToJSON(value.payload),
-    security: SwarmSecurityToJSON(value.security),
-    ttl: value.ttl,
-    priority: value.priority,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'type': value.type,
+        'fromSwarm': SwarmToJSON(value.fromSwarm),
+        'toSwarm': SwarmToJSON(value.toSwarm),
+        'timestamp': value.timestamp === undefined ? undefined : value.timestamp.toISOString(),
+        'ackId': value.ackId,
+        'payload': SwarmPayloadToJSON(value.payload),
+        'security': SwarmSecurityToJSON(value.security),
+        'ttl': value.ttl,
+        'priority': value.priority,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum SwarmMessageTypeEnum {
-  COMMAND = "command",
-  RESPONSE = "response",
-  BROADCAST = "broadcast",
-  EVENT = "event",
-  ACK = "ack",
-  NACK = "nack",
+    COMMAND = 'command',
+    RESPONSE = 'response',
+    BROADCAST = 'broadcast',
+    EVENT = 'event',
+    ACK = 'ack',
+    NACK = 'nack'
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum SwarmMessagePriorityEnum {
-  LOW = "low",
-  NORMAL = "normal",
-  HIGH = "high",
-  URGENT = "urgent",
+    LOW = 'low',
+    NORMAL = 'normal',
+    HIGH = 'high',
+    URGENT = 'urgent'
 }
+
+

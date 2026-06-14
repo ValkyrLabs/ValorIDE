@@ -35,75 +35,37 @@ const _1 = require("./");
 function ExecModuleIOConfigFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        inputSchema: !(0, runtime_1.exists)(json, "inputSchema")
-            ? undefined
-            : (0, _1.OasObjectSchemaFromJSON)(json["inputSchema"]),
-        outputSchema: !(0, runtime_1.exists)(json, "outputSchema")
-            ? undefined
-            : (0, _1.OasObjectSchemaFromJSON)(json["outputSchema"]),
-        inputMapping: !(0, runtime_1.exists)(json, "inputMapping")
-            ? undefined
-            : json["inputMapping"],
-        outputMapping: !(0, runtime_1.exists)(json, "outputMapping")
-            ? undefined
-            : json["outputMapping"],
-        contactMapping: !(0, runtime_1.exists)(json, "contactMapping")
-            ? undefined
-            : json["contactMapping"],
-        field: !(0, runtime_1.exists)(json, "field") ? undefined : json["field"],
-        flattenOutput: !(0, runtime_1.exists)(json, "flatten_output")
-            ? undefined
-            : json["flatten_output"],
-        groupBy: !(0, runtime_1.exists)(json, "group_by") ? undefined : json["group_by"],
-        imageShape: !(0, runtime_1.exists)(json, "imageShape")
-            ? undefined
-            : json["imageShape"].map(_1.ArrayIntegerItemFromJSON),
-        inputShape: !(0, runtime_1.exists)(json, "inputShape")
-            ? undefined
-            : json["inputShape"].map(_1.ArrayIntegerItemFromJSON),
-        numClasses: !(0, runtime_1.exists)(json, "numClasses") ? undefined : json["numClasses"],
-        operationMode: !(0, runtime_1.exists)(json, "operation_mode")
-            ? undefined
-            : json["operation_mode"],
-        outputClasses: !(0, runtime_1.exists)(json, "outputClasses")
-            ? undefined
-            : json["outputClasses"],
-        outputMode: !(0, runtime_1.exists)(json, "outputMode") ? undefined : json["outputMode"],
-        outputField: !(0, runtime_1.exists)(json, "output_field")
-            ? undefined
-            : json["output_field"],
-        prettyPrint: !(0, runtime_1.exists)(json, "pretty_print")
-            ? undefined
-            : json["pretty_print"],
-        projection: !(0, runtime_1.exists)(json, "projection") ? undefined : json["projection"],
-        schema: !(0, runtime_1.exists)(json, "schema") ? undefined : json["schema"],
-        schemaRegistryUrl: !(0, runtime_1.exists)(json, "schema_registry_url")
-            ? undefined
-            : json["schema_registry_url"],
-        sourcePath: !(0, runtime_1.exists)(json, "source_path") ? undefined : json["source_path"],
-        timestampField: !(0, runtime_1.exists)(json, "timestamp_field")
-            ? undefined
-            : json["timestamp_field"],
-        valueField: !(0, runtime_1.exists)(json, "value_field") ? undefined : json["value_field"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'inputSchema': !(0, runtime_1.exists)(json, 'inputSchema') ? undefined : (0, _1.OasObjectSchemaFromJSON)(json['inputSchema']),
+        'outputSchema': !(0, runtime_1.exists)(json, 'outputSchema') ? undefined : (0, _1.OasObjectSchemaFromJSON)(json['outputSchema']),
+        'inputMapping': !(0, runtime_1.exists)(json, 'inputMapping') ? undefined : json['inputMapping'],
+        'outputMapping': !(0, runtime_1.exists)(json, 'outputMapping') ? undefined : json['outputMapping'],
+        'contactMapping': !(0, runtime_1.exists)(json, 'contactMapping') ? undefined : json['contactMapping'],
+        'field': !(0, runtime_1.exists)(json, 'field') ? undefined : json['field'],
+        'flattenOutput': !(0, runtime_1.exists)(json, 'flattenOutput') ? undefined : json['flattenOutput'],
+        'groupBy': !(0, runtime_1.exists)(json, 'groupBy') ? undefined : json['groupBy'],
+        'imageShape': !(0, runtime_1.exists)(json, 'imageShape') ? undefined : json['imageShape'].map(_1.ArrayIntegerItemFromJSON),
+        'inputShape': !(0, runtime_1.exists)(json, 'inputShape') ? undefined : json['inputShape'].map(_1.ArrayIntegerItemFromJSON),
+        'numClasses': !(0, runtime_1.exists)(json, 'numClasses') ? undefined : json['numClasses'],
+        'operationMode': !(0, runtime_1.exists)(json, 'operationMode') ? undefined : json['operationMode'],
+        'outputClasses': !(0, runtime_1.exists)(json, 'outputClasses') ? undefined : json['outputClasses'],
+        'outputMode': !(0, runtime_1.exists)(json, 'outputMode') ? undefined : json['outputMode'],
+        'outputField': !(0, runtime_1.exists)(json, 'outputField') ? undefined : json['outputField'],
+        'prettyPrint': !(0, runtime_1.exists)(json, 'prettyPrint') ? undefined : json['prettyPrint'],
+        'projection': !(0, runtime_1.exists)(json, 'projection') ? undefined : json['projection'],
+        'schema': !(0, runtime_1.exists)(json, 'schema') ? undefined : json['schema'],
+        'schemaRegistryUrl': !(0, runtime_1.exists)(json, 'schemaRegistryUrl') ? undefined : json['schemaRegistryUrl'],
+        'sourcePath': !(0, runtime_1.exists)(json, 'sourcePath') ? undefined : json['sourcePath'],
+        'timestampField': !(0, runtime_1.exists)(json, 'timestampField') ? undefined : json['timestampField'],
+        'valueField': !(0, runtime_1.exists)(json, 'valueField') ? undefined : json['valueField'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ExecModuleIOConfigToJSON(value) {
@@ -112,33 +74,29 @@ function ExecModuleIOConfigToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        inputSchema: (0, _1.OasObjectSchemaToJSON)(value.inputSchema),
-        outputSchema: (0, _1.OasObjectSchemaToJSON)(value.outputSchema),
-        inputMapping: value.inputMapping,
-        outputMapping: value.outputMapping,
-        contactMapping: value.contactMapping,
-        field: value.field,
-        flatten_output: value.flattenOutput,
-        group_by: value.groupBy,
-        imageShape: value.imageShape === undefined
-            ? undefined
-            : value.imageShape.map(_1.ArrayIntegerItemToJSON),
-        inputShape: value.inputShape === undefined
-            ? undefined
-            : value.inputShape.map(_1.ArrayIntegerItemToJSON),
-        numClasses: value.numClasses,
-        operation_mode: value.operationMode,
-        outputClasses: value.outputClasses,
-        outputMode: value.outputMode,
-        output_field: value.outputField,
-        pretty_print: value.prettyPrint,
-        projection: value.projection,
-        schema: value.schema,
-        schema_registry_url: value.schemaRegistryUrl,
-        source_path: value.sourcePath,
-        timestamp_field: value.timestampField,
-        value_field: value.valueField,
-        trashed: value.trashed,
+        'inputSchema': (0, _1.OasObjectSchemaToJSON)(value.inputSchema),
+        'outputSchema': (0, _1.OasObjectSchemaToJSON)(value.outputSchema),
+        'inputMapping': value.inputMapping,
+        'outputMapping': value.outputMapping,
+        'contactMapping': value.contactMapping,
+        'field': value.field,
+        'flattenOutput': value.flattenOutput,
+        'groupBy': value.groupBy,
+        'imageShape': value.imageShape === undefined ? undefined : value.imageShape.map(_1.ArrayIntegerItemToJSON),
+        'inputShape': value.inputShape === undefined ? undefined : value.inputShape.map(_1.ArrayIntegerItemToJSON),
+        'numClasses': value.numClasses,
+        'operationMode': value.operationMode,
+        'outputClasses': value.outputClasses,
+        'outputMode': value.outputMode,
+        'outputField': value.outputField,
+        'prettyPrint': value.prettyPrint,
+        'projection': value.projection,
+        'schema': value.schema,
+        'schemaRegistryUrl': value.schemaRegistryUrl,
+        'sourcePath': value.sourcePath,
+        'timestampField': value.timestampField,
+        'valueField': value.valueField,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=ExecModuleIOConfig.js.map

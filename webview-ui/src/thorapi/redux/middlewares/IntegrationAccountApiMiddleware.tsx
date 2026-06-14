@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_INTEGRATIONACCOUNT_REQUEST,
-  FETCH_INTEGRATIONACCOUNT_REQUEST,
-  LIST_INTEGRATIONACCOUNT_REQUEST,
-  UPDATE_INTEGRATIONACCOUNT_REQUEST,
-  DELETE_INTEGRATIONACCOUNT_REQUEST,
-  addIntegrationAccountFailure,
-  addIntegrationAccountSuccess,
-  fetchIntegrationAccountFailure,
-  fetchIntegrationAccountSuccess,
-  listIntegrationAccountFailure,
-  listIntegrationAccountSuccess,
-  updateIntegrationAccountFailure,
-  updateIntegrationAccountSuccess,
-  deleteIntegrationAccountFailure,
-  deleteIntegrationAccountSuccess,
-} from "../actions/IntegrationAccountApiAction";
+
+    ADD_INTEGRATIONACCOUNT_REQUEST,
+    FETCH_INTEGRATIONACCOUNT_REQUEST,
+    LIST_INTEGRATIONACCOUNT_REQUEST,
+    UPDATE_INTEGRATIONACCOUNT_REQUEST,
+    DELETE_INTEGRATIONACCOUNT_REQUEST,
+
+    addIntegrationAccountFailure,
+    addIntegrationAccountSuccess,
+
+    fetchIntegrationAccountFailure,
+    fetchIntegrationAccountSuccess,
+    
+    listIntegrationAccountFailure,
+    listIntegrationAccountSuccess,
+
+    updateIntegrationAccountFailure,
+    updateIntegrationAccountSuccess,
+    
+    deleteIntegrationAccountFailure,
+    deleteIntegrationAccountSuccess,
+    
+} from '../actions/IntegrationAccountApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: IntegrationAccount
 */
 
-export const IntegrationAccountMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("IntegrationAccount MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const IntegrationAccountMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("IntegrationAccount MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

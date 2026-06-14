@@ -36,38 +36,24 @@ const _1 = require("./");
 function TrustSecretAccessEventFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        keyVersion: !(0, runtime_1.exists)(json, "keyVersion")
-            ? undefined
-            : (0, _1.TrustKeyVersionFromJSON)(json["keyVersion"]),
-        lease: !(0, runtime_1.exists)(json, "lease")
-            ? undefined
-            : (0, _1.TrustSecretLeaseFromJSON)(json["lease"]),
-        operation: !(0, runtime_1.exists)(json, "operation") ? undefined : json["operation"],
-        actorId: !(0, runtime_1.exists)(json, "actorId") ? undefined : json["actorId"],
-        objectType: !(0, runtime_1.exists)(json, "objectType") ? undefined : json["objectType"],
-        objectId: !(0, runtime_1.exists)(json, "objectId") ? undefined : json["objectId"],
-        outcome: !(0, runtime_1.exists)(json, "outcome") ? undefined : json["outcome"],
-        reasonCode: !(0, runtime_1.exists)(json, "reasonCode") ? undefined : json["reasonCode"],
-        eventHash: !(0, runtime_1.exists)(json, "eventHash") ? undefined : json["eventHash"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'keyVersion': !(0, runtime_1.exists)(json, 'keyVersion') ? undefined : (0, _1.TrustKeyVersionFromJSON)(json['keyVersion']),
+        'lease': !(0, runtime_1.exists)(json, 'lease') ? undefined : (0, _1.TrustSecretLeaseFromJSON)(json['lease']),
+        'operation': !(0, runtime_1.exists)(json, 'operation') ? undefined : json['operation'],
+        'actorId': !(0, runtime_1.exists)(json, 'actorId') ? undefined : json['actorId'],
+        'objectType': !(0, runtime_1.exists)(json, 'objectType') ? undefined : json['objectType'],
+        'objectId': !(0, runtime_1.exists)(json, 'objectId') ? undefined : json['objectId'],
+        'outcome': !(0, runtime_1.exists)(json, 'outcome') ? undefined : json['outcome'],
+        'reasonCode': !(0, runtime_1.exists)(json, 'reasonCode') ? undefined : json['reasonCode'],
+        'eventHash': !(0, runtime_1.exists)(json, 'eventHash') ? undefined : json['eventHash'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function TrustSecretAccessEventToJSON(value) {
@@ -76,23 +62,23 @@ function TrustSecretAccessEventToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        keyVersion: (0, _1.TrustKeyVersionToJSON)(value.keyVersion),
-        lease: (0, _1.TrustSecretLeaseToJSON)(value.lease),
-        operation: value.operation,
-        actorId: value.actorId,
-        objectType: value.objectType,
-        objectId: value.objectId,
-        outcome: value.outcome,
-        reasonCode: value.reasonCode,
-        eventHash: value.eventHash,
-        ownerId: value.ownerId,
-        trashed: value.trashed,
+        'keyVersion': (0, _1.TrustKeyVersionToJSON)(value.keyVersion),
+        'lease': (0, _1.TrustSecretLeaseToJSON)(value.lease),
+        'operation': value.operation,
+        'actorId': value.actorId,
+        'objectType': value.objectType,
+        'objectId': value.objectId,
+        'outcome': value.outcome,
+        'reasonCode': value.reasonCode,
+        'eventHash': value.eventHash,
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustSecretAccessEventOutcomeEnum;
 (function (TrustSecretAccessEventOutcomeEnum) {
     TrustSecretAccessEventOutcomeEnum["ALLOWED"] = "allowed";

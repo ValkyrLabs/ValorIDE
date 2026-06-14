@@ -35,10 +35,8 @@ const _1 = require("./");
 function ScanBuildArtifacts200ResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        found: !(0, runtime_1.exists)(json, "found") ? undefined : json["found"],
-        artifacts: !(0, runtime_1.exists)(json, "artifacts")
-            ? undefined
-            : json["artifacts"].map(_1.BuildArtifactFromJSON),
+        'found': !(0, runtime_1.exists)(json, 'found') ? undefined : json['found'],
+        'artifacts': !(0, runtime_1.exists)(json, 'artifacts') ? undefined : json['artifacts'].map(_1.BuildArtifactFromJSON),
     };
 }
 function ScanBuildArtifacts200ResponseToJSON(value) {
@@ -47,10 +45,8 @@ function ScanBuildArtifacts200ResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        found: value.found,
-        artifacts: value.artifacts === undefined
-            ? undefined
-            : value.artifacts.map(_1.BuildArtifactToJSON),
+        'found': value.found,
+        'artifacts': value.artifacts === undefined ? undefined : value.artifacts.map(_1.BuildArtifactToJSON),
     };
 }
 //# sourceMappingURL=ScanBuildArtifacts200Response.js.map

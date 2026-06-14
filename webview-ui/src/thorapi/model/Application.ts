@@ -26,16 +26,19 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 import {
-  ContentMediaLink,
-  ContentMediaLinkFromJSON,
-  ContentMediaLinkToJSON,
-  OasOpenAPISpec,
-  OasOpenAPISpecFromJSON,
-  OasOpenAPISpecToJSON,
-} from "./";
+
+
+    ContentMediaLink,
+    ContentMediaLinkFromJSON,
+    ContentMediaLinkToJSON,
+    OasOpenAPISpec,
+    OasOpenAPISpecFromJSON,
+    OasOpenAPISpecToJSON,
+} from './';
+
 
 // thorapi
 
@@ -44,193 +47,176 @@ import {
  * @export
  * @interface Application
  */
-export type Application = DataObject & {
-  /**
-   * name of the application
-   * @type {string}
-   * @memberof Application
-   */
-  name?: string;
-  /**
-   * detailed description of the application
-   * @type {string}
-   * @memberof Application
-   */
-  description?: string;
-  /**
-   * whether this Application is a Template
-   * @type {boolean}
-   * @memberof Application
-   */
-  isTemplate?: boolean;
-  /**
-   * type of application
-   * @type {string}
-   * @memberof Application
-   */
-  type?: ApplicationTypeEnum;
-  /**
-   * status for event
-   * @type {string}
-   * @memberof Application
-   */
-  status?: ApplicationStatusEnum;
-  /**
-   * the url to the \'homepage\' or service endpoint
-   * @type {string}
-   * @memberof Application
-   */
-  entrypointUrl?: string;
-  /**
-   *
-   * @type {Array<ContentMediaLink>}
-   * @memberof Application
-   */
-  contentMedia?: Array<ContentMediaLink>;
-  /**
-   *
-   * @type {OasOpenAPISpec}
-   * @memberof Application
-   */
-  openAPISpec?: OasOpenAPISpec;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof Application
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof Application
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof Application
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof Application
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof Application
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof Application
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof Application
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof Application
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof Application
-   */
-  trashed?: boolean;
-};
+export type Application  = DataObject & {
+    /**
+     * name of the application
+     * @type {string}
+     * @memberof Application
+     */
+    name?: string;
+    /**
+     * detailed description of the application
+     * @type {string}
+     * @memberof Application
+     */
+    description?: string;
+    /**
+     * whether this Application is a Template
+     * @type {boolean}
+     * @memberof Application
+     */
+    isTemplate?: boolean;
+    /**
+     * type of application
+     * @type {string}
+     * @memberof Application
+     */
+    type?: ApplicationTypeEnum;
+    /**
+     * status for event
+     * @type {string}
+     * @memberof Application
+     */
+    status?: ApplicationStatusEnum;
+    /**
+     * the url to the \'homepage\' or service endpoint
+     * @type {string}
+     * @memberof Application
+     */
+    entrypointUrl?: string;
+    /**
+     * 
+     * @type {Array<ContentMediaLink>}
+     * @memberof Application
+     */
+    contentMedia?: Array<ContentMediaLink>;
+    /**
+     * 
+     * @type {OasOpenAPISpec}
+     * @memberof Application
+     */
+    openAPISpec?: OasOpenAPISpec;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof Application
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof Application
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof Application
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof Application
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof Application
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof Application
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof Application
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof Application
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof Application
+     */
+    trashed?: boolean;
+}
 
 export function ApplicationFromJSON(json: any): Application {
-  return {
-    ...DataObjectFromJSON(json),
-    name: !exists(json, "name") ? undefined : json["name"],
-    description: !exists(json, "description") ? undefined : json["description"],
-    isTemplate: !exists(json, "isTemplate") ? undefined : json["isTemplate"],
-    type: !exists(json, "type") ? undefined : json["type"],
-    status: !exists(json, "status") ? undefined : json["status"],
-    entrypointUrl: !exists(json, "entrypointUrl")
-      ? undefined
-      : json["entrypointUrl"],
-    contentMedia: !exists(json, "contentMedia")
-      ? undefined
-      : (json["contentMedia"] as Array<any>).map(ContentMediaLinkFromJSON),
-    openAPISpec: !exists(json, "openAPISpec")
-      ? undefined
-      : OasOpenAPISpecFromJSON(json["openAPISpec"]),
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'isTemplate': !exists(json, 'isTemplate') ? undefined : json['isTemplate'],
+        'type': !exists(json, 'type') ? undefined : json['type'],
+        'status': !exists(json, 'status') ? undefined : json['status'],
+        'entrypointUrl': !exists(json, 'entrypointUrl') ? undefined : json['entrypointUrl'],
+        'contentMedia': !exists(json, 'contentMedia') ? undefined : (json['contentMedia'] as Array<any>).map(ContentMediaLinkFromJSON),
+        'openAPISpec': !exists(json, 'openAPISpec') ? undefined : OasOpenAPISpecFromJSON(json['openAPISpec']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function ApplicationToJSON(value?: Application): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    name: value.name,
-    description: value.description,
-    isTemplate: value.isTemplate,
-    type: value.type,
-    status: value.status,
-    entrypointUrl: value.entrypointUrl,
-    contentMedia:
-      value.contentMedia === undefined
-        ? undefined
-        : (value.contentMedia as Array<any>).map(ContentMediaLinkToJSON),
-    openAPISpec: OasOpenAPISpecToJSON(value.openAPISpec),
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'name': value.name,
+        'description': value.description,
+        'isTemplate': value.isTemplate,
+        'type': value.type,
+        'status': value.status,
+        'entrypointUrl': value.entrypointUrl,
+        'contentMedia': value.contentMedia === undefined ? undefined : (value.contentMedia as Array<any>).map(ContentMediaLinkToJSON),
+        'openAPISpec': OasOpenAPISpecToJSON(value.openAPISpec),
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum ApplicationTypeEnum {
-  FULLSTACK = "full-stack",
-  AUTOMATION = "automation",
-  AGENT = "agent",
-  SERVICE = "service",
-  FRONTEND = "front-end",
-  MOBILE = "mobile",
-  CICD = "ci-cd",
-  LAMBDA = "lambda",
+    FULLSTACK = 'full-stack',
+    AUTOMATION = 'automation',
+    AGENT = 'agent',
+    SERVICE = 'service',
+    FRONTEND = 'front-end',
+    MOBILE = 'mobile',
+    CICD = 'ci-cd',
+    LAMBDA = 'lambda'
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum ApplicationStatusEnum {
-  READY = "ready",
-  DEPLOYED = "deployed",
-  STAGING = "staging",
-  ERROR = "error",
-  DISABLED = "disabled",
+    READY = 'ready',
+    DEPLOYED = 'deployed',
+    STAGING = 'staging',
+    ERROR = 'error',
+    DISABLED = 'disabled'
 }
+
+

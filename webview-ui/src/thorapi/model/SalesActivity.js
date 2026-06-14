@@ -35,34 +35,20 @@ const DataObject_1 = require("./DataObject");
 function SalesActivityFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        opportunityId: !(0, runtime_1.exists)(json, "opportunityId")
-            ? undefined
-            : json["opportunityId"],
-        type: !(0, runtime_1.exists)(json, "type") ? undefined : json["type"],
-        details: !(0, runtime_1.exists)(json, "details") ? undefined : json["details"],
-        activityDate: !(0, runtime_1.exists)(json, "activityDate")
-            ? undefined
-            : new Date(json["activityDate"]),
-        performedBy: !(0, runtime_1.exists)(json, "performedBy") ? undefined : json["performedBy"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'opportunityId': !(0, runtime_1.exists)(json, 'opportunityId') ? undefined : json['opportunityId'],
+        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
+        'details': !(0, runtime_1.exists)(json, 'details') ? undefined : json['details'],
+        'activityDate': !(0, runtime_1.exists)(json, 'activityDate') ? undefined : new Date(json['activityDate']),
+        'performedBy': !(0, runtime_1.exists)(json, 'performedBy') ? undefined : json['performedBy'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function SalesActivityToJSON(value) {
@@ -71,20 +57,18 @@ function SalesActivityToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        opportunityId: value.opportunityId,
-        type: value.type,
-        details: value.details,
-        activityDate: value.activityDate === undefined
-            ? undefined
-            : value.activityDate.toISOString(),
-        performedBy: value.performedBy,
-        trashed: value.trashed,
+        'opportunityId': value.opportunityId,
+        'type': value.type,
+        'details': value.details,
+        'activityDate': value.activityDate === undefined ? undefined : value.activityDate.toISOString(),
+        'performedBy': value.performedBy,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var SalesActivityTypeEnum;
 (function (SalesActivityTypeEnum) {
     SalesActivityTypeEnum["CALL"] = "call";

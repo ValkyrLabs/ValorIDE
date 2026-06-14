@@ -36,44 +36,24 @@ const _1 = require("./");
 function SwarmMessageFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        type: !(0, runtime_1.exists)(json, "type") ? undefined : json["type"],
-        fromSwarm: !(0, runtime_1.exists)(json, "fromSwarm")
-            ? undefined
-            : (0, _1.SwarmFromJSON)(json["fromSwarm"]),
-        toSwarm: !(0, runtime_1.exists)(json, "toSwarm")
-            ? undefined
-            : (0, _1.SwarmFromJSON)(json["toSwarm"]),
-        timestamp: !(0, runtime_1.exists)(json, "timestamp")
-            ? undefined
-            : new Date(json["timestamp"]),
-        ackId: !(0, runtime_1.exists)(json, "ackId") ? undefined : json["ackId"],
-        payload: !(0, runtime_1.exists)(json, "payload")
-            ? undefined
-            : (0, _1.SwarmPayloadFromJSON)(json["payload"]),
-        security: !(0, runtime_1.exists)(json, "security")
-            ? undefined
-            : (0, _1.SwarmSecurityFromJSON)(json["security"]),
-        ttl: !(0, runtime_1.exists)(json, "ttl") ? undefined : json["ttl"],
-        priority: !(0, runtime_1.exists)(json, "priority") ? undefined : json["priority"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
+        'fromSwarm': !(0, runtime_1.exists)(json, 'fromSwarm') ? undefined : (0, _1.SwarmFromJSON)(json['fromSwarm']),
+        'toSwarm': !(0, runtime_1.exists)(json, 'toSwarm') ? undefined : (0, _1.SwarmFromJSON)(json['toSwarm']),
+        'timestamp': !(0, runtime_1.exists)(json, 'timestamp') ? undefined : new Date(json['timestamp']),
+        'ackId': !(0, runtime_1.exists)(json, 'ackId') ? undefined : json['ackId'],
+        'payload': !(0, runtime_1.exists)(json, 'payload') ? undefined : (0, _1.SwarmPayloadFromJSON)(json['payload']),
+        'security': !(0, runtime_1.exists)(json, 'security') ? undefined : (0, _1.SwarmSecurityFromJSON)(json['security']),
+        'ttl': !(0, runtime_1.exists)(json, 'ttl') ? undefined : json['ttl'],
+        'priority': !(0, runtime_1.exists)(json, 'priority') ? undefined : json['priority'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function SwarmMessageToJSON(value) {
@@ -82,22 +62,22 @@ function SwarmMessageToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        type: value.type,
-        fromSwarm: (0, _1.SwarmToJSON)(value.fromSwarm),
-        toSwarm: (0, _1.SwarmToJSON)(value.toSwarm),
-        timestamp: value.timestamp === undefined ? undefined : value.timestamp.toISOString(),
-        ackId: value.ackId,
-        payload: (0, _1.SwarmPayloadToJSON)(value.payload),
-        security: (0, _1.SwarmSecurityToJSON)(value.security),
-        ttl: value.ttl,
-        priority: value.priority,
-        trashed: value.trashed,
+        'type': value.type,
+        'fromSwarm': (0, _1.SwarmToJSON)(value.fromSwarm),
+        'toSwarm': (0, _1.SwarmToJSON)(value.toSwarm),
+        'timestamp': value.timestamp === undefined ? undefined : value.timestamp.toISOString(),
+        'ackId': value.ackId,
+        'payload': (0, _1.SwarmPayloadToJSON)(value.payload),
+        'security': (0, _1.SwarmSecurityToJSON)(value.security),
+        'ttl': value.ttl,
+        'priority': value.priority,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var SwarmMessageTypeEnum;
 (function (SwarmMessageTypeEnum) {
     SwarmMessageTypeEnum["COMMAND"] = "command";
@@ -108,9 +88,9 @@ var SwarmMessageTypeEnum;
     SwarmMessageTypeEnum["NACK"] = "nack";
 })(SwarmMessageTypeEnum || (exports.SwarmMessageTypeEnum = SwarmMessageTypeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var SwarmMessagePriorityEnum;
 (function (SwarmMessagePriorityEnum) {
     SwarmMessagePriorityEnum["LOW"] = "low";

@@ -34,9 +34,9 @@ const DataObject_1 = require("./DataObject");
 function ValidateDeploymentSpec200ResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        valid: !(0, runtime_1.exists)(json, "valid") ? undefined : json["valid"],
-        errors: !(0, runtime_1.exists)(json, "errors") ? undefined : json["errors"],
-        warnings: !(0, runtime_1.exists)(json, "warnings") ? undefined : json["warnings"],
+        'valid': !(0, runtime_1.exists)(json, 'valid') ? undefined : json['valid'],
+        'errors': !(0, runtime_1.exists)(json, 'errors') ? undefined : json['errors'],
+        'warnings': !(0, runtime_1.exists)(json, 'warnings') ? undefined : json['warnings'],
     };
 }
 function ValidateDeploymentSpec200ResponseToJSON(value) {
@@ -45,9 +45,9 @@ function ValidateDeploymentSpec200ResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        valid: value.valid,
-        errors: value.errors,
-        warnings: value.warnings,
+        'valid': value.valid,
+        'errors': value.errors,
+        'warnings': value.warnings,
     };
 }
 //# sourceMappingURL=ValidateDeploymentSpec200Response.js.map

@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_SOLUTION_REQUEST,
-  FETCH_SOLUTION_REQUEST,
-  LIST_SOLUTION_REQUEST,
-  UPDATE_SOLUTION_REQUEST,
-  DELETE_SOLUTION_REQUEST,
-  addSolutionFailure,
-  addSolutionSuccess,
-  fetchSolutionFailure,
-  fetchSolutionSuccess,
-  listSolutionFailure,
-  listSolutionSuccess,
-  updateSolutionFailure,
-  updateSolutionSuccess,
-  deleteSolutionFailure,
-  deleteSolutionSuccess,
-} from "../actions/SolutionApiAction";
+
+    ADD_SOLUTION_REQUEST,
+    FETCH_SOLUTION_REQUEST,
+    LIST_SOLUTION_REQUEST,
+    UPDATE_SOLUTION_REQUEST,
+    DELETE_SOLUTION_REQUEST,
+
+    addSolutionFailure,
+    addSolutionSuccess,
+
+    fetchSolutionFailure,
+    fetchSolutionSuccess,
+    
+    listSolutionFailure,
+    listSolutionSuccess,
+
+    updateSolutionFailure,
+    updateSolutionSuccess,
+    
+    deleteSolutionFailure,
+    deleteSolutionSuccess,
+    
+} from '../actions/SolutionApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Solution
 */
 
-export const SolutionMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Solution MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const SolutionMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("Solution MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

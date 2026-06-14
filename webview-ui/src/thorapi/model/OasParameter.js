@@ -36,34 +36,20 @@ const _1 = require("./");
 function OasParameterFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        oasOperationId: !(0, runtime_1.exists)(json, "oasOperationId")
-            ? undefined
-            : json["oasOperationId"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        location: !(0, runtime_1.exists)(json, "location") ? undefined : json["location"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        schema: !(0, runtime_1.exists)(json, "schema")
-            ? undefined
-            : (0, _1.OasObjectSchemaFromJSON)(json["schema"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'oasOperationId': !(0, runtime_1.exists)(json, 'oasOperationId') ? undefined : json['oasOperationId'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'location': !(0, runtime_1.exists)(json, 'location') ? undefined : json['location'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'schema': !(0, runtime_1.exists)(json, 'schema') ? undefined : (0, _1.OasObjectSchemaFromJSON)(json['schema']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function OasParameterToJSON(value) {
@@ -72,18 +58,18 @@ function OasParameterToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        oasOperationId: value.oasOperationId,
-        name: value.name,
-        location: value.location,
-        description: value.description,
-        schema: (0, _1.OasObjectSchemaToJSON)(value.schema),
-        trashed: value.trashed,
+        'oasOperationId': value.oasOperationId,
+        'name': value.name,
+        'location': value.location,
+        'description': value.description,
+        'schema': (0, _1.OasObjectSchemaToJSON)(value.schema),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var OasParameterLocationEnum;
 (function (OasParameterLocationEnum) {
     OasParameterLocationEnum["QUERY"] = "query";

@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_DEPLOYMENT_REQUEST,
-  FETCH_DEPLOYMENT_REQUEST,
-  LIST_DEPLOYMENT_REQUEST,
-  UPDATE_DEPLOYMENT_REQUEST,
-  DELETE_DEPLOYMENT_REQUEST,
-  addDeploymentFailure,
-  addDeploymentSuccess,
-  fetchDeploymentFailure,
-  fetchDeploymentSuccess,
-  listDeploymentFailure,
-  listDeploymentSuccess,
-  updateDeploymentFailure,
-  updateDeploymentSuccess,
-  deleteDeploymentFailure,
-  deleteDeploymentSuccess,
-} from "../actions/DeploymentApiAction";
+
+    ADD_DEPLOYMENT_REQUEST,
+    FETCH_DEPLOYMENT_REQUEST,
+    LIST_DEPLOYMENT_REQUEST,
+    UPDATE_DEPLOYMENT_REQUEST,
+    DELETE_DEPLOYMENT_REQUEST,
+
+    addDeploymentFailure,
+    addDeploymentSuccess,
+
+    fetchDeploymentFailure,
+    fetchDeploymentSuccess,
+    
+    listDeploymentFailure,
+    listDeploymentSuccess,
+
+    updateDeploymentFailure,
+    updateDeploymentSuccess,
+    
+    deleteDeploymentFailure,
+    deleteDeploymentSuccess,
+    
+} from '../actions/DeploymentApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Deployment
 */
 
-export const DeploymentMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Deployment MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const DeploymentMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("Deployment MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

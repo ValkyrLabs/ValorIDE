@@ -35,29 +35,17 @@ const _1 = require("./");
 function SubmitTrustAttestationEvidenceResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        evidence: !(0, runtime_1.exists)(json, "evidence")
-            ? undefined
-            : (0, _1.TrustAttestationEvidenceFromJSON)(json["evidence"]),
-        accepted: !(0, runtime_1.exists)(json, "accepted") ? undefined : json["accepted"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'evidence': !(0, runtime_1.exists)(json, 'evidence') ? undefined : (0, _1.TrustAttestationEvidenceFromJSON)(json['evidence']),
+        'accepted': !(0, runtime_1.exists)(json, 'accepted') ? undefined : json['accepted'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function SubmitTrustAttestationEvidenceResponseToJSON(value) {
@@ -66,9 +54,9 @@ function SubmitTrustAttestationEvidenceResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        evidence: (0, _1.TrustAttestationEvidenceToJSON)(value.evidence),
-        accepted: value.accepted,
-        trashed: value.trashed,
+        'evidence': (0, _1.TrustAttestationEvidenceToJSON)(value.evidence),
+        'accepted': value.accepted,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=SubmitTrustAttestationEvidenceResponse.js.map

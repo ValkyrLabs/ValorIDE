@@ -35,32 +35,20 @@ const DataObject_1 = require("./DataObject");
 function LoginResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        token: !(0, runtime_1.exists)(json, "token") ? undefined : json["token"],
-        tempToken: !(0, runtime_1.exists)(json, "tempToken") ? undefined : json["tempToken"],
-        message: !(0, runtime_1.exists)(json, "message") ? undefined : json["message"],
-        twoFactorMethods: !(0, runtime_1.exists)(json, "twoFactorMethods")
-            ? undefined
-            : json["twoFactorMethods"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'token': !(0, runtime_1.exists)(json, 'token') ? undefined : json['token'],
+        'tempToken': !(0, runtime_1.exists)(json, 'tempToken') ? undefined : json['tempToken'],
+        'message': !(0, runtime_1.exists)(json, 'message') ? undefined : json['message'],
+        'twoFactorMethods': !(0, runtime_1.exists)(json, 'twoFactorMethods') ? undefined : json['twoFactorMethods'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function LoginResponseToJSON(value) {
@@ -69,18 +57,18 @@ function LoginResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        status: value.status,
-        token: value.token,
-        tempToken: value.tempToken,
-        message: value.message,
-        twoFactorMethods: value.twoFactorMethods,
-        trashed: value.trashed,
+        'status': value.status,
+        'token': value.token,
+        'tempToken': value.tempToken,
+        'message': value.message,
+        'twoFactorMethods': value.twoFactorMethods,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var LoginResponseStatusEnum;
 (function (LoginResponseStatusEnum) {
     LoginResponseStatusEnum["SUCCESS"] = "success";

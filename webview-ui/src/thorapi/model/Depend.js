@@ -35,31 +35,21 @@ const DataObject_1 = require("./DataObject");
 function DependFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        groupId: !(0, runtime_1.exists)(json, "groupId") ? undefined : json["groupId"],
-        artifactId: !(0, runtime_1.exists)(json, "artifactId") ? undefined : json["artifactId"],
-        version: !(0, runtime_1.exists)(json, "version") ? undefined : json["version"],
-        scope: !(0, runtime_1.exists)(json, "scope") ? undefined : json["scope"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        buildId: !(0, runtime_1.exists)(json, "buildId") ? undefined : json["buildId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'groupId': !(0, runtime_1.exists)(json, 'groupId') ? undefined : json['groupId'],
+        'artifactId': !(0, runtime_1.exists)(json, 'artifactId') ? undefined : json['artifactId'],
+        'version': !(0, runtime_1.exists)(json, 'version') ? undefined : json['version'],
+        'scope': !(0, runtime_1.exists)(json, 'scope') ? undefined : json['scope'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'buildId': !(0, runtime_1.exists)(json, 'buildId') ? undefined : json['buildId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function DependToJSON(value) {
@@ -68,19 +58,19 @@ function DependToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        groupId: value.groupId,
-        artifactId: value.artifactId,
-        version: value.version,
-        scope: value.scope,
-        status: value.status,
-        buildId: value.buildId,
-        trashed: value.trashed,
+        'groupId': value.groupId,
+        'artifactId': value.artifactId,
+        'version': value.version,
+        'scope': value.scope,
+        'status': value.status,
+        'buildId': value.buildId,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var DependStatusEnum;
 (function (DependStatusEnum) {
     DependStatusEnum["UPTODATE"] = "up_to_date";

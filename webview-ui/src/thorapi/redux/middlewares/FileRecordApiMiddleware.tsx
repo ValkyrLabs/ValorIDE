@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_FILERECORD_REQUEST,
-  FETCH_FILERECORD_REQUEST,
-  LIST_FILERECORD_REQUEST,
-  UPDATE_FILERECORD_REQUEST,
-  DELETE_FILERECORD_REQUEST,
-  addFileRecordFailure,
-  addFileRecordSuccess,
-  fetchFileRecordFailure,
-  fetchFileRecordSuccess,
-  listFileRecordFailure,
-  listFileRecordSuccess,
-  updateFileRecordFailure,
-  updateFileRecordSuccess,
-  deleteFileRecordFailure,
-  deleteFileRecordSuccess,
-} from "../actions/FileRecordApiAction";
+
+    ADD_FILERECORD_REQUEST,
+    FETCH_FILERECORD_REQUEST,
+    LIST_FILERECORD_REQUEST,
+    UPDATE_FILERECORD_REQUEST,
+    DELETE_FILERECORD_REQUEST,
+
+    addFileRecordFailure,
+    addFileRecordSuccess,
+
+    fetchFileRecordFailure,
+    fetchFileRecordSuccess,
+    
+    listFileRecordFailure,
+    listFileRecordSuccess,
+
+    updateFileRecordFailure,
+    updateFileRecordSuccess,
+    
+    deleteFileRecordFailure,
+    deleteFileRecordSuccess,
+    
+} from '../actions/FileRecordApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: FileRecord
 */
 
-export const FileRecordMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("FileRecord MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const FileRecordMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("FileRecord MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

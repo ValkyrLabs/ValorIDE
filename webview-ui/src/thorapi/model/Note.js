@@ -35,33 +35,21 @@ const DataObject_1 = require("./DataObject");
 function NoteFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        noteId: !(0, runtime_1.exists)(json, "noteId") ? undefined : json["noteId"],
-        associatedEntityId: !(0, runtime_1.exists)(json, "associatedEntityId")
-            ? undefined
-            : json["associatedEntityId"],
-        entityType: !(0, runtime_1.exists)(json, "entityType") ? undefined : json["entityType"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        content: !(0, runtime_1.exists)(json, "content") ? undefined : json["content"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        createdBy: !(0, runtime_1.exists)(json, "createdBy") ? undefined : json["createdBy"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'noteId': !(0, runtime_1.exists)(json, 'noteId') ? undefined : json['noteId'],
+        'associatedEntityId': !(0, runtime_1.exists)(json, 'associatedEntityId') ? undefined : json['associatedEntityId'],
+        'entityType': !(0, runtime_1.exists)(json, 'entityType') ? undefined : json['entityType'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'content': !(0, runtime_1.exists)(json, 'content') ? undefined : json['content'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'createdBy': !(0, runtime_1.exists)(json, 'createdBy') ? undefined : json['createdBy'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function NoteToJSON(value) {
@@ -70,22 +58,20 @@ function NoteToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        noteId: value.noteId,
-        associatedEntityId: value.associatedEntityId,
-        entityType: value.entityType,
-        name: value.name,
-        content: value.content,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        createdBy: value.createdBy,
-        trashed: value.trashed,
+        'noteId': value.noteId,
+        'associatedEntityId': value.associatedEntityId,
+        'entityType': value.entityType,
+        'name': value.name,
+        'content': value.content,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
+        'createdBy': value.createdBy,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var NoteEntityTypeEnum;
 (function (NoteEntityTypeEnum) {
     NoteEntityTypeEnum["CUSTOMER"] = "customer";

@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_CHATRESPONSE_REQUEST,
-  FETCH_CHATRESPONSE_REQUEST,
-  LIST_CHATRESPONSE_REQUEST,
-  UPDATE_CHATRESPONSE_REQUEST,
-  DELETE_CHATRESPONSE_REQUEST,
-  addChatResponseFailure,
-  addChatResponseSuccess,
-  fetchChatResponseFailure,
-  fetchChatResponseSuccess,
-  listChatResponseFailure,
-  listChatResponseSuccess,
-  updateChatResponseFailure,
-  updateChatResponseSuccess,
-  deleteChatResponseFailure,
-  deleteChatResponseSuccess,
-} from "../actions/ChatResponseApiAction";
+
+    ADD_CHATRESPONSE_REQUEST,
+    FETCH_CHATRESPONSE_REQUEST,
+    LIST_CHATRESPONSE_REQUEST,
+    UPDATE_CHATRESPONSE_REQUEST,
+    DELETE_CHATRESPONSE_REQUEST,
+
+    addChatResponseFailure,
+    addChatResponseSuccess,
+
+    fetchChatResponseFailure,
+    fetchChatResponseSuccess,
+    
+    listChatResponseFailure,
+    listChatResponseSuccess,
+
+    updateChatResponseFailure,
+    updateChatResponseSuccess,
+    
+    deleteChatResponseFailure,
+    deleteChatResponseSuccess,
+    
+} from '../actions/ChatResponseApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: ChatResponse
 */
 
-export const ChatResponseMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("ChatResponse MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const ChatResponseMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("ChatResponse MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

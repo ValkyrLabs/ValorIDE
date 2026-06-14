@@ -36,40 +36,22 @@ const _1 = require("./");
 function TrustProofFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        execution: !(0, runtime_1.exists)(json, "execution")
-            ? undefined
-            : (0, _1.TrustRuntimeExecutionFromJSON)(json["execution"]),
-        policyManifest: !(0, runtime_1.exists)(json, "policyManifest")
-            ? undefined
-            : (0, _1.TrustPolicyManifestFromJSON)(json["policyManifest"]),
-        merkleBatch: !(0, runtime_1.exists)(json, "merkleBatch")
-            ? undefined
-            : (0, _1.TrustMerkleBatchFromJSON)(json["merkleBatch"]),
-        proofHash: !(0, runtime_1.exists)(json, "proofHash") ? undefined : json["proofHash"],
-        proofStatus: !(0, runtime_1.exists)(json, "proofStatus") ? undefined : json["proofStatus"],
-        proofFormat: !(0, runtime_1.exists)(json, "proofFormat") ? undefined : json["proofFormat"],
-        proofBundleRef: !(0, runtime_1.exists)(json, "proofBundleRef")
-            ? undefined
-            : json["proofBundleRef"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'execution': !(0, runtime_1.exists)(json, 'execution') ? undefined : (0, _1.TrustRuntimeExecutionFromJSON)(json['execution']),
+        'policyManifest': !(0, runtime_1.exists)(json, 'policyManifest') ? undefined : (0, _1.TrustPolicyManifestFromJSON)(json['policyManifest']),
+        'merkleBatch': !(0, runtime_1.exists)(json, 'merkleBatch') ? undefined : (0, _1.TrustMerkleBatchFromJSON)(json['merkleBatch']),
+        'proofHash': !(0, runtime_1.exists)(json, 'proofHash') ? undefined : json['proofHash'],
+        'proofStatus': !(0, runtime_1.exists)(json, 'proofStatus') ? undefined : json['proofStatus'],
+        'proofFormat': !(0, runtime_1.exists)(json, 'proofFormat') ? undefined : json['proofFormat'],
+        'proofBundleRef': !(0, runtime_1.exists)(json, 'proofBundleRef') ? undefined : json['proofBundleRef'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function TrustProofToJSON(value) {
@@ -78,21 +60,21 @@ function TrustProofToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        execution: (0, _1.TrustRuntimeExecutionToJSON)(value.execution),
-        policyManifest: (0, _1.TrustPolicyManifestToJSON)(value.policyManifest),
-        merkleBatch: (0, _1.TrustMerkleBatchToJSON)(value.merkleBatch),
-        proofHash: value.proofHash,
-        proofStatus: value.proofStatus,
-        proofFormat: value.proofFormat,
-        proofBundleRef: value.proofBundleRef,
-        ownerId: value.ownerId,
-        trashed: value.trashed,
+        'execution': (0, _1.TrustRuntimeExecutionToJSON)(value.execution),
+        'policyManifest': (0, _1.TrustPolicyManifestToJSON)(value.policyManifest),
+        'merkleBatch': (0, _1.TrustMerkleBatchToJSON)(value.merkleBatch),
+        'proofHash': value.proofHash,
+        'proofStatus': value.proofStatus,
+        'proofFormat': value.proofFormat,
+        'proofBundleRef': value.proofBundleRef,
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustProofProofStatusEnum;
 (function (TrustProofProofStatusEnum) {
     TrustProofProofStatusEnum["GENERATED"] = "generated";
@@ -101,9 +83,9 @@ var TrustProofProofStatusEnum;
     TrustProofProofStatusEnum["REVOKED"] = "revoked";
 })(TrustProofProofStatusEnum || (exports.TrustProofProofStatusEnum = TrustProofProofStatusEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustProofProofFormatEnum;
 (function (TrustProofProofFormatEnum) {
     TrustProofProofFormatEnum["JCSJSON"] = "jcs_json";

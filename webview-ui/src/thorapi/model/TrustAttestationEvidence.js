@@ -36,38 +36,20 @@ const _1 = require("./");
 function TrustAttestationEvidenceFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        execution: !(0, runtime_1.exists)(json, "execution")
-            ? undefined
-            : (0, _1.TrustRuntimeExecutionFromJSON)(json["execution"]),
-        evidenceType: !(0, runtime_1.exists)(json, "evidenceType")
-            ? undefined
-            : json["evidenceType"],
-        evidenceHash: !(0, runtime_1.exists)(json, "evidenceHash")
-            ? undefined
-            : json["evidenceHash"],
-        evidenceRef: !(0, runtime_1.exists)(json, "evidenceRef") ? undefined : json["evidenceRef"],
-        evidenceStatus: !(0, runtime_1.exists)(json, "evidenceStatus")
-            ? undefined
-            : json["evidenceStatus"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'execution': !(0, runtime_1.exists)(json, 'execution') ? undefined : (0, _1.TrustRuntimeExecutionFromJSON)(json['execution']),
+        'evidenceType': !(0, runtime_1.exists)(json, 'evidenceType') ? undefined : json['evidenceType'],
+        'evidenceHash': !(0, runtime_1.exists)(json, 'evidenceHash') ? undefined : json['evidenceHash'],
+        'evidenceRef': !(0, runtime_1.exists)(json, 'evidenceRef') ? undefined : json['evidenceRef'],
+        'evidenceStatus': !(0, runtime_1.exists)(json, 'evidenceStatus') ? undefined : json['evidenceStatus'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function TrustAttestationEvidenceToJSON(value) {
@@ -76,19 +58,19 @@ function TrustAttestationEvidenceToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        execution: (0, _1.TrustRuntimeExecutionToJSON)(value.execution),
-        evidenceType: value.evidenceType,
-        evidenceHash: value.evidenceHash,
-        evidenceRef: value.evidenceRef,
-        evidenceStatus: value.evidenceStatus,
-        ownerId: value.ownerId,
-        trashed: value.trashed,
+        'execution': (0, _1.TrustRuntimeExecutionToJSON)(value.execution),
+        'evidenceType': value.evidenceType,
+        'evidenceHash': value.evidenceHash,
+        'evidenceRef': value.evidenceRef,
+        'evidenceStatus': value.evidenceStatus,
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustAttestationEvidenceEvidenceTypeEnum;
 (function (TrustAttestationEvidenceEvidenceTypeEnum) {
     TrustAttestationEvidenceEvidenceTypeEnum["SOFTWAREDECLARATION"] = "software_declaration";
@@ -100,9 +82,9 @@ var TrustAttestationEvidenceEvidenceTypeEnum;
     TrustAttestationEvidenceEvidenceTypeEnum["NITROENCLAVE"] = "nitro_enclave";
 })(TrustAttestationEvidenceEvidenceTypeEnum || (exports.TrustAttestationEvidenceEvidenceTypeEnum = TrustAttestationEvidenceEvidenceTypeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustAttestationEvidenceEvidenceStatusEnum;
 (function (TrustAttestationEvidenceEvidenceStatusEnum) {
     TrustAttestationEvidenceEvidenceStatusEnum["ACCEPTED"] = "accepted";

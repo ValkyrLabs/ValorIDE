@@ -26,16 +26,19 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 import {
-  OasObjectSchema,
-  OasObjectSchemaFromJSON,
-  OasObjectSchemaToJSON,
-  OasSecurityScheme,
-  OasSecuritySchemeFromJSON,
-  OasSecuritySchemeToJSON,
-} from "./";
+
+
+    OasObjectSchema,
+    OasObjectSchemaFromJSON,
+    OasObjectSchemaToJSON,
+    OasSecurityScheme,
+    OasSecuritySchemeFromJSON,
+    OasSecuritySchemeToJSON,
+} from './';
+
 
 // thorapi
 
@@ -44,130 +47,110 @@ import {
  * @export
  * @interface OasComponent
  */
-export type OasComponent = DataObject & {
-  /**
-   *
-   * @type {string}
-   * @memberof OasComponent
-   */
-  oasOpenAPISpecId?: string;
-  /**
-   *
-   * @type {Array<OasObjectSchema>}
-   * @memberof OasComponent
-   */
-  schemas?: Array<OasObjectSchema>;
-  /**
-   *
-   * @type {Array<OasSecurityScheme>}
-   * @memberof OasComponent
-   */
-  securitySchemes?: Array<OasSecurityScheme>;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof OasComponent
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof OasComponent
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof OasComponent
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof OasComponent
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof OasComponent
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof OasComponent
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof OasComponent
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof OasComponent
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof OasComponent
-   */
-  trashed?: boolean;
-};
+export type OasComponent  = DataObject & {
+    /**
+     * 
+     * @type {string}
+     * @memberof OasComponent
+     */
+    oasOpenAPISpecId?: string;
+    /**
+     * 
+     * @type {Array<OasObjectSchema>}
+     * @memberof OasComponent
+     */
+    schemas?: Array<OasObjectSchema>;
+    /**
+     * 
+     * @type {Array<OasSecurityScheme>}
+     * @memberof OasComponent
+     */
+    securitySchemes?: Array<OasSecurityScheme>;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof OasComponent
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof OasComponent
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof OasComponent
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof OasComponent
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof OasComponent
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof OasComponent
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof OasComponent
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof OasComponent
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof OasComponent
+     */
+    trashed?: boolean;
+}
 
 export function OasComponentFromJSON(json: any): OasComponent {
-  return {
-    ...DataObjectFromJSON(json),
-    oasOpenAPISpecId: !exists(json, "oasOpenAPISpecId")
-      ? undefined
-      : json["oasOpenAPISpecId"],
-    schemas: !exists(json, "schemas")
-      ? undefined
-      : (json["schemas"] as Array<any>).map(OasObjectSchemaFromJSON),
-    securitySchemes: !exists(json, "securitySchemes")
-      ? undefined
-      : (json["securitySchemes"] as Array<any>).map(OasSecuritySchemeFromJSON),
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'oasOpenAPISpecId': !exists(json, 'oasOpenAPISpecId') ? undefined : json['oasOpenAPISpecId'],
+        'schemas': !exists(json, 'schemas') ? undefined : (json['schemas'] as Array<any>).map(OasObjectSchemaFromJSON),
+        'securitySchemes': !exists(json, 'securitySchemes') ? undefined : (json['securitySchemes'] as Array<any>).map(OasSecuritySchemeFromJSON),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function OasComponentToJSON(value?: OasComponent): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    oasOpenAPISpecId: value.oasOpenAPISpecId,
-    schemas:
-      value.schemas === undefined
-        ? undefined
-        : (value.schemas as Array<any>).map(OasObjectSchemaToJSON),
-    securitySchemes:
-      value.securitySchemes === undefined
-        ? undefined
-        : (value.securitySchemes as Array<any>).map(OasSecuritySchemeToJSON),
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'oasOpenAPISpecId': value.oasOpenAPISpecId,
+        'schemas': value.schemas === undefined ? undefined : (value.schemas as Array<any>).map(OasObjectSchemaToJSON),
+        'securitySchemes': value.securitySchemes === undefined ? undefined : (value.securitySchemes as Array<any>).map(OasSecuritySchemeToJSON),
+        'trashed': value.trashed,
+    };
 }
+
+

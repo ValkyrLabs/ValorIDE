@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_MEMORYRETENTIONPOLICY_REQUEST,
-  FETCH_MEMORYRETENTIONPOLICY_REQUEST,
-  LIST_MEMORYRETENTIONPOLICY_REQUEST,
-  UPDATE_MEMORYRETENTIONPOLICY_REQUEST,
-  DELETE_MEMORYRETENTIONPOLICY_REQUEST,
-  addMemoryRetentionPolicyFailure,
-  addMemoryRetentionPolicySuccess,
-  fetchMemoryRetentionPolicyFailure,
-  fetchMemoryRetentionPolicySuccess,
-  listMemoryRetentionPolicyFailure,
-  listMemoryRetentionPolicySuccess,
-  updateMemoryRetentionPolicyFailure,
-  updateMemoryRetentionPolicySuccess,
-  deleteMemoryRetentionPolicyFailure,
-  deleteMemoryRetentionPolicySuccess,
-} from "../actions/MemoryRetentionPolicyApiAction";
+
+    ADD_MEMORYRETENTIONPOLICY_REQUEST,
+    FETCH_MEMORYRETENTIONPOLICY_REQUEST,
+    LIST_MEMORYRETENTIONPOLICY_REQUEST,
+    UPDATE_MEMORYRETENTIONPOLICY_REQUEST,
+    DELETE_MEMORYRETENTIONPOLICY_REQUEST,
+
+    addMemoryRetentionPolicyFailure,
+    addMemoryRetentionPolicySuccess,
+
+    fetchMemoryRetentionPolicyFailure,
+    fetchMemoryRetentionPolicySuccess,
+    
+    listMemoryRetentionPolicyFailure,
+    listMemoryRetentionPolicySuccess,
+
+    updateMemoryRetentionPolicyFailure,
+    updateMemoryRetentionPolicySuccess,
+    
+    deleteMemoryRetentionPolicyFailure,
+    deleteMemoryRetentionPolicySuccess,
+    
+} from '../actions/MemoryRetentionPolicyApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: MemoryRetentionPolicy
 */
 
-export const MemoryRetentionPolicyMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("MemoryRetentionPolicy MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const MemoryRetentionPolicyMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("MemoryRetentionPolicy MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

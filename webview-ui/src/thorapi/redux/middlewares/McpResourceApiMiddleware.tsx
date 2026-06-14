@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_MCPRESOURCE_REQUEST,
-  FETCH_MCPRESOURCE_REQUEST,
-  LIST_MCPRESOURCE_REQUEST,
-  UPDATE_MCPRESOURCE_REQUEST,
-  DELETE_MCPRESOURCE_REQUEST,
-  addMcpResourceFailure,
-  addMcpResourceSuccess,
-  fetchMcpResourceFailure,
-  fetchMcpResourceSuccess,
-  listMcpResourceFailure,
-  listMcpResourceSuccess,
-  updateMcpResourceFailure,
-  updateMcpResourceSuccess,
-  deleteMcpResourceFailure,
-  deleteMcpResourceSuccess,
-} from "../actions/McpResourceApiAction";
+
+    ADD_MCPRESOURCE_REQUEST,
+    FETCH_MCPRESOURCE_REQUEST,
+    LIST_MCPRESOURCE_REQUEST,
+    UPDATE_MCPRESOURCE_REQUEST,
+    DELETE_MCPRESOURCE_REQUEST,
+
+    addMcpResourceFailure,
+    addMcpResourceSuccess,
+
+    fetchMcpResourceFailure,
+    fetchMcpResourceSuccess,
+    
+    listMcpResourceFailure,
+    listMcpResourceSuccess,
+
+    updateMcpResourceFailure,
+    updateMcpResourceSuccess,
+    
+    deleteMcpResourceFailure,
+    deleteMcpResourceSuccess,
+    
+} from '../actions/McpResourceApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: McpResource
 */
 
-export const McpResourceMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("McpResource MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const McpResourceMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("McpResource MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

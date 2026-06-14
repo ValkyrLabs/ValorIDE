@@ -35,29 +35,17 @@ const _1 = require("./");
 function RewrapTrustKeyResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        rotation: !(0, runtime_1.exists)(json, "rotation")
-            ? undefined
-            : (0, _1.TrustKeyRotationFromJSON)(json["rotation"]),
-        accepted: !(0, runtime_1.exists)(json, "accepted") ? undefined : json["accepted"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'rotation': !(0, runtime_1.exists)(json, 'rotation') ? undefined : (0, _1.TrustKeyRotationFromJSON)(json['rotation']),
+        'accepted': !(0, runtime_1.exists)(json, 'accepted') ? undefined : json['accepted'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function RewrapTrustKeyResponseToJSON(value) {
@@ -66,9 +54,9 @@ function RewrapTrustKeyResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        rotation: (0, _1.TrustKeyRotationToJSON)(value.rotation),
-        accepted: value.accepted,
-        trashed: value.trashed,
+        'rotation': (0, _1.TrustKeyRotationToJSON)(value.rotation),
+        'accepted': value.accepted,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=RewrapTrustKeyResponse.js.map

@@ -35,43 +35,25 @@ const DataObject_1 = require("./DataObject");
 function McpTransportConfigFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        mcpServerId: !(0, runtime_1.exists)(json, "mcpServerId") ? undefined : json["mcpServerId"],
-        transportType: !(0, runtime_1.exists)(json, "transportType")
-            ? undefined
-            : json["transportType"],
-        executablePath: !(0, runtime_1.exists)(json, "executablePath")
-            ? undefined
-            : json["executablePath"],
-        baseUrl: !(0, runtime_1.exists)(json, "baseUrl") ? undefined : json["baseUrl"],
-        authHeaderName: !(0, runtime_1.exists)(json, "authHeaderName")
-            ? undefined
-            : json["authHeaderName"],
-        authToken: !(0, runtime_1.exists)(json, "authToken") ? undefined : json["authToken"],
-        functionArn: !(0, runtime_1.exists)(json, "functionArn") ? undefined : json["functionArn"],
-        roleArn: !(0, runtime_1.exists)(json, "roleArn") ? undefined : json["roleArn"],
-        customConfig: !(0, runtime_1.exists)(json, "customConfig")
-            ? undefined
-            : json["customConfig"],
-        isActive: !(0, runtime_1.exists)(json, "isActive") ? undefined : json["isActive"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'mcpServerId': !(0, runtime_1.exists)(json, 'mcpServerId') ? undefined : json['mcpServerId'],
+        'transportType': !(0, runtime_1.exists)(json, 'transportType') ? undefined : json['transportType'],
+        'executablePath': !(0, runtime_1.exists)(json, 'executablePath') ? undefined : json['executablePath'],
+        'baseUrl': !(0, runtime_1.exists)(json, 'baseUrl') ? undefined : json['baseUrl'],
+        'authHeaderName': !(0, runtime_1.exists)(json, 'authHeaderName') ? undefined : json['authHeaderName'],
+        'authToken': !(0, runtime_1.exists)(json, 'authToken') ? undefined : json['authToken'],
+        'functionArn': !(0, runtime_1.exists)(json, 'functionArn') ? undefined : json['functionArn'],
+        'roleArn': !(0, runtime_1.exists)(json, 'roleArn') ? undefined : json['roleArn'],
+        'customConfig': !(0, runtime_1.exists)(json, 'customConfig') ? undefined : json['customConfig'],
+        'isActive': !(0, runtime_1.exists)(json, 'isActive') ? undefined : json['isActive'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function McpTransportConfigToJSON(value) {
@@ -80,23 +62,23 @@ function McpTransportConfigToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        mcpServerId: value.mcpServerId,
-        transportType: value.transportType,
-        executablePath: value.executablePath,
-        baseUrl: value.baseUrl,
-        authHeaderName: value.authHeaderName,
-        authToken: value.authToken,
-        functionArn: value.functionArn,
-        roleArn: value.roleArn,
-        customConfig: value.customConfig,
-        isActive: value.isActive,
-        trashed: value.trashed,
+        'mcpServerId': value.mcpServerId,
+        'transportType': value.transportType,
+        'executablePath': value.executablePath,
+        'baseUrl': value.baseUrl,
+        'authHeaderName': value.authHeaderName,
+        'authToken': value.authToken,
+        'functionArn': value.functionArn,
+        'roleArn': value.roleArn,
+        'customConfig': value.customConfig,
+        'isActive': value.isActive,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var McpTransportConfigTransportTypeEnum;
 (function (McpTransportConfigTransportTypeEnum) {
     McpTransportConfigTransportTypeEnum["STDIO"] = "stdio";

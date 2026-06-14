@@ -26,16 +26,19 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 import {
-  BuildOutput,
-  BuildOutputFromJSON,
-  BuildOutputToJSON,
-  Depend,
-  DependFromJSON,
-  DependToJSON,
-} from "./";
+
+
+    BuildOutput,
+    BuildOutputFromJSON,
+    BuildOutputToJSON,
+    Depend,
+    DependFromJSON,
+    DependToJSON,
+} from './';
+
 
 // thorapi
 
@@ -44,192 +47,170 @@ import {
  * @export
  * @interface Build
  */
-export type Build = DataObject & {
-  /**
-   *
-   * @type {string}
-   * @memberof Build
-   */
-  name?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof Build
-   */
-  applicationId?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof Build
-   */
-  status?: BuildStatusEnum;
-  /**
-   *
-   * @type {string}
-   * @memberof Build
-   */
-  projectPath?: string;
-  /**
-   *
-   * @type {number}
-   * @memberof Build
-   */
-  testEnumCodegen?: BuildTestEnumCodegenEnum;
-  /**
-   *
-   * @type {string}
-   * @memberof Build
-   */
-  mavenHome?: string;
-  /**
-   *
-   * @type {Array<BuildOutput>}
-   * @memberof Build
-   */
-  outputs?: Array<BuildOutput>;
-  /**
-   *
-   * @type {Array<Depend>}
-   * @memberof Build
-   */
-  dependencies?: Array<Depend>;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof Build
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof Build
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof Build
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof Build
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof Build
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof Build
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof Build
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof Build
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof Build
-   */
-  trashed?: boolean;
-};
+export type Build  = DataObject & {
+    /**
+     * 
+     * @type {string}
+     * @memberof Build
+     */
+    name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Build
+     */
+    applicationId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Build
+     */
+    status?: BuildStatusEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof Build
+     */
+    projectPath?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Build
+     */
+    testEnumCodegen?: BuildTestEnumCodegenEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof Build
+     */
+    mavenHome?: string;
+    /**
+     * 
+     * @type {Array<BuildOutput>}
+     * @memberof Build
+     */
+    outputs?: Array<BuildOutput>;
+    /**
+     * 
+     * @type {Array<Depend>}
+     * @memberof Build
+     */
+    dependencies?: Array<Depend>;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof Build
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof Build
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof Build
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof Build
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof Build
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof Build
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof Build
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof Build
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof Build
+     */
+    trashed?: boolean;
+}
 
 export function BuildFromJSON(json: any): Build {
-  return {
-    ...DataObjectFromJSON(json),
-    name: !exists(json, "name") ? undefined : json["name"],
-    applicationId: !exists(json, "applicationId")
-      ? undefined
-      : json["applicationId"],
-    status: !exists(json, "status") ? undefined : json["status"],
-    projectPath: !exists(json, "projectPath") ? undefined : json["projectPath"],
-    testEnumCodegen: !exists(json, "testEnumCodegen")
-      ? undefined
-      : json["testEnumCodegen"],
-    mavenHome: !exists(json, "mavenHome") ? undefined : json["mavenHome"],
-    outputs: !exists(json, "outputs")
-      ? undefined
-      : (json["outputs"] as Array<any>).map(BuildOutputFromJSON),
-    dependencies: !exists(json, "dependencies")
-      ? undefined
-      : (json["dependencies"] as Array<any>).map(DependFromJSON),
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'applicationId': !exists(json, 'applicationId') ? undefined : json['applicationId'],
+        'status': !exists(json, 'status') ? undefined : json['status'],
+        'projectPath': !exists(json, 'projectPath') ? undefined : json['projectPath'],
+        'testEnumCodegen': !exists(json, 'testEnumCodegen') ? undefined : json['testEnumCodegen'],
+        'mavenHome': !exists(json, 'mavenHome') ? undefined : json['mavenHome'],
+        'outputs': !exists(json, 'outputs') ? undefined : (json['outputs'] as Array<any>).map(BuildOutputFromJSON),
+        'dependencies': !exists(json, 'dependencies') ? undefined : (json['dependencies'] as Array<any>).map(DependFromJSON),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function BuildToJSON(value?: Build): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    name: value.name,
-    applicationId: value.applicationId,
-    status: value.status,
-    projectPath: value.projectPath,
-    testEnumCodegen: value.testEnumCodegen,
-    mavenHome: value.mavenHome,
-    outputs:
-      value.outputs === undefined
-        ? undefined
-        : (value.outputs as Array<any>).map(BuildOutputToJSON),
-    dependencies:
-      value.dependencies === undefined
-        ? undefined
-        : (value.dependencies as Array<any>).map(DependToJSON),
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'name': value.name,
+        'applicationId': value.applicationId,
+        'status': value.status,
+        'projectPath': value.projectPath,
+        'testEnumCodegen': value.testEnumCodegen,
+        'mavenHome': value.mavenHome,
+        'outputs': value.outputs === undefined ? undefined : (value.outputs as Array<any>).map(BuildOutputToJSON),
+        'dependencies': value.dependencies === undefined ? undefined : (value.dependencies as Array<any>).map(DependToJSON),
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum BuildStatusEnum {
-  PENDING = "pending",
-  RUNNING = "running",
-  SUCCESS = "success",
-  FAILURE = "failure",
+    PENDING = 'pending',
+    RUNNING = 'running',
+    SUCCESS = 'success',
+    FAILURE = 'failure'
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum BuildTestEnumCodegenEnum {
-  BROKE = 0,
-  POOR = 10,
-  RICH = 1000,
+    BROKE = 0,
+    POOR = 10,
+    RICH = 1000
 }
+
+

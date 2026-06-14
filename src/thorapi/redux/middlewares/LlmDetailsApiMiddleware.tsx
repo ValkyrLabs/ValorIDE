@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_LLMDETAILS_REQUEST,
-  FETCH_LLMDETAILS_REQUEST,
-  LIST_LLMDETAILS_REQUEST,
-  UPDATE_LLMDETAILS_REQUEST,
-  DELETE_LLMDETAILS_REQUEST,
-  addLlmDetailsFailure,
-  addLlmDetailsSuccess,
-  fetchLlmDetailsFailure,
-  fetchLlmDetailsSuccess,
-  listLlmDetailsFailure,
-  listLlmDetailsSuccess,
-  updateLlmDetailsFailure,
-  updateLlmDetailsSuccess,
-  deleteLlmDetailsFailure,
-  deleteLlmDetailsSuccess,
-} from "../actions/LlmDetailsApiAction";
+
+    ADD_LLMDETAILS_REQUEST,
+    FETCH_LLMDETAILS_REQUEST,
+    LIST_LLMDETAILS_REQUEST,
+    UPDATE_LLMDETAILS_REQUEST,
+    DELETE_LLMDETAILS_REQUEST,
+
+    addLlmDetailsFailure,
+    addLlmDetailsSuccess,
+
+    fetchLlmDetailsFailure,
+    fetchLlmDetailsSuccess,
+    
+    listLlmDetailsFailure,
+    listLlmDetailsSuccess,
+
+    updateLlmDetailsFailure,
+    updateLlmDetailsSuccess,
+    
+    deleteLlmDetailsFailure,
+    deleteLlmDetailsSuccess,
+    
+} from '../actions/LlmDetailsApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: LlmDetails
 */
 
-export const LlmDetailsMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("LlmDetails MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const LlmDetailsMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("LlmDetails MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

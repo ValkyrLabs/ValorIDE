@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { SwarmAgentSummary } from "@thorapi/model/SwarmAgentSummary";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { SwarmAgentSummary } from '@thorapi/model/SwarmAgentSummary'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type SwarmAgentSummaryResponse = SwarmAgentSummary[];
+type SwarmAgentSummaryResponse = SwarmAgentSummary[]
+type SwarmAgentSummaryPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<SwarmAgentSummary>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toSwarmAgentSummaryList = (
-  result: unknown,
-): SwarmAgentSummaryResponse => {
+type SwarmAgentSummaryListQueryArg = {
+  example?: Partial<SwarmAgentSummary>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toSwarmAgentSummaryList = (result: unknown): SwarmAgentSummaryResponse => {
   if (Array.isArray(result)) {
-    return result as SwarmAgentSummaryResponse;
+    return result as SwarmAgentSummaryResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as SwarmAgentSummaryResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as SwarmAgentSummaryResponse) : []
+}
 
 export const SwarmAgentSummaryService = createApi({
-  reducerPath: "SwarmAgentSummary", // This should remain unique
+  reducerPath: 'SwarmAgentSummary', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["SwarmAgentSummary"],
+  tagTypes: ['SwarmAgentSummary'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSwarmAgentSummarysPaged: build.query<
-      SwarmAgentSummaryResponse,
-      { page: number; size?: number; example?: Partial<SwarmAgentSummary> }
-    >({
+    getSwarmAgentSummarysPaged: build.query<SwarmAgentSummaryResponse, SwarmAgentSummaryPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SwarmAgentSummary?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SwarmAgentSummary?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toSwarmAgentSummaryList(result);
+        const rows = toSwarmAgentSummaryList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SwarmAgentSummary" as const, id })),
-          { type: "SwarmAgentSummary", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'SwarmAgentSummary' as const, id })),
+          { type: 'SwarmAgentSummary', id: `PAGE_${page}` },
+          { type: 'SwarmAgentSummary', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSwarmAgentSummarys: build.query<
-      SwarmAgentSummaryResponse,
-      { example?: Partial<SwarmAgentSummary> } | void
-    >({
+    getSwarmAgentSummarys: build.query<SwarmAgentSummaryResponse, SwarmAgentSummaryListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,112 +82,86 @@ export const SwarmAgentSummaryService = createApi({
         return `SwarmAgentSummary`;
       },
       providesTags: (result) => {
-        const rows = toSwarmAgentSummaryList(result);
+        const rows = toSwarmAgentSummaryList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SwarmAgentSummary" as const, id })),
-          { type: "SwarmAgentSummary", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'SwarmAgentSummary' as const, id })),
+          { type: 'SwarmAgentSummary', id: 'LIST' },
+          { type: 'SwarmAgentSummary', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addSwarmAgentSummary: build.mutation<
-      SwarmAgentSummary,
-      Partial<SwarmAgentSummary>
-    >({
+    addSwarmAgentSummary: build.mutation<SwarmAgentSummary, Partial<SwarmAgentSummary>>({
       query: (body) => ({
         url: `SwarmAgentSummary`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "SwarmAgentSummary", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'SwarmAgentSummary', id: 'LIST' },
+        { type: 'SwarmAgentSummary', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getSwarmAgentSummary: build.query<SwarmAgentSummary, string>({
       query: (id) => `SwarmAgentSummary/${id}`,
-      providesTags: (result, error, id) => [{ type: "SwarmAgentSummary", id }],
+      providesTags: (result, error, id) => [{ type: 'SwarmAgentSummary', id }],
     }),
 
     // 5) Update
-    updateSwarmAgentSummary: build.mutation<
-      void,
-      Pick<SwarmAgentSummary, "id"> & Partial<SwarmAgentSummary>
-    >({
+    updateSwarmAgentSummary: build.mutation<SwarmAgentSummary, Pick<SwarmAgentSummary, 'id'> & Partial<SwarmAgentSummary>>({
       query: ({ id, ...patch }) => ({
         url: `SwarmAgentSummary/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            SwarmAgentSummaryService.util.updateQueryData(
-              "getSwarmAgentSummary",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<SwarmAgentSummary, "id">,
-      ) => [
-        { type: "SwarmAgentSummary", id },
-        { type: "SwarmAgentSummary", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<SwarmAgentSummary, 'id'>) => [
+        { type: 'SwarmAgentSummary', id },
+        { type: 'SwarmAgentSummary', id: 'LIST' },
+        { type: 'SwarmAgentSummary', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteSwarmAgentSummary: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteSwarmAgentSummary: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `SwarmAgentSummary/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "SwarmAgentSummary", id },
+        { type: 'SwarmAgentSummary', id },
+        { type: 'SwarmAgentSummary', id: 'LIST' },
+        { type: 'SwarmAgentSummary', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSwarmAgentSummaryCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteSwarmAgentSummaryCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `SwarmAgentSummary/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "SwarmAgentSummary", id },
-        { type: "SwarmAgentSummary", id: "LIST" },
+        { type: 'SwarmAgentSummary', id },
+        { type: 'SwarmAgentSummary', id: 'LIST' },
+        { type: 'SwarmAgentSummary', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetSwarmAgentSummarysPagedQuery`
 export const {
-  useGetSwarmAgentSummarysPagedQuery, // immediate fetch
+  useGetSwarmAgentSummarysPagedQuery,     // immediate fetch
   useLazyGetSwarmAgentSummarysPagedQuery, // lazy fetch
   useGetSwarmAgentSummaryQuery,
   useGetSwarmAgentSummarysQuery,
@@ -190,4 +169,4 @@ export const {
   useUpdateSwarmAgentSummaryMutation,
   useDeleteSwarmAgentSummaryMutation,
   useDeleteSwarmAgentSummaryCascadeMutation,
-} = SwarmAgentSummaryService;
+} = SwarmAgentSummaryService

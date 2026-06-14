@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_SHEETCOLUMN_REQUEST,
-  FETCH_SHEETCOLUMN_REQUEST,
-  LIST_SHEETCOLUMN_REQUEST,
-  UPDATE_SHEETCOLUMN_REQUEST,
-  DELETE_SHEETCOLUMN_REQUEST,
-  addSheetColumnFailure,
-  addSheetColumnSuccess,
-  fetchSheetColumnFailure,
-  fetchSheetColumnSuccess,
-  listSheetColumnFailure,
-  listSheetColumnSuccess,
-  updateSheetColumnFailure,
-  updateSheetColumnSuccess,
-  deleteSheetColumnFailure,
-  deleteSheetColumnSuccess,
-} from "../actions/SheetColumnApiAction";
+
+    ADD_SHEETCOLUMN_REQUEST,
+    FETCH_SHEETCOLUMN_REQUEST,
+    LIST_SHEETCOLUMN_REQUEST,
+    UPDATE_SHEETCOLUMN_REQUEST,
+    DELETE_SHEETCOLUMN_REQUEST,
+
+    addSheetColumnFailure,
+    addSheetColumnSuccess,
+
+    fetchSheetColumnFailure,
+    fetchSheetColumnSuccess,
+    
+    listSheetColumnFailure,
+    listSheetColumnSuccess,
+
+    updateSheetColumnFailure,
+    updateSheetColumnSuccess,
+    
+    deleteSheetColumnFailure,
+    deleteSheetColumnSuccess,
+    
+} from '../actions/SheetColumnApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: SheetColumn
 */
 
-export const SheetColumnMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("SheetColumn MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const SheetColumnMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("SheetColumn MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

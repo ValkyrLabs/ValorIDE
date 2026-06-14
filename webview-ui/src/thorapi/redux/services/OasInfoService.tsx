@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { OasInfo } from "@thorapi/model/OasInfo";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { OasInfo } from '@thorapi/model/OasInfo'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type OasInfoResponse = OasInfo[];
+type OasInfoResponse = OasInfo[]
+type OasInfoPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<OasInfo>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type OasInfoListQueryArg = {
+  example?: Partial<OasInfo>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toOasInfoList = (result: unknown): OasInfoResponse => {
   if (Array.isArray(result)) {
-    return result as OasInfoResponse;
+    return result as OasInfoResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as OasInfoResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as OasInfoResponse) : []
+}
 
 export const OasInfoService = createApi({
-  reducerPath: "OasInfo", // This should remain unique
+  reducerPath: 'OasInfo', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["OasInfo"],
+  tagTypes: ['OasInfo'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getOasInfosPaged: build.query<
-      OasInfoResponse,
-      { page: number; size?: number; example?: Partial<OasInfo> }
-    >({
+    getOasInfosPaged: build.query<OasInfoResponse, OasInfoPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `OasInfo?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `OasInfo?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toOasInfoList(result);
+        const rows = toOasInfoList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "OasInfo" as const, id })),
-          { type: "OasInfo", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'OasInfo' as const, id })),
+          { type: 'OasInfo', id: `PAGE_${page}` },
+          { type: 'OasInfo', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOasInfos: build.query<
-      OasInfoResponse,
-      { example?: Partial<OasInfo> } | void
-    >({
+    getOasInfos: build.query<OasInfoResponse, OasInfoListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const OasInfoService = createApi({
         return `OasInfo`;
       },
       providesTags: (result) => {
-        const rows = toOasInfoList(result);
+        const rows = toOasInfoList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "OasInfo" as const, id })),
-          { type: "OasInfo", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'OasInfo' as const, id })),
+          { type: 'OasInfo', id: 'LIST' },
+          { type: 'OasInfo', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,81 +97,71 @@ export const OasInfoService = createApi({
     addOasInfo: build.mutation<OasInfo, Partial<OasInfo>>({
       query: (body) => ({
         url: `OasInfo`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "OasInfo", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'OasInfo', id: 'LIST' },
+        { type: 'OasInfo', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getOasInfo: build.query<OasInfo, string>({
       query: (id) => `OasInfo/${id}`,
-      providesTags: (result, error, id) => [{ type: "OasInfo", id }],
+      providesTags: (result, error, id) => [{ type: 'OasInfo', id }],
     }),
 
     // 5) Update
-    updateOasInfo: build.mutation<void, Pick<OasInfo, "id"> & Partial<OasInfo>>(
-      {
-        query: ({ id, ...patch }) => ({
-          url: `OasInfo/${id}`,
-          method: "PUT",
-          body: patch,
-        }),
-        async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-          if (id) {
-            const patchResult = dispatch(
-              OasInfoService.util.updateQueryData("getOasInfo", id, (draft) => {
-                Object.assign(draft, patch);
-              }),
-            );
-            try {
-              await queryFulfilled;
-            } catch {
-              patchResult.undo();
-            }
-          }
-        },
-        invalidatesTags: (result, error, { id }: Pick<OasInfo, "id">) => [
-          { type: "OasInfo", id },
-          { type: "OasInfo", id: "LIST" },
-        ],
-      },
-    ),
+    updateOasInfo: build.mutation<OasInfo, Pick<OasInfo, 'id'> & Partial<OasInfo>>({
+      query: ({ id, ...patch }) => ({
+        url: `OasInfo/${id}`,
+        method: 'PUT',
+        body: patch,
+      }),
+      invalidatesTags: (result, error, { id }: Pick<OasInfo, 'id'>) => [
+        { type: 'OasInfo', id },
+        { type: 'OasInfo', id: 'LIST' },
+        { type: 'OasInfo', id: 'PARTIAL-LIST' },
+      ],
+    }),
 
     // 6) Delete
     deleteOasInfo: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `OasInfo/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "OasInfo", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'OasInfo', id },
+        { type: 'OasInfo', id: 'LIST' },
+        { type: 'OasInfo', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteOasInfoCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteOasInfoCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `OasInfo/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "OasInfo", id },
-        { type: "OasInfo", id: "LIST" },
+        { type: 'OasInfo', id },
+        { type: 'OasInfo', id: 'LIST' },
+        { type: 'OasInfo', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetOasInfosPagedQuery`
 export const {
-  useGetOasInfosPagedQuery, // immediate fetch
+  useGetOasInfosPagedQuery,     // immediate fetch
   useLazyGetOasInfosPagedQuery, // lazy fetch
   useGetOasInfoQuery,
   useGetOasInfosQuery,
@@ -169,4 +169,4 @@ export const {
   useUpdateOasInfoMutation,
   useDeleteOasInfoMutation,
   useDeleteOasInfoCascadeMutation,
-} = OasInfoService;
+} = OasInfoService

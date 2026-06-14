@@ -34,33 +34,21 @@ const DataObject_1 = require("./DataObject");
 function ChartSeriesFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        chartId: !(0, runtime_1.exists)(json, "chartId") ? undefined : json["chartId"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        valuesRange: !(0, runtime_1.exists)(json, "valuesRange") ? undefined : json["valuesRange"],
-        color: !(0, runtime_1.exists)(json, "color") ? undefined : json["color"],
-        markerStyle: !(0, runtime_1.exists)(json, "markerStyle") ? undefined : json["markerStyle"],
-        showDataLabels: !(0, runtime_1.exists)(json, "showDataLabels")
-            ? undefined
-            : json["showDataLabels"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'chartId': !(0, runtime_1.exists)(json, 'chartId') ? undefined : json['chartId'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'valuesRange': !(0, runtime_1.exists)(json, 'valuesRange') ? undefined : json['valuesRange'],
+        'color': !(0, runtime_1.exists)(json, 'color') ? undefined : json['color'],
+        'markerStyle': !(0, runtime_1.exists)(json, 'markerStyle') ? undefined : json['markerStyle'],
+        'showDataLabels': !(0, runtime_1.exists)(json, 'showDataLabels') ? undefined : json['showDataLabels'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ChartSeriesToJSON(value) {
@@ -69,13 +57,13 @@ function ChartSeriesToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        chartId: value.chartId,
-        name: value.name,
-        valuesRange: value.valuesRange,
-        color: value.color,
-        markerStyle: value.markerStyle,
-        showDataLabels: value.showDataLabels,
-        trashed: value.trashed,
+        'chartId': value.chartId,
+        'name': value.name,
+        'valuesRange': value.valuesRange,
+        'color': value.color,
+        'markerStyle': value.markerStyle,
+        'showDataLabels': value.showDataLabels,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=ChartSeries.js.map

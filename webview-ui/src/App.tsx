@@ -41,6 +41,93 @@ import {
   clearCreditIntent,
 } from "./redux/slices/apiErrorsSlice";
 
+const parseJsonRecord = (
+  value: unknown,
+): Record<string, unknown> | undefined => {
+  if (!value) return undefined;
+  if (typeof value === "object" && !Array.isArray(value)) {
+    return value as Record<string, unknown>;
+  }
+  if (typeof value !== "string") return undefined;
+  try {
+    const parsed = JSON.parse(value);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+      ? (parsed as Record<string, unknown>)
+      : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+const hasSwarmTraceEvidence = (value: Record<string, unknown>): boolean =>
+  [
+    "receiptRef",
+    "traceId",
+    "contextPageRef",
+    "skillOptReceiptRef",
+    "workflowExecutionRef",
+    "workflowDispatchJson",
+  ].some((key) => typeof value[key] === "string" && value[key] !== "");
+
+const coerceSwarmTraceCandidate = (
+  value: unknown,
+): Record<string, unknown> | undefined => {
+  const record = parseJsonRecord(value);
+  if (!record) return undefined;
+
+  const nestedCandidates = [
+    record.swarmCommandResponse,
+    record.commandResponse,
+    record.response,
+    record.result,
+    record.data,
+    record.payload,
+  ];
+  if (hasSwarmTraceEvidence(record)) {
+    return record;
+  }
+
+  for (const nested of nestedCandidates) {
+    const candidate = coerceSwarmTraceCandidate(nested);
+    if (candidate) return candidate;
+  }
+
+  return undefined;
+};
+
+const extractSwarmCommandInspectionPayload = (
+  message: ExtensionMessage,
+): Record<string, unknown> | undefined => {
+  const directCandidate =
+    coerceSwarmTraceCandidate(message.swarmCommandResponse) ||
+    coerceSwarmTraceCandidate(message.payload) ||
+    coerceSwarmTraceCandidate((message as any).response);
+  if (directCandidate) {
+    return directCandidate;
+  }
+
+  const command = message.command;
+  if (!command) {
+    return undefined;
+  }
+
+  const commandPayload = parseJsonRecord(command.payload) ?? command.payload;
+  const commandCandidate = coerceSwarmTraceCandidate(commandPayload);
+  if (!commandCandidate) {
+    return undefined;
+  }
+
+  return {
+    ...commandCandidate,
+    commandId:
+      commandCandidate.commandId ??
+      (commandPayload as any)?.commandId ??
+      command.id,
+    targetInstanceId:
+      commandCandidate.targetInstanceId ?? command.targetInstanceId,
+  };
+};
+
 const AppContent = () => {
   const {
     didHydrateState,
@@ -90,11 +177,18 @@ const AppContent = () => {
     | "login"
     | "account"
     | "applications"
+    | "appGeneration"
+    | "contextPage"
     | "generatedFiles"
+    | "receipts"
     | "userPreferences"
     | "serverConsole"
     | undefined
   >(undefined);
+  const [
+    accountInitialSwarmCommandResponse,
+    setAccountInitialSwarmCommandResponse,
+  ] = useState<Record<string, unknown> | undefined>(undefined);
   // Always show file explorer by default
   const [showFileExplorer, setShowFileExplorer] = useState(true);
   const [showApplicationProgress, setShowApplicationProgress] = useState(false);
@@ -272,6 +366,35 @@ const AppContent = () => {
 
           break;
 
+        case "swarm:command-response":
+        case "swarm:remote-command":
+        case "swarm:widget-command": {
+          const swarmCommandResponse =
+            extractSwarmCommandInspectionPayload(message);
+          if (swarmCommandResponse) {
+            setShowSettings(false);
+            setShowHistory(false);
+            setShowMcp(false);
+            setShowAccount(true);
+            setShowGeneratedFiles(false);
+            setShowServerConsole(false);
+            setShowApplicationProgress(false);
+            setShowFileExplorer(true);
+            setAccountInitialActiveTab("receipts");
+            setAccountInitialSwarmCommandResponse(swarmCommandResponse);
+            break;
+          }
+
+          sendChatAction({
+            type: "api_data",
+            metadata: {
+              messageType: message.type,
+              timestamp: Date.now(),
+            },
+          });
+          break;
+        }
+
         default:
           // Track any other message types as generic activity
           sendChatAction({
@@ -403,6 +526,10 @@ const AppContent = () => {
               initialActiveTab={accountInitialActiveTab}
               onConsumeInitialActiveTab={() =>
                 setAccountInitialActiveTab(undefined)
+              }
+              initialSwarmCommandResponse={accountInitialSwarmCommandResponse}
+              onConsumeInitialSwarmCommandResponse={() =>
+                setAccountInitialSwarmCommandResponse(undefined)
               }
               creditIntent={creditIntent}
               onClearCreditIntent={() => {

@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_MEDIAOBJECT_REQUEST,
-  FETCH_MEDIAOBJECT_REQUEST,
-  LIST_MEDIAOBJECT_REQUEST,
-  UPDATE_MEDIAOBJECT_REQUEST,
-  DELETE_MEDIAOBJECT_REQUEST,
-  addMediaObjectFailure,
-  addMediaObjectSuccess,
-  fetchMediaObjectFailure,
-  fetchMediaObjectSuccess,
-  listMediaObjectFailure,
-  listMediaObjectSuccess,
-  updateMediaObjectFailure,
-  updateMediaObjectSuccess,
-  deleteMediaObjectFailure,
-  deleteMediaObjectSuccess,
-} from "../actions/MediaObjectApiAction";
+
+    ADD_MEDIAOBJECT_REQUEST,
+    FETCH_MEDIAOBJECT_REQUEST,
+    LIST_MEDIAOBJECT_REQUEST,
+    UPDATE_MEDIAOBJECT_REQUEST,
+    DELETE_MEDIAOBJECT_REQUEST,
+
+    addMediaObjectFailure,
+    addMediaObjectSuccess,
+
+    fetchMediaObjectFailure,
+    fetchMediaObjectSuccess,
+    
+    listMediaObjectFailure,
+    listMediaObjectSuccess,
+
+    updateMediaObjectFailure,
+    updateMediaObjectSuccess,
+    
+    deleteMediaObjectFailure,
+    deleteMediaObjectSuccess,
+    
+} from '../actions/MediaObjectApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: MediaObject
 */
 
-export const MediaObjectMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("MediaObject MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const MediaObjectMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("MediaObject MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

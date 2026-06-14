@@ -36,40 +36,22 @@ const _1 = require("./");
 function ProductDeliveryConfigFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        deliveryType: json["deliveryType"],
-        product: !(0, runtime_1.exists)(json, "product")
-            ? undefined
-            : (0, _1.ProductFromJSON)(json["product"]),
-        autoFulfill: !(0, runtime_1.exists)(json, "autoFulfill") ? undefined : json["autoFulfill"],
-        fulfillmentWorkflow: !(0, runtime_1.exists)(json, "fulfillmentWorkflow")
-            ? undefined
-            : (0, _1.WorkflowFromJSON)(json["fulfillmentWorkflow"]),
-        notificationTemplate: !(0, runtime_1.exists)(json, "notificationTemplate")
-            ? undefined
-            : json["notificationTemplate"],
-        maxConcurrentFulfillments: !(0, runtime_1.exists)(json, "maxConcurrentFulfillments")
-            ? undefined
-            : json["maxConcurrentFulfillments"],
-        retryPolicy: !(0, runtime_1.exists)(json, "retryPolicy") ? undefined : json["retryPolicy"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'deliveryType': json['deliveryType'],
+        'product': !(0, runtime_1.exists)(json, 'product') ? undefined : (0, _1.ProductFromJSON)(json['product']),
+        'autoFulfill': !(0, runtime_1.exists)(json, 'autoFulfill') ? undefined : json['autoFulfill'],
+        'fulfillmentWorkflow': !(0, runtime_1.exists)(json, 'fulfillmentWorkflow') ? undefined : (0, _1.WorkflowFromJSON)(json['fulfillmentWorkflow']),
+        'notificationTemplate': !(0, runtime_1.exists)(json, 'notificationTemplate') ? undefined : json['notificationTemplate'],
+        'maxConcurrentFulfillments': !(0, runtime_1.exists)(json, 'maxConcurrentFulfillments') ? undefined : json['maxConcurrentFulfillments'],
+        'retryPolicy': !(0, runtime_1.exists)(json, 'retryPolicy') ? undefined : json['retryPolicy'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ProductDeliveryConfigToJSON(value) {
@@ -78,20 +60,20 @@ function ProductDeliveryConfigToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        deliveryType: value.deliveryType,
-        product: (0, _1.ProductToJSON)(value.product),
-        autoFulfill: value.autoFulfill,
-        fulfillmentWorkflow: (0, _1.WorkflowToJSON)(value.fulfillmentWorkflow),
-        notificationTemplate: value.notificationTemplate,
-        maxConcurrentFulfillments: value.maxConcurrentFulfillments,
-        retryPolicy: value.retryPolicy,
-        trashed: value.trashed,
+        'deliveryType': value.deliveryType,
+        'product': (0, _1.ProductToJSON)(value.product),
+        'autoFulfill': value.autoFulfill,
+        'fulfillmentWorkflow': (0, _1.WorkflowToJSON)(value.fulfillmentWorkflow),
+        'notificationTemplate': value.notificationTemplate,
+        'maxConcurrentFulfillments': value.maxConcurrentFulfillments,
+        'retryPolicy': value.retryPolicy,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ProductDeliveryConfigDeliveryTypeEnum;
 (function (ProductDeliveryConfigDeliveryTypeEnum) {
     ProductDeliveryConfigDeliveryTypeEnum["INSTANTDIGITAL"] = "instant_digital";

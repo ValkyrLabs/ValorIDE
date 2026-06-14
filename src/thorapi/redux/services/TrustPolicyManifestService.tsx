@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { TrustPolicyManifest } from "@thorapi/model/TrustPolicyManifest";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { TrustPolicyManifest } from '@thorapi/model/TrustPolicyManifest'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type TrustPolicyManifestResponse = TrustPolicyManifest[];
+type TrustPolicyManifestResponse = TrustPolicyManifest[]
+type TrustPolicyManifestPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<TrustPolicyManifest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toTrustPolicyManifestList = (
-  result: unknown,
-): TrustPolicyManifestResponse => {
+type TrustPolicyManifestListQueryArg = {
+  example?: Partial<TrustPolicyManifest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toTrustPolicyManifestList = (result: unknown): TrustPolicyManifestResponse => {
   if (Array.isArray(result)) {
-    return result as TrustPolicyManifestResponse;
+    return result as TrustPolicyManifestResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as TrustPolicyManifestResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as TrustPolicyManifestResponse) : []
+}
 
 export const TrustPolicyManifestService = createApi({
-  reducerPath: "TrustPolicyManifest", // This should remain unique
+  reducerPath: 'TrustPolicyManifest', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["TrustPolicyManifest"],
+  tagTypes: ['TrustPolicyManifest'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getTrustPolicyManifestsPaged: build.query<
-      TrustPolicyManifestResponse,
-      { page: number; size?: number; example?: Partial<TrustPolicyManifest> }
-    >({
+    getTrustPolicyManifestsPaged: build.query<TrustPolicyManifestResponse, TrustPolicyManifestPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `TrustPolicyManifest?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `TrustPolicyManifest?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toTrustPolicyManifestList(result);
+        const rows = toTrustPolicyManifestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "TrustPolicyManifest" as const, id })),
-          { type: "TrustPolicyManifest", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'TrustPolicyManifest' as const, id })),
+          { type: 'TrustPolicyManifest', id: `PAGE_${page}` },
+          { type: 'TrustPolicyManifest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getTrustPolicyManifests: build.query<
-      TrustPolicyManifestResponse,
-      { example?: Partial<TrustPolicyManifest> } | void
-    >({
+    getTrustPolicyManifests: build.query<TrustPolicyManifestResponse, TrustPolicyManifestListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,114 +82,86 @@ export const TrustPolicyManifestService = createApi({
         return `TrustPolicyManifest`;
       },
       providesTags: (result) => {
-        const rows = toTrustPolicyManifestList(result);
+        const rows = toTrustPolicyManifestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "TrustPolicyManifest" as const, id })),
-          { type: "TrustPolicyManifest", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'TrustPolicyManifest' as const, id })),
+          { type: 'TrustPolicyManifest', id: 'LIST' },
+          { type: 'TrustPolicyManifest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addTrustPolicyManifest: build.mutation<
-      TrustPolicyManifest,
-      Partial<TrustPolicyManifest>
-    >({
+    addTrustPolicyManifest: build.mutation<TrustPolicyManifest, Partial<TrustPolicyManifest>>({
       query: (body) => ({
         url: `TrustPolicyManifest`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "TrustPolicyManifest", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'TrustPolicyManifest', id: 'LIST' },
+        { type: 'TrustPolicyManifest', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getTrustPolicyManifest: build.query<TrustPolicyManifest, string>({
       query: (id) => `TrustPolicyManifest/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "TrustPolicyManifest", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'TrustPolicyManifest', id }],
     }),
 
     // 5) Update
-    updateTrustPolicyManifest: build.mutation<
-      void,
-      Pick<TrustPolicyManifest, "id"> & Partial<TrustPolicyManifest>
-    >({
+    updateTrustPolicyManifest: build.mutation<TrustPolicyManifest, Pick<TrustPolicyManifest, 'id'> & Partial<TrustPolicyManifest>>({
       query: ({ id, ...patch }) => ({
         url: `TrustPolicyManifest/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            TrustPolicyManifestService.util.updateQueryData(
-              "getTrustPolicyManifest",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<TrustPolicyManifest, "id">,
-      ) => [
-        { type: "TrustPolicyManifest", id },
-        { type: "TrustPolicyManifest", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<TrustPolicyManifest, 'id'>) => [
+        { type: 'TrustPolicyManifest', id },
+        { type: 'TrustPolicyManifest', id: 'LIST' },
+        { type: 'TrustPolicyManifest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteTrustPolicyManifest: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteTrustPolicyManifest: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `TrustPolicyManifest/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "TrustPolicyManifest", id },
+        { type: 'TrustPolicyManifest', id },
+        { type: 'TrustPolicyManifest', id: 'LIST' },
+        { type: 'TrustPolicyManifest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteTrustPolicyManifestCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteTrustPolicyManifestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `TrustPolicyManifest/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "TrustPolicyManifest", id },
-        { type: "TrustPolicyManifest", id: "LIST" },
+        { type: 'TrustPolicyManifest', id },
+        { type: 'TrustPolicyManifest', id: 'LIST' },
+        { type: 'TrustPolicyManifest', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetTrustPolicyManifestsPagedQuery`
 export const {
-  useGetTrustPolicyManifestsPagedQuery, // immediate fetch
+  useGetTrustPolicyManifestsPagedQuery,     // immediate fetch
   useLazyGetTrustPolicyManifestsPagedQuery, // lazy fetch
   useGetTrustPolicyManifestQuery,
   useGetTrustPolicyManifestsQuery,
@@ -192,4 +169,4 @@ export const {
   useUpdateTrustPolicyManifestMutation,
   useDeleteTrustPolicyManifestMutation,
   useDeleteTrustPolicyManifestCascadeMutation,
-} = TrustPolicyManifestService;
+} = TrustPolicyManifestService

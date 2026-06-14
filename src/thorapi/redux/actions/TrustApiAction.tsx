@@ -17,94 +17,95 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // Trust
 
-export const FETCH_TRUST_REQUEST = "FETCH_TRUST_REQUEST";
-export const FETCH_TRUST_SUCCESS = "FETCH_TRUST_SUCCESS";
-export const FETCH_TRUST_FAILURE = "FETCH_TRUST_FAILURE";
+export const FETCH_TRUST_REQUEST = 'FETCH_TRUST_REQUEST';
+export const FETCH_TRUST_SUCCESS = 'FETCH_TRUST_SUCCESS';
+export const FETCH_TRUST_FAILURE = 'FETCH_TRUST_FAILURE';
 
-export const ADD_TRUST_REQUEST = "ADD_TRUST_REQUEST";
-export const ADD_TRUST_SUCCESS = "ADD_TRUST_SUCCESS";
-export const ADD_TRUST_FAILURE = "ADD_TRUST_FAILURE";
+export const ADD_TRUST_REQUEST = 'ADD_TRUST_REQUEST';
+export const ADD_TRUST_SUCCESS = 'ADD_TRUST_SUCCESS';
+export const ADD_TRUST_FAILURE = 'ADD_TRUST_FAILURE';
 
-export const UPDATE_TRUST_REQUEST = "UPDATE_TRUST_REQUEST";
-export const UPDATE_TRUST_SUCCESS = "UPDATE_TRUST_SUCCESS";
-export const UPDATE_TRUST_FAILURE = "UPDATE_TRUST_FAILURE";
+export const UPDATE_TRUST_REQUEST = 'UPDATE_TRUST_REQUEST';
+export const UPDATE_TRUST_SUCCESS = 'UPDATE_TRUST_SUCCESS';
+export const UPDATE_TRUST_FAILURE = 'UPDATE_TRUST_FAILURE';
 
-export const DELETE_TRUST_REQUEST = "DELETE_TRUST_REQUEST";
-export const DELETE_TRUST_SUCCESS = "DELETE_TRUST_SUCCESS";
-export const DELETE_TRUST_FAILURE = "DELETE_TRUST_FAILURE";
+export const DELETE_TRUST_REQUEST = 'DELETE_TRUST_REQUEST';
+export const DELETE_TRUST_SUCCESS = 'DELETE_TRUST_SUCCESS';
+export const DELETE_TRUST_FAILURE = 'DELETE_TRUST_FAILURE';
 
-export const LIST_TRUST_REQUEST = "LIST_TRUST_REQUEST";
-export const LIST_TRUST_SUCCESS = "LIST_TRUST_SUCCESS";
-export const LIST_TRUST_FAILURE = "LIST_TRUST_FAILURE";
+export const LIST_TRUST_REQUEST = 'LIST_TRUST_REQUEST';
+export const LIST_TRUST_SUCCESS = 'LIST_TRUST_SUCCESS';
+export const LIST_TRUST_FAILURE = 'LIST_TRUST_FAILURE';
 
 export const addTrustRequest = () => ({
-  type: ADD_TRUST_REQUEST,
+    type: ADD_TRUST_REQUEST,
 });
 
 export const addTrustSuccess = (Trusts: any) => ({
-  type: ADD_TRUST_SUCCESS,
-  payload: Trusts,
+    type: ADD_TRUST_SUCCESS,
+    payload: Trusts,
 });
 
 export const addTrustFailure = (error: Error) => ({
-  type: ADD_TRUST_FAILURE,
-  payload: error,
+    type: ADD_TRUST_FAILURE,
+    payload: error,
 });
 
+
 export const fetchTrustRequest = () => ({
-  type: FETCH_TRUST_REQUEST,
+    type: FETCH_TRUST_REQUEST,
 });
 
 export const fetchTrustSuccess = (Trusts: any) => ({
-  type: FETCH_TRUST_SUCCESS,
-  payload: Trusts,
+    type: FETCH_TRUST_SUCCESS,
+    payload: Trusts,
 });
 
 export const fetchTrustFailure = (error: Error) => ({
-  type: FETCH_TRUST_FAILURE,
-  payload: error,
+    type: FETCH_TRUST_FAILURE,
+    payload: error,
 });
 
 export const listTrustRequest = () => ({
-  type: LIST_TRUST_REQUEST,
+    type: LIST_TRUST_REQUEST,
 });
 
 export const listTrustSuccess = (Trusts: any) => ({
-  type: LIST_TRUST_SUCCESS,
-  payload: Trusts,
+    type: LIST_TRUST_SUCCESS,
+    payload: Trusts,
 });
 
 export const listTrustFailure = (error: Error) => ({
-  type: LIST_TRUST_FAILURE,
-  payload: error,
+    type: LIST_TRUST_FAILURE,
+    payload: error,
 });
 
 export const updateTrustRequest = (Trust: any) => ({
-  type: UPDATE_TRUST_REQUEST,
-  payload: Trust,
+    type: UPDATE_TRUST_REQUEST,
+    payload: Trust,
 });
 
 export const updateTrustSuccess = (Trust: any) => ({
-  type: UPDATE_TRUST_SUCCESS,
-  payload: Trust,
+    type: UPDATE_TRUST_SUCCESS,
+    payload: Trust,
 });
 
 export const updateTrustFailure = (error: Error) => ({
-  type: UPDATE_TRUST_FAILURE,
-  payload: error,
+    type: UPDATE_TRUST_FAILURE,
+    payload: error,
 });
 
 export const deleteTrustRequest = (Trust: any) => ({
-  type: DELETE_TRUST_REQUEST,
-  payload: Trust,
+    type: DELETE_TRUST_REQUEST,
+    payload: Trust,
 });
 
 export const deleteTrustSuccess = (Trust: any) => ({
-  type: DELETE_TRUST_SUCCESS,
-  payload: Trust,
+    type: DELETE_TRUST_SUCCESS,
+    payload: Trust,
 });
 
 export const deleteTrustFailure = (error: Error) => ({
-  type: DELETE_TRUST_FAILURE,
-  payload: error,
+    type: DELETE_TRUST_FAILURE,
+    payload: error,
 });

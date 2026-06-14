@@ -26,22 +26,25 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 import {
-  MemoryContextStats,
-  MemoryContextStatsFromJSON,
-  MemoryContextStatsToJSON,
-  MemoryCostStats,
-  MemoryCostStatsFromJSON,
-  MemoryCostStatsToJSON,
-  MemoryHitStats,
-  MemoryHitStatsFromJSON,
-  MemoryHitStatsToJSON,
-  MemoryRecommendation,
-  MemoryRecommendationFromJSON,
-  MemoryRecommendationToJSON,
-} from "./";
+
+
+    MemoryContextStats,
+    MemoryContextStatsFromJSON,
+    MemoryContextStatsToJSON,
+    MemoryCostStats,
+    MemoryCostStatsFromJSON,
+    MemoryCostStatsToJSON,
+    MemoryHitStats,
+    MemoryHitStatsFromJSON,
+    MemoryHitStatsToJSON,
+    MemoryRecommendation,
+    MemoryRecommendationFromJSON,
+    MemoryRecommendationToJSON,
+} from './';
+
 
 // thorapi
 
@@ -50,147 +53,126 @@ import {
  * @export
  * @interface MemoryStats
  */
-export type MemoryStats = DataObject & {
-  /**
-   *
-   * @type {MemoryContextStats}
-   * @memberof MemoryStats
-   */
-  context?: MemoryContextStats;
-  /**
-   *
-   * @type {MemoryHitStats}
-   * @memberof MemoryStats
-   */
-  memory?: MemoryHitStats;
-  /**
-   *
-   * @type {MemoryCostStats}
-   * @memberof MemoryStats
-   */
-  cost?: MemoryCostStats;
-  /**
-   * Active alerts shown in dashboard UI.
-   * @type {Array<string>}
-   * @memberof MemoryStats
-   */
-  alerts?: Array<string>;
-  /**
-   * Suggested actions generated from current telemetry.
-   * @type {Array<MemoryRecommendation>}
-   * @memberof MemoryStats
-   */
-  recommendations?: Array<MemoryRecommendation>;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof MemoryStats
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof MemoryStats
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof MemoryStats
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof MemoryStats
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof MemoryStats
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof MemoryStats
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof MemoryStats
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof MemoryStats
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof MemoryStats
-   */
-  trashed?: boolean;
-};
+export type MemoryStats  = DataObject & {
+    /**
+     * 
+     * @type {MemoryContextStats}
+     * @memberof MemoryStats
+     */
+    context?: MemoryContextStats;
+    /**
+     * 
+     * @type {MemoryHitStats}
+     * @memberof MemoryStats
+     */
+    memory?: MemoryHitStats;
+    /**
+     * 
+     * @type {MemoryCostStats}
+     * @memberof MemoryStats
+     */
+    cost?: MemoryCostStats;
+    /**
+     * Active alerts shown in dashboard UI.
+     * @type {Array<string>}
+     * @memberof MemoryStats
+     */
+    alerts?: Array<string>;
+    /**
+     * Suggested actions generated from current telemetry.
+     * @type {Array<MemoryRecommendation>}
+     * @memberof MemoryStats
+     */
+    recommendations?: Array<MemoryRecommendation>;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof MemoryStats
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof MemoryStats
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof MemoryStats
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof MemoryStats
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof MemoryStats
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof MemoryStats
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof MemoryStats
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof MemoryStats
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof MemoryStats
+     */
+    trashed?: boolean;
+}
 
 export function MemoryStatsFromJSON(json: any): MemoryStats {
-  return {
-    ...DataObjectFromJSON(json),
-    context: !exists(json, "context")
-      ? undefined
-      : MemoryContextStatsFromJSON(json["context"]),
-    memory: !exists(json, "memory")
-      ? undefined
-      : MemoryHitStatsFromJSON(json["memory"]),
-    cost: !exists(json, "cost")
-      ? undefined
-      : MemoryCostStatsFromJSON(json["cost"]),
-    alerts: !exists(json, "alerts") ? undefined : json["alerts"],
-    recommendations: !exists(json, "recommendations")
-      ? undefined
-      : (json["recommendations"] as Array<any>).map(
-          MemoryRecommendationFromJSON,
-        ),
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'context': !exists(json, 'context') ? undefined : MemoryContextStatsFromJSON(json['context']),
+        'memory': !exists(json, 'memory') ? undefined : MemoryHitStatsFromJSON(json['memory']),
+        'cost': !exists(json, 'cost') ? undefined : MemoryCostStatsFromJSON(json['cost']),
+        'alerts': !exists(json, 'alerts') ? undefined : json['alerts'],
+        'recommendations': !exists(json, 'recommendations') ? undefined : (json['recommendations'] as Array<any>).map(MemoryRecommendationFromJSON),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function MemoryStatsToJSON(value?: MemoryStats): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    context: MemoryContextStatsToJSON(value.context),
-    memory: MemoryHitStatsToJSON(value.memory),
-    cost: MemoryCostStatsToJSON(value.cost),
-    alerts: value.alerts,
-    recommendations:
-      value.recommendations === undefined
-        ? undefined
-        : (value.recommendations as Array<any>).map(MemoryRecommendationToJSON),
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'context': MemoryContextStatsToJSON(value.context),
+        'memory': MemoryHitStatsToJSON(value.memory),
+        'cost': MemoryCostStatsToJSON(value.cost),
+        'alerts': value.alerts,
+        'recommendations': value.recommendations === undefined ? undefined : (value.recommendations as Array<any>).map(MemoryRecommendationToJSON),
+        'trashed': value.trashed,
+    };
 }
+
+

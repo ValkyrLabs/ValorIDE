@@ -13,60 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { WebsocketSession } from "@thorapi/model/WebsocketSession";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { WebsocketSession } from '@thorapi/model/WebsocketSession'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type WebsocketSessionResponse = WebsocketSession[];
+type WebsocketSessionResponse = WebsocketSession[]
+type WebsocketSessionPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<WebsocketSession>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type WebsocketSessionListQueryArg = {
+  example?: Partial<WebsocketSession>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toWebsocketSessionList = (result: unknown): WebsocketSessionResponse => {
   if (Array.isArray(result)) {
-    return result as WebsocketSessionResponse;
+    return result as WebsocketSessionResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as WebsocketSessionResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as WebsocketSessionResponse) : []
+}
 
 export const WebsocketSessionService = createApi({
-  reducerPath: "WebsocketSession", // This should remain unique
+  reducerPath: 'WebsocketSession', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["WebsocketSession"],
+  tagTypes: ['WebsocketSession'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getWebsocketSessionsPaged: build.query<
-      WebsocketSessionResponse,
-      { page: number; size?: number; example?: Partial<WebsocketSession> }
-    >({
+    getWebsocketSessionsPaged: build.query<WebsocketSessionResponse, WebsocketSessionPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `WebsocketSession?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `WebsocketSession?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toWebsocketSessionList(result);
+        const rows = toWebsocketSessionList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "WebsocketSession" as const, id })),
-          { type: "WebsocketSession", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'WebsocketSession' as const, id })),
+          { type: 'WebsocketSession', id: `PAGE_${page}` },
+          { type: 'WebsocketSession', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getWebsocketSessions: build.query<
-      WebsocketSessionResponse,
-      { example?: Partial<WebsocketSession> } | void
-    >({
+    getWebsocketSessions: build.query<WebsocketSessionResponse, WebsocketSessionListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -75,112 +82,86 @@ export const WebsocketSessionService = createApi({
         return `WebsocketSession`;
       },
       providesTags: (result) => {
-        const rows = toWebsocketSessionList(result);
+        const rows = toWebsocketSessionList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "WebsocketSession" as const, id })),
-          { type: "WebsocketSession", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'WebsocketSession' as const, id })),
+          { type: 'WebsocketSession', id: 'LIST' },
+          { type: 'WebsocketSession', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addWebsocketSession: build.mutation<
-      WebsocketSession,
-      Partial<WebsocketSession>
-    >({
+    addWebsocketSession: build.mutation<WebsocketSession, Partial<WebsocketSession>>({
       query: (body) => ({
         url: `WebsocketSession`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "WebsocketSession", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'WebsocketSession', id: 'LIST' },
+        { type: 'WebsocketSession', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getWebsocketSession: build.query<WebsocketSession, string>({
       query: (id) => `WebsocketSession/${id}`,
-      providesTags: (result, error, id) => [{ type: "WebsocketSession", id }],
+      providesTags: (result, error, id) => [{ type: 'WebsocketSession', id }],
     }),
 
     // 5) Update
-    updateWebsocketSession: build.mutation<
-      void,
-      Pick<WebsocketSession, "id"> & Partial<WebsocketSession>
-    >({
+    updateWebsocketSession: build.mutation<WebsocketSession, Pick<WebsocketSession, 'id'> & Partial<WebsocketSession>>({
       query: ({ id, ...patch }) => ({
         url: `WebsocketSession/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            WebsocketSessionService.util.updateQueryData(
-              "getWebsocketSession",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<WebsocketSession, "id">,
-      ) => [
-        { type: "WebsocketSession", id },
-        { type: "WebsocketSession", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<WebsocketSession, 'id'>) => [
+        { type: 'WebsocketSession', id },
+        { type: 'WebsocketSession', id: 'LIST' },
+        { type: 'WebsocketSession', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteWebsocketSession: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteWebsocketSession: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `WebsocketSession/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "WebsocketSession", id },
+        { type: 'WebsocketSession', id },
+        { type: 'WebsocketSession', id: 'LIST' },
+        { type: 'WebsocketSession', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteWebsocketSessionCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteWebsocketSessionCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `WebsocketSession/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "WebsocketSession", id },
-        { type: "WebsocketSession", id: "LIST" },
+        { type: 'WebsocketSession', id },
+        { type: 'WebsocketSession', id: 'LIST' },
+        { type: 'WebsocketSession', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetWebsocketSessionsPagedQuery`
 export const {
-  useGetWebsocketSessionsPagedQuery, // immediate fetch
+  useGetWebsocketSessionsPagedQuery,     // immediate fetch
   useLazyGetWebsocketSessionsPagedQuery, // lazy fetch
   useGetWebsocketSessionQuery,
   useGetWebsocketSessionsQuery,
@@ -188,4 +169,4 @@ export const {
   useUpdateWebsocketSessionMutation,
   useDeleteWebsocketSessionMutation,
   useDeleteWebsocketSessionCascadeMutation,
-} = WebsocketSessionService;
+} = WebsocketSessionService

@@ -17,53 +17,76 @@ Template file: typescript-redux-query/customBaseQuery.mustache
   Auth handling for generated ThorAPI services.
   Cookie transport is default; bearer header fallback is opt-in.
 */
-import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { applyCsrfHeader, shouldAttachCsrfToken } from "../../utils/csrfToken";
-import { refreshCsrfToken } from "../../utils/authFetch";
-import { getStoredJwtToken } from "../../utils/authTokenStorage";
-import { BASE_PATH } from "../src";
+import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { applyCsrfHeader, shouldAttachCsrfToken } from '../../utils/csrfToken';
+import { refreshCsrfToken } from '../../utils/authFetch';
+import { getStoredJwtToken } from '../../utils/authTokenStorage';
+import { applyTenantHeaders } from '../../utils/tenantContext';
+import { BASE_PATH } from '../src';
 
 const readBearerFallbackFlag = (): string => {
   const procValue =
-    typeof process !== "undefined"
+    typeof process !== 'undefined'
       ? (process as any)?.env?.VITE_AUTH_BEARER_HEADER_FALLBACK_ENABLED
       : undefined;
   const globalValue =
-    typeof globalThis !== "undefined"
+    typeof globalThis !== 'undefined'
       ? (globalThis as any)?.VITE_AUTH_BEARER_HEADER_FALLBACK_ENABLED
       : undefined;
-  return String(procValue ?? globalValue ?? "");
+  return String(procValue ?? globalValue ?? '');
 };
 
 const isBearerFallbackEnabled = (): boolean => {
   try {
-    return readBearerFallbackFlag().trim().toLowerCase() === "true";
+    return readBearerFallbackFlag()
+      .trim()
+      .toLowerCase() === 'true';
   } catch {
     return false;
   }
 };
 
+const resolveBaseUrl = () => {
+  const trimmed = (BASE_PATH || '').replace(/\/+$/, '');
+  if (typeof window === 'undefined') {
+    return trimmed || '/';
+  }
+
+  try {
+    const absolute = new URL(trimmed);
+    const currentOrigin = window.location.origin;
+    const isDev = Boolean((import.meta as any)?.env?.DEV);
+    if (isDev && absolute.origin !== currentOrigin) {
+      return absolute.pathname || '/';
+    }
+    return absolute.toString();
+  } catch {
+    return trimmed || '/';
+  }
+};
+
 const rawBaseQuery = fetchBaseQuery({
-  baseUrl: BASE_PATH, // Replace with your base URL
-  credentials: "include",
+  baseUrl: resolveBaseUrl(),
+  credentials: 'include',
   prepareHeaders: (headers, { arg }) => {
     const storedToken = getStoredJwtToken();
     if (storedToken) {
-      headers.set("Authorization", `Bearer ${storedToken}`);
-      headers.set("jwtSession", storedToken);
+      headers.set('Authorization', `Bearer ${storedToken}`);
+      headers.set('jwtSession', storedToken);
     }
 
     // Temporary global migration path only when explicitly enabled.
     if (isBearerFallbackEnabled()) {
       const token =
-        typeof globalThis !== "undefined"
+        typeof globalThis !== 'undefined'
           ? (globalThis as any).__VALKYR_AUTH_TOKEN__
           : undefined;
       if (token && !storedToken) {
-        headers.set("Authorization", `Bearer ${token}`);
+        headers.set('Authorization', `Bearer ${token}`);
       }
     }
-    const method = typeof arg === "string" ? undefined : arg?.method;
+    applyTenantHeaders(headers);
+    const method = typeof arg === 'string' ? undefined : arg?.method;
     return applyCsrfHeader(headers, method);
   },
 });
@@ -74,10 +97,10 @@ const customBaseQuery = async (args: any, api: any, extraOptions: any) => {
   // On 403 for mutating requests, the CSRF token may be stale (common in
   // cross-subdomain deployments where JS cannot read the API-domain cookie).
   // Refresh the token via /auth/csrf and retry exactly once.
-  if (result.error && typeof result.error === "object" && "status" in result.error) {
+  if (result.error && typeof result.error === 'object' && 'status' in result.error) {
     const status = (result.error as any).status;
     if (status === 403) {
-      const method = typeof args === "string" ? undefined : args?.method;
+      const method = typeof args === 'string' ? undefined : args?.method;
       if (shouldAttachCsrfToken(method)) {
         const refreshed = await refreshCsrfToken();
         if (refreshed) {

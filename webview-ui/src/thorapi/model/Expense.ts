@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,144 +36,131 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface Expense
  */
-export type Expense = DataObject & {
-  /**
-   *
-   * @type {Date}
-   * @memberof Expense
-   */
-  expenseDate?: Date;
-  /**
-   *
-   * @type {number}
-   * @memberof Expense
-   */
-  amount?: number;
-  /**
-   *
-   * @type {string}
-   * @memberof Expense
-   */
-  description?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof Expense
-   */
-  category?: ExpenseCategoryEnum;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof Expense
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof Expense
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof Expense
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof Expense
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof Expense
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof Expense
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof Expense
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof Expense
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof Expense
-   */
-  trashed?: boolean;
-};
+export type Expense  = DataObject & {
+    /**
+     * 
+     * @type {Date}
+     * @memberof Expense
+     */
+    expenseDate?: Date;
+    /**
+     * 
+     * @type {number}
+     * @memberof Expense
+     */
+    amount?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Expense
+     */
+    description?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Expense
+     */
+    category?: ExpenseCategoryEnum;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof Expense
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof Expense
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof Expense
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof Expense
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof Expense
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof Expense
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof Expense
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof Expense
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof Expense
+     */
+    trashed?: boolean;
+}
 
 export function ExpenseFromJSON(json: any): Expense {
-  return {
-    ...DataObjectFromJSON(json),
-    expenseDate: !exists(json, "expenseDate")
-      ? undefined
-      : new Date(json["expenseDate"]),
-    amount: !exists(json, "amount") ? undefined : json["amount"],
-    description: !exists(json, "description") ? undefined : json["description"],
-    category: !exists(json, "category") ? undefined : json["category"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'expenseDate': !exists(json, 'expenseDate') ? undefined : new Date(json['expenseDate']),
+        'amount': !exists(json, 'amount') ? undefined : json['amount'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'category': !exists(json, 'category') ? undefined : json['category'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function ExpenseToJSON(value?: Expense): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    expenseDate:
-      value.expenseDate === undefined
-        ? undefined
-        : value.expenseDate.toISOString(),
-    amount: value.amount,
-    description: value.description,
-    category: value.category,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'expenseDate': value.expenseDate === undefined ? undefined : value.expenseDate.toISOString(),
+        'amount': value.amount,
+        'description': value.description,
+        'category': value.category,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum ExpenseCategoryEnum {
-  MARKETING = "marketing",
-  TRAVEL = "travel",
-  PAYROLL = "payroll",
-  HOSTING = "hosting",
-  SOFTWARE = "software",
-  OTHER = "other",
+    MARKETING = 'marketing',
+    TRAVEL = 'travel',
+    PAYROLL = 'payroll',
+    HOSTING = 'hosting',
+    SOFTWARE = 'software',
+    OTHER = 'other'
 }
+
+

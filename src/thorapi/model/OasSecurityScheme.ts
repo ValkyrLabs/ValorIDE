@@ -26,122 +26,189 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
 /**
- * a security scheme to access the api
+ * OpenAPI security scheme metadata used by API Studio and ThorAPI schema modeling.
  * @export
  * @interface OasSecurityScheme
  */
-export type OasSecurityScheme = DataObject & {
-  /**
-   *
-   * @type {string}
-   * @memberof OasSecurityScheme
-   */
-  oasComponentId?: string;
-  /**
-   * the name of the security scheme
-   * @type {string}
-   * @memberof OasSecurityScheme
-   */
-  name?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof OasSecurityScheme
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof OasSecurityScheme
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof OasSecurityScheme
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof OasSecurityScheme
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof OasSecurityScheme
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof OasSecurityScheme
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof OasSecurityScheme
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof OasSecurityScheme
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof OasSecurityScheme
-   */
-  trashed?: boolean;
-};
+export type OasSecurityScheme  = DataObject & {
+    /**
+     * ID of the OasComponent that owns this security scheme.
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    oasComponentId?: string;
+    /**
+     * Map key for this security scheme.
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    key?: string;
+    /**
+     * OpenAPI Security Scheme Object type.
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    type?: OasSecuritySchemeTypeEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    description?: string;
+    /**
+     * API key header, query, or cookie parameter name when type=apiKey.
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    name?: string;
+    /**
+     * API key location when type=apiKey.
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    _in?: OasSecuritySchemeInEnum;
+    /**
+     * HTTP authentication scheme when type=http.
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    scheme?: string;
+    /**
+     * Optional bearer token format hint when type=http and scheme=bearer.
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    bearerFormat?: string;
+    /**
+     * OpenID Connect discovery URL when type=openIdConnect.
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    openIdConnectUrl?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof OasSecurityScheme
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof OasSecurityScheme
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof OasSecurityScheme
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof OasSecurityScheme
+     */
+    trashed?: boolean;
+}
 
 export function OasSecuritySchemeFromJSON(json: any): OasSecurityScheme {
-  return {
-    ...DataObjectFromJSON(json),
-    oasComponentId: !exists(json, "oasComponentId")
-      ? undefined
-      : json["oasComponentId"],
-    name: !exists(json, "name") ? undefined : json["name"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'oasComponentId': !exists(json, 'oasComponentId') ? undefined : json['oasComponentId'],
+        'key': !exists(json, 'key') ? undefined : json['key'],
+        'type': !exists(json, 'type') ? undefined : json['type'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        '_in': !exists(json, 'in') ? undefined : json['in'],
+        'scheme': !exists(json, 'scheme') ? undefined : json['scheme'],
+        'bearerFormat': !exists(json, 'bearerFormat') ? undefined : json['bearerFormat'],
+        'openIdConnectUrl': !exists(json, 'openIdConnectUrl') ? undefined : json['openIdConnectUrl'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function OasSecuritySchemeToJSON(value?: OasSecurityScheme): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    oasComponentId: value.oasComponentId,
-    name: value.name,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'oasComponentId': value.oasComponentId,
+        'key': value.key,
+        'type': value.type,
+        'description': value.description,
+        'name': value.name,
+        'in': value._in,
+        'scheme': value.scheme,
+        'bearerFormat': value.bearerFormat,
+        'openIdConnectUrl': value.openIdConnectUrl,
+        'trashed': value.trashed,
+    };
 }
+
+/**
+* @export
+* @enum {string}
+*/
+export enum OasSecuritySchemeTypeEnum {
+    APIKEY = 'apikey',
+    HTTP = 'http',
+    MUTUALTLS = 'mutualtls',
+    OAUTH2 = 'oauth2',
+    OPENIDCONNECT = 'openidconnect'
+}
+/**
+* @export
+* @enum {string}
+*/
+export enum OasSecuritySchemeInEnum {
+    QUERY = 'query',
+    HEADER = 'header',
+    COOKIE = 'cookie'
+}
+
+

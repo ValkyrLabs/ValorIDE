@@ -26,9 +26,16 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { Principal, PrincipalFromJSON, PrincipalToJSON } from "./";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import {
+
+
+    Principal,
+    PrincipalFromJSON,
+    PrincipalToJSON,
+} from './';
+
 
 // thorapi
 
@@ -37,183 +44,162 @@ import { Principal, PrincipalFromJSON, PrincipalToJSON } from "./";
  * @export
  * @interface CreatorEarnings
  */
-export type CreatorEarnings = DataObject & {
-  /**
-   *
-   * @type {Principal}
-   * @memberof CreatorEarnings
-   */
-  creator?: Principal;
-  /**
-   * Year-month for earnings (e.g., 2025-12)
-   * @type {string}
-   * @memberof CreatorEarnings
-   */
-  month?: string;
-  /**
-   *
-   * @type {number}
-   * @memberof CreatorEarnings
-   */
-  totalEarned?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof CreatorEarnings
-   */
-  totalInvocations?: number;
-  /**
-   *
-   * @type {string}
-   * @memberof CreatorEarnings
-   */
-  payoutStatus?: CreatorEarningsPayoutStatusEnum;
-  /**
-   *
-   * @type {string}
-   * @memberof CreatorEarnings
-   */
-  payoutMethod?: CreatorEarningsPayoutMethodEnum;
-  /**
-   *
-   * @type {Date}
-   * @memberof CreatorEarnings
-   */
-  payoutDate?: Date;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof CreatorEarnings
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof CreatorEarnings
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof CreatorEarnings
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof CreatorEarnings
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof CreatorEarnings
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof CreatorEarnings
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof CreatorEarnings
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof CreatorEarnings
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof CreatorEarnings
-   */
-  trashed?: boolean;
-};
+export type CreatorEarnings  = DataObject & {
+    /**
+     * 
+     * @type {Principal}
+     * @memberof CreatorEarnings
+     */
+    creator?: Principal;
+    /**
+     * Year-month for earnings (e.g., 2025-12)
+     * @type {string}
+     * @memberof CreatorEarnings
+     */
+    month?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof CreatorEarnings
+     */
+    totalEarned?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof CreatorEarnings
+     */
+    totalInvocations?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreatorEarnings
+     */
+    payoutStatus?: CreatorEarningsPayoutStatusEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof CreatorEarnings
+     */
+    payoutMethod?: CreatorEarningsPayoutMethodEnum;
+    /**
+     * 
+     * @type {Date}
+     * @memberof CreatorEarnings
+     */
+    payoutDate?: Date;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof CreatorEarnings
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof CreatorEarnings
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof CreatorEarnings
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof CreatorEarnings
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof CreatorEarnings
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof CreatorEarnings
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof CreatorEarnings
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof CreatorEarnings
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof CreatorEarnings
+     */
+    trashed?: boolean;
+}
 
 export function CreatorEarningsFromJSON(json: any): CreatorEarnings {
-  return {
-    ...DataObjectFromJSON(json),
-    creator: !exists(json, "creator")
-      ? undefined
-      : PrincipalFromJSON(json["creator"]),
-    month: !exists(json, "month") ? undefined : json["month"],
-    totalEarned: !exists(json, "totalEarned") ? undefined : json["totalEarned"],
-    totalInvocations: !exists(json, "totalInvocations")
-      ? undefined
-      : json["totalInvocations"],
-    payoutStatus: !exists(json, "payoutStatus")
-      ? undefined
-      : json["payoutStatus"],
-    payoutMethod: !exists(json, "payoutMethod")
-      ? undefined
-      : json["payoutMethod"],
-    payoutDate: !exists(json, "payoutDate")
-      ? undefined
-      : new Date(json["payoutDate"]),
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'creator': !exists(json, 'creator') ? undefined : PrincipalFromJSON(json['creator']),
+        'month': !exists(json, 'month') ? undefined : json['month'],
+        'totalEarned': !exists(json, 'totalEarned') ? undefined : json['totalEarned'],
+        'totalInvocations': !exists(json, 'totalInvocations') ? undefined : json['totalInvocations'],
+        'payoutStatus': !exists(json, 'payoutStatus') ? undefined : json['payoutStatus'],
+        'payoutMethod': !exists(json, 'payoutMethod') ? undefined : json['payoutMethod'],
+        'payoutDate': !exists(json, 'payoutDate') ? undefined : new Date(json['payoutDate']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function CreatorEarningsToJSON(value?: CreatorEarnings): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    creator: PrincipalToJSON(value.creator),
-    month: value.month,
-    totalEarned: value.totalEarned,
-    totalInvocations: value.totalInvocations,
-    payoutStatus: value.payoutStatus,
-    payoutMethod: value.payoutMethod,
-    payoutDate:
-      value.payoutDate === undefined
-        ? undefined
-        : value.payoutDate.toISOString(),
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'creator': PrincipalToJSON(value.creator),
+        'month': value.month,
+        'totalEarned': value.totalEarned,
+        'totalInvocations': value.totalInvocations,
+        'payoutStatus': value.payoutStatus,
+        'payoutMethod': value.payoutMethod,
+        'payoutDate': value.payoutDate === undefined ? undefined : value.payoutDate.toISOString(),
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum CreatorEarningsPayoutStatusEnum {
-  PENDING = "pending",
-  PROCESSING = "processing",
-  PAID = "paid",
-  FAILED = "failed",
+    PENDING = 'pending',
+    PROCESSING = 'processing',
+    PAID = 'paid',
+    FAILED = 'failed'
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum CreatorEarningsPayoutMethodEnum {
-  STRIPE = "stripe",
-  CRYPTO_WALLET = "crypto_wallet",
-  BANK_TRANSFER = "bank_transfer",
+    STRIPE = 'stripe',
+    CRYPTO_WALLET = 'crypto_wallet',
+    BANK_TRANSFER = 'bank_transfer'
 }
+
+

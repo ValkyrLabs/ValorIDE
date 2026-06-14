@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { ReferralLink } from "@thorapi/model/ReferralLink";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { ReferralLink } from '@thorapi/model/ReferralLink'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type ReferralLinkResponse = ReferralLink[];
+type ReferralLinkResponse = ReferralLink[]
+type ReferralLinkPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<ReferralLink>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type ReferralLinkListQueryArg = {
+  example?: Partial<ReferralLink>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toReferralLinkList = (result: unknown): ReferralLinkResponse => {
   if (Array.isArray(result)) {
-    return result as ReferralLinkResponse;
+    return result as ReferralLinkResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as ReferralLinkResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as ReferralLinkResponse) : []
+}
 
 export const ReferralLinkService = createApi({
-  reducerPath: "ReferralLink", // This should remain unique
+  reducerPath: 'ReferralLink', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["ReferralLink"],
+  tagTypes: ['ReferralLink'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getReferralLinksPaged: build.query<
-      ReferralLinkResponse,
-      { page: number; size?: number; example?: Partial<ReferralLink> }
-    >({
+    getReferralLinksPaged: build.query<ReferralLinkResponse, ReferralLinkPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ReferralLink?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ReferralLink?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toReferralLinkList(result);
+        const rows = toReferralLinkList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "ReferralLink" as const, id })),
-          { type: "ReferralLink", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'ReferralLink' as const, id })),
+          { type: 'ReferralLink', id: `PAGE_${page}` },
+          { type: 'ReferralLink', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getReferralLinks: build.query<
-      ReferralLinkResponse,
-      { example?: Partial<ReferralLink> } | void
-    >({
+    getReferralLinks: build.query<ReferralLinkResponse, ReferralLinkListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const ReferralLinkService = createApi({
         return `ReferralLink`;
       },
       providesTags: (result) => {
-        const rows = toReferralLinkList(result);
+        const rows = toReferralLinkList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "ReferralLink" as const, id })),
-          { type: "ReferralLink", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'ReferralLink' as const, id })),
+          { type: 'ReferralLink', id: 'LIST' },
+          { type: 'ReferralLink', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,89 +97,71 @@ export const ReferralLinkService = createApi({
     addReferralLink: build.mutation<ReferralLink, Partial<ReferralLink>>({
       query: (body) => ({
         url: `ReferralLink`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "ReferralLink", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'ReferralLink', id: 'LIST' },
+        { type: 'ReferralLink', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getReferralLink: build.query<ReferralLink, string>({
       query: (id) => `ReferralLink/${id}`,
-      providesTags: (result, error, id) => [{ type: "ReferralLink", id }],
+      providesTags: (result, error, id) => [{ type: 'ReferralLink', id }],
     }),
 
     // 5) Update
-    updateReferralLink: build.mutation<
-      void,
-      Pick<ReferralLink, "id"> & Partial<ReferralLink>
-    >({
+    updateReferralLink: build.mutation<ReferralLink, Pick<ReferralLink, 'id'> & Partial<ReferralLink>>({
       query: ({ id, ...patch }) => ({
         url: `ReferralLink/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            ReferralLinkService.util.updateQueryData(
-              "getReferralLink",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<ReferralLink, "id">) => [
-        { type: "ReferralLink", id },
-        { type: "ReferralLink", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<ReferralLink, 'id'>) => [
+        { type: 'ReferralLink', id },
+        { type: 'ReferralLink', id: 'LIST' },
+        { type: 'ReferralLink', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteReferralLink: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteReferralLink: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `ReferralLink/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "ReferralLink", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'ReferralLink', id },
+        { type: 'ReferralLink', id: 'LIST' },
+        { type: 'ReferralLink', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteReferralLinkCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteReferralLinkCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `ReferralLink/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "ReferralLink", id },
-        { type: "ReferralLink", id: "LIST" },
+        { type: 'ReferralLink', id },
+        { type: 'ReferralLink', id: 'LIST' },
+        { type: 'ReferralLink', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetReferralLinksPagedQuery`
 export const {
-  useGetReferralLinksPagedQuery, // immediate fetch
+  useGetReferralLinksPagedQuery,     // immediate fetch
   useLazyGetReferralLinksPagedQuery, // lazy fetch
   useGetReferralLinkQuery,
   useGetReferralLinksQuery,
@@ -177,4 +169,4 @@ export const {
   useUpdateReferralLinkMutation,
   useDeleteReferralLinkMutation,
   useDeleteReferralLinkCascadeMutation,
-} = ReferralLinkService;
+} = ReferralLinkService

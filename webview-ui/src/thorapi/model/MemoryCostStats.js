@@ -34,35 +34,21 @@ const DataObject_1 = require("./DataObject");
 function MemoryCostStatsFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        lastRun: !(0, runtime_1.exists)(json, "lastRun") ? undefined : json["lastRun"],
-        waste: !(0, runtime_1.exists)(json, "waste") ? undefined : json["waste"],
-        burnRate: !(0, runtime_1.exists)(json, "burnRate") ? undefined : json["burnRate"],
-        retrievalCost: !(0, runtime_1.exists)(json, "retrievalCost")
-            ? undefined
-            : json["retrievalCost"],
-        writesCost: !(0, runtime_1.exists)(json, "writesCost") ? undefined : json["writesCost"],
-        assemblyCost: !(0, runtime_1.exists)(json, "assemblyCost")
-            ? undefined
-            : json["assemblyCost"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'lastRun': !(0, runtime_1.exists)(json, 'lastRun') ? undefined : json['lastRun'],
+        'waste': !(0, runtime_1.exists)(json, 'waste') ? undefined : json['waste'],
+        'burnRate': !(0, runtime_1.exists)(json, 'burnRate') ? undefined : json['burnRate'],
+        'retrievalCost': !(0, runtime_1.exists)(json, 'retrievalCost') ? undefined : json['retrievalCost'],
+        'writesCost': !(0, runtime_1.exists)(json, 'writesCost') ? undefined : json['writesCost'],
+        'assemblyCost': !(0, runtime_1.exists)(json, 'assemblyCost') ? undefined : json['assemblyCost'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function MemoryCostStatsToJSON(value) {
@@ -71,13 +57,13 @@ function MemoryCostStatsToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        lastRun: value.lastRun,
-        waste: value.waste,
-        burnRate: value.burnRate,
-        retrievalCost: value.retrievalCost,
-        writesCost: value.writesCost,
-        assemblyCost: value.assemblyCost,
-        trashed: value.trashed,
+        'lastRun': value.lastRun,
+        'waste': value.waste,
+        'burnRate': value.burnRate,
+        'retrievalCost': value.retrievalCost,
+        'writesCost': value.writesCost,
+        'assemblyCost': value.assemblyCost,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=MemoryCostStats.js.map

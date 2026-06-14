@@ -35,39 +35,21 @@ const _1 = require("./");
 function GrayMatterFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        contextStats: !(0, runtime_1.exists)(json, "contextStats")
-            ? undefined
-            : (0, _1.MemoryContextStatsFromJSON)(json["contextStats"]),
-        hitStats: !(0, runtime_1.exists)(json, "hitStats")
-            ? undefined
-            : (0, _1.MemoryHitStatsFromJSON)(json["hitStats"]),
-        costStats: !(0, runtime_1.exists)(json, "costStats")
-            ? undefined
-            : (0, _1.MemoryCostStatsFromJSON)(json["costStats"]),
-        alerts: !(0, runtime_1.exists)(json, "alerts") ? undefined : json["alerts"],
-        recommendations: !(0, runtime_1.exists)(json, "recommendations")
-            ? undefined
-            : json["recommendations"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'contextStats': !(0, runtime_1.exists)(json, 'contextStats') ? undefined : (0, _1.MemoryContextStatsFromJSON)(json['contextStats']),
+        'hitStats': !(0, runtime_1.exists)(json, 'hitStats') ? undefined : (0, _1.MemoryHitStatsFromJSON)(json['hitStats']),
+        'costStats': !(0, runtime_1.exists)(json, 'costStats') ? undefined : (0, _1.MemoryCostStatsFromJSON)(json['costStats']),
+        'alerts': !(0, runtime_1.exists)(json, 'alerts') ? undefined : json['alerts'],
+        'recommendations': !(0, runtime_1.exists)(json, 'recommendations') ? undefined : json['recommendations'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function GrayMatterToJSON(value) {
@@ -76,13 +58,13 @@ function GrayMatterToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        description: value.description,
-        contextStats: (0, _1.MemoryContextStatsToJSON)(value.contextStats),
-        hitStats: (0, _1.MemoryHitStatsToJSON)(value.hitStats),
-        costStats: (0, _1.MemoryCostStatsToJSON)(value.costStats),
-        alerts: value.alerts,
-        recommendations: value.recommendations,
-        trashed: value.trashed,
+        'description': value.description,
+        'contextStats': (0, _1.MemoryContextStatsToJSON)(value.contextStats),
+        'hitStats': (0, _1.MemoryHitStatsToJSON)(value.hitStats),
+        'costStats': (0, _1.MemoryCostStatsToJSON)(value.costStats),
+        'alerts': value.alerts,
+        'recommendations': value.recommendations,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=GrayMatter.js.map

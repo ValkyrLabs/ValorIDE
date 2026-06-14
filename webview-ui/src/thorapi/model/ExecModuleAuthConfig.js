@@ -35,44 +35,24 @@ const _1 = require("./");
 function ExecModuleAuthConfigFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        authStrategy: json["authStrategy"],
-        integrationAccount: !(0, runtime_1.exists)(json, "integrationAccount")
-            ? undefined
-            : (0, _1.IntegrationAccountFromJSON)(json["integrationAccount"]),
-        apiKey: !(0, runtime_1.exists)(json, "apiKey") ? undefined : json["apiKey"],
-        auth: !(0, runtime_1.exists)(json, "auth") ? undefined : json["auth"],
-        authAccount: !(0, runtime_1.exists)(json, "authAccount") ? undefined : json["authAccount"],
-        emailAccount: !(0, runtime_1.exists)(json, "emailAccount")
-            ? undefined
-            : json["emailAccount"],
-        openAiApiKey: !(0, runtime_1.exists)(json, "openAiApiKey")
-            ? undefined
-            : json["openAiApiKey"],
-        signingSecret: !(0, runtime_1.exists)(json, "signing_secret")
-            ? undefined
-            : json["signing_secret"],
-        storeEnrollment: !(0, runtime_1.exists)(json, "store_enrollment")
-            ? undefined
-            : json["store_enrollment"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'authStrategy': json['authStrategy'],
+        'integrationAccount': !(0, runtime_1.exists)(json, 'integrationAccount') ? undefined : (0, _1.IntegrationAccountFromJSON)(json['integrationAccount']),
+        'apiKey': !(0, runtime_1.exists)(json, 'apiKey') ? undefined : json['apiKey'],
+        'auth': !(0, runtime_1.exists)(json, 'auth') ? undefined : json['auth'],
+        'authAccount': !(0, runtime_1.exists)(json, 'authAccount') ? undefined : json['authAccount'],
+        'emailAccount': !(0, runtime_1.exists)(json, 'emailAccount') ? undefined : json['emailAccount'],
+        'openAiApiKey': !(0, runtime_1.exists)(json, 'openAiApiKey') ? undefined : json['openAiApiKey'],
+        'signingSecret': !(0, runtime_1.exists)(json, 'signingSecret') ? undefined : json['signingSecret'],
+        'storeEnrollment': !(0, runtime_1.exists)(json, 'storeEnrollment') ? undefined : json['storeEnrollment'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ExecModuleAuthConfigToJSON(value) {
@@ -81,16 +61,16 @@ function ExecModuleAuthConfigToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        authStrategy: value.authStrategy,
-        integrationAccount: (0, _1.IntegrationAccountToJSON)(value.integrationAccount),
-        apiKey: value.apiKey,
-        auth: value.auth,
-        authAccount: value.authAccount,
-        emailAccount: value.emailAccount,
-        openAiApiKey: value.openAiApiKey,
-        signing_secret: value.signingSecret,
-        store_enrollment: value.storeEnrollment,
-        trashed: value.trashed,
+        'authStrategy': value.authStrategy,
+        'integrationAccount': (0, _1.IntegrationAccountToJSON)(value.integrationAccount),
+        'apiKey': value.apiKey,
+        'auth': value.auth,
+        'authAccount': value.authAccount,
+        'emailAccount': value.emailAccount,
+        'openAiApiKey': value.openAiApiKey,
+        'signingSecret': value.signingSecret,
+        'storeEnrollment': value.storeEnrollment,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=ExecModuleAuthConfig.js.map

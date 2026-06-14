@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { ChartSeries } from "@thorapi/model/ChartSeries";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { ChartSeries } from '@thorapi/model/ChartSeries'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type ChartSeriesResponse = ChartSeries[];
+type ChartSeriesResponse = ChartSeries[]
+type ChartSeriesPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<ChartSeries>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type ChartSeriesListQueryArg = {
+  example?: Partial<ChartSeries>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toChartSeriesList = (result: unknown): ChartSeriesResponse => {
   if (Array.isArray(result)) {
-    return result as ChartSeriesResponse;
+    return result as ChartSeriesResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as ChartSeriesResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as ChartSeriesResponse) : []
+}
 
 export const ChartSeriesService = createApi({
-  reducerPath: "ChartSeries", // This should remain unique
+  reducerPath: 'ChartSeries', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["ChartSeries"],
+  tagTypes: ['ChartSeries'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getChartSeriessPaged: build.query<
-      ChartSeriesResponse,
-      { page: number; size?: number; example?: Partial<ChartSeries> }
-    >({
+    getChartSeriessPaged: build.query<ChartSeriesResponse, ChartSeriesPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ChartSeries?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ChartSeries?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toChartSeriesList(result);
+        const rows = toChartSeriesList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "ChartSeries" as const, id })),
-          { type: "ChartSeries", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'ChartSeries' as const, id })),
+          { type: 'ChartSeries', id: `PAGE_${page}` },
+          { type: 'ChartSeries', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getChartSeriess: build.query<
-      ChartSeriesResponse,
-      { example?: Partial<ChartSeries> } | void
-    >({
+    getChartSeriess: build.query<ChartSeriesResponse, ChartSeriesListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const ChartSeriesService = createApi({
         return `ChartSeries`;
       },
       providesTags: (result) => {
-        const rows = toChartSeriesList(result);
+        const rows = toChartSeriesList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "ChartSeries" as const, id })),
-          { type: "ChartSeries", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'ChartSeries' as const, id })),
+          { type: 'ChartSeries', id: 'LIST' },
+          { type: 'ChartSeries', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,88 +97,71 @@ export const ChartSeriesService = createApi({
     addChartSeries: build.mutation<ChartSeries, Partial<ChartSeries>>({
       query: (body) => ({
         url: `ChartSeries`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "ChartSeries", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'ChartSeries', id: 'LIST' },
+        { type: 'ChartSeries', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getChartSeries: build.query<ChartSeries, string>({
       query: (id) => `ChartSeries/${id}`,
-      providesTags: (result, error, id) => [{ type: "ChartSeries", id }],
+      providesTags: (result, error, id) => [{ type: 'ChartSeries', id }],
     }),
 
     // 5) Update
-    updateChartSeries: build.mutation<
-      void,
-      Pick<ChartSeries, "id"> & Partial<ChartSeries>
-    >({
+    updateChartSeries: build.mutation<ChartSeries, Pick<ChartSeries, 'id'> & Partial<ChartSeries>>({
       query: ({ id, ...patch }) => ({
         url: `ChartSeries/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            ChartSeriesService.util.updateQueryData(
-              "getChartSeries",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<ChartSeries, "id">) => [
-        { type: "ChartSeries", id },
-        { type: "ChartSeries", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<ChartSeries, 'id'>) => [
+        { type: 'ChartSeries', id },
+        { type: 'ChartSeries', id: 'LIST' },
+        { type: 'ChartSeries', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteChartSeries: build.mutation<{ success: boolean; id: string }, number>(
-      {
-        query(id) {
-          return {
-            url: `ChartSeries/${id}`,
-            method: "DELETE",
-          };
-        },
-        invalidatesTags: (result, error, id) => [{ type: "ChartSeries", id }],
+    deleteChartSeries: build.mutation<{ success: boolean; id: string }, number>({
+      query(id) {
+        return {
+          url: `ChartSeries/${id}`,
+          method: 'DELETE',
+        }
       },
-    ),
+      invalidatesTags: (result, error, id) => [
+        { type: 'ChartSeries', id },
+        { type: 'ChartSeries', id: 'LIST' },
+        { type: 'ChartSeries', id: 'PARTIAL-LIST' },
+      ],
+    }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteChartSeriesCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteChartSeriesCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `ChartSeries/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "ChartSeries", id },
-        { type: "ChartSeries", id: "LIST" },
+        { type: 'ChartSeries', id },
+        { type: 'ChartSeries', id: 'LIST' },
+        { type: 'ChartSeries', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetChartSeriessPagedQuery`
 export const {
-  useGetChartSeriessPagedQuery, // immediate fetch
+  useGetChartSeriessPagedQuery,     // immediate fetch
   useLazyGetChartSeriessPagedQuery, // lazy fetch
   useGetChartSeriesQuery,
   useGetChartSeriessQuery,
@@ -176,4 +169,4 @@ export const {
   useUpdateChartSeriesMutation,
   useDeleteChartSeriesMutation,
   useDeleteChartSeriesCascadeMutation,
-} = ChartSeriesService;
+} = ChartSeriesService

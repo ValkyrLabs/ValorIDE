@@ -34,30 +34,18 @@ const DataObject_1 = require("./DataObject");
 function VerifyTwoFactorRequestFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        secretId: !(0, runtime_1.exists)(json, "secretId") ? undefined : json["secretId"],
-        code: !(0, runtime_1.exists)(json, "code") ? undefined : json["code"],
-        useBackupCode: !(0, runtime_1.exists)(json, "useBackupCode")
-            ? undefined
-            : json["useBackupCode"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'secretId': !(0, runtime_1.exists)(json, 'secretId') ? undefined : json['secretId'],
+        'code': !(0, runtime_1.exists)(json, 'code') ? undefined : json['code'],
+        'useBackupCode': !(0, runtime_1.exists)(json, 'useBackupCode') ? undefined : json['useBackupCode'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function VerifyTwoFactorRequestToJSON(value) {
@@ -66,10 +54,10 @@ function VerifyTwoFactorRequestToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        secretId: value.secretId,
-        code: value.code,
-        useBackupCode: value.useBackupCode,
-        trashed: value.trashed,
+        'secretId': value.secretId,
+        'code': value.code,
+        'useBackupCode': value.useBackupCode,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=VerifyTwoFactorRequest.js.map

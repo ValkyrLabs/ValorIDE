@@ -36,43 +36,23 @@ const _1 = require("./");
 function OpportunityFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        description: json["description"],
-        currentStatus: json["currentStatus"],
-        customer: !(0, runtime_1.exists)(json, "customer")
-            ? undefined
-            : (0, _1.CustomerFromJSON)(json["customer"]),
-        organization: !(0, runtime_1.exists)(json, "organization")
-            ? undefined
-            : (0, _1.OrganizationFromJSON)(json["organization"]),
-        totalValue: !(0, runtime_1.exists)(json, "totalValue") ? undefined : json["totalValue"],
-        salesOrder: !(0, runtime_1.exists)(json, "salesOrder")
-            ? undefined
-            : (0, _1.SalesOrderFromJSON)(json["salesOrder"]),
-        deadline: !(0, runtime_1.exists)(json, "deadline")
-            ? undefined
-            : new Date(json["deadline"]),
-        closeDate: !(0, runtime_1.exists)(json, "closeDate")
-            ? undefined
-            : new Date(json["closeDate"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'description': json['description'],
+        'currentStatus': json['currentStatus'],
+        'customer': !(0, runtime_1.exists)(json, 'customer') ? undefined : (0, _1.CustomerFromJSON)(json['customer']),
+        'organization': !(0, runtime_1.exists)(json, 'organization') ? undefined : (0, _1.OrganizationFromJSON)(json['organization']),
+        'totalValue': !(0, runtime_1.exists)(json, 'totalValue') ? undefined : json['totalValue'],
+        'salesOrder': !(0, runtime_1.exists)(json, 'salesOrder') ? undefined : (0, _1.SalesOrderFromJSON)(json['salesOrder']),
+        'deadline': !(0, runtime_1.exists)(json, 'deadline') ? undefined : new Date(json['deadline']),
+        'closeDate': !(0, runtime_1.exists)(json, 'closeDate') ? undefined : new Date(json['closeDate']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function OpportunityToJSON(value) {
@@ -81,21 +61,21 @@ function OpportunityToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        description: value.description,
-        currentStatus: value.currentStatus,
-        customer: (0, _1.CustomerToJSON)(value.customer),
-        organization: (0, _1.OrganizationToJSON)(value.organization),
-        totalValue: value.totalValue,
-        salesOrder: (0, _1.SalesOrderToJSON)(value.salesOrder),
-        deadline: value.deadline === undefined ? undefined : value.deadline.toISOString(),
-        closeDate: value.closeDate === undefined ? undefined : value.closeDate.toISOString(),
-        trashed: value.trashed,
+        'description': value.description,
+        'currentStatus': value.currentStatus,
+        'customer': (0, _1.CustomerToJSON)(value.customer),
+        'organization': (0, _1.OrganizationToJSON)(value.organization),
+        'totalValue': value.totalValue,
+        'salesOrder': (0, _1.SalesOrderToJSON)(value.salesOrder),
+        'deadline': value.deadline === undefined ? undefined : value.deadline.toISOString(),
+        'closeDate': value.closeDate === undefined ? undefined : value.closeDate.toISOString(),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var OpportunityCurrentStatusEnum;
 (function (OpportunityCurrentStatusEnum) {
     OpportunityCurrentStatusEnum["DISCOVERY"] = "discovery";

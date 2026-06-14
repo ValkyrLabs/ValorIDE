@@ -34,33 +34,19 @@ const DataObject_1 = require("./DataObject");
 function IdempotencyKeyFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        idempotencyKey: !(0, runtime_1.exists)(json, "idempotencyKey")
-            ? undefined
-            : json["idempotencyKey"],
-        accountId: !(0, runtime_1.exists)(json, "accountId") ? undefined : json["accountId"],
-        requestHash: !(0, runtime_1.exists)(json, "requestHash") ? undefined : json["requestHash"],
-        processedAt: !(0, runtime_1.exists)(json, "processedAt")
-            ? undefined
-            : new Date(json["processedAt"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'idempotencyKey': !(0, runtime_1.exists)(json, 'idempotencyKey') ? undefined : json['idempotencyKey'],
+        'accountId': !(0, runtime_1.exists)(json, 'accountId') ? undefined : json['accountId'],
+        'requestHash': !(0, runtime_1.exists)(json, 'requestHash') ? undefined : json['requestHash'],
+        'processedAt': !(0, runtime_1.exists)(json, 'processedAt') ? undefined : new Date(json['processedAt']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function IdempotencyKeyToJSON(value) {
@@ -69,10 +55,10 @@ function IdempotencyKeyToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        idempotencyKey: value.idempotencyKey,
-        accountId: value.accountId,
-        requestHash: value.requestHash,
-        trashed: value.trashed,
+        'idempotencyKey': value.idempotencyKey,
+        'accountId': value.accountId,
+        'requestHash': value.requestHash,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=IdempotencyKey.js.map

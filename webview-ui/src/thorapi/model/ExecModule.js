@@ -36,48 +36,29 @@ const _1 = require("./");
 function ExecModuleFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        systemId: !(0, runtime_1.exists)(json, "systemId") ? undefined : json["systemId"],
-        task: !(0, runtime_1.exists)(json, "task") ? undefined : (0, _1.TaskFromJSON)(json["task"]),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        longDescription: !(0, runtime_1.exists)(json, "longDescription")
-            ? undefined
-            : json["longDescription"],
-        className: !(0, runtime_1.exists)(json, "className") ? undefined : json["className"],
-        moduleType: !(0, runtime_1.exists)(json, "moduleType") ? undefined : json["moduleType"],
-        moduleOrder: !(0, runtime_1.exists)(json, "moduleOrder") ? undefined : json["moduleOrder"],
-        execModuleConfig: !(0, runtime_1.exists)(json, "execModuleConfig")
-            ? undefined
-            : (0, _1.ExecModuleConfigFromJSON)(json["execModuleConfig"]),
-        moduleData: !(0, runtime_1.exists)(json, "moduleData") ? undefined : json["moduleData"],
-        integrationAccount: !(0, runtime_1.exists)(json, "integrationAccount")
-            ? undefined
-            : (0, _1.IntegrationAccountFromJSON)(json["integrationAccount"]),
-        taskId: !(0, runtime_1.exists)(json, "taskId") ? undefined : json["taskId"],
-        notes: !(0, runtime_1.exists)(json, "notes") ? undefined : json["notes"],
-        specs: !(0, runtime_1.exists)(json, "specs")
-            ? undefined
-            : json["specs"].map(_1.OasOpenAPISpecFromJSON),
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        role: !(0, runtime_1.exists)(json, "role") ? undefined : json["role"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'systemId': !(0, runtime_1.exists)(json, 'systemId') ? undefined : json['systemId'],
+        'task': !(0, runtime_1.exists)(json, 'task') ? undefined : (0, _1.TaskFromJSON)(json['task']),
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'longDescription': !(0, runtime_1.exists)(json, 'longDescription') ? undefined : json['longDescription'],
+        'className': !(0, runtime_1.exists)(json, 'className') ? undefined : json['className'],
+        'moduleType': !(0, runtime_1.exists)(json, 'moduleType') ? undefined : json['moduleType'],
+        'moduleOrder': !(0, runtime_1.exists)(json, 'moduleOrder') ? undefined : json['moduleOrder'],
+        'execModuleConfig': !(0, runtime_1.exists)(json, 'execModuleConfig') ? undefined : (0, _1.ExecModuleConfigFromJSON)(json['execModuleConfig']),
+        'integrationAccount': !(0, runtime_1.exists)(json, 'integrationAccount') ? undefined : (0, _1.IntegrationAccountFromJSON)(json['integrationAccount']),
+        'taskId': !(0, runtime_1.exists)(json, 'taskId') ? undefined : json['taskId'],
+        'notes': !(0, runtime_1.exists)(json, 'notes') ? undefined : json['notes'],
+        'specs': !(0, runtime_1.exists)(json, 'specs') ? undefined : json['specs'].map(_1.OasOpenAPISpecFromJSON),
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'role': !(0, runtime_1.exists)(json, 'role') ? undefined : json['role'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ExecModuleToJSON(value) {
@@ -86,30 +67,27 @@ function ExecModuleToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        systemId: value.systemId,
-        task: (0, _1.TaskToJSON)(value.task),
-        name: value.name,
-        longDescription: value.longDescription,
-        className: value.className,
-        moduleType: value.moduleType,
-        moduleOrder: value.moduleOrder,
-        execModuleConfig: (0, _1.ExecModuleConfigToJSON)(value.execModuleConfig),
-        moduleData: value.moduleData,
-        integrationAccount: (0, _1.IntegrationAccountToJSON)(value.integrationAccount),
-        taskId: value.taskId,
-        notes: value.notes,
-        specs: value.specs === undefined
-            ? undefined
-            : value.specs.map(_1.OasOpenAPISpecToJSON),
-        status: value.status,
-        role: value.role,
-        trashed: value.trashed,
+        'systemId': value.systemId,
+        'task': (0, _1.TaskToJSON)(value.task),
+        'name': value.name,
+        'longDescription': value.longDescription,
+        'className': value.className,
+        'moduleType': value.moduleType,
+        'moduleOrder': value.moduleOrder,
+        'execModuleConfig': (0, _1.ExecModuleConfigToJSON)(value.execModuleConfig),
+        'integrationAccount': (0, _1.IntegrationAccountToJSON)(value.integrationAccount),
+        'taskId': value.taskId,
+        'notes': value.notes,
+        'specs': value.specs === undefined ? undefined : value.specs.map(_1.OasOpenAPISpecToJSON),
+        'status': value.status,
+        'role': value.role,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ExecModuleModuleTypeEnum;
 (function (ExecModuleModuleTypeEnum) {
     ExecModuleModuleTypeEnum["BROADCAST"] = "broadcast";
@@ -119,9 +97,9 @@ var ExecModuleModuleTypeEnum;
     ExecModuleModuleTypeEnum["TRANSFORMER"] = "transformer";
 })(ExecModuleModuleTypeEnum || (exports.ExecModuleModuleTypeEnum = ExecModuleModuleTypeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ExecModuleStatusEnum;
 (function (ExecModuleStatusEnum) {
     ExecModuleStatusEnum["READY"] = "ready";
@@ -133,9 +111,9 @@ var ExecModuleStatusEnum;
     ExecModuleStatusEnum["DISABLED"] = "disabled";
 })(ExecModuleStatusEnum || (exports.ExecModuleStatusEnum = ExecModuleStatusEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ExecModuleRoleEnum;
 (function (ExecModuleRoleEnum) {
     ExecModuleRoleEnum["ANONYMOUS"] = "anonymous";

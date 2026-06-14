@@ -36,44 +36,22 @@ const _1 = require("./");
 function ServiceSubscriptionFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        consumer: !(0, runtime_1.exists)(json, "consumer")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["consumer"]),
-        service: !(0, runtime_1.exists)(json, "service")
-            ? undefined
-            : (0, _1.ManagedMcpServiceFromJSON)(json["service"]),
-        subscriptionType: !(0, runtime_1.exists)(json, "subscriptionType")
-            ? undefined
-            : json["subscriptionType"],
-        creditsIncluded: !(0, runtime_1.exists)(json, "creditsIncluded")
-            ? undefined
-            : json["creditsIncluded"],
-        monthlyLimit: !(0, runtime_1.exists)(json, "monthlyLimit")
-            ? undefined
-            : json["monthlyLimit"],
-        renewalDate: !(0, runtime_1.exists)(json, "renewalDate")
-            ? undefined
-            : new Date(json["renewalDate"]),
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'consumer': !(0, runtime_1.exists)(json, 'consumer') ? undefined : (0, _1.PrincipalFromJSON)(json['consumer']),
+        'service': !(0, runtime_1.exists)(json, 'service') ? undefined : (0, _1.ManagedMcpServiceFromJSON)(json['service']),
+        'subscriptionType': !(0, runtime_1.exists)(json, 'subscriptionType') ? undefined : json['subscriptionType'],
+        'creditsIncluded': !(0, runtime_1.exists)(json, 'creditsIncluded') ? undefined : json['creditsIncluded'],
+        'monthlyLimit': !(0, runtime_1.exists)(json, 'monthlyLimit') ? undefined : json['monthlyLimit'],
+        'renewalDate': !(0, runtime_1.exists)(json, 'renewalDate') ? undefined : new Date(json['renewalDate']),
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ServiceSubscriptionToJSON(value) {
@@ -82,22 +60,20 @@ function ServiceSubscriptionToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        consumer: (0, _1.PrincipalToJSON)(value.consumer),
-        service: (0, _1.ManagedMcpServiceToJSON)(value.service),
-        subscriptionType: value.subscriptionType,
-        creditsIncluded: value.creditsIncluded,
-        monthlyLimit: value.monthlyLimit,
-        renewalDate: value.renewalDate === undefined
-            ? undefined
-            : value.renewalDate.toISOString(),
-        status: value.status,
-        trashed: value.trashed,
+        'consumer': (0, _1.PrincipalToJSON)(value.consumer),
+        'service': (0, _1.ManagedMcpServiceToJSON)(value.service),
+        'subscriptionType': value.subscriptionType,
+        'creditsIncluded': value.creditsIncluded,
+        'monthlyLimit': value.monthlyLimit,
+        'renewalDate': value.renewalDate === undefined ? undefined : value.renewalDate.toISOString(),
+        'status': value.status,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ServiceSubscriptionSubscriptionTypeEnum;
 (function (ServiceSubscriptionSubscriptionTypeEnum) {
     ServiceSubscriptionSubscriptionTypeEnum["MONTHLY"] = "monthly";
@@ -105,9 +81,9 @@ var ServiceSubscriptionSubscriptionTypeEnum;
     ServiceSubscriptionSubscriptionTypeEnum["PAY_AS_YOU_GO"] = "pay_as_you_go";
 })(ServiceSubscriptionSubscriptionTypeEnum || (exports.ServiceSubscriptionSubscriptionTypeEnum = ServiceSubscriptionSubscriptionTypeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ServiceSubscriptionStatusEnum;
 (function (ServiceSubscriptionStatusEnum) {
     ServiceSubscriptionStatusEnum["ACTIVE"] = "active";

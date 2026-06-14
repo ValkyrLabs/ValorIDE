@@ -35,32 +35,20 @@ const _1 = require("./");
 function LoginFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        username: !(0, runtime_1.exists)(json, "username") ? undefined : json["username"],
-        password: !(0, runtime_1.exists)(json, "password") ? undefined : json["password"],
-        token: !(0, runtime_1.exists)(json, "token") ? undefined : json["token"],
-        authenticatedPrincipal: !(0, runtime_1.exists)(json, "authenticatedPrincipal")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["authenticatedPrincipal"]),
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'username': !(0, runtime_1.exists)(json, 'username') ? undefined : json['username'],
+        'password': !(0, runtime_1.exists)(json, 'password') ? undefined : json['password'],
+        'token': !(0, runtime_1.exists)(json, 'token') ? undefined : json['token'],
+        'authenticatedPrincipal': !(0, runtime_1.exists)(json, 'authenticatedPrincipal') ? undefined : (0, _1.PrincipalFromJSON)(json['authenticatedPrincipal']),
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function LoginToJSON(value) {
@@ -69,12 +57,12 @@ function LoginToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        username: value.username,
-        password: value.password,
-        token: value.token,
-        authenticatedPrincipal: (0, _1.PrincipalToJSON)(value.authenticatedPrincipal),
-        description: value.description,
-        trashed: value.trashed,
+        'username': value.username,
+        'password': value.password,
+        'token': value.token,
+        'authenticatedPrincipal': (0, _1.PrincipalToJSON)(value.authenticatedPrincipal),
+        'description': value.description,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=Login.js.map

@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { LoginResponse } from "@thorapi/model/LoginResponse";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { LoginResponse } from '@thorapi/model/LoginResponse'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type LoginResponseResponse = LoginResponse[];
+type LoginResponseResponse = LoginResponse[]
+type LoginResponsePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<LoginResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type LoginResponseListQueryArg = {
+  example?: Partial<LoginResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toLoginResponseList = (result: unknown): LoginResponseResponse => {
   if (Array.isArray(result)) {
-    return result as LoginResponseResponse;
+    return result as LoginResponseResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as LoginResponseResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as LoginResponseResponse) : []
+}
 
 export const LoginResponseService = createApi({
-  reducerPath: "LoginResponse", // This should remain unique
+  reducerPath: 'LoginResponse', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["LoginResponse"],
+  tagTypes: ['LoginResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getLoginResponsesPaged: build.query<
-      LoginResponseResponse,
-      { page: number; size?: number; example?: Partial<LoginResponse> }
-    >({
+    getLoginResponsesPaged: build.query<LoginResponseResponse, LoginResponsePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `LoginResponse?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `LoginResponse?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toLoginResponseList(result);
+        const rows = toLoginResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "LoginResponse" as const, id })),
-          { type: "LoginResponse", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'LoginResponse' as const, id })),
+          { type: 'LoginResponse', id: `PAGE_${page}` },
+          { type: 'LoginResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getLoginResponses: build.query<
-      LoginResponseResponse,
-      { example?: Partial<LoginResponse> } | void
-    >({
+    getLoginResponses: build.query<LoginResponseResponse, LoginResponseListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const LoginResponseService = createApi({
         return `LoginResponse`;
       },
       providesTags: (result) => {
-        const rows = toLoginResponseList(result);
+        const rows = toLoginResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "LoginResponse" as const, id })),
-          { type: "LoginResponse", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'LoginResponse' as const, id })),
+          { type: 'LoginResponse', id: 'LIST' },
+          { type: 'LoginResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,89 +97,71 @@ export const LoginResponseService = createApi({
     addLoginResponse: build.mutation<LoginResponse, Partial<LoginResponse>>({
       query: (body) => ({
         url: `LoginResponse`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "LoginResponse", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'LoginResponse', id: 'LIST' },
+        { type: 'LoginResponse', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getLoginResponse: build.query<LoginResponse, string>({
       query: (id) => `LoginResponse/${id}`,
-      providesTags: (result, error, id) => [{ type: "LoginResponse", id }],
+      providesTags: (result, error, id) => [{ type: 'LoginResponse', id }],
     }),
 
     // 5) Update
-    updateLoginResponse: build.mutation<
-      void,
-      Pick<LoginResponse, "id"> & Partial<LoginResponse>
-    >({
+    updateLoginResponse: build.mutation<LoginResponse, Pick<LoginResponse, 'id'> & Partial<LoginResponse>>({
       query: ({ id, ...patch }) => ({
         url: `LoginResponse/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            LoginResponseService.util.updateQueryData(
-              "getLoginResponse",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<LoginResponse, "id">) => [
-        { type: "LoginResponse", id },
-        { type: "LoginResponse", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<LoginResponse, 'id'>) => [
+        { type: 'LoginResponse', id },
+        { type: 'LoginResponse', id: 'LIST' },
+        { type: 'LoginResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteLoginResponse: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteLoginResponse: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `LoginResponse/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "LoginResponse", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'LoginResponse', id },
+        { type: 'LoginResponse', id: 'LIST' },
+        { type: 'LoginResponse', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteLoginResponseCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteLoginResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `LoginResponse/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "LoginResponse", id },
-        { type: "LoginResponse", id: "LIST" },
+        { type: 'LoginResponse', id },
+        { type: 'LoginResponse', id: 'LIST' },
+        { type: 'LoginResponse', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetLoginResponsesPagedQuery`
 export const {
-  useGetLoginResponsesPagedQuery, // immediate fetch
+  useGetLoginResponsesPagedQuery,     // immediate fetch
   useLazyGetLoginResponsesPagedQuery, // lazy fetch
   useGetLoginResponseQuery,
   useGetLoginResponsesQuery,
@@ -177,4 +169,4 @@ export const {
   useUpdateLoginResponseMutation,
   useDeleteLoginResponseMutation,
   useDeleteLoginResponseCascadeMutation,
-} = LoginResponseService;
+} = LoginResponseService

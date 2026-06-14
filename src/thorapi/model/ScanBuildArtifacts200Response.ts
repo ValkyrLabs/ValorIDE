@@ -26,56 +26,56 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { BuildArtifact, BuildArtifactFromJSON, BuildArtifactToJSON } from "./";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
+import {
+
+
+    BuildArtifact,
+    BuildArtifactFromJSON,
+    BuildArtifactToJSON,
+} from './';
+
 
 // thorapi
 
 /**
- *
+ * 
  * @export
  * @interface ScanBuildArtifacts200Response
  */
-export type ScanBuildArtifacts200Response = DataObject & {
-  /**
-   *
-   * @type {boolean}
-   * @memberof ScanBuildArtifacts200Response
-   */
-  found?: boolean;
-  /**
-   *
-   * @type {Array<BuildArtifact>}
-   * @memberof ScanBuildArtifacts200Response
-   */
-  artifacts?: Array<BuildArtifact>;
-};
-
-export function ScanBuildArtifacts200ResponseFromJSON(
-  json: any,
-): ScanBuildArtifacts200Response {
-  return {
-    ...DataObjectFromJSON(json),
-    found: !exists(json, "found") ? undefined : json["found"],
-    artifacts: !exists(json, "artifacts")
-      ? undefined
-      : (json["artifacts"] as Array<any>).map(BuildArtifactFromJSON),
-  };
+export type ScanBuildArtifacts200Response  = DataObject & {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ScanBuildArtifacts200Response
+     */
+    found?: boolean;
+    /**
+     * 
+     * @type {Array<BuildArtifact>}
+     * @memberof ScanBuildArtifacts200Response
+     */
+    artifacts?: Array<BuildArtifact>;
 }
 
-export function ScanBuildArtifacts200ResponseToJSON(
-  value?: ScanBuildArtifacts200Response,
-): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    found: value.found,
-    artifacts:
-      value.artifacts === undefined
-        ? undefined
-        : (value.artifacts as Array<any>).map(BuildArtifactToJSON),
-  };
+export function ScanBuildArtifacts200ResponseFromJSON(json: any): ScanBuildArtifacts200Response {
+    return {
+        ...DataObjectFromJSON(json),
+        'found': !exists(json, 'found') ? undefined : json['found'],
+        'artifacts': !exists(json, 'artifacts') ? undefined : (json['artifacts'] as Array<any>).map(BuildArtifactFromJSON),
+    };
 }
+
+export function ScanBuildArtifacts200ResponseToJSON(value?: ScanBuildArtifacts200Response): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'found': value.found,
+        'artifacts': value.artifacts === undefined ? undefined : (value.artifacts as Array<any>).map(BuildArtifactToJSON),
+    };
+}
+
+

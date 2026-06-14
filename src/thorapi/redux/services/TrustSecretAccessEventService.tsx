@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { TrustSecretAccessEvent } from "@thorapi/model/TrustSecretAccessEvent";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { TrustSecretAccessEvent } from '@thorapi/model/TrustSecretAccessEvent'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type TrustSecretAccessEventResponse = TrustSecretAccessEvent[];
+type TrustSecretAccessEventResponse = TrustSecretAccessEvent[]
+type TrustSecretAccessEventPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<TrustSecretAccessEvent>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toTrustSecretAccessEventList = (
-  result: unknown,
-): TrustSecretAccessEventResponse => {
+type TrustSecretAccessEventListQueryArg = {
+  example?: Partial<TrustSecretAccessEvent>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toTrustSecretAccessEventList = (result: unknown): TrustSecretAccessEventResponse => {
   if (Array.isArray(result)) {
-    return result as TrustSecretAccessEventResponse;
+    return result as TrustSecretAccessEventResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as TrustSecretAccessEventResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as TrustSecretAccessEventResponse) : []
+}
 
 export const TrustSecretAccessEventService = createApi({
-  reducerPath: "TrustSecretAccessEvent", // This should remain unique
+  reducerPath: 'TrustSecretAccessEvent', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["TrustSecretAccessEvent"],
+  tagTypes: ['TrustSecretAccessEvent'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getTrustSecretAccessEventsPaged: build.query<
-      TrustSecretAccessEventResponse,
-      { page: number; size?: number; example?: Partial<TrustSecretAccessEvent> }
-    >({
+    getTrustSecretAccessEventsPaged: build.query<TrustSecretAccessEventResponse, TrustSecretAccessEventPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `TrustSecretAccessEvent?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `TrustSecretAccessEvent?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toTrustSecretAccessEventList(result);
+        const rows = toTrustSecretAccessEventList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "TrustSecretAccessEvent" as const, id })),
-          { type: "TrustSecretAccessEvent", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'TrustSecretAccessEvent' as const, id })),
+          { type: 'TrustSecretAccessEvent', id: `PAGE_${page}` },
+          { type: 'TrustSecretAccessEvent', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getTrustSecretAccessEvents: build.query<
-      TrustSecretAccessEventResponse,
-      { example?: Partial<TrustSecretAccessEvent> } | void
-    >({
+    getTrustSecretAccessEvents: build.query<TrustSecretAccessEventResponse, TrustSecretAccessEventListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,114 +82,86 @@ export const TrustSecretAccessEventService = createApi({
         return `TrustSecretAccessEvent`;
       },
       providesTags: (result) => {
-        const rows = toTrustSecretAccessEventList(result);
+        const rows = toTrustSecretAccessEventList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "TrustSecretAccessEvent" as const, id })),
-          { type: "TrustSecretAccessEvent", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'TrustSecretAccessEvent' as const, id })),
+          { type: 'TrustSecretAccessEvent', id: 'LIST' },
+          { type: 'TrustSecretAccessEvent', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addTrustSecretAccessEvent: build.mutation<
-      TrustSecretAccessEvent,
-      Partial<TrustSecretAccessEvent>
-    >({
+    addTrustSecretAccessEvent: build.mutation<TrustSecretAccessEvent, Partial<TrustSecretAccessEvent>>({
       query: (body) => ({
         url: `TrustSecretAccessEvent`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "TrustSecretAccessEvent", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'TrustSecretAccessEvent', id: 'LIST' },
+        { type: 'TrustSecretAccessEvent', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getTrustSecretAccessEvent: build.query<TrustSecretAccessEvent, string>({
       query: (id) => `TrustSecretAccessEvent/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "TrustSecretAccessEvent", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'TrustSecretAccessEvent', id }],
     }),
 
     // 5) Update
-    updateTrustSecretAccessEvent: build.mutation<
-      void,
-      Pick<TrustSecretAccessEvent, "id"> & Partial<TrustSecretAccessEvent>
-    >({
+    updateTrustSecretAccessEvent: build.mutation<TrustSecretAccessEvent, Pick<TrustSecretAccessEvent, 'id'> & Partial<TrustSecretAccessEvent>>({
       query: ({ id, ...patch }) => ({
         url: `TrustSecretAccessEvent/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            TrustSecretAccessEventService.util.updateQueryData(
-              "getTrustSecretAccessEvent",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<TrustSecretAccessEvent, "id">,
-      ) => [
-        { type: "TrustSecretAccessEvent", id },
-        { type: "TrustSecretAccessEvent", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<TrustSecretAccessEvent, 'id'>) => [
+        { type: 'TrustSecretAccessEvent', id },
+        { type: 'TrustSecretAccessEvent', id: 'LIST' },
+        { type: 'TrustSecretAccessEvent', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteTrustSecretAccessEvent: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteTrustSecretAccessEvent: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `TrustSecretAccessEvent/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "TrustSecretAccessEvent", id },
+        { type: 'TrustSecretAccessEvent', id },
+        { type: 'TrustSecretAccessEvent', id: 'LIST' },
+        { type: 'TrustSecretAccessEvent', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteTrustSecretAccessEventCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteTrustSecretAccessEventCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `TrustSecretAccessEvent/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "TrustSecretAccessEvent", id },
-        { type: "TrustSecretAccessEvent", id: "LIST" },
+        { type: 'TrustSecretAccessEvent', id },
+        { type: 'TrustSecretAccessEvent', id: 'LIST' },
+        { type: 'TrustSecretAccessEvent', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetTrustSecretAccessEventsPagedQuery`
 export const {
-  useGetTrustSecretAccessEventsPagedQuery, // immediate fetch
+  useGetTrustSecretAccessEventsPagedQuery,     // immediate fetch
   useLazyGetTrustSecretAccessEventsPagedQuery, // lazy fetch
   useGetTrustSecretAccessEventQuery,
   useGetTrustSecretAccessEventsQuery,
@@ -192,4 +169,4 @@ export const {
   useUpdateTrustSecretAccessEventMutation,
   useDeleteTrustSecretAccessEventMutation,
   useDeleteTrustSecretAccessEventCascadeMutation,
-} = TrustSecretAccessEventService;
+} = TrustSecretAccessEventService

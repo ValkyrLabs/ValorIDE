@@ -34,32 +34,22 @@ const DataObject_1 = require("./DataObject");
 function WorkflowGraphNodeFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        nodeId: !(0, runtime_1.exists)(json, "nodeId") ? undefined : json["nodeId"],
-        taskId: !(0, runtime_1.exists)(json, "taskId") ? undefined : json["taskId"],
-        label: !(0, runtime_1.exists)(json, "label") ? undefined : json["label"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        position: !(0, runtime_1.exists)(json, "position") ? undefined : json["position"],
-        type: !(0, runtime_1.exists)(json, "type") ? undefined : json["type"],
-        data: !(0, runtime_1.exists)(json, "data") ? undefined : json["data"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'nodeId': !(0, runtime_1.exists)(json, 'nodeId') ? undefined : json['nodeId'],
+        'taskId': !(0, runtime_1.exists)(json, 'taskId') ? undefined : json['taskId'],
+        'label': !(0, runtime_1.exists)(json, 'label') ? undefined : json['label'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'position': !(0, runtime_1.exists)(json, 'position') ? undefined : json['position'],
+        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
+        'data': !(0, runtime_1.exists)(json, 'data') ? undefined : json['data'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function WorkflowGraphNodeToJSON(value) {
@@ -68,14 +58,14 @@ function WorkflowGraphNodeToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        nodeId: value.nodeId,
-        taskId: value.taskId,
-        label: value.label,
-        description: value.description,
-        position: value.position,
-        type: value.type,
-        data: value.data,
-        trashed: value.trashed,
+        'nodeId': value.nodeId,
+        'taskId': value.taskId,
+        'label': value.label,
+        'description': value.description,
+        'position': value.position,
+        'type': value.type,
+        'data': value.data,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=WorkflowGraphNode.js.map

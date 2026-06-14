@@ -36,40 +36,24 @@ const _1 = require("./");
 function OrderFulfillmentTaskFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        fulfillmentType: json["fulfillmentType"],
-        salesOrder: !(0, runtime_1.exists)(json, "salesOrder")
-            ? undefined
-            : (0, _1.SalesOrderFromJSON)(json["salesOrder"]),
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        workflow: !(0, runtime_1.exists)(json, "workflow")
-            ? undefined
-            : (0, _1.WorkflowFromJSON)(json["workflow"]),
-        assignedTo: !(0, runtime_1.exists)(json, "assignedTo") ? undefined : json["assignedTo"],
-        attempts: !(0, runtime_1.exists)(json, "attempts") ? undefined : json["attempts"],
-        lastError: !(0, runtime_1.exists)(json, "lastError") ? undefined : json["lastError"],
-        completedAt: !(0, runtime_1.exists)(json, "completedAt")
-            ? undefined
-            : new Date(json["completedAt"]),
-        metadata: !(0, runtime_1.exists)(json, "metadata") ? undefined : json["metadata"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'fulfillmentType': json['fulfillmentType'],
+        'salesOrder': !(0, runtime_1.exists)(json, 'salesOrder') ? undefined : (0, _1.SalesOrderFromJSON)(json['salesOrder']),
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'workflow': !(0, runtime_1.exists)(json, 'workflow') ? undefined : (0, _1.WorkflowFromJSON)(json['workflow']),
+        'assignedTo': !(0, runtime_1.exists)(json, 'assignedTo') ? undefined : json['assignedTo'],
+        'attempts': !(0, runtime_1.exists)(json, 'attempts') ? undefined : json['attempts'],
+        'lastError': !(0, runtime_1.exists)(json, 'lastError') ? undefined : json['lastError'],
+        'completedAt': !(0, runtime_1.exists)(json, 'completedAt') ? undefined : new Date(json['completedAt']),
+        'metadata': !(0, runtime_1.exists)(json, 'metadata') ? undefined : json['metadata'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function OrderFulfillmentTaskToJSON(value) {
@@ -78,24 +62,22 @@ function OrderFulfillmentTaskToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        fulfillmentType: value.fulfillmentType,
-        salesOrder: (0, _1.SalesOrderToJSON)(value.salesOrder),
-        status: value.status,
-        workflow: (0, _1.WorkflowToJSON)(value.workflow),
-        assignedTo: value.assignedTo,
-        attempts: value.attempts,
-        lastError: value.lastError,
-        completedAt: value.completedAt === undefined
-            ? undefined
-            : value.completedAt.toISOString(),
-        metadata: value.metadata,
-        trashed: value.trashed,
+        'fulfillmentType': value.fulfillmentType,
+        'salesOrder': (0, _1.SalesOrderToJSON)(value.salesOrder),
+        'status': value.status,
+        'workflow': (0, _1.WorkflowToJSON)(value.workflow),
+        'assignedTo': value.assignedTo,
+        'attempts': value.attempts,
+        'lastError': value.lastError,
+        'completedAt': value.completedAt === undefined ? undefined : value.completedAt.toISOString(),
+        'metadata': value.metadata,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var OrderFulfillmentTaskFulfillmentTypeEnum;
 (function (OrderFulfillmentTaskFulfillmentTypeEnum) {
     OrderFulfillmentTaskFulfillmentTypeEnum["DIGITALDELIVERY"] = "digital_delivery";
@@ -107,9 +89,9 @@ var OrderFulfillmentTaskFulfillmentTypeEnum;
     OrderFulfillmentTaskFulfillmentTypeEnum["OTHER"] = "other";
 })(OrderFulfillmentTaskFulfillmentTypeEnum || (exports.OrderFulfillmentTaskFulfillmentTypeEnum = OrderFulfillmentTaskFulfillmentTypeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var OrderFulfillmentTaskStatusEnum;
 (function (OrderFulfillmentTaskStatusEnum) {
     OrderFulfillmentTaskStatusEnum["PENDING"] = "pending";

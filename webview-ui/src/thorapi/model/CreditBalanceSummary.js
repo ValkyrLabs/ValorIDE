@@ -34,35 +34,19 @@ const DataObject_1 = require("./DataObject");
 function CreditBalanceSummaryFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        customerId: !(0, runtime_1.exists)(json, "customerId") ? undefined : json["customerId"],
-        currentBalance: !(0, runtime_1.exists)(json, "currentBalance")
-            ? undefined
-            : json["currentBalance"],
-        paymentTransactionCount: !(0, runtime_1.exists)(json, "paymentTransactionCount")
-            ? undefined
-            : json["paymentTransactionCount"],
-        usageTransactionCount: !(0, runtime_1.exists)(json, "usageTransactionCount")
-            ? undefined
-            : json["usageTransactionCount"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'customerId': !(0, runtime_1.exists)(json, 'customerId') ? undefined : json['customerId'],
+        'currentBalance': !(0, runtime_1.exists)(json, 'currentBalance') ? undefined : json['currentBalance'],
+        'paymentTransactionCount': !(0, runtime_1.exists)(json, 'paymentTransactionCount') ? undefined : json['paymentTransactionCount'],
+        'usageTransactionCount': !(0, runtime_1.exists)(json, 'usageTransactionCount') ? undefined : json['usageTransactionCount'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function CreditBalanceSummaryToJSON(value) {
@@ -71,11 +55,11 @@ function CreditBalanceSummaryToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        customerId: value.customerId,
-        currentBalance: value.currentBalance,
-        paymentTransactionCount: value.paymentTransactionCount,
-        usageTransactionCount: value.usageTransactionCount,
-        trashed: value.trashed,
+        'customerId': value.customerId,
+        'currentBalance': value.currentBalance,
+        'paymentTransactionCount': value.paymentTransactionCount,
+        'usageTransactionCount': value.usageTransactionCount,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=CreditBalanceSummary.js.map

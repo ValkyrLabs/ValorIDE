@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { RewrapTrustKeyRequest } from "@thorapi/model/RewrapTrustKeyRequest";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { RewrapTrustKeyRequest } from '@thorapi/model/RewrapTrustKeyRequest'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type RewrapTrustKeyRequestResponse = RewrapTrustKeyRequest[];
+type RewrapTrustKeyRequestResponse = RewrapTrustKeyRequest[]
+type RewrapTrustKeyRequestPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<RewrapTrustKeyRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toRewrapTrustKeyRequestList = (
-  result: unknown,
-): RewrapTrustKeyRequestResponse => {
+type RewrapTrustKeyRequestListQueryArg = {
+  example?: Partial<RewrapTrustKeyRequest>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toRewrapTrustKeyRequestList = (result: unknown): RewrapTrustKeyRequestResponse => {
   if (Array.isArray(result)) {
-    return result as RewrapTrustKeyRequestResponse;
+    return result as RewrapTrustKeyRequestResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as RewrapTrustKeyRequestResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as RewrapTrustKeyRequestResponse) : []
+}
 
 export const RewrapTrustKeyRequestService = createApi({
-  reducerPath: "RewrapTrustKeyRequest", // This should remain unique
+  reducerPath: 'RewrapTrustKeyRequest', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["RewrapTrustKeyRequest"],
+  tagTypes: ['RewrapTrustKeyRequest'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getRewrapTrustKeyRequestsPaged: build.query<
-      RewrapTrustKeyRequestResponse,
-      { page: number; size?: number; example?: Partial<RewrapTrustKeyRequest> }
-    >({
+    getRewrapTrustKeyRequestsPaged: build.query<RewrapTrustKeyRequestResponse, RewrapTrustKeyRequestPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `RewrapTrustKeyRequest?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `RewrapTrustKeyRequest?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toRewrapTrustKeyRequestList(result);
+        const rows = toRewrapTrustKeyRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "RewrapTrustKeyRequest" as const, id })),
-          { type: "RewrapTrustKeyRequest", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'RewrapTrustKeyRequest' as const, id })),
+          { type: 'RewrapTrustKeyRequest', id: `PAGE_${page}` },
+          { type: 'RewrapTrustKeyRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getRewrapTrustKeyRequests: build.query<
-      RewrapTrustKeyRequestResponse,
-      { example?: Partial<RewrapTrustKeyRequest> } | void
-    >({
+    getRewrapTrustKeyRequests: build.query<RewrapTrustKeyRequestResponse, RewrapTrustKeyRequestListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,114 +82,86 @@ export const RewrapTrustKeyRequestService = createApi({
         return `RewrapTrustKeyRequest`;
       },
       providesTags: (result) => {
-        const rows = toRewrapTrustKeyRequestList(result);
+        const rows = toRewrapTrustKeyRequestList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "RewrapTrustKeyRequest" as const, id })),
-          { type: "RewrapTrustKeyRequest", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'RewrapTrustKeyRequest' as const, id })),
+          { type: 'RewrapTrustKeyRequest', id: 'LIST' },
+          { type: 'RewrapTrustKeyRequest', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addRewrapTrustKeyRequest: build.mutation<
-      RewrapTrustKeyRequest,
-      Partial<RewrapTrustKeyRequest>
-    >({
+    addRewrapTrustKeyRequest: build.mutation<RewrapTrustKeyRequest, Partial<RewrapTrustKeyRequest>>({
       query: (body) => ({
         url: `RewrapTrustKeyRequest`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "RewrapTrustKeyRequest", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'RewrapTrustKeyRequest', id: 'LIST' },
+        { type: 'RewrapTrustKeyRequest', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getRewrapTrustKeyRequest: build.query<RewrapTrustKeyRequest, string>({
       query: (id) => `RewrapTrustKeyRequest/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "RewrapTrustKeyRequest", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'RewrapTrustKeyRequest', id }],
     }),
 
     // 5) Update
-    updateRewrapTrustKeyRequest: build.mutation<
-      void,
-      Pick<RewrapTrustKeyRequest, "id"> & Partial<RewrapTrustKeyRequest>
-    >({
+    updateRewrapTrustKeyRequest: build.mutation<RewrapTrustKeyRequest, Pick<RewrapTrustKeyRequest, 'id'> & Partial<RewrapTrustKeyRequest>>({
       query: ({ id, ...patch }) => ({
         url: `RewrapTrustKeyRequest/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            RewrapTrustKeyRequestService.util.updateQueryData(
-              "getRewrapTrustKeyRequest",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<RewrapTrustKeyRequest, "id">,
-      ) => [
-        { type: "RewrapTrustKeyRequest", id },
-        { type: "RewrapTrustKeyRequest", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<RewrapTrustKeyRequest, 'id'>) => [
+        { type: 'RewrapTrustKeyRequest', id },
+        { type: 'RewrapTrustKeyRequest', id: 'LIST' },
+        { type: 'RewrapTrustKeyRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteRewrapTrustKeyRequest: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteRewrapTrustKeyRequest: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `RewrapTrustKeyRequest/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "RewrapTrustKeyRequest", id },
+        { type: 'RewrapTrustKeyRequest', id },
+        { type: 'RewrapTrustKeyRequest', id: 'LIST' },
+        { type: 'RewrapTrustKeyRequest', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteRewrapTrustKeyRequestCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteRewrapTrustKeyRequestCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `RewrapTrustKeyRequest/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "RewrapTrustKeyRequest", id },
-        { type: "RewrapTrustKeyRequest", id: "LIST" },
+        { type: 'RewrapTrustKeyRequest', id },
+        { type: 'RewrapTrustKeyRequest', id: 'LIST' },
+        { type: 'RewrapTrustKeyRequest', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetRewrapTrustKeyRequestsPagedQuery`
 export const {
-  useGetRewrapTrustKeyRequestsPagedQuery, // immediate fetch
+  useGetRewrapTrustKeyRequestsPagedQuery,     // immediate fetch
   useLazyGetRewrapTrustKeyRequestsPagedQuery, // lazy fetch
   useGetRewrapTrustKeyRequestQuery,
   useGetRewrapTrustKeyRequestsQuery,
@@ -192,4 +169,4 @@ export const {
   useUpdateRewrapTrustKeyRequestMutation,
   useDeleteRewrapTrustKeyRequestMutation,
   useDeleteRewrapTrustKeyRequestCascadeMutation,
-} = RewrapTrustKeyRequestService;
+} = RewrapTrustKeyRequestService

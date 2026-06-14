@@ -36,40 +36,22 @@ const _1 = require("./");
 function DigitalAssetFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        deliveryMethod: json["deliveryMethod"],
-        product: !(0, runtime_1.exists)(json, "product")
-            ? undefined
-            : (0, _1.ProductFromJSON)(json["product"]),
-        file: !(0, runtime_1.exists)(json, "file") ? undefined : (0, _1.FileRecordFromJSON)(json["file"]),
-        accessModel: !(0, runtime_1.exists)(json, "accessModel") ? undefined : json["accessModel"],
-        maxDownloads: !(0, runtime_1.exists)(json, "maxDownloads")
-            ? undefined
-            : json["maxDownloads"],
-        expiresAfterDays: !(0, runtime_1.exists)(json, "expiresAfterDays")
-            ? undefined
-            : json["expiresAfterDays"],
-        notifyCustomerOnExpiry: !(0, runtime_1.exists)(json, "notifyCustomerOnExpiry")
-            ? undefined
-            : json["notifyCustomerOnExpiry"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'deliveryMethod': json['deliveryMethod'],
+        'product': !(0, runtime_1.exists)(json, 'product') ? undefined : (0, _1.ProductFromJSON)(json['product']),
+        'file': !(0, runtime_1.exists)(json, 'file') ? undefined : (0, _1.FileRecordFromJSON)(json['file']),
+        'accessModel': !(0, runtime_1.exists)(json, 'accessModel') ? undefined : json['accessModel'],
+        'maxDownloads': !(0, runtime_1.exists)(json, 'maxDownloads') ? undefined : json['maxDownloads'],
+        'expiresAfterDays': !(0, runtime_1.exists)(json, 'expiresAfterDays') ? undefined : json['expiresAfterDays'],
+        'notifyCustomerOnExpiry': !(0, runtime_1.exists)(json, 'notifyCustomerOnExpiry') ? undefined : json['notifyCustomerOnExpiry'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function DigitalAssetToJSON(value) {
@@ -78,20 +60,20 @@ function DigitalAssetToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        deliveryMethod: value.deliveryMethod,
-        product: (0, _1.ProductToJSON)(value.product),
-        file: (0, _1.FileRecordToJSON)(value.file),
-        accessModel: value.accessModel,
-        maxDownloads: value.maxDownloads,
-        expiresAfterDays: value.expiresAfterDays,
-        notifyCustomerOnExpiry: value.notifyCustomerOnExpiry,
-        trashed: value.trashed,
+        'deliveryMethod': value.deliveryMethod,
+        'product': (0, _1.ProductToJSON)(value.product),
+        'file': (0, _1.FileRecordToJSON)(value.file),
+        'accessModel': value.accessModel,
+        'maxDownloads': value.maxDownloads,
+        'expiresAfterDays': value.expiresAfterDays,
+        'notifyCustomerOnExpiry': value.notifyCustomerOnExpiry,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var DigitalAssetDeliveryMethodEnum;
 (function (DigitalAssetDeliveryMethodEnum) {
     DigitalAssetDeliveryMethodEnum["DIRECTDOWNLOAD"] = "direct_download";
@@ -101,9 +83,9 @@ var DigitalAssetDeliveryMethodEnum;
     DigitalAssetDeliveryMethodEnum["APIKEY"] = "api_key";
 })(DigitalAssetDeliveryMethodEnum || (exports.DigitalAssetDeliveryMethodEnum = DigitalAssetDeliveryMethodEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var DigitalAssetAccessModelEnum;
 (function (DigitalAssetAccessModelEnum) {
     DigitalAssetAccessModelEnum["PERPETUAL"] = "perpetual";

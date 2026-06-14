@@ -35,60 +35,28 @@ const _1 = require("./");
 function ExecModuleConfigFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        version: json["version"],
-        timeoutMs: !(0, runtime_1.exists)(json, "timeoutMs") ? undefined : json["timeoutMs"],
-        authConfig: !(0, runtime_1.exists)(json, "authConfig")
-            ? undefined
-            : (0, _1.ExecModuleAuthConfigFromJSON)(json["authConfig"]),
-        executionConfig: !(0, runtime_1.exists)(json, "executionConfig")
-            ? undefined
-            : (0, _1.ExecModuleExecutionConfigFromJSON)(json["executionConfig"]),
-        ioConfig: !(0, runtime_1.exists)(json, "ioConfig")
-            ? undefined
-            : (0, _1.ExecModuleIOConfigFromJSON)(json["ioConfig"]),
-        observabilityConfig: !(0, runtime_1.exists)(json, "observabilityConfig")
-            ? undefined
-            : (0, _1.ExecModuleObservabilityConfigFromJSON)(json["observabilityConfig"]),
-        rateLimitConfig: !(0, runtime_1.exists)(json, "rateLimitConfig")
-            ? undefined
-            : (0, _1.ExecModuleRateLimitConfigFromJSON)(json["rateLimitConfig"]),
-        retryPolicy: !(0, runtime_1.exists)(json, "retryPolicy")
-            ? undefined
-            : (0, _1.RetryPolicyFromJSON)(json["retryPolicy"]),
-        circuitBreakerConfig: !(0, runtime_1.exists)(json, "circuitBreakerConfig")
-            ? undefined
-            : (0, _1.CircuitBreakerConfigFromJSON)(json["circuitBreakerConfig"]),
-        audienceConfig: !(0, runtime_1.exists)(json, "audienceConfig")
-            ? undefined
-            : (0, _1.ExecModuleAudienceConfigFromJSON)(json["audienceConfig"]),
-        payloadConfig: !(0, runtime_1.exists)(json, "payloadConfig")
-            ? undefined
-            : (0, _1.ExecModulePayloadConfigFromJSON)(json["payloadConfig"]),
-        resourceConfig: !(0, runtime_1.exists)(json, "resourceConfig")
-            ? undefined
-            : (0, _1.ExecModuleResourceConfigFromJSON)(json["resourceConfig"]),
-        transportConfig: !(0, runtime_1.exists)(json, "transportConfig")
-            ? undefined
-            : (0, _1.ExecModuleTransportConfigFromJSON)(json["transportConfig"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'version': json['version'],
+        'timeoutMs': !(0, runtime_1.exists)(json, 'timeoutMs') ? undefined : json['timeoutMs'],
+        'authConfig': !(0, runtime_1.exists)(json, 'authConfig') ? undefined : (0, _1.ExecModuleAuthConfigFromJSON)(json['authConfig']),
+        'executionConfig': !(0, runtime_1.exists)(json, 'executionConfig') ? undefined : (0, _1.ExecModuleExecutionConfigFromJSON)(json['executionConfig']),
+        'ioConfig': !(0, runtime_1.exists)(json, 'ioConfig') ? undefined : (0, _1.ExecModuleIOConfigFromJSON)(json['ioConfig']),
+        'observabilityConfig': !(0, runtime_1.exists)(json, 'observabilityConfig') ? undefined : (0, _1.ExecModuleObservabilityConfigFromJSON)(json['observabilityConfig']),
+        'rateLimitConfig': !(0, runtime_1.exists)(json, 'rateLimitConfig') ? undefined : (0, _1.ExecModuleRateLimitConfigFromJSON)(json['rateLimitConfig']),
+        'retryPolicy': !(0, runtime_1.exists)(json, 'retryPolicy') ? undefined : (0, _1.RetryPolicyFromJSON)(json['retryPolicy']),
+        'circuitBreakerConfig': !(0, runtime_1.exists)(json, 'circuitBreakerConfig') ? undefined : (0, _1.CircuitBreakerConfigFromJSON)(json['circuitBreakerConfig']),
+        'audienceConfig': !(0, runtime_1.exists)(json, 'audienceConfig') ? undefined : (0, _1.ExecModuleAudienceConfigFromJSON)(json['audienceConfig']),
+        'payloadConfig': !(0, runtime_1.exists)(json, 'payloadConfig') ? undefined : (0, _1.ExecModulePayloadConfigFromJSON)(json['payloadConfig']),
+        'resourceConfig': !(0, runtime_1.exists)(json, 'resourceConfig') ? undefined : (0, _1.ExecModuleResourceConfigFromJSON)(json['resourceConfig']),
+        'transportConfig': !(0, runtime_1.exists)(json, 'transportConfig') ? undefined : (0, _1.ExecModuleTransportConfigFromJSON)(json['transportConfig']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ExecModuleConfigToJSON(value) {
@@ -97,20 +65,20 @@ function ExecModuleConfigToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        version: value.version,
-        timeoutMs: value.timeoutMs,
-        authConfig: (0, _1.ExecModuleAuthConfigToJSON)(value.authConfig),
-        executionConfig: (0, _1.ExecModuleExecutionConfigToJSON)(value.executionConfig),
-        ioConfig: (0, _1.ExecModuleIOConfigToJSON)(value.ioConfig),
-        observabilityConfig: (0, _1.ExecModuleObservabilityConfigToJSON)(value.observabilityConfig),
-        rateLimitConfig: (0, _1.ExecModuleRateLimitConfigToJSON)(value.rateLimitConfig),
-        retryPolicy: (0, _1.RetryPolicyToJSON)(value.retryPolicy),
-        circuitBreakerConfig: (0, _1.CircuitBreakerConfigToJSON)(value.circuitBreakerConfig),
-        audienceConfig: (0, _1.ExecModuleAudienceConfigToJSON)(value.audienceConfig),
-        payloadConfig: (0, _1.ExecModulePayloadConfigToJSON)(value.payloadConfig),
-        resourceConfig: (0, _1.ExecModuleResourceConfigToJSON)(value.resourceConfig),
-        transportConfig: (0, _1.ExecModuleTransportConfigToJSON)(value.transportConfig),
-        trashed: value.trashed,
+        'version': value.version,
+        'timeoutMs': value.timeoutMs,
+        'authConfig': (0, _1.ExecModuleAuthConfigToJSON)(value.authConfig),
+        'executionConfig': (0, _1.ExecModuleExecutionConfigToJSON)(value.executionConfig),
+        'ioConfig': (0, _1.ExecModuleIOConfigToJSON)(value.ioConfig),
+        'observabilityConfig': (0, _1.ExecModuleObservabilityConfigToJSON)(value.observabilityConfig),
+        'rateLimitConfig': (0, _1.ExecModuleRateLimitConfigToJSON)(value.rateLimitConfig),
+        'retryPolicy': (0, _1.RetryPolicyToJSON)(value.retryPolicy),
+        'circuitBreakerConfig': (0, _1.CircuitBreakerConfigToJSON)(value.circuitBreakerConfig),
+        'audienceConfig': (0, _1.ExecModuleAudienceConfigToJSON)(value.audienceConfig),
+        'payloadConfig': (0, _1.ExecModulePayloadConfigToJSON)(value.payloadConfig),
+        'resourceConfig': (0, _1.ExecModuleResourceConfigToJSON)(value.resourceConfig),
+        'transportConfig': (0, _1.ExecModuleTransportConfigToJSON)(value.transportConfig),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=ExecModuleConfig.js.map

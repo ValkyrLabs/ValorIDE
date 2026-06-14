@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_OASOBJECTSCHEMA_REQUEST,
-  FETCH_OASOBJECTSCHEMA_REQUEST,
-  LIST_OASOBJECTSCHEMA_REQUEST,
-  UPDATE_OASOBJECTSCHEMA_REQUEST,
-  DELETE_OASOBJECTSCHEMA_REQUEST,
-  addOasObjectSchemaFailure,
-  addOasObjectSchemaSuccess,
-  fetchOasObjectSchemaFailure,
-  fetchOasObjectSchemaSuccess,
-  listOasObjectSchemaFailure,
-  listOasObjectSchemaSuccess,
-  updateOasObjectSchemaFailure,
-  updateOasObjectSchemaSuccess,
-  deleteOasObjectSchemaFailure,
-  deleteOasObjectSchemaSuccess,
-} from "../actions/OasObjectSchemaApiAction";
+
+    ADD_OASOBJECTSCHEMA_REQUEST,
+    FETCH_OASOBJECTSCHEMA_REQUEST,
+    LIST_OASOBJECTSCHEMA_REQUEST,
+    UPDATE_OASOBJECTSCHEMA_REQUEST,
+    DELETE_OASOBJECTSCHEMA_REQUEST,
+
+    addOasObjectSchemaFailure,
+    addOasObjectSchemaSuccess,
+
+    fetchOasObjectSchemaFailure,
+    fetchOasObjectSchemaSuccess,
+    
+    listOasObjectSchemaFailure,
+    listOasObjectSchemaSuccess,
+
+    updateOasObjectSchemaFailure,
+    updateOasObjectSchemaSuccess,
+    
+    deleteOasObjectSchemaFailure,
+    deleteOasObjectSchemaSuccess,
+    
+} from '../actions/OasObjectSchemaApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: OasObjectSchema
 */
 
-export const OasObjectSchemaMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("OasObjectSchema MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const OasObjectSchemaMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("OasObjectSchema MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

@@ -36,63 +36,38 @@ const _1 = require("./");
 function LlmDetailsFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        version: !(0, runtime_1.exists)(json, "version") ? undefined : json["version"],
-        notes: !(0, runtime_1.exists)(json, "notes") ? undefined : json["notes"],
-        role: !(0, runtime_1.exists)(json, "role") ? undefined : json["role"],
-        provider: !(0, runtime_1.exists)(json, "provider") ? undefined : json["provider"],
-        apiType: !(0, runtime_1.exists)(json, "apiType") ? undefined : json["apiType"],
-        routingPolicy: !(0, runtime_1.exists)(json, "routingPolicy")
-            ? undefined
-            : (0, _1.LlmRoutingPolicyFromJSON)(json["routingPolicy"]),
-        initialPrompt: !(0, runtime_1.exists)(json, "initialPrompt")
-            ? undefined
-            : json["initialPrompt"],
-        apiKeyIntegrationAccount: !(0, runtime_1.exists)(json, "apiKeyIntegrationAccount")
-            ? undefined
-            : (0, _1.IntegrationAccountFromJSON)(json["apiKeyIntegrationAccount"]),
-        credential: !(0, runtime_1.exists)(json, "credential") ? undefined : json["credential"],
-        credentialPassword: !(0, runtime_1.exists)(json, "credentialPassword")
-            ? undefined
-            : json["credentialPassword"],
-        temperature: !(0, runtime_1.exists)(json, "temperature") ? undefined : json["temperature"],
-        contextWindow: !(0, runtime_1.exists)(json, "contextWindow")
-            ? undefined
-            : json["contextWindow"],
-        maxTokens: !(0, runtime_1.exists)(json, "maxTokens") ? undefined : json["maxTokens"],
-        supportsImages: !(0, runtime_1.exists)(json, "supportsImages")
-            ? undefined
-            : json["supportsImages"],
-        supportsPromptCache: !(0, runtime_1.exists)(json, "supportsPromptCache")
-            ? undefined
-            : json["supportsPromptCache"],
-        inputPrice: !(0, runtime_1.exists)(json, "inputPrice") ? undefined : json["inputPrice"],
-        outputPrice: !(0, runtime_1.exists)(json, "outputPrice") ? undefined : json["outputPrice"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        url: !(0, runtime_1.exists)(json, "url") ? undefined : json["url"],
-        requestParameters: !(0, runtime_1.exists)(json, "requestParameters")
-            ? undefined
-            : json["requestParameters"],
-        metaData: !(0, runtime_1.exists)(json, "metaData") ? undefined : json["metaData"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'version': !(0, runtime_1.exists)(json, 'version') ? undefined : json['version'],
+        'useGrayMatter': !(0, runtime_1.exists)(json, 'useGrayMatter') ? undefined : json['useGrayMatter'],
+        'notes': !(0, runtime_1.exists)(json, 'notes') ? undefined : json['notes'],
+        'role': !(0, runtime_1.exists)(json, 'role') ? undefined : json['role'],
+        'provider': !(0, runtime_1.exists)(json, 'provider') ? undefined : json['provider'],
+        'apiType': !(0, runtime_1.exists)(json, 'apiType') ? undefined : json['apiType'],
+        'routingPolicy': !(0, runtime_1.exists)(json, 'routingPolicy') ? undefined : (0, _1.LlmRoutingPolicyFromJSON)(json['routingPolicy']),
+        'initialPrompt': !(0, runtime_1.exists)(json, 'initialPrompt') ? undefined : json['initialPrompt'],
+        'apiKeyIntegrationAccount': !(0, runtime_1.exists)(json, 'apiKeyIntegrationAccount') ? undefined : (0, _1.IntegrationAccountFromJSON)(json['apiKeyIntegrationAccount']),
+        'credential': !(0, runtime_1.exists)(json, 'credential') ? undefined : json['credential'],
+        'credentialPassword': !(0, runtime_1.exists)(json, 'credentialPassword') ? undefined : json['credentialPassword'],
+        'temperature': !(0, runtime_1.exists)(json, 'temperature') ? undefined : json['temperature'],
+        'contextWindow': !(0, runtime_1.exists)(json, 'contextWindow') ? undefined : json['contextWindow'],
+        'maxTokens': !(0, runtime_1.exists)(json, 'maxTokens') ? undefined : json['maxTokens'],
+        'supportsImages': !(0, runtime_1.exists)(json, 'supportsImages') ? undefined : json['supportsImages'],
+        'supportsPromptCache': !(0, runtime_1.exists)(json, 'supportsPromptCache') ? undefined : json['supportsPromptCache'],
+        'inputPrice': !(0, runtime_1.exists)(json, 'inputPrice') ? undefined : json['inputPrice'],
+        'outputPrice': !(0, runtime_1.exists)(json, 'outputPrice') ? undefined : json['outputPrice'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'url': !(0, runtime_1.exists)(json, 'url') ? undefined : json['url'],
+        'requestParameters': !(0, runtime_1.exists)(json, 'requestParameters') ? undefined : json['requestParameters'],
+        'metaData': !(0, runtime_1.exists)(json, 'metaData') ? undefined : json['metaData'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function LlmDetailsToJSON(value) {
@@ -101,44 +76,45 @@ function LlmDetailsToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        name: value.name,
-        version: value.version,
-        notes: value.notes,
-        role: value.role,
-        provider: value.provider,
-        apiType: value.apiType,
-        routingPolicy: (0, _1.LlmRoutingPolicyToJSON)(value.routingPolicy),
-        initialPrompt: value.initialPrompt,
-        apiKeyIntegrationAccount: (0, _1.IntegrationAccountToJSON)(value.apiKeyIntegrationAccount),
-        credential: value.credential,
-        credentialPassword: value.credentialPassword,
-        temperature: value.temperature,
-        contextWindow: value.contextWindow,
-        maxTokens: value.maxTokens,
-        supportsImages: value.supportsImages,
-        supportsPromptCache: value.supportsPromptCache,
-        inputPrice: value.inputPrice,
-        outputPrice: value.outputPrice,
-        description: value.description,
-        url: value.url,
-        requestParameters: value.requestParameters,
-        metaData: value.metaData,
-        trashed: value.trashed,
+        'name': value.name,
+        'version': value.version,
+        'useGrayMatter': value.useGrayMatter,
+        'notes': value.notes,
+        'role': value.role,
+        'provider': value.provider,
+        'apiType': value.apiType,
+        'routingPolicy': (0, _1.LlmRoutingPolicyToJSON)(value.routingPolicy),
+        'initialPrompt': value.initialPrompt,
+        'apiKeyIntegrationAccount': (0, _1.IntegrationAccountToJSON)(value.apiKeyIntegrationAccount),
+        'credential': value.credential,
+        'credentialPassword': value.credentialPassword,
+        'temperature': value.temperature,
+        'contextWindow': value.contextWindow,
+        'maxTokens': value.maxTokens,
+        'supportsImages': value.supportsImages,
+        'supportsPromptCache': value.supportsPromptCache,
+        'inputPrice': value.inputPrice,
+        'outputPrice': value.outputPrice,
+        'description': value.description,
+        'url': value.url,
+        'requestParameters': value.requestParameters,
+        'metaData': value.metaData,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var LlmDetailsRoleEnum;
 (function (LlmDetailsRoleEnum) {
     LlmDetailsRoleEnum["USER"] = "user";
     LlmDetailsRoleEnum["ASSISTANT"] = "assistant";
 })(LlmDetailsRoleEnum || (exports.LlmDetailsRoleEnum = LlmDetailsRoleEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var LlmDetailsProviderEnum;
 (function (LlmDetailsProviderEnum) {
     LlmDetailsProviderEnum["VALKYRAI"] = "valkyrai";
@@ -156,9 +132,9 @@ var LlmDetailsProviderEnum;
     LlmDetailsProviderEnum["CHATGPTPASSTHROUGH"] = "chatgpt_pass_through";
 })(LlmDetailsProviderEnum || (exports.LlmDetailsProviderEnum = LlmDetailsProviderEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var LlmDetailsApiTypeEnum;
 (function (LlmDetailsApiTypeEnum) {
     LlmDetailsApiTypeEnum["OPENAI"] = "openai";

@@ -35,35 +35,21 @@ const _1 = require("./");
 function OasOperationFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        oasPathId: !(0, runtime_1.exists)(json, "oasPathId") ? undefined : json["oasPathId"],
-        summary: !(0, runtime_1.exists)(json, "summary") ? undefined : json["summary"],
-        operationId: !(0, runtime_1.exists)(json, "operationId") ? undefined : json["operationId"],
-        parameters: !(0, runtime_1.exists)(json, "parameters")
-            ? undefined
-            : json["parameters"].map(_1.OasParameterFromJSON),
-        responses: !(0, runtime_1.exists)(json, "responses")
-            ? undefined
-            : json["responses"].map(_1.OasResponseFromJSON),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'oasPathId': !(0, runtime_1.exists)(json, 'oasPathId') ? undefined : json['oasPathId'],
+        'summary': !(0, runtime_1.exists)(json, 'summary') ? undefined : json['summary'],
+        'operationId': !(0, runtime_1.exists)(json, 'operationId') ? undefined : json['operationId'],
+        'parameters': !(0, runtime_1.exists)(json, 'parameters') ? undefined : json['parameters'].map(_1.OasParameterFromJSON),
+        'responses': !(0, runtime_1.exists)(json, 'responses') ? undefined : json['responses'].map(_1.OasResponseFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function OasOperationToJSON(value) {
@@ -72,17 +58,13 @@ function OasOperationToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        description: value.description,
-        oasPathId: value.oasPathId,
-        summary: value.summary,
-        operationId: value.operationId,
-        parameters: value.parameters === undefined
-            ? undefined
-            : value.parameters.map(_1.OasParameterToJSON),
-        responses: value.responses === undefined
-            ? undefined
-            : value.responses.map(_1.OasResponseToJSON),
-        trashed: value.trashed,
+        'description': value.description,
+        'oasPathId': value.oasPathId,
+        'summary': value.summary,
+        'operationId': value.operationId,
+        'parameters': value.parameters === undefined ? undefined : value.parameters.map(_1.OasParameterToJSON),
+        'responses': value.responses === undefined ? undefined : value.responses.map(_1.OasResponseToJSON),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=OasOperation.js.map

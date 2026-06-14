@@ -1,4 +1,5 @@
 import { memo, useState, useCallback, useEffect, useMemo } from "react";
+import "./AccountView.css";
 
 import { UsageTransaction, PaymentTransaction } from "@thorapi/model";
 import { useGetAccountBalanceQuery } from "@thorapi/services/creditsApi";
@@ -17,6 +18,9 @@ import ApplicationsList from "./ApplicationsList";
 import OpenAPIFilePicker from "./OpenAPIFilePicker";
 import Form from "../Login/form";
 import FileExplorer from "../FileExplorer/FileExplorer";
+import ContextPagePanel from "./ContextPagePanel";
+import ReceiptTraceInspector from "./ReceiptTraceInspector";
+import TenantAppGenerationPanel from "./TenantAppGenerationPanel";
 
 import {
   VSCodeButton,
@@ -27,7 +31,10 @@ import { vscode } from "@thorapi/utils/vscode";
 import {
   FaAppStore,
   FaBackward,
+  FaBrain,
   FaFileArchive,
+  FaHammer,
+  FaReceipt,
   FaRecycle,
   FaUserEdit,
   FaServer,
@@ -53,23 +60,28 @@ import {
 } from "@thorapi/utils/accessControl";
 import { CreditIntent } from "@thorapi/types/creditIntent";
 import { buildAccountLoginSuccessMessage } from "./accountAuthBridge";
+import { loginThroughExtensionHost } from "./extensionLogin";
 
 type AccountViewProps = {
   onDone: () => void;
   serverConsoleNeedsAttention: boolean;
   initialActiveTab?:
-  | "login"
-  | "account"
-  | "applications"
-  | "generatedFiles"
-  | "userPreferences"
-  | "serverConsole";
+    | "login"
+    | "account"
+    | "applications"
+    | "appGeneration"
+    | "contextPage"
+    | "generatedFiles"
+    | "receipts"
+    | "userPreferences"
+    | "serverConsole";
   onConsumeInitialActiveTab?: () => void;
+  initialSwarmCommandResponse?: Record<string, unknown>;
+  onConsumeInitialSwarmCommandResponse?: () => void;
   onClearServerConsoleNeedsAttention: () => void;
   creditIntent?: CreditIntent;
   onClearCreditIntent?: () => void;
 };
-
 
 const AccountView = ({
   onDone,
@@ -77,11 +89,18 @@ const AccountView = ({
   onClearServerConsoleNeedsAttention,
   initialActiveTab,
   onConsumeInitialActiveTab,
+  initialSwarmCommandResponse,
+  onConsumeInitialSwarmCommandResponse,
   creditIntent,
   onClearCreditIntent,
 }: AccountViewProps) => {
-  const { userInfo, authenticatedUser, isLoggedIn, jwtToken } =
-    useExtensionState();
+  const {
+    userInfo,
+    authenticatedUser,
+    isLoggedIn,
+    jwtToken,
+    advancedSettings,
+  } = useExtensionState();
   // Read live messages once at top-level to respect Hooks rules
   const { valorideMessages } = useExtensionState();
   // Compute API metrics from messages once using useMemo
@@ -119,7 +138,10 @@ const AccountView = ({
     | "login"
     | "account"
     | "applications"
+    | "appGeneration"
+    | "contextPage"
     | "generatedFiles"
+    | "receipts"
     | "userPreferences"
     | "serverConsole"
   >(authed ? "account" : "login");
@@ -142,6 +164,11 @@ const AccountView = ({
     }
     onConsumeInitialActiveTab?.();
   }, [authed, initialActiveTab, onConsumeInitialActiveTab]);
+
+  useEffect(() => {
+    if (!initialSwarmCommandResponse) return;
+    setActiveTab(authed ? "receipts" : "login");
+  }, [authed, initialSwarmCommandResponse]);
 
   const { principal: resolvedPrincipal } = useAccessControl(
     authenticatedUser || userInfo,
@@ -187,6 +214,17 @@ const AccountView = ({
     isUsageLoading ||
     isPaymentsLoading;
 
+  const effectiveBalance = useMemo(() => {
+    const rawBalance = balanceData?.currentBalance ?? 0;
+    return Math.max(0, rawBalance - (apiMetrics.totalCost || 0));
+  }, [apiMetrics.totalCost, balanceData?.currentBalance]);
+  const criticalBalanceThreshold =
+    advancedSettings?.budgetAlerts?.criticalThreshold;
+  const shouldShowBuyCredits =
+    creditIntent ||
+    criticalBalanceThreshold === undefined ||
+    effectiveBalance <= Number(criticalBalanceThreshold);
+
   const [loginUser] = useLoginUserMutation();
   const [addUsageTransaction] = useAddUsageTransactionMutation();
 
@@ -195,7 +233,9 @@ const AccountView = ({
     { setSubmitting }: FormikHelpers<Login>,
   ) => {
     try {
-      const result = await loginUser(values).unwrap();
+      const result = vscode.isAvailable()
+        ? await loginThroughExtensionHost(values)
+        : await loginUser(values).unwrap();
       if (result.token) {
         storeJwtToken(result.token, "account-login");
       }
@@ -275,6 +315,7 @@ const AccountView = ({
       } catch {
         // ignore transport issues
       }
+      throw error;
     } finally {
       setSubmitting(false);
     }
@@ -385,6 +426,22 @@ const AccountView = ({
                 <FaAppStore />
               </div>
               <div
+                className={`nav-link ${activeTab === "appGeneration" ? "active" : ""}`}
+                onClick={() => setActiveTab("appGeneration")}
+                style={{ cursor: "pointer" }}
+                title="App Generation"
+              >
+                <FaHammer />
+              </div>
+              <div
+                className={`nav-link ${activeTab === "contextPage" ? "active" : ""}`}
+                onClick={() => setActiveTab("contextPage")}
+                style={{ cursor: "pointer" }}
+                title="Context Pages"
+              >
+                <FaBrain />
+              </div>
+              <div
                 className={`nav-link ${activeTab === "generatedFiles" ? "active" : ""}`}
                 onClick={() => setActiveTab("generatedFiles")}
                 style={{ cursor: "pointer" }}
@@ -392,8 +449,19 @@ const AccountView = ({
                 <FaFileArchive />
               </div>
               <div
-                className={`nav-link ${activeTab === "serverConsole" ? "active" : ""}`}
-                onClick={() => setActiveTab("serverConsole")}
+                className={`nav-link ${activeTab === "receipts" ? "active" : ""}`}
+                onClick={() => setActiveTab("receipts")}
+                style={{ cursor: "pointer" }}
+                title="Receipts"
+              >
+                <FaReceipt />
+              </div>
+              <div
+                className={`nav-link ${activeTab === "serverConsole" ? "active" : ""} ${serverConsoleNeedsAttention ? "needs-attention" : ""}`}
+                onClick={() => {
+                  setActiveTab("serverConsole");
+                  onClearServerConsoleNeedsAttention();
+                }}
                 style={{ cursor: "pointer" }}
                 title="Server Console"
               >
@@ -470,6 +538,14 @@ const AccountView = ({
             <ApplicationsList showTitle={true} title="Available Applications" />
           </div>
         </div>
+      ) : activeTab === "appGeneration" ? (
+        <div className="h-full flex flex-col pr-3 overflow-y-auto">
+          <TenantAppGenerationPanel accountId={accountId} />
+        </div>
+      ) : activeTab === "contextPage" ? (
+        <div className="h-full flex flex-col pr-3 overflow-y-auto">
+          <ContextPagePanel accountId={accountId} />
+        </div>
       ) : activeTab === "generatedFiles" ? (
         <div className="h-full flex flex-col pr-3 overflow-y-auto">
           <div className="grow flex flex-col min-h-0">
@@ -481,6 +557,16 @@ const AccountView = ({
               refreshInterval={5000}
             />
           </div>
+        </div>
+      ) : activeTab === "receipts" ? (
+        <div className="h-full flex flex-col pr-3 overflow-y-auto">
+          <ReceiptTraceInspector
+            accountId={accountId}
+            initialSwarmCommandResponse={initialSwarmCommandResponse}
+            onConsumeInitialSwarmCommandResponse={
+              onConsumeInitialSwarmCommandResponse
+            }
+          />
         </div>
       ) : activeTab === "userPreferences" ? (
         <div className="h-full flex flex-col pr-3 overflow-y-auto">
@@ -525,23 +611,12 @@ const AccountView = ({
                   <LoadingSpinner label="Loading balance..." size={28} />
                 ) : (
                   <>
-                    {(() => {
-                      const rawBalance = balanceData?.currentBalance ?? 0;
-                      const effectiveBalance = Math.max(
-                        0,
-                        rawBalance - (apiMetrics.totalCost || 0),
-                      );
-                      return (
-                        <>
-                          <span>$</span>
-                          <CountUp
-                            end={effectiveBalance}
-                            duration={0.66}
-                            decimals={2}
-                          />
-                        </>
-                      );
-                    })()}
+                    <span>$</span>
+                    <CountUp
+                      end={effectiveBalance}
+                      duration={0.66}
+                      decimals={2}
+                    />
                     <VSCodeButton
                       appearance="icon"
                       className="mt-1"
@@ -575,7 +650,13 @@ const AccountView = ({
                       Finish this action: {creditIntent.actionName}
                     </div>
                     <div style={{ fontSize: "12px", marginBottom: "8px" }}>
-                      Balance ${creditIntent.currentBalance.toFixed(2)} · Need ${creditIntent.requiredCredits.toFixed(2)} · Suggested top-up ${Math.max(5, Math.ceil(creditIntent.requiredCredits)).toFixed(0)}
+                      Balance ${creditIntent.currentBalance.toFixed(2)} · Need $
+                      {creditIntent.requiredCredits.toFixed(2)} · Suggested
+                      top-up $
+                      {Math.max(
+                        5,
+                        Math.ceil(creditIntent.requiredCredits),
+                      ).toFixed(0)}
                     </div>
                     {(creditIntent.resumeUrl || creditIntent.originView) && (
                       <VSCodeButton
@@ -596,19 +677,21 @@ const AccountView = ({
                     )}
                   </div>
                 )}
-                <VSCodeButton
-                  appearance="primary"
-                  className="w-full mt-2"
-                  onClick={() => {
-                    vscode.postMessage({
-                      type: "openInBrowser",
-                      url: "https://valkyrlabs.com/buy-credits",
-                    });
-                  }}
-                  data-testid="buy-credits-btn"
-                >
-                  Buy Credits
-                </VSCodeButton>
+                {shouldShowBuyCredits && (
+                  <VSCodeButton
+                    appearance="primary"
+                    className="w-full mt-2"
+                    onClick={() => {
+                      vscode.postMessage({
+                        type: "openInBrowser",
+                        url: "https://valkyrlabs.com/buy-credits",
+                      });
+                    }}
+                    data-testid="buy-credits-btn"
+                  >
+                    Buy Credits
+                  </VSCodeButton>
+                )}
               </div>
             </div>
 

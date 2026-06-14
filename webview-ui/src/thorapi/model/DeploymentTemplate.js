@@ -35,37 +35,23 @@ const _1 = require("./");
 function DeploymentTemplateFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        cloudProvider: !(0, runtime_1.exists)(json, "cloudProvider")
-            ? undefined
-            : (0, _1.CloudProviderFromJSON)(json["cloudProvider"]),
-        cpu: !(0, runtime_1.exists)(json, "cpu") ? undefined : json["cpu"],
-        memory: !(0, runtime_1.exists)(json, "memory") ? undefined : json["memory"],
-        autoScale: !(0, runtime_1.exists)(json, "autoScale") ? undefined : json["autoScale"],
-        defaultEnvironmentVariables: !(0, runtime_1.exists)(json, "defaultEnvironmentVariables")
-            ? undefined
-            : json["defaultEnvironmentVariables"],
-        tags: !(0, runtime_1.exists)(json, "tags") ? undefined : json["tags"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'cloudProvider': !(0, runtime_1.exists)(json, 'cloudProvider') ? undefined : (0, _1.CloudProviderFromJSON)(json['cloudProvider']),
+        'cpu': !(0, runtime_1.exists)(json, 'cpu') ? undefined : json['cpu'],
+        'memory': !(0, runtime_1.exists)(json, 'memory') ? undefined : json['memory'],
+        'autoScale': !(0, runtime_1.exists)(json, 'autoScale') ? undefined : json['autoScale'],
+        'defaultEnvironmentVariables': !(0, runtime_1.exists)(json, 'defaultEnvironmentVariables') ? undefined : json['defaultEnvironmentVariables'],
+        'tags': !(0, runtime_1.exists)(json, 'tags') ? undefined : json['tags'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function DeploymentTemplateToJSON(value) {
@@ -74,15 +60,15 @@ function DeploymentTemplateToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        name: value.name,
-        description: value.description,
-        cloudProvider: (0, _1.CloudProviderToJSON)(value.cloudProvider),
-        cpu: value.cpu,
-        memory: value.memory,
-        autoScale: value.autoScale,
-        defaultEnvironmentVariables: value.defaultEnvironmentVariables,
-        tags: value.tags,
-        trashed: value.trashed,
+        'name': value.name,
+        'description': value.description,
+        'cloudProvider': (0, _1.CloudProviderToJSON)(value.cloudProvider),
+        'cpu': value.cpu,
+        'memory': value.memory,
+        'autoScale': value.autoScale,
+        'defaultEnvironmentVariables': value.defaultEnvironmentVariables,
+        'tags': value.tags,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=DeploymentTemplate.js.map

@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { SwarmSecurity } from "@thorapi/model/SwarmSecurity";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { SwarmSecurity } from '@thorapi/model/SwarmSecurity'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type SwarmSecurityResponse = SwarmSecurity[];
+type SwarmSecurityResponse = SwarmSecurity[]
+type SwarmSecurityPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<SwarmSecurity>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type SwarmSecurityListQueryArg = {
+  example?: Partial<SwarmSecurity>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toSwarmSecurityList = (result: unknown): SwarmSecurityResponse => {
   if (Array.isArray(result)) {
-    return result as SwarmSecurityResponse;
+    return result as SwarmSecurityResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as SwarmSecurityResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as SwarmSecurityResponse) : []
+}
 
 export const SwarmSecurityService = createApi({
-  reducerPath: "SwarmSecurity", // This should remain unique
+  reducerPath: 'SwarmSecurity', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["SwarmSecurity"],
+  tagTypes: ['SwarmSecurity'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSwarmSecuritysPaged: build.query<
-      SwarmSecurityResponse,
-      { page: number; size?: number; example?: Partial<SwarmSecurity> }
-    >({
+    getSwarmSecuritysPaged: build.query<SwarmSecurityResponse, SwarmSecurityPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SwarmSecurity?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SwarmSecurity?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toSwarmSecurityList(result);
+        const rows = toSwarmSecurityList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SwarmSecurity" as const, id })),
-          { type: "SwarmSecurity", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'SwarmSecurity' as const, id })),
+          { type: 'SwarmSecurity', id: `PAGE_${page}` },
+          { type: 'SwarmSecurity', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSwarmSecuritys: build.query<
-      SwarmSecurityResponse,
-      { example?: Partial<SwarmSecurity> } | void
-    >({
+    getSwarmSecuritys: build.query<SwarmSecurityResponse, SwarmSecurityListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const SwarmSecurityService = createApi({
         return `SwarmSecurity`;
       },
       providesTags: (result) => {
-        const rows = toSwarmSecurityList(result);
+        const rows = toSwarmSecurityList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SwarmSecurity" as const, id })),
-          { type: "SwarmSecurity", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'SwarmSecurity' as const, id })),
+          { type: 'SwarmSecurity', id: 'LIST' },
+          { type: 'SwarmSecurity', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,89 +97,71 @@ export const SwarmSecurityService = createApi({
     addSwarmSecurity: build.mutation<SwarmSecurity, Partial<SwarmSecurity>>({
       query: (body) => ({
         url: `SwarmSecurity`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "SwarmSecurity", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'SwarmSecurity', id: 'LIST' },
+        { type: 'SwarmSecurity', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getSwarmSecurity: build.query<SwarmSecurity, string>({
       query: (id) => `SwarmSecurity/${id}`,
-      providesTags: (result, error, id) => [{ type: "SwarmSecurity", id }],
+      providesTags: (result, error, id) => [{ type: 'SwarmSecurity', id }],
     }),
 
     // 5) Update
-    updateSwarmSecurity: build.mutation<
-      void,
-      Pick<SwarmSecurity, "id"> & Partial<SwarmSecurity>
-    >({
+    updateSwarmSecurity: build.mutation<SwarmSecurity, Pick<SwarmSecurity, 'id'> & Partial<SwarmSecurity>>({
       query: ({ id, ...patch }) => ({
         url: `SwarmSecurity/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            SwarmSecurityService.util.updateQueryData(
-              "getSwarmSecurity",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<SwarmSecurity, "id">) => [
-        { type: "SwarmSecurity", id },
-        { type: "SwarmSecurity", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<SwarmSecurity, 'id'>) => [
+        { type: 'SwarmSecurity', id },
+        { type: 'SwarmSecurity', id: 'LIST' },
+        { type: 'SwarmSecurity', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteSwarmSecurity: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteSwarmSecurity: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `SwarmSecurity/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "SwarmSecurity", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'SwarmSecurity', id },
+        { type: 'SwarmSecurity', id: 'LIST' },
+        { type: 'SwarmSecurity', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSwarmSecurityCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteSwarmSecurityCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `SwarmSecurity/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "SwarmSecurity", id },
-        { type: "SwarmSecurity", id: "LIST" },
+        { type: 'SwarmSecurity', id },
+        { type: 'SwarmSecurity', id: 'LIST' },
+        { type: 'SwarmSecurity', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetSwarmSecuritysPagedQuery`
 export const {
-  useGetSwarmSecuritysPagedQuery, // immediate fetch
+  useGetSwarmSecuritysPagedQuery,     // immediate fetch
   useLazyGetSwarmSecuritysPagedQuery, // lazy fetch
   useGetSwarmSecurityQuery,
   useGetSwarmSecuritysQuery,
@@ -177,4 +169,4 @@ export const {
   useUpdateSwarmSecurityMutation,
   useDeleteSwarmSecurityMutation,
   useDeleteSwarmSecurityCascadeMutation,
-} = SwarmSecurityService;
+} = SwarmSecurityService

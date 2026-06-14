@@ -18,431 +18,359 @@ Template file: typescript-redux-query/apis.mustache
 Description: FileDownloadTokenApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import {
-  FileDownloadToken,
-  FileDownloadTokenFromJSON,
-  FileDownloadTokenToJSON,
-} from "../model";
+    FileDownloadToken,
+    FileDownloadTokenFromJSON,
+    FileDownloadTokenToJSON,
+} from '../model';
 
 export interface DeleteFileDownloadTokenApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetFileDownloadTokenApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetFileDownloadTokenListApiRequest {
-  page?: number;
-  size?: number;
-  sort?: Array<string>;
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
+    example?: string;
 }
 
 export interface PatchFileDownloadTokenByIdApiRequest {
-  id: string;
-  fileDownloadToken: FileDownloadToken;
+    id: string;
+    fileDownloadToken: FileDownloadToken;
 }
 
 export interface PostFileDownloadTokenApiRequest {
-  fileDownloadToken: FileDownloadToken;
+    fileDownloadToken: FileDownloadToken;
 }
 
 export interface UpdateFileDownloadTokenApiRequest {
-  id: string;
-  fileDownloadToken: FileDownloadToken;
+    id: string;
+    fileDownloadToken: FileDownloadToken;
 }
+
 
 /**
  * Deletes a specific FileDownloadToken.
  * Delete a FileDownloadToken.
  */
-function deleteFileDownloadTokenRaw<T>(
-  requestParameters: DeleteFileDownloadTokenApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteFileDownloadToken.",
-    );
-  }
+function deleteFileDownloadTokenRaw<T>(requestParameters: DeleteFileDownloadTokenApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteFileDownloadToken.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/FileDownloadToken/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/FileDownloadToken/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific FileDownloadToken.
- * Delete a FileDownloadToken.
- */
-export function deleteFileDownloadToken<T>(
-  requestParameters: DeleteFileDownloadTokenApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteFileDownloadTokenRaw(requestParameters, requestConfig);
+* Deletes a specific FileDownloadToken.
+* Delete a FileDownloadToken.
+*/
+export function deleteFileDownloadToken<T>(requestParameters: DeleteFileDownloadTokenApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteFileDownloadTokenRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single FileDownloadToken for a specific uid.
  * Retrieve a single FileDownloadToken
  */
-function getFileDownloadTokenRaw<T>(
-  requestParameters: GetFileDownloadTokenApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, FileDownloadToken> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getFileDownloadToken.",
-    );
-  }
+function getFileDownloadTokenRaw<T>(requestParameters: GetFileDownloadTokenApiRequest, requestConfig: runtime.TypedQueryConfig<T, FileDownloadToken> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getFileDownloadToken.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/FileDownloadToken/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(FileDownloadTokenFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/FileDownloadToken/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(FileDownloadTokenFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single FileDownloadToken for a specific uid.
- * Retrieve a single FileDownloadToken
- */
-export function getFileDownloadToken<T>(
-  requestParameters: GetFileDownloadTokenApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, FileDownloadToken>,
-): QueryConfig<T> {
-  return getFileDownloadTokenRaw(requestParameters, requestConfig);
+* Retrieves a single FileDownloadToken for a specific uid.
+* Retrieve a single FileDownloadToken
+*/
+export function getFileDownloadToken<T>(requestParameters: GetFileDownloadTokenApiRequest, requestConfig?: runtime.TypedQueryConfig<T, FileDownloadToken>): QueryConfig<T> {
+    return getFileDownloadTokenRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of FileDownloadTokens.
  * Retrieve a list of FileDownloadTokens
  */
-function getFileDownloadTokenListRaw<T>(
-  requestParameters: GetFileDownloadTokenListApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Array<FileDownloadToken>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getFileDownloadTokenListRaw<T>(requestParameters: GetFileDownloadTokenListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<FileDownloadToken>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  queryParameters = {};
+    queryParameters = {};
 
-  if (requestParameters.page !== undefined) {
-    queryParameters["page"] = requestParameters.page;
-  }
 
-  if (requestParameters.size !== undefined) {
-    queryParameters["size"] = requestParameters.size;
-  }
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  if (requestParameters.sort) {
-    queryParameters["sort"] = requestParameters.sort;
-  }
 
-  const headerParameters: runtime.HttpHeaders = {};
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/FileDownloadToken`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(FileDownloadTokenFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.example !== undefined) {
+        queryParameters['example'] = requestParameters.example;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/FileDownloadToken`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(FileDownloadTokenFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of FileDownloadTokens.
- * Retrieve a list of FileDownloadTokens
- */
-export function getFileDownloadTokenList<T>(
-  requestParameters: GetFileDownloadTokenListApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Array<FileDownloadToken>>,
-): QueryConfig<T> {
-  return getFileDownloadTokenListRaw(requestParameters, requestConfig);
-}
-
-/**
- * Updates an existing FileDownloadToken.
- * Partially update an existing FileDownloadToken
- */
-function patchFileDownloadTokenByIdRaw<T>(
-  requestParameters: PatchFileDownloadTokenByIdApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, FileDownloadToken> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling patchFileDownloadTokenById.",
-    );
-  }
-
-  if (
-    requestParameters.fileDownloadToken === null ||
-    requestParameters.fileDownloadToken === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "fileDownloadToken",
-      "Required parameter requestParameters.fileDownloadToken was null or undefined when calling patchFileDownloadTokenById.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/merge-patch+json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/FileDownloadToken/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PATCH",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      FileDownloadTokenToJSON(requestParameters.fileDownloadToken),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(FileDownloadTokenFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of FileDownloadTokens.
+* Retrieve a list of FileDownloadTokens
+*/
+export function getFileDownloadTokenList<T>(requestParameters: GetFileDownloadTokenListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<FileDownloadToken>>): QueryConfig<T> {
+    return getFileDownloadTokenListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing FileDownloadToken.
  * Partially update an existing FileDownloadToken
  */
-export function patchFileDownloadTokenById<T>(
-  requestParameters: PatchFileDownloadTokenByIdApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, FileDownloadToken>,
-): QueryConfig<T> {
-  return patchFileDownloadTokenByIdRaw(requestParameters, requestConfig);
+function patchFileDownloadTokenByIdRaw<T>(requestParameters: PatchFileDownloadTokenByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, FileDownloadToken> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchFileDownloadTokenById.');
+    }
+
+    if (requestParameters.fileDownloadToken === null || requestParameters.fileDownloadToken === undefined) {
+        throw new runtime.RequiredError('fileDownloadToken','Required parameter requestParameters.fileDownloadToken was null or undefined when calling patchFileDownloadTokenById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/FileDownloadToken/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || FileDownloadTokenToJSON(requestParameters.fileDownloadToken),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(FileDownloadTokenFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing FileDownloadToken.
+* Partially update an existing FileDownloadToken
+*/
+export function patchFileDownloadTokenById<T>(requestParameters: PatchFileDownloadTokenByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, FileDownloadToken>): QueryConfig<T> {
+    return patchFileDownloadTokenByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new FileDownloadToken.
  * Create a new FileDownloadToken
  */
-function postFileDownloadTokenRaw<T>(
-  requestParameters: PostFileDownloadTokenApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, FileDownloadToken> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.fileDownloadToken === null ||
-    requestParameters.fileDownloadToken === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "fileDownloadToken",
-      "Required parameter requestParameters.fileDownloadToken was null or undefined when calling postFileDownloadToken.",
-    );
-  }
+function postFileDownloadTokenRaw<T>(requestParameters: PostFileDownloadTokenApiRequest, requestConfig: runtime.TypedQueryConfig<T, FileDownloadToken> = {}): QueryConfig<T> {
+    if (requestParameters.fileDownloadToken === null || requestParameters.fileDownloadToken === undefined) {
+        throw new runtime.RequiredError('fileDownloadToken','Required parameter requestParameters.fileDownloadToken was null or undefined when calling postFileDownloadToken.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/FileDownloadToken`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      FileDownloadTokenToJSON(requestParameters.fileDownloadToken),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(FileDownloadTokenFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/FileDownloadToken`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || FileDownloadTokenToJSON(requestParameters.fileDownloadToken),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(FileDownloadTokenFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Creates a new FileDownloadToken.
- * Create a new FileDownloadToken
- */
-export function postFileDownloadToken<T>(
-  requestParameters: PostFileDownloadTokenApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, FileDownloadToken>,
-): QueryConfig<T> {
-  return postFileDownloadTokenRaw(requestParameters, requestConfig);
+* Creates a new FileDownloadToken.
+* Create a new FileDownloadToken
+*/
+export function postFileDownloadToken<T>(requestParameters: PostFileDownloadTokenApiRequest, requestConfig?: runtime.TypedQueryConfig<T, FileDownloadToken>): QueryConfig<T> {
+    return postFileDownloadTokenRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing FileDownloadToken.
  * Update an existing FileDownloadToken
  */
-function updateFileDownloadTokenRaw<T>(
-  requestParameters: UpdateFileDownloadTokenApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, FileDownloadToken> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateFileDownloadToken.",
-    );
-  }
+function updateFileDownloadTokenRaw<T>(requestParameters: UpdateFileDownloadTokenApiRequest, requestConfig: runtime.TypedQueryConfig<T, FileDownloadToken> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateFileDownloadToken.');
+    }
 
-  if (
-    requestParameters.fileDownloadToken === null ||
-    requestParameters.fileDownloadToken === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "fileDownloadToken",
-      "Required parameter requestParameters.fileDownloadToken was null or undefined when calling updateFileDownloadToken.",
-    );
-  }
+    if (requestParameters.fileDownloadToken === null || requestParameters.fileDownloadToken === undefined) {
+        throw new runtime.RequiredError('fileDownloadToken','Required parameter requestParameters.fileDownloadToken was null or undefined when calling updateFileDownloadToken.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/FileDownloadToken/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      FileDownloadTokenToJSON(requestParameters.fileDownloadToken),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(FileDownloadTokenFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/FileDownloadToken/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || FileDownloadTokenToJSON(requestParameters.fileDownloadToken),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(FileDownloadTokenFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing FileDownloadToken.
- * Update an existing FileDownloadToken
- */
-export function updateFileDownloadToken<T>(
-  requestParameters: UpdateFileDownloadTokenApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, FileDownloadToken>,
-): QueryConfig<T> {
-  return updateFileDownloadTokenRaw(requestParameters, requestConfig);
+* Updates an existing FileDownloadToken.
+* Update an existing FileDownloadToken
+*/
+export function updateFileDownloadToken<T>(requestParameters: UpdateFileDownloadTokenApiRequest, requestConfig?: runtime.TypedQueryConfig<T, FileDownloadToken>): QueryConfig<T> {
+    return updateFileDownloadTokenRaw(requestParameters, requestConfig);
 }
+

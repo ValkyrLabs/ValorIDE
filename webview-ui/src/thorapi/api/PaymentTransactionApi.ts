@@ -18,431 +18,359 @@ Template file: typescript-redux-query/apis.mustache
 Description: PaymentTransactionApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import {
-  PaymentTransaction,
-  PaymentTransactionFromJSON,
-  PaymentTransactionToJSON,
-} from "../model";
+    PaymentTransaction,
+    PaymentTransactionFromJSON,
+    PaymentTransactionToJSON,
+} from '../model';
 
 export interface DeletePaymentTransactionApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetPaymentTransactionApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetPaymentTransactionListApiRequest {
-  page?: number;
-  size?: number;
-  sort?: Array<string>;
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
+    example?: string;
 }
 
 export interface PatchPaymentTransactionByIdApiRequest {
-  id: string;
-  paymentTransaction: PaymentTransaction;
+    id: string;
+    paymentTransaction: PaymentTransaction;
 }
 
 export interface PostPaymentTransactionApiRequest {
-  paymentTransaction: PaymentTransaction;
+    paymentTransaction: PaymentTransaction;
 }
 
 export interface UpdatePaymentTransactionApiRequest {
-  id: string;
-  paymentTransaction: PaymentTransaction;
+    id: string;
+    paymentTransaction: PaymentTransaction;
 }
+
 
 /**
  * Deletes a specific PaymentTransaction.
  * Delete a PaymentTransaction.
  */
-function deletePaymentTransactionRaw<T>(
-  requestParameters: DeletePaymentTransactionApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deletePaymentTransaction.",
-    );
-  }
+function deletePaymentTransactionRaw<T>(requestParameters: DeletePaymentTransactionApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deletePaymentTransaction.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/PaymentTransaction/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/PaymentTransaction/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific PaymentTransaction.
- * Delete a PaymentTransaction.
- */
-export function deletePaymentTransaction<T>(
-  requestParameters: DeletePaymentTransactionApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deletePaymentTransactionRaw(requestParameters, requestConfig);
+* Deletes a specific PaymentTransaction.
+* Delete a PaymentTransaction.
+*/
+export function deletePaymentTransaction<T>(requestParameters: DeletePaymentTransactionApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deletePaymentTransactionRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single PaymentTransaction for a specific uid.
  * Retrieve a single PaymentTransaction
  */
-function getPaymentTransactionRaw<T>(
-  requestParameters: GetPaymentTransactionApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, PaymentTransaction> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getPaymentTransaction.",
-    );
-  }
+function getPaymentTransactionRaw<T>(requestParameters: GetPaymentTransactionApiRequest, requestConfig: runtime.TypedQueryConfig<T, PaymentTransaction> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getPaymentTransaction.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/PaymentTransaction/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(PaymentTransactionFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/PaymentTransaction/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(PaymentTransactionFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single PaymentTransaction for a specific uid.
- * Retrieve a single PaymentTransaction
- */
-export function getPaymentTransaction<T>(
-  requestParameters: GetPaymentTransactionApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, PaymentTransaction>,
-): QueryConfig<T> {
-  return getPaymentTransactionRaw(requestParameters, requestConfig);
+* Retrieves a single PaymentTransaction for a specific uid.
+* Retrieve a single PaymentTransaction
+*/
+export function getPaymentTransaction<T>(requestParameters: GetPaymentTransactionApiRequest, requestConfig?: runtime.TypedQueryConfig<T, PaymentTransaction>): QueryConfig<T> {
+    return getPaymentTransactionRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of PaymentTransactions.
  * Retrieve a list of PaymentTransactions
  */
-function getPaymentTransactionListRaw<T>(
-  requestParameters: GetPaymentTransactionListApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Array<PaymentTransaction>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getPaymentTransactionListRaw<T>(requestParameters: GetPaymentTransactionListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<PaymentTransaction>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  queryParameters = {};
+    queryParameters = {};
 
-  if (requestParameters.page !== undefined) {
-    queryParameters["page"] = requestParameters.page;
-  }
 
-  if (requestParameters.size !== undefined) {
-    queryParameters["size"] = requestParameters.size;
-  }
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  if (requestParameters.sort) {
-    queryParameters["sort"] = requestParameters.sort;
-  }
 
-  const headerParameters: runtime.HttpHeaders = {};
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/PaymentTransaction`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(PaymentTransactionFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.example !== undefined) {
+        queryParameters['example'] = requestParameters.example;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/PaymentTransaction`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(PaymentTransactionFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of PaymentTransactions.
- * Retrieve a list of PaymentTransactions
- */
-export function getPaymentTransactionList<T>(
-  requestParameters: GetPaymentTransactionListApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Array<PaymentTransaction>>,
-): QueryConfig<T> {
-  return getPaymentTransactionListRaw(requestParameters, requestConfig);
-}
-
-/**
- * Updates an existing PaymentTransaction.
- * Partially update an existing PaymentTransaction
- */
-function patchPaymentTransactionByIdRaw<T>(
-  requestParameters: PatchPaymentTransactionByIdApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, PaymentTransaction> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling patchPaymentTransactionById.",
-    );
-  }
-
-  if (
-    requestParameters.paymentTransaction === null ||
-    requestParameters.paymentTransaction === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "paymentTransaction",
-      "Required parameter requestParameters.paymentTransaction was null or undefined when calling patchPaymentTransactionById.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/merge-patch+json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/PaymentTransaction/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PATCH",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      PaymentTransactionToJSON(requestParameters.paymentTransaction),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(PaymentTransactionFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of PaymentTransactions.
+* Retrieve a list of PaymentTransactions
+*/
+export function getPaymentTransactionList<T>(requestParameters: GetPaymentTransactionListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<PaymentTransaction>>): QueryConfig<T> {
+    return getPaymentTransactionListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing PaymentTransaction.
  * Partially update an existing PaymentTransaction
  */
-export function patchPaymentTransactionById<T>(
-  requestParameters: PatchPaymentTransactionByIdApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, PaymentTransaction>,
-): QueryConfig<T> {
-  return patchPaymentTransactionByIdRaw(requestParameters, requestConfig);
+function patchPaymentTransactionByIdRaw<T>(requestParameters: PatchPaymentTransactionByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, PaymentTransaction> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchPaymentTransactionById.');
+    }
+
+    if (requestParameters.paymentTransaction === null || requestParameters.paymentTransaction === undefined) {
+        throw new runtime.RequiredError('paymentTransaction','Required parameter requestParameters.paymentTransaction was null or undefined when calling patchPaymentTransactionById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/PaymentTransaction/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || PaymentTransactionToJSON(requestParameters.paymentTransaction),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(PaymentTransactionFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing PaymentTransaction.
+* Partially update an existing PaymentTransaction
+*/
+export function patchPaymentTransactionById<T>(requestParameters: PatchPaymentTransactionByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, PaymentTransaction>): QueryConfig<T> {
+    return patchPaymentTransactionByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new PaymentTransaction.
  * Create a new PaymentTransaction
  */
-function postPaymentTransactionRaw<T>(
-  requestParameters: PostPaymentTransactionApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, PaymentTransaction> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.paymentTransaction === null ||
-    requestParameters.paymentTransaction === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "paymentTransaction",
-      "Required parameter requestParameters.paymentTransaction was null or undefined when calling postPaymentTransaction.",
-    );
-  }
+function postPaymentTransactionRaw<T>(requestParameters: PostPaymentTransactionApiRequest, requestConfig: runtime.TypedQueryConfig<T, PaymentTransaction> = {}): QueryConfig<T> {
+    if (requestParameters.paymentTransaction === null || requestParameters.paymentTransaction === undefined) {
+        throw new runtime.RequiredError('paymentTransaction','Required parameter requestParameters.paymentTransaction was null or undefined when calling postPaymentTransaction.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/PaymentTransaction`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      PaymentTransactionToJSON(requestParameters.paymentTransaction),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(PaymentTransactionFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/PaymentTransaction`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || PaymentTransactionToJSON(requestParameters.paymentTransaction),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(PaymentTransactionFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Creates a new PaymentTransaction.
- * Create a new PaymentTransaction
- */
-export function postPaymentTransaction<T>(
-  requestParameters: PostPaymentTransactionApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, PaymentTransaction>,
-): QueryConfig<T> {
-  return postPaymentTransactionRaw(requestParameters, requestConfig);
+* Creates a new PaymentTransaction.
+* Create a new PaymentTransaction
+*/
+export function postPaymentTransaction<T>(requestParameters: PostPaymentTransactionApiRequest, requestConfig?: runtime.TypedQueryConfig<T, PaymentTransaction>): QueryConfig<T> {
+    return postPaymentTransactionRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing PaymentTransaction.
  * Update an existing PaymentTransaction
  */
-function updatePaymentTransactionRaw<T>(
-  requestParameters: UpdatePaymentTransactionApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, PaymentTransaction> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updatePaymentTransaction.",
-    );
-  }
+function updatePaymentTransactionRaw<T>(requestParameters: UpdatePaymentTransactionApiRequest, requestConfig: runtime.TypedQueryConfig<T, PaymentTransaction> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updatePaymentTransaction.');
+    }
 
-  if (
-    requestParameters.paymentTransaction === null ||
-    requestParameters.paymentTransaction === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "paymentTransaction",
-      "Required parameter requestParameters.paymentTransaction was null or undefined when calling updatePaymentTransaction.",
-    );
-  }
+    if (requestParameters.paymentTransaction === null || requestParameters.paymentTransaction === undefined) {
+        throw new runtime.RequiredError('paymentTransaction','Required parameter requestParameters.paymentTransaction was null or undefined when calling updatePaymentTransaction.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/PaymentTransaction/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      PaymentTransactionToJSON(requestParameters.paymentTransaction),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(PaymentTransactionFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/PaymentTransaction/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || PaymentTransactionToJSON(requestParameters.paymentTransaction),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(PaymentTransactionFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing PaymentTransaction.
- * Update an existing PaymentTransaction
- */
-export function updatePaymentTransaction<T>(
-  requestParameters: UpdatePaymentTransactionApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, PaymentTransaction>,
-): QueryConfig<T> {
-  return updatePaymentTransactionRaw(requestParameters, requestConfig);
+* Updates an existing PaymentTransaction.
+* Update an existing PaymentTransaction
+*/
+export function updatePaymentTransaction<T>(requestParameters: UpdatePaymentTransactionApiRequest, requestConfig?: runtime.TypedQueryConfig<T, PaymentTransaction>): QueryConfig<T> {
+    return updatePaymentTransactionRaw(requestParameters, requestConfig);
 }
+

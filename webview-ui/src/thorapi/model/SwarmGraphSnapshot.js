@@ -35,31 +35,17 @@ const _1 = require("./");
 function SwarmGraphSnapshotFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        nodes: !(0, runtime_1.exists)(json, "nodes")
-            ? undefined
-            : json["nodes"].map(_1.SwarmGraphNodeFromJSON),
-        edges: !(0, runtime_1.exists)(json, "edges")
-            ? undefined
-            : json["edges"].map(_1.SwarmGraphEdgeFromJSON),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'nodes': !(0, runtime_1.exists)(json, 'nodes') ? undefined : json['nodes'].map(_1.SwarmGraphNodeFromJSON),
+        'edges': !(0, runtime_1.exists)(json, 'edges') ? undefined : json['edges'].map(_1.SwarmGraphEdgeFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function SwarmGraphSnapshotToJSON(value) {
@@ -68,13 +54,9 @@ function SwarmGraphSnapshotToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        nodes: value.nodes === undefined
-            ? undefined
-            : value.nodes.map(_1.SwarmGraphNodeToJSON),
-        edges: value.edges === undefined
-            ? undefined
-            : value.edges.map(_1.SwarmGraphEdgeToJSON),
-        trashed: value.trashed,
+        'nodes': value.nodes === undefined ? undefined : value.nodes.map(_1.SwarmGraphNodeToJSON),
+        'edges': value.edges === undefined ? undefined : value.edges.map(_1.SwarmGraphEdgeToJSON),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=SwarmGraphSnapshot.js.map

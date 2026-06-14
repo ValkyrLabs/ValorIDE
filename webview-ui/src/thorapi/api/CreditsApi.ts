@@ -18,398 +18,613 @@ Template file: typescript-redux-query/apis.mustache
 Description: CreditsApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import {
-  AccountBalance,
-  AccountBalanceFromJSON,
-  AccountBalanceToJSON,
-  BalanceResponse,
-  BalanceResponseFromJSON,
-  BalanceResponseToJSON,
-  CreditBalanceSummary,
-  CreditBalanceSummaryFromJSON,
-  CreditBalanceSummaryToJSON,
-  PaymentTransaction,
-  PaymentTransactionFromJSON,
-  PaymentTransactionToJSON,
-  UsageTransaction,
-  UsageTransactionFromJSON,
-  UsageTransactionToJSON,
-} from "../model";
+    AccountBalance,
+    AccountBalanceFromJSON,
+    AccountBalanceToJSON,
+    BalanceResponse,
+    BalanceResponseFromJSON,
+    BalanceResponseToJSON,
+    CreditBalanceSummary,
+    CreditBalanceSummaryFromJSON,
+    CreditBalanceSummaryToJSON,
+    CreditDebitReceipt,
+    CreditDebitReceiptFromJSON,
+    CreditDebitReceiptToJSON,
+    CreditReservation,
+    CreditReservationFromJSON,
+    CreditReservationToJSON,
+    PaymentTransaction,
+    PaymentTransactionFromJSON,
+    PaymentTransactionToJSON,
+    UsageTransaction,
+    UsageTransactionFromJSON,
+    UsageTransactionToJSON,
+} from '../model';
+
+export interface DebitCreditReservationApiRequest {
+    accountId: string;
+    reservationRef: string;
+    idempotencyKey: string;
+    creditDebitReceipt: CreditDebitReceipt;
+}
+
+export interface GetCreditDebitReceiptByReceiptRefApiRequest {
+    accountId: string;
+    receiptRef: string;
+}
 
 export interface GetCreditsAccountBalanceApiRequest {
-  accountId: string;
+    accountId: string;
 }
 
 export interface GetCreditsAccountBalanceSummaryApiRequest {
-  accountId: string;
+    accountId: string;
+}
+
+export interface ListCreditDebitReceiptsApiRequest {
+    accountId: string;
 }
 
 export interface RecordCreditsPaymentTransactionApiRequest {
-  accountId: string;
-  idempotencyKey: string;
-  paymentTransaction: PaymentTransaction;
+    accountId: string;
+    idempotencyKey: string;
+    paymentTransaction: PaymentTransaction;
 }
 
 export interface RecordCreditsUsageTransactionApiRequest {
-  accountId: string;
-  idempotencyKey: string;
-  usageTransaction: UsageTransaction;
+    accountId: string;
+    idempotencyKey: string;
+    usageTransaction: UsageTransaction;
+}
+
+export interface ReleaseCreditReservationApiRequest {
+    accountId: string;
+    reservationRef: string;
+    idempotencyKey: string;
+    creditReservation?: CreditReservation;
+}
+
+export interface ReserveCreditsApiRequest {
+    accountId: string;
+    idempotencyKey: string;
+    creditReservation: CreditReservation;
+}
+
+
+/**
+ * Debit credits for a successful billable milestone
+ */
+function debitCreditReservationRaw<T>(requestParameters: DebitCreditReservationApiRequest, requestConfig: runtime.TypedQueryConfig<T, CreditDebitReceipt> = {}): QueryConfig<T> {
+    if (requestParameters.accountId === null || requestParameters.accountId === undefined) {
+        throw new runtime.RequiredError('accountId','Required parameter requestParameters.accountId was null or undefined when calling debitCreditReservation.');
+    }
+
+    if (requestParameters.reservationRef === null || requestParameters.reservationRef === undefined) {
+        throw new runtime.RequiredError('reservationRef','Required parameter requestParameters.reservationRef was null or undefined when calling debitCreditReservation.');
+    }
+
+    if (requestParameters.idempotencyKey === null || requestParameters.idempotencyKey === undefined) {
+        throw new runtime.RequiredError('idempotencyKey','Required parameter requestParameters.idempotencyKey was null or undefined when calling debitCreditReservation.');
+    }
+
+    if (requestParameters.creditDebitReceipt === null || requestParameters.creditDebitReceipt === undefined) {
+        throw new runtime.RequiredError('creditDebitReceipt','Required parameter requestParameters.creditDebitReceipt was null or undefined when calling debitCreditReservation.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    if (requestParameters.idempotencyKey !== undefined && requestParameters.idempotencyKey !== null) {
+        headerParameters['Idempotency-Key'] = String(requestParameters.idempotencyKey);
+    }
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/credits/{accountId}/credit_reservations/{reservationRef}/debit`.replace(`{${"accountId"}}`, encodeURIComponent(String(requestParameters.accountId))).replace(`{${"reservationRef"}}`, encodeURIComponent(String(requestParameters.reservationRef))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || CreditDebitReceiptToJSON(requestParameters.creditDebitReceipt),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(CreditDebitReceiptFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Debit credits for a successful billable milestone
+*/
+export function debitCreditReservation<T>(requestParameters: DebitCreditReservationApiRequest, requestConfig?: runtime.TypedQueryConfig<T, CreditDebitReceipt>): QueryConfig<T> {
+    return debitCreditReservationRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Get an account-scoped credit debit receipt
+ */
+function getCreditDebitReceiptByReceiptRefRaw<T>(requestParameters: GetCreditDebitReceiptByReceiptRefApiRequest, requestConfig: runtime.TypedQueryConfig<T, CreditDebitReceipt> = {}): QueryConfig<T> {
+    if (requestParameters.accountId === null || requestParameters.accountId === undefined) {
+        throw new runtime.RequiredError('accountId','Required parameter requestParameters.accountId was null or undefined when calling getCreditDebitReceiptByReceiptRef.');
+    }
+
+    if (requestParameters.receiptRef === null || requestParameters.receiptRef === undefined) {
+        throw new runtime.RequiredError('receiptRef','Required parameter requestParameters.receiptRef was null or undefined when calling getCreditDebitReceiptByReceiptRef.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/credits/{accountId}/credit_debit_receipts/{receiptRef}`.replace(`{${"accountId"}}`, encodeURIComponent(String(requestParameters.accountId))).replace(`{${"receiptRef"}}`, encodeURIComponent(String(requestParameters.receiptRef))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(CreditDebitReceiptFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Get an account-scoped credit debit receipt
+*/
+export function getCreditDebitReceiptByReceiptRef<T>(requestParameters: GetCreditDebitReceiptByReceiptRefApiRequest, requestConfig?: runtime.TypedQueryConfig<T, CreditDebitReceipt>): QueryConfig<T> {
+    return getCreditDebitReceiptByReceiptRefRaw(requestParameters, requestConfig);
 }
 
 /**
  * Get current credit balance and transaction history
  */
-function getCreditsAccountBalanceRaw<T>(
-  requestParameters: GetCreditsAccountBalanceApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, AccountBalance> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.accountId === null ||
-    requestParameters.accountId === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "accountId",
-      "Required parameter requestParameters.accountId was null or undefined when calling getCreditsAccountBalance.",
-    );
-  }
+function getCreditsAccountBalanceRaw<T>(requestParameters: GetCreditsAccountBalanceApiRequest, requestConfig: runtime.TypedQueryConfig<T, AccountBalance> = {}): QueryConfig<T> {
+    if (requestParameters.accountId === null || requestParameters.accountId === undefined) {
+        throw new runtime.RequiredError('accountId','Required parameter requestParameters.accountId was null or undefined when calling getCreditsAccountBalance.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/credits/{accountId}/balance`.replace(
-      `{${"accountId"}}`,
-      encodeURIComponent(String(requestParameters.accountId)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(AccountBalanceFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/credits/{accountId}/balance`.replace(`{${"accountId"}}`, encodeURIComponent(String(requestParameters.accountId))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(AccountBalanceFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Get current credit balance and transaction history
- */
-export function getCreditsAccountBalance<T>(
-  requestParameters: GetCreditsAccountBalanceApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, AccountBalance>,
-): QueryConfig<T> {
-  return getCreditsAccountBalanceRaw(requestParameters, requestConfig);
+* Get current credit balance and transaction history
+*/
+export function getCreditsAccountBalance<T>(requestParameters: GetCreditsAccountBalanceApiRequest, requestConfig?: runtime.TypedQueryConfig<T, AccountBalance>): QueryConfig<T> {
+    return getCreditsAccountBalanceRaw(requestParameters, requestConfig);
 }
 
 /**
  * Get current credit balance summary
  */
-function getCreditsAccountBalanceSummaryRaw<T>(
-  requestParameters: GetCreditsAccountBalanceSummaryApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, CreditBalanceSummary> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.accountId === null ||
-    requestParameters.accountId === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "accountId",
-      "Required parameter requestParameters.accountId was null or undefined when calling getCreditsAccountBalanceSummary.",
-    );
-  }
+function getCreditsAccountBalanceSummaryRaw<T>(requestParameters: GetCreditsAccountBalanceSummaryApiRequest, requestConfig: runtime.TypedQueryConfig<T, CreditBalanceSummary> = {}): QueryConfig<T> {
+    if (requestParameters.accountId === null || requestParameters.accountId === undefined) {
+        throw new runtime.RequiredError('accountId','Required parameter requestParameters.accountId was null or undefined when calling getCreditsAccountBalanceSummary.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/credits/{accountId}/balance/summary`.replace(
-      `{${"accountId"}}`,
-      encodeURIComponent(String(requestParameters.accountId)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(CreditBalanceSummaryFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/credits/{accountId}/balance/summary`.replace(`{${"accountId"}}`, encodeURIComponent(String(requestParameters.accountId))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(CreditBalanceSummaryFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Get current credit balance summary
- */
-export function getCreditsAccountBalanceSummary<T>(
-  requestParameters: GetCreditsAccountBalanceSummaryApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, CreditBalanceSummary>,
-): QueryConfig<T> {
-  return getCreditsAccountBalanceSummaryRaw(requestParameters, requestConfig);
+* Get current credit balance summary
+*/
+export function getCreditsAccountBalanceSummary<T>(requestParameters: GetCreditsAccountBalanceSummaryApiRequest, requestConfig?: runtime.TypedQueryConfig<T, CreditBalanceSummary>): QueryConfig<T> {
+    return getCreditsAccountBalanceSummaryRaw(requestParameters, requestConfig);
 }
 
 /**
  * Get current credit balance summary for the authenticated account
  */
-function getMyCreditsAccountBalanceSummaryRaw<T>(
-  requestConfig: runtime.TypedQueryConfig<T, CreditBalanceSummary> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getMyCreditsAccountBalanceSummaryRaw<T>( requestConfig: runtime.TypedQueryConfig<T, CreditBalanceSummary> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/credits/me/balance/summary`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(CreditBalanceSummaryFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/credits/me/balance/summary`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(CreditBalanceSummaryFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Get current credit balance summary for the authenticated account
- */
-export function getMyCreditsAccountBalanceSummary<T>(
-  requestConfig?: runtime.TypedQueryConfig<T, CreditBalanceSummary>,
-): QueryConfig<T> {
-  return getMyCreditsAccountBalanceSummaryRaw(requestConfig);
+* Get current credit balance summary for the authenticated account
+*/
+export function getMyCreditsAccountBalanceSummary<T>( requestConfig?: runtime.TypedQueryConfig<T, CreditBalanceSummary>): QueryConfig<T> {
+    return getMyCreditsAccountBalanceSummaryRaw( requestConfig);
 }
 
 /**
- * Record payment transaction (credit top-up)
+ * List credit debit receipts for an account
  */
-function recordCreditsPaymentTransactionRaw<T>(
-  requestParameters: RecordCreditsPaymentTransactionApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, BalanceResponse> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.accountId === null ||
-    requestParameters.accountId === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "accountId",
-      "Required parameter requestParameters.accountId was null or undefined when calling recordCreditsPaymentTransaction.",
-    );
-  }
+function listCreditDebitReceiptsRaw<T>(requestParameters: ListCreditDebitReceiptsApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<CreditDebitReceipt>> = {}): QueryConfig<T> {
+    if (requestParameters.accountId === null || requestParameters.accountId === undefined) {
+        throw new runtime.RequiredError('accountId','Required parameter requestParameters.accountId was null or undefined when calling listCreditDebitReceipts.');
+    }
 
-  if (
-    requestParameters.idempotencyKey === null ||
-    requestParameters.idempotencyKey === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "idempotencyKey",
-      "Required parameter requestParameters.idempotencyKey was null or undefined when calling recordCreditsPaymentTransaction.",
-    );
-  }
+    let queryParameters = null;
 
-  if (
-    requestParameters.paymentTransaction === null ||
-    requestParameters.paymentTransaction === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "paymentTransaction",
-      "Required parameter requestParameters.paymentTransaction was null or undefined when calling recordCreditsPaymentTransaction.",
-    );
-  }
 
-  let queryParameters = null;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const { meta = {} } = requestConfig;
 
-  if (
-    requestParameters.idempotencyKey !== undefined &&
-    requestParameters.idempotencyKey !== null
-  ) {
-    headerParameters["Idempotency-Key"] = String(
-      requestParameters.idempotencyKey,
-    );
-  }
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/credits/{accountId}/credit_debit_receipts`.replace(`{${"accountId"}}`, encodeURIComponent(String(requestParameters.accountId))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
 
-  const { meta = {} } = requestConfig;
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(CreditDebitReceiptFromJSON), text);
+    }
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/credits/{accountId}/payment`.replace(
-      `{${"accountId"}}`,
-      encodeURIComponent(String(requestParameters.accountId)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      PaymentTransactionToJSON(requestParameters.paymentTransaction),
-  };
+    return config;
+}
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(BalanceResponseFromJSON(body), text);
-  }
-
-  return config;
+/**
+* List credit debit receipts for an account
+*/
+export function listCreditDebitReceipts<T>(requestParameters: ListCreditDebitReceiptsApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<CreditDebitReceipt>>): QueryConfig<T> {
+    return listCreditDebitReceiptsRaw(requestParameters, requestConfig);
 }
 
 /**
  * Record payment transaction (credit top-up)
  */
-export function recordCreditsPaymentTransaction<T>(
-  requestParameters: RecordCreditsPaymentTransactionApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, BalanceResponse>,
-): QueryConfig<T> {
-  return recordCreditsPaymentTransactionRaw(requestParameters, requestConfig);
+function recordCreditsPaymentTransactionRaw<T>(requestParameters: RecordCreditsPaymentTransactionApiRequest, requestConfig: runtime.TypedQueryConfig<T, BalanceResponse> = {}): QueryConfig<T> {
+    if (requestParameters.accountId === null || requestParameters.accountId === undefined) {
+        throw new runtime.RequiredError('accountId','Required parameter requestParameters.accountId was null or undefined when calling recordCreditsPaymentTransaction.');
+    }
+
+    if (requestParameters.idempotencyKey === null || requestParameters.idempotencyKey === undefined) {
+        throw new runtime.RequiredError('idempotencyKey','Required parameter requestParameters.idempotencyKey was null or undefined when calling recordCreditsPaymentTransaction.');
+    }
+
+    if (requestParameters.paymentTransaction === null || requestParameters.paymentTransaction === undefined) {
+        throw new runtime.RequiredError('paymentTransaction','Required parameter requestParameters.paymentTransaction was null or undefined when calling recordCreditsPaymentTransaction.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    if (requestParameters.idempotencyKey !== undefined && requestParameters.idempotencyKey !== null) {
+        headerParameters['Idempotency-Key'] = String(requestParameters.idempotencyKey);
+    }
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/credits/{accountId}/payment`.replace(`{${"accountId"}}`, encodeURIComponent(String(requestParameters.accountId))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || PaymentTransactionToJSON(requestParameters.paymentTransaction),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BalanceResponseFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Record payment transaction (credit top-up)
+*/
+export function recordCreditsPaymentTransaction<T>(requestParameters: RecordCreditsPaymentTransactionApiRequest, requestConfig?: runtime.TypedQueryConfig<T, BalanceResponse>): QueryConfig<T> {
+    return recordCreditsPaymentTransactionRaw(requestParameters, requestConfig);
 }
 
 /**
  * Record usage transaction (credit debit)
  */
-function recordCreditsUsageTransactionRaw<T>(
-  requestParameters: RecordCreditsUsageTransactionApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, BalanceResponse> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.accountId === null ||
-    requestParameters.accountId === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "accountId",
-      "Required parameter requestParameters.accountId was null or undefined when calling recordCreditsUsageTransaction.",
-    );
-  }
+function recordCreditsUsageTransactionRaw<T>(requestParameters: RecordCreditsUsageTransactionApiRequest, requestConfig: runtime.TypedQueryConfig<T, BalanceResponse> = {}): QueryConfig<T> {
+    if (requestParameters.accountId === null || requestParameters.accountId === undefined) {
+        throw new runtime.RequiredError('accountId','Required parameter requestParameters.accountId was null or undefined when calling recordCreditsUsageTransaction.');
+    }
 
-  if (
-    requestParameters.idempotencyKey === null ||
-    requestParameters.idempotencyKey === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "idempotencyKey",
-      "Required parameter requestParameters.idempotencyKey was null or undefined when calling recordCreditsUsageTransaction.",
-    );
-  }
+    if (requestParameters.idempotencyKey === null || requestParameters.idempotencyKey === undefined) {
+        throw new runtime.RequiredError('idempotencyKey','Required parameter requestParameters.idempotencyKey was null or undefined when calling recordCreditsUsageTransaction.');
+    }
 
-  if (
-    requestParameters.usageTransaction === null ||
-    requestParameters.usageTransaction === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "usageTransaction",
-      "Required parameter requestParameters.usageTransaction was null or undefined when calling recordCreditsUsageTransaction.",
-    );
-  }
+    if (requestParameters.usageTransaction === null || requestParameters.usageTransaction === undefined) {
+        throw new runtime.RequiredError('usageTransaction','Required parameter requestParameters.usageTransaction was null or undefined when calling recordCreditsUsageTransaction.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  if (
-    requestParameters.idempotencyKey !== undefined &&
-    requestParameters.idempotencyKey !== null
-  ) {
-    headerParameters["Idempotency-Key"] = String(
-      requestParameters.idempotencyKey,
-    );
-  }
+    headerParameters['Content-Type'] = 'application/json';
 
-  const { meta = {} } = requestConfig;
+    if (requestParameters.idempotencyKey !== undefined && requestParameters.idempotencyKey !== null) {
+        headerParameters['Idempotency-Key'] = String(requestParameters.idempotencyKey);
+    }
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/credits/{accountId}/usage`.replace(
-      `{${"accountId"}}`,
-      encodeURIComponent(String(requestParameters.accountId)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      UsageTransactionToJSON(requestParameters.usageTransaction),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(BalanceResponseFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/credits/{accountId}/usage`.replace(`{${"accountId"}}`, encodeURIComponent(String(requestParameters.accountId))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || UsageTransactionToJSON(requestParameters.usageTransaction),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BalanceResponseFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Record usage transaction (credit debit)
- */
-export function recordCreditsUsageTransaction<T>(
-  requestParameters: RecordCreditsUsageTransactionApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, BalanceResponse>,
-): QueryConfig<T> {
-  return recordCreditsUsageTransactionRaw(requestParameters, requestConfig);
+* Record usage transaction (credit debit)
+*/
+export function recordCreditsUsageTransaction<T>(requestParameters: RecordCreditsUsageTransactionApiRequest, requestConfig?: runtime.TypedQueryConfig<T, BalanceResponse>): QueryConfig<T> {
+    return recordCreditsUsageTransactionRaw(requestParameters, requestConfig);
 }
+
+/**
+ * Release a credit reservation without debiting credits
+ */
+function releaseCreditReservationRaw<T>(requestParameters: ReleaseCreditReservationApiRequest, requestConfig: runtime.TypedQueryConfig<T, CreditReservation> = {}): QueryConfig<T> {
+    if (requestParameters.accountId === null || requestParameters.accountId === undefined) {
+        throw new runtime.RequiredError('accountId','Required parameter requestParameters.accountId was null or undefined when calling releaseCreditReservation.');
+    }
+
+    if (requestParameters.reservationRef === null || requestParameters.reservationRef === undefined) {
+        throw new runtime.RequiredError('reservationRef','Required parameter requestParameters.reservationRef was null or undefined when calling releaseCreditReservation.');
+    }
+
+    if (requestParameters.idempotencyKey === null || requestParameters.idempotencyKey === undefined) {
+        throw new runtime.RequiredError('idempotencyKey','Required parameter requestParameters.idempotencyKey was null or undefined when calling releaseCreditReservation.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    if (requestParameters.idempotencyKey !== undefined && requestParameters.idempotencyKey !== null) {
+        headerParameters['Idempotency-Key'] = String(requestParameters.idempotencyKey);
+    }
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/credits/{accountId}/credit_reservations/{reservationRef}/release`.replace(`{${"accountId"}}`, encodeURIComponent(String(requestParameters.accountId))).replace(`{${"reservationRef"}}`, encodeURIComponent(String(requestParameters.reservationRef))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || CreditReservationToJSON(requestParameters.creditReservation),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(CreditReservationFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Release a credit reservation without debiting credits
+*/
+export function releaseCreditReservation<T>(requestParameters: ReleaseCreditReservationApiRequest, requestConfig?: runtime.TypedQueryConfig<T, CreditReservation>): QueryConfig<T> {
+    return releaseCreditReservationRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Reserve credits for a billable action
+ */
+function reserveCreditsRaw<T>(requestParameters: ReserveCreditsApiRequest, requestConfig: runtime.TypedQueryConfig<T, CreditReservation> = {}): QueryConfig<T> {
+    if (requestParameters.accountId === null || requestParameters.accountId === undefined) {
+        throw new runtime.RequiredError('accountId','Required parameter requestParameters.accountId was null or undefined when calling reserveCredits.');
+    }
+
+    if (requestParameters.idempotencyKey === null || requestParameters.idempotencyKey === undefined) {
+        throw new runtime.RequiredError('idempotencyKey','Required parameter requestParameters.idempotencyKey was null or undefined when calling reserveCredits.');
+    }
+
+    if (requestParameters.creditReservation === null || requestParameters.creditReservation === undefined) {
+        throw new runtime.RequiredError('creditReservation','Required parameter requestParameters.creditReservation was null or undefined when calling reserveCredits.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    if (requestParameters.idempotencyKey !== undefined && requestParameters.idempotencyKey !== null) {
+        headerParameters['Idempotency-Key'] = String(requestParameters.idempotencyKey);
+    }
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/credits/{accountId}/credit_reservations`.replace(`{${"accountId"}}`, encodeURIComponent(String(requestParameters.accountId))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || CreditReservationToJSON(requestParameters.creditReservation),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(CreditReservationFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Reserve credits for a billable action
+*/
+export function reserveCredits<T>(requestParameters: ReserveCreditsApiRequest, requestConfig?: runtime.TypedQueryConfig<T, CreditReservation>): QueryConfig<T> {
+    return reserveCreditsRaw(requestParameters, requestConfig);
+}
+

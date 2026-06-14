@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { OasPath } from "@thorapi/model/OasPath";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { OasPath } from '@thorapi/model/OasPath'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type OasPathResponse = OasPath[];
+type OasPathResponse = OasPath[]
+type OasPathPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<OasPath>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type OasPathListQueryArg = {
+  example?: Partial<OasPath>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toOasPathList = (result: unknown): OasPathResponse => {
   if (Array.isArray(result)) {
-    return result as OasPathResponse;
+    return result as OasPathResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as OasPathResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as OasPathResponse) : []
+}
 
 export const OasPathService = createApi({
-  reducerPath: "OasPath", // This should remain unique
+  reducerPath: 'OasPath', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["OasPath"],
+  tagTypes: ['OasPath'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getOasPathsPaged: build.query<
-      OasPathResponse,
-      { page: number; size?: number; example?: Partial<OasPath> }
-    >({
+    getOasPathsPaged: build.query<OasPathResponse, OasPathPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `OasPath?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `OasPath?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toOasPathList(result);
+        const rows = toOasPathList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "OasPath" as const, id })),
-          { type: "OasPath", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'OasPath' as const, id })),
+          { type: 'OasPath', id: `PAGE_${page}` },
+          { type: 'OasPath', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOasPaths: build.query<
-      OasPathResponse,
-      { example?: Partial<OasPath> } | void
-    >({
+    getOasPaths: build.query<OasPathResponse, OasPathListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const OasPathService = createApi({
         return `OasPath`;
       },
       providesTags: (result) => {
-        const rows = toOasPathList(result);
+        const rows = toOasPathList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "OasPath" as const, id })),
-          { type: "OasPath", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'OasPath' as const, id })),
+          { type: 'OasPath', id: 'LIST' },
+          { type: 'OasPath', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,81 +97,71 @@ export const OasPathService = createApi({
     addOasPath: build.mutation<OasPath, Partial<OasPath>>({
       query: (body) => ({
         url: `OasPath`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "OasPath", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'OasPath', id: 'LIST' },
+        { type: 'OasPath', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getOasPath: build.query<OasPath, string>({
       query: (id) => `OasPath/${id}`,
-      providesTags: (result, error, id) => [{ type: "OasPath", id }],
+      providesTags: (result, error, id) => [{ type: 'OasPath', id }],
     }),
 
     // 5) Update
-    updateOasPath: build.mutation<void, Pick<OasPath, "id"> & Partial<OasPath>>(
-      {
-        query: ({ id, ...patch }) => ({
-          url: `OasPath/${id}`,
-          method: "PUT",
-          body: patch,
-        }),
-        async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-          if (id) {
-            const patchResult = dispatch(
-              OasPathService.util.updateQueryData("getOasPath", id, (draft) => {
-                Object.assign(draft, patch);
-              }),
-            );
-            try {
-              await queryFulfilled;
-            } catch {
-              patchResult.undo();
-            }
-          }
-        },
-        invalidatesTags: (result, error, { id }: Pick<OasPath, "id">) => [
-          { type: "OasPath", id },
-          { type: "OasPath", id: "LIST" },
-        ],
-      },
-    ),
+    updateOasPath: build.mutation<OasPath, Pick<OasPath, 'id'> & Partial<OasPath>>({
+      query: ({ id, ...patch }) => ({
+        url: `OasPath/${id}`,
+        method: 'PUT',
+        body: patch,
+      }),
+      invalidatesTags: (result, error, { id }: Pick<OasPath, 'id'>) => [
+        { type: 'OasPath', id },
+        { type: 'OasPath', id: 'LIST' },
+        { type: 'OasPath', id: 'PARTIAL-LIST' },
+      ],
+    }),
 
     // 6) Delete
     deleteOasPath: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `OasPath/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "OasPath", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'OasPath', id },
+        { type: 'OasPath', id: 'LIST' },
+        { type: 'OasPath', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteOasPathCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteOasPathCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `OasPath/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "OasPath", id },
-        { type: "OasPath", id: "LIST" },
+        { type: 'OasPath', id },
+        { type: 'OasPath', id: 'LIST' },
+        { type: 'OasPath', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetOasPathsPagedQuery`
 export const {
-  useGetOasPathsPagedQuery, // immediate fetch
+  useGetOasPathsPagedQuery,     // immediate fetch
   useLazyGetOasPathsPagedQuery, // lazy fetch
   useGetOasPathQuery,
   useGetOasPathsQuery,
@@ -169,4 +169,4 @@ export const {
   useUpdateOasPathMutation,
   useDeleteOasPathMutation,
   useDeleteOasPathCascadeMutation,
-} = OasPathService;
+} = OasPathService

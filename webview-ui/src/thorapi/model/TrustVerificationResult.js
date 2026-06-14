@@ -36,41 +36,21 @@ const _1 = require("./");
 function TrustVerificationResultFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        proof: !(0, runtime_1.exists)(json, "proof")
-            ? undefined
-            : (0, _1.TrustProofFromJSON)(json["proof"]),
-        verifierId: !(0, runtime_1.exists)(json, "verifierId") ? undefined : json["verifierId"],
-        verificationStatus: !(0, runtime_1.exists)(json, "verificationStatus")
-            ? undefined
-            : json["verificationStatus"],
-        checkedAt: !(0, runtime_1.exists)(json, "checkedAt")
-            ? undefined
-            : new Date(json["checkedAt"]),
-        failureReason: !(0, runtime_1.exists)(json, "failureReason")
-            ? undefined
-            : json["failureReason"],
-        verificationHash: !(0, runtime_1.exists)(json, "verificationHash")
-            ? undefined
-            : json["verificationHash"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'proof': !(0, runtime_1.exists)(json, 'proof') ? undefined : (0, _1.TrustProofFromJSON)(json['proof']),
+        'verifierId': !(0, runtime_1.exists)(json, 'verifierId') ? undefined : json['verifierId'],
+        'verificationStatus': !(0, runtime_1.exists)(json, 'verificationStatus') ? undefined : json['verificationStatus'],
+        'checkedAt': !(0, runtime_1.exists)(json, 'checkedAt') ? undefined : new Date(json['checkedAt']),
+        'failureReason': !(0, runtime_1.exists)(json, 'failureReason') ? undefined : json['failureReason'],
+        'verificationHash': !(0, runtime_1.exists)(json, 'verificationHash') ? undefined : json['verificationHash'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function TrustVerificationResultToJSON(value) {
@@ -79,20 +59,20 @@ function TrustVerificationResultToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        proof: (0, _1.TrustProofToJSON)(value.proof),
-        verifierId: value.verifierId,
-        verificationStatus: value.verificationStatus,
-        checkedAt: value.checkedAt === undefined ? undefined : value.checkedAt.toISOString(),
-        failureReason: value.failureReason,
-        verificationHash: value.verificationHash,
-        ownerId: value.ownerId,
-        trashed: value.trashed,
+        'proof': (0, _1.TrustProofToJSON)(value.proof),
+        'verifierId': value.verifierId,
+        'verificationStatus': value.verificationStatus,
+        'checkedAt': value.checkedAt === undefined ? undefined : value.checkedAt.toISOString(),
+        'failureReason': value.failureReason,
+        'verificationHash': value.verificationHash,
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustVerificationResultVerificationStatusEnum;
 (function (TrustVerificationResultVerificationStatusEnum) {
     TrustVerificationResultVerificationStatusEnum["VALID"] = "valid";

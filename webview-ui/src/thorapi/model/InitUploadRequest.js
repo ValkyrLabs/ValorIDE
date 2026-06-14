@@ -34,30 +34,20 @@ const DataObject_1 = require("./DataObject");
 function InitUploadRequestFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        filename: !(0, runtime_1.exists)(json, "filename") ? undefined : json["filename"],
-        mimeType: !(0, runtime_1.exists)(json, "mimeType") ? undefined : json["mimeType"],
-        sizeBytes: !(0, runtime_1.exists)(json, "sizeBytes") ? undefined : json["sizeBytes"],
-        spaceId: !(0, runtime_1.exists)(json, "spaceId") ? undefined : json["spaceId"],
-        metadata: !(0, runtime_1.exists)(json, "metadata") ? undefined : json["metadata"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'filename': !(0, runtime_1.exists)(json, 'filename') ? undefined : json['filename'],
+        'mimeType': !(0, runtime_1.exists)(json, 'mimeType') ? undefined : json['mimeType'],
+        'sizeBytes': !(0, runtime_1.exists)(json, 'sizeBytes') ? undefined : json['sizeBytes'],
+        'spaceId': !(0, runtime_1.exists)(json, 'spaceId') ? undefined : json['spaceId'],
+        'metadata': !(0, runtime_1.exists)(json, 'metadata') ? undefined : json['metadata'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function InitUploadRequestToJSON(value) {
@@ -66,12 +56,12 @@ function InitUploadRequestToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        filename: value.filename,
-        mimeType: value.mimeType,
-        sizeBytes: value.sizeBytes,
-        spaceId: value.spaceId,
-        metadata: value.metadata,
-        trashed: value.trashed,
+        'filename': value.filename,
+        'mimeType': value.mimeType,
+        'sizeBytes': value.sizeBytes,
+        'spaceId': value.spaceId,
+        'metadata': value.metadata,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=InitUploadRequest.js.map

@@ -35,40 +35,22 @@ const DataObject_1 = require("./DataObject");
 function SkillProfileFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        jobSeekerId: !(0, runtime_1.exists)(json, "jobSeekerId") ? undefined : json["jobSeekerId"],
-        skillName: !(0, runtime_1.exists)(json, "skillName") ? undefined : json["skillName"],
-        proficiency: !(0, runtime_1.exists)(json, "proficiency") ? undefined : json["proficiency"],
-        yearsOfExperience: !(0, runtime_1.exists)(json, "yearsOfExperience")
-            ? undefined
-            : json["yearsOfExperience"],
-        verifiedByAI: !(0, runtime_1.exists)(json, "verifiedByAI")
-            ? undefined
-            : json["verifiedByAI"],
-        verifiedByRecruiters: !(0, runtime_1.exists)(json, "verifiedByRecruiters")
-            ? undefined
-            : json["verifiedByRecruiters"],
-        lastUsedDate: !(0, runtime_1.exists)(json, "lastUsedDate")
-            ? undefined
-            : new Date(json["lastUsedDate"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'jobSeekerId': !(0, runtime_1.exists)(json, 'jobSeekerId') ? undefined : json['jobSeekerId'],
+        'skillName': !(0, runtime_1.exists)(json, 'skillName') ? undefined : json['skillName'],
+        'proficiency': !(0, runtime_1.exists)(json, 'proficiency') ? undefined : json['proficiency'],
+        'yearsOfExperience': !(0, runtime_1.exists)(json, 'yearsOfExperience') ? undefined : json['yearsOfExperience'],
+        'verifiedByAI': !(0, runtime_1.exists)(json, 'verifiedByAI') ? undefined : json['verifiedByAI'],
+        'verifiedByRecruiters': !(0, runtime_1.exists)(json, 'verifiedByRecruiters') ? undefined : json['verifiedByRecruiters'],
+        'lastUsedDate': !(0, runtime_1.exists)(json, 'lastUsedDate') ? undefined : new Date(json['lastUsedDate']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function SkillProfileToJSON(value) {
@@ -77,22 +59,20 @@ function SkillProfileToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        jobSeekerId: value.jobSeekerId,
-        skillName: value.skillName,
-        proficiency: value.proficiency,
-        yearsOfExperience: value.yearsOfExperience,
-        verifiedByAI: value.verifiedByAI,
-        verifiedByRecruiters: value.verifiedByRecruiters,
-        lastUsedDate: value.lastUsedDate === undefined
-            ? undefined
-            : value.lastUsedDate.toISOString(),
-        trashed: value.trashed,
+        'jobSeekerId': value.jobSeekerId,
+        'skillName': value.skillName,
+        'proficiency': value.proficiency,
+        'yearsOfExperience': value.yearsOfExperience,
+        'verifiedByAI': value.verifiedByAI,
+        'verifiedByRecruiters': value.verifiedByRecruiters,
+        'lastUsedDate': value.lastUsedDate === undefined ? undefined : value.lastUsedDate.toISOString(),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var SkillProfileProficiencyEnum;
 (function (SkillProfileProficiencyEnum) {
     SkillProfileProficiencyEnum["BEGINNER"] = "beginner";

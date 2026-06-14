@@ -36,39 +36,27 @@ const _1 = require("./");
 function TaskFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        workflow: !(0, runtime_1.exists)(json, "workflow")
-            ? undefined
-            : (0, _1.WorkflowFromJSON)(json["workflow"]),
-        role: !(0, runtime_1.exists)(json, "role") ? undefined : json["role"],
-        priorityLevel: !(0, runtime_1.exists)(json, "priorityLevel")
-            ? undefined
-            : json["priorityLevel"],
-        taskOrder: !(0, runtime_1.exists)(json, "taskOrder") ? undefined : json["taskOrder"],
-        modules: !(0, runtime_1.exists)(json, "modules")
-            ? undefined
-            : json["modules"].map(_1.ExecModuleFromJSON),
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'workflow': !(0, runtime_1.exists)(json, 'workflow') ? undefined : (0, _1.WorkflowFromJSON)(json['workflow']),
+        'role': !(0, runtime_1.exists)(json, 'role') ? undefined : json['role'],
+        'executionMode': !(0, runtime_1.exists)(json, 'executionMode') ? undefined : (0, _1.WorkflowExecutionModeFromJSON)(json['executionMode']),
+        'requiredSkills': !(0, runtime_1.exists)(json, 'requiredSkills') ? undefined : json['requiredSkills'],
+        'approvalRequired': !(0, runtime_1.exists)(json, 'approvalRequired') ? undefined : json['approvalRequired'],
+        'policyTags': !(0, runtime_1.exists)(json, 'policyTags') ? undefined : json['policyTags'],
+        'priorityLevel': !(0, runtime_1.exists)(json, 'priorityLevel') ? undefined : json['priorityLevel'],
+        'taskOrder': !(0, runtime_1.exists)(json, 'taskOrder') ? undefined : json['taskOrder'],
+        'modules': !(0, runtime_1.exists)(json, 'modules') ? undefined : json['modules'].map(_1.ExecModuleFromJSON),
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function TaskToJSON(value) {
@@ -77,32 +65,37 @@ function TaskToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        name: value.name,
-        description: value.description,
-        workflow: (0, _1.WorkflowToJSON)(value.workflow),
-        role: value.role,
-        priorityLevel: value.priorityLevel,
-        taskOrder: value.taskOrder,
-        modules: value.modules === undefined
-            ? undefined
-            : value.modules.map(_1.ExecModuleToJSON),
-        status: value.status,
-        trashed: value.trashed,
+        'name': value.name,
+        'description': value.description,
+        'workflow': (0, _1.WorkflowToJSON)(value.workflow),
+        'role': value.role,
+        'executionMode': (0, _1.WorkflowExecutionModeToJSON)(value.executionMode),
+        'requiredSkills': value.requiredSkills,
+        'approvalRequired': value.approvalRequired,
+        'policyTags': value.policyTags,
+        'priorityLevel': value.priorityLevel,
+        'taskOrder': value.taskOrder,
+        'modules': value.modules === undefined ? undefined : value.modules.map(_1.ExecModuleToJSON),
+        'status': value.status,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TaskRoleEnum;
 (function (TaskRoleEnum) {
     TaskRoleEnum["USER"] = "user";
     TaskRoleEnum["ASSISTANT"] = "assistant";
+    TaskRoleEnum["SYSTEM"] = "system";
+    TaskRoleEnum["ADMIN"] = "admin";
+    TaskRoleEnum["OPERATOR"] = "operator";
 })(TaskRoleEnum || (exports.TaskRoleEnum = TaskRoleEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TaskPriorityLevelEnum;
 (function (TaskPriorityLevelEnum) {
     TaskPriorityLevelEnum["CRITICAL"] = "critical";
@@ -111,9 +104,9 @@ var TaskPriorityLevelEnum;
     TaskPriorityLevelEnum["LOW"] = "low";
 })(TaskPriorityLevelEnum || (exports.TaskPriorityLevelEnum = TaskPriorityLevelEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TaskStatusEnum;
 (function (TaskStatusEnum) {
     TaskStatusEnum["READY"] = "ready";

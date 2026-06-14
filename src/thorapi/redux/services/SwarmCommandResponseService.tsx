@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { SwarmCommandResponse } from "@thorapi/model/SwarmCommandResponse";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { SwarmCommandResponse } from '@thorapi/model/SwarmCommandResponse'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type SwarmCommandResponseResponse = SwarmCommandResponse[];
+type SwarmCommandResponseResponse = SwarmCommandResponse[]
+type SwarmCommandResponsePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<SwarmCommandResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toSwarmCommandResponseList = (
-  result: unknown,
-): SwarmCommandResponseResponse => {
+type SwarmCommandResponseListQueryArg = {
+  example?: Partial<SwarmCommandResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toSwarmCommandResponseList = (result: unknown): SwarmCommandResponseResponse => {
   if (Array.isArray(result)) {
-    return result as SwarmCommandResponseResponse;
+    return result as SwarmCommandResponseResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as SwarmCommandResponseResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as SwarmCommandResponseResponse) : []
+}
 
 export const SwarmCommandResponseService = createApi({
-  reducerPath: "SwarmCommandResponse", // This should remain unique
+  reducerPath: 'SwarmCommandResponse', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["SwarmCommandResponse"],
+  tagTypes: ['SwarmCommandResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSwarmCommandResponsesPaged: build.query<
-      SwarmCommandResponseResponse,
-      { page: number; size?: number; example?: Partial<SwarmCommandResponse> }
-    >({
+    getSwarmCommandResponsesPaged: build.query<SwarmCommandResponseResponse, SwarmCommandResponsePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SwarmCommandResponse?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SwarmCommandResponse?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toSwarmCommandResponseList(result);
+        const rows = toSwarmCommandResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SwarmCommandResponse" as const, id })),
-          { type: "SwarmCommandResponse", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'SwarmCommandResponse' as const, id })),
+          { type: 'SwarmCommandResponse', id: `PAGE_${page}` },
+          { type: 'SwarmCommandResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSwarmCommandResponses: build.query<
-      SwarmCommandResponseResponse,
-      { example?: Partial<SwarmCommandResponse> } | void
-    >({
+    getSwarmCommandResponses: build.query<SwarmCommandResponseResponse, SwarmCommandResponseListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,114 +82,86 @@ export const SwarmCommandResponseService = createApi({
         return `SwarmCommandResponse`;
       },
       providesTags: (result) => {
-        const rows = toSwarmCommandResponseList(result);
+        const rows = toSwarmCommandResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "SwarmCommandResponse" as const, id })),
-          { type: "SwarmCommandResponse", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'SwarmCommandResponse' as const, id })),
+          { type: 'SwarmCommandResponse', id: 'LIST' },
+          { type: 'SwarmCommandResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addSwarmCommandResponse: build.mutation<
-      SwarmCommandResponse,
-      Partial<SwarmCommandResponse>
-    >({
+    addSwarmCommandResponse: build.mutation<SwarmCommandResponse, Partial<SwarmCommandResponse>>({
       query: (body) => ({
         url: `SwarmCommandResponse`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "SwarmCommandResponse", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'SwarmCommandResponse', id: 'LIST' },
+        { type: 'SwarmCommandResponse', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getSwarmCommandResponse: build.query<SwarmCommandResponse, string>({
       query: (id) => `SwarmCommandResponse/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "SwarmCommandResponse", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'SwarmCommandResponse', id }],
     }),
 
     // 5) Update
-    updateSwarmCommandResponse: build.mutation<
-      void,
-      Pick<SwarmCommandResponse, "id"> & Partial<SwarmCommandResponse>
-    >({
+    updateSwarmCommandResponse: build.mutation<SwarmCommandResponse, Pick<SwarmCommandResponse, 'id'> & Partial<SwarmCommandResponse>>({
       query: ({ id, ...patch }) => ({
         url: `SwarmCommandResponse/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            SwarmCommandResponseService.util.updateQueryData(
-              "getSwarmCommandResponse",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<SwarmCommandResponse, "id">,
-      ) => [
-        { type: "SwarmCommandResponse", id },
-        { type: "SwarmCommandResponse", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<SwarmCommandResponse, 'id'>) => [
+        { type: 'SwarmCommandResponse', id },
+        { type: 'SwarmCommandResponse', id: 'LIST' },
+        { type: 'SwarmCommandResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteSwarmCommandResponse: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteSwarmCommandResponse: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `SwarmCommandResponse/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "SwarmCommandResponse", id },
+        { type: 'SwarmCommandResponse', id },
+        { type: 'SwarmCommandResponse', id: 'LIST' },
+        { type: 'SwarmCommandResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteSwarmCommandResponseCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteSwarmCommandResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `SwarmCommandResponse/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "SwarmCommandResponse", id },
-        { type: "SwarmCommandResponse", id: "LIST" },
+        { type: 'SwarmCommandResponse', id },
+        { type: 'SwarmCommandResponse', id: 'LIST' },
+        { type: 'SwarmCommandResponse', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetSwarmCommandResponsesPagedQuery`
 export const {
-  useGetSwarmCommandResponsesPagedQuery, // immediate fetch
+  useGetSwarmCommandResponsesPagedQuery,     // immediate fetch
   useLazyGetSwarmCommandResponsesPagedQuery, // lazy fetch
   useGetSwarmCommandResponseQuery,
   useGetSwarmCommandResponsesQuery,
@@ -192,4 +169,4 @@ export const {
   useUpdateSwarmCommandResponseMutation,
   useDeleteSwarmCommandResponseMutation,
   useDeleteSwarmCommandResponseCascadeMutation,
-} = SwarmCommandResponseService;
+} = SwarmCommandResponseService

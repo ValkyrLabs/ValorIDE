@@ -35,42 +35,24 @@ const _1 = require("./");
 function OasPathFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        path: !(0, runtime_1.exists)(json, "path") ? undefined : json["path"],
-        oasOpenAPISpecId: !(0, runtime_1.exists)(json, "oasOpenAPISpecId")
-            ? undefined
-            : json["oasOpenAPISpecId"],
-        summary: !(0, runtime_1.exists)(json, "summary") ? undefined : json["summary"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        get: !(0, runtime_1.exists)(json, "get") ? undefined : (0, _1.OasOperationFromJSON)(json["get"]),
-        put: !(0, runtime_1.exists)(json, "put") ? undefined : (0, _1.OasOperationFromJSON)(json["put"]),
-        post: !(0, runtime_1.exists)(json, "post")
-            ? undefined
-            : (0, _1.OasOperationFromJSON)(json["post"]),
-        patch: !(0, runtime_1.exists)(json, "patch")
-            ? undefined
-            : (0, _1.OasOperationFromJSON)(json["patch"]),
-        _delete: !(0, runtime_1.exists)(json, "delete")
-            ? undefined
-            : (0, _1.OasOperationFromJSON)(json["delete"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'path': !(0, runtime_1.exists)(json, 'path') ? undefined : json['path'],
+        'oasOpenAPISpecId': !(0, runtime_1.exists)(json, 'oasOpenAPISpecId') ? undefined : json['oasOpenAPISpecId'],
+        'summary': !(0, runtime_1.exists)(json, 'summary') ? undefined : json['summary'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'get': !(0, runtime_1.exists)(json, 'get') ? undefined : (0, _1.OasOperationFromJSON)(json['get']),
+        'put': !(0, runtime_1.exists)(json, 'put') ? undefined : (0, _1.OasOperationFromJSON)(json['put']),
+        'post': !(0, runtime_1.exists)(json, 'post') ? undefined : (0, _1.OasOperationFromJSON)(json['post']),
+        'patch': !(0, runtime_1.exists)(json, 'patch') ? undefined : (0, _1.OasOperationFromJSON)(json['patch']),
+        '_delete': !(0, runtime_1.exists)(json, 'delete') ? undefined : (0, _1.OasOperationFromJSON)(json['delete']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function OasPathToJSON(value) {
@@ -79,16 +61,16 @@ function OasPathToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        path: value.path,
-        oasOpenAPISpecId: value.oasOpenAPISpecId,
-        summary: value.summary,
-        description: value.description,
-        get: (0, _1.OasOperationToJSON)(value.get),
-        put: (0, _1.OasOperationToJSON)(value.put),
-        post: (0, _1.OasOperationToJSON)(value.post),
-        patch: (0, _1.OasOperationToJSON)(value.patch),
-        delete: (0, _1.OasOperationToJSON)(value._delete),
-        trashed: value.trashed,
+        'path': value.path,
+        'oasOpenAPISpecId': value.oasOpenAPISpecId,
+        'summary': value.summary,
+        'description': value.description,
+        'get': (0, _1.OasOperationToJSON)(value.get),
+        'put': (0, _1.OasOperationToJSON)(value.put),
+        'post': (0, _1.OasOperationToJSON)(value.post),
+        'patch': (0, _1.OasOperationToJSON)(value.patch),
+        'delete': (0, _1.OasOperationToJSON)(value._delete),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=OasPath.js.map

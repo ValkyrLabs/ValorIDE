@@ -26,16 +26,19 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 import {
-  TrustKeyVersion,
-  TrustKeyVersionFromJSON,
-  TrustKeyVersionToJSON,
-  TrustRuntimeExecution,
-  TrustRuntimeExecutionFromJSON,
-  TrustRuntimeExecutionToJSON,
-} from "./";
+
+
+    TrustKeyVersion,
+    TrustKeyVersionFromJSON,
+    TrustKeyVersionToJSON,
+    TrustRuntimeExecution,
+    TrustRuntimeExecutionFromJSON,
+    TrustRuntimeExecutionToJSON,
+} from './';
+
 
 // thorapi
 
@@ -44,153 +47,135 @@ import {
  * @export
  * @interface TrustMerkleBatch
  */
-export type TrustMerkleBatch = DataObject & {
-  /**
-   *
-   * @type {TrustRuntimeExecution}
-   * @memberof TrustMerkleBatch
-   */
-  execution?: TrustRuntimeExecution;
-  /**
-   *
-   * @type {number}
-   * @memberof TrustMerkleBatch
-   */
-  fromSequence?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof TrustMerkleBatch
-   */
-  toSequence?: number;
-  /**
-   *
-   * @type {string}
-   * @memberof TrustMerkleBatch
-   */
-  merkleRootHash?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof TrustMerkleBatch
-   */
-  batchSignature?: string;
-  /**
-   *
-   * @type {TrustKeyVersion}
-   * @memberof TrustMerkleBatch
-   */
-  signingKeyVersion?: TrustKeyVersion;
-  /**
-   *
-   * @type {string}
-   * @memberof TrustMerkleBatch
-   */
-  ownerId?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof TrustMerkleBatch
-   */
-  readonly id?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof TrustMerkleBatch
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof TrustMerkleBatch
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof TrustMerkleBatch
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof TrustMerkleBatch
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof TrustMerkleBatch
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof TrustMerkleBatch
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof TrustMerkleBatch
-   */
-  trashed?: boolean;
-};
+export type TrustMerkleBatch  = DataObject & {
+    /**
+     * 
+     * @type {TrustRuntimeExecution}
+     * @memberof TrustMerkleBatch
+     */
+    execution?: TrustRuntimeExecution;
+    /**
+     * 
+     * @type {number}
+     * @memberof TrustMerkleBatch
+     */
+    fromSequence?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof TrustMerkleBatch
+     */
+    toSequence?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustMerkleBatch
+     */
+    merkleRootHash?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustMerkleBatch
+     */
+    batchSignature?: string;
+    /**
+     * 
+     * @type {TrustKeyVersion}
+     * @memberof TrustMerkleBatch
+     */
+    signingKeyVersion?: TrustKeyVersion;
+    /**
+     * 
+     * @type {string}
+     * @memberof TrustMerkleBatch
+     */
+    ownerId?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof TrustMerkleBatch
+     */
+    readonly id?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof TrustMerkleBatch
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof TrustMerkleBatch
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof TrustMerkleBatch
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof TrustMerkleBatch
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof TrustMerkleBatch
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof TrustMerkleBatch
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof TrustMerkleBatch
+     */
+    trashed?: boolean;
+}
 
 export function TrustMerkleBatchFromJSON(json: any): TrustMerkleBatch {
-  return {
-    ...DataObjectFromJSON(json),
-    execution: !exists(json, "execution")
-      ? undefined
-      : TrustRuntimeExecutionFromJSON(json["execution"]),
-    fromSequence: !exists(json, "fromSequence")
-      ? undefined
-      : json["fromSequence"],
-    toSequence: !exists(json, "toSequence") ? undefined : json["toSequence"],
-    merkleRootHash: !exists(json, "merkleRootHash")
-      ? undefined
-      : json["merkleRootHash"],
-    batchSignature: !exists(json, "batchSignature")
-      ? undefined
-      : json["batchSignature"],
-    signingKeyVersion: !exists(json, "signingKeyVersion")
-      ? undefined
-      : TrustKeyVersionFromJSON(json["signingKeyVersion"]),
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'execution': !exists(json, 'execution') ? undefined : TrustRuntimeExecutionFromJSON(json['execution']),
+        'fromSequence': !exists(json, 'fromSequence') ? undefined : json['fromSequence'],
+        'toSequence': !exists(json, 'toSequence') ? undefined : json['toSequence'],
+        'merkleRootHash': !exists(json, 'merkleRootHash') ? undefined : json['merkleRootHash'],
+        'batchSignature': !exists(json, 'batchSignature') ? undefined : json['batchSignature'],
+        'signingKeyVersion': !exists(json, 'signingKeyVersion') ? undefined : TrustKeyVersionFromJSON(json['signingKeyVersion']),
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function TrustMerkleBatchToJSON(value?: TrustMerkleBatch): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    execution: TrustRuntimeExecutionToJSON(value.execution),
-    fromSequence: value.fromSequence,
-    toSequence: value.toSequence,
-    merkleRootHash: value.merkleRootHash,
-    batchSignature: value.batchSignature,
-    signingKeyVersion: TrustKeyVersionToJSON(value.signingKeyVersion),
-    ownerId: value.ownerId,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'execution': TrustRuntimeExecutionToJSON(value.execution),
+        'fromSequence': value.fromSequence,
+        'toSequence': value.toSequence,
+        'merkleRootHash': value.merkleRootHash,
+        'batchSignature': value.batchSignature,
+        'signingKeyVersion': TrustKeyVersionToJSON(value.signingKeyVersion),
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
+    };
 }
+
+

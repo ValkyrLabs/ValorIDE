@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_OPPORTUNITY_REQUEST,
-  FETCH_OPPORTUNITY_REQUEST,
-  LIST_OPPORTUNITY_REQUEST,
-  UPDATE_OPPORTUNITY_REQUEST,
-  DELETE_OPPORTUNITY_REQUEST,
-  addOpportunityFailure,
-  addOpportunitySuccess,
-  fetchOpportunityFailure,
-  fetchOpportunitySuccess,
-  listOpportunityFailure,
-  listOpportunitySuccess,
-  updateOpportunityFailure,
-  updateOpportunitySuccess,
-  deleteOpportunityFailure,
-  deleteOpportunitySuccess,
-} from "../actions/OpportunityApiAction";
+
+    ADD_OPPORTUNITY_REQUEST,
+    FETCH_OPPORTUNITY_REQUEST,
+    LIST_OPPORTUNITY_REQUEST,
+    UPDATE_OPPORTUNITY_REQUEST,
+    DELETE_OPPORTUNITY_REQUEST,
+
+    addOpportunityFailure,
+    addOpportunitySuccess,
+
+    fetchOpportunityFailure,
+    fetchOpportunitySuccess,
+    
+    listOpportunityFailure,
+    listOpportunitySuccess,
+
+    updateOpportunityFailure,
+    updateOpportunitySuccess,
+    
+    deleteOpportunityFailure,
+    deleteOpportunitySuccess,
+    
+} from '../actions/OpportunityApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Opportunity
 */
 
-export const OpportunityMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Opportunity MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const OpportunityMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("Opportunity MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

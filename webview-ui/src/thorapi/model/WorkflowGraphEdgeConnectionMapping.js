@@ -34,29 +34,17 @@ const DataObject_1 = require("./DataObject");
 function WorkflowGraphEdgeConnectionMappingFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        edgeId: !(0, runtime_1.exists)(json, "edgeId") ? undefined : json["edgeId"],
-        connectionId: !(0, runtime_1.exists)(json, "connectionId")
-            ? undefined
-            : json["connectionId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'edgeId': !(0, runtime_1.exists)(json, 'edgeId') ? undefined : json['edgeId'],
+        'connectionId': !(0, runtime_1.exists)(json, 'connectionId') ? undefined : json['connectionId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function WorkflowGraphEdgeConnectionMappingToJSON(value) {
@@ -65,9 +53,9 @@ function WorkflowGraphEdgeConnectionMappingToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        edgeId: value.edgeId,
-        connectionId: value.connectionId,
-        trashed: value.trashed,
+        'edgeId': value.edgeId,
+        'connectionId': value.connectionId,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=WorkflowGraphEdgeConnectionMapping.js.map

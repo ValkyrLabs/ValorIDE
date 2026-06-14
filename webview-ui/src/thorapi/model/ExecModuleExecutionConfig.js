@@ -35,57 +35,33 @@ const _1 = require("./");
 function ExecModuleExecutionConfigFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        mode: json["mode"],
-        concurrencyKey: !(0, runtime_1.exists)(json, "concurrencyKey")
-            ? undefined
-            : json["concurrencyKey"],
-        idempotent: !(0, runtime_1.exists)(json, "idempotent") ? undefined : json["idempotent"],
-        priority: !(0, runtime_1.exists)(json, "priority") ? undefined : json["priority"],
-        arrayMode: !(0, runtime_1.exists)(json, "array_mode") ? undefined : json["array_mode"],
-        batchSize: !(0, runtime_1.exists)(json, "batchSize") ? undefined : json["batchSize"],
-        batchMode: !(0, runtime_1.exists)(json, "batch_mode") ? undefined : json["batch_mode"],
-        batchQueries: !(0, runtime_1.exists)(json, "batch_queries")
-            ? undefined
-            : json["batch_queries"].map(_1.ArrayStringItemFromJSON),
-        classificationMode: !(0, runtime_1.exists)(json, "classificationMode")
-            ? undefined
-            : json["classificationMode"],
-        limitValue: !(0, runtime_1.exists)(json, "limitValue") ? undefined : json["limitValue"],
-        lookbackPeriod: !(0, runtime_1.exists)(json, "lookbackPeriod")
-            ? undefined
-            : json["lookbackPeriod"],
-        priceLimitUsd: !(0, runtime_1.exists)(json, "price_limit_usd")
-            ? undefined
-            : json["price_limit_usd"],
-        threadPoolSize: !(0, runtime_1.exists)(json, "threadPoolSize")
-            ? undefined
-            : json["threadPoolSize"],
-        threadTs: !(0, runtime_1.exists)(json, "thread_ts") ? undefined : json["thread_ts"],
-        timeoutMs: !(0, runtime_1.exists)(json, "timeout_ms") ? undefined : json["timeout_ms"],
-        windowSize: !(0, runtime_1.exists)(json, "windowSize") ? undefined : json["windowSize"],
-        windowDuration: !(0, runtime_1.exists)(json, "windowDuration")
-            ? undefined
-            : json["windowDuration"],
-        windowType: !(0, runtime_1.exists)(json, "window_type") ? undefined : json["window_type"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'mode': json['mode'],
+        'concurrencyKey': !(0, runtime_1.exists)(json, 'concurrencyKey') ? undefined : json['concurrencyKey'],
+        'idempotent': !(0, runtime_1.exists)(json, 'idempotent') ? undefined : json['idempotent'],
+        'priority': !(0, runtime_1.exists)(json, 'priority') ? undefined : json['priority'],
+        'arrayMode': !(0, runtime_1.exists)(json, 'arrayMode') ? undefined : json['arrayMode'],
+        'batchSize': !(0, runtime_1.exists)(json, 'batchSize') ? undefined : json['batchSize'],
+        'batchMode': !(0, runtime_1.exists)(json, 'batchMode') ? undefined : json['batchMode'],
+        'batchQueries': !(0, runtime_1.exists)(json, 'batchQueries') ? undefined : json['batchQueries'].map(_1.ArrayStringItemFromJSON),
+        'classificationMode': !(0, runtime_1.exists)(json, 'classificationMode') ? undefined : json['classificationMode'],
+        'limitValue': !(0, runtime_1.exists)(json, 'limitValue') ? undefined : json['limitValue'],
+        'lookbackPeriod': !(0, runtime_1.exists)(json, 'lookbackPeriod') ? undefined : json['lookbackPeriod'],
+        'priceLimitUsd': !(0, runtime_1.exists)(json, 'priceLimitUsd') ? undefined : json['priceLimitUsd'],
+        'threadPoolSize': !(0, runtime_1.exists)(json, 'threadPoolSize') ? undefined : json['threadPoolSize'],
+        'threadTs': !(0, runtime_1.exists)(json, 'threadTs') ? undefined : json['threadTs'],
+        'timeoutMs': !(0, runtime_1.exists)(json, 'timeoutMs') ? undefined : json['timeoutMs'],
+        'windowSize': !(0, runtime_1.exists)(json, 'windowSize') ? undefined : json['windowSize'],
+        'windowDuration': !(0, runtime_1.exists)(json, 'windowDuration') ? undefined : json['windowDuration'],
+        'windowType': !(0, runtime_1.exists)(json, 'windowType') ? undefined : json['windowType'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ExecModuleExecutionConfigToJSON(value) {
@@ -94,27 +70,25 @@ function ExecModuleExecutionConfigToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        mode: value.mode,
-        concurrencyKey: value.concurrencyKey,
-        idempotent: value.idempotent,
-        priority: value.priority,
-        array_mode: value.arrayMode,
-        batchSize: value.batchSize,
-        batch_mode: value.batchMode,
-        batch_queries: value.batchQueries === undefined
-            ? undefined
-            : value.batchQueries.map(_1.ArrayStringItemToJSON),
-        classificationMode: value.classificationMode,
-        limitValue: value.limitValue,
-        lookbackPeriod: value.lookbackPeriod,
-        price_limit_usd: value.priceLimitUsd,
-        threadPoolSize: value.threadPoolSize,
-        thread_ts: value.threadTs,
-        timeout_ms: value.timeoutMs,
-        windowSize: value.windowSize,
-        windowDuration: value.windowDuration,
-        window_type: value.windowType,
-        trashed: value.trashed,
+        'mode': value.mode,
+        'concurrencyKey': value.concurrencyKey,
+        'idempotent': value.idempotent,
+        'priority': value.priority,
+        'arrayMode': value.arrayMode,
+        'batchSize': value.batchSize,
+        'batchMode': value.batchMode,
+        'batchQueries': value.batchQueries === undefined ? undefined : value.batchQueries.map(_1.ArrayStringItemToJSON),
+        'classificationMode': value.classificationMode,
+        'limitValue': value.limitValue,
+        'lookbackPeriod': value.lookbackPeriod,
+        'priceLimitUsd': value.priceLimitUsd,
+        'threadPoolSize': value.threadPoolSize,
+        'threadTs': value.threadTs,
+        'timeoutMs': value.timeoutMs,
+        'windowSize': value.windowSize,
+        'windowDuration': value.windowDuration,
+        'windowType': value.windowType,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=ExecModuleExecutionConfig.js.map

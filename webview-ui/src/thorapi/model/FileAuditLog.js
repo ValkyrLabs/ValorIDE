@@ -36,33 +36,21 @@ const _1 = require("./");
 function FileAuditLogFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        action: json["action"],
-        file: !(0, runtime_1.exists)(json, "file") ? undefined : (0, _1.FileRecordFromJSON)(json["file"]),
-        actor: !(0, runtime_1.exists)(json, "actor")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["actor"]),
-        details: !(0, runtime_1.exists)(json, "details") ? undefined : json["details"],
-        ipAddress: !(0, runtime_1.exists)(json, "ipAddress") ? undefined : json["ipAddress"],
-        userAgent: !(0, runtime_1.exists)(json, "userAgent") ? undefined : json["userAgent"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'action': json['action'],
+        'file': !(0, runtime_1.exists)(json, 'file') ? undefined : (0, _1.FileRecordFromJSON)(json['file']),
+        'actor': !(0, runtime_1.exists)(json, 'actor') ? undefined : (0, _1.PrincipalFromJSON)(json['actor']),
+        'details': !(0, runtime_1.exists)(json, 'details') ? undefined : json['details'],
+        'ipAddress': !(0, runtime_1.exists)(json, 'ipAddress') ? undefined : json['ipAddress'],
+        'userAgent': !(0, runtime_1.exists)(json, 'userAgent') ? undefined : json['userAgent'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function FileAuditLogToJSON(value) {
@@ -71,19 +59,19 @@ function FileAuditLogToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        action: value.action,
-        file: (0, _1.FileRecordToJSON)(value.file),
-        actor: (0, _1.PrincipalToJSON)(value.actor),
-        details: value.details,
-        ipAddress: value.ipAddress,
-        userAgent: value.userAgent,
-        trashed: value.trashed,
+        'action': value.action,
+        'file': (0, _1.FileRecordToJSON)(value.file),
+        'actor': (0, _1.PrincipalToJSON)(value.actor),
+        'details': value.details,
+        'ipAddress': value.ipAddress,
+        'userAgent': value.userAgent,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var FileAuditLogActionEnum;
 (function (FileAuditLogActionEnum) {
     FileAuditLogActionEnum["UPLOAD"] = "upload";

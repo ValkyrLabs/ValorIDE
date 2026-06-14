@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { ChatMessage } from "@thorapi/model/ChatMessage";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { ChatMessage } from '@thorapi/model/ChatMessage'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type ChatMessageResponse = ChatMessage[];
+type ChatMessageResponse = ChatMessage[]
+type ChatMessagePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<ChatMessage>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type ChatMessageListQueryArg = {
+  example?: Partial<ChatMessage>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toChatMessageList = (result: unknown): ChatMessageResponse => {
   if (Array.isArray(result)) {
-    return result as ChatMessageResponse;
+    return result as ChatMessageResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as ChatMessageResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as ChatMessageResponse) : []
+}
 
 export const ChatMessageService = createApi({
-  reducerPath: "ChatMessage", // This should remain unique
+  reducerPath: 'ChatMessage', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["ChatMessage"],
+  tagTypes: ['ChatMessage'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getChatMessagesPaged: build.query<
-      ChatMessageResponse,
-      { page: number; size?: number; example?: Partial<ChatMessage> }
-    >({
+    getChatMessagesPaged: build.query<ChatMessageResponse, ChatMessagePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ChatMessage?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ChatMessage?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toChatMessageList(result);
+        const rows = toChatMessageList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "ChatMessage" as const, id })),
-          { type: "ChatMessage", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'ChatMessage' as const, id })),
+          { type: 'ChatMessage', id: `PAGE_${page}` },
+          { type: 'ChatMessage', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getChatMessages: build.query<
-      ChatMessageResponse,
-      { example?: Partial<ChatMessage> } | void
-    >({
+    getChatMessages: build.query<ChatMessageResponse, ChatMessageListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const ChatMessageService = createApi({
         return `ChatMessage`;
       },
       providesTags: (result) => {
-        const rows = toChatMessageList(result);
+        const rows = toChatMessageList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "ChatMessage" as const, id })),
-          { type: "ChatMessage", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'ChatMessage' as const, id })),
+          { type: 'ChatMessage', id: 'LIST' },
+          { type: 'ChatMessage', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,88 +97,71 @@ export const ChatMessageService = createApi({
     addChatMessage: build.mutation<ChatMessage, Partial<ChatMessage>>({
       query: (body) => ({
         url: `ChatMessage`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "ChatMessage", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'ChatMessage', id: 'LIST' },
+        { type: 'ChatMessage', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getChatMessage: build.query<ChatMessage, string>({
       query: (id) => `ChatMessage/${id}`,
-      providesTags: (result, error, id) => [{ type: "ChatMessage", id }],
+      providesTags: (result, error, id) => [{ type: 'ChatMessage', id }],
     }),
 
     // 5) Update
-    updateChatMessage: build.mutation<
-      void,
-      Pick<ChatMessage, "id"> & Partial<ChatMessage>
-    >({
+    updateChatMessage: build.mutation<ChatMessage, Pick<ChatMessage, 'id'> & Partial<ChatMessage>>({
       query: ({ id, ...patch }) => ({
         url: `ChatMessage/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            ChatMessageService.util.updateQueryData(
-              "getChatMessage",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<ChatMessage, "id">) => [
-        { type: "ChatMessage", id },
-        { type: "ChatMessage", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<ChatMessage, 'id'>) => [
+        { type: 'ChatMessage', id },
+        { type: 'ChatMessage', id: 'LIST' },
+        { type: 'ChatMessage', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteChatMessage: build.mutation<{ success: boolean; id: string }, number>(
-      {
-        query(id) {
-          return {
-            url: `ChatMessage/${id}`,
-            method: "DELETE",
-          };
-        },
-        invalidatesTags: (result, error, id) => [{ type: "ChatMessage", id }],
+    deleteChatMessage: build.mutation<{ success: boolean; id: string }, number>({
+      query(id) {
+        return {
+          url: `ChatMessage/${id}`,
+          method: 'DELETE',
+        }
       },
-    ),
+      invalidatesTags: (result, error, id) => [
+        { type: 'ChatMessage', id },
+        { type: 'ChatMessage', id: 'LIST' },
+        { type: 'ChatMessage', id: 'PARTIAL-LIST' },
+      ],
+    }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteChatMessageCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteChatMessageCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `ChatMessage/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "ChatMessage", id },
-        { type: "ChatMessage", id: "LIST" },
+        { type: 'ChatMessage', id },
+        { type: 'ChatMessage', id: 'LIST' },
+        { type: 'ChatMessage', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetChatMessagesPagedQuery`
 export const {
-  useGetChatMessagesPagedQuery, // immediate fetch
+  useGetChatMessagesPagedQuery,     // immediate fetch
   useLazyGetChatMessagesPagedQuery, // lazy fetch
   useGetChatMessageQuery,
   useGetChatMessagesQuery,
@@ -176,4 +169,4 @@ export const {
   useUpdateChatMessageMutation,
   useDeleteChatMessageMutation,
   useDeleteChatMessageCascadeMutation,
-} = ChatMessageService;
+} = ChatMessageService

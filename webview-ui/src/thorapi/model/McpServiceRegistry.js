@@ -35,48 +35,30 @@ const DataObject_1 = require("./DataObject");
 function McpServiceRegistryFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        slug: !(0, runtime_1.exists)(json, "slug") ? undefined : json["slug"],
-        displayName: !(0, runtime_1.exists)(json, "displayName") ? undefined : json["displayName"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        category: !(0, runtime_1.exists)(json, "category") ? undefined : json["category"],
-        author: !(0, runtime_1.exists)(json, "author") ? undefined : json["author"],
-        manifestUrl: !(0, runtime_1.exists)(json, "manifestUrl") ? undefined : json["manifestUrl"],
-        apiBaseUrl: !(0, runtime_1.exists)(json, "apiBaseUrl") ? undefined : json["apiBaseUrl"],
-        healthCheckUrl: !(0, runtime_1.exists)(json, "healthCheckUrl")
-            ? undefined
-            : json["healthCheckUrl"],
-        version: !(0, runtime_1.exists)(json, "version") ? undefined : json["version"],
-        isPublished: !(0, runtime_1.exists)(json, "isPublished") ? undefined : json["isPublished"],
-        installCount: !(0, runtime_1.exists)(json, "installCount")
-            ? undefined
-            : json["installCount"],
-        tags: !(0, runtime_1.exists)(json, "tags") ? undefined : json["tags"],
-        publishedDate: !(0, runtime_1.exists)(json, "publishedDate")
-            ? undefined
-            : new Date(json["publishedDate"]),
-        updatedDate: !(0, runtime_1.exists)(json, "updatedDate")
-            ? undefined
-            : new Date(json["updatedDate"]),
-        mcpServerId: !(0, runtime_1.exists)(json, "mcpServerId") ? undefined : json["mcpServerId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'slug': !(0, runtime_1.exists)(json, 'slug') ? undefined : json['slug'],
+        'displayName': !(0, runtime_1.exists)(json, 'displayName') ? undefined : json['displayName'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'category': !(0, runtime_1.exists)(json, 'category') ? undefined : json['category'],
+        'author': !(0, runtime_1.exists)(json, 'author') ? undefined : json['author'],
+        'manifestUrl': !(0, runtime_1.exists)(json, 'manifestUrl') ? undefined : json['manifestUrl'],
+        'apiBaseUrl': !(0, runtime_1.exists)(json, 'apiBaseUrl') ? undefined : json['apiBaseUrl'],
+        'healthCheckUrl': !(0, runtime_1.exists)(json, 'healthCheckUrl') ? undefined : json['healthCheckUrl'],
+        'version': !(0, runtime_1.exists)(json, 'version') ? undefined : json['version'],
+        'isPublished': !(0, runtime_1.exists)(json, 'isPublished') ? undefined : json['isPublished'],
+        'installCount': !(0, runtime_1.exists)(json, 'installCount') ? undefined : json['installCount'],
+        'tags': !(0, runtime_1.exists)(json, 'tags') ? undefined : json['tags'],
+        'publishedDate': !(0, runtime_1.exists)(json, 'publishedDate') ? undefined : new Date(json['publishedDate']),
+        'updatedDate': !(0, runtime_1.exists)(json, 'updatedDate') ? undefined : new Date(json['updatedDate']),
+        'mcpServerId': !(0, runtime_1.exists)(json, 'mcpServerId') ? undefined : json['mcpServerId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function McpServiceRegistryToJSON(value) {
@@ -85,32 +67,28 @@ function McpServiceRegistryToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        slug: value.slug,
-        displayName: value.displayName,
-        description: value.description,
-        category: value.category,
-        author: value.author,
-        manifestUrl: value.manifestUrl,
-        apiBaseUrl: value.apiBaseUrl,
-        healthCheckUrl: value.healthCheckUrl,
-        version: value.version,
-        isPublished: value.isPublished,
-        installCount: value.installCount,
-        tags: value.tags,
-        publishedDate: value.publishedDate === undefined
-            ? undefined
-            : value.publishedDate.toISOString(),
-        updatedDate: value.updatedDate === undefined
-            ? undefined
-            : value.updatedDate.toISOString(),
-        mcpServerId: value.mcpServerId,
-        trashed: value.trashed,
+        'slug': value.slug,
+        'displayName': value.displayName,
+        'description': value.description,
+        'category': value.category,
+        'author': value.author,
+        'manifestUrl': value.manifestUrl,
+        'apiBaseUrl': value.apiBaseUrl,
+        'healthCheckUrl': value.healthCheckUrl,
+        'version': value.version,
+        'isPublished': value.isPublished,
+        'installCount': value.installCount,
+        'tags': value.tags,
+        'publishedDate': value.publishedDate === undefined ? undefined : value.publishedDate.toISOString(),
+        'updatedDate': value.updatedDate === undefined ? undefined : value.updatedDate.toISOString(),
+        'mcpServerId': value.mcpServerId,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var McpServiceRegistryCategoryEnum;
 (function (McpServiceRegistryCategoryEnum) {
     McpServiceRegistryCategoryEnum["CODEGENERATION"] = "code_generation";

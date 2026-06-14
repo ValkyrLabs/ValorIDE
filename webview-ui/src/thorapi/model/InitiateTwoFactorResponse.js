@@ -34,32 +34,20 @@ const DataObject_1 = require("./DataObject");
 function InitiateTwoFactorResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        secretId: !(0, runtime_1.exists)(json, "secretId") ? undefined : json["secretId"],
-        qrCodeUrl: !(0, runtime_1.exists)(json, "qrCodeUrl") ? undefined : json["qrCodeUrl"],
-        manualEntryKey: !(0, runtime_1.exists)(json, "manualEntryKey")
-            ? undefined
-            : json["manualEntryKey"],
-        backupCodes: !(0, runtime_1.exists)(json, "backupCodes") ? undefined : json["backupCodes"],
-        message: !(0, runtime_1.exists)(json, "message") ? undefined : json["message"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'secretId': !(0, runtime_1.exists)(json, 'secretId') ? undefined : json['secretId'],
+        'qrCodeUrl': !(0, runtime_1.exists)(json, 'qrCodeUrl') ? undefined : json['qrCodeUrl'],
+        'manualEntryKey': !(0, runtime_1.exists)(json, 'manualEntryKey') ? undefined : json['manualEntryKey'],
+        'backupCodes': !(0, runtime_1.exists)(json, 'backupCodes') ? undefined : json['backupCodes'],
+        'message': !(0, runtime_1.exists)(json, 'message') ? undefined : json['message'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function InitiateTwoFactorResponseToJSON(value) {
@@ -68,12 +56,12 @@ function InitiateTwoFactorResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        secretId: value.secretId,
-        qrCodeUrl: value.qrCodeUrl,
-        manualEntryKey: value.manualEntryKey,
-        backupCodes: value.backupCodes,
-        message: value.message,
-        trashed: value.trashed,
+        'secretId': value.secretId,
+        'qrCodeUrl': value.qrCodeUrl,
+        'manualEntryKey': value.manualEntryKey,
+        'backupCodes': value.backupCodes,
+        'message': value.message,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=InitiateTwoFactorResponse.js.map

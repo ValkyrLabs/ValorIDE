@@ -36,39 +36,23 @@ const _1 = require("./");
 function McpServerFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        config: !(0, runtime_1.exists)(json, "config") ? undefined : json["config"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        error: !(0, runtime_1.exists)(json, "error") ? undefined : json["error"],
-        tools: !(0, runtime_1.exists)(json, "tools")
-            ? undefined
-            : json["tools"].map(_1.McpToolFromJSON),
-        resources: !(0, runtime_1.exists)(json, "resources")
-            ? undefined
-            : json["resources"].map(_1.McpResourceFromJSON),
-        resourceTemplates: !(0, runtime_1.exists)(json, "resourceTemplates")
-            ? undefined
-            : json["resourceTemplates"].map(_1.McpResourceTemplateFromJSON),
-        disabled: !(0, runtime_1.exists)(json, "disabled") ? undefined : json["disabled"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'config': !(0, runtime_1.exists)(json, 'config') ? undefined : json['config'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'error': !(0, runtime_1.exists)(json, 'error') ? undefined : json['error'],
+        'tools': !(0, runtime_1.exists)(json, 'tools') ? undefined : json['tools'].map(_1.McpToolFromJSON),
+        'resources': !(0, runtime_1.exists)(json, 'resources') ? undefined : json['resources'].map(_1.McpResourceFromJSON),
+        'resourceTemplates': !(0, runtime_1.exists)(json, 'resourceTemplates') ? undefined : json['resourceTemplates'].map(_1.McpResourceTemplateFromJSON),
+        'disabled': !(0, runtime_1.exists)(json, 'disabled') ? undefined : json['disabled'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function McpServerToJSON(value) {
@@ -77,27 +61,21 @@ function McpServerToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        name: value.name,
-        config: value.config,
-        status: value.status,
-        error: value.error,
-        tools: value.tools === undefined
-            ? undefined
-            : value.tools.map(_1.McpToolToJSON),
-        resources: value.resources === undefined
-            ? undefined
-            : value.resources.map(_1.McpResourceToJSON),
-        resourceTemplates: value.resourceTemplates === undefined
-            ? undefined
-            : value.resourceTemplates.map(_1.McpResourceTemplateToJSON),
-        disabled: value.disabled,
-        trashed: value.trashed,
+        'name': value.name,
+        'config': value.config,
+        'status': value.status,
+        'error': value.error,
+        'tools': value.tools === undefined ? undefined : value.tools.map(_1.McpToolToJSON),
+        'resources': value.resources === undefined ? undefined : value.resources.map(_1.McpResourceToJSON),
+        'resourceTemplates': value.resourceTemplates === undefined ? undefined : value.resourceTemplates.map(_1.McpResourceTemplateToJSON),
+        'disabled': value.disabled,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var McpServerStatusEnum;
 (function (McpServerStatusEnum) {
     McpServerStatusEnum["CONNECTED"] = "connected";

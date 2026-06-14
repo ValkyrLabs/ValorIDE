@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_OASSECURITYSCHEME_REQUEST,
-  FETCH_OASSECURITYSCHEME_REQUEST,
-  LIST_OASSECURITYSCHEME_REQUEST,
-  UPDATE_OASSECURITYSCHEME_REQUEST,
-  DELETE_OASSECURITYSCHEME_REQUEST,
-  addOasSecuritySchemeFailure,
-  addOasSecuritySchemeSuccess,
-  fetchOasSecuritySchemeFailure,
-  fetchOasSecuritySchemeSuccess,
-  listOasSecuritySchemeFailure,
-  listOasSecuritySchemeSuccess,
-  updateOasSecuritySchemeFailure,
-  updateOasSecuritySchemeSuccess,
-  deleteOasSecuritySchemeFailure,
-  deleteOasSecuritySchemeSuccess,
-} from "../actions/OasSecuritySchemeApiAction";
+
+    ADD_OASSECURITYSCHEME_REQUEST,
+    FETCH_OASSECURITYSCHEME_REQUEST,
+    LIST_OASSECURITYSCHEME_REQUEST,
+    UPDATE_OASSECURITYSCHEME_REQUEST,
+    DELETE_OASSECURITYSCHEME_REQUEST,
+
+    addOasSecuritySchemeFailure,
+    addOasSecuritySchemeSuccess,
+
+    fetchOasSecuritySchemeFailure,
+    fetchOasSecuritySchemeSuccess,
+    
+    listOasSecuritySchemeFailure,
+    listOasSecuritySchemeSuccess,
+
+    updateOasSecuritySchemeFailure,
+    updateOasSecuritySchemeSuccess,
+    
+    deleteOasSecuritySchemeFailure,
+    deleteOasSecuritySchemeSuccess,
+    
+} from '../actions/OasSecuritySchemeApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: OasSecurityScheme
 */
 
-export const OasSecuritySchemeMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("OasSecurityScheme MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const OasSecuritySchemeMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("OasSecurityScheme MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

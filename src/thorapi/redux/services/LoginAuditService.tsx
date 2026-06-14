@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { LoginAudit } from "@thorapi/model/LoginAudit";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { LoginAudit } from '@thorapi/model/LoginAudit'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type LoginAuditResponse = LoginAudit[];
+type LoginAuditResponse = LoginAudit[]
+type LoginAuditPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<LoginAudit>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type LoginAuditListQueryArg = {
+  example?: Partial<LoginAudit>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toLoginAuditList = (result: unknown): LoginAuditResponse => {
   if (Array.isArray(result)) {
-    return result as LoginAuditResponse;
+    return result as LoginAuditResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as LoginAuditResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as LoginAuditResponse) : []
+}
 
 export const LoginAuditService = createApi({
-  reducerPath: "LoginAudit", // This should remain unique
+  reducerPath: 'LoginAudit', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["LoginAudit"],
+  tagTypes: ['LoginAudit'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getLoginAuditsPaged: build.query<
-      LoginAuditResponse,
-      { page: number; size?: number; example?: Partial<LoginAudit> }
-    >({
+    getLoginAuditsPaged: build.query<LoginAuditResponse, LoginAuditPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `LoginAudit?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `LoginAudit?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toLoginAuditList(result);
+        const rows = toLoginAuditList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "LoginAudit" as const, id })),
-          { type: "LoginAudit", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'LoginAudit' as const, id })),
+          { type: 'LoginAudit', id: `PAGE_${page}` },
+          { type: 'LoginAudit', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getLoginAudits: build.query<
-      LoginAuditResponse,
-      { example?: Partial<LoginAudit> } | void
-    >({
+    getLoginAudits: build.query<LoginAuditResponse, LoginAuditListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const LoginAuditService = createApi({
         return `LoginAudit`;
       },
       providesTags: (result) => {
-        const rows = toLoginAuditList(result);
+        const rows = toLoginAuditList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "LoginAudit" as const, id })),
-          { type: "LoginAudit", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'LoginAudit' as const, id })),
+          { type: 'LoginAudit', id: 'LIST' },
+          { type: 'LoginAudit', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,49 +97,32 @@ export const LoginAuditService = createApi({
     addLoginAudit: build.mutation<LoginAudit, Partial<LoginAudit>>({
       query: (body) => ({
         url: `LoginAudit`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "LoginAudit", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'LoginAudit', id: 'LIST' },
+        { type: 'LoginAudit', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getLoginAudit: build.query<LoginAudit, string>({
       query: (id) => `LoginAudit/${id}`,
-      providesTags: (result, error, id) => [{ type: "LoginAudit", id }],
+      providesTags: (result, error, id) => [{ type: 'LoginAudit', id }],
     }),
 
     // 5) Update
-    updateLoginAudit: build.mutation<
-      void,
-      Pick<LoginAudit, "id"> & Partial<LoginAudit>
-    >({
+    updateLoginAudit: build.mutation<LoginAudit, Pick<LoginAudit, 'id'> & Partial<LoginAudit>>({
       query: ({ id, ...patch }) => ({
         url: `LoginAudit/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            LoginAuditService.util.updateQueryData(
-              "getLoginAudit",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<LoginAudit, "id">) => [
-        { type: "LoginAudit", id },
-        { type: "LoginAudit", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<LoginAudit, 'id'>) => [
+        { type: 'LoginAudit', id },
+        { type: 'LoginAudit', id: 'LIST' },
+        { type: 'LoginAudit', id: 'PARTIAL-LIST' },
       ],
     }),
 
@@ -138,35 +131,37 @@ export const LoginAuditService = createApi({
       query(id) {
         return {
           url: `LoginAudit/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "LoginAudit", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'LoginAudit', id },
+        { type: 'LoginAudit', id: 'LIST' },
+        { type: 'LoginAudit', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteLoginAuditCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteLoginAuditCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `LoginAudit/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "LoginAudit", id },
-        { type: "LoginAudit", id: "LIST" },
+        { type: 'LoginAudit', id },
+        { type: 'LoginAudit', id: 'LIST' },
+        { type: 'LoginAudit', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetLoginAuditsPagedQuery`
 export const {
-  useGetLoginAuditsPagedQuery, // immediate fetch
+  useGetLoginAuditsPagedQuery,     // immediate fetch
   useLazyGetLoginAuditsPagedQuery, // lazy fetch
   useGetLoginAuditQuery,
   useGetLoginAuditsQuery,
@@ -174,4 +169,4 @@ export const {
   useUpdateLoginAuditMutation,
   useDeleteLoginAuditMutation,
   useDeleteLoginAuditCascadeMutation,
-} = LoginAuditService;
+} = LoginAuditService

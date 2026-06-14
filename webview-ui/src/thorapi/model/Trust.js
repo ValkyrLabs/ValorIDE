@@ -35,31 +35,19 @@ const DataObject_1 = require("./DataObject");
 function TrustFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        trustStatus: !(0, runtime_1.exists)(json, "trustStatus") ? undefined : json["trustStatus"],
-        apiSpecHash: !(0, runtime_1.exists)(json, "apiSpecHash") ? undefined : json["apiSpecHash"],
-        generatedSourceHash: !(0, runtime_1.exists)(json, "generatedSourceHash")
-            ? undefined
-            : json["generatedSourceHash"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'trustStatus': !(0, runtime_1.exists)(json, 'trustStatus') ? undefined : json['trustStatus'],
+        'apiSpecHash': !(0, runtime_1.exists)(json, 'apiSpecHash') ? undefined : json['apiSpecHash'],
+        'generatedSourceHash': !(0, runtime_1.exists)(json, 'generatedSourceHash') ? undefined : json['generatedSourceHash'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function TrustToJSON(value) {
@@ -68,18 +56,18 @@ function TrustToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        name: value.name,
-        trustStatus: value.trustStatus,
-        apiSpecHash: value.apiSpecHash,
-        generatedSourceHash: value.generatedSourceHash,
-        ownerId: value.ownerId,
-        trashed: value.trashed,
+        'name': value.name,
+        'trustStatus': value.trustStatus,
+        'apiSpecHash': value.apiSpecHash,
+        'generatedSourceHash': value.generatedSourceHash,
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustTrustStatusEnum;
 (function (TrustTrustStatusEnum) {
     TrustTrustStatusEnum["VERIFIED"] = "verified";

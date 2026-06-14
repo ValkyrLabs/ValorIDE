@@ -35,28 +35,18 @@ const DataObject_1 = require("./DataObject");
 function GrantPermissionRequestFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        subjectType: !(0, runtime_1.exists)(json, "subjectType") ? undefined : json["subjectType"],
-        subjectId: !(0, runtime_1.exists)(json, "subjectId") ? undefined : json["subjectId"],
-        permission: !(0, runtime_1.exists)(json, "permission") ? undefined : json["permission"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'subjectType': !(0, runtime_1.exists)(json, 'subjectType') ? undefined : json['subjectType'],
+        'subjectId': !(0, runtime_1.exists)(json, 'subjectId') ? undefined : json['subjectId'],
+        'permission': !(0, runtime_1.exists)(json, 'permission') ? undefined : json['permission'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function GrantPermissionRequestToJSON(value) {
@@ -65,16 +55,16 @@ function GrantPermissionRequestToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        subjectType: value.subjectType,
-        subjectId: value.subjectId,
-        permission: value.permission,
-        trashed: value.trashed,
+        'subjectType': value.subjectType,
+        'subjectId': value.subjectId,
+        'permission': value.permission,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var GrantPermissionRequestSubjectTypeEnum;
 (function (GrantPermissionRequestSubjectTypeEnum) {
     GrantPermissionRequestSubjectTypeEnum["USER"] = "user";
@@ -83,9 +73,9 @@ var GrantPermissionRequestSubjectTypeEnum;
     GrantPermissionRequestSubjectTypeEnum["ROLE"] = "role";
 })(GrantPermissionRequestSubjectTypeEnum || (exports.GrantPermissionRequestSubjectTypeEnum = GrantPermissionRequestSubjectTypeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var GrantPermissionRequestPermissionEnum;
 (function (GrantPermissionRequestPermissionEnum) {
     GrantPermissionRequestPermissionEnum["READ"] = "read";

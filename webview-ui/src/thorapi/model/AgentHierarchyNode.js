@@ -35,37 +35,21 @@ const _1 = require("./");
 function AgentHierarchyNodeFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        agentId: !(0, runtime_1.exists)(json, "agentId") ? undefined : json["agentId"],
-        parentAgentId: !(0, runtime_1.exists)(json, "parentAgentId")
-            ? undefined
-            : json["parentAgentId"],
-        children: !(0, runtime_1.exists)(json, "children")
-            ? undefined
-            : json["children"].map(AgentHierarchyNodeFromJSON),
-        depth: !(0, runtime_1.exists)(json, "depth") ? undefined : json["depth"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        billing: !(0, runtime_1.exists)(json, "billing")
-            ? undefined
-            : (0, _1.AgentBillingFromJSON)(json["billing"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'agentId': !(0, runtime_1.exists)(json, 'agentId') ? undefined : json['agentId'],
+        'parentAgentId': !(0, runtime_1.exists)(json, 'parentAgentId') ? undefined : json['parentAgentId'],
+        'children': !(0, runtime_1.exists)(json, 'children') ? undefined : json['children'].map(AgentHierarchyNodeFromJSON),
+        'depth': !(0, runtime_1.exists)(json, 'depth') ? undefined : json['depth'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'billing': !(0, runtime_1.exists)(json, 'billing') ? undefined : (0, _1.AgentBillingFromJSON)(json['billing']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function AgentHierarchyNodeToJSON(value) {
@@ -74,15 +58,13 @@ function AgentHierarchyNodeToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        agentId: value.agentId,
-        parentAgentId: value.parentAgentId,
-        children: value.children === undefined
-            ? undefined
-            : value.children.map(AgentHierarchyNodeToJSON),
-        depth: value.depth,
-        status: value.status,
-        billing: (0, _1.AgentBillingToJSON)(value.billing),
-        trashed: value.trashed,
+        'agentId': value.agentId,
+        'parentAgentId': value.parentAgentId,
+        'children': value.children === undefined ? undefined : value.children.map(AgentHierarchyNodeToJSON),
+        'depth': value.depth,
+        'status': value.status,
+        'billing': (0, _1.AgentBillingToJSON)(value.billing),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=AgentHierarchyNode.js.map

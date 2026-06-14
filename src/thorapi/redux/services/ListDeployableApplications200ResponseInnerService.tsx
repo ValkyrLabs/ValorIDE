@@ -13,73 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { ListDeployableApplications200ResponseInner } from "@thorapi/model/ListDeployableApplications200ResponseInner";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { ListDeployableApplications200ResponseInner } from '@thorapi/model/ListDeployableApplications200ResponseInner'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type ListDeployableApplications200ResponseInnerResponse =
-  ListDeployableApplications200ResponseInner[];
+type ListDeployableApplications200ResponseInnerResponse = ListDeployableApplications200ResponseInner[]
+type ListDeployableApplications200ResponseInnerPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<ListDeployableApplications200ResponseInner>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toListDeployableApplications200ResponseInnerList = (
-  result: unknown,
-): ListDeployableApplications200ResponseInnerResponse => {
+type ListDeployableApplications200ResponseInnerListQueryArg = {
+  example?: Partial<ListDeployableApplications200ResponseInner>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toListDeployableApplications200ResponseInnerList = (result: unknown): ListDeployableApplications200ResponseInnerResponse => {
   if (Array.isArray(result)) {
-    return result as ListDeployableApplications200ResponseInnerResponse;
+    return result as ListDeployableApplications200ResponseInnerResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as ListDeployableApplications200ResponseInnerResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as ListDeployableApplications200ResponseInnerResponse) : []
+}
 
 export const ListDeployableApplications200ResponseInnerService = createApi({
-  reducerPath: "ListDeployableApplications200ResponseInner", // This should remain unique
+  reducerPath: 'ListDeployableApplications200ResponseInner', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["ListDeployableApplications200ResponseInner"],
+  tagTypes: ['ListDeployableApplications200ResponseInner'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getListDeployableApplications200ResponseInnersPaged: build.query<
-      ListDeployableApplications200ResponseInnerResponse,
-      {
-        page: number;
-        size?: number;
-        example?: Partial<ListDeployableApplications200ResponseInner>;
-      }
-    >({
+    getListDeployableApplications200ResponseInnersPaged: build.query<ListDeployableApplications200ResponseInnerResponse, ListDeployableApplications200ResponseInnerPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ListDeployableApplications200ResponseInner?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ListDeployableApplications200ResponseInner?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toListDeployableApplications200ResponseInnerList(result);
+        const rows = toListDeployableApplications200ResponseInnerList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "ListDeployableApplications200ResponseInner" as const,
-              id,
-            })),
-          {
-            type: "ListDeployableApplications200ResponseInner",
-            id: `PAGE_${page}`,
-          },
-        ];
+            .map(({ id }) => ({ type: 'ListDeployableApplications200ResponseInner' as const, id })),
+          { type: 'ListDeployableApplications200ResponseInner', id: `PAGE_${page}` },
+          { type: 'ListDeployableApplications200ResponseInner', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getListDeployableApplications200ResponseInners: build.query<
-      ListDeployableApplications200ResponseInnerResponse,
-      { example?: Partial<ListDeployableApplications200ResponseInner> } | void
-    >({
+    getListDeployableApplications200ResponseInners: build.query<ListDeployableApplications200ResponseInnerResponse, ListDeployableApplications200ResponseInnerListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -88,123 +82,86 @@ export const ListDeployableApplications200ResponseInnerService = createApi({
         return `ListDeployableApplications200ResponseInner`;
       },
       providesTags: (result) => {
-        const rows = toListDeployableApplications200ResponseInnerList(result);
+        const rows = toListDeployableApplications200ResponseInnerList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "ListDeployableApplications200ResponseInner" as const,
-              id,
-            })),
-          { type: "ListDeployableApplications200ResponseInner", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'ListDeployableApplications200ResponseInner' as const, id })),
+          { type: 'ListDeployableApplications200ResponseInner', id: 'LIST' },
+          { type: 'ListDeployableApplications200ResponseInner', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addListDeployableApplications200ResponseInner: build.mutation<
-      ListDeployableApplications200ResponseInner,
-      Partial<ListDeployableApplications200ResponseInner>
-    >({
+    addListDeployableApplications200ResponseInner: build.mutation<ListDeployableApplications200ResponseInner, Partial<ListDeployableApplications200ResponseInner>>({
       query: (body) => ({
         url: `ListDeployableApplications200ResponseInner`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
       invalidatesTags: [
-        { type: "ListDeployableApplications200ResponseInner", id: "LIST" },
+        { type: 'ListDeployableApplications200ResponseInner', id: 'LIST' },
+        { type: 'ListDeployableApplications200ResponseInner', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 4) Get single by ID
-    getListDeployableApplications200ResponseInner: build.query<
-      ListDeployableApplications200ResponseInner,
-      string
-    >({
+    getListDeployableApplications200ResponseInner: build.query<ListDeployableApplications200ResponseInner, string>({
       query: (id) => `ListDeployableApplications200ResponseInner/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "ListDeployableApplications200ResponseInner", id },
-      ],
+      providesTags: (result, error, id) => [{ type: 'ListDeployableApplications200ResponseInner', id }],
     }),
 
     // 5) Update
-    updateListDeployableApplications200ResponseInner: build.mutation<
-      void,
-      Pick<ListDeployableApplications200ResponseInner, "id"> &
-        Partial<ListDeployableApplications200ResponseInner>
-    >({
+    updateListDeployableApplications200ResponseInner: build.mutation<ListDeployableApplications200ResponseInner, Pick<ListDeployableApplications200ResponseInner, 'id'> & Partial<ListDeployableApplications200ResponseInner>>({
       query: ({ id, ...patch }) => ({
         url: `ListDeployableApplications200ResponseInner/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            ListDeployableApplications200ResponseInnerService.util.updateQueryData(
-              "getListDeployableApplications200ResponseInner",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<ListDeployableApplications200ResponseInner, "id">,
-      ) => [
-        { type: "ListDeployableApplications200ResponseInner", id },
-        { type: "ListDeployableApplications200ResponseInner", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<ListDeployableApplications200ResponseInner, 'id'>) => [
+        { type: 'ListDeployableApplications200ResponseInner', id },
+        { type: 'ListDeployableApplications200ResponseInner', id: 'LIST' },
+        { type: 'ListDeployableApplications200ResponseInner', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteListDeployableApplications200ResponseInner: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteListDeployableApplications200ResponseInner: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `ListDeployableApplications200ResponseInner/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "ListDeployableApplications200ResponseInner", id },
+        { type: 'ListDeployableApplications200ResponseInner', id },
+        { type: 'ListDeployableApplications200ResponseInner', id: 'LIST' },
+        { type: 'ListDeployableApplications200ResponseInner', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteListDeployableApplications200ResponseInnerCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteListDeployableApplications200ResponseInnerCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `ListDeployableApplications200ResponseInner/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "ListDeployableApplications200ResponseInner", id },
-        { type: "ListDeployableApplications200ResponseInner", id: "LIST" },
+        { type: 'ListDeployableApplications200ResponseInner', id },
+        { type: 'ListDeployableApplications200ResponseInner', id: 'LIST' },
+        { type: 'ListDeployableApplications200ResponseInner', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetListDeployableApplications200ResponseInnersPagedQuery`
 export const {
-  useGetListDeployableApplications200ResponseInnersPagedQuery, // immediate fetch
+  useGetListDeployableApplications200ResponseInnersPagedQuery,     // immediate fetch
   useLazyGetListDeployableApplications200ResponseInnersPagedQuery, // lazy fetch
   useGetListDeployableApplications200ResponseInnerQuery,
   useGetListDeployableApplications200ResponseInnersQuery,
@@ -212,4 +169,4 @@ export const {
   useUpdateListDeployableApplications200ResponseInnerMutation,
   useDeleteListDeployableApplications200ResponseInnerMutation,
   useDeleteListDeployableApplications200ResponseInnerCascadeMutation,
-} = ListDeployableApplications200ResponseInnerService;
+} = ListDeployableApplications200ResponseInnerService

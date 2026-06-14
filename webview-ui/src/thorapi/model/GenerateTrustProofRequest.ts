@@ -26,133 +26,121 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
 /**
- *
+ * 
  * @export
  * @interface GenerateTrustProofRequest
  */
-export type GenerateTrustProofRequest = DataObject & {
-  /**
-   *
-   * @type {string}
-   * @memberof GenerateTrustProofRequest
-   */
-  executionId?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof GenerateTrustProofRequest
-   */
-  proofFormat?: GenerateTrustProofRequestProofFormatEnum;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof GenerateTrustProofRequest
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof GenerateTrustProofRequest
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof GenerateTrustProofRequest
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof GenerateTrustProofRequest
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof GenerateTrustProofRequest
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof GenerateTrustProofRequest
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof GenerateTrustProofRequest
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof GenerateTrustProofRequest
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof GenerateTrustProofRequest
-   */
-  trashed?: boolean;
-};
-
-export function GenerateTrustProofRequestFromJSON(
-  json: any,
-): GenerateTrustProofRequest {
-  return {
-    ...DataObjectFromJSON(json),
-    executionId: !exists(json, "executionId") ? undefined : json["executionId"],
-    proofFormat: !exists(json, "proofFormat") ? undefined : json["proofFormat"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+export type GenerateTrustProofRequest  = DataObject & {
+    /**
+     * 
+     * @type {string}
+     * @memberof GenerateTrustProofRequest
+     */
+    executionId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GenerateTrustProofRequest
+     */
+    proofFormat?: GenerateTrustProofRequestProofFormatEnum;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof GenerateTrustProofRequest
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof GenerateTrustProofRequest
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof GenerateTrustProofRequest
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof GenerateTrustProofRequest
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof GenerateTrustProofRequest
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof GenerateTrustProofRequest
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof GenerateTrustProofRequest
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof GenerateTrustProofRequest
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof GenerateTrustProofRequest
+     */
+    trashed?: boolean;
 }
 
-export function GenerateTrustProofRequestToJSON(
-  value?: GenerateTrustProofRequest,
-): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    executionId: value.executionId,
-    proofFormat: value.proofFormat,
-    trashed: value.trashed,
-  };
+export function GenerateTrustProofRequestFromJSON(json: any): GenerateTrustProofRequest {
+    return {
+        ...DataObjectFromJSON(json),
+        'executionId': !exists(json, 'executionId') ? undefined : json['executionId'],
+        'proofFormat': !exists(json, 'proofFormat') ? undefined : json['proofFormat'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
+}
+
+export function GenerateTrustProofRequestToJSON(value?: GenerateTrustProofRequest): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'executionId': value.executionId,
+        'proofFormat': value.proofFormat,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum GenerateTrustProofRequestProofFormatEnum {
-  JCSJSON = "jcs_json",
-  CANONICALCBOR = "canonical_cbor",
+    JCSJSON = 'jcs_json',
+    CANONICALCBOR = 'canonical_cbor'
 }
+
+

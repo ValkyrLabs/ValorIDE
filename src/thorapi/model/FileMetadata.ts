@@ -26,8 +26,8 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 
 // thorapi
 
@@ -36,139 +36,131 @@ import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
  * @export
  * @interface FileMetadata
  */
-export type FileMetadata = DataObject & {
-  /**
-   *
-   * @type {string}
-   * @memberof FileMetadata
-   */
-  filename?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof FileMetadata
-   */
-  mimeType?: string;
-  /**
-   *
-   * @type {number}
-   * @memberof FileMetadata
-   */
-  sizeBytes?: number;
-  /**
-   *
-   * @type {string}
-   * @memberof FileMetadata
-   */
-  status?: FileMetadataStatusEnum;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof FileMetadata
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof FileMetadata
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof FileMetadata
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof FileMetadata
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof FileMetadata
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof FileMetadata
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof FileMetadata
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof FileMetadata
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof FileMetadata
-   */
-  trashed?: boolean;
-};
+export type FileMetadata  = DataObject & {
+    /**
+     * 
+     * @type {string}
+     * @memberof FileMetadata
+     */
+    filename?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof FileMetadata
+     */
+    mimeType?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof FileMetadata
+     */
+    sizeBytes?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof FileMetadata
+     */
+    status?: FileMetadataStatusEnum;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof FileMetadata
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof FileMetadata
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof FileMetadata
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof FileMetadata
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof FileMetadata
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof FileMetadata
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof FileMetadata
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof FileMetadata
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof FileMetadata
+     */
+    trashed?: boolean;
+}
 
 export function FileMetadataFromJSON(json: any): FileMetadata {
-  return {
-    ...DataObjectFromJSON(json),
-    filename: !exists(json, "filename") ? undefined : json["filename"],
-    mimeType: !exists(json, "mimeType") ? undefined : json["mimeType"],
-    sizeBytes: !exists(json, "sizeBytes") ? undefined : json["sizeBytes"],
-    status: !exists(json, "status") ? undefined : json["status"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'filename': !exists(json, 'filename') ? undefined : json['filename'],
+        'mimeType': !exists(json, 'mimeType') ? undefined : json['mimeType'],
+        'sizeBytes': !exists(json, 'sizeBytes') ? undefined : json['sizeBytes'],
+        'status': !exists(json, 'status') ? undefined : json['status'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function FileMetadataToJSON(value?: FileMetadata): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    filename: value.filename,
-    mimeType: value.mimeType,
-    sizeBytes: value.sizeBytes,
-    status: value.status,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'filename': value.filename,
+        'mimeType': value.mimeType,
+        'sizeBytes': value.sizeBytes,
+        'status': value.status,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum FileMetadataStatusEnum {
-  UPLOADING = "uploading",
-  SCANNING = "scanning",
-  AVAILABLE = "available",
-  BLOCKED = "blocked",
-  DELETED = "deleted",
-  FAILED = "failed",
+    UPLOADING = 'uploading',
+    SCANNING = 'scanning',
+    AVAILABLE = 'available',
+    BLOCKED = 'blocked',
+    DELETED = 'deleted',
+    FAILED = 'failed'
 }
+
+

@@ -26,159 +26,152 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 import {
-  ExecModuleConfig,
-  ExecModuleConfigFromJSON,
-  ExecModuleConfigToJSON,
-} from "./";
+
+
+    ExecModuleConfig,
+    ExecModuleConfigFromJSON,
+    ExecModuleConfigToJSON,
+} from './';
+
 
 // thorapi
 
 /**
- *
+ * 
  * @export
  * @interface WorkflowGraphModule
  */
-export type WorkflowGraphModule = DataObject & {
-  /**
-   *
-   * @type {string}
-   * @memberof WorkflowGraphModule
-   */
-  moduleId?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof WorkflowGraphModule
-   */
-  nodeId?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof WorkflowGraphModule
-   */
-  className?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof WorkflowGraphModule
-   */
-  name?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof WorkflowGraphModule
-   */
-  displayName?: string;
-  /**
-   *
-   * @type {ExecModuleConfig}
-   * @memberof WorkflowGraphModule
-   */
-  execModuleConfig?: ExecModuleConfig;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof WorkflowGraphModule
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof WorkflowGraphModule
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof WorkflowGraphModule
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof WorkflowGraphModule
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof WorkflowGraphModule
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof WorkflowGraphModule
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof WorkflowGraphModule
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof WorkflowGraphModule
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof WorkflowGraphModule
-   */
-  trashed?: boolean;
-};
+export type WorkflowGraphModule  = DataObject & {
+    /**
+     * 
+     * @type {string}
+     * @memberof WorkflowGraphModule
+     */
+    moduleId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof WorkflowGraphModule
+     */
+    nodeId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof WorkflowGraphModule
+     */
+    className?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof WorkflowGraphModule
+     */
+    name?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof WorkflowGraphModule
+     */
+    displayName?: string;
+    /**
+     * 
+     * @type {ExecModuleConfig}
+     * @memberof WorkflowGraphModule
+     */
+    execModuleConfig?: ExecModuleConfig;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof WorkflowGraphModule
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof WorkflowGraphModule
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof WorkflowGraphModule
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof WorkflowGraphModule
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof WorkflowGraphModule
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof WorkflowGraphModule
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof WorkflowGraphModule
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof WorkflowGraphModule
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof WorkflowGraphModule
+     */
+    trashed?: boolean;
+}
 
 export function WorkflowGraphModuleFromJSON(json: any): WorkflowGraphModule {
-  return {
-    ...DataObjectFromJSON(json),
-    moduleId: !exists(json, "moduleId") ? undefined : json["moduleId"],
-    nodeId: !exists(json, "nodeId") ? undefined : json["nodeId"],
-    className: !exists(json, "className") ? undefined : json["className"],
-    name: !exists(json, "name") ? undefined : json["name"],
-    displayName: !exists(json, "displayName") ? undefined : json["displayName"],
-    execModuleConfig: !exists(json, "execModuleConfig")
-      ? undefined
-      : ExecModuleConfigFromJSON(json["execModuleConfig"]),
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'moduleId': !exists(json, 'moduleId') ? undefined : json['moduleId'],
+        'nodeId': !exists(json, 'nodeId') ? undefined : json['nodeId'],
+        'className': !exists(json, 'className') ? undefined : json['className'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'displayName': !exists(json, 'displayName') ? undefined : json['displayName'],
+        'execModuleConfig': !exists(json, 'execModuleConfig') ? undefined : ExecModuleConfigFromJSON(json['execModuleConfig']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function WorkflowGraphModuleToJSON(value?: WorkflowGraphModule): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    moduleId: value.moduleId,
-    nodeId: value.nodeId,
-    className: value.className,
-    name: value.name,
-    displayName: value.displayName,
-    execModuleConfig: ExecModuleConfigToJSON(value.execModuleConfig),
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'moduleId': value.moduleId,
+        'nodeId': value.nodeId,
+        'className': value.className,
+        'name': value.name,
+        'displayName': value.displayName,
+        'execModuleConfig': ExecModuleConfigToJSON(value.execModuleConfig),
+        'trashed': value.trashed,
+    };
 }
+
+

@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { WorkflowGraphNode } from "@thorapi/model/WorkflowGraphNode";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { WorkflowGraphNode } from '@thorapi/model/WorkflowGraphNode'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type WorkflowGraphNodeResponse = WorkflowGraphNode[];
+type WorkflowGraphNodeResponse = WorkflowGraphNode[]
+type WorkflowGraphNodePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<WorkflowGraphNode>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toWorkflowGraphNodeList = (
-  result: unknown,
-): WorkflowGraphNodeResponse => {
+type WorkflowGraphNodeListQueryArg = {
+  example?: Partial<WorkflowGraphNode>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toWorkflowGraphNodeList = (result: unknown): WorkflowGraphNodeResponse => {
   if (Array.isArray(result)) {
-    return result as WorkflowGraphNodeResponse;
+    return result as WorkflowGraphNodeResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as WorkflowGraphNodeResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as WorkflowGraphNodeResponse) : []
+}
 
 export const WorkflowGraphNodeService = createApi({
-  reducerPath: "WorkflowGraphNode", // This should remain unique
+  reducerPath: 'WorkflowGraphNode', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["WorkflowGraphNode"],
+  tagTypes: ['WorkflowGraphNode'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getWorkflowGraphNodesPaged: build.query<
-      WorkflowGraphNodeResponse,
-      { page: number; size?: number; example?: Partial<WorkflowGraphNode> }
-    >({
+    getWorkflowGraphNodesPaged: build.query<WorkflowGraphNodeResponse, WorkflowGraphNodePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `WorkflowGraphNode?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `WorkflowGraphNode?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toWorkflowGraphNodeList(result);
+        const rows = toWorkflowGraphNodeList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "WorkflowGraphNode" as const, id })),
-          { type: "WorkflowGraphNode", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'WorkflowGraphNode' as const, id })),
+          { type: 'WorkflowGraphNode', id: `PAGE_${page}` },
+          { type: 'WorkflowGraphNode', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getWorkflowGraphNodes: build.query<
-      WorkflowGraphNodeResponse,
-      { example?: Partial<WorkflowGraphNode> } | void
-    >({
+    getWorkflowGraphNodes: build.query<WorkflowGraphNodeResponse, WorkflowGraphNodeListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,112 +82,86 @@ export const WorkflowGraphNodeService = createApi({
         return `WorkflowGraphNode`;
       },
       providesTags: (result) => {
-        const rows = toWorkflowGraphNodeList(result);
+        const rows = toWorkflowGraphNodeList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "WorkflowGraphNode" as const, id })),
-          { type: "WorkflowGraphNode", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'WorkflowGraphNode' as const, id })),
+          { type: 'WorkflowGraphNode', id: 'LIST' },
+          { type: 'WorkflowGraphNode', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addWorkflowGraphNode: build.mutation<
-      WorkflowGraphNode,
-      Partial<WorkflowGraphNode>
-    >({
+    addWorkflowGraphNode: build.mutation<WorkflowGraphNode, Partial<WorkflowGraphNode>>({
       query: (body) => ({
         url: `WorkflowGraphNode`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "WorkflowGraphNode", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'WorkflowGraphNode', id: 'LIST' },
+        { type: 'WorkflowGraphNode', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getWorkflowGraphNode: build.query<WorkflowGraphNode, string>({
       query: (id) => `WorkflowGraphNode/${id}`,
-      providesTags: (result, error, id) => [{ type: "WorkflowGraphNode", id }],
+      providesTags: (result, error, id) => [{ type: 'WorkflowGraphNode', id }],
     }),
 
     // 5) Update
-    updateWorkflowGraphNode: build.mutation<
-      void,
-      Pick<WorkflowGraphNode, "id"> & Partial<WorkflowGraphNode>
-    >({
+    updateWorkflowGraphNode: build.mutation<WorkflowGraphNode, Pick<WorkflowGraphNode, 'id'> & Partial<WorkflowGraphNode>>({
       query: ({ id, ...patch }) => ({
         url: `WorkflowGraphNode/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            WorkflowGraphNodeService.util.updateQueryData(
-              "getWorkflowGraphNode",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<WorkflowGraphNode, "id">,
-      ) => [
-        { type: "WorkflowGraphNode", id },
-        { type: "WorkflowGraphNode", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<WorkflowGraphNode, 'id'>) => [
+        { type: 'WorkflowGraphNode', id },
+        { type: 'WorkflowGraphNode', id: 'LIST' },
+        { type: 'WorkflowGraphNode', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteWorkflowGraphNode: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteWorkflowGraphNode: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `WorkflowGraphNode/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "WorkflowGraphNode", id },
+        { type: 'WorkflowGraphNode', id },
+        { type: 'WorkflowGraphNode', id: 'LIST' },
+        { type: 'WorkflowGraphNode', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteWorkflowGraphNodeCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteWorkflowGraphNodeCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `WorkflowGraphNode/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "WorkflowGraphNode", id },
-        { type: "WorkflowGraphNode", id: "LIST" },
+        { type: 'WorkflowGraphNode', id },
+        { type: 'WorkflowGraphNode', id: 'LIST' },
+        { type: 'WorkflowGraphNode', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetWorkflowGraphNodesPagedQuery`
 export const {
-  useGetWorkflowGraphNodesPagedQuery, // immediate fetch
+  useGetWorkflowGraphNodesPagedQuery,     // immediate fetch
   useLazyGetWorkflowGraphNodesPagedQuery, // lazy fetch
   useGetWorkflowGraphNodeQuery,
   useGetWorkflowGraphNodesQuery,
@@ -190,4 +169,4 @@ export const {
   useUpdateWorkflowGraphNodeMutation,
   useDeleteWorkflowGraphNodeMutation,
   useDeleteWorkflowGraphNodeCascadeMutation,
-} = WorkflowGraphNodeService;
+} = WorkflowGraphNodeService

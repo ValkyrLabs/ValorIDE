@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_PIVOTTABLE_REQUEST,
-  FETCH_PIVOTTABLE_REQUEST,
-  LIST_PIVOTTABLE_REQUEST,
-  UPDATE_PIVOTTABLE_REQUEST,
-  DELETE_PIVOTTABLE_REQUEST,
-  addPivotTableFailure,
-  addPivotTableSuccess,
-  fetchPivotTableFailure,
-  fetchPivotTableSuccess,
-  listPivotTableFailure,
-  listPivotTableSuccess,
-  updatePivotTableFailure,
-  updatePivotTableSuccess,
-  deletePivotTableFailure,
-  deletePivotTableSuccess,
-} from "../actions/PivotTableApiAction";
+
+    ADD_PIVOTTABLE_REQUEST,
+    FETCH_PIVOTTABLE_REQUEST,
+    LIST_PIVOTTABLE_REQUEST,
+    UPDATE_PIVOTTABLE_REQUEST,
+    DELETE_PIVOTTABLE_REQUEST,
+
+    addPivotTableFailure,
+    addPivotTableSuccess,
+
+    fetchPivotTableFailure,
+    fetchPivotTableSuccess,
+    
+    listPivotTableFailure,
+    listPivotTableSuccess,
+
+    updatePivotTableFailure,
+    updatePivotTableSuccess,
+    
+    deletePivotTableFailure,
+    deletePivotTableSuccess,
+    
+} from '../actions/PivotTableApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: PivotTable
 */
 
-export const PivotTableMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("PivotTable MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const PivotTableMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("PivotTable MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

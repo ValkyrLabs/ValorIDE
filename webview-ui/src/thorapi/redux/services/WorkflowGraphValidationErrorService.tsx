@@ -13,69 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { WorkflowGraphValidationError } from "@thorapi/model/WorkflowGraphValidationError";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { WorkflowGraphValidationError } from '@thorapi/model/WorkflowGraphValidationError'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type WorkflowGraphValidationErrorResponse = WorkflowGraphValidationError[];
+type WorkflowGraphValidationErrorResponse = WorkflowGraphValidationError[]
+type WorkflowGraphValidationErrorPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<WorkflowGraphValidationError>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toWorkflowGraphValidationErrorList = (
-  result: unknown,
-): WorkflowGraphValidationErrorResponse => {
+type WorkflowGraphValidationErrorListQueryArg = {
+  example?: Partial<WorkflowGraphValidationError>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toWorkflowGraphValidationErrorList = (result: unknown): WorkflowGraphValidationErrorResponse => {
   if (Array.isArray(result)) {
-    return result as WorkflowGraphValidationErrorResponse;
+    return result as WorkflowGraphValidationErrorResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as WorkflowGraphValidationErrorResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as WorkflowGraphValidationErrorResponse) : []
+}
 
 export const WorkflowGraphValidationErrorService = createApi({
-  reducerPath: "WorkflowGraphValidationError", // This should remain unique
+  reducerPath: 'WorkflowGraphValidationError', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["WorkflowGraphValidationError"],
+  tagTypes: ['WorkflowGraphValidationError'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getWorkflowGraphValidationErrorsPaged: build.query<
-      WorkflowGraphValidationErrorResponse,
-      {
-        page: number;
-        size?: number;
-        example?: Partial<WorkflowGraphValidationError>;
-      }
-    >({
+    getWorkflowGraphValidationErrorsPaged: build.query<WorkflowGraphValidationErrorResponse, WorkflowGraphValidationErrorPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `WorkflowGraphValidationError?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `WorkflowGraphValidationError?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toWorkflowGraphValidationErrorList(result);
+        const rows = toWorkflowGraphValidationErrorList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "WorkflowGraphValidationError" as const,
-              id,
-            })),
-          { type: "WorkflowGraphValidationError", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'WorkflowGraphValidationError' as const, id })),
+          { type: 'WorkflowGraphValidationError', id: `PAGE_${page}` },
+          { type: 'WorkflowGraphValidationError', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getWorkflowGraphValidationErrors: build.query<
-      WorkflowGraphValidationErrorResponse,
-      { example?: Partial<WorkflowGraphValidationError> } | void
-    >({
+    getWorkflowGraphValidationErrors: build.query<WorkflowGraphValidationErrorResponse, WorkflowGraphValidationErrorListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -84,121 +82,86 @@ export const WorkflowGraphValidationErrorService = createApi({
         return `WorkflowGraphValidationError`;
       },
       providesTags: (result) => {
-        const rows = toWorkflowGraphValidationErrorList(result);
+        const rows = toWorkflowGraphValidationErrorList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({
-              type: "WorkflowGraphValidationError" as const,
-              id,
-            })),
-          { type: "WorkflowGraphValidationError", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'WorkflowGraphValidationError' as const, id })),
+          { type: 'WorkflowGraphValidationError', id: 'LIST' },
+          { type: 'WorkflowGraphValidationError', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addWorkflowGraphValidationError: build.mutation<
-      WorkflowGraphValidationError,
-      Partial<WorkflowGraphValidationError>
-    >({
+    addWorkflowGraphValidationError: build.mutation<WorkflowGraphValidationError, Partial<WorkflowGraphValidationError>>({
       query: (body) => ({
         url: `WorkflowGraphValidationError`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "WorkflowGraphValidationError", id: "LIST" }],
-    }),
-
-    // 4) Get single by ID
-    getWorkflowGraphValidationError: build.query<
-      WorkflowGraphValidationError,
-      string
-    >({
-      query: (id) => `WorkflowGraphValidationError/${id}`,
-      providesTags: (result, error, id) => [
-        { type: "WorkflowGraphValidationError", id },
+      invalidatesTags: [
+        { type: 'WorkflowGraphValidationError', id: 'LIST' },
+        { type: 'WorkflowGraphValidationError', id: 'PARTIAL-LIST' },
       ],
     }),
 
+    // 4) Get single by ID
+    getWorkflowGraphValidationError: build.query<WorkflowGraphValidationError, string>({
+      query: (id) => `WorkflowGraphValidationError/${id}`,
+      providesTags: (result, error, id) => [{ type: 'WorkflowGraphValidationError', id }],
+    }),
+
     // 5) Update
-    updateWorkflowGraphValidationError: build.mutation<
-      void,
-      Pick<WorkflowGraphValidationError, "id"> &
-        Partial<WorkflowGraphValidationError>
-    >({
+    updateWorkflowGraphValidationError: build.mutation<WorkflowGraphValidationError, Pick<WorkflowGraphValidationError, 'id'> & Partial<WorkflowGraphValidationError>>({
       query: ({ id, ...patch }) => ({
         url: `WorkflowGraphValidationError/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            WorkflowGraphValidationErrorService.util.updateQueryData(
-              "getWorkflowGraphValidationError",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<WorkflowGraphValidationError, "id">,
-      ) => [
-        { type: "WorkflowGraphValidationError", id },
-        { type: "WorkflowGraphValidationError", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<WorkflowGraphValidationError, 'id'>) => [
+        { type: 'WorkflowGraphValidationError', id },
+        { type: 'WorkflowGraphValidationError', id: 'LIST' },
+        { type: 'WorkflowGraphValidationError', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteWorkflowGraphValidationError: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteWorkflowGraphValidationError: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `WorkflowGraphValidationError/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "WorkflowGraphValidationError", id },
+        { type: 'WorkflowGraphValidationError', id },
+        { type: 'WorkflowGraphValidationError', id: 'LIST' },
+        { type: 'WorkflowGraphValidationError', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteWorkflowGraphValidationErrorCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteWorkflowGraphValidationErrorCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `WorkflowGraphValidationError/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "WorkflowGraphValidationError", id },
-        { type: "WorkflowGraphValidationError", id: "LIST" },
+        { type: 'WorkflowGraphValidationError', id },
+        { type: 'WorkflowGraphValidationError', id: 'LIST' },
+        { type: 'WorkflowGraphValidationError', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetWorkflowGraphValidationErrorsPagedQuery`
 export const {
-  useGetWorkflowGraphValidationErrorsPagedQuery, // immediate fetch
+  useGetWorkflowGraphValidationErrorsPagedQuery,     // immediate fetch
   useLazyGetWorkflowGraphValidationErrorsPagedQuery, // lazy fetch
   useGetWorkflowGraphValidationErrorQuery,
   useGetWorkflowGraphValidationErrorsQuery,
@@ -206,4 +169,4 @@ export const {
   useUpdateWorkflowGraphValidationErrorMutation,
   useDeleteWorkflowGraphValidationErrorMutation,
   useDeleteWorkflowGraphValidationErrorCascadeMutation,
-} = WorkflowGraphValidationErrorService;
+} = WorkflowGraphValidationErrorService

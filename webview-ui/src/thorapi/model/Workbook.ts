@@ -26,16 +26,19 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 import {
-  Format,
-  FormatFromJSON,
-  FormatToJSON,
-  Sheet,
-  SheetFromJSON,
-  SheetToJSON,
-} from "./";
+
+
+    Format,
+    FormatFromJSON,
+    FormatToJSON,
+    Sheet,
+    SheetFromJSON,
+    SheetToJSON,
+} from './';
+
 
 // thorapi
 
@@ -44,148 +47,130 @@ import {
  * @export
  * @interface Workbook
  */
-export type Workbook = DataObject & {
-  /**
-   * name of the workbook
-   * @type {string}
-   * @memberof Workbook
-   */
-  name?: string;
-  /**
-   * the sheets in the workbook
-   * @type {Array<Sheet>}
-   * @memberof Workbook
-   */
-  sheets?: Array<Sheet>;
-  /**
-   * the sheets in the workbook
-   * @type {Array<Format>}
-   * @memberof Workbook
-   */
-  formats?: Array<Format>;
-  /**
-   *
-   * @type {string}
-   * @memberof Workbook
-   */
-  status?: WorkbookStatusEnum;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof Workbook
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof Workbook
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof Workbook
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof Workbook
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof Workbook
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof Workbook
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof Workbook
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof Workbook
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof Workbook
-   */
-  trashed?: boolean;
-};
+export type Workbook  = DataObject & {
+    /**
+     * name of the workbook
+     * @type {string}
+     * @memberof Workbook
+     */
+    name?: string;
+    /**
+     * the sheets in the workbook
+     * @type {Array<Sheet>}
+     * @memberof Workbook
+     */
+    sheets?: Array<Sheet>;
+    /**
+     * the sheets in the workbook
+     * @type {Array<Format>}
+     * @memberof Workbook
+     */
+    formats?: Array<Format>;
+    /**
+     * 
+     * @type {string}
+     * @memberof Workbook
+     */
+    status?: WorkbookStatusEnum;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof Workbook
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof Workbook
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof Workbook
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof Workbook
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof Workbook
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof Workbook
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof Workbook
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof Workbook
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof Workbook
+     */
+    trashed?: boolean;
+}
 
 export function WorkbookFromJSON(json: any): Workbook {
-  return {
-    ...DataObjectFromJSON(json),
-    name: !exists(json, "name") ? undefined : json["name"],
-    sheets: !exists(json, "sheets")
-      ? undefined
-      : (json["sheets"] as Array<any>).map(SheetFromJSON),
-    formats: !exists(json, "formats")
-      ? undefined
-      : (json["formats"] as Array<any>).map(FormatFromJSON),
-    status: !exists(json, "status") ? undefined : json["status"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+    return {
+        ...DataObjectFromJSON(json),
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'sheets': !exists(json, 'sheets') ? undefined : (json['sheets'] as Array<any>).map(SheetFromJSON),
+        'formats': !exists(json, 'formats') ? undefined : (json['formats'] as Array<any>).map(FormatFromJSON),
+        'status': !exists(json, 'status') ? undefined : json['status'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
 
 export function WorkbookToJSON(value?: Workbook): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    name: value.name,
-    sheets:
-      value.sheets === undefined
-        ? undefined
-        : (value.sheets as Array<any>).map(SheetToJSON),
-    formats:
-      value.formats === undefined
-        ? undefined
-        : (value.formats as Array<any>).map(FormatToJSON),
-    status: value.status,
-    trashed: value.trashed,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'name': value.name,
+        'sheets': value.sheets === undefined ? undefined : (value.sheets as Array<any>).map(SheetToJSON),
+        'formats': value.formats === undefined ? undefined : (value.formats as Array<any>).map(FormatToJSON),
+        'status': value.status,
+        'trashed': value.trashed,
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum WorkbookStatusEnum {
-  WORKBOOKOPEN = "open",
-  WORKBOOKCLOSED = "closed",
-  WORKBOOKARCHIVED = "archived",
-  WORKBOOKERROR = "error",
-  WORKBOOKINVALID = "invalid",
+    WORKBOOKOPEN = 'open',
+    WORKBOOKCLOSED = 'closed',
+    WORKBOOKARCHIVED = 'archived',
+    WORKBOOKERROR = 'error',
+    WORKBOOKINVALID = 'invalid'
 }
+
+

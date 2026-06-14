@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { TwoFactorSecret } from "@thorapi/model/TwoFactorSecret";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { TwoFactorSecret } from '@thorapi/model/TwoFactorSecret'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type TwoFactorSecretResponse = TwoFactorSecret[];
+type TwoFactorSecretResponse = TwoFactorSecret[]
+type TwoFactorSecretPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<TwoFactorSecret>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type TwoFactorSecretListQueryArg = {
+  example?: Partial<TwoFactorSecret>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toTwoFactorSecretList = (result: unknown): TwoFactorSecretResponse => {
   if (Array.isArray(result)) {
-    return result as TwoFactorSecretResponse;
+    return result as TwoFactorSecretResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as TwoFactorSecretResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as TwoFactorSecretResponse) : []
+}
 
 export const TwoFactorSecretService = createApi({
-  reducerPath: "TwoFactorSecret", // This should remain unique
+  reducerPath: 'TwoFactorSecret', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["TwoFactorSecret"],
+  tagTypes: ['TwoFactorSecret'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getTwoFactorSecretsPaged: build.query<
-      TwoFactorSecretResponse,
-      { page: number; size?: number; example?: Partial<TwoFactorSecret> }
-    >({
+    getTwoFactorSecretsPaged: build.query<TwoFactorSecretResponse, TwoFactorSecretPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `TwoFactorSecret?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `TwoFactorSecret?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toTwoFactorSecretList(result);
+        const rows = toTwoFactorSecretList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "TwoFactorSecret" as const, id })),
-          { type: "TwoFactorSecret", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'TwoFactorSecret' as const, id })),
+          { type: 'TwoFactorSecret', id: `PAGE_${page}` },
+          { type: 'TwoFactorSecret', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getTwoFactorSecrets: build.query<
-      TwoFactorSecretResponse,
-      { example?: Partial<TwoFactorSecret> } | void
-    >({
+    getTwoFactorSecrets: build.query<TwoFactorSecretResponse, TwoFactorSecretListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,106 +82,86 @@ export const TwoFactorSecretService = createApi({
         return `TwoFactorSecret`;
       },
       providesTags: (result) => {
-        const rows = toTwoFactorSecretList(result);
+        const rows = toTwoFactorSecretList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "TwoFactorSecret" as const, id })),
-          { type: "TwoFactorSecret", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'TwoFactorSecret' as const, id })),
+          { type: 'TwoFactorSecret', id: 'LIST' },
+          { type: 'TwoFactorSecret', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addTwoFactorSecret: build.mutation<
-      TwoFactorSecret,
-      Partial<TwoFactorSecret>
-    >({
+    addTwoFactorSecret: build.mutation<TwoFactorSecret, Partial<TwoFactorSecret>>({
       query: (body) => ({
         url: `TwoFactorSecret`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "TwoFactorSecret", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'TwoFactorSecret', id: 'LIST' },
+        { type: 'TwoFactorSecret', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getTwoFactorSecret: build.query<TwoFactorSecret, string>({
       query: (id) => `TwoFactorSecret/${id}`,
-      providesTags: (result, error, id) => [{ type: "TwoFactorSecret", id }],
+      providesTags: (result, error, id) => [{ type: 'TwoFactorSecret', id }],
     }),
 
     // 5) Update
-    updateTwoFactorSecret: build.mutation<
-      void,
-      Pick<TwoFactorSecret, "id"> & Partial<TwoFactorSecret>
-    >({
+    updateTwoFactorSecret: build.mutation<TwoFactorSecret, Pick<TwoFactorSecret, 'id'> & Partial<TwoFactorSecret>>({
       query: ({ id, ...patch }) => ({
         url: `TwoFactorSecret/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            TwoFactorSecretService.util.updateQueryData(
-              "getTwoFactorSecret",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<TwoFactorSecret, "id">) => [
-        { type: "TwoFactorSecret", id },
-        { type: "TwoFactorSecret", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<TwoFactorSecret, 'id'>) => [
+        { type: 'TwoFactorSecret', id },
+        { type: 'TwoFactorSecret', id: 'LIST' },
+        { type: 'TwoFactorSecret', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteTwoFactorSecret: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteTwoFactorSecret: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `TwoFactorSecret/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "TwoFactorSecret", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'TwoFactorSecret', id },
+        { type: 'TwoFactorSecret', id: 'LIST' },
+        { type: 'TwoFactorSecret', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteTwoFactorSecretCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteTwoFactorSecretCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `TwoFactorSecret/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "TwoFactorSecret", id },
-        { type: "TwoFactorSecret", id: "LIST" },
+        { type: 'TwoFactorSecret', id },
+        { type: 'TwoFactorSecret', id: 'LIST' },
+        { type: 'TwoFactorSecret', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetTwoFactorSecretsPagedQuery`
 export const {
-  useGetTwoFactorSecretsPagedQuery, // immediate fetch
+  useGetTwoFactorSecretsPagedQuery,     // immediate fetch
   useLazyGetTwoFactorSecretsPagedQuery, // lazy fetch
   useGetTwoFactorSecretQuery,
   useGetTwoFactorSecretsQuery,
@@ -180,4 +169,4 @@ export const {
   useUpdateTwoFactorSecretMutation,
   useDeleteTwoFactorSecretMutation,
   useDeleteTwoFactorSecretCascadeMutation,
-} = TwoFactorSecretService;
+} = TwoFactorSecretService

@@ -35,41 +35,21 @@ const _1 = require("./");
 function TrustMerkleBatchFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        execution: !(0, runtime_1.exists)(json, "execution")
-            ? undefined
-            : (0, _1.TrustRuntimeExecutionFromJSON)(json["execution"]),
-        fromSequence: !(0, runtime_1.exists)(json, "fromSequence")
-            ? undefined
-            : json["fromSequence"],
-        toSequence: !(0, runtime_1.exists)(json, "toSequence") ? undefined : json["toSequence"],
-        merkleRootHash: !(0, runtime_1.exists)(json, "merkleRootHash")
-            ? undefined
-            : json["merkleRootHash"],
-        batchSignature: !(0, runtime_1.exists)(json, "batchSignature")
-            ? undefined
-            : json["batchSignature"],
-        signingKeyVersion: !(0, runtime_1.exists)(json, "signingKeyVersion")
-            ? undefined
-            : (0, _1.TrustKeyVersionFromJSON)(json["signingKeyVersion"]),
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'execution': !(0, runtime_1.exists)(json, 'execution') ? undefined : (0, _1.TrustRuntimeExecutionFromJSON)(json['execution']),
+        'fromSequence': !(0, runtime_1.exists)(json, 'fromSequence') ? undefined : json['fromSequence'],
+        'toSequence': !(0, runtime_1.exists)(json, 'toSequence') ? undefined : json['toSequence'],
+        'merkleRootHash': !(0, runtime_1.exists)(json, 'merkleRootHash') ? undefined : json['merkleRootHash'],
+        'batchSignature': !(0, runtime_1.exists)(json, 'batchSignature') ? undefined : json['batchSignature'],
+        'signingKeyVersion': !(0, runtime_1.exists)(json, 'signingKeyVersion') ? undefined : (0, _1.TrustKeyVersionFromJSON)(json['signingKeyVersion']),
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function TrustMerkleBatchToJSON(value) {
@@ -78,14 +58,14 @@ function TrustMerkleBatchToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        execution: (0, _1.TrustRuntimeExecutionToJSON)(value.execution),
-        fromSequence: value.fromSequence,
-        toSequence: value.toSequence,
-        merkleRootHash: value.merkleRootHash,
-        batchSignature: value.batchSignature,
-        signingKeyVersion: (0, _1.TrustKeyVersionToJSON)(value.signingKeyVersion),
-        ownerId: value.ownerId,
-        trashed: value.trashed,
+        'execution': (0, _1.TrustRuntimeExecutionToJSON)(value.execution),
+        'fromSequence': value.fromSequence,
+        'toSequence': value.toSequence,
+        'merkleRootHash': value.merkleRootHash,
+        'batchSignature': value.batchSignature,
+        'signingKeyVersion': (0, _1.TrustKeyVersionToJSON)(value.signingKeyVersion),
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=TrustMerkleBatch.js.map

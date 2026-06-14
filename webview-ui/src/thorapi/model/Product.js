@@ -36,43 +36,27 @@ const _1 = require("./");
 function ProductFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        price: !(0, runtime_1.exists)(json, "price") ? undefined : json["price"],
-        salePrice: !(0, runtime_1.exists)(json, "salePrice") ? undefined : json["salePrice"],
-        taxRate: !(0, runtime_1.exists)(json, "taxRate") ? undefined : json["taxRate"],
-        duration: !(0, runtime_1.exists)(json, "duration") ? undefined : json["duration"],
-        sku: !(0, runtime_1.exists)(json, "sku") ? undefined : json["sku"],
-        productContentData: !(0, runtime_1.exists)(json, "productContentData")
-            ? undefined
-            : json["productContentData"].map(_1.ContentDataFromJSON),
-        type: !(0, runtime_1.exists)(json, "type") ? undefined : json["type"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        features: !(0, runtime_1.exists)(json, "features")
-            ? undefined
-            : json["features"].map(_1.ProductFeatureFromJSON),
-        countryOfOrigin: !(0, runtime_1.exists)(json, "countryOfOrigin")
-            ? undefined
-            : json["countryOfOrigin"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'price': !(0, runtime_1.exists)(json, 'price') ? undefined : json['price'],
+        'salePrice': !(0, runtime_1.exists)(json, 'salePrice') ? undefined : json['salePrice'],
+        'taxRate': !(0, runtime_1.exists)(json, 'taxRate') ? undefined : json['taxRate'],
+        'duration': !(0, runtime_1.exists)(json, 'duration') ? undefined : json['duration'],
+        'sku': !(0, runtime_1.exists)(json, 'sku') ? undefined : json['sku'],
+        'productContentData': !(0, runtime_1.exists)(json, 'productContentData') ? undefined : json['productContentData'].map(_1.ContentDataFromJSON),
+        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'features': !(0, runtime_1.exists)(json, 'features') ? undefined : json['features'].map(_1.ProductFeatureFromJSON),
+        'countryOfOrigin': !(0, runtime_1.exists)(json, 'countryOfOrigin') ? undefined : json['countryOfOrigin'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ProductToJSON(value) {
@@ -81,29 +65,25 @@ function ProductToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        name: value.name,
-        description: value.description,
-        price: value.price,
-        salePrice: value.salePrice,
-        taxRate: value.taxRate,
-        duration: value.duration,
-        sku: value.sku,
-        productContentData: value.productContentData === undefined
-            ? undefined
-            : value.productContentData.map(_1.ContentDataToJSON),
-        type: value.type,
-        status: value.status,
-        features: value.features === undefined
-            ? undefined
-            : value.features.map(_1.ProductFeatureToJSON),
-        countryOfOrigin: value.countryOfOrigin,
-        trashed: value.trashed,
+        'name': value.name,
+        'description': value.description,
+        'price': value.price,
+        'salePrice': value.salePrice,
+        'taxRate': value.taxRate,
+        'duration': value.duration,
+        'sku': value.sku,
+        'productContentData': value.productContentData === undefined ? undefined : value.productContentData.map(_1.ContentDataToJSON),
+        'type': value.type,
+        'status': value.status,
+        'features': value.features === undefined ? undefined : value.features.map(_1.ProductFeatureToJSON),
+        'countryOfOrigin': value.countryOfOrigin,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ProductTypeEnum;
 (function (ProductTypeEnum) {
     ProductTypeEnum["PHYSICAL"] = "physical";
@@ -120,9 +100,9 @@ var ProductTypeEnum;
     ProductTypeEnum["OTHER"] = "other";
 })(ProductTypeEnum || (exports.ProductTypeEnum = ProductTypeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ProductStatusEnum;
 (function (ProductStatusEnum) {
     ProductStatusEnum["PENDING"] = "pending";

@@ -36,60 +36,34 @@ const _1 = require("./");
 function MemoryEntryFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        type: json["type"],
-        text: json["text"],
-        title: !(0, runtime_1.exists)(json, "title") ? undefined : json["title"],
-        tags: !(0, runtime_1.exists)(json, "tags")
-            ? undefined
-            : json["tags"].map(_1.TagFromJSON),
-        principal: !(0, runtime_1.exists)(json, "principal")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["principal"]),
-        organization: !(0, runtime_1.exists)(json, "organization")
-            ? undefined
-            : (0, _1.OrganizationFromJSON)(json["organization"]),
-        customer: !(0, runtime_1.exists)(json, "customer")
-            ? undefined
-            : (0, _1.CustomerFromJSON)(json["customer"]),
-        opportunity: !(0, runtime_1.exists)(json, "opportunity")
-            ? undefined
-            : (0, _1.OpportunityFromJSON)(json["opportunity"]),
-        contentData: !(0, runtime_1.exists)(json, "contentData")
-            ? undefined
-            : (0, _1.ContentDataFromJSON)(json["contentData"]),
-        goal: !(0, runtime_1.exists)(json, "goal") ? undefined : (0, _1.GoalFromJSON)(json["goal"]),
-        task: !(0, runtime_1.exists)(json, "task") ? undefined : (0, _1.TaskFromJSON)(json["task"]),
-        workflow: !(0, runtime_1.exists)(json, "workflow")
-            ? undefined
-            : (0, _1.WorkflowFromJSON)(json["workflow"]),
-        agent: !(0, runtime_1.exists)(json, "agent") ? undefined : (0, _1.AgentFromJSON)(json["agent"]),
-        run: !(0, runtime_1.exists)(json, "run") ? undefined : (0, _1.RunFromJSON)(json["run"]),
-        sourceChannel: !(0, runtime_1.exists)(json, "sourceChannel")
-            ? undefined
-            : json["sourceChannel"],
-        sourceMessageId: !(0, runtime_1.exists)(json, "sourceMessageId")
-            ? undefined
-            : json["sourceMessageId"],
-        sourceUrl: !(0, runtime_1.exists)(json, "sourceUrl") ? undefined : json["sourceUrl"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'type': json['type'],
+        'text': json['text'],
+        'title': !(0, runtime_1.exists)(json, 'title') ? undefined : json['title'],
+        'tags': !(0, runtime_1.exists)(json, 'tags') ? undefined : json['tags'].map(_1.TagFromJSON),
+        'principal': !(0, runtime_1.exists)(json, 'principal') ? undefined : (0, _1.PrincipalFromJSON)(json['principal']),
+        'organization': !(0, runtime_1.exists)(json, 'organization') ? undefined : (0, _1.OrganizationFromJSON)(json['organization']),
+        'customer': !(0, runtime_1.exists)(json, 'customer') ? undefined : (0, _1.CustomerFromJSON)(json['customer']),
+        'opportunity': !(0, runtime_1.exists)(json, 'opportunity') ? undefined : (0, _1.OpportunityFromJSON)(json['opportunity']),
+        'contentData': !(0, runtime_1.exists)(json, 'contentData') ? undefined : (0, _1.ContentDataFromJSON)(json['contentData']),
+        'goal': !(0, runtime_1.exists)(json, 'goal') ? undefined : (0, _1.GoalFromJSON)(json['goal']),
+        'task': !(0, runtime_1.exists)(json, 'task') ? undefined : (0, _1.TaskFromJSON)(json['task']),
+        'workflow': !(0, runtime_1.exists)(json, 'workflow') ? undefined : (0, _1.WorkflowFromJSON)(json['workflow']),
+        'application': !(0, runtime_1.exists)(json, 'application') ? undefined : (0, _1.ApplicationFromJSON)(json['application']),
+        'project': !(0, runtime_1.exists)(json, 'project') ? undefined : (0, _1.ProjectFromJSON)(json['project']),
+        'agent': !(0, runtime_1.exists)(json, 'agent') ? undefined : (0, _1.AgentFromJSON)(json['agent']),
+        'run': !(0, runtime_1.exists)(json, 'run') ? undefined : (0, _1.RunFromJSON)(json['run']),
+        'sourceChannel': !(0, runtime_1.exists)(json, 'sourceChannel') ? undefined : json['sourceChannel'],
+        'sourceMessageId': !(0, runtime_1.exists)(json, 'sourceMessageId') ? undefined : json['sourceMessageId'],
+        'sourceUrl': !(0, runtime_1.exists)(json, 'sourceUrl') ? undefined : json['sourceUrl'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function MemoryEntryToJSON(value) {
@@ -98,32 +72,32 @@ function MemoryEntryToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        type: value.type,
-        text: value.text,
-        title: value.title,
-        tags: value.tags === undefined
-            ? undefined
-            : value.tags.map(_1.TagToJSON),
-        principal: (0, _1.PrincipalToJSON)(value.principal),
-        organization: (0, _1.OrganizationToJSON)(value.organization),
-        customer: (0, _1.CustomerToJSON)(value.customer),
-        opportunity: (0, _1.OpportunityToJSON)(value.opportunity),
-        contentData: (0, _1.ContentDataToJSON)(value.contentData),
-        goal: (0, _1.GoalToJSON)(value.goal),
-        task: (0, _1.TaskToJSON)(value.task),
-        workflow: (0, _1.WorkflowToJSON)(value.workflow),
-        agent: (0, _1.AgentToJSON)(value.agent),
-        run: (0, _1.RunToJSON)(value.run),
-        sourceChannel: value.sourceChannel,
-        sourceMessageId: value.sourceMessageId,
-        sourceUrl: value.sourceUrl,
-        trashed: value.trashed,
+        'type': value.type,
+        'text': value.text,
+        'title': value.title,
+        'tags': value.tags === undefined ? undefined : value.tags.map(_1.TagToJSON),
+        'principal': (0, _1.PrincipalToJSON)(value.principal),
+        'organization': (0, _1.OrganizationToJSON)(value.organization),
+        'customer': (0, _1.CustomerToJSON)(value.customer),
+        'opportunity': (0, _1.OpportunityToJSON)(value.opportunity),
+        'contentData': (0, _1.ContentDataToJSON)(value.contentData),
+        'goal': (0, _1.GoalToJSON)(value.goal),
+        'task': (0, _1.TaskToJSON)(value.task),
+        'workflow': (0, _1.WorkflowToJSON)(value.workflow),
+        'application': (0, _1.ApplicationToJSON)(value.application),
+        'project': (0, _1.ProjectToJSON)(value.project),
+        'agent': (0, _1.AgentToJSON)(value.agent),
+        'run': (0, _1.RunToJSON)(value.run),
+        'sourceChannel': value.sourceChannel,
+        'sourceMessageId': value.sourceMessageId,
+        'sourceUrl': value.sourceUrl,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var MemoryEntryTypeEnum;
 (function (MemoryEntryTypeEnum) {
     MemoryEntryTypeEnum["CONFIGURATION"] = "configuration";

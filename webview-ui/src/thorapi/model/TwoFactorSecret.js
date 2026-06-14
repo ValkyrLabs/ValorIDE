@@ -36,41 +36,25 @@ const _1 = require("./");
 function TwoFactorSecretFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        secretKey: json["secretKey"],
-        algorithm: json["algorithm"],
-        digits: json["digits"],
-        period: json["period"],
-        principal: !(0, runtime_1.exists)(json, "principal")
-            ? undefined
-            : (0, _1.PrincipalFromJSON)(json["principal"]),
-        qrCodeUrl: !(0, runtime_1.exists)(json, "qrCodeUrl") ? undefined : json["qrCodeUrl"],
-        backupCodes: !(0, runtime_1.exists)(json, "backupCodes") ? undefined : json["backupCodes"],
-        enabled: !(0, runtime_1.exists)(json, "enabled") ? undefined : json["enabled"],
-        lastUsedAt: !(0, runtime_1.exists)(json, "lastUsedAt")
-            ? undefined
-            : new Date(json["lastUsedAt"]),
-        verifiedAt: !(0, runtime_1.exists)(json, "verifiedAt")
-            ? undefined
-            : new Date(json["verifiedAt"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'secretKey': json['secretKey'],
+        'algorithm': json['algorithm'],
+        'digits': json['digits'],
+        'period': json['period'],
+        'principal': !(0, runtime_1.exists)(json, 'principal') ? undefined : (0, _1.PrincipalFromJSON)(json['principal']),
+        'qrCodeUrl': !(0, runtime_1.exists)(json, 'qrCodeUrl') ? undefined : json['qrCodeUrl'],
+        'backupCodes': !(0, runtime_1.exists)(json, 'backupCodes') ? undefined : json['backupCodes'],
+        'enabled': !(0, runtime_1.exists)(json, 'enabled') ? undefined : json['enabled'],
+        'lastUsedAt': !(0, runtime_1.exists)(json, 'lastUsedAt') ? undefined : new Date(json['lastUsedAt']),
+        'verifiedAt': !(0, runtime_1.exists)(json, 'verifiedAt') ? undefined : new Date(json['verifiedAt']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function TwoFactorSecretToJSON(value) {
@@ -79,20 +63,20 @@ function TwoFactorSecretToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        secretKey: value.secretKey,
-        algorithm: value.algorithm,
-        digits: value.digits,
-        period: value.period,
-        principal: (0, _1.PrincipalToJSON)(value.principal),
-        backupCodes: value.backupCodes,
-        enabled: value.enabled,
-        trashed: value.trashed,
+        'secretKey': value.secretKey,
+        'algorithm': value.algorithm,
+        'digits': value.digits,
+        'period': value.period,
+        'principal': (0, _1.PrincipalToJSON)(value.principal),
+        'backupCodes': value.backupCodes,
+        'enabled': value.enabled,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TwoFactorSecretAlgorithmEnum;
 (function (TwoFactorSecretAlgorithmEnum) {
     TwoFactorSecretAlgorithmEnum["HMACSHA1"] = "hmacsha1";

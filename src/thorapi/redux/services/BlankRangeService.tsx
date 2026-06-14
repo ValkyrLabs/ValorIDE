@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { BlankRange } from "@thorapi/model/BlankRange";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { BlankRange } from '@thorapi/model/BlankRange'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type BlankRangeResponse = BlankRange[];
+type BlankRangeResponse = BlankRange[]
+type BlankRangePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<BlankRange>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type BlankRangeListQueryArg = {
+  example?: Partial<BlankRange>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toBlankRangeList = (result: unknown): BlankRangeResponse => {
   if (Array.isArray(result)) {
-    return result as BlankRangeResponse;
+    return result as BlankRangeResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as BlankRangeResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as BlankRangeResponse) : []
+}
 
 export const BlankRangeService = createApi({
-  reducerPath: "BlankRange", // This should remain unique
+  reducerPath: 'BlankRange', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["BlankRange"],
+  tagTypes: ['BlankRange'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getBlankRangesPaged: build.query<
-      BlankRangeResponse,
-      { page: number; size?: number; example?: Partial<BlankRange> }
-    >({
+    getBlankRangesPaged: build.query<BlankRangeResponse, BlankRangePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `BlankRange?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `BlankRange?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toBlankRangeList(result);
+        const rows = toBlankRangeList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "BlankRange" as const, id })),
-          { type: "BlankRange", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'BlankRange' as const, id })),
+          { type: 'BlankRange', id: `PAGE_${page}` },
+          { type: 'BlankRange', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getBlankRanges: build.query<
-      BlankRangeResponse,
-      { example?: Partial<BlankRange> } | void
-    >({
+    getBlankRanges: build.query<BlankRangeResponse, BlankRangeListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const BlankRangeService = createApi({
         return `BlankRange`;
       },
       providesTags: (result) => {
-        const rows = toBlankRangeList(result);
+        const rows = toBlankRangeList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "BlankRange" as const, id })),
-          { type: "BlankRange", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'BlankRange' as const, id })),
+          { type: 'BlankRange', id: 'LIST' },
+          { type: 'BlankRange', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,49 +97,32 @@ export const BlankRangeService = createApi({
     addBlankRange: build.mutation<BlankRange, Partial<BlankRange>>({
       query: (body) => ({
         url: `BlankRange`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "BlankRange", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'BlankRange', id: 'LIST' },
+        { type: 'BlankRange', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getBlankRange: build.query<BlankRange, string>({
       query: (id) => `BlankRange/${id}`,
-      providesTags: (result, error, id) => [{ type: "BlankRange", id }],
+      providesTags: (result, error, id) => [{ type: 'BlankRange', id }],
     }),
 
     // 5) Update
-    updateBlankRange: build.mutation<
-      void,
-      Pick<BlankRange, "id"> & Partial<BlankRange>
-    >({
+    updateBlankRange: build.mutation<BlankRange, Pick<BlankRange, 'id'> & Partial<BlankRange>>({
       query: ({ id, ...patch }) => ({
         url: `BlankRange/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            BlankRangeService.util.updateQueryData(
-              "getBlankRange",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<BlankRange, "id">) => [
-        { type: "BlankRange", id },
-        { type: "BlankRange", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<BlankRange, 'id'>) => [
+        { type: 'BlankRange', id },
+        { type: 'BlankRange', id: 'LIST' },
+        { type: 'BlankRange', id: 'PARTIAL-LIST' },
       ],
     }),
 
@@ -138,35 +131,37 @@ export const BlankRangeService = createApi({
       query(id) {
         return {
           url: `BlankRange/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "BlankRange", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'BlankRange', id },
+        { type: 'BlankRange', id: 'LIST' },
+        { type: 'BlankRange', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteBlankRangeCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteBlankRangeCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `BlankRange/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "BlankRange", id },
-        { type: "BlankRange", id: "LIST" },
+        { type: 'BlankRange', id },
+        { type: 'BlankRange', id: 'LIST' },
+        { type: 'BlankRange', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetBlankRangesPagedQuery`
 export const {
-  useGetBlankRangesPagedQuery, // immediate fetch
+  useGetBlankRangesPagedQuery,     // immediate fetch
   useLazyGetBlankRangesPagedQuery, // lazy fetch
   useGetBlankRangeQuery,
   useGetBlankRangesQuery,
@@ -174,4 +169,4 @@ export const {
   useUpdateBlankRangeMutation,
   useDeleteBlankRangeMutation,
   useDeleteBlankRangeCascadeMutation,
-} = BlankRangeService;
+} = BlankRangeService

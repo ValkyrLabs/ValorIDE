@@ -17,94 +17,95 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // LineItem
 
-export const FETCH_LINEITEM_REQUEST = "FETCH_LINEITEM_REQUEST";
-export const FETCH_LINEITEM_SUCCESS = "FETCH_LINEITEM_SUCCESS";
-export const FETCH_LINEITEM_FAILURE = "FETCH_LINEITEM_FAILURE";
+export const FETCH_LINEITEM_REQUEST = 'FETCH_LINEITEM_REQUEST';
+export const FETCH_LINEITEM_SUCCESS = 'FETCH_LINEITEM_SUCCESS';
+export const FETCH_LINEITEM_FAILURE = 'FETCH_LINEITEM_FAILURE';
 
-export const ADD_LINEITEM_REQUEST = "ADD_LINEITEM_REQUEST";
-export const ADD_LINEITEM_SUCCESS = "ADD_LINEITEM_SUCCESS";
-export const ADD_LINEITEM_FAILURE = "ADD_LINEITEM_FAILURE";
+export const ADD_LINEITEM_REQUEST = 'ADD_LINEITEM_REQUEST';
+export const ADD_LINEITEM_SUCCESS = 'ADD_LINEITEM_SUCCESS';
+export const ADD_LINEITEM_FAILURE = 'ADD_LINEITEM_FAILURE';
 
-export const UPDATE_LINEITEM_REQUEST = "UPDATE_LINEITEM_REQUEST";
-export const UPDATE_LINEITEM_SUCCESS = "UPDATE_LINEITEM_SUCCESS";
-export const UPDATE_LINEITEM_FAILURE = "UPDATE_LINEITEM_FAILURE";
+export const UPDATE_LINEITEM_REQUEST = 'UPDATE_LINEITEM_REQUEST';
+export const UPDATE_LINEITEM_SUCCESS = 'UPDATE_LINEITEM_SUCCESS';
+export const UPDATE_LINEITEM_FAILURE = 'UPDATE_LINEITEM_FAILURE';
 
-export const DELETE_LINEITEM_REQUEST = "DELETE_LINEITEM_REQUEST";
-export const DELETE_LINEITEM_SUCCESS = "DELETE_LINEITEM_SUCCESS";
-export const DELETE_LINEITEM_FAILURE = "DELETE_LINEITEM_FAILURE";
+export const DELETE_LINEITEM_REQUEST = 'DELETE_LINEITEM_REQUEST';
+export const DELETE_LINEITEM_SUCCESS = 'DELETE_LINEITEM_SUCCESS';
+export const DELETE_LINEITEM_FAILURE = 'DELETE_LINEITEM_FAILURE';
 
-export const LIST_LINEITEM_REQUEST = "LIST_LINEITEM_REQUEST";
-export const LIST_LINEITEM_SUCCESS = "LIST_LINEITEM_SUCCESS";
-export const LIST_LINEITEM_FAILURE = "LIST_LINEITEM_FAILURE";
+export const LIST_LINEITEM_REQUEST = 'LIST_LINEITEM_REQUEST';
+export const LIST_LINEITEM_SUCCESS = 'LIST_LINEITEM_SUCCESS';
+export const LIST_LINEITEM_FAILURE = 'LIST_LINEITEM_FAILURE';
 
 export const addLineItemRequest = () => ({
-  type: ADD_LINEITEM_REQUEST,
+    type: ADD_LINEITEM_REQUEST,
 });
 
 export const addLineItemSuccess = (LineItems: any) => ({
-  type: ADD_LINEITEM_SUCCESS,
-  payload: LineItems,
+    type: ADD_LINEITEM_SUCCESS,
+    payload: LineItems,
 });
 
 export const addLineItemFailure = (error: Error) => ({
-  type: ADD_LINEITEM_FAILURE,
-  payload: error,
+    type: ADD_LINEITEM_FAILURE,
+    payload: error,
 });
 
+
 export const fetchLineItemRequest = () => ({
-  type: FETCH_LINEITEM_REQUEST,
+    type: FETCH_LINEITEM_REQUEST,
 });
 
 export const fetchLineItemSuccess = (LineItems: any) => ({
-  type: FETCH_LINEITEM_SUCCESS,
-  payload: LineItems,
+    type: FETCH_LINEITEM_SUCCESS,
+    payload: LineItems,
 });
 
 export const fetchLineItemFailure = (error: Error) => ({
-  type: FETCH_LINEITEM_FAILURE,
-  payload: error,
+    type: FETCH_LINEITEM_FAILURE,
+    payload: error,
 });
 
 export const listLineItemRequest = () => ({
-  type: LIST_LINEITEM_REQUEST,
+    type: LIST_LINEITEM_REQUEST,
 });
 
 export const listLineItemSuccess = (LineItems: any) => ({
-  type: LIST_LINEITEM_SUCCESS,
-  payload: LineItems,
+    type: LIST_LINEITEM_SUCCESS,
+    payload: LineItems,
 });
 
 export const listLineItemFailure = (error: Error) => ({
-  type: LIST_LINEITEM_FAILURE,
-  payload: error,
+    type: LIST_LINEITEM_FAILURE,
+    payload: error,
 });
 
 export const updateLineItemRequest = (LineItem: any) => ({
-  type: UPDATE_LINEITEM_REQUEST,
-  payload: LineItem,
+    type: UPDATE_LINEITEM_REQUEST,
+    payload: LineItem,
 });
 
 export const updateLineItemSuccess = (LineItem: any) => ({
-  type: UPDATE_LINEITEM_SUCCESS,
-  payload: LineItem,
+    type: UPDATE_LINEITEM_SUCCESS,
+    payload: LineItem,
 });
 
 export const updateLineItemFailure = (error: Error) => ({
-  type: UPDATE_LINEITEM_FAILURE,
-  payload: error,
+    type: UPDATE_LINEITEM_FAILURE,
+    payload: error,
 });
 
 export const deleteLineItemRequest = (LineItem: any) => ({
-  type: DELETE_LINEITEM_REQUEST,
-  payload: LineItem,
+    type: DELETE_LINEITEM_REQUEST,
+    payload: LineItem,
 });
 
 export const deleteLineItemSuccess = (LineItem: any) => ({
-  type: DELETE_LINEITEM_SUCCESS,
-  payload: LineItem,
+    type: DELETE_LINEITEM_SUCCESS,
+    payload: LineItem,
 });
 
 export const deleteLineItemFailure = (error: Error) => ({
-  type: DELETE_LINEITEM_FAILURE,
-  payload: error,
+    type: DELETE_LINEITEM_FAILURE,
+    payload: error,
 });

@@ -13,62 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { CareerOpportunity } from "@thorapi/model/CareerOpportunity";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { CareerOpportunity } from '@thorapi/model/CareerOpportunity'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type CareerOpportunityResponse = CareerOpportunity[];
+type CareerOpportunityResponse = CareerOpportunity[]
+type CareerOpportunityPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<CareerOpportunity>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
 
-const toCareerOpportunityList = (
-  result: unknown,
-): CareerOpportunityResponse => {
+type CareerOpportunityListQueryArg = {
+  example?: Partial<CareerOpportunity>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
+
+const toCareerOpportunityList = (result: unknown): CareerOpportunityResponse => {
   if (Array.isArray(result)) {
-    return result as CareerOpportunityResponse;
+    return result as CareerOpportunityResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate)
-    ? (candidate as CareerOpportunityResponse)
-    : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as CareerOpportunityResponse) : []
+}
 
 export const CareerOpportunityService = createApi({
-  reducerPath: "CareerOpportunity", // This should remain unique
+  reducerPath: 'CareerOpportunity', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["CareerOpportunity"],
+  tagTypes: ['CareerOpportunity'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getCareerOpportunitysPaged: build.query<
-      CareerOpportunityResponse,
-      { page: number; size?: number; example?: Partial<CareerOpportunity> }
-    >({
+    getCareerOpportunitysPaged: build.query<CareerOpportunityResponse, CareerOpportunityPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `CareerOpportunity?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `CareerOpportunity?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toCareerOpportunityList(result);
+        const rows = toCareerOpportunityList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "CareerOpportunity" as const, id })),
-          { type: "CareerOpportunity", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'CareerOpportunity' as const, id })),
+          { type: 'CareerOpportunity', id: `PAGE_${page}` },
+          { type: 'CareerOpportunity', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getCareerOpportunitys: build.query<
-      CareerOpportunityResponse,
-      { example?: Partial<CareerOpportunity> } | void
-    >({
+    getCareerOpportunitys: build.query<CareerOpportunityResponse, CareerOpportunityListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -77,112 +82,86 @@ export const CareerOpportunityService = createApi({
         return `CareerOpportunity`;
       },
       providesTags: (result) => {
-        const rows = toCareerOpportunityList(result);
+        const rows = toCareerOpportunityList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "CareerOpportunity" as const, id })),
-          { type: "CareerOpportunity", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'CareerOpportunity' as const, id })),
+          { type: 'CareerOpportunity', id: 'LIST' },
+          { type: 'CareerOpportunity', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 3) Create
-    addCareerOpportunity: build.mutation<
-      CareerOpportunity,
-      Partial<CareerOpportunity>
-    >({
+    addCareerOpportunity: build.mutation<CareerOpportunity, Partial<CareerOpportunity>>({
       query: (body) => ({
         url: `CareerOpportunity`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "CareerOpportunity", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'CareerOpportunity', id: 'LIST' },
+        { type: 'CareerOpportunity', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getCareerOpportunity: build.query<CareerOpportunity, string>({
       query: (id) => `CareerOpportunity/${id}`,
-      providesTags: (result, error, id) => [{ type: "CareerOpportunity", id }],
+      providesTags: (result, error, id) => [{ type: 'CareerOpportunity', id }],
     }),
 
     // 5) Update
-    updateCareerOpportunity: build.mutation<
-      void,
-      Pick<CareerOpportunity, "id"> & Partial<CareerOpportunity>
-    >({
+    updateCareerOpportunity: build.mutation<CareerOpportunity, Pick<CareerOpportunity, 'id'> & Partial<CareerOpportunity>>({
       query: ({ id, ...patch }) => ({
         url: `CareerOpportunity/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            CareerOpportunityService.util.updateQueryData(
-              "getCareerOpportunity",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (
-        result,
-        error,
-        { id }: Pick<CareerOpportunity, "id">,
-      ) => [
-        { type: "CareerOpportunity", id },
-        { type: "CareerOpportunity", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<CareerOpportunity, 'id'>) => [
+        { type: 'CareerOpportunity', id },
+        { type: 'CareerOpportunity', id: 'LIST' },
+        { type: 'CareerOpportunity', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteCareerOpportunity: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteCareerOpportunity: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `CareerOpportunity/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, id) => [
-        { type: "CareerOpportunity", id },
+        { type: 'CareerOpportunity', id },
+        { type: 'CareerOpportunity', id: 'LIST' },
+        { type: 'CareerOpportunity', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteCareerOpportunityCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteCareerOpportunityCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `CareerOpportunity/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "CareerOpportunity", id },
-        { type: "CareerOpportunity", id: "LIST" },
+        { type: 'CareerOpportunity', id },
+        { type: 'CareerOpportunity', id: 'LIST' },
+        { type: 'CareerOpportunity', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetCareerOpportunitysPagedQuery`
 export const {
-  useGetCareerOpportunitysPagedQuery, // immediate fetch
+  useGetCareerOpportunitysPagedQuery,     // immediate fetch
   useLazyGetCareerOpportunitysPagedQuery, // lazy fetch
   useGetCareerOpportunityQuery,
   useGetCareerOpportunitysQuery,
@@ -190,4 +169,4 @@ export const {
   useUpdateCareerOpportunityMutation,
   useDeleteCareerOpportunityMutation,
   useDeleteCareerOpportunityCascadeMutation,
-} = CareerOpportunityService;
+} = CareerOpportunityService

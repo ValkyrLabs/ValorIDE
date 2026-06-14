@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { BuildArtifact } from "@thorapi/model/BuildArtifact";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { BuildArtifact } from '@thorapi/model/BuildArtifact'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type BuildArtifactResponse = BuildArtifact[];
+type BuildArtifactResponse = BuildArtifact[]
+type BuildArtifactPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<BuildArtifact>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type BuildArtifactListQueryArg = {
+  example?: Partial<BuildArtifact>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toBuildArtifactList = (result: unknown): BuildArtifactResponse => {
   if (Array.isArray(result)) {
-    return result as BuildArtifactResponse;
+    return result as BuildArtifactResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as BuildArtifactResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as BuildArtifactResponse) : []
+}
 
 export const BuildArtifactService = createApi({
-  reducerPath: "BuildArtifact", // This should remain unique
+  reducerPath: 'BuildArtifact', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["BuildArtifact"],
+  tagTypes: ['BuildArtifact'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getBuildArtifactsPaged: build.query<
-      BuildArtifactResponse,
-      { page: number; size?: number; example?: Partial<BuildArtifact> }
-    >({
+    getBuildArtifactsPaged: build.query<BuildArtifactResponse, BuildArtifactPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `BuildArtifact?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `BuildArtifact?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toBuildArtifactList(result);
+        const rows = toBuildArtifactList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "BuildArtifact" as const, id })),
-          { type: "BuildArtifact", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'BuildArtifact' as const, id })),
+          { type: 'BuildArtifact', id: `PAGE_${page}` },
+          { type: 'BuildArtifact', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getBuildArtifacts: build.query<
-      BuildArtifactResponse,
-      { example?: Partial<BuildArtifact> } | void
-    >({
+    getBuildArtifacts: build.query<BuildArtifactResponse, BuildArtifactListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const BuildArtifactService = createApi({
         return `BuildArtifact`;
       },
       providesTags: (result) => {
-        const rows = toBuildArtifactList(result);
+        const rows = toBuildArtifactList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "BuildArtifact" as const, id })),
-          { type: "BuildArtifact", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'BuildArtifact' as const, id })),
+          { type: 'BuildArtifact', id: 'LIST' },
+          { type: 'BuildArtifact', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,89 +97,71 @@ export const BuildArtifactService = createApi({
     addBuildArtifact: build.mutation<BuildArtifact, Partial<BuildArtifact>>({
       query: (body) => ({
         url: `BuildArtifact`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "BuildArtifact", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'BuildArtifact', id: 'LIST' },
+        { type: 'BuildArtifact', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getBuildArtifact: build.query<BuildArtifact, string>({
       query: (id) => `BuildArtifact/${id}`,
-      providesTags: (result, error, id) => [{ type: "BuildArtifact", id }],
+      providesTags: (result, error, id) => [{ type: 'BuildArtifact', id }],
     }),
 
     // 5) Update
-    updateBuildArtifact: build.mutation<
-      void,
-      Pick<BuildArtifact, "id"> & Partial<BuildArtifact>
-    >({
+    updateBuildArtifact: build.mutation<BuildArtifact, Pick<BuildArtifact, 'id'> & Partial<BuildArtifact>>({
       query: ({ id, ...patch }) => ({
         url: `BuildArtifact/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            BuildArtifactService.util.updateQueryData(
-              "getBuildArtifact",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<BuildArtifact, "id">) => [
-        { type: "BuildArtifact", id },
-        { type: "BuildArtifact", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<BuildArtifact, 'id'>) => [
+        { type: 'BuildArtifact', id },
+        { type: 'BuildArtifact', id: 'LIST' },
+        { type: 'BuildArtifact', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteBuildArtifact: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteBuildArtifact: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `BuildArtifact/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "BuildArtifact", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'BuildArtifact', id },
+        { type: 'BuildArtifact', id: 'LIST' },
+        { type: 'BuildArtifact', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteBuildArtifactCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteBuildArtifactCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `BuildArtifact/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "BuildArtifact", id },
-        { type: "BuildArtifact", id: "LIST" },
+        { type: 'BuildArtifact', id },
+        { type: 'BuildArtifact', id: 'LIST' },
+        { type: 'BuildArtifact', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetBuildArtifactsPagedQuery`
 export const {
-  useGetBuildArtifactsPagedQuery, // immediate fetch
+  useGetBuildArtifactsPagedQuery,     // immediate fetch
   useLazyGetBuildArtifactsPagedQuery, // lazy fetch
   useGetBuildArtifactQuery,
   useGetBuildArtifactsQuery,
@@ -177,4 +169,4 @@ export const {
   useUpdateBuildArtifactMutation,
   useDeleteBuildArtifactMutation,
   useDeleteBuildArtifactCascadeMutation,
-} = BuildArtifactService;
+} = BuildArtifactService

@@ -12,6 +12,6 @@ Template file: typescript-redux-query/index.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-export * from "./runtime";
-export * from "../api";
-export * from "../model";
+export * from './runtime';
+export * from '../api';
+export * from '../model';

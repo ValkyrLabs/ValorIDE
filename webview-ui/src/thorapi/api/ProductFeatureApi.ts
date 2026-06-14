@@ -18,428 +18,359 @@ Template file: typescript-redux-query/apis.mustache
 Description: ProductFeatureApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import {
-  ProductFeature,
-  ProductFeatureFromJSON,
-  ProductFeatureToJSON,
-} from "../model";
+    ProductFeature,
+    ProductFeatureFromJSON,
+    ProductFeatureToJSON,
+} from '../model';
 
 export interface DeleteProductFeatureApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetProductFeatureApiRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetProductFeatureListApiRequest {
-  page?: number;
-  size?: number;
-  sort?: Array<string>;
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
+    example?: string;
 }
 
 export interface PatchProductFeatureByIdApiRequest {
-  id: string;
-  productFeature: ProductFeature;
+    id: string;
+    productFeature: ProductFeature;
 }
 
 export interface PostProductFeatureApiRequest {
-  productFeature: ProductFeature;
+    productFeature: ProductFeature;
 }
 
 export interface UpdateProductFeatureApiRequest {
-  id: string;
-  productFeature: ProductFeature;
+    id: string;
+    productFeature: ProductFeature;
 }
+
 
 /**
  * Deletes a specific ProductFeature.
  * Delete a ProductFeature.
  */
-function deleteProductFeatureRaw<T>(
-  requestParameters: DeleteProductFeatureApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteProductFeature.",
-    );
-  }
+function deleteProductFeatureRaw<T>(requestParameters: DeleteProductFeatureApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteProductFeature.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ProductFeature/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ProductFeature/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific ProductFeature.
- * Delete a ProductFeature.
- */
-export function deleteProductFeature<T>(
-  requestParameters: DeleteProductFeatureApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteProductFeatureRaw(requestParameters, requestConfig);
+* Deletes a specific ProductFeature.
+* Delete a ProductFeature.
+*/
+export function deleteProductFeature<T>(requestParameters: DeleteProductFeatureApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteProductFeatureRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single ProductFeature for a specific uid.
  * Retrieve a single ProductFeature
  */
-function getProductFeatureRaw<T>(
-  requestParameters: GetProductFeatureApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, ProductFeature> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getProductFeature.",
-    );
-  }
+function getProductFeatureRaw<T>(requestParameters: GetProductFeatureApiRequest, requestConfig: runtime.TypedQueryConfig<T, ProductFeature> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getProductFeature.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ProductFeature/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(ProductFeatureFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ProductFeature/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ProductFeatureFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single ProductFeature for a specific uid.
- * Retrieve a single ProductFeature
- */
-export function getProductFeature<T>(
-  requestParameters: GetProductFeatureApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, ProductFeature>,
-): QueryConfig<T> {
-  return getProductFeatureRaw(requestParameters, requestConfig);
+* Retrieves a single ProductFeature for a specific uid.
+* Retrieve a single ProductFeature
+*/
+export function getProductFeature<T>(requestParameters: GetProductFeatureApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ProductFeature>): QueryConfig<T> {
+    return getProductFeatureRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of ProductFeatures.
  * Retrieve a list of ProductFeatures
  */
-function getProductFeatureListRaw<T>(
-  requestParameters: GetProductFeatureListApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Array<ProductFeature>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getProductFeatureListRaw<T>(requestParameters: GetProductFeatureListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<ProductFeature>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  queryParameters = {};
+    queryParameters = {};
 
-  if (requestParameters.page !== undefined) {
-    queryParameters["page"] = requestParameters.page;
-  }
 
-  if (requestParameters.size !== undefined) {
-    queryParameters["size"] = requestParameters.size;
-  }
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  if (requestParameters.sort) {
-    queryParameters["sort"] = requestParameters.sort;
-  }
 
-  const headerParameters: runtime.HttpHeaders = {};
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ProductFeature`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(ProductFeatureFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.example !== undefined) {
+        queryParameters['example'] = requestParameters.example;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ProductFeature`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(ProductFeatureFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of ProductFeatures.
- * Retrieve a list of ProductFeatures
- */
-export function getProductFeatureList<T>(
-  requestParameters: GetProductFeatureListApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Array<ProductFeature>>,
-): QueryConfig<T> {
-  return getProductFeatureListRaw(requestParameters, requestConfig);
-}
-
-/**
- * Updates an existing ProductFeature.
- * Partially update an existing ProductFeature
- */
-function patchProductFeatureByIdRaw<T>(
-  requestParameters: PatchProductFeatureByIdApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, ProductFeature> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling patchProductFeatureById.",
-    );
-  }
-
-  if (
-    requestParameters.productFeature === null ||
-    requestParameters.productFeature === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "productFeature",
-      "Required parameter requestParameters.productFeature was null or undefined when calling patchProductFeatureById.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/merge-patch+json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ProductFeature/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PATCH",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters || ProductFeatureToJSON(requestParameters.productFeature),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(ProductFeatureFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of ProductFeatures.
+* Retrieve a list of ProductFeatures
+*/
+export function getProductFeatureList<T>(requestParameters: GetProductFeatureListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<ProductFeature>>): QueryConfig<T> {
+    return getProductFeatureListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing ProductFeature.
  * Partially update an existing ProductFeature
  */
-export function patchProductFeatureById<T>(
-  requestParameters: PatchProductFeatureByIdApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, ProductFeature>,
-): QueryConfig<T> {
-  return patchProductFeatureByIdRaw(requestParameters, requestConfig);
+function patchProductFeatureByIdRaw<T>(requestParameters: PatchProductFeatureByIdApiRequest, requestConfig: runtime.TypedQueryConfig<T, ProductFeature> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling patchProductFeatureById.');
+    }
+
+    if (requestParameters.productFeature === null || requestParameters.productFeature === undefined) {
+        throw new runtime.RequiredError('productFeature','Required parameter requestParameters.productFeature was null or undefined when calling patchProductFeatureById.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/merge-patch+json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ProductFeature/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PATCH',
+            headers: headerParameters,
+        },
+        body: queryParameters || ProductFeatureToJSON(requestParameters.productFeature),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ProductFeatureFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Updates an existing ProductFeature.
+* Partially update an existing ProductFeature
+*/
+export function patchProductFeatureById<T>(requestParameters: PatchProductFeatureByIdApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ProductFeature>): QueryConfig<T> {
+    return patchProductFeatureByIdRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new ProductFeature.
  * Create a new ProductFeature
  */
-function postProductFeatureRaw<T>(
-  requestParameters: PostProductFeatureApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, ProductFeature> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.productFeature === null ||
-    requestParameters.productFeature === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "productFeature",
-      "Required parameter requestParameters.productFeature was null or undefined when calling postProductFeature.",
-    );
-  }
+function postProductFeatureRaw<T>(requestParameters: PostProductFeatureApiRequest, requestConfig: runtime.TypedQueryConfig<T, ProductFeature> = {}): QueryConfig<T> {
+    if (requestParameters.productFeature === null || requestParameters.productFeature === undefined) {
+        throw new runtime.RequiredError('productFeature','Required parameter requestParameters.productFeature was null or undefined when calling postProductFeature.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ProductFeature`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters || ProductFeatureToJSON(requestParameters.productFeature),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(ProductFeatureFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ProductFeature`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || ProductFeatureToJSON(requestParameters.productFeature),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ProductFeatureFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Creates a new ProductFeature.
- * Create a new ProductFeature
- */
-export function postProductFeature<T>(
-  requestParameters: PostProductFeatureApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, ProductFeature>,
-): QueryConfig<T> {
-  return postProductFeatureRaw(requestParameters, requestConfig);
+* Creates a new ProductFeature.
+* Create a new ProductFeature
+*/
+export function postProductFeature<T>(requestParameters: PostProductFeatureApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ProductFeature>): QueryConfig<T> {
+    return postProductFeatureRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing ProductFeature.
  * Update an existing ProductFeature
  */
-function updateProductFeatureRaw<T>(
-  requestParameters: UpdateProductFeatureApiRequest,
-  requestConfig: runtime.TypedQueryConfig<T, ProductFeature> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateProductFeature.",
-    );
-  }
+function updateProductFeatureRaw<T>(requestParameters: UpdateProductFeatureApiRequest, requestConfig: runtime.TypedQueryConfig<T, ProductFeature> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateProductFeature.');
+    }
 
-  if (
-    requestParameters.productFeature === null ||
-    requestParameters.productFeature === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "productFeature",
-      "Required parameter requestParameters.productFeature was null or undefined when calling updateProductFeature.",
-    );
-  }
+    if (requestParameters.productFeature === null || requestParameters.productFeature === undefined) {
+        throw new runtime.RequiredError('productFeature','Required parameter requestParameters.productFeature was null or undefined when calling updateProductFeature.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ProductFeature/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters || ProductFeatureToJSON(requestParameters.productFeature),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(ProductFeatureFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ProductFeature/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || ProductFeatureToJSON(requestParameters.productFeature),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ProductFeatureFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing ProductFeature.
- * Update an existing ProductFeature
- */
-export function updateProductFeature<T>(
-  requestParameters: UpdateProductFeatureApiRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, ProductFeature>,
-): QueryConfig<T> {
-  return updateProductFeatureRaw(requestParameters, requestConfig);
+* Updates an existing ProductFeature.
+* Update an existing ProductFeature
+*/
+export function updateProductFeature<T>(requestParameters: UpdateProductFeatureApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ProductFeature>): QueryConfig<T> {
+    return updateProductFeatureRaw(requestParameters, requestConfig);
 }
+

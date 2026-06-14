@@ -35,51 +35,27 @@ const DataObject_1 = require("./DataObject");
 function WorkflowExecutionFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        workflowId: !(0, runtime_1.exists)(json, "workflowId") ? undefined : json["workflowId"],
-        version: !(0, runtime_1.exists)(json, "version") ? undefined : json["version"],
-        state: !(0, runtime_1.exists)(json, "state") ? undefined : json["state"],
-        startedAt: !(0, runtime_1.exists)(json, "startedAt")
-            ? undefined
-            : new Date(json["startedAt"]),
-        finishedAt: !(0, runtime_1.exists)(json, "finishedAt")
-            ? undefined
-            : new Date(json["finishedAt"]),
-        parentExecutionId: !(0, runtime_1.exists)(json, "parentExecutionId")
-            ? undefined
-            : json["parentExecutionId"],
-        triggerType: !(0, runtime_1.exists)(json, "triggerType") ? undefined : json["triggerType"],
-        triggerPayload: !(0, runtime_1.exists)(json, "triggerPayload")
-            ? undefined
-            : json["triggerPayload"],
-        contextData: !(0, runtime_1.exists)(json, "contextData") ? undefined : json["contextData"],
-        errorMessage: !(0, runtime_1.exists)(json, "errorMessage")
-            ? undefined
-            : json["errorMessage"],
-        errorStackTrace: !(0, runtime_1.exists)(json, "errorStackTrace")
-            ? undefined
-            : json["errorStackTrace"],
-        metricsSnapshot: !(0, runtime_1.exists)(json, "metricsSnapshot")
-            ? undefined
-            : json["metricsSnapshot"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'workflowId': !(0, runtime_1.exists)(json, 'workflowId') ? undefined : json['workflowId'],
+        'version': !(0, runtime_1.exists)(json, 'version') ? undefined : json['version'],
+        'state': !(0, runtime_1.exists)(json, 'state') ? undefined : json['state'],
+        'startedAt': !(0, runtime_1.exists)(json, 'startedAt') ? undefined : new Date(json['startedAt']),
+        'finishedAt': !(0, runtime_1.exists)(json, 'finishedAt') ? undefined : new Date(json['finishedAt']),
+        'parentExecutionId': !(0, runtime_1.exists)(json, 'parentExecutionId') ? undefined : json['parentExecutionId'],
+        'triggerType': !(0, runtime_1.exists)(json, 'triggerType') ? undefined : json['triggerType'],
+        'triggerPayload': !(0, runtime_1.exists)(json, 'triggerPayload') ? undefined : json['triggerPayload'],
+        'contextData': !(0, runtime_1.exists)(json, 'contextData') ? undefined : json['contextData'],
+        'errorMessage': !(0, runtime_1.exists)(json, 'errorMessage') ? undefined : json['errorMessage'],
+        'errorStackTrace': !(0, runtime_1.exists)(json, 'errorStackTrace') ? undefined : json['errorStackTrace'],
+        'metricsSnapshot': !(0, runtime_1.exists)(json, 'metricsSnapshot') ? undefined : json['metricsSnapshot'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function WorkflowExecutionToJSON(value) {
@@ -88,27 +64,25 @@ function WorkflowExecutionToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        workflowId: value.workflowId,
-        version: value.version,
-        state: value.state,
-        startedAt: value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
-        finishedAt: value.finishedAt === undefined
-            ? undefined
-            : value.finishedAt.toISOString(),
-        parentExecutionId: value.parentExecutionId,
-        triggerType: value.triggerType,
-        triggerPayload: value.triggerPayload,
-        contextData: value.contextData,
-        errorMessage: value.errorMessage,
-        errorStackTrace: value.errorStackTrace,
-        metricsSnapshot: value.metricsSnapshot,
-        trashed: value.trashed,
+        'workflowId': value.workflowId,
+        'version': value.version,
+        'state': value.state,
+        'startedAt': value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
+        'finishedAt': value.finishedAt === undefined ? undefined : value.finishedAt.toISOString(),
+        'parentExecutionId': value.parentExecutionId,
+        'triggerType': value.triggerType,
+        'triggerPayload': value.triggerPayload,
+        'contextData': value.contextData,
+        'errorMessage': value.errorMessage,
+        'errorStackTrace': value.errorStackTrace,
+        'metricsSnapshot': value.metricsSnapshot,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var WorkflowExecutionStateEnum;
 (function (WorkflowExecutionStateEnum) {
     WorkflowExecutionStateEnum["PENDING"] = "pending";
@@ -120,9 +94,9 @@ var WorkflowExecutionStateEnum;
     WorkflowExecutionStateEnum["TIMEOUT"] = "timeout";
 })(WorkflowExecutionStateEnum || (exports.WorkflowExecutionStateEnum = WorkflowExecutionStateEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var WorkflowExecutionTriggerTypeEnum;
 (function (WorkflowExecutionTriggerTypeEnum) {
     WorkflowExecutionTriggerTypeEnum["MANUAL"] = "manual";

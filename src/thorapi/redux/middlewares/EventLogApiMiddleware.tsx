@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_EVENTLOG_REQUEST,
-  FETCH_EVENTLOG_REQUEST,
-  LIST_EVENTLOG_REQUEST,
-  UPDATE_EVENTLOG_REQUEST,
-  DELETE_EVENTLOG_REQUEST,
-  addEventLogFailure,
-  addEventLogSuccess,
-  fetchEventLogFailure,
-  fetchEventLogSuccess,
-  listEventLogFailure,
-  listEventLogSuccess,
-  updateEventLogFailure,
-  updateEventLogSuccess,
-  deleteEventLogFailure,
-  deleteEventLogSuccess,
-} from "../actions/EventLogApiAction";
+
+    ADD_EVENTLOG_REQUEST,
+    FETCH_EVENTLOG_REQUEST,
+    LIST_EVENTLOG_REQUEST,
+    UPDATE_EVENTLOG_REQUEST,
+    DELETE_EVENTLOG_REQUEST,
+
+    addEventLogFailure,
+    addEventLogSuccess,
+
+    fetchEventLogFailure,
+    fetchEventLogSuccess,
+    
+    listEventLogFailure,
+    listEventLogSuccess,
+
+    updateEventLogFailure,
+    updateEventLogSuccess,
+    
+    deleteEventLogFailure,
+    deleteEventLogSuccess,
+    
+} from '../actions/EventLogApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: EventLog
 */
 
-export const EventLogMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("EventLog MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const EventLogMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("EventLog MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

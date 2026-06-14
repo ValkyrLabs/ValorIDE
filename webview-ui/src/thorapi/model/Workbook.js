@@ -36,33 +36,19 @@ const _1 = require("./");
 function WorkbookFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        sheets: !(0, runtime_1.exists)(json, "sheets")
-            ? undefined
-            : json["sheets"].map(_1.SheetFromJSON),
-        formats: !(0, runtime_1.exists)(json, "formats")
-            ? undefined
-            : json["formats"].map(_1.FormatFromJSON),
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'sheets': !(0, runtime_1.exists)(json, 'sheets') ? undefined : json['sheets'].map(_1.SheetFromJSON),
+        'formats': !(0, runtime_1.exists)(json, 'formats') ? undefined : json['formats'].map(_1.FormatFromJSON),
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function WorkbookToJSON(value) {
@@ -71,21 +57,17 @@ function WorkbookToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        name: value.name,
-        sheets: value.sheets === undefined
-            ? undefined
-            : value.sheets.map(_1.SheetToJSON),
-        formats: value.formats === undefined
-            ? undefined
-            : value.formats.map(_1.FormatToJSON),
-        status: value.status,
-        trashed: value.trashed,
+        'name': value.name,
+        'sheets': value.sheets === undefined ? undefined : value.sheets.map(_1.SheetToJSON),
+        'formats': value.formats === undefined ? undefined : value.formats.map(_1.FormatToJSON),
+        'status': value.status,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var WorkbookStatusEnum;
 (function (WorkbookStatusEnum) {
     WorkbookStatusEnum["WORKBOOKOPEN"] = "open";

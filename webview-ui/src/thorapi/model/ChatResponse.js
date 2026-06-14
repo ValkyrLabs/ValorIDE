@@ -35,31 +35,21 @@ const DataObject_1 = require("./DataObject");
 function ChatResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        sessionId: !(0, runtime_1.exists)(json, "sessionId") ? undefined : json["sessionId"],
-        json: !(0, runtime_1.exists)(json, "json") ? undefined : json["json"],
-        sourceType: !(0, runtime_1.exists)(json, "sourceType") ? undefined : json["sourceType"],
-        sourceOwner: !(0, runtime_1.exists)(json, "sourceOwner") ? undefined : json["sourceOwner"],
-        role: !(0, runtime_1.exists)(json, "role") ? undefined : json["role"],
-        content: !(0, runtime_1.exists)(json, "content") ? undefined : json["content"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'sessionId': !(0, runtime_1.exists)(json, 'sessionId') ? undefined : json['sessionId'],
+        'json': !(0, runtime_1.exists)(json, 'json') ? undefined : json['json'],
+        'sourceType': !(0, runtime_1.exists)(json, 'sourceType') ? undefined : json['sourceType'],
+        'sourceOwner': !(0, runtime_1.exists)(json, 'sourceOwner') ? undefined : json['sourceOwner'],
+        'role': !(0, runtime_1.exists)(json, 'role') ? undefined : json['role'],
+        'content': !(0, runtime_1.exists)(json, 'content') ? undefined : json['content'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ChatResponseToJSON(value) {
@@ -68,19 +58,19 @@ function ChatResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        sessionId: value.sessionId,
-        json: value.json,
-        sourceType: value.sourceType,
-        sourceOwner: value.sourceOwner,
-        role: value.role,
-        content: value.content,
-        trashed: value.trashed,
+        'sessionId': value.sessionId,
+        'json': value.json,
+        'sourceType': value.sourceType,
+        'sourceOwner': value.sourceOwner,
+        'role': value.role,
+        'content': value.content,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ChatResponseSourceTypeEnum;
 (function (ChatResponseSourceTypeEnum) {
     ChatResponseSourceTypeEnum["API"] = "api";
@@ -88,9 +78,9 @@ var ChatResponseSourceTypeEnum;
     ChatResponseSourceTypeEnum["P2P"] = "p2p";
 })(ChatResponseSourceTypeEnum || (exports.ChatResponseSourceTypeEnum = ChatResponseSourceTypeEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var ChatResponseRoleEnum;
 (function (ChatResponseRoleEnum) {
     ChatResponseRoleEnum["USER"] = "user";

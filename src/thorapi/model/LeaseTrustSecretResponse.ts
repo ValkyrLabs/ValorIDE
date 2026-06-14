@@ -26,139 +26,128 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from "../src/runtime";
-import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { exists, mapValues } from '../src/runtime';
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from './DataObject';
 import {
-  TrustSecretLease,
-  TrustSecretLeaseFromJSON,
-  TrustSecretLeaseToJSON,
-} from "./";
+
+
+    TrustSecretLease,
+    TrustSecretLeaseFromJSON,
+    TrustSecretLeaseToJSON,
+} from './';
+
 
 // thorapi
 
 /**
- *
+ * 
  * @export
  * @interface LeaseTrustSecretResponse
  */
-export type LeaseTrustSecretResponse = DataObject & {
-  /**
-   *
-   * @type {TrustSecretLease}
-   * @memberof LeaseTrustSecretResponse
-   */
-  lease?: TrustSecretLease;
-  /**
-   *
-   * @type {boolean}
-   * @memberof LeaseTrustSecretResponse
-   */
-  allowed?: boolean;
-  /**
-   *
-   * @type {string}
-   * @memberof LeaseTrustSecretResponse
-   */
-  reasonCode?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof LeaseTrustSecretResponse
-   */
-  readonly id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof LeaseTrustSecretResponse
-   */
-  readonly ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof LeaseTrustSecretResponse
-   */
-  readonly createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof LeaseTrustSecretResponse
-   */
-  readonly keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof LeaseTrustSecretResponse
-   */
-  readonly lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof LeaseTrustSecretResponse
-   */
-  readonly lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof LeaseTrustSecretResponse
-   */
-  readonly lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof LeaseTrustSecretResponse
-   */
-  readonly lastModifiedDate?: Date;
-  /**
-   * Indicates if the object is trashed (soft deleted)
-   * @type {boolean}
-   * @memberof LeaseTrustSecretResponse
-   */
-  trashed?: boolean;
-};
-
-export function LeaseTrustSecretResponseFromJSON(
-  json: any,
-): LeaseTrustSecretResponse {
-  return {
-    ...DataObjectFromJSON(json),
-    lease: !exists(json, "lease")
-      ? undefined
-      : TrustSecretLeaseFromJSON(json["lease"]),
-    allowed: !exists(json, "allowed") ? undefined : json["allowed"],
-    reasonCode: !exists(json, "reasonCode") ? undefined : json["reasonCode"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-  };
+export type LeaseTrustSecretResponse  = DataObject & {
+    /**
+     * 
+     * @type {TrustSecretLease}
+     * @memberof LeaseTrustSecretResponse
+     */
+    lease?: TrustSecretLease;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof LeaseTrustSecretResponse
+     */
+    allowed?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof LeaseTrustSecretResponse
+     */
+    reasonCode?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof LeaseTrustSecretResponse
+     */
+    readonly id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof LeaseTrustSecretResponse
+     */
+    readonly ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof LeaseTrustSecretResponse
+     */
+    readonly createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof LeaseTrustSecretResponse
+     */
+    readonly keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof LeaseTrustSecretResponse
+     */
+    readonly lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof LeaseTrustSecretResponse
+     */
+    readonly lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof LeaseTrustSecretResponse
+     */
+    readonly lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof LeaseTrustSecretResponse
+     */
+    readonly lastModifiedDate?: Date;
+    /**
+     * Indicates if the object is trashed (soft deleted)
+     * @type {boolean}
+     * @memberof LeaseTrustSecretResponse
+     */
+    trashed?: boolean;
 }
 
-export function LeaseTrustSecretResponseToJSON(
-  value?: LeaseTrustSecretResponse,
-): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    ...DataObjectToJSON(value),
-    lease: TrustSecretLeaseToJSON(value.lease),
-    allowed: value.allowed,
-    reasonCode: value.reasonCode,
-    trashed: value.trashed,
-  };
+export function LeaseTrustSecretResponseFromJSON(json: any): LeaseTrustSecretResponse {
+    return {
+        ...DataObjectFromJSON(json),
+        'lease': !exists(json, 'lease') ? undefined : TrustSecretLeaseFromJSON(json['lease']),
+        'allowed': !exists(json, 'allowed') ? undefined : json['allowed'],
+        'reasonCode': !exists(json, 'reasonCode') ? undefined : json['reasonCode'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !exists(json, 'trashed') ? undefined : json['trashed'],
+    };
 }
+
+export function LeaseTrustSecretResponseToJSON(value?: LeaseTrustSecretResponse): any {
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        ...DataObjectToJSON(value),
+        'lease': TrustSecretLeaseToJSON(value.lease),
+        'allowed': value.allowed,
+        'reasonCode': value.reasonCode,
+        'trashed': value.trashed,
+    };
+}
+
+

@@ -34,40 +34,24 @@ const DataObject_1 = require("./DataObject");
 function PublishWorkflowRequestFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        workflowId: !(0, runtime_1.exists)(json, "workflowId") ? undefined : json["workflowId"],
-        toolSlug: !(0, runtime_1.exists)(json, "toolSlug") ? undefined : json["toolSlug"],
-        displayName: !(0, runtime_1.exists)(json, "displayName") ? undefined : json["displayName"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        category: !(0, runtime_1.exists)(json, "category") ? undefined : json["category"],
-        inputMapping: !(0, runtime_1.exists)(json, "inputMapping")
-            ? undefined
-            : json["inputMapping"],
-        outputMapping: !(0, runtime_1.exists)(json, "outputMapping")
-            ? undefined
-            : json["outputMapping"],
-        marketplaceCategory: !(0, runtime_1.exists)(json, "marketplaceCategory")
-            ? undefined
-            : json["marketplaceCategory"],
-        tags: !(0, runtime_1.exists)(json, "tags") ? undefined : json["tags"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'workflowId': !(0, runtime_1.exists)(json, 'workflowId') ? undefined : json['workflowId'],
+        'toolSlug': !(0, runtime_1.exists)(json, 'toolSlug') ? undefined : json['toolSlug'],
+        'displayName': !(0, runtime_1.exists)(json, 'displayName') ? undefined : json['displayName'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'category': !(0, runtime_1.exists)(json, 'category') ? undefined : json['category'],
+        'inputMapping': !(0, runtime_1.exists)(json, 'inputMapping') ? undefined : json['inputMapping'],
+        'outputMapping': !(0, runtime_1.exists)(json, 'outputMapping') ? undefined : json['outputMapping'],
+        'marketplaceCategory': !(0, runtime_1.exists)(json, 'marketplaceCategory') ? undefined : json['marketplaceCategory'],
+        'tags': !(0, runtime_1.exists)(json, 'tags') ? undefined : json['tags'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function PublishWorkflowRequestToJSON(value) {
@@ -76,16 +60,16 @@ function PublishWorkflowRequestToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        workflowId: value.workflowId,
-        toolSlug: value.toolSlug,
-        displayName: value.displayName,
-        description: value.description,
-        category: value.category,
-        inputMapping: value.inputMapping,
-        outputMapping: value.outputMapping,
-        marketplaceCategory: value.marketplaceCategory,
-        tags: value.tags,
-        trashed: value.trashed,
+        'workflowId': value.workflowId,
+        'toolSlug': value.toolSlug,
+        'displayName': value.displayName,
+        'description': value.description,
+        'category': value.category,
+        'inputMapping': value.inputMapping,
+        'outputMapping': value.outputMapping,
+        'marketplaceCategory': value.marketplaceCategory,
+        'tags': value.tags,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=PublishWorkflowRequest.js.map

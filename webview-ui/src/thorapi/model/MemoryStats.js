@@ -35,38 +35,20 @@ const _1 = require("./");
 function MemoryStatsFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        context: !(0, runtime_1.exists)(json, "context")
-            ? undefined
-            : (0, _1.MemoryContextStatsFromJSON)(json["context"]),
-        memory: !(0, runtime_1.exists)(json, "memory")
-            ? undefined
-            : (0, _1.MemoryHitStatsFromJSON)(json["memory"]),
-        cost: !(0, runtime_1.exists)(json, "cost")
-            ? undefined
-            : (0, _1.MemoryCostStatsFromJSON)(json["cost"]),
-        alerts: !(0, runtime_1.exists)(json, "alerts") ? undefined : json["alerts"],
-        recommendations: !(0, runtime_1.exists)(json, "recommendations")
-            ? undefined
-            : json["recommendations"].map(_1.MemoryRecommendationFromJSON),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'context': !(0, runtime_1.exists)(json, 'context') ? undefined : (0, _1.MemoryContextStatsFromJSON)(json['context']),
+        'memory': !(0, runtime_1.exists)(json, 'memory') ? undefined : (0, _1.MemoryHitStatsFromJSON)(json['memory']),
+        'cost': !(0, runtime_1.exists)(json, 'cost') ? undefined : (0, _1.MemoryCostStatsFromJSON)(json['cost']),
+        'alerts': !(0, runtime_1.exists)(json, 'alerts') ? undefined : json['alerts'],
+        'recommendations': !(0, runtime_1.exists)(json, 'recommendations') ? undefined : json['recommendations'].map(_1.MemoryRecommendationFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function MemoryStatsToJSON(value) {
@@ -75,14 +57,12 @@ function MemoryStatsToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        context: (0, _1.MemoryContextStatsToJSON)(value.context),
-        memory: (0, _1.MemoryHitStatsToJSON)(value.memory),
-        cost: (0, _1.MemoryCostStatsToJSON)(value.cost),
-        alerts: value.alerts,
-        recommendations: value.recommendations === undefined
-            ? undefined
-            : value.recommendations.map(_1.MemoryRecommendationToJSON),
-        trashed: value.trashed,
+        'context': (0, _1.MemoryContextStatsToJSON)(value.context),
+        'memory': (0, _1.MemoryHitStatsToJSON)(value.memory),
+        'cost': (0, _1.MemoryCostStatsToJSON)(value.cost),
+        'alerts': value.alerts,
+        'recommendations': value.recommendations === undefined ? undefined : value.recommendations.map(_1.MemoryRecommendationToJSON),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=MemoryStats.js.map

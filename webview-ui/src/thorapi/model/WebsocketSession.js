@@ -36,37 +36,21 @@ const _1 = require("./");
 function WebsocketSessionFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        execModuleId: !(0, runtime_1.exists)(json, "execModuleId")
-            ? undefined
-            : json["execModuleId"],
-        state: !(0, runtime_1.exists)(json, "state") ? undefined : json["state"],
-        type: !(0, runtime_1.exists)(json, "type") ? undefined : json["type"],
-        connected: !(0, runtime_1.exists)(json, "connected") ? undefined : json["connected"],
-        statuses: !(0, runtime_1.exists)(json, "statuses")
-            ? undefined
-            : json["statuses"].map(_1.WebsocketMessageFromJSON),
-        messages: !(0, runtime_1.exists)(json, "messages")
-            ? undefined
-            : json["messages"].map(_1.WebsocketMessageFromJSON),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'execModuleId': !(0, runtime_1.exists)(json, 'execModuleId') ? undefined : json['execModuleId'],
+        'state': !(0, runtime_1.exists)(json, 'state') ? undefined : json['state'],
+        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
+        'connected': !(0, runtime_1.exists)(json, 'connected') ? undefined : json['connected'],
+        'statuses': !(0, runtime_1.exists)(json, 'statuses') ? undefined : json['statuses'].map(_1.WebsocketMessageFromJSON),
+        'messages': !(0, runtime_1.exists)(json, 'messages') ? undefined : json['messages'].map(_1.WebsocketMessageFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function WebsocketSessionToJSON(value) {
@@ -75,23 +59,19 @@ function WebsocketSessionToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        execModuleId: value.execModuleId,
-        state: value.state,
-        type: value.type,
-        connected: value.connected,
-        statuses: value.statuses === undefined
-            ? undefined
-            : value.statuses.map(_1.WebsocketMessageToJSON),
-        messages: value.messages === undefined
-            ? undefined
-            : value.messages.map(_1.WebsocketMessageToJSON),
-        trashed: value.trashed,
+        'execModuleId': value.execModuleId,
+        'state': value.state,
+        'type': value.type,
+        'connected': value.connected,
+        'statuses': value.statuses === undefined ? undefined : value.statuses.map(_1.WebsocketMessageToJSON),
+        'messages': value.messages === undefined ? undefined : value.messages.map(_1.WebsocketMessageToJSON),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var WebsocketSessionStateEnum;
 (function (WebsocketSessionStateEnum) {
     WebsocketSessionStateEnum["BROADCAST"] = "broadcast";
@@ -100,9 +80,9 @@ var WebsocketSessionStateEnum;
     WebsocketSessionStateEnum["AGENT"] = "agent";
 })(WebsocketSessionStateEnum || (exports.WebsocketSessionStateEnum = WebsocketSessionStateEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var WebsocketSessionTypeEnum;
 (function (WebsocketSessionTypeEnum) {
     WebsocketSessionTypeEnum["BROADCAST"] = "broadcast";

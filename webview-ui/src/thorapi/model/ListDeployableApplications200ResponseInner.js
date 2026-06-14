@@ -35,14 +35,10 @@ const _1 = require("./");
 function ListDeployableApplications200ResponseInnerFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        applicationId: !(0, runtime_1.exists)(json, "applicationId")
-            ? undefined
-            : json["applicationId"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        buildArtifacts: !(0, runtime_1.exists)(json, "buildArtifacts")
-            ? undefined
-            : json["buildArtifacts"].map(_1.BuildArtifactFromJSON),
+        'applicationId': !(0, runtime_1.exists)(json, 'applicationId') ? undefined : json['applicationId'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'buildArtifacts': !(0, runtime_1.exists)(json, 'buildArtifacts') ? undefined : json['buildArtifacts'].map(_1.BuildArtifactFromJSON),
     };
 }
 function ListDeployableApplications200ResponseInnerToJSON(value) {
@@ -51,12 +47,10 @@ function ListDeployableApplications200ResponseInnerToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        applicationId: value.applicationId,
-        name: value.name,
-        description: value.description,
-        buildArtifacts: value.buildArtifacts === undefined
-            ? undefined
-            : value.buildArtifacts.map(_1.BuildArtifactToJSON),
+        'applicationId': value.applicationId,
+        'name': value.name,
+        'description': value.description,
+        'buildArtifacts': value.buildArtifacts === undefined ? undefined : value.buildArtifacts.map(_1.BuildArtifactToJSON),
     };
 }
 //# sourceMappingURL=ListDeployableApplications200ResponseInner.js.map

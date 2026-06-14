@@ -36,51 +36,29 @@ const _1 = require("./");
 function McpToolFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        mcpServerId: !(0, runtime_1.exists)(json, "mcpServerId") ? undefined : json["mcpServerId"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        slug: !(0, runtime_1.exists)(json, "slug") ? undefined : json["slug"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        category: !(0, runtime_1.exists)(json, "category") ? undefined : json["category"],
-        capabilities: !(0, runtime_1.exists)(json, "capabilities")
-            ? undefined
-            : json["capabilities"],
-        inputSchemaRef: !(0, runtime_1.exists)(json, "inputSchemaRef")
-            ? undefined
-            : (0, _1.OasObjectSchemaFromJSON)(json["inputSchemaRef"]),
-        outputSchemaRef: !(0, runtime_1.exists)(json, "outputSchemaRef")
-            ? undefined
-            : (0, _1.OasObjectSchemaFromJSON)(json["outputSchemaRef"]),
-        invocationStyle: !(0, runtime_1.exists)(json, "invocationStyle")
-            ? undefined
-            : json["invocationStyle"],
-        streamingSupported: !(0, runtime_1.exists)(json, "streamingSupported")
-            ? undefined
-            : json["streamingSupported"],
-        autoApprove: !(0, runtime_1.exists)(json, "autoApprove") ? undefined : json["autoApprove"],
-        defaultAutoApprove: !(0, runtime_1.exists)(json, "defaultAutoApprove")
-            ? undefined
-            : json["defaultAutoApprove"],
-        docsUrl: !(0, runtime_1.exists)(json, "docsUrl") ? undefined : json["docsUrl"],
-        inputSchema: !(0, runtime_1.exists)(json, "inputSchema") ? undefined : json["inputSchema"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'mcpServerId': !(0, runtime_1.exists)(json, 'mcpServerId') ? undefined : json['mcpServerId'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'slug': !(0, runtime_1.exists)(json, 'slug') ? undefined : json['slug'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'category': !(0, runtime_1.exists)(json, 'category') ? undefined : json['category'],
+        'capabilities': !(0, runtime_1.exists)(json, 'capabilities') ? undefined : json['capabilities'],
+        'inputSchemaRef': !(0, runtime_1.exists)(json, 'inputSchemaRef') ? undefined : (0, _1.OasObjectSchemaFromJSON)(json['inputSchemaRef']),
+        'outputSchemaRef': !(0, runtime_1.exists)(json, 'outputSchemaRef') ? undefined : (0, _1.OasObjectSchemaFromJSON)(json['outputSchemaRef']),
+        'invocationStyle': !(0, runtime_1.exists)(json, 'invocationStyle') ? undefined : json['invocationStyle'],
+        'streamingSupported': !(0, runtime_1.exists)(json, 'streamingSupported') ? undefined : json['streamingSupported'],
+        'autoApprove': !(0, runtime_1.exists)(json, 'autoApprove') ? undefined : json['autoApprove'],
+        'defaultAutoApprove': !(0, runtime_1.exists)(json, 'defaultAutoApprove') ? undefined : json['defaultAutoApprove'],
+        'docsUrl': !(0, runtime_1.exists)(json, 'docsUrl') ? undefined : json['docsUrl'],
+        'inputSchema': !(0, runtime_1.exists)(json, 'inputSchema') ? undefined : json['inputSchema'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function McpToolToJSON(value) {
@@ -89,27 +67,27 @@ function McpToolToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        mcpServerId: value.mcpServerId,
-        name: value.name,
-        slug: value.slug,
-        description: value.description,
-        category: value.category,
-        capabilities: value.capabilities,
-        inputSchemaRef: (0, _1.OasObjectSchemaToJSON)(value.inputSchemaRef),
-        outputSchemaRef: (0, _1.OasObjectSchemaToJSON)(value.outputSchemaRef),
-        invocationStyle: value.invocationStyle,
-        streamingSupported: value.streamingSupported,
-        autoApprove: value.autoApprove,
-        defaultAutoApprove: value.defaultAutoApprove,
-        docsUrl: value.docsUrl,
-        inputSchema: value.inputSchema,
-        trashed: value.trashed,
+        'mcpServerId': value.mcpServerId,
+        'name': value.name,
+        'slug': value.slug,
+        'description': value.description,
+        'category': value.category,
+        'capabilities': value.capabilities,
+        'inputSchemaRef': (0, _1.OasObjectSchemaToJSON)(value.inputSchemaRef),
+        'outputSchemaRef': (0, _1.OasObjectSchemaToJSON)(value.outputSchemaRef),
+        'invocationStyle': value.invocationStyle,
+        'streamingSupported': value.streamingSupported,
+        'autoApprove': value.autoApprove,
+        'defaultAutoApprove': value.defaultAutoApprove,
+        'docsUrl': value.docsUrl,
+        'inputSchema': value.inputSchema,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var McpToolCategoryEnum;
 (function (McpToolCategoryEnum) {
     McpToolCategoryEnum["UNCATEGORIZED"] = "uncategorized";
@@ -123,9 +101,9 @@ var McpToolCategoryEnum;
     McpToolCategoryEnum["CUSTOMIZATION"] = "customization";
 })(McpToolCategoryEnum || (exports.McpToolCategoryEnum = McpToolCategoryEnum = {}));
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var McpToolInvocationStyleEnum;
 (function (McpToolInvocationStyleEnum) {
     McpToolInvocationStyleEnum["SINGLECALL"] = "single_call";

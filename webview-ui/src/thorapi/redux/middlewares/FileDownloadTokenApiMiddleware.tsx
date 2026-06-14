@@ -13,23 +13,34 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
+
+
+
+
 import {
-  ADD_FILEDOWNLOADTOKEN_REQUEST,
-  FETCH_FILEDOWNLOADTOKEN_REQUEST,
-  LIST_FILEDOWNLOADTOKEN_REQUEST,
-  UPDATE_FILEDOWNLOADTOKEN_REQUEST,
-  DELETE_FILEDOWNLOADTOKEN_REQUEST,
-  addFileDownloadTokenFailure,
-  addFileDownloadTokenSuccess,
-  fetchFileDownloadTokenFailure,
-  fetchFileDownloadTokenSuccess,
-  listFileDownloadTokenFailure,
-  listFileDownloadTokenSuccess,
-  updateFileDownloadTokenFailure,
-  updateFileDownloadTokenSuccess,
-  deleteFileDownloadTokenFailure,
-  deleteFileDownloadTokenSuccess,
-} from "../actions/FileDownloadTokenApiAction";
+
+    ADD_FILEDOWNLOADTOKEN_REQUEST,
+    FETCH_FILEDOWNLOADTOKEN_REQUEST,
+    LIST_FILEDOWNLOADTOKEN_REQUEST,
+    UPDATE_FILEDOWNLOADTOKEN_REQUEST,
+    DELETE_FILEDOWNLOADTOKEN_REQUEST,
+
+    addFileDownloadTokenFailure,
+    addFileDownloadTokenSuccess,
+
+    fetchFileDownloadTokenFailure,
+    fetchFileDownloadTokenSuccess,
+    
+    listFileDownloadTokenFailure,
+    listFileDownloadTokenSuccess,
+
+    updateFileDownloadTokenFailure,
+    updateFileDownloadTokenSuccess,
+    
+    deleteFileDownloadTokenFailure,
+    deleteFileDownloadTokenSuccess,
+    
+} from '../actions/FileDownloadTokenApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,15 +58,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: FileDownloadToken
 */
 
-export const FileDownloadTokenMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("FileDownloadToken MIDDLEWARE: " + JSON.stringify(action));
+
+
+export const FileDownloadTokenMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("FileDownloadToken MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      default:
-        break;
+        default:
+            break;
     }
-  };
+};
+

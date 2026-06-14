@@ -9,6 +9,18 @@
  */
 import { createApi } from "@reduxjs/toolkit/query/react";
 import customBaseQuery from "@thorapi/redux/customBaseQuery";
+import type {
+  AppGenerationRequest,
+  AppGenerationTraceResponse,
+  ContextPageCompileRequest,
+  ContextPageHydrateRequest,
+  ContextPageRecompressRequest,
+  ContextPageResponse,
+  ContextPageTraverseRequest,
+  CreditDebitReceipt,
+  GenerationReceipt,
+  SkillOptRouteReceipt,
+} from "@thorapi/model";
 import { v4 as uuidv4 } from "uuid";
 
 // AccountBalance DTO - matches ValkyrAI's AccountBalanceDTO
@@ -63,7 +75,13 @@ export interface ErrorResponse {
 export const creditsApi = createApi({
   reducerPath: "creditsApi",
   baseQuery: customBaseQuery,
-  tagTypes: ["AccountBalance", "Credits"],
+  tagTypes: [
+    "AccountBalance",
+    "Credits",
+    "Receipts",
+    "AppGeneration",
+    "GrayMatter",
+  ],
   endpoints: (builder) => ({
     /**
      * GET /v1/credits/{accountId}/balance
@@ -129,6 +147,155 @@ export const creditsApi = createApi({
         { type: "Credits", id: "BALANCE" },
       ],
     }),
+
+    getAppGenerationTrace: builder.query<AppGenerationTraceResponse, string>({
+      query: (receiptRef) =>
+        `app_generation_ops/traces/${encodeURIComponent(receiptRef)}`,
+      providesTags: (result, error, receiptRef) => [
+        { type: "Receipts", id: `app-generation-trace:${receiptRef}` },
+      ],
+    }),
+
+    createAppGenerationRequest: builder.mutation<
+      AppGenerationRequest,
+      AppGenerationRequest
+    >({
+      query: (appGenerationRequest) => ({
+        url: "app_generation_ops/requests",
+        method: "POST",
+        body: appGenerationRequest,
+      }),
+      invalidatesTags: (result) => [
+        { type: "AppGeneration", id: result?.requestRef || "REQUEST" },
+      ],
+    }),
+
+    getAppGenerationRequest: builder.query<AppGenerationRequest, string>({
+      query: (requestRef) =>
+        `app_generation_ops/requests/${encodeURIComponent(requestRef)}`,
+      providesTags: (result, error, requestRef) => [
+        { type: "AppGeneration", id: requestRef },
+      ],
+    }),
+
+    runAppGenerationRequest: builder.mutation<GenerationReceipt, string>({
+      query: (requestRef) => ({
+        url: `app_generation_ops/requests/${encodeURIComponent(requestRef)}/run`,
+        method: "POST",
+      }),
+      invalidatesTags: (result, error, requestRef) => [
+        { type: "AppGeneration", id: requestRef },
+        { type: "Receipts", id: `app-generation-trace:${result?.receiptRef}` },
+      ],
+    }),
+
+    compileContextPage: builder.mutation<
+      ContextPageResponse,
+      ContextPageCompileRequest
+    >({
+      query: (contextPageCompileRequest) => ({
+        url: "graymatter_ops/context_page/compile",
+        method: "POST",
+        body: contextPageCompileRequest,
+      }),
+      invalidatesTags: (result) => [
+        { type: "GrayMatter", id: result?.contextPage?.pageRef || "CONTEXT" },
+      ],
+    }),
+
+    getContextPage: builder.query<ContextPageResponse, string>({
+      query: (contextPageRef) =>
+        `graymatter_ops/context_page/${encodeURIComponent(contextPageRef)}`,
+      providesTags: (result, error, contextPageRef) => [
+        { type: "GrayMatter", id: contextPageRef },
+      ],
+    }),
+
+    hydrateContextPage: builder.mutation<
+      ContextPageResponse,
+      ContextPageHydrateRequest
+    >({
+      query: (contextPageHydrateRequest) => ({
+        url: "graymatter_ops/context_page/hydrate",
+        method: "POST",
+        body: contextPageHydrateRequest,
+      }),
+      invalidatesTags: (result) => [
+        { type: "GrayMatter", id: result?.contextPage?.pageRef || "CONTEXT" },
+      ],
+    }),
+
+    recompressContextPage: builder.mutation<
+      ContextPageResponse,
+      ContextPageRecompressRequest
+    >({
+      query: (contextPageRecompressRequest) => ({
+        url: "graymatter_ops/context_page/recompress",
+        method: "POST",
+        body: contextPageRecompressRequest,
+      }),
+      invalidatesTags: (result) => [
+        { type: "GrayMatter", id: result?.contextPage?.pageRef || "CONTEXT" },
+      ],
+    }),
+
+    traverseContextPage: builder.mutation<
+      ContextPageResponse,
+      ContextPageTraverseRequest
+    >({
+      query: (contextPageTraverseRequest) => ({
+        url: "graymatter_ops/context_page/traverse",
+        method: "POST",
+        body: contextPageTraverseRequest,
+      }),
+      invalidatesTags: (result) => [
+        { type: "GrayMatter", id: result?.contextPage?.pageRef || "CONTEXT" },
+      ],
+    }),
+
+    getSkilloptRouteReceipt: builder.query<
+      SkillOptRouteReceipt,
+      { accountId: string; receiptRef: string }
+    >({
+      query: ({ accountId, receiptRef }) =>
+        `skillopt_ops/${encodeURIComponent(accountId)}/route_receipts/${encodeURIComponent(receiptRef)}`,
+      providesTags: (result, error, { receiptRef }) => [
+        { type: "Receipts", id: `skillopt-route:${receiptRef}` },
+      ],
+    }),
+
+    listSkilloptRouteReceipts: builder.query<
+      SkillOptRouteReceipt[],
+      { accountId: string }
+    >({
+      query: ({ accountId }) =>
+        `skillopt_ops/${encodeURIComponent(accountId)}/route_receipts`,
+      providesTags: (result, error, { accountId }) => [
+        { type: "Receipts", id: `skillopt-route-list:${accountId}` },
+      ],
+    }),
+
+    getCreditDebitReceiptByReceiptRef: builder.query<
+      CreditDebitReceipt,
+      { accountId: string; receiptRef: string }
+    >({
+      query: ({ accountId, receiptRef }) =>
+        `credits/${encodeURIComponent(accountId)}/credit_debit_receipts/${encodeURIComponent(receiptRef)}`,
+      providesTags: (result, error, { receiptRef }) => [
+        { type: "Receipts", id: `credit-debit:${receiptRef}` },
+      ],
+    }),
+
+    listCreditDebitReceipts: builder.query<
+      CreditDebitReceipt[],
+      { accountId: string }
+    >({
+      query: ({ accountId }) =>
+        `credits/${encodeURIComponent(accountId)}/credit_debit_receipts`,
+      providesTags: (result, error, { accountId }) => [
+        { type: "Receipts", id: `credit-debit-list:${accountId}` },
+      ],
+    }),
   }),
 });
 
@@ -138,6 +305,19 @@ export const {
   useLazyGetAccountBalanceQuery,
   useRecordUsageTransactionMutation,
   useRecordPaymentTransactionMutation,
+  useCreateAppGenerationRequestMutation,
+  useCompileContextPageMutation,
+  useGetAppGenerationRequestQuery,
+  useGetAppGenerationTraceQuery,
+  useGetContextPageQuery,
+  useHydrateContextPageMutation,
+  useRecompressContextPageMutation,
+  useRunAppGenerationRequestMutation,
+  useTraverseContextPageMutation,
+  useGetSkilloptRouteReceiptQuery,
+  useListSkilloptRouteReceiptsQuery,
+  useGetCreditDebitReceiptByReceiptRefQuery,
+  useListCreditDebitReceiptsQuery,
 } = creditsApi;
 
 /**

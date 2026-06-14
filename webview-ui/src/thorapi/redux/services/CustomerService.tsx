@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { Customer } from "@thorapi/model/Customer";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { Customer } from '@thorapi/model/Customer'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type CustomerResponse = Customer[];
+type CustomerResponse = Customer[]
+type CustomerPagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<Customer>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type CustomerListQueryArg = {
+  example?: Partial<Customer>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toCustomerList = (result: unknown): CustomerResponse => {
   if (Array.isArray(result)) {
-    return result as CustomerResponse;
+    return result as CustomerResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as CustomerResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as CustomerResponse) : []
+}
 
 export const CustomerService = createApi({
-  reducerPath: "Customer", // This should remain unique
+  reducerPath: 'Customer', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["Customer"],
+  tagTypes: ['Customer'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getCustomersPaged: build.query<
-      CustomerResponse,
-      { page: number; size?: number; example?: Partial<Customer> }
-    >({
+    getCustomersPaged: build.query<CustomerResponse, CustomerPagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `Customer?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Customer?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toCustomerList(result);
+        const rows = toCustomerList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Customer" as const, id })),
-          { type: "Customer", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'Customer' as const, id })),
+          { type: 'Customer', id: `PAGE_${page}` },
+          { type: 'Customer', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getCustomers: build.query<
-      CustomerResponse,
-      { example?: Partial<Customer> } | void
-    >({
+    getCustomers: build.query<CustomerResponse, CustomerListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const CustomerService = createApi({
         return `Customer`;
       },
       providesTags: (result) => {
-        const rows = toCustomerList(result);
+        const rows = toCustomerList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "Customer" as const, id })),
-          { type: "Customer", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'Customer' as const, id })),
+          { type: 'Customer', id: 'LIST' },
+          { type: 'Customer', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,45 +97,32 @@ export const CustomerService = createApi({
     addCustomer: build.mutation<Customer, Partial<Customer>>({
       query: (body) => ({
         url: `Customer`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "Customer", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'Customer', id: 'LIST' },
+        { type: 'Customer', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getCustomer: build.query<Customer, string>({
       query: (id) => `Customer/${id}`,
-      providesTags: (result, error, id) => [{ type: "Customer", id }],
+      providesTags: (result, error, id) => [{ type: 'Customer', id }],
     }),
 
     // 5) Update
-    updateCustomer: build.mutation<
-      void,
-      Pick<Customer, "id"> & Partial<Customer>
-    >({
+    updateCustomer: build.mutation<Customer, Pick<Customer, 'id'> & Partial<Customer>>({
       query: ({ id, ...patch }) => ({
         url: `Customer/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            CustomerService.util.updateQueryData("getCustomer", id, (draft) => {
-              Object.assign(draft, patch);
-            }),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<Customer, "id">) => [
-        { type: "Customer", id },
-        { type: "Customer", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<Customer, 'id'>) => [
+        { type: 'Customer', id },
+        { type: 'Customer', id: 'LIST' },
+        { type: 'Customer', id: 'PARTIAL-LIST' },
       ],
     }),
 
@@ -134,35 +131,37 @@ export const CustomerService = createApi({
       query(id) {
         return {
           url: `Customer/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "Customer", id }],
+      invalidatesTags: (result, error, id) => [
+        { type: 'Customer', id },
+        { type: 'Customer', id: 'LIST' },
+        { type: 'Customer', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteCustomerCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteCustomerCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `Customer/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "Customer", id },
-        { type: "Customer", id: "LIST" },
+        { type: 'Customer', id },
+        { type: 'Customer', id: 'LIST' },
+        { type: 'Customer', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetCustomersPagedQuery`
 export const {
-  useGetCustomersPagedQuery, // immediate fetch
+  useGetCustomersPagedQuery,     // immediate fetch
   useLazyGetCustomersPagedQuery, // lazy fetch
   useGetCustomerQuery,
   useGetCustomersQuery,
@@ -170,4 +169,4 @@ export const {
   useUpdateCustomerMutation,
   useDeleteCustomerMutation,
   useDeleteCustomerCascadeMutation,
-} = CustomerService;
+} = CustomerService

@@ -36,40 +36,24 @@ const _1 = require("./");
 function McpToolPresetFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        slug: !(0, runtime_1.exists)(json, "slug") ? undefined : json["slug"],
-        displayName: !(0, runtime_1.exists)(json, "displayName") ? undefined : json["displayName"],
-        summary: !(0, runtime_1.exists)(json, "summary") ? undefined : json["summary"],
-        category: !(0, runtime_1.exists)(json, "category") ? undefined : json["category"],
-        tags: !(0, runtime_1.exists)(json, "tags")
-            ? undefined
-            : json["tags"].map(_1.McpMarketplaceItemTagFromJSON),
-        recommendedFor: !(0, runtime_1.exists)(json, "recommendedFor")
-            ? undefined
-            : json["recommendedFor"],
-        documentationUrl: !(0, runtime_1.exists)(json, "documentationUrl")
-            ? undefined
-            : json["documentationUrl"],
-        autoApprove: !(0, runtime_1.exists)(json, "autoApprove") ? undefined : json["autoApprove"],
-        tool: !(0, runtime_1.exists)(json, "tool") ? undefined : (0, _1.McpToolFromJSON)(json["tool"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'slug': !(0, runtime_1.exists)(json, 'slug') ? undefined : json['slug'],
+        'displayName': !(0, runtime_1.exists)(json, 'displayName') ? undefined : json['displayName'],
+        'summary': !(0, runtime_1.exists)(json, 'summary') ? undefined : json['summary'],
+        'category': !(0, runtime_1.exists)(json, 'category') ? undefined : json['category'],
+        'tags': !(0, runtime_1.exists)(json, 'tags') ? undefined : json['tags'].map(_1.McpMarketplaceItemTagFromJSON),
+        'recommendedFor': !(0, runtime_1.exists)(json, 'recommendedFor') ? undefined : json['recommendedFor'],
+        'documentationUrl': !(0, runtime_1.exists)(json, 'documentationUrl') ? undefined : json['documentationUrl'],
+        'autoApprove': !(0, runtime_1.exists)(json, 'autoApprove') ? undefined : json['autoApprove'],
+        'tool': !(0, runtime_1.exists)(json, 'tool') ? undefined : (0, _1.McpToolFromJSON)(json['tool']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function McpToolPresetToJSON(value) {
@@ -78,24 +62,22 @@ function McpToolPresetToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        slug: value.slug,
-        displayName: value.displayName,
-        summary: value.summary,
-        category: value.category,
-        tags: value.tags === undefined
-            ? undefined
-            : value.tags.map(_1.McpMarketplaceItemTagToJSON),
-        recommendedFor: value.recommendedFor,
-        documentationUrl: value.documentationUrl,
-        autoApprove: value.autoApprove,
-        tool: (0, _1.McpToolToJSON)(value.tool),
-        trashed: value.trashed,
+        'slug': value.slug,
+        'displayName': value.displayName,
+        'summary': value.summary,
+        'category': value.category,
+        'tags': value.tags === undefined ? undefined : value.tags.map(_1.McpMarketplaceItemTagToJSON),
+        'recommendedFor': value.recommendedFor,
+        'documentationUrl': value.documentationUrl,
+        'autoApprove': value.autoApprove,
+        'tool': (0, _1.McpToolToJSON)(value.tool),
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var McpToolPresetCategoryEnum;
 (function (McpToolPresetCategoryEnum) {
     McpToolPresetCategoryEnum["CLOUDPLATFORM"] = "cloud_platform";

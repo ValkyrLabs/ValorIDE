@@ -35,58 +35,36 @@ const _1 = require("./");
 function ExecModuleResourceConfigFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        apiVersion: !(0, runtime_1.exists)(json, "apiVersion") ? undefined : json["apiVersion"],
-        attachments: !(0, runtime_1.exists)(json, "attachments") ? undefined : json["attachments"],
-        blocks: !(0, runtime_1.exists)(json, "blocks") ? undefined : json["blocks"],
-        collection: !(0, runtime_1.exists)(json, "collection") ? undefined : json["collection"],
-        connection: !(0, runtime_1.exists)(json, "connection") ? undefined : json["connection"],
-        embeds: !(0, runtime_1.exists)(json, "embeds") ? undefined : json["embeds"],
-        fileNameTemplate: !(0, runtime_1.exists)(json, "fileNameTemplate")
-            ? undefined
-            : json["fileNameTemplate"],
-        itemKey: !(0, runtime_1.exists)(json, "item_key") ? undefined : json["item_key"],
-        resourceKey: !(0, runtime_1.exists)(json, "resourceKey") ? undefined : json["resourceKey"],
-        keyPath: !(0, runtime_1.exists)(json, "key_path") ? undefined : json["key_path"],
-        media: !(0, runtime_1.exists)(json, "media") ? undefined : json["media"],
-        mediaIds: !(0, runtime_1.exists)(json, "media_ids") ? undefined : json["media_ids"],
-        mediaUrl: !(0, runtime_1.exists)(json, "media_url") ? undefined : json["media_url"],
-        messagePath: !(0, runtime_1.exists)(json, "message_path")
-            ? undefined
-            : json["message_path"],
-        partitionKey: !(0, runtime_1.exists)(json, "partition_key")
-            ? undefined
-            : json["partition_key"],
-        path: !(0, runtime_1.exists)(json, "path") ? undefined : json["path"],
-        paymentMethodTypes: !(0, runtime_1.exists)(json, "payment_method_types")
-            ? undefined
-            : json["payment_method_types"].map(_1.ArrayStringItemFromJSON),
-        profile: !(0, runtime_1.exists)(json, "profile")
-            ? undefined
-            : (0, _1.UserPreferenceFromJSON)(json["profile"]),
-        userTags: !(0, runtime_1.exists)(json, "user_tags")
-            ? undefined
-            : json["user_tags"].map(_1.ArrayStringItemFromJSON),
-        valuePath: !(0, runtime_1.exists)(json, "value_path") ? undefined : json["value_path"],
-        wkhtmlPath: !(0, runtime_1.exists)(json, "wkhtmlPath") ? undefined : json["wkhtmlPath"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'apiVersion': !(0, runtime_1.exists)(json, 'apiVersion') ? undefined : json['apiVersion'],
+        'attachments': !(0, runtime_1.exists)(json, 'attachments') ? undefined : json['attachments'],
+        'blocks': !(0, runtime_1.exists)(json, 'blocks') ? undefined : json['blocks'],
+        'collection': !(0, runtime_1.exists)(json, 'collection') ? undefined : json['collection'],
+        'connection': !(0, runtime_1.exists)(json, 'connection') ? undefined : json['connection'],
+        'embeds': !(0, runtime_1.exists)(json, 'embeds') ? undefined : json['embeds'],
+        'fileNameTemplate': !(0, runtime_1.exists)(json, 'fileNameTemplate') ? undefined : json['fileNameTemplate'],
+        'itemKey': !(0, runtime_1.exists)(json, 'itemKey') ? undefined : json['itemKey'],
+        'resourceKey': !(0, runtime_1.exists)(json, 'resourceKey') ? undefined : json['resourceKey'],
+        'keyPath': !(0, runtime_1.exists)(json, 'keyPath') ? undefined : json['keyPath'],
+        'media': !(0, runtime_1.exists)(json, 'media') ? undefined : json['media'],
+        'mediaIds': !(0, runtime_1.exists)(json, 'mediaIds') ? undefined : json['mediaIds'],
+        'mediaUrl': !(0, runtime_1.exists)(json, 'mediaUrl') ? undefined : json['mediaUrl'],
+        'messagePath': !(0, runtime_1.exists)(json, 'messagePath') ? undefined : json['messagePath'],
+        'partitionKey': !(0, runtime_1.exists)(json, 'partitionKey') ? undefined : json['partitionKey'],
+        'path': !(0, runtime_1.exists)(json, 'path') ? undefined : json['path'],
+        'paymentMethodTypes': !(0, runtime_1.exists)(json, 'paymentMethodTypes') ? undefined : json['paymentMethodTypes'].map(_1.ArrayStringItemFromJSON),
+        'profile': !(0, runtime_1.exists)(json, 'profile') ? undefined : (0, _1.UserPreferenceFromJSON)(json['profile']),
+        'userTags': !(0, runtime_1.exists)(json, 'userTags') ? undefined : json['userTags'].map(_1.ArrayStringItemFromJSON),
+        'valuePath': !(0, runtime_1.exists)(json, 'valuePath') ? undefined : json['valuePath'],
+        'wkhtmlPath': !(0, runtime_1.exists)(json, 'wkhtmlPath') ? undefined : json['wkhtmlPath'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function ExecModuleResourceConfigToJSON(value) {
@@ -95,32 +73,28 @@ function ExecModuleResourceConfigToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        apiVersion: value.apiVersion,
-        attachments: value.attachments,
-        blocks: value.blocks,
-        collection: value.collection,
-        connection: value.connection,
-        embeds: value.embeds,
-        fileNameTemplate: value.fileNameTemplate,
-        item_key: value.itemKey,
-        resourceKey: value.resourceKey,
-        key_path: value.keyPath,
-        media: value.media,
-        media_ids: value.mediaIds,
-        media_url: value.mediaUrl,
-        message_path: value.messagePath,
-        partition_key: value.partitionKey,
-        path: value.path,
-        payment_method_types: value.paymentMethodTypes === undefined
-            ? undefined
-            : value.paymentMethodTypes.map(_1.ArrayStringItemToJSON),
-        profile: (0, _1.UserPreferenceToJSON)(value.profile),
-        user_tags: value.userTags === undefined
-            ? undefined
-            : value.userTags.map(_1.ArrayStringItemToJSON),
-        value_path: value.valuePath,
-        wkhtmlPath: value.wkhtmlPath,
-        trashed: value.trashed,
+        'apiVersion': value.apiVersion,
+        'attachments': value.attachments,
+        'blocks': value.blocks,
+        'collection': value.collection,
+        'connection': value.connection,
+        'embeds': value.embeds,
+        'fileNameTemplate': value.fileNameTemplate,
+        'itemKey': value.itemKey,
+        'resourceKey': value.resourceKey,
+        'keyPath': value.keyPath,
+        'media': value.media,
+        'mediaIds': value.mediaIds,
+        'mediaUrl': value.mediaUrl,
+        'messagePath': value.messagePath,
+        'partitionKey': value.partitionKey,
+        'path': value.path,
+        'paymentMethodTypes': value.paymentMethodTypes === undefined ? undefined : value.paymentMethodTypes.map(_1.ArrayStringItemToJSON),
+        'profile': (0, _1.UserPreferenceToJSON)(value.profile),
+        'userTags': value.userTags === undefined ? undefined : value.userTags.map(_1.ArrayStringItemToJSON),
+        'valuePath': value.valuePath,
+        'wkhtmlPath': value.wkhtmlPath,
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=ExecModuleResourceConfig.js.map

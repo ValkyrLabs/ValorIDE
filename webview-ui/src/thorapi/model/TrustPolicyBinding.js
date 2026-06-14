@@ -36,37 +36,19 @@ const _1 = require("./");
 function TrustPolicyBindingFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        policyManifest: !(0, runtime_1.exists)(json, "policyManifest")
-            ? undefined
-            : (0, _1.TrustPolicyManifestFromJSON)(json["policyManifest"]),
-        boundObjectType: !(0, runtime_1.exists)(json, "boundObjectType")
-            ? undefined
-            : json["boundObjectType"],
-        boundObjectId: !(0, runtime_1.exists)(json, "boundObjectId")
-            ? undefined
-            : json["boundObjectId"],
-        bindingStatus: !(0, runtime_1.exists)(json, "bindingStatus")
-            ? undefined
-            : json["bindingStatus"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'policyManifest': !(0, runtime_1.exists)(json, 'policyManifest') ? undefined : (0, _1.TrustPolicyManifestFromJSON)(json['policyManifest']),
+        'boundObjectType': !(0, runtime_1.exists)(json, 'boundObjectType') ? undefined : json['boundObjectType'],
+        'boundObjectId': !(0, runtime_1.exists)(json, 'boundObjectId') ? undefined : json['boundObjectId'],
+        'bindingStatus': !(0, runtime_1.exists)(json, 'bindingStatus') ? undefined : json['bindingStatus'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function TrustPolicyBindingToJSON(value) {
@@ -75,18 +57,18 @@ function TrustPolicyBindingToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        policyManifest: (0, _1.TrustPolicyManifestToJSON)(value.policyManifest),
-        boundObjectType: value.boundObjectType,
-        boundObjectId: value.boundObjectId,
-        bindingStatus: value.bindingStatus,
-        ownerId: value.ownerId,
-        trashed: value.trashed,
+        'policyManifest': (0, _1.TrustPolicyManifestToJSON)(value.policyManifest),
+        'boundObjectType': value.boundObjectType,
+        'boundObjectId': value.boundObjectId,
+        'bindingStatus': value.bindingStatus,
+        'ownerId': value.ownerId,
+        'trashed': value.trashed,
     };
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 var TrustPolicyBindingBindingStatusEnum;
 (function (TrustPolicyBindingBindingStatusEnum) {
     TrustPolicyBindingBindingStatusEnum["ACTIVE"] = "active";

@@ -34,35 +34,21 @@ const DataObject_1 = require("./DataObject");
 function PublishFunnel200ResponseFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        success: !(0, runtime_1.exists)(json, "success") ? undefined : json["success"],
-        published: !(0, runtime_1.exists)(json, "published") ? undefined : json["published"],
-        funnelUrl: !(0, runtime_1.exists)(json, "funnelUrl") ? undefined : json["funnelUrl"],
-        landingPageUrl: !(0, runtime_1.exists)(json, "landingPageUrl")
-            ? undefined
-            : json["landingPageUrl"],
-        message: !(0, runtime_1.exists)(json, "message") ? undefined : json["message"],
-        publishedAt: !(0, runtime_1.exists)(json, "publishedAt")
-            ? undefined
-            : new Date(json["publishedAt"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'success': !(0, runtime_1.exists)(json, 'success') ? undefined : json['success'],
+        'published': !(0, runtime_1.exists)(json, 'published') ? undefined : json['published'],
+        'funnelUrl': !(0, runtime_1.exists)(json, 'funnelUrl') ? undefined : json['funnelUrl'],
+        'landingPageUrl': !(0, runtime_1.exists)(json, 'landingPageUrl') ? undefined : json['landingPageUrl'],
+        'message': !(0, runtime_1.exists)(json, 'message') ? undefined : json['message'],
+        'publishedAt': !(0, runtime_1.exists)(json, 'publishedAt') ? undefined : new Date(json['publishedAt']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function PublishFunnel200ResponseToJSON(value) {
@@ -71,15 +57,13 @@ function PublishFunnel200ResponseToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        success: value.success,
-        published: value.published,
-        funnelUrl: value.funnelUrl,
-        landingPageUrl: value.landingPageUrl,
-        message: value.message,
-        publishedAt: value.publishedAt === undefined
-            ? undefined
-            : value.publishedAt.toISOString(),
-        trashed: value.trashed,
+        'success': value.success,
+        'published': value.published,
+        'funnelUrl': value.funnelUrl,
+        'landingPageUrl': value.landingPageUrl,
+        'message': value.message,
+        'publishedAt': value.publishedAt === undefined ? undefined : value.publishedAt.toISOString(),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=PublishFunnel200Response.js.map

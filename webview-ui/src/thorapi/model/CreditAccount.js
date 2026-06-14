@@ -34,41 +34,21 @@ const DataObject_1 = require("./DataObject");
 function CreditAccountFromJSON(json) {
     return {
         ...(0, DataObject_1.DataObjectFromJSON)(json),
-        customerId: !(0, runtime_1.exists)(json, "customerId") ? undefined : json["customerId"],
-        availableCredits: !(0, runtime_1.exists)(json, "availableCredits")
-            ? undefined
-            : json["availableCredits"],
-        totalCredited: !(0, runtime_1.exists)(json, "totalCredited")
-            ? undefined
-            : json["totalCredited"],
-        totalDebited: !(0, runtime_1.exists)(json, "totalDebited")
-            ? undefined
-            : json["totalDebited"],
-        stripeCustomerId: !(0, runtime_1.exists)(json, "stripeCustomerId")
-            ? undefined
-            : json["stripeCustomerId"],
-        updatedAt: !(0, runtime_1.exists)(json, "updatedAt")
-            ? undefined
-            : new Date(json["updatedAt"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !(0, runtime_1.exists)(json, "trashed") ? undefined : json["trashed"],
+        'customerId': !(0, runtime_1.exists)(json, 'customerId') ? undefined : json['customerId'],
+        'availableCredits': !(0, runtime_1.exists)(json, 'availableCredits') ? undefined : json['availableCredits'],
+        'totalCredited': !(0, runtime_1.exists)(json, 'totalCredited') ? undefined : json['totalCredited'],
+        'totalDebited': !(0, runtime_1.exists)(json, 'totalDebited') ? undefined : json['totalDebited'],
+        'stripeCustomerId': !(0, runtime_1.exists)(json, 'stripeCustomerId') ? undefined : json['stripeCustomerId'],
+        'updatedAt': !(0, runtime_1.exists)(json, 'updatedAt') ? undefined : new Date(json['updatedAt']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'trashed': !(0, runtime_1.exists)(json, 'trashed') ? undefined : json['trashed'],
     };
 }
 function CreditAccountToJSON(value) {
@@ -77,13 +57,13 @@ function CreditAccountToJSON(value) {
     }
     return {
         ...(0, DataObject_1.DataObjectToJSON)(value),
-        customerId: value.customerId,
-        availableCredits: value.availableCredits,
-        totalCredited: value.totalCredited,
-        totalDebited: value.totalDebited,
-        stripeCustomerId: value.stripeCustomerId,
-        updatedAt: value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
-        trashed: value.trashed,
+        'customerId': value.customerId,
+        'availableCredits': value.availableCredits,
+        'totalCredited': value.totalCredited,
+        'totalDebited': value.totalDebited,
+        'stripeCustomerId': value.stripeCustomerId,
+        'updatedAt': value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
+        'trashed': value.trashed,
     };
 }
 //# sourceMappingURL=CreditAccount.js.map

@@ -13,58 +13,67 @@ Template file: typescript-redux-query/modelService.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { OasResponse } from "@thorapi/model/OasResponse";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { OasResponse } from '@thorapi/model/OasResponse'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type OasResponseResponse = OasResponse[];
+type OasResponseResponse = OasResponse[]
+type OasResponsePagedQueryArg = {
+  page: number
+  size?: number
+  example?: Partial<OasResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI; callers pass the
+   * authenticated principal id/username so RBAC-filtered pages cannot be
+   * reused across login boundaries by RTK Query.
+   */
+  authSessionKey?: string
+}
+
+type OasResponseListQueryArg = {
+  example?: Partial<OasResponse>
+  /**
+   * Cache discriminator only. Do not send this to ThorAPI.
+   */
+  authSessionKey?: string
+}
 
 const toOasResponseList = (result: unknown): OasResponseResponse => {
   if (Array.isArray(result)) {
-    return result as OasResponseResponse;
+    return result as OasResponseResponse
   }
 
-  const candidate =
-    (result as any)?.content ??
-    (result as any)?.items ??
-    (result as any)?.results ??
-    (result as any)?.data;
-  return Array.isArray(candidate) ? (candidate as OasResponseResponse) : [];
-};
+  const candidate = (result as any)?.content ?? (result as any)?.items ?? (result as any)?.results ?? (result as any)?.data
+  return Array.isArray(candidate) ? (candidate as OasResponseResponse) : []
+}
 
 export const OasResponseService = createApi({
-  reducerPath: "OasResponse", // This should remain unique
+  reducerPath: 'OasResponse', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["OasResponse"],
+  tagTypes: ['OasResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getOasResponsesPaged: build.query<
-      OasResponseResponse,
-      { page: number; size?: number; example?: Partial<OasResponse> }
-    >({
+    getOasResponsesPaged: build.query<OasResponseResponse, OasResponsePagedQueryArg>({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example)
-          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `OasResponse?${q.join("&")}`;
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `OasResponse?${q.join('&')}`;
       },
       providesTags: (result, error, { page }) => {
-        const rows = toOasResponseList(result);
+        const rows = toOasResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "OasResponse" as const, id })),
-          { type: "OasResponse", id: `PAGE_${page}` },
-        ];
+            .map(({ id }) => ({ type: 'OasResponse' as const, id })),
+          { type: 'OasResponse', id: `PAGE_${page}` },
+          { type: 'OasResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOasResponses: build.query<
-      OasResponseResponse,
-      { example?: Partial<OasResponse> } | void
-    >({
+    getOasResponses: build.query<OasResponseResponse, OasResponseListQueryArg | void>({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -73,13 +82,14 @@ export const OasResponseService = createApi({
         return `OasResponse`;
       },
       providesTags: (result) => {
-        const rows = toOasResponseList(result);
+        const rows = toOasResponseList(result)
         return [
           ...rows
             .filter((row) => row?.id != null)
-            .map(({ id }) => ({ type: "OasResponse" as const, id })),
-          { type: "OasResponse", id: "LIST" },
-        ];
+            .map(({ id }) => ({ type: 'OasResponse' as const, id })),
+          { type: 'OasResponse', id: 'LIST' },
+          { type: 'OasResponse', id: 'PARTIAL-LIST' },
+        ]
       },
     }),
 
@@ -87,88 +97,71 @@ export const OasResponseService = createApi({
     addOasResponse: build.mutation<OasResponse, Partial<OasResponse>>({
       query: (body) => ({
         url: `OasResponse`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "OasResponse", id: "LIST" }],
+      invalidatesTags: [
+        { type: 'OasResponse', id: 'LIST' },
+        { type: 'OasResponse', id: 'PARTIAL-LIST' },
+      ],
     }),
 
     // 4) Get single by ID
     getOasResponse: build.query<OasResponse, string>({
       query: (id) => `OasResponse/${id}`,
-      providesTags: (result, error, id) => [{ type: "OasResponse", id }],
+      providesTags: (result, error, id) => [{ type: 'OasResponse', id }],
     }),
 
     // 5) Update
-    updateOasResponse: build.mutation<
-      void,
-      Pick<OasResponse, "id"> & Partial<OasResponse>
-    >({
+    updateOasResponse: build.mutation<OasResponse, Pick<OasResponse, 'id'> & Partial<OasResponse>>({
       query: ({ id, ...patch }) => ({
         url: `OasResponse/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
-      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-        if (id) {
-          const patchResult = dispatch(
-            OasResponseService.util.updateQueryData(
-              "getOasResponse",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
-          try {
-            await queryFulfilled;
-          } catch {
-            patchResult.undo();
-          }
-        }
-      },
-      invalidatesTags: (result, error, { id }: Pick<OasResponse, "id">) => [
-        { type: "OasResponse", id },
-        { type: "OasResponse", id: "LIST" },
+      invalidatesTags: (result, error, { id }: Pick<OasResponse, 'id'>) => [
+        { type: 'OasResponse', id },
+        { type: 'OasResponse', id: 'LIST' },
+        { type: 'OasResponse', id: 'PARTIAL-LIST' },
       ],
     }),
 
     // 6) Delete
-    deleteOasResponse: build.mutation<{ success: boolean; id: string }, number>(
-      {
-        query(id) {
-          return {
-            url: `OasResponse/${id}`,
-            method: "DELETE",
-          };
-        },
-        invalidatesTags: (result, error, id) => [{ type: "OasResponse", id }],
+    deleteOasResponse: build.mutation<{ success: boolean; id: string }, number>({
+      query(id) {
+        return {
+          url: `OasResponse/${id}`,
+          method: 'DELETE',
+        }
       },
-    ),
+      invalidatesTags: (result, error, id) => [
+        { type: 'OasResponse', id },
+        { type: 'OasResponse', id: 'LIST' },
+        { type: 'OasResponse', id: 'PARTIAL-LIST' },
+      ],
+    }),
 
     // 7) Cascade / soft-delete (marks trashed, cascades children)
-    deleteOasResponseCascade: build.mutation<
-      { success: boolean; id: string },
-      { id: string; cascade?: boolean; trash?: boolean }
-    >({
+    deleteOasResponseCascade: build.mutation<{ success: boolean; id: string }, { id: string; cascade?: boolean; trash?: boolean }>({
       query({ id, cascade = true, trash = true }) {
-        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join('&');
         return {
           url: `OasResponse/${id}?${params}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
       invalidatesTags: (result, error, { id }) => [
-        { type: "OasResponse", id },
-        { type: "OasResponse", id: "LIST" },
+        { type: 'OasResponse', id },
+        { type: 'OasResponse', id: 'LIST' },
+        { type: 'OasResponse', id: 'PARTIAL-LIST' },
       ],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetOasResponsesPagedQuery`
 export const {
-  useGetOasResponsesPagedQuery, // immediate fetch
+  useGetOasResponsesPagedQuery,     // immediate fetch
   useLazyGetOasResponsesPagedQuery, // lazy fetch
   useGetOasResponseQuery,
   useGetOasResponsesQuery,
@@ -176,4 +169,4 @@ export const {
   useUpdateOasResponseMutation,
   useDeleteOasResponseMutation,
   useDeleteOasResponseCascadeMutation,
-} = OasResponseService;
+} = OasResponseService
