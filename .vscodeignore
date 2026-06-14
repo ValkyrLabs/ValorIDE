@@ -2,14 +2,21 @@
 .git/
 .gitignore
 .husky/
+.worktrees/
 .vscode/
 .DS_Store
 .valoride
 ValorIDE_docs/
+
 # ignore caches and build outputs
-**/dist/**
 **/.cache/**
+**/.turbo/**
+**/.vite/**
+**/coverage/**
+**/node_modules/**
 **/*.log
+**/*.map
+
 # Exclude source, tests, docs, configs, and build scripts
 src/
 test/
@@ -32,9 +39,11 @@ eslint.config.*
 *.md
 *.markdown
 *.vsix
-
-# Exclude node_modules except production dependencies (if not bundled)
-node_modules/
+out/
+webview-ui/
+packages/*/node_modules/
+packages/*/dist/
+packages/*/out/
 
 # Exclude other common unnecessary files
 *.swp
@@ -43,9 +52,7 @@ node_modules/
 *.tmp
 
 # Include only the built output and essential files
-!out/
 !dist/
-dist/**/*.map
 !extension.js
 !package.json
 !README.md
