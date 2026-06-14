@@ -35,12 +35,11 @@ import { initializeRatingService } from "./services/ratingService";
 import { initializeStatusBarService } from "./services/StatusBarService";
 import { revealValorideSidebar } from "./services/startupReveal";
 import {
+  createStartupLlmDetailsClient,
   initializeLLMPromptService,
-  SelectedPrompt,
-  ThorApiLlmDetailsClient,
+  selectedPromptFromStoredLlmDetails,
 } from "./services/llmPromptService";
 import { getAllExtensionState, getSecret } from "./core/storage/state";
-import { SelectedLlmDetails } from "@shared/llm";
 import {
   getStartupRevealMode,
   shouldRevealSidebarOnStartup,
@@ -65,27 +64,18 @@ async function initializeWorkspaceLlmPromptService(
 ): Promise<void> {
   const { apiConfiguration, selectedLlmDetails } =
     await getAllExtensionState(context);
-  const manualSelection: SelectedPrompt | undefined = selectedLlmDetails
-    ? {
-        llmDetailsId: selectedLlmDetails.id,
-        name: selectedLlmDetails.name,
-        prompt: selectedLlmDetails.prompt,
-        mode: selectedLlmDetails.mode,
-        tags: selectedLlmDetails.tags,
-        source:
-          selectedLlmDetails.source === "fallback" ? "fallback" : "thorapi",
-        stackSpecific: true,
-      }
-    : undefined;
+  const manualSelection =
+    selectedPromptFromStoredLlmDetails(selectedLlmDetails);
   const authToken =
     authTokenOverride ??
     (await getSecret(context, "jwtToken")) ??
     apiConfiguration.valkyraiJwt ??
     apiConfiguration.valorideApiKey;
-  const llmDetailsClient =
-    authToken && !manualSelection
-      ? new ThorApiLlmDetailsClient(authToken, apiConfiguration.valkyraiHost)
-      : undefined;
+  const llmDetailsClient = createStartupLlmDetailsClient({
+    authToken,
+    valkyraiHost: apiConfiguration.valkyraiHost,
+    manualSelection,
+  });
 
   await initializeLLMPromptService(
     workspaceRoot,
