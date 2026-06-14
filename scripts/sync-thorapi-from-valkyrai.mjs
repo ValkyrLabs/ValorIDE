@@ -63,7 +63,6 @@ const reportJsonPath = getOptionalPathArg(
 
 const thorapiTargets = [
   path.join(repoRoot, "webview-ui", "src", "thorapi"),
-  path.join(repoRoot, "src", "thorapi"),
 ];
 
 const requiredThorapiFolders = ["api", "model", "redux", "src"];

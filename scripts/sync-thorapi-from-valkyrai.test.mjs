@@ -124,7 +124,8 @@ test("dry-run report includes source hash, validation, and changed ThorAPI names
         { name: "csrfToken.ts", ok: true },
       ],
     );
-    assert.equal(report.copied.length, 2);
+    assert.equal(report.copied.length, 1);
+    assert.equal(report.copied[0].target, "webview-ui/src/thorapi");
     assert.ok(
       report.copied.every(({ fileCount }) => fileCount === 6),
       `unexpected copied file counts: ${JSON.stringify(report.copied)}`,

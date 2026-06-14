@@ -88,7 +88,6 @@ These files and docs are relevant starting points:
   - `scripts/sync-thorapi-from-valkyrai.mjs`
   - `docs/architecture/thorapi-client-upgrade-checklist.md`
   - `webview-ui/src/thorapi`
-  - `src/thorapi`
 - SWARM:
   - `src/shared/swarm-protocol.ts`
   - `src/services/swarmOrchestrator.ts`
@@ -211,7 +210,7 @@ Downloads generated ValkyrAI/ThorAPI app frameworks and expects ValorIDE to unde
 
 ### 8.2 ThorAPI Sync And Generated Client Consumption
 
-- FR-THOR-1: `npm run sync:thorapi` must copy from latest ValkyrAI ThorAPI source into `webview-ui/src/thorapi` and `src/thorapi`.
+- FR-THOR-1: `npm run sync:thorapi` must copy from latest ValkyrAI ThorAPI source into `webview-ui/src/thorapi`; the extension host resolves generated ThorAPI imports through that canonical webview copy.
 - FR-THOR-2: The sync script must support `--dry-run`, explicit source overrides, and support-file sync.
 - FR-THOR-3: Sync must validate required folders: `api`, `model`, `redux`, `src`.
 - FR-THOR-4: Sync must patch runtime base path mutability without manual edits.
